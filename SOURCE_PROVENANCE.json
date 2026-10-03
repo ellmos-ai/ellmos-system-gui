@@ -11,9 +11,9 @@
     "src/components/TaskCreateForm.astro": "fcfbad55ec1a3a1b4324db717a4ef2e0d7149dba6724d1bfbe95a34b3daf1852",
     "src/config/nav_config.json": "7f1d112641cae258c153f76f765a7398af78b86dd2d769b1980d9555e47c4262",
     "src/layouts/BachLayout.astro": "06e3348894a83e588a8c9c67a6b01b22b364e7aa2a4d878a86ed76b69e8f1f7b",
-    "src/pages/agenten/fabrika.astro": "71474da251a1cb31e093e0131d1d531d74aaa693ad3ba28c528028334f61d751",
+    "src/pages/agenten/fabrika.astro": "8c46c4eb92e4fa2deeb3a1c40242c5c1ec258d37d20dd6ea1f4db696ff2ba6b6",
     "src/pages/agenten/marblerun.astro": "6e15986fcf02f0915f5c99b3be38ad90aa5e6b09643270864802f179b3cef560",
-    "src/pages/agenten/running.astro": "04041524d5fb2279c56e60578ead62fe57a82b689b4d3bd95848380a818417ed",
+    "src/pages/agenten/running.astro": "6840addf9c4d37ffa4595babe45d7f1177a4819631dd08b3a948402330ad72c9",
     "src/pages/agenten/sessions.astro": "bf64fafd76bbe2bc69975f001612a0924eecd78b53a2578435e13c6020b1d4e5",
     "src/pages/artefakte.astro": "a9e033147168845c95ab93767afbd222a4272ee63cb15166c135931865fc27de",
     "src/pages/domains.astro": "322a43ad7e9d5deae5d7c7e81bba9bf6256b5d372cda0aaa1dbfb3c13c2476c1",
@@ -28,5 +28,10 @@
     "src/pages/skills.astro": "056f5cd6d3907dd9a480c467478a692c92db362fea169b5bc7e3d9b70b736d83",
     "src/pages/tasks.astro": "98b61f12bbc01ae66271b3f6920e75a7db939a5b4e610898e56f3e8920c4ec09",
     "src/styles/main.css": "5b603834c336eee5c068ce3673ddb5a747d6092d62d01e73e8c9365cfe94c9b4"
-  }
+  },
+  "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
+  "post_extraction_shared_changes": [
+    "src/pages/agenten/running.astro",
+    "src/pages/agenten/fabrika.astro"
+  ]
 }
