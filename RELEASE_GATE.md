@@ -10,11 +10,11 @@ The initial GitHub repository was created publicly on 2026-10-03 before this eco
 |---|---|
 | `.gitignore` minimum entries | PASS |
 | English README | PASS |
-| MIT license in repository and ZIP | Source present; ZIP rebuild pending |
+| MIT license in repository and ZIP | PASS in corrected package; final source commit rebuild pending |
 | No tracked database or environment files | PASS |
 | No embedded secrets, personal paths, or internal documents | PASS |
 | TODO status table | Present |
 
 ## Gate execution
 
-On 2026-10-03, the copied `.AI/.MODULES/_scripts/final_gate_check.py` returned exit code 0 with 10 PASS, 0 FAIL, and 0 WARN against this repository. The source-commit-specific gate will be rerun after the correction commit. The archive stays unpublished until the license, stale-build guard, archive hash, and independent review pass.
+On 2026-10-03, the copied `.AI/.MODULES/_scripts/final_gate_check.py` returned exit code 0 with 10 PASS, 0 FAIL, and 0 WARN against this repository. The source-commit-specific gate will be rerun after this correction commit. The archive stays unpublished until the license, stale-build guard, archive hash, and independent review pass.

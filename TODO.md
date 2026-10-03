@@ -8,7 +8,7 @@ Audit date: 2026-10-03. Repository: `ellmos-ai/ellmos-system-gui`.
 |---|---|---|
 | Secrets | Reviewed | Tracked source, static build, and ZIP scanned; no embedded credential pattern found. |
 | Private data and paths | Reviewed | No user home path or private host pattern in tracked source, build, or ZIP. |
-| License | In progress | MIT text is tracked; corrected ZIP needs rebuild and readback. |
+| License | Reviewed | MIT text is tracked and included in the ZIP; archive readback is part of packaging. |
 | Source provenance | Reviewed | `SOURCE_PROVENANCE.json` records the 22 reviewed BACH source file hashes. |
 | Language | Intentional | German end-user labels serve the current BACH/Ocean audience; the README is in English. |
 | Ocean adapters | Open | Implement and verify the corresponding REST handlers and capability metadata before claiming panel availability. |

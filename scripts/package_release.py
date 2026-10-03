@@ -28,7 +28,9 @@ package = json.loads((root / 'package.json').read_text(encoding='utf-8'))
 release = root / 'release'
 release.mkdir(exist_ok=True)
 revision = manifest['source_commit']
-head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
+head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root, text=True, check=True,
+                      stdin=subprocess.DEVNULL, capture_output=True,
+                      creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0)).stdout.strip()
 if revision != head:
     raise SystemExit('Build source commit does not match repository HEAD; rebuild first')
 archive = release / f"{package['name']}-{package['version']}-{revision[:12]}.zip"
@@ -46,4 +48,4 @@ with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslev
     output.writestr(info, license_text, compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
 print('archive', archive)
 print('sha256', sha256(archive.read_bytes()).hexdigest())
-print('files', len(expected))
+print('files', len(expected) + 1)
