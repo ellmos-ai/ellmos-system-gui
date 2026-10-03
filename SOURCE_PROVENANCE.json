@@ -1,0 +1,31 @@
+{
+  "schema": "ellmos-system-gui.source-provenance.v1",
+  "source_repository": "ellmos-ai/bach",
+  "public_base_commit": "4b007a51776592ff2426511c585360b6ce58897f",
+  "reviewed_source_commit": "0d5a1e39893a3f7180df3c450df46e7cbf2b774f",
+  "license": "MIT",
+  "files_sha256": {
+    "src/components/Header.astro": "50d3200e3cb814ee1637b2730fe7a944c0ad6eb3946c3a09a942fe615bd56883",
+    "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
+    "src/config/nav_config.json": "9297f3eac290c009d26eda4cdf5096d0c25246b813a8f7828dcfe97c368f8e45",
+    "src/layouts/BachLayout.astro": "564ff2847417236cc697729164af14f9d56258317e043a7ab12a985530631cf0",
+    "src/pages/agenten/fabrika.astro": "b0d3f560a03ae586439b0209658a5f184601a1dcd9ae1abf97953a3e32baa87b",
+    "src/pages/agenten/marblerun.astro": "8c0020a406f9d63bdc86b53f89372f2d3753ec055a4560d8f9e7051101d07c46",
+    "src/pages/agenten/running.astro": "8001e9decc72f197b1052c854c4048bf121c4b5a8b3146e2408722a18e62a2f9",
+    "src/pages/agenten/sessions.astro": "e78943a772bca92c082ab5ba170dda599d47885ed79a3f8923d728338a36c86f",
+    "src/pages/artefakte.astro": "b5ed10323a6af739ebcbf9ac5e32b2adf33082937557f7372f2f63fd84dcb5e6",
+    "src/pages/domains.astro": "bf8a568c9a14d013363705d558afb94884c20e204e4074f599fb06f4e4e516b3",
+    "src/pages/governance/funk.astro": "703dd43f2f06beb059e9a44de35dfead479d79c340203e13b291d6f4072ec00a",
+    "src/pages/governance/index.astro": "7e97d0d5130ff9d0161b836f37783c6ef4db3a5f0d2b3d3ce2b19ff48610c503",
+    "src/pages/governance/logs.astro": "77bc3c16b5f095c6ff000cf1d7758fe9483acdbc31dbf3030ef11107c5349a91",
+    "src/pages/governance/usecases.astro": "894f1ad5694d0c5665136152c54dcf7e18927c99a4abc868119d67a354e56a32",
+    "src/pages/index.astro": "5ad5405b9ce69b738374065bebfd102b3ee23800a200e1b715a87a32a7e69420",
+    "src/pages/life.astro": "f68cbc03f377f59208fddea47e1ef293ddeb3c40ee82fd2ed77918a5e5f962d8",
+    "src/pages/memory.astro": "ff833c4d94b5cf04c4164f55528db7325665b3c63ad52299bba0418a8471b848",
+    "src/pages/settings.astro": "93aed9f8e8f4cc9ce89df73a53a9c3143a9aed23d893d40d0f724bd040be9c4f",
+    "src/pages/skills.astro": "3161b0198118b03f94a0c798b2032a8e6e4d3f59a2ce535732f3916249e49e58",
+    "src/pages/tasks.astro": "f50887c60d55eaee76dc627ae9443c36f830181a9feff8458f2202484bf544fa",
+    "src/styles/main.css": "1411778d4cd0fcb6aa28c1ccb0bd7f4780d7a6fa961e6693fcf7526aa068018e",
+    "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2"
+  }
+}
