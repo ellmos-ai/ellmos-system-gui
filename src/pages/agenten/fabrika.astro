@@ -73,6 +73,11 @@ import BachLayout from "../../layouts/BachLayout.astro";
         <p id="core-prompt-status" role="status" style="font-size:.8rem;color:var(--text-muted);">Promptquelle wird geprüft…</p>
         <label for="core-prompt-text" style="display:block;margin:.75rem 0 .25rem;">Aktiver Prompttext</label>
         <textarea id="core-prompt-text" rows="8" style="width:100%;padding:.6rem;background:var(--bg-dark);color:var(--text);border:1px solid var(--border);font-family:monospace;"></textarea>
+         <details style="margin-top:.75rem;">
+           <summary style="cursor:pointer;">Gemeldeten Werkstandard getrennt ansehen</summary>
+           <label for="core-prompt-default" style="display:block;margin:.5rem 0 .25rem;">Werkstandard der ausgewählten Quelle · nur lesen</label>
+           <textarea id="core-prompt-default" rows="8" readonly style="width:100%;padding:.6rem;background:var(--bg-dark);color:var(--text);border:1px solid var(--border);font-family:monospace;"></textarea>
+         </details>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem;">
           <button type="button" id="core-prompt-save" class="btn btn-sm btn-primary" onclick="saveCorePrompt()" disabled>Anpassung speichern</button>
           <button type="button" id="core-prompt-reset" class="btn btn-sm" onclick="resetCorePrompt()" disabled>Auf Werkstandard zurücksetzen</button>
@@ -496,12 +501,17 @@ import BachLayout from "../../layouts/BachLayout.astro";
       const prompt = _corePromptData?.prompts?.[key];
       const editor = document.getElementById('core-prompt-text');
       editor.value = prompt?.effective || '';
+      document.getElementById('core-prompt-default').value = prompt?.default || '';
       editor.disabled = !prompt;
       for (const id of ['core-prompt-save', 'core-prompt-reset', 'core-prompt-use']) {
-        document.getElementById(id).disabled = !prompt || (id !== 'core-prompt-use' && _corePromptData?.mutation_supported !== true);
+        document.getElementById(id).disabled = !prompt ||
+          (id === 'core-prompt-use' && _corePromptData?.source === 'in_memory_defaults') ||
+          (id !== 'core-prompt-use' && _corePromptData?.mutation_supported !== true);
       }
-      corePromptMessage(prompt ? (_corePromptData?.mutation_supported !== true ?
-        'Live-Control-Prompt lesbar. Speichern/Zurücksetzen wartet auf versionierte Control-API.' :
+      corePromptMessage(prompt ? (_corePromptData?.source === 'in_memory_defaults' ?
+        'Nur unbestätigte Speicher-Defaults. Keine aktive Control-Konfiguration nachgewiesen; Übernahme und Schreiben gesperrt.' :
+        _corePromptData?.mutation_supported !== true ?
+        'Unversionierte Control-Antwort: Prompt zur ausdrücklichen Vorschau, aktive Konfiguration nicht bestätigt. Schreiben gesperrt.' :
         prompt.is_custom ? 'Aktive eigene Anpassung · Werkstandard bleibt separat erhalten.' :
         'Aktiver Werkstandard aus der Control-Quelle.') : 'Promptquelle nicht verfügbar.');
     }
@@ -514,6 +524,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
         if (data.schema !== 'bach.core-prompts.v1' || !data.prompts?.system_default ||
             (data.mutation_supported === true && typeof data.configuration_version !== 'string')) throw new Error('Promptantwort ungültig');
         const select = document.getElementById('core-prompt-key');
+        select.disabled = false;
         const previous = select.value;
         select.replaceChildren();
         for (const key of Object.keys(data.prompts)) {
@@ -528,12 +539,11 @@ import BachLayout from "../../layouts/BachLayout.astro";
         showCorePrompt();
       } catch (_error) {
         _corePromptData = null;
-        document.getElementById('core-prompt-key').replaceChildren();
-        document.getElementById('core-prompt-text').value = '';
+        document.getElementById('core-prompt-key').disabled = true;
         for (const id of ['core-prompt-save', 'core-prompt-reset', 'core-prompt-use']) {
           document.getElementById(id).disabled = true;
         }
-        corePromptMessage('Original-Promptquelle nicht verfügbar. Geräteanmeldung oder Control-Konfiguration prüfen.');
+        corePromptMessage('Promptquelle nicht erreichbar. Vorhandene Eingaben bleiben sichtbar; Speichern und Übernehmen sind bis zur erneuten Prüfung gesperrt.');
       }
     }
 

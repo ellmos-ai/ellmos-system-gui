@@ -307,12 +307,23 @@ import BachLayout from "../../layouts/BachLayout.astro";
       card.append(label);
     }
 
-    function renderCoreAgents(data) {
+    function renderCoreAgents(data, changedId = null) {
+      const target = document.getElementById('core-agent-cards');
+      const previousCards = new Map([...target.querySelectorAll('[data-core-agent-id]')]
+        .map(card => [card.dataset.coreAgentId, card]));
+      const previousAgents = new Map(coreAgents.map(agent => [agent.id, agent]));
       coreConfigVersion = data.configuration_version;
       coreAgents = data.agents;
-      const target = document.getElementById('core-agent-cards');
-      target.replaceChildren();
+      if (!changedId) target.replaceChildren();
       for (const agent of coreAgents) {
+        const existing = changedId ? previousCards.get(agent.id) : null;
+        if (changedId && agent.id !== changedId && existing) {
+          const before = previousAgents.get(agent.id);
+          const keys = ['name', 'icon', 'backend', 'model', 'mode', 'think',
+            'max_tool_rounds', 'pause_after', 'pause_minutes'];
+          if (before && keys.some(key => before[key] !== agent[key])) existing.dataset.coreStale = 'true';
+          continue;
+        }
         const card = coreElement('article', undefined, 'core-agent-card');
         card.dataset.coreAgentId = agent.id;
         card.append(coreElement('h3', `${agent.icon || '◇'} ${agent.name || agent.id}`));
@@ -341,7 +352,8 @@ import BachLayout from "../../layouts/BachLayout.astro";
         reset.addEventListener('click', () => resetCoreSlot(agent.id));
         actions.append(reset);
         card.append(actions);
-        target.append(card);
+        if (existing) existing.replaceWith(card);
+        else target.append(card);
       }
     }
 
@@ -362,16 +374,44 @@ import BachLayout from "../../layouts/BachLayout.astro";
       }
     }
 
+    function showCoreSaveFailure(message) {
+      const feedback = document.getElementById('core-agent-feedback');
+      const reload = coreElement('button', 'Zustand neu laden (verwirft Eingaben)', 'btn btn-sm');
+      reload.type = 'button';
+      reload.addEventListener('click', () => loadCoreSlots());
+      feedback.replaceChildren(coreElement('span', message + ' Eingaben bleiben bis zum Neuladen erhalten. '), reload);
+    }
+
     async function saveCoreSlot(slotId) {
       const card = [...document.querySelectorAll('[data-core-agent-id]')].find(node => node.dataset.coreAgentId === slotId);
       if (!card || !coreConfigVersion) return;
+      if (card.dataset.coreStale === 'true') {
+        showCoreSaveFailure('Serverkonfiguration dieses Agenten hat sich verändert.');
+        return;
+      }
+      const original = coreAgents.find(item => item.id === slotId);
+      if (!original) return;
       const changes = {};
       for (const input of card.querySelectorAll('[data-core-field]')) {
         const field = input.dataset.coreField;
-        changes[field] = input.type === 'checkbox' ? input.checked :
-          input.type === 'number' ? Number(input.value) : input.value.trim();
+        const previous = original[field];
+        if (input.type === 'checkbox') {
+          if (previous == null && !input.checked) continue;
+          if (input.checked !== previous) changes[field] = input.checked;
+        } else if (input.type === 'number') {
+          if (input.value.trim() === '' && previous == null) continue;
+          const current = input.value.trim() === '' ? null : Number(input.value);
+          if (current !== previous) changes[field] = current;
+        } else {
+          const current = input.value.trim();
+          if (current !== String(previous ?? '').trim()) changes[field] = current;
+        }
       }
       const feedback = document.getElementById('core-agent-feedback');
+      if (Object.keys(changes).length === 0) {
+        feedback.textContent = 'Keine Änderungen zum Speichern.';
+        return;
+      }
       feedback.textContent = 'Einstellungen werden gespeichert…';
       try {
         const res = await fetch('/api/system/core-agents/' + encodeURIComponent(slotId), {
@@ -382,16 +422,20 @@ import BachLayout from "../../layouts/BachLayout.astro";
         const saved = data.agents?.find(item => item.id === slotId);
         if (!res.ok || data.ack?.configuration_saved !== true || data.ack?.worker_started !== false ||
             !saved || Object.entries(changes).some(([key, value]) => saved[key] !== value)) throw new Error('Speicherung nicht bestätigt');
-        renderCoreAgents(data);
-        feedback.textContent = 'Konfiguration gespeichert. Kein Agent wurde dadurch gestartet.';
+        renderCoreAgents(data, slotId);
+        feedback.textContent = 'Konfiguration gespeichert. Andere Eingaben bleiben erhalten. Kein Agent wurde dadurch gestartet.';
       } catch (_error) {
-        feedback.textContent = 'Speicherung nicht bestätigt. Bitte Zustand neu laden und erneut prüfen.';
-        await loadCoreSlots();
+        showCoreSaveFailure('Speicherung nicht bestätigt. Bei einem Versionskonflikt müssen Sie vor erneutem Speichern den Zustand laden.');
       }
     }
 
     async function resetCoreSlot(slotId) {
       if (!coreConfigVersion || !window.confirm('Nur die editierbaren Einstellungen dieses System-Agenten zurücksetzen?')) return;
+      const card = [...document.querySelectorAll('[data-core-agent-id]')].find(node => node.dataset.coreAgentId === slotId);
+      if (card?.dataset.coreStale === 'true') {
+        showCoreSaveFailure('Serverkonfiguration dieses Agenten hat sich verändert.');
+        return;
+      }
       const feedback = document.getElementById('core-agent-feedback');
       feedback.textContent = 'Standards werden wiederhergestellt…';
       try {
@@ -402,11 +446,10 @@ import BachLayout from "../../layouts/BachLayout.astro";
         const data = await res.json();
         if (!res.ok || data.ack?.configuration_saved !== true || data.ack?.worker_started !== false ||
             !data.agents?.some(item => item.id === slotId)) throw new Error('Reset nicht bestätigt');
-        renderCoreAgents(data);
-        feedback.textContent = 'Einstellungen zurückgesetzt. Aufgaben, Sitzungen und Geräte bleiben erhalten.';
+        renderCoreAgents(data, slotId);
+        feedback.textContent = 'Einstellungen zurückgesetzt. Andere Eingaben, Aufgaben, Sitzungen und Geräte bleiben erhalten.';
       } catch (_error) {
-        feedback.textContent = 'Reset nicht bestätigt. Bitte Zustand neu laden.';
-        await loadCoreSlots();
+        showCoreSaveFailure('Reset nicht bestätigt. Bitte Serverzustand prüfen.');
       }
     }
 
