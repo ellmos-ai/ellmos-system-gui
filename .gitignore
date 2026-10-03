@@ -1,6 +1,8 @@
 node_modules/
+__pycache__/
 .astro/
 dist/
+release/
 *.tgz
 *.tar.gz
 .env

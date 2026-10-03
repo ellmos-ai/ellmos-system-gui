@@ -9,9 +9,10 @@ Die bisherige Astro-Quelle stammte aus dem bereinigten öffentlichen BACH-Stand 
 ```sh
 npm ci
 npm run build:release
+python scripts/package_release.py
 ```
 
-`dist/` enthält danach 16 HTML-Seiten und die zugehörigen Assets. `dist-manifest.json` enthält SHA-256-Werte aller Dateien und den Quellcommit. Das Manifest allein installiert die Oberfläche nicht. BACH und Ocean müssen ein freigegebenes Release-Archiv und seinen SHA-256-Wert pinnen und vor der Aktivierung prüfen.
+`dist/` enthält danach 16 HTML-Seiten und die zugehörigen Assets. `dist-manifest.json` enthält SHA-256-Werte aller Dateien und den Quellcommit. Das Python-Skript prüft alle Einträge und erstellt unter `release/` ein ZIP-Archiv mit festen Zeitstempeln. BACH und Ocean müssen ein freigegebenes Release-Archiv und seinen SHA-256-Wert pinnen und vor der Aktivierung prüfen.
 
 ## Status und API
 
