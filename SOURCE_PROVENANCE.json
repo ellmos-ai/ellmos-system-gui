@@ -1,8 +1,8 @@
 {
   "schema": "ellmos-system-gui.source-provenance.v1",
   "source_repository": "ellmos-ai/bach",
-  "public_base_commit": "b4e0d3224a48b80a576fcfd974e1d0bc51f97b41",
-  "reviewed_source_commit": "5f918a6602bbc6656f46a7e049105e1a2196225e",
+  "public_base_commit": "5f918a6602bbc6656f46a7e049105e1a2196225e",
+  "reviewed_source_commit": "16f994dee5d7af58cdc8c1ab7bddd6f758f4fc16",
   "license": "MIT",
   "files_sha256": {
     "astro.config.mjs": "ddefea2a83fdf40bb8a70a154d816461c3d4c92e7451ee4b9457fa9082a6a13d",
@@ -15,7 +15,7 @@
     "src/pages/agenten/marblerun.astro": "6e15986fcf02f0915f5c99b3be38ad90aa5e6b09643270864802f179b3cef560",
     "src/pages/agenten/running.astro": "04041524d5fb2279c56e60578ead62fe57a82b689b4d3bd95848380a818417ed",
     "src/pages/agenten/sessions.astro": "bf64fafd76bbe2bc69975f001612a0924eecd78b53a2578435e13c6020b1d4e5",
-    "src/pages/artefakte.astro": "30be7b0f4e700559f6e5e80872ee36fc49a865c29a521bcce1dc0ebd61a2ccb8",
+    "src/pages/artefakte.astro": "a9e033147168845c95ab93767afbd222a4272ee63cb15166c135931865fc27de",
     "src/pages/domains.astro": "322a43ad7e9d5deae5d7c7e81bba9bf6256b5d372cda0aaa1dbfb3c13c2476c1",
     "src/pages/governance/funk.astro": "6d98131fdc14591708062ee7f8e50f5a1f39571b3945d3b94bff9e2626b2767c",
     "src/pages/governance/index.astro": "cd3d12d2442b4aa955b8c2ce9bb4fa9552df6d994c3a19a23dedb8e1d1bea9fd",

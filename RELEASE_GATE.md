@@ -2,7 +2,7 @@
 
 **Status: UNLOCKED for the reviewed source and versioned archive.**
 
-The initial GitHub repository was created publicly on 2026-10-03 before this ecosystem final gate was applied. No release tag or ZIP has been published. This file records the remedial gate review; it does not claim retroactive pre-publication approval.
+The initial GitHub repository was created publicly on 2026-10-03 before this ecosystem final gate was applied. The first gated versioned release, v0.1.1, was subsequently published. This file records the remedial gate review; it does not claim retroactive pre-publication approval.
 
 ## Checklist
 
@@ -17,4 +17,4 @@ The initial GitHub repository was created publicly on 2026-10-03 before this eco
 
 ## Gate execution
 
-On 2026-10-03, the copied `.AI/.MODULES/_scripts/final_gate_check.py` returned exit code 0 with 10 PASS, 0 FAIL, and 0 WARN. The packager's stale-build rejection returned exit code 1 as expected; the corrected ZIP contained the MIT license and passed an independent read-only source/archive review. The gate check, build, and archive verification are repeated for the final tagged commit before publication. This is a dated gate record; it does not erase the earlier pre-gate public repository creation. For every later source revision, the final gate and archive hash are checked again before public release; source synchronization alone never establishes a released artifact or a working Ocean adapter.
+On 2026-10-03, the copied `.AI/.MODULES/_scripts/final_gate_check.py` returned exit code 0 with 10 PASS, 0 FAIL, and 0 WARN. The packager's stale-build rejection returned exit code 1 as expected; the corrected ZIP contained the MIT license and passed an independent read-only source/archive review. For v0.1.2, the gate check, build, and archive verification must be repeated against the final tagged commit before publication. This is a dated gate record; it does not erase the earlier pre-gate public repository creation. For every later source revision, the final gate and archive hash are checked again before public release; source synchronization alone never establishes a released artifact or a working Ocean adapter.
