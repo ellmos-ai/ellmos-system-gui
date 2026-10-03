@@ -4,6 +4,7 @@ from __future__ import annotations
 from hashlib import sha256
 import json
 from pathlib import Path
+import subprocess
 import zipfile
 
 root = Path(__file__).resolve().parent.parent
@@ -27,6 +28,9 @@ package = json.loads((root / 'package.json').read_text(encoding='utf-8'))
 release = root / 'release'
 release.mkdir(exist_ok=True)
 revision = manifest['source_commit']
+head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
+if revision != head:
+    raise SystemExit('Build source commit does not match repository HEAD; rebuild first')
 archive = release / f"{package['name']}-{package['version']}-{revision[:12]}.zip"
 with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as output:
     for name in sorted(expected):
@@ -35,6 +39,11 @@ with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslev
         info.external_attr = 0o644 << 16
         output.writestr(info, (dist / name).read_bytes(), compress_type=zipfile.ZIP_DEFLATED,
                         compresslevel=9)
+    license_text = (root / 'LICENSE').read_bytes()
+    info = zipfile.ZipInfo('LICENSE', date_time=(1980, 1, 1, 0, 0, 0))
+    info.compress_type = zipfile.ZIP_DEFLATED
+    info.external_attr = 0o644 << 16
+    output.writestr(info, license_text, compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
 print('archive', archive)
 print('sha256', sha256(archive.read_bytes()).hexdigest())
 print('files', len(expected))

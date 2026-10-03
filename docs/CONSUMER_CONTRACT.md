@@ -16,4 +16,4 @@ Trithon, Muschelgrund und Salt haben eigene Architekturverträge. Die BACH-Teila
 
 ## Release und Konsum
 
-Ein Release enthält `dist/` mit `dist-manifest.json` und ein Archiv, dessen SHA-256 öffentlich dokumentiert wird. BACH und Open-Ocean pinnen **Repo-Commit plus Archiv-SHA-256** und prüfen beide vor Installation. Sie halten keine unabhängig bearbeiteten Kopien von `src/`. BACHs Mac-Checkout enthält fremde Änderungen und alte Overlay-Dateien; dort sind nur einzeln vorabbild- und hashgeprüfte Installationen zulässig. Open-Ocean aktiviert Panels erst nach eigenem Adapter-/Capability-Readback.
+Ein Release enthält `dist/` mit `dist-manifest.json` sowie `LICENSE` und ein Archiv, dessen SHA-256 öffentlich dokumentiert wird. Der Packager verweigert einen Build aus einem anderen Git-Commit. BACH und Open-Ocean pinnen **Repo-Commit plus Archiv-SHA-256** und prüfen beide vor Installation. Sie halten keine unabhängig bearbeiteten Kopien von `src/`. BACHs Mac-Checkout enthält fremde Änderungen und alte Overlay-Dateien; dort sind nur einzeln vorabbild- und hashgeprüfte Installationen zulässig. Open-Ocean aktiviert Panels erst nach eigenem Adapter-/Capability-Readback.

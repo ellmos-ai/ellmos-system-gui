@@ -1,5 +1,11 @@
 node_modules/
 __pycache__/
+*.pyc
+.venv/
+.idea/
+.vscode/
+data/
+*.db
 .astro/
 dist/
 release/
