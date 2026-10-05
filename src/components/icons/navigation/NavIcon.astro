@@ -1,0 +1,84 @@
+---
+// NavIcon.astro - Dispatcher for navigation, workshop, and Life-module icons
+import DashboardIcon from "./DashboardIcon.astro";
+import TasksIcon from "./TasksIcon.astro";
+import AssistantIcon from "./AssistantIcon.astro";
+import LifeIcon from "./LifeIcon.astro";
+import AgentenIcon from "./AgentenIcon.astro";
+import DomainsIcon from "./DomainsIcon.astro";
+import FilesIcon from "./FilesIcon.astro";
+import GovernanceIcon from "./GovernanceIcon.astro";
+import SystemIcon from "./SystemIcon.astro";
+import FabrikaIcon from "./FabrikaIcon.astro";
+import RunningIcon from "./RunningIcon.astro";
+import MarblerunIcon from "./MarblerunIcon.astro";
+import SessionsIcon from "./SessionsIcon.astro";
+import MemoryIcon from "./MemoryIcon.astro";
+import SkillsIcon from "./SkillsIcon.astro";
+import MessagesIcon from "./MessagesIcon.astro";
+import BuddhaChatIcon from "../roles/BuddhaChatIcon.astro";
+import AlwaysOnWorkerIcon from "../roles/AlwaysOnWorkerIcon.astro";
+import ConnectorIcon from "../roles/ConnectorIcon.astro";
+import TaskSolverIcon from "../roles/TaskSolverIcon.astro";
+import TaskWriterIcon from "../roles/TaskWriterIcon.astro";
+import MaintainerIcon from "../roles/MaintainerIcon.astro";
+import OperatorIcon from "../roles/OperatorIcon.astro";
+import TicketMasterIcon from "../roles/TicketMasterIcon.astro";
+import WartungsagentIcon from "../roles/WartungsagentIcon.astro";
+import SystemAuditorIcon from "../roles/SystemAuditorIcon.astro";
+import LawCheckerIcon from "../roles/LawCheckerIcon.astro";
+import ResearcherIcon from "../roles/ResearcherIcon.astro";
+import CalendarIcon from "../life/CalendarIcon.astro";
+import RoutinesIcon from "../life/RoutinesIcon.astro";
+import FinancialIcon from "../life/FinancialIcon.astro";
+import BalanceIcon from "../life/BalanceIcon.astro";
+import HealthIcon from "../life/HealthIcon.astro";
+import FocusIcon from "../life/FocusIcon.astro";
+
+interface Props {
+  name: string;
+  size?: number | string;
+  class?: string;
+  strokeWidth?: number | string;
+}
+
+const { name, ...rest } = Astro.props;
+---
+
+{
+  name === "dashboard" ? <DashboardIcon {...rest} /> :
+  name === "tasks" ? <TasksIcon {...rest} /> :
+  name === "assistant" ? <AssistantIcon {...rest} /> :
+  name === "life" ? <LifeIcon {...rest} /> :
+  name === "agenten" ? <AgentenIcon {...rest} /> :
+  name === "domains" ? <DomainsIcon {...rest} /> :
+  name === "files" ? <FilesIcon {...rest} /> :
+  name === "governance" ? <GovernanceIcon {...rest} /> :
+  name === "system" ? <SystemIcon {...rest} /> :
+  name === "fabrika" ? <FabrikaIcon {...rest} /> :
+  name === "running" ? <RunningIcon {...rest} /> :
+  name === "marblerun" ? <MarblerunIcon {...rest} /> :
+  name === "sessions" ? <SessionsIcon {...rest} /> :
+  name === "memory" ? <MemoryIcon {...rest} /> :
+  name === "skills" ? <SkillsIcon {...rest} /> :
+  name === "messages" ? <MessagesIcon {...rest} /> :
+  name === "buddha-chat" ? <BuddhaChatIcon {...rest} /> :
+  name === "always-on-worker" ? <AlwaysOnWorkerIcon {...rest} /> :
+  name === "connector" ? <ConnectorIcon {...rest} /> :
+  name === "task-solver" ? <TaskSolverIcon {...rest} /> :
+  name === "task-writer" ? <TaskWriterIcon {...rest} /> :
+  name === "maintainer" ? <MaintainerIcon {...rest} /> :
+  name === "operator" ? <OperatorIcon {...rest} /> :
+  name === "ticket-master" ? <TicketMasterIcon {...rest} /> :
+  name === "wartungsagent" ? <WartungsagentIcon {...rest} /> :
+  name === "system-auditor" ? <SystemAuditorIcon {...rest} /> :
+  name === "law-checker" ? <LawCheckerIcon {...rest} /> :
+  name === "researcher" ? <ResearcherIcon {...rest} /> :
+  name === "calendar" ? <CalendarIcon {...rest} /> :
+  name === "routines" ? <RoutinesIcon {...rest} /> :
+  name === "financial" ? <FinancialIcon {...rest} /> :
+  name === "balance" ? <BalanceIcon {...rest} /> :
+  name === "health" ? <HealthIcon {...rest} /> :
+  name === "focus" ? <FocusIcon {...rest} /> :
+  null
+}

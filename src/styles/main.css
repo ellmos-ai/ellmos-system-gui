@@ -161,6 +161,12 @@ body {
 .nav-icon {
     font-size: 0.9rem;
     line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.125rem;
+    height: 1.125rem;
+    flex: 0 0 1.125rem;
 }
 
 .nav-label-short {
@@ -319,6 +325,11 @@ body {
     line-height: 1.2;
     flex-shrink: 0;
     margin-top: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
 }
 
 .dropdown-item-text {

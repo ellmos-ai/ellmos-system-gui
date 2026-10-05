@@ -3,12 +3,14 @@
     "id": "dashboard",
     "label": "Dashboard",
     "icon": "🎵",
+    "iconId": "dashboard",
     "href": "/"
   },
   {
     "id": "tasks",
     "label": "Aufgaben",
     "icon": "📋",
+    "iconId": "tasks",
     "children": [
       {
         "href": "/tasks",
@@ -34,6 +36,7 @@
     "id": "assistant",
     "label": "Persönlicher Assistent",
     "icon": "🧘",
+    "iconId": "assistant",
     "children": [
       {
         "href": "/persoenlich",
@@ -66,6 +69,7 @@
     "id": "life",
     "label": "Life",
     "icon": "🌱",
+    "iconId": "life",
     "children": [
       {
         "href": "/life",
@@ -77,42 +81,49 @@
         "href": "/life?tab=kalender",
         "label": "Kalender (Tag, Woche, Monat, Jahr)",
         "icon": "📅",
+        "iconId": "calendar",
         "description": "Tages-, Wochen-, Monatsansicht & Jahresüberblick"
       },
       {
         "href": "/life?tab=routinen",
         "label": "Deine Routinen",
         "icon": "⏰",
+        "iconId": "routines",
         "description": "Persönliche Lebens-, Haushalts- und Tagesroutinen"
       },
       {
         "href": "/tasks?assigned_to=user",
         "label": "Meine Aufgaben",
         "icon": "👤",
+        "iconId": "tasks",
         "description": "Gefiltert auf persönliche Aufgaben"
       },
       {
         "href": "/life?tab=selbstmanagement",
         "label": "Selbstmanagement & ADHS",
         "icon": "🎯",
+        "iconId": "focus",
         "description": "Fokusstrategien und Entlastungsmethoden"
       },
       {
         "href": "/financial",
         "label": "Finanzen & Budget",
         "icon": "💰",
+        "iconId": "financial",
         "description": "Einnahmen, Ausgaben und Prognosen"
       },
       {
         "href": "/life?tab=balance",
         "label": "Lebenskreise & Reflexion",
         "icon": "☯️",
+        "iconId": "balance",
         "description": "Work-Life-Balance und psychologische Selbsteinschätzung"
       },
       {
         "href": "/gesundheit",
         "label": "Gesundheit & Vitalität",
         "icon": "🩺",
+        "iconId": "health",
         "description": "Tracking, Wohlbefinden und Förderpläne"
       }
     ]
@@ -121,29 +132,34 @@
     "id": "agenten",
     "label": "Agenten",
     "icon": "🤖",
+    "iconId": "agenten",
     "children": [
       {
         "href": "/agenten/fabrika",
         "label": "Agenten-Fabrik",
         "icon": "🏭",
+        "iconId": "fabrika",
         "description": "Baukasten: Einzelagenten, Teambuilding (Swarm) & Ketten-Staffel"
       },
       {
         "href": "/agenten/running",
         "label": "Living & Running",
         "icon": "⚡",
+        "iconId": "running",
         "description": "Aktive Instanzen, Beseelungen und Health"
       },
       {
         "href": "/agenten/sessions",
         "label": "Sessions & Protokolle",
         "icon": "📜",
+        "iconId": "sessions",
         "description": "Rohberichte und strukturierte Zusammenfassungen"
       },
       {
         "href": "/messages",
         "label": "Messages (User Inbox)",
         "icon": "✉️",
+        "iconId": "messages",
         "description": "Direktnachrichten von Agenten an dich"
       },
       {
@@ -156,12 +172,14 @@
         "href": "/skills",
         "label": "Skill- & Tool-Center",
         "icon": "🔌",
+        "iconId": "skills",
         "description": "Steckdosenleiste, MCP Cookbooks & Rollback"
       },
       {
         "href": "/memory",
         "label": "Memory",
         "icon": "🧠",
+        "iconId": "memory",
         "description": "Kognitiver Schaltplan, Arbeitsgedächtnis & Wissens-Inspektor"
       }
     ]
@@ -170,6 +188,7 @@
     "id": "domains",
     "label": "Meine Domänen",
     "icon": "🌐",
+    "iconId": "domains",
     "children": [
       {
         "href": "/domains",
@@ -201,6 +220,7 @@
     "id": "files",
     "label": "Dateien",
     "icon": "📁",
+    "iconId": "files",
     "children": [
       {
         "href": "/inbox",
@@ -220,6 +240,7 @@
     "id": "governance",
     "label": "Governance & Control",
     "icon": "🛡️",
+    "iconId": "governance",
     "children": [
       {
         "href": "/governance",
@@ -263,6 +284,7 @@
     "id": "system",
     "label": "System",
     "icon": "⚙️",
+    "iconId": "system",
     "children": [
       {
         "href": "/settings",

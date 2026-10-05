@@ -1,6 +1,7 @@
 ---
 // Header.astro - Single Source of Truth Navigation fuer BACH & OCEAN
 import navConfig from "../config/nav_config.json";
+import NavIcon from "./icons/navigation/NavIcon.astro";
 
 interface Props {
   currentPath?: string;
@@ -36,7 +37,7 @@ function hasActiveChild(item: any) {
         item.children ? (
           <div class={`nav-dropdown${hasActiveChild(item) ? " active" : ""}`}>
             <button class={`nav-item nav-dropdown-toggle${hasActiveChild(item) ? " active" : ""}`} type="button">
-              <span class="nav-icon">{item.icon}</span>
+              <span class="nav-icon">{item.iconId ? <NavIcon name={item.iconId} size={18} /> : item.icon}</span>
               <span class="nav-label">
                 {item.id === "assistant" ? (
                   <>
@@ -67,7 +68,7 @@ function hasActiveChild(item: any) {
                   rel={child.target === "_blank" ? "noopener noreferrer" : undefined}
                   class={`dropdown-item${isActive(child.href) ? " active" : ""}`}
                 >
-                  <span class="dropdown-item-icon">{child.icon}</span>
+                  <span class="dropdown-item-icon">{child.iconId ? <NavIcon name={child.iconId} size={18} /> : child.icon}</span>
                   <div class="dropdown-item-text">
                     <div class="dropdown-item-title">{child.label}</div>
                     {child.description && <div class="dropdown-item-desc">{child.description}</div>}
@@ -78,7 +79,7 @@ function hasActiveChild(item: any) {
           </div>
         ) : (
           <a href={item.href} class={`nav-item${isActive(item.href) ? " active" : ""}`}>
-            <span class="nav-icon">{item.icon}</span>
+            <span class="nav-icon">{item.iconId ? <NavIcon name={item.iconId} size={18} /> : item.icon}</span>
             <span class="nav-label">{item.label}</span>
           </a>
         )
@@ -142,6 +143,12 @@ function hasActiveChild(item: any) {
   .nav-icon {
     font-size: 0.95rem;
     margin-right: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.125rem;
+    height: 1.125rem;
+    flex: 0 0 1.125rem;
   }
   .nav-label-short {
     display: none;
@@ -208,6 +215,11 @@ function hasActiveChild(item: any) {
     line-height: 1.2;
     flex-shrink: 0;
     margin-top: 1px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
   }
   .dropdown-item-text {
     display: flex;

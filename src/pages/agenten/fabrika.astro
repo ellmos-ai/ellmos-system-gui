@@ -1,13 +1,14 @@
 ---
-// fabrika.astro - Agenten-Fabrika Schablonen-Baukasten
+// fabrika.astro - Agenten-Werkstatt für Rollen, Teams und Staffelentwürfe
 import BachLayout from "../../layouts/BachLayout.astro";
+import NavIcon from "../../components/icons/navigation/NavIcon.astro";
 ---
 
-<BachLayout title="Agenten-Fabrik" currentPath="/agenten/fabrika">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+<BachLayout title="Agenten-Werkstatt" currentPath="/agenten/fabrika">
+  <section class="agent-workshop-hero" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
     <div>
       <h1 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;">
-        🤖 Agenten-Fabrik
+        <NavIcon name="fabrika" size={26} /> Agenten-Werkstatt
       </h1>
       <p style="color:var(--text-muted);font-size:0.875rem;">
         Schablonen-Baukasten • Einzelagenten, Teambuilding (Swarm-AI) & Agenten-Staffeln
@@ -22,13 +23,13 @@ import BachLayout from "../../layouts/BachLayout.astro";
         <span>+</span> Neue Schablone
       </button>
     </div>
-  </div>
+  </section>
 
-  <!-- 3 Tabs der Agenten-Fabrik (Segmented Pill Design) -->
+  <!-- Drei Bereiche der Agenten-Werkstatt -->
   <div class="fab-tabs-container" style="display:flex;align-items:center;background:var(--bg-dark);padding:5px;border-radius:32px;border:1px solid var(--border);width:fit-content;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(0,0,0,0.25);gap:6px;">
     <button class="fab-tab-btn active" data-tab="einzelagenten">🤖 Tab 1: Einzelagenten (Baukasten)</button>
     <button class="fab-tab-btn" data-tab="teambuilding">👥 Tab 2: Teambuilding (Swarm-AI)</button>
-    <button class="fab-tab-btn" data-tab="staffel">⛓️ Tab 3: Agenten-Staffel (MarbleRun)</button>
+    <button class="fab-tab-btn" data-tab="staffel"><NavIcon name="marblerun" size={18} /> Tab 3: Agenten-Staffel (MarbleRun)</button>
   </div>
 
   <div class="fab-pane active" id="pane-einzelagenten">
@@ -316,7 +317,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
     <div class="card">
       <div class="card-header">
         <div>
-          <h2 class="card-title">⛓️ Agenten-Staffel (MarbleRun) & Übergabe-Pipelines</h2>
+          <h2 class="card-title"><NavIcon name="marblerun" size={20} /> Agenten-Staffel (MarbleRun) & Übergabe-Pipelines</h2>
           <p style="font-size:0.825rem;color:var(--text-muted);margin:0.25rem 0 0 0;">
             Sequenzielle Kette: Output von Agent A wird geprüft und dient als getypte Eingabe für Agent B
           </p>
@@ -392,6 +393,39 @@ import BachLayout from "../../layouts/BachLayout.astro";
 
   <style>
     .hidden { display: none !important; }
+    .agent-workshop-hero {
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background-color: var(--bg-panel);
+      background-image:
+        linear-gradient(90deg,
+          color-mix(in srgb, var(--bg-panel) 96%, transparent) 0%,
+          color-mix(in srgb, var(--bg-panel) 84%, transparent) 62%,
+          color-mix(in srgb, var(--bg-panel) 70%, transparent) 100%),
+        url('/assets/backgrounds/agent-workshop/workshop-bg-1080p.webp');
+      background-size: cover;
+      background-position: center 46%;
+      background-repeat: no-repeat;
+    }
+    .agent-role-icon {
+      display: inline-block;
+      width: 1.25rem;
+      height: 1.25rem;
+      flex: 0 0 1.25rem;
+      background-color: var(--accent);
+      -webkit-mask-image: var(--agent-role-icon);
+      mask-image: var(--agent-role-icon);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-size: contain;
+      mask-size: contain;
+    }
+    @media (max-width: 760px) {
+      .agent-workshop-hero { padding: 0.85rem; background-position: center; }
+    }
     .fab-tab-btn {
       padding: 0.55rem 1.35rem;
       font-size: 0.85rem;
@@ -452,6 +486,56 @@ import BachLayout from "../../layouts/BachLayout.astro";
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    }
+
+    const AGENT_PORTRAITS = Object.freeze({
+      'always-on-worker': 'always-on-worker',
+      'buddha-chat': 'buddha-chat',
+      connector: 'connector',
+      'law-checker': 'law-checker',
+      maintainer: 'maintainer',
+      operator: 'operator',
+      researcher: 'researcher',
+      'system-auditor': 'system-auditor',
+      'task-solver': 'task-solver',
+      'task-writer': 'task-writer',
+      'ticket-master': 'ticket-master',
+      wartungsagent: 'wartungsagent'
+    });
+
+    const ROLE_PORTRAIT_ALIASES = Object.freeze({
+      alwaysonworker: 'always-on-worker',
+      tasksolver: 'task-solver',
+      taskwriter: 'task-writer',
+      'wartungs-agent': 'wartungsagent'
+    });
+
+    function agentAssetIdForBlueprint(blueprint) {
+      const candidates = [blueprint?.persona_role, blueprint?.role, blueprint?.name];
+      for (const candidate of candidates) {
+        const normalized = String(candidate || '')
+          .trim()
+          .toLowerCase()
+          .replace(/[\s_]+/g, '-')
+          .replace(/[^a-z0-9-]/g, '')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        const key = ROLE_PORTRAIT_ALIASES[normalized] || normalized;
+        if (Object.prototype.hasOwnProperty.call(AGENT_PORTRAITS, key)) {
+          return AGENT_PORTRAITS[key];
+        }
+      }
+      return '';
+    }
+
+    function portraitPathForBlueprint(blueprint) {
+      const assetId = agentAssetIdForBlueprint(blueprint);
+      return assetId ? `/assets/agents/portraits/${assetId}.webp` : '';
+    }
+
+    function roleIconPathForBlueprint(blueprint) {
+      const assetId = agentAssetIdForBlueprint(blueprint);
+      return assetId ? `/assets/agents/icons/${assetId}.svg` : '';
     }
 
     let _allBlueprints = [];
@@ -678,19 +762,31 @@ import BachLayout from "../../layouts/BachLayout.astro";
           return;
         }
 
-        container.innerHTML = blueprints.map(b => `
-          <div style="padding:0.75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <strong style="font-size:0.9rem;color:var(--text);">${escapeHtml(b.name)}</strong>
-              <span class="badge badge-accent">${escapeHtml(b.persona_role || 'Schablone')}</span>
+        container.innerHTML = blueprints.map(b => {
+          const portrait = portraitPathForBlueprint(b);
+          const roleIcon = roleIconPathForBlueprint(b);
+          return `
+            <div style="padding:0.75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);">
+              <div style="display:flex;align-items:flex-start;gap:0.65rem;">
+                ${portrait ? `<img src="${portrait}" alt="" aria-hidden="true" width="64" height="72" loading="lazy" decoding="async" style="width:64px;height:72px;flex:0 0 64px;object-fit:contain;object-position:center top;">` : ''}
+                <div style="min-width:0;flex:1;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
+                    <span style="display:inline-flex;align-items:center;gap:0.45rem;min-width:0;">
+                      ${roleIcon ? `<span class="agent-role-icon" aria-hidden="true" style="--agent-role-icon:url('${roleIcon}')"></span>` : ''}
+                      <strong style="font-size:0.9rem;color:var(--text);">${escapeHtml(b.name)}</strong>
+                    </span>
+                    <span class="badge badge-accent">${escapeHtml(b.persona_role || 'Schablone')}</span>
+                  </div>
+                  <p style="font-size:0.75rem;color:var(--text-muted);margin:0.4rem 0;">${escapeHtml((b.persona_prompt || b.description || '').slice(0, 80))}...</p>
+                  <div style="display:flex;justify-content:flex-end;gap:0.4rem;margin-top:0.5rem;">
+                    <button class="btn" style="padding:0.2rem 0.5rem;font-size:0.7rem;" onclick="loadBlueprintToEditor(${Number(b.id)})">Bearbeiten</button>
+                    <button class="btn btn-primary" style="padding:0.2rem 0.5rem;font-size:0.7rem;" onclick="openBeseelenModal(${Number(b.id)})">Vormerken ✨</button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p style="font-size:0.75rem;color:var(--text-muted);margin:0.4rem 0;">${escapeHtml((b.persona_prompt || b.description || '').slice(0, 80))}...</p>
-            <div style="display:flex;justify-content:flex-end;gap:0.4rem;margin-top:0.5rem;">
-              <button class="btn" style="padding:0.2rem 0.5rem;font-size:0.7rem;" onclick="loadBlueprintToEditor(${Number(b.id)})">Bearbeiten</button>
-              <button class="btn btn-primary" style="padding:0.2rem 0.5rem;font-size:0.7rem;" onclick="openBeseelenModal(${Number(b.id)})">Vormerken ✨</button>
-            </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       } catch (e) {
         container.innerHTML = `<p style="color:var(--error);font-size:0.8rem;">Fehler: ${e.message}</p>`;
       }

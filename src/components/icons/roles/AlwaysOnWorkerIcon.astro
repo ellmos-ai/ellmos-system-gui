@@ -1,0 +1,29 @@
+---
+// AlwaysOnWorkerIcon.astro - ellmos-system-gui roles icon (always-on-worker)
+// ViewBox: 24x24 | Stroke: currentColor | Clean Contour
+interface Props {
+  size?: number | string;
+  class?: string;
+  strokeWidth?: number | string;
+}
+
+const { size = 24, class: className = "", strokeWidth = 2 } = Astro.props;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={className}
+  aria-hidden="true"
+>
+  <path d="M18.5 15.5A8 8 0 0 1 8.5 5.2 8.5 8.5 0 1 0 18.5 15.5z" />
+  <path d="M17 3v4M15 5h4" />
+  <circle cx="18" cy="18" r="2.5" />
+</svg>

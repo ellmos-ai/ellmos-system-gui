@@ -1,0 +1,29 @@
+---
+// SkillsIcon.astro - ellmos-system-gui navigation icon (skills)
+// ViewBox: 24x24 | Stroke: currentColor | Clean Contour
+interface Props {
+  size?: number | string;
+  class?: string;
+  strokeWidth?: number | string;
+}
+
+const { size = 24, class: className = "", strokeWidth = 2 } = Astro.props;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={className}
+  aria-hidden="true"
+>
+  <path d="M12 22v-5" />
+  <path d="M9 8V3M15 8V3" />
+  <rect x="6" y="8" width="12" height="9" rx="2" />
+</svg>
