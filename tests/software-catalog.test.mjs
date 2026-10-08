@@ -20,3 +20,32 @@ test('publication labels retain the declared evidence boundary', () => {
   assert.equal(publicationLabel({platform:'windows', declared_status:'live'}), 'windows · Veröffentlicht laut Register');
   assert.equal(publicationLabel({type:'web', declared_status:'planned'}), 'web · Geplant');
 });
+
+import vm from 'node:vm';
+import {readFileSync} from 'node:fs';
+
+test('refresh failures clear stale applications and show the actual failure', async () => {
+  const source = readFileSync(new URL('../src/lib/capability-board-ui.mjs', import.meta.url), 'utf8');
+  const start = source.indexOf('  async function refresh()');
+  const end = source.indexOf('  const editor =', start);
+  let answer = {kind:'software', catalog:'software-applications', items:[{name:'Routinika'}]};
+  const nodes = {'board-status':{textContent:''},'board-refresh':{disabled:false}};
+  const context = vm.createContext({
+    kind:'software', INVENTORIES, catalogMatches,
+    byId: id => nodes[id] || null,
+    renderItems: () => {},
+    requestJson: async () => {if (answer instanceof Error) throw answer; return answer;}
+  });
+  vm.runInContext('let items=[], inventoryGeneration=0;\n' + source.slice(start,end) +
+    '\nglobalThis.refresh=refresh; globalThis.loaded=()=>items;', context);
+  await context.refresh();
+  assert.equal(context.loaded().length, 1);
+  for (const failure of [new Error('API 503'), {kind:'software', items:[{name:'Legacy repository'}]}]) {
+    answer = failure;
+    await context.refresh();
+    assert.equal(context.loaded().length, 0);
+    assert.match(nodes['board-status'].textContent, /Quelle nicht geladen:/);
+    assert.equal(nodes['board-refresh'].disabled, false);
+  }
+  assert.match(nodes['board-status'].textContent, /noch nicht getrennt angebunden/);
+});

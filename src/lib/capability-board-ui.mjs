@@ -109,7 +109,6 @@ if (board) {
       renderItems();
     } catch (error) {
       if (generation !== inventoryGeneration) return;
-      if (!catalogMatches(kind, data)) throw new Error('Der Anwendungskatalog und die Ocean-Quellen sind noch nicht getrennt angebunden.');
       items = []; renderItems();
       byId('board-status').textContent = 'Quelle nicht geladen: ' + error.message;
     } finally { if (generation === inventoryGeneration) byId('board-refresh').disabled = false; }

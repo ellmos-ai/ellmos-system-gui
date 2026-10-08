@@ -33,7 +33,7 @@
     "src/layouts/BachLayout.astro": "8f45bbac50c150ea9d19f91794bb97b94ad103f5abc5cdef01e70a3c9cc43ac6",
     "src/lib/agent-avatar.mjs": "020b31b014f9e719775e7f199bd588eb133552e56eab606f8c76a11034965ccc",
     "src/lib/capability-board-client.mjs": "436c4dfe46ebd997603f1319039552855c39077c2a818ff04e5217a100ba1a00",
-    "src/lib/capability-board-ui.mjs": "1045e748c0eb736232d5533b96b3f940e27f2262367890dad8baa071cafe85c3",
+    "src/lib/capability-board-ui.mjs": "63b4437259f1987bfccbc9647fd230cb99619866a5d02448e109cad9289812ce",
     "src/lib/task-summary.js": "e28cfddcc7ee559b74be8c9883b946b85571941dda13d5cba97aec3dfcc63d07",
     "src/lib/ticket-symbol-assets.mjs": "207537da4144c4f1627d0086417ad384069085adb1aa8090d6f41f770e6d0b84",
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
@@ -282,7 +282,7 @@
         "src/lib/capability-board-ui.mjs": {
           "source_path": "system/gui/web/src/lib/capability-board-ui.mjs",
           "source_sha256": "da3fdb6bcf817557478ba6d309d8ad249f6461a6d47d86af32fa4dc7ea97ddf5",
-          "imported_sha256": "1045e748c0eb736232d5533b96b3f940e27f2262367890dad8baa071cafe85c3",
+          "imported_sha256": "63b4437259f1987bfccbc9647fd230cb99619866a5d02448e109cad9289812ce",
           "adapted": true
         },
         "src/lib/task-summary.js": {
@@ -521,6 +521,13 @@
         "ellmos-module.v2.json"
       ],
       "backend_authority": "consumer adapters only"
+    },
+    {
+      "purpose": "Independent review P2: refresh failures clear stale entries without out-of-scope data reference",
+      "files": [
+        "src/lib/capability-board-ui.mjs",
+        "tests/software-catalog.test.mjs"
+      ]
     }
   ],
   "local_amendments": [
