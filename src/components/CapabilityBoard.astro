@@ -20,6 +20,7 @@ const tabs = [
 ];
 ---
 <section id="capability-board" data-board={board} data-ticket-symbols={JSON.stringify(TICKET_SYMBOL_URLS)}>
+  {board === 'ocean' && <p class="text-muted">Module und Quellen finden · <a href="/system?tab=ocean">Ocean-Modulschaltplan in System öffnen ↗</a></p>}
   <header class="board-heading">
     <div><p class="board-eyebrow">Skills & Software</p><h1>{titles[board]}</h1><p>{descriptions[board]}</p></div>
     <div class="board-actions">

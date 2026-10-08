@@ -12,7 +12,7 @@ import BachLayout from "../layouts/BachLayout.astro";
       </div>
       <div class="header-actions">
         <span class="badge">Laufstatus ungeprüft</span>
-        <button class="btn btn-secondary" onclick="loadDomains()">🔄 Aktualisieren</button>
+        <button class="btn btn-secondary" id="domains-refresh">🔄 Aktualisieren</button>
       </div>
     </div>
 
@@ -34,9 +34,9 @@ import BachLayout from "../layouts/BachLayout.astro";
         <div class="stat-sub">Betriebsbereit (Probe OK)</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Gepinnte Menü-Slots</div>
+        <div class="stat-label">Gespeicherte Pins</div>
         <div class="stat-value" id="stat-count-pins">...</div>
-        <div class="stat-sub">Stabile IDs mit Fallback</div>
+        <div class="stat-sub">Menüübernahme noch nicht angebunden</div>
       </div>
     </div>
 
@@ -233,6 +233,7 @@ import BachLayout from "../layouts/BachLayout.astro";
   }
 </style>
 
+<script>import "../lib/domain-routes.mjs";</script>
 <script is:inline>
   let pinnedIds = new Set();
 
@@ -248,23 +249,6 @@ import BachLayout from "../layouts/BachLayout.astro";
       }
     } catch (e) {
       console.error("Fehler beim Laden der Pins:", e);
-    }
-  }
-
-  async function togglePin(domainId) {
-    try {
-      const isPinned = pinnedIds.has(domainId);
-      const res = await fetch(`/api/domains/${encodeURIComponent(domainId)}/pin`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({pinned: !isPinned})
-      });
-      if (res.ok) {
-        await loadPins();
-        loadDomains();
-      }
-    } catch (e) {
-      alert("Pin-Fehler: " + e.message);
     }
   }
 
@@ -347,17 +331,20 @@ import BachLayout from "../layouts/BachLayout.astro";
 
         const footer = domainElement('div', 'domain-footer', '');
         const isPinned = pinnedIds.has(domain.id);
-        const pinBtn = domainElement('button', 'btn btn-secondary btn-sm', isPinned ? '📍 Gepinnt' : '📌 Pinnen');
-        pinBtn.onclick = () => togglePin(domain.id);
+        const pinBtn = domainElement('button', 'btn btn-secondary btn-sm', isPinned ? '📍 Pin gespeichert' : '📌 Anpinnen in Arbeit');
+        pinBtn.type = 'button';pinBtn.disabled = true;
+        pinBtn.title = 'Die Übernahme ins Menü ist noch nicht angebunden. Aufgabe #1932.';
         footer.append(pinBtn);
 
-        const workbench = domain.workbench_url || domain.fachseite_url;
+        const declaredWorkbench = domain.workbench_url || domain.fachseite_url;
+        const workbench = window.BachDomainRoutes?.domainWorkbenchRoute(declaredWorkbench);
         if (workbench) {
           const link = domainElement('a', 'btn btn-primary btn-sm', 'Fachseite ↗');
           link.href = workbench;
           footer.append(link);
         } else {
-          footer.append(domainElement('span', 'text-muted', 'Keine Route'));
+          const hint = domainElement('span', 'text-muted', declaredWorkbench ? 'Fachseite noch nicht angebunden' : 'Keine Fachseite angebunden');
+          hint.setAttribute('aria-disabled','true');footer.append(hint);
         }
 
         card.append(body, footer);
@@ -369,5 +356,8 @@ import BachLayout from "../layouts/BachLayout.astro";
     }
   }
 
-  document.addEventListener('DOMContentLoaded', loadDomains);
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('domains-refresh')?.addEventListener('click',loadDomains);
+    loadDomains();
+  });
 </script>

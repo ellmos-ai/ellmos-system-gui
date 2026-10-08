@@ -1,0 +1,50 @@
+{
+  "schema": "ellmos-agent-portraits.sources.v1",
+  "origin": "Gemini Antigravity image artifacts",
+  "source_session": "daee3cf3-7af5-47a6-a2a6-4cbe50d6823a",
+  "transformation": "none; original JPEG bytes; source names used .png",
+  "files": [
+    {
+      "id": "preset:gemini-claude-friendly",
+      "name": "Claude · Begleiter",
+      "file": "claude-friendly.jpg",
+      "source_file": "claude_code_avatar_1775081955041.png",
+      "source_sha256": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15"
+    },
+    {
+      "id": "preset:gemini-claude-neon",
+      "name": "Claude · Neon",
+      "file": "claude-neon.jpg",
+      "source_file": "claude_code_avatar_variation_1775082003902.png",
+      "source_sha256": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7"
+    },
+    {
+      "id": "preset:gemini-claude-opus",
+      "name": "Claude · Opus",
+      "file": "claude-opus.jpg",
+      "source_file": "claude_code_opus_avatar_1775082307177.png",
+      "source_sha256": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c"
+    },
+    {
+      "id": "preset:gemini-copilot",
+      "name": "Copilot",
+      "file": "copilot.jpg",
+      "source_file": "copilot_smart_plus_avatar_1775082422630.png",
+      "source_sha256": "c673a9651e44f11a7be116562eb082411d7127d397550fd062d42c61a93c8a4c"
+    },
+    {
+      "id": "preset:gemini-gemini",
+      "name": "Gemini · Sternenlicht",
+      "file": "gemini.jpg",
+      "source_file": "gemini_avatar_1775082104242.png",
+      "source_sha256": "f18b2731f1a1cf528d03bc3ebc64aceacce04d5d7cf34e3abfa098c5f0713dd3"
+    },
+    {
+      "id": "preset:gemini-gemini-umbruch",
+      "name": "Gemini · Um:bruch",
+      "file": "gemini-umbruch.jpg",
+      "source_file": "gemini_avatar_umbruch_1775082525313.png",
+      "source_sha256": "514a9f32a3956175bbb1f1fc90158401a00e042020e690d56f35b4f902070751"
+    }
+  ]
+}
