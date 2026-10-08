@@ -29,7 +29,7 @@
     "src/components/Header.astro": "50d3200e3cb814ee1637b2730fe7a944c0ad6eb3946c3a09a942fe615bd56883",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "55a36e2661e10d3cd988ae1b20766ed8edd5b48efabc334276d3f269f33d13a2",
-    "src/config/nav_config.json": "d86348606bae5b0a6d474c6179635f674d362bff5848b1e2318f11135c7c9097",
+    "src/config/nav_config.json": "8be53b5675c1c93bce514a90bc14488c1817353b559cca8b466a28cfc669f907",
     "src/layouts/BachLayout.astro": "8f45bbac50c150ea9d19f91794bb97b94ad103f5abc5cdef01e70a3c9cc43ac6",
     "src/lib/agent-avatar.mjs": "020b31b014f9e719775e7f199bd588eb133552e56eab606f8c76a11034965ccc",
     "src/lib/capability-board-client.mjs": "18692a18bfda506a263af130f0bf0870d680a2127fd1c95d6ba0d0144747ab91",
@@ -70,7 +70,7 @@
     "tests/ticket-symbol.test.mjs": "0b391fbc4e624b17a7398754c0f421c46d1f669a1ab5378616f81fd36795c226",
     "tests/worker-decomposition.test.mjs": "c67a1cd692bad66677674aef2cc60c33baa5127d24306d76659e0a27a924d551",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/frontend-parity.test.mjs": "b429bfced100d8ffbf4888259e0bc9f4d5cc1e794457cfd80346550553d1319e",
+    "tests/frontend-parity.test.mjs": "8c7903b39ae94a80fbef670d835eb064f5fce0cf95ef117150292e1abf7848c5",
     "tests/task-assignment.test.mjs": "46cf92f6871208fb21d9503fca0203b5351a228e322c182574438b0a4238a439",
     "src/lib/task-assignment.mjs": "a1d86f5fc06e6abbd0be8fc2f2f8fcca1d80ddbc70c0a8bbd13914c6a5ddf9b5",
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
@@ -78,8 +78,8 @@
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "b54fa62a95cf46e1736113caee0d0563b502ea51bd6c41e8a94e2731eac50a85",
-    "package-lock.json": "c812e3c8c22194620643795a81b4dae862652f8fd7f910b019d4b9763151de9f"
+    "package.json": "62f7c041381870a3743d327d0a9507934d5814bdeb7ec7295ffe36da64e2af6d",
+    "package-lock.json": "d02e8a03bafce9882f0a6a5e236733ffe2d49df755c248d02af0df11a975f413"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -254,8 +254,8 @@
         "src/config/nav_config.json": {
           "source_path": "system/gui/web/src/config/nav_config.json",
           "source_sha256": "d86348606bae5b0a6d474c6179635f674d362bff5848b1e2318f11135c7c9097",
-          "imported_sha256": "d86348606bae5b0a6d474c6179635f674d362bff5848b1e2318f11135c7c9097",
-          "adapted": false
+          "imported_sha256": "8be53b5675c1c93bce514a90bc14488c1817353b559cca8b466a28cfc669f907",
+          "adapted": true
         },
         "src/layouts/BachLayout.astro": {
           "source_path": "system/gui/web/src/layouts/BachLayout.astro",
@@ -495,5 +495,14 @@
     }
   ],
   "import_review": "docs/BACH_FRONTEND_IMPORT_2026-10-08.md",
-  "shared_text_bytes": "UTF-8 with LF, enforced by .gitattributes; original source blob hashes remain unchanged."
+  "shared_text_bytes": "UTF-8 with LF, enforced by .gitattributes; original source blob hashes remain unchanged.",
+  "followup_adaptations": [
+    {
+      "reason": "Remove deprecated Agents-Board navigation after migration to shared capability boards and Blueprints",
+      "files": [
+        "src/config/nav_config.json",
+        "tests/frontend-parity.test.mjs"
+      ]
+    }
+  ]
 }
