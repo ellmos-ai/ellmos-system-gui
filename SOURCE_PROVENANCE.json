@@ -78,8 +78,8 @@
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "62f7c041381870a3743d327d0a9507934d5814bdeb7ec7295ffe36da64e2af6d",
-    "package-lock.json": "d02e8a03bafce9882f0a6a5e236733ffe2d49df755c248d02af0df11a975f413"
+    "package.json": "bfa98715fee52ac46eb5916e3e4dff38b6cdcc580d277d31843cffe0d8ee25b2",
+    "package-lock.json": "3cdabdf3a6acc535880d6a3a0a27876cce19b6974f786dce5659c78ab6e3df0c"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
