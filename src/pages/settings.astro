@@ -79,7 +79,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
             <button class="btn btn-secondary" style="font-size:0.75rem;padding:0.25rem 0.5rem;" onclick="loadExternalArtifacts()">🔄 Neu prüfen</button>
           </div>
           <p class="card-desc">Forensische Erkennung und verifizierter Import von ProfiPrompt, PromptBoard und Explorer Pro Suiten.</p>
-          <div id="settings-artifacts-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;margin-top:1rem;">
+          <div id="settings-artifacts-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 280px), 1fr));gap:1rem;margin-top:1rem;">
             <p style="color:var(--text-muted);font-size:0.85rem;">Prüfe Artefakt-Bestand...</p>
           </div>
         </div>
@@ -228,6 +228,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
             <select id="theme-select" style="padding:0.5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);">
               <option value="dark">Dunkel</option>
               <option value="light">Hell</option>
+              <option value="ocean">Ocean</option>
               <option value="warm">Warm</option>
               <option value="custom">Benutzerfarben (gespeicherte Palette)</option>
             </select>
@@ -273,15 +274,18 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
 
 <style>
   .settings-container {
+    min-width: 0;
     max-width: 1280px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: clamp(.75rem,2vw,2rem) clamp(.5rem,2vw,1.5rem);
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
   }
   .page-header {
     display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
     justify-content: space-between;
     align-items: flex-start;
     border-bottom: 1px solid var(--border);
@@ -302,6 +306,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
   }
   .tab-bar {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
   .tab-btn {
@@ -334,10 +339,12 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
   }
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
     gap: 1.25rem;
   }
   .glass-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -354,7 +361,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
   }
   .ocean-components-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: 1rem;
   }
   .ocean-card {
@@ -554,7 +561,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
       const response = await fetch('/api/settings/theme', { cache: 'no-store' });
       if (!response.ok) throw new Error('HTTP ' + response.status);
       const data = await response.json();
-      if (!data.success || !['dark', 'light', 'warm', 'custom'].includes(data.theme))
+      if (!data.success || !['dark', 'light', 'ocean', 'warm', 'custom'].includes(data.theme))
         throw new Error('Theme-Antwort ungültig');
       document.getElementById('theme-select').value = data.theme;
       applyStoredTheme(data.theme);

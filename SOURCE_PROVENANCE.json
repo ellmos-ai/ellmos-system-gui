@@ -51,7 +51,7 @@
     "src/pages/index.astro": "35342c625e3fb6676e11848f4d0d36ec77e5858e82ecc6260156df258b55b1e6",
     "src/pages/life.astro": "05180c2d12c7c86a4305d18cb41b2281e0cbf37b80daf0ad26b512100e893671",
     "src/pages/memory.astro": "352512c9d9afd5ffe8d4ebc52374ef43bf2208e000cbf66e79e608fbd2308fd6",
-    "src/pages/settings.astro": "90c21c0f46ce68a7d32d7fc8119ec0e061d1e32560f6dbd7eaf878a09d8e723a",
+    "src/pages/settings.astro": "6a2b2ddec57f43242ac2e21678537259cbfaaf8c1c9554d3751799dc76ac44d2",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
@@ -59,7 +59,7 @@
     "src/pages/tasks.astro": "e09fef8f440ef91328dab4e9e7e69349285b5097a398a70460098cd28bf135d1",
     "src/scripts/blueprint-studio.mjs": "736857b5f8f657abae6886ea384a8a801210d56dfa1947c044995a4787708b88",
     "src/styles/agent-avatars.css": "fd3aaaea7ad084ed8b2eb585a3309ac6b5f7cf69a986104ea86b000ed2b64501",
-    "src/styles/main.css": "5b603834c336eee5c068ce3673ddb5a747d6092d62d01e73e8c9365cfe94c9b4",
+    "src/styles/main.css": "b46606bd8d999141cef7151f849c802dd57f692142330acc01c941c82b91a3e4",
     "src/styles/ticket-symbols.css": "41cb91fd4b9a84b340cfa9123727ccdb892d5a70266d6329a1b24f5e3cedb057",
     "tests/agent-avatar.test.mjs": "c33b7193379a77f4c800e385b35e54abe8f603d2f3df25b7623844aa8295f6dc",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
@@ -78,8 +78,8 @@
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "bfa98715fee52ac46eb5916e3e4dff38b6cdcc580d277d31843cffe0d8ee25b2",
-    "package-lock.json": "3cdabdf3a6acc535880d6a3a0a27876cce19b6974f786dce5659c78ab6e3df0c"
+    "package.json": "cc39ea74e7eadddcd60ed8f0a16be3e2076d5ba6b647f26ab1ed410824aca77d",
+    "package-lock.json": "0ea385c327e52b227a91d706785ec69c8b885208031e73b7165eb773763dbd53"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -386,7 +386,7 @@
         "src/pages/settings.astro": {
           "source_path": "system/gui/web/src/pages/settings.astro",
           "source_sha256": "3929b2172e78e6addf010b071750be5c53ab509d5f1748e86d4b85b5a795b867",
-          "imported_sha256": "90c21c0f46ce68a7d32d7fc8119ec0e061d1e32560f6dbd7eaf878a09d8e723a",
+          "imported_sha256": "6a2b2ddec57f43242ac2e21678537259cbfaaf8c1c9554d3751799dc76ac44d2",
           "adapted": true
         },
         "src/pages/skills.astro": {
@@ -434,8 +434,8 @@
         "src/styles/main.css": {
           "source_path": "system/gui/web/src/styles/main.css",
           "source_sha256": "5b603834c336eee5c068ce3673ddb5a747d6092d62d01e73e8c9365cfe94c9b4",
-          "imported_sha256": "5b603834c336eee5c068ce3673ddb5a747d6092d62d01e73e8c9365cfe94c9b4",
-          "adapted": false
+          "imported_sha256": "b46606bd8d999141cef7151f849c802dd57f692142330acc01c941c82b91a3e4",
+          "adapted": true
         },
         "src/styles/ticket-symbols.css": {
           "source_path": "system/gui/web/src/styles/ticket-symbols.css",
@@ -503,6 +503,16 @@
         "src/config/nav_config.json",
         "tests/frontend-parity.test.mjs"
       ]
+    }
+  ],
+  "local_amendments": [
+    {
+      "reason": "Native Ocean theme support and browser-observed navigation/settings overflow repair",
+      "paths": [
+        "src/pages/settings.astro",
+        "src/styles/main.css"
+      ],
+      "origin": "codex GUI acceptance 2026-10-08"
     }
   ]
 }
