@@ -35,9 +35,16 @@ export function validateCatalog(data){
     throw new Error('Katalog enthält unbestätigte Ketten-, Agenten- oder Laufdaten.');
   return data;
 }
+export function startPreview(chain,catalog){
+  validateCatalog(catalog);
+  const current=catalog.chains.find(item=>item.id===chain.id&&item.version===chain.version);
+  if(!current)throw new Error('Kettenversion geändert; Vorschau neu öffnen.');
+  return {chain:structuredClone(current),version:current.version,configuration_version:catalog.configuration_version,
+    expected_service_instance:catalog.service_instance,models:selectedModels(current,catalog.agents).map(item=>({...item}))};
+}
 if(typeof document!=='undefined')initialize();
 function initialize(){
-  const $=id=>document.getElementById(id),state={catalog:null,edit:null,steps:[],start:null,startRequest:null,pendingStart:false,busy:false,loading:false,queryHandled:false};
+  const $=id=>document.getElementById(id),state={catalog:null,edit:null,steps:[],start:null,startRequest:null,startSnapshot:null,startRejectionStatus:null,pendingStart:false,busy:false,loading:false,queryHandled:false};
   const notify=(id,text,error=false)=>{ $(id).textContent=text;$(id).dataset.error=String(error); };
   let disabledControls=[];
   function setBusy(value){
@@ -53,7 +60,11 @@ function initialize(){
   async function api(path,options={}){
     const response=await fetch(path,{...options,headers:{'Content-Type':'application/json',...options.headers}});
     let data;try{data=await response.json();}catch{throw new Error('Antwort nicht lesbar (HTTP '+response.status+')');}
-    if(!response.ok||data.ok===false)throw new Error((data.detail||data.error||'Anfrage nicht bestätigt')+' (HTTP '+response.status+')');
+    if(!response.ok||data.ok===false){
+      const error=new Error((data.detail||data.error||'Anfrage nicht bestätigt')+' (HTTP '+response.status+')');
+      if(!response.ok)error.status=response.status;
+      throw error;
+    }
     return data;
   }
   const button=(label,action)=>{const b=document.createElement('button');b.type='button';b.className='btn';b.textContent=label;b.addEventListener('click',()=>{if(!state.busy)action();});return b;};
@@ -109,7 +120,7 @@ function initialize(){
       card.append(h,note);
       if(run.stop_requested){const p=document.createElement('p');p.textContent='Stop wurde dauerhaft angefordert.';card.append(p);}
       if(run.reason){const p=document.createElement('p');p.textContent=run.reason;card.append(p);}
-      for(const step of run.steps){const p=document.createElement('p');p.className='chain-note';const link=document.createElement('a');link.href='/tasks?task_id='+step.task_id;link.textContent='Task #'+step.task_id;p.append('Schritt '+(step.cursor+1)+' · ',link);card.append(p);}
+      for(const step of run.steps){const p=document.createElement('p');p.className='chain-note';const link=document.createElement('a');link.href='/tasks?task='+step.task_id;link.textContent='Task #'+step.task_id;p.append('Schritt '+(step.cursor+1)+' · ',link);card.append(p);}
       if(run.completed.length){const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Fachliche Ergebnisse';details.append(summary);for(const result of run.completed){const pre=document.createElement('pre');pre.textContent=result.output;details.append(pre);}card.append(details);}
       if(!['complete','failed','stopped'].includes(run.phase)){
         const stop=button(run.stop_requested?'Stopstatus prüfen':'Stop',async()=>{
@@ -169,11 +180,14 @@ function initialize(){
   function openStart(chain){
     if(state.busy||!state.catalog||chain.legacy||!state.catalog.runtime_available)return;
     if(state.pendingStart&&state.start.id!==chain.id){notify('chain-status','Prüfe zuerst den nicht bestätigten Start der bisherigen Kette.',true);return;}
-    if(!state.pendingStart){state.start=chain;state.startRequest=null;}else chain=state.start;
+    if(!state.pendingStart){
+      try{state.startSnapshot=startPreview(chain,state.catalog);}catch(error){notify('chain-status',error.message,true);return;}
+      state.start=state.startSnapshot.chain;chain=state.start;state.startRequest=null;state.startRejectionStatus=null;
+    }else chain=state.start;
     $('chain-start-title').textContent='„'+(chain.title||chain.name)+'“ starten';
-    const models=selectedModels(chain,state.catalog.agents);$('chain-start-summary').textContent=models.map((a,i)=>`${i+1}. ${agentText(a)}`).join(' → ');
+    const models=state.startSnapshot.models;$('chain-start-summary').textContent=models.map((a,i)=>`${i+1}. ${agentText(a)}`).join(' → ');
     $('chain-start-preview').innerHTML=flowNodes(chain.steps);$('chain-input').value=state.startRequest?.input||'';$('chain-input').disabled=state.pendingStart;
-    $('chain-start-submit').disabled=false;notify('chain-start-status',state.pendingStart?'Wiederholung prüft denselben Auftrag mit derselben Startkennung.':'');$('chain-start-dialog').showModal();
+    $('chain-start-submit').disabled=false;$('chain-start-check').hidden=!state.pendingStart;notify('chain-start-status',state.pendingStart?'Wiederholung prüft denselben Auftrag mit derselben Startkennung.':'');$('chain-start-dialog').showModal();
   }
   $('chain-form').addEventListener('submit',async event=>{
     event.preventDefault();if(state.busy||!$('chain-form').reportValidity())return;
@@ -189,16 +203,42 @@ function initialize(){
   });
   $('chain-start-form').addEventListener('submit',async event=>{
     event.preventDefault();if(state.busy||!state.catalog||!state.start||!$('chain-start-form').reportValidity())return;
-    state.startRequest??={request_id:crypto.randomUUID().replaceAll('-',''),version:state.start.version,configuration_version:state.catalog.configuration_version,expected_service_instance:state.catalog.service_instance,input:$('chain-input').value};
+    state.startRequest??={request_id:crypto.randomUUID().replaceAll('-',''),version:state.startSnapshot.version,configuration_version:state.startSnapshot.configuration_version,expected_service_instance:state.startSnapshot.expected_service_instance,input:$('chain-input').value};
     state.pendingStart=true;setBusy(true);
     try{
       const data=await api('/api/marblerun/chains/'+state.start.id+'/run',{method:'POST',body:JSON.stringify(state.startRequest)});
       if(data.accepted!==true||data.run?.run_id!==state.startRequest.request_id||data.run?.chain_id!==state.start.id||
          data.run?.service_instance!==state.startRequest.expected_service_instance)throw new Error('Startkennung nicht bestätigt');
       state.pendingStart=false;$('chain-start-dialog').close();await load();
-    }catch(error){notify('chain-start-status',error.message+' Prüfe denselben Auftrag mit derselben Startkennung.',true);}
+     }catch(error){
+      state.startRejectionStatus=[400,404,409].includes(error.status)?error.status:null;
+      $('chain-start-check').hidden=false;
+      notify('chain-start-status',error.message+' Prüfe denselben Auftrag mit derselben Startkennung oder kläre die Ablehnung.',true);
+    }
     finally{setBusy(false);}
 
+  });
+  $('chain-start-check').addEventListener('click',async()=>{
+    if(state.busy||!state.pendingStart||!state.startRequest)return;
+    const request=state.startRequest,chainId=state.start.id,oldInput=request.input;let reopen=null;
+    setBusy(true);
+    try{
+      const catalog=validateCatalog(await api('/api/marblerun/catalog'));
+      let observed=null,missing=false;
+      try{observed=await api('/api/marblerun/runs/'+request.request_id);}catch(error){if(error.status===404)missing=true;else throw error;}
+      if(observed?.ok===true&&observed.run?.run_id===request.request_id&&observed.run?.chain_id===chainId&&
+        observed.run?.service_instance===request.expected_service_instance){
+        state.pendingStart=false;state.catalog=catalog;$('chain-start-dialog').close();render();
+        notify('chain-status','Der ursprüngliche Lauf ist bestätigt; seinen tatsächlichen Status zeigt die Laufkarte.');
+      }else if(missing&&[400,404,409].includes(state.startRejectionStatus)&&catalog.service_instance===request.expected_service_instance&&
+        !catalog.runs.some(run=>run.run_id===request.request_id)){
+        state.pendingStart=false;state.startRequest=null;state.catalog=catalog;render();
+        reopen=selectedChain(chainId)||null;
+        if(!reopen){$('chain-start-dialog').close();notify('chain-status','Der abgewiesene Start hat keinen Lauf angelegt. Die Kette ist inzwischen nicht mehr vorhanden.',true);}
+      }else notify('chain-start-status','Zulassung bleibt ungeklärt. Auftrag und Startkennung bleiben gebunden; es wird kein neuer Start erzeugt.',true);
+    }catch(error){notify('chain-start-status','Klärung nicht bestätigt: '+error.message,true);}
+    finally{setBusy(false);$('chain-start-check').hidden=!state.pendingStart;}
+    if(reopen){openStart(reopen);$('chain-input').value=oldInput;notify('chain-start-status','Ablehnung und fehlender Lauf sind bestätigt. Prüfe die aktuelle Modellvorschau, korrigiere den Auftrag und bestätige den Start erneut.');}
   });
   $('chain-mode').addEventListener('change',renderEditor);$('chain-add-step').addEventListener('click',()=>{if(state.steps.length<32){state.steps.push({label:'Neuer Schritt',agent_slot:'',skill_ids:[],instructions:''});renderEditor();}});
   $('chain-palette-search').addEventListener('input',renderEditor);

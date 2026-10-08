@@ -39,7 +39,7 @@
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
     "src/pages/agenten/blueprints.astro": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
-    "src/pages/agenten/marblerun.astro": "4e6c2c1496c21c9f83f2c1099a2768a07b6f8e72a873b66386f982ec46ef3c91",
+    "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
     "src/pages/agenten/running.astro": "9e79eb9be6836fe4470c2a619a5e2f57073b2c3150bf6f1f53cd28294449a8aa",
     "src/pages/agenten/sessions.astro": "8117001f267bf411bdf008a36dbbf672fd3964e81b609529905ca6e043aed486",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
@@ -97,8 +97,8 @@
     "src/assets/agent-workshop/provenance.json": "ce9d3c13bceb267452aa813371ae9eb8126f54d283521730b3a917bd4f68d764",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
     "src/pages/user-inbox.astro": "e912b71af66cedada70ae29986f9fb3cf23b2f6ab021c3c838c923b4fab745c7",
-    "src/scripts/marblerun-studio.mjs": "5fbe6dc135661c9e374d4ef695d6bd0d00a3f2bd5cfda9b6849dbc197387ab77",
-    "tests/marblerun-studio.test.mjs": "95eae98c51cdfff85fb8a3f0c9459133c23b3bdc9a842e569dd5094b8b44abbc"
+    "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
+    "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -335,7 +335,7 @@
         "src/pages/agenten/marblerun.astro": {
           "source_path": "system/gui/web/src/pages/agenten/marblerun.astro",
           "source_sha256": "6b75e1a4dbb6eb7348816d41bafec01abd0a6d0bed363a05118a3bba07a1eea7",
-          "imported_sha256": "4e6c2c1496c21c9f83f2c1099a2768a07b6f8e72a873b66386f982ec46ef3c91",
+          "imported_sha256": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
           "adapted": true
         },
         "src/pages/agenten/running.astro": {
@@ -523,19 +523,19 @@
         "src/pages/agenten/marblerun.astro": {
           "source_path": "system/gui/web/src/pages/agenten/marblerun.astro",
           "source_sha256": "4e6c2c1496c21c9f83f2c1099a2768a07b6f8e72a873b66386f982ec46ef3c91",
-          "imported_sha256": "4e6c2c1496c21c9f83f2c1099a2768a07b6f8e72a873b66386f982ec46ef3c91",
-          "adapted": false
+          "imported_sha256": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
+          "adapted": true
         },
         "src/scripts/marblerun-studio.mjs": {
           "source_path": "system/gui/web/src/scripts/marblerun-studio.mjs",
           "source_sha256": "5d2ffee6a8d86bb7e9f34280bccb5b66709cb79ed429c4ec1a22aa5e841b3940",
-          "imported_sha256": "5fbe6dc135661c9e374d4ef695d6bd0d00a3f2bd5cfda9b6849dbc197387ab77",
+          "imported_sha256": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
           "adapted": true
         },
         "tests/marblerun-studio.test.mjs": {
           "source_path": "system/gui/web/tests/marblerun-studio.test.mjs",
           "source_sha256": "e111fce97fe5eb8415eb174dddbdd662b98f8e1b4a4b7266d72b253835748d3b",
-          "imported_sha256": "95eae98c51cdfff85fb8a3f0c9459133c23b3bdc9a842e569dd5094b8b44abbc",
+          "imported_sha256": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
           "adapted": true
         }
       }

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {flowNodes,moveStep,phaseLabel,selectedModels,validateCatalog} from '../src/scripts/marblerun-studio.mjs';
+import {flowNodes,moveStep,phaseLabel,selectedModels,validateCatalog,startPreview} from '../src/scripts/marblerun-studio.mjs';
 test('flow nodes reuse arrows while escaping actual stored labels',()=>{
   const html=flowNodes([{label:'<img onerror="alert(1)">'},{label:'Müller & Söhne'}]);
   assert.ok(html.includes('&lt;img'));assert.ok(html.includes('Müller &amp; Söhne'));assert.equal((html.match(/flow-arrow/g)||[]).length,1);
@@ -31,4 +31,12 @@ test('only a correlated native catalog is admitted, including an unavailable run
 test('unconfirmed run identity cannot enter the rendered native history',()=>{
   const data=catalog();data.runs=[{run_id:'f'.repeat(32),chain_id:1,cursor:0,step_count:1,phase:'unconfirmed',steps:[{task_id:9,cursor:0}],completed:[]}];
   assert.equal(validateCatalog(data),data);data.runs[0].run_id='../other';assert.throws(()=>validateCatalog(data));
+});
+
+test('model preview and request bindings use one immutable catalog image',()=>{
+  const data=catalog();data.chains[0].mode='agents';data.chains[0].steps=[{label:'Prüfen',agent_slot:'local'}];data.agents[0].model='local-chosen';
+  const preview=startPreview(data.chains[0],data);data.configuration_version='b'.repeat(64);data.service_instance='new-controller';data.agents[0].model='cloud-new';data.chains[0].version=3;
+  assert.equal(preview.configuration_version,'a'.repeat(64));assert.equal(preview.expected_service_instance,'fixture-controller');
+  assert.equal(preview.models[0].model,'local-chosen');assert.equal(preview.chain.version,2);
+  assert.throws(()=>startPreview(preview.chain,data),/Kettenversion geändert/);
 });

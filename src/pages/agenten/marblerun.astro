@@ -24,7 +24,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
     <p id="chain-start-summary"></p><div id="chain-start-preview" class="flow-canvas"></div>
     <label>Arbeitsauftrag<textarea id="chain-input" required maxlength="12000" rows="5" placeholder="Was sollen die Schritte gemeinsam erarbeiten?"></textarea></label>
     <p>Die ausgewählten Modelle arbeiten in eigenen Laufsteckplätzen. Ihre Ergebnisse und Task-IDs erscheinen unter „Läufe“. Ein Stop wartet auf die kooperative Beendigung.</p>
-    <p id="chain-start-status" role="status"></p><footer class="chain-actions"><button type="button" class="btn" data-close="chain-start-dialog">Abbrechen</button><button class="btn btn-primary" id="chain-start-submit">Jetzt starten</button></footer>
+    <p id="chain-start-status" role="status"></p><footer class="chain-actions"><button type="button" class="btn" data-close="chain-start-dialog">Abbrechen</button><button type="button" class="btn" id="chain-start-check" hidden>Start klären</button><button class="btn btn-primary" id="chain-start-submit">Jetzt starten</button></footer>
   </form></dialog>
   <script>import "../../scripts/marblerun-studio.mjs";</script>
   <style>
