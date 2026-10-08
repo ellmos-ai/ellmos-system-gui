@@ -23,7 +23,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         <span>＋</span> Blueprint anlegen
       </a>
       <a href="/agenten/blueprints" class="btn">
-        <span>📐</span> Zu den Blueprints
+        <span>📐</span> Agenten-Werkstatt
       </a>
       <button class="btn btn-primary" onclick="refreshAll(true)">
         <span>🔄</span> Jetzt aktualisieren
@@ -31,170 +31,11 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     </div>
   </div>
 
-  <!-- 1. DUAL ACTIONS HUB (ZWEI MÖGLICHKEITEN) -->
-  <section class="card dual-actions-card" style="margin-bottom:1.5rem;padding:1.25rem;background:linear-gradient(135deg, rgba(30,41,59,0.7) 0%, rgba(15,23,42,0.85) 100%);border:1px solid var(--border);">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
-      <div>
-        <h2 style="font-size:1.2rem;font-weight:700;margin:0 0 0.25rem 0;">🚀 Agenten & Teams in Betrieb nehmen</h2>
-        <p style="font-size:0.825rem;color:var(--text-muted);margin:0;">
-          Vorlage übernehmen oder einen eigenen Blueprint mit Rolle, Skills und Modell anlegen.
-        </p>
-      </div>
-      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-        <button class="btn btn-primary" onclick="openPickupWerkstattModal()">
-          <span>🏭</span> Vorlage auswählen
-        </button>
-        <button class="btn" style="background:var(--bg-dark);border-color:var(--accent);" onclick="openOneOffModal()">
-          <span>✨</span> Eigene Einzelanfertigung erstellen
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 2. HARDWARE-FACKEL & COMPUTE-VORRANG & KONNEKTIVITÄT -->
-  <section class="card hardware-torch" aria-labelledby="hardware-torch-title" style="margin-bottom:1.5rem;">
-    <div class="card-header">
-      <div>
-        <h2 class="card-title" id="hardware-torch-title">Hardware-Fackel, Compute-Vorrang & Konnektivität</h2>
-        <p class="torch-intro">Besitz, Vorrang, Compute-Meldung, Ollama-Cloud & OpenRouter Free Tier Anbindung</p>
-      </div>
-      <span class="badge" id="torch-observed-at">Nicht geprüft</span>
-    </div>
-    <div class="torch-grid">
-      <div class="torch-panel torch-owner" role="status" aria-live="polite">
-        <svg id="hardware-flame" class="torch-svg" viewBox="0 0 64 80" role="img" aria-labelledby="torch-svg-title">
-          <title id="torch-svg-title">Hardware-Fackel ohne bestätigten Besitz</title>
-          <path class="torch-flame-outer" d="M31 4c7 14 5 22 2 28 10-3 13-12 14-16 17 18 17 42 4 55-11 11-32 11-43-1C-2 59 2 41 15 28c1 9 3 14 8 17-2-16 1-29 8-41Z"/>
-          <path class="torch-flame-inner" d="M33 39c2 7 6 10 9 15 5 11-1 22-11 22-10 0-16-11-11-21 2-5 8-10 13-16Z"/>
-        </svg>
-        <div>
-          <strong>Hardware-Besitz</strong>
-          <p id="fackel-holder">Nicht geprüft</p>
-          <small id="fackel-owner-reason">Ein aktueller Halternachweis fehlt.</small>
-        </div>
-      </div>
-      <div class="torch-panel">
-        <strong>Compute-Vorrang</strong>
-        <p id="fackel-priority">Nicht geprüft</p>
-        <button id="btn-toggle-fackel" class="btn btn-sm" type="button" onclick="toggleFackel()" disabled>Vorrang ändern</button>
-        <small>Einstellung ändert die Bevorzugung zwischen Compute und Ollama.</small>
-      </div>
-      <div class="torch-panel">
-        <strong>Idle- & Aufwachfunktion</strong>
-        <p id="idle-wakeup-status">Nicht geprüft</p>
-        <small>Der Backendadapter hat die Aufwachbereitschaft noch nicht bestätigt.</small>
-      </div>
-      <div class="torch-panel">
-        <strong>Ollama-Kapazität</strong>
-        <p id="fackel-capacity">Nicht geprüft</p>
-        <small id="fackel-compute">Geladene Einheiten & Hostverbindung.</small>
-      </div>
-    </div>
-    <p id="fackel-feedback" class="torch-feedback" role="status" aria-live="polite"></p>
-  </section>
-
-  <!-- 3. ANSICHT: EINSATZBEREITE FERTIGE AGENTEN (LIVING / READY) -->
-  <section class="card" style="margin-bottom:1.5rem;" aria-labelledby="ready-agents-title">
-    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
-      <div>
-        <h2 class="card-title" id="ready-agents-title">✨ Einsatzbereite fertige Agenten (Living / Ready)</h2>
-        <p style="font-size:0.8rem;color:var(--text-muted);margin:0.2rem 0 0 0;">
-          Konfigurierte Agentenprofile in Ruhestellung • Aktionen: Bearbeiten, Löschen, Losschicken (Start), Pausieren
-        </p>
-      </div>
-      <button class="btn btn-sm" onclick="loadBackgroundWorkers()">Neu prüfen</button>
-    </div>
-    <p id="worker-status-summary" role="status" aria-live="polite" style="font-size:0.8rem;color:var(--text-muted);margin:0.5rem 0 1rem 0;">Workerstatus wird geprüft…</p>
-    <div id="ready-agents-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:1rem;">
-      <p class="loading-state" style="grid-column:1/-1;text-align:center;padding:2rem;">Prüfe einsatzbereite Agenten…</p>
-    </div>
-  </section>
-
-  <!-- 4. ANSICHT: EINSATZBEREITE FERTIGE TEAMS & KETTEN -->
-  <section class="card" style="margin-bottom:1.5rem;">
-    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
-      <div>
-        <h2 class="card-title">👥 Einsatzbereite fertige Teams & Ketten/Staffeln</h2>
-        <p style="font-size:0.8rem;color:var(--text-muted);margin:0.2rem 0 0 0;">
-          Kollaborative Multi-Agenten-Teams (Swarm-AI) und sequenzielle Staffeln (MarbleRun)
-        </p>
-      </div>
-      <div style="display:flex;gap:0.4rem;">
-        <button class="btn btn-sm" onclick="loadTeamsBeseelen(); loadStaffelnBeseelen();">Aktualisieren</button>
-      </div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:1.5rem;margin-top:1rem;align-items:start;">
-      <!-- TEAMS BESEELEN -->
-      <div class="card" id="teams" style="background:var(--bg-dark);border:1px solid var(--border);">
-        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
-          <div>
-            <h3 style="font-size:1.05rem;font-weight:700;margin:0;">👥 Teams (Swarm-AI)</h3>
-            <p style="font-size:0.75rem;color:var(--text-muted);margin:0.15rem 0 0 0;">
-              Mitglieder mit Modellen ausstatten & starten
-            </p>
-          </div>
-          <button class="btn btn-sm btn-primary" onclick="openPickupTeamModal()">+ Team abholen</button>
-        </div>
-        <div id="teams-beseelen-container" style="display:flex;flex-direction:column;gap:1rem;margin-top:0.75rem;">
-          <p class="loading-state">Lade konfigurierte Teams...</p>
-        </div>
-      </div>
-
-      <!-- AGENTEN-STAFFELN (MARBLERUN) BESEELEN -->
-      <div class="card" id="staffeln" style="background:var(--bg-dark);border:1px solid var(--border);">
-        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
-          <div>
-            <h3 style="font-size:1.05rem;font-weight:700;margin:0;">⛓️ Agenten-Staffeln (MarbleRun)</h3>
-            <p style="font-size:0.75rem;color:var(--text-muted);margin:0.15rem 0 0 0;">
-              Stations-Gliedern Modelle zuweisen & Ketten ausführen
-            </p>
-          </div>
-          <a href="/agenten/marblerun" class="btn btn-sm">Ketten-Editor ↗</a>
-        </div>
-        <div id="staffel-beseelen-container" style="display:flex;flex-direction:column;gap:1rem;margin-top:0.75rem;">
-          <p class="loading-state">Lade Agenten-Staffeln...</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5. ANSICHT: RUNNING AGENTS & SYSTEMSLOTS -->
-  <section class="card" aria-labelledby="core-agents-title" style="margin-bottom:1.5rem;">
-    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
-      <div>
-        <h2 class="card-title" id="core-agents-title">⚡ Running Agents: Systemslots & Aktive Läufe</h2>
-        <p style="font-size:0.8rem;color:var(--text-muted);margin:0.2rem 0 0 0;">
-          Status und Besetzung der Systemsteckplätze sowie dynamisch aktive Worker
-        </p>
-      </div>
-      <span class="badge badge-accent">Systemagenten + eigene Steckplätze</span>
-    </div>
-
-    <!-- Systemsteckplätze (Persönlicher Assistent, Hintergrundworker, Connector, Erweiterungsplatz) -->
-    <div style="margin:1rem 0;">
-      <h3 style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">
-        Besetzung der System-Steckplätze:
-      </h3>
-      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
-        Jeder Steckplatz kann einen Chat führen. Boss- und Expertenrollen lassen sich als eigene Steckplätze anlegen. Lokale Modelle teilen eine Inferenz; der Vordergrund hat Vorrang.
-      </p>
-
-      <div id="core-agent-feedback" role="status" aria-live="polite"></div>
-      <div id="core-agent-cards" class="core-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;">
-        <p class="loading-state">System-Agenten werden geprüft…</p>
-      </div>
-    </div>
-
-    <!-- Dynamisch laufende Worker (Running Agents) -->
-    <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);">
-      <h3 style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">
-        Weitere Agenten (Aktive Läufe):
-      </h3>
-      <div id="running-workers-list" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;">
-        <p style="grid-column:1/-1;color:var(--text-muted);font-size:0.85rem;">Prüfe aktive Läufe…</p>
-      </div>
-    </div>
+  <!-- Aktuell arbeitende Agenten; Ready-Worker werden nicht als Running ausgegeben. -->
+  <section class="card" aria-labelledby="running-agents-title" style="margin-bottom:1.5rem;">
+    <div class="card-header"><h2 class="card-title" id="running-agents-title">⚡ Running · Aktive Läufe</h2></div>
+    <div id="running-system-slots-list" class="active-runs-grid"><p>Prüfe arbeitende Systemslots…</p></div>
+    <div id="running-workers-list" class="active-runs-grid"><p>Prüfe weitere aktive Läufe…</p></div>
   </section>
 
   <!-- 6. VERLAUF SESSIONS & LÄUFE (TIMELINE) -->
@@ -219,6 +60,137 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     </div>
   </details>
 
+  <!-- 2. HARDWARE-FACKEL & COMPUTE-VORRANG & KONNEKTIVITÄT -->
+  <section class="card hardware-torch" aria-labelledby="hardware-torch-title" style="margin-bottom:1.5rem;">
+    <div class="card-header">
+      <div>
+        <h2 class="card-title" id="hardware-torch-title">Hardware-Fackel & Compute-Vorrang</h2>
+        <p class="torch-intro">Aktueller Besitz, lokaler Compute-Turn und gemessene Kapazität.</p>
+      </div>
+      <span class="badge" id="torch-observed-at">Nicht geprüft</span>
+    </div>
+    <div class="torch-grid">
+      <div class="torch-panel torch-owner" role="status" aria-live="polite">
+        <svg id="hardware-flame" class="torch-svg" viewBox="0 0 64 80" role="img" aria-labelledby="torch-svg-title">
+          <title id="torch-svg-title">Hardware-Fackel ohne bestätigten Besitz</title>
+          <path class="torch-flame-outer" d="M31 4c7 14 5 22 2 28 10-3 13-12 14-16 17 18 17 42 4 55-11 11-32 11-43-1C-2 59 2 41 15 28c1 9 3 14 8 17-2-16 1-29 8-41Z"/>
+          <path class="torch-flame-inner" d="M33 39c2 7 6 10 9 15 5 11-1 22-11 22-10 0-16-11-11-21 2-5 8-10 13-16Z"/>
+        </svg>
+        <div>
+          <strong>Hardware-Besitz</strong>
+          <p id="fackel-holder">Nicht geprüft</p>
+          <small id="fackel-owner-reason">Ein aktueller Halternachweis fehlt.</small>
+        </div>
+      </div>
+      <div class="torch-panel">
+        <strong>Compute-Vorrang</strong>
+        <p id="fackel-priority">Nicht geprüft</p>
+        <button id="btn-toggle-fackel" class="btn btn-sm" type="button" onclick="toggleFackel()" disabled>Vorrang ändern</button>
+        <small>Einstellung ändert die Bevorzugung zwischen Compute und Ollama.</small>
+      </div>
+      <div class="torch-panel">
+        <strong>Lokaler Compute-Turn</strong>
+        <p id="compute-turn-status">Nicht geprüft</p>
+        <small><span id="compute-turn-reason">Aktueller Turn und wartende Vordergrundanfragen.</span></small>
+      </div>
+      <div class="torch-panel">
+        <strong>Ollama-Kapazität</strong>
+        <p id="fackel-capacity">Nicht geprüft</p>
+        <small id="fackel-compute">Geladene Einheiten & Hostverbindung.</small>
+      </div>
+    </div>
+    <p id="fackel-feedback" class="torch-feedback" role="status" aria-live="polite"></p>
+  </section>
+
+  <!-- 5. ANSICHT: RUNNING AGENTS & SYSTEMSLOTS -->
+  <details class="card collapsible-section" aria-labelledby="core-agents-title" style="margin-bottom:1.5rem;">
+<summary class="card-header"><span><span class="card-title" id="core-agents-title">Systemslots</span><span class="section-description">Status und Besetzung der Systemsteckplätze.</span></span></summary>
+
+    <!-- Systemsteckplätze (Persönlicher Assistent, Hintergrundworker, Connector, Erweiterungsplatz) -->
+    <div style="margin:1rem 0;">
+      <h3 style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">
+        Besetzung der System-Steckplätze:
+      </h3>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
+        Jeder Steckplatz kann einen Chat führen. Boss- und Expertenrollen lassen sich als eigene Steckplätze anlegen. Lokale Modelle teilen eine Inferenz; der Vordergrund hat Vorrang.
+      </p>
+
+      <div id="core-agent-feedback" role="status" aria-live="polite"></div>
+      <div id="core-agent-cards" class="core-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;">
+        <p class="loading-state">System-Agenten werden geprüft…</p>
+      </div>
+    </div>
+
+  </details>
+
+  <!-- 1. DUAL ACTIONS HUB (ZWEI MÖGLICHKEITEN) -->
+  <section class="card dual-actions-card" style="margin-bottom:1.5rem;padding:1.25rem;background:linear-gradient(135deg, rgba(30,41,59,0.7) 0%, rgba(15,23,42,0.85) 100%);border:1px solid var(--border);">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h2 style="font-size:1.2rem;font-weight:700;margin:0 0 0.25rem 0;">Agenten, Teams und Staffeln erstellen</h2>
+        <p style="font-size:0.825rem;color:var(--text-muted);margin:0;">
+          Vorlage mit einem Modell ausstatten oder einen eigenen Agenten zusammenstellen.
+        </p>
+      </div>
+      <div class="creation-actions">
+        <button class="btn btn-primary" type="button" onclick="openOneOffModal()">✨ Agenten erstellen</button>
+        <button class="btn" type="button" onclick="openPickupTeamModal()">👥 Teams erstellen</button>
+        <a class="btn" href="/agenten/marblerun?new=1">⛓️ Staffel erstellen</a>
+        <button class="btn" type="button" onclick="openPickupWerkstattModal()">🏭 Vorlage auswählen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. ANSICHT: EINSATZBEREITE FERTIGE AGENTEN (LIVING / READY) -->
+  <details class="card collapsible-section" style="margin-bottom:1.5rem;" aria-labelledby="ready-agents-title">
+<summary class="card-header"><span><span class="card-title" id="ready-agents-title">✨ Einsatzbereite fertige Agenten (Living / Ready)</span><span class="section-description">Konfigurierte Agentenprofile in Ruhestellung · Bearbeiten, Zuweisen und ausdrücklich starten.</span></span></summary>
+    <button class="btn btn-sm" type="button" onclick="loadBackgroundWorkers()">Neu prüfen</button>
+    <p id="worker-status-summary" role="status" aria-live="polite" style="font-size:0.8rem;color:var(--text-muted);margin:0.5rem 0 1rem 0;">Workerstatus wird geprüft…</p>
+    <div id="ready-agents-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:1rem;">
+      <p class="loading-state" style="grid-column:1/-1;text-align:center;padding:2rem;">Prüfe einsatzbereite Agenten…</p>
+    </div>
+  </details>
+
+  <!-- 4. ANSICHT: EINSATZBEREITE FERTIGE TEAMS & KETTEN -->
+  <details class="card collapsible-section" style="margin-bottom:1.5rem;">
+<summary class="card-header"><span><span class="card-title" id="ready-teams-title">👥 Einsatzbereite Teams & Staffeln</span><span class="section-description">Teamkonfigurationen und sequenzielle Agenten- oder Skillfolgen.</span></span></summary>
+    <button class="btn btn-sm" type="button" onclick="loadTeamsBeseelen(); loadStaffelnBeseelen();">Aktualisieren</button>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:1.5rem;margin-top:1rem;align-items:start;">
+      <!-- TEAMS BESEELEN -->
+      <div class="card" id="teams" style="background:var(--bg-dark);border:1px solid var(--border);">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <h3 style="font-size:1.05rem;font-weight:700;margin:0;">👥 Teams (Swarm-AI)</h3>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin:0.15rem 0 0 0;">
+              Mitglieder mit Modellen ausstatten & starten
+            </p>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openPickupTeamModal()">+ Team abholen</button>
+        </div>
+        <div id="teams-beseelen-container" style="display:flex;flex-direction:column;gap:1rem;margin-top:0.75rem;">
+          <p class="loading-state">Lade konfigurierte Teams...</p>
+        </div>
+      </div>
+
+      <!-- AGENTEN-STAFFELN (MARBLERUN) BESEELEN -->
+      <div class="card" id="staffeln" style="background:var(--bg-dark);border:1px solid var(--border);">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <h3 style="font-size:1.05rem;font-weight:700;margin:0;">⛓️ Agenten-Staffeln (MarbleRun)</h3>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin:0.15rem 0 0 0;">
+              Schritte ansehen · Bearbeitung und Ausführung im Staffel-Editor
+            </p>
+          </div>
+          <a href="/agenten/marblerun" class="btn btn-sm">Ketten-Editor ↗</a>
+        </div>
+        <div id="staffel-beseelen-container" style="display:flex;flex-direction:column;gap:1rem;margin-top:0.75rem;">
+          <p class="loading-state">Lade Agenten-Staffeln...</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
   <!-- 7. OPENROUTER FREE TIER KATALOG -->
   <section class="card" aria-labelledby="openrouter-title" style="margin-bottom:1.5rem;">
     <div class="card-header">
@@ -239,7 +211,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     <div class="card" style="max-width:700px;width:94%;margin:auto;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
       <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <h2 class="card-title" style="margin:0;">✨ Eigene Einzelanfertigung erstellen</h2>
+          <h2 class="card-title" style="margin:0;">✨ Agenten erstellen</h2>
           <p style="font-size:0.75rem;color:var(--text-muted);margin:0.2rem 0 0 0;">Maßgeschneidertes Worker-Profil ohne vorherigen Blueprint anlegen</p>
         </div>
         <button class="btn btn-sm" onclick="closeOneOffModal()">✕</button>
@@ -280,8 +252,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
               <option value="false">Aus</option>
             </select>
           </label>
-          <label>Maximale Tool-Runden (0 = unbegrenzt)<input id="worker-blueprint-turns" type="number" min="0" max="100" value="25" required></label>
-          <label>Pausenauslöser<select id="worker-blueprint-pause-basis"><option value="runs">Abgeschlossene Läufe</option><option value="tasks">Abgeschlossene Aufgaben</option></select></label>
+          <label>Maximale Tool-Runden (0 = unbegrenzt)<input id="worker-blueprint-turns" type="number" min="0" max="1000" value="25" required></label>
+          <label>Pausenauslöser<select id="worker-blueprint-pause-basis"><option value="none">Keine Pause</option><option value="runs">Abgeschlossene Läufe</option><option value="tasks">Abgeschlossene Aufgaben</option></select></label>
           <label>Pause nach Anzahl Auslöser<input id="worker-blueprint-pause-after" type="number" min="0" max="100" value="5" required></label>
           <label>Pausendauer (Minuten)<input id="worker-blueprint-pause-minutes" type="number" min="0" max="1440" value="1" required></label>
           <label>Automatischer Stopp nach (Minuten, 0 = unbegrenzt)<input id="worker-blueprint-ttl" type="number" min="0" max="1440" value="0"></label>
@@ -334,6 +306,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
   </dialog>
 
   <style>
+    .collapsible-section>summary{cursor:pointer}.section-description{display:block;margin-top:.25rem;font-size:.8rem;color:var(--text-muted)}.collapsible-section>summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px}.active-runs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1rem;margin:.6rem 0}.staffel-card{padding:.85rem;border:1px solid var(--border);border-radius:8px;background:var(--bg-card)}.staffel-card>summary{cursor:pointer;font-weight:600}.staffel-card p,.staffel-card ol{font-size:.82rem;margin:.6rem 0}.staffel-card ol{padding-left:1.2rem}.creation-actions{display:flex;gap:.5rem;flex-wrap:wrap}.hardware-torch .card-header{margin-bottom:.6rem}.hardware-torch .card-title{font-size:1rem}.hardware-torch .torch-intro{font-size:.76rem}.hardware-torch .torch-panel strong{font-size:.82rem}.hardware-torch .torch-panel p{font-size:.8rem;margin:.3rem 0}.hardware-torch .torch-panel small{font-size:.72rem}
+
     #core-agent-cards :global(.core-agent-card) {display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
     #core-agent-cards :global(.core-slot-header), #core-agent-cards :global(.core-slot-identity) {display:flex;align-items:center;gap:.65rem;justify-content:space-between}
     #core-agent-cards :global(.core-slot-identity) {justify-content:flex-start}
@@ -360,8 +334,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     .torch-panel, .core-agent-card { min-width: 0; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-dark); }
     .torch-panel p { margin: .5rem 0; overflow-wrap: anywhere; }
     .torch-panel small, .core-agent-card small { display: block; color: var(--text-muted); line-height: 1.4; overflow-wrap: anywhere; }
-    .torch-owner { display: flex; align-items: center; gap: 1rem; }
-    .torch-svg { width: 52px; height: 68px; flex: none; fill: none; stroke: var(--text-muted); stroke-width: 2px; opacity: .65; }
+    .torch-owner { display: flex; align-items: center; gap: .6rem; }
+    .torch-svg { width: 32px; height: 42px; flex: none; fill: none; stroke: var(--text-muted); stroke-width: 2px; opacity: .65; }
     .torch-svg .torch-flame-inner { display: none; }
     .torch-svg.is-owned { opacity: 1; stroke: #f97316; fill: #fbbf24; }
     .torch-svg.is-owned .torch-flame-inner { display: block; fill: #fef08a; stroke: #f97316; }
@@ -393,6 +367,11 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       .torch-svg.is-owned { animation: torch-glow 1.8s ease-in-out infinite alternate; }
       @keyframes torch-glow { from { filter: drop-shadow(0 0 2px #f97316); } to { filter: drop-shadow(0 0 12px #f97316); } }
     }
+    #template-agent-picker form { display:grid; gap:.85rem; }
+    #template-agent-picker header, #template-agent-picker footer { display:flex; align-items:center; justify-content:space-between; gap:.75rem; flex-wrap:wrap; }
+    #template-agent-picker label { display:grid; gap:.35rem; }
+    #template-agent-picker input, #template-agent-picker select { min-width:0; width:100%; padding:.65rem; border:1px solid var(--border); border-radius:5px; color:var(--text); background:var(--bg-dark); }
+    #template-agent-picker pre { max-height:15rem; overflow:auto; font-size:.8rem; }
   </style>
 
   <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';</script>
@@ -432,6 +411,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       document.getElementById('fackel-priority').textContent = 'Nicht geprüft';
       document.getElementById('fackel-compute').textContent = 'Nicht geprüft';
       document.getElementById('fackel-capacity').textContent = 'Nicht geprüft';
+      document.getElementById('compute-turn-status').textContent = 'Nicht geprüft';
+      document.getElementById('compute-turn-reason').textContent = 'Kein aktueller Turn-Nachweis.';
       document.getElementById('btn-toggle-fackel').disabled = true;
       document.getElementById('torch-observed-at').textContent = 'Nicht geprüft';
     }
@@ -472,6 +453,14 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           `Lockdatei meldet ${Number(lock.reported_jobs) || 0} Job(s); Identität nicht geprüft` :
           lock.state === 'none_reported' ? 'Frische Lockdatei meldet keine Jobs' :
           lock.state === 'stale' ? 'Status veraltet' : 'Nicht geprüft';
+        const turn = f.compute_turn;
+        const confirmedTurn = turn && turn.source === 'local_control_api' && typeof turn.active === 'boolean';
+        document.getElementById('compute-turn-status').textContent = confirmedTurn
+          ? (turn.active ? 'Inferenz läuft · ' + (turn.priority === 'foreground' ? 'Vordergrund' : turn.priority === 'background' ? 'Hintergrund' : 'Priorität unbekannt') : 'Kein aktiver Turn')
+          : 'Nicht geprüft';
+        document.getElementById('compute-turn-reason').textContent = confirmedTurn
+          ? (Number.isInteger(turn.foreground_waiters) && turn.foreground_waiters >= 0 ? turn.foreground_waiters + ' Vordergrundanfrage(n) warten.' : 'Wartende Anfragen nicht bestätigt.')
+          : 'Control-Adapter meldet keinen bestätigten Turn.';
         const cap = f.capacity;
         document.getElementById('fackel-capacity').textContent = cap.state === 'measured' ?
           `${Number(cap.loaded_model_count) || 0} geladene Modelle · ${Number(cap.occupied_units) || 0} Einheiten · ${Number(cap.used_gib) || 0} GiB` :
@@ -530,6 +519,29 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       return ['idle', 'ready', 'completed'].includes(agent.status) ? 'Ready · Living' : 'Status unbekannt';
     }
 
+    function renderRunningSystemSlots(agents) {
+      const target = document.getElementById('running-system-slots-list');
+      target.replaceChildren();
+      const active = agents.filter(agent => agent.runtime_verified === true && agent.running === true && !['starting','stopping'].includes(agent.status));
+      const unknown = agents.filter(agent => agent.runtime_verified !== true || typeof agent.running !== 'boolean');
+      const transitioning = agents.some(agent => ['starting','stopping'].includes(agent.status));
+      if (unknown.length) target.append(coreElement('p','Laufstatus unvollständig · ' + unknown.length + ' Systemslot(s) sind nicht bestätigt.','text-muted'));
+      if (!active.length) {
+        if (!unknown.length) target.append(coreElement('p', transitioning ? 'Systemslot startet oder beendet seinen Lauf.' : 'Kein Systemslot arbeitet derzeit an einem Lauf.','text-muted'));
+        return;
+      }
+      for (const agent of active) {
+        const card = coreElement('article',undefined,'core-agent-card');
+        card.dataset.runningSlot = agent.id;
+        card.append(coreElement('h3',agent.name || agent.id),coreElement('span','Running','badge'));
+        card.append(coreElement('p',agent.model || 'Modell nicht bestätigt'));
+        card.append(coreElement('small','Tool: ' + (agent.current_tool || '—') + ' · Runde: ' + (agent.tool_round ?? 0) + (agent.task_id ? ' · Task #' + agent.task_id : '')));
+        const chat = coreElement('a','Chat öffnen','btn btn-sm');chat.href='/chat?slot_id='+encodeURIComponent(agent.id);
+        const assign = coreElement('a','Aufgabe zuweisen','btn btn-sm');assign.href='/tasks?create=1&assign_slot='+encodeURIComponent(agent.id);
+        card.append(chat,assign);target.append(card);
+      }
+    }
+
     function coreField(card, field, labelText, value, type = 'text', options = [], backend = '') {
       const label = coreElement('label', labelText);
       let input;
@@ -554,7 +566,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         input.type = type;
         if (type === 'checkbox') input.checked = value === true;
         else input.value = value == null ? '' : String(value);
-        if (type === 'number') { input.min = field === 'max_tool_rounds' ? '0' : '1'; input.max = field === 'max_tool_rounds' ? '100' : '1440'; }
+        if (type === 'number') { input.min = '0'; input.max = field === 'max_tool_rounds' ? '1000' : '1440'; }
         if (type === 'text') input.maxLength = field === 'icon' ? 8 : 120;
         if (field === 'model' && backend === 'openrouter') input.setAttribute('list', 'openrouter-free-models');
       }
@@ -572,6 +584,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       coreConfigVersion = data.configuration_version;
       coreAgents = data.agents;
       coreCatalog = data;
+      renderRunningSystemSlots(coreAgents);
       const target = document.getElementById('core-agent-cards');
       target.replaceChildren();
       for (const agent of coreAgents) {
@@ -614,6 +627,9 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         const chat = coreElement('a', 'Chat öffnen', 'btn btn-sm');
         chat.href = '/chat?slot_id=' + encodeURIComponent(agent.id);
         actions.append(chat);
+        const assign = coreElement('a','Aufgabe zuweisen','btn btn-sm');
+        assign.href = '/tasks?create=1&assign_slot=' + encodeURIComponent(agent.id);
+        actions.append(assign);
         card.append(actions);
         target.append(card);
       }
@@ -637,6 +653,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       try { renderCoreAgents(await coreRequest('')); }
       catch (error) {
         coreConfigVersion = null;
+        document.getElementById('running-system-slots-list').replaceChildren(coreElement('p','Systemslot-Laufstatus nicht verfügbar.'));
         document.getElementById('core-agent-cards').replaceChildren(
           coreElement('p', 'System-Agenten nicht verfügbar: ' + error.message));
       }
@@ -662,12 +679,23 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         ['expert_role', 'boss_routing', 'task_worker', 'hintergrund_worker']);
       coreField(form, 'think', 'Denken', source.think, 'checkbox');
       coreField(form, 'allow_tools', 'Werkzeuge erlauben', source.allow_tools !== false, 'checkbox');
-      coreField(form, 'max_tool_rounds', 'Maximale Tool-Runden', source.max_tool_rounds, 'number');
+      coreField(form, 'max_tool_rounds', 'Maximale Tool-Runden (0 = unbegrenzt)', source.max_tool_rounds, 'number');
       coreField(form, 'pause_after', 'Pause nach', source.pause_after, 'number');
-      coreField(form, 'pause_basis', 'Pausen zählen', source.pause_basis, 'select',
-        [{value:'runs', label:'Läufe'}, {value:'tasks', label:'Tasks'}]);
+      coreField(form, 'pause_basis', 'Pausenauslöser', Number(source.pause_after ?? 5) === 0 ? 'none' : source.pause_basis, 'select',
+        [{value:'none', label:'Keine Pause'}, {value:'runs', label:'Läufe'}, {value:'tasks', label:'Aufgaben'}]);
       coreField(form, 'pause_minutes', 'Pausendauer (Minuten)', source.pause_minutes, 'number');
       coreField(form, 'include_system_prompt', 'Systemprompt einbinden', source.include_system_prompt !== false, 'checkbox');
+      const pauseBasis = form.querySelector('[data-core-field="pause_basis"]');
+      const syncPauseInputs = () => {
+        const disabled = pauseBasis.value === 'none';
+        for (const field of ['pause_after', 'pause_minutes']) {
+          const input = form.querySelector('[data-core-field="' + field + '"]');
+          input.disabled = disabled;
+          if (!disabled && Number(input.value) === 0) input.value = '1';
+        }
+      };
+      pauseBasis.addEventListener('change', syncPauseInputs);
+      syncPauseInputs();
       const templates = coreCatalog.prompt_templates || {system_default:'', roles:{}};
       for (const [field, label, defaultText] of [
         ['custom_system_prompt', 'Systemprompt', templates.system_default],
@@ -768,6 +796,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         let value = input.type === 'checkbox' ? input.checked : input.type === 'number' ? Number(input.value) : input.value;
         if (field.startsWith('custom_') && input.dataset.wasCustom !== 'true' && value === input.dataset.defaultText) value = '';
         if (!coreEditorAgent || value !== coreEditorAgent[field]) changes[field] = value;
+      }
+      if (form.querySelector('[data-core-field="pause_basis"]')?.value === 'none') {
+        delete changes.pause_basis;
+        changes.pause_after = 0;
       }
       const avatar = document.getElementById('core-slot-avatar').value;
       if (!coreEditorAgent || avatar !== coreEditorAgent.avatar) changes.avatar = avatar;
@@ -945,7 +977,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         } else {
           runningList.innerHTML = runningWorkers.map(w => {
             const toolRound = Number(w.tool_round) || 0;
-            const maxRounds = Number(w.max_tool_rounds) || 25;
+            const maxRounds = Number(w.max_tool_rounds ?? 25) === 0 ? 'unbegrenzt' : Number(w.max_tool_rounds ?? 25);
             return `
               <div class="core-agent-card" data-appearance-worker="${escapeHtml(w.id)}" data-worker-id="${escapeHtml(w.id)}" style="border-color:#38bdf8;background:rgba(56,189,248,0.04);">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
@@ -1141,103 +1173,24 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
     // ── STAFFELN BESEELEN ──
     async function loadStaffelnBeseelen() {
-      const container = document.getElementById('staffel-beseelen-container');
+      const container=document.getElementById('staffel-beseelen-container');
+      const opened = new Set([...container.querySelectorAll('details[open]')].map(node=>node.dataset.chain));
       try {
-        const res = await fetch('/api/marblerun/chains');
-        const data = await res.json();
-        const chains = data.chains || [];
-
-        if (chains.length === 0) {
-          container.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Keine Ketten vorhanden. Erstelle eine im Ketten-Editor!</p>';
-          return;
+        const res=await fetch('/api/marblerun/chains');if(!res.ok)throw new Error('HTTP '+res.status);
+        const data=await res.json();if(data.schema!=='bach.native-sequences.v1'||!Array.isArray(data.chains))throw new Error('Staffelantwort ungültig');
+        container.replaceChildren();
+        if(!data.chains.length){container.append(coreElement('p','Keine Staffeln vorhanden. Erstelle eine im Staffel-Editor.'));return;}
+        for(const chain of data.chains){
+          const card=coreElement('details',undefined,'staffel-card');card.dataset.chain=String(chain.id);card.open=opened.has(String(chain.id));
+          const steps=Array.isArray(chain.steps)?chain.steps:[];
+          const summary=coreElement('summary',(chain.title||chain.name||'Staffel')+' · '+steps.length+' Stationen');card.append(summary);
+          if(chain.description)card.append(coreElement('p',chain.description));
+          if(chain.legacy)card.append(coreElement('p','Älterer Entwurf · im Staffel-Editor in eine native Folge übernehmen.'));
+          const list=coreElement('ol');
+          for(const step of steps)list.append(coreElement('li',String(step.label||step.action||'Schritt')+(step.agent_slot?' · '+step.agent_slot:'')));
+          card.append(list);const edit=coreElement('a','Im Staffel-Editor öffnen','btn btn-sm');edit.href='/agenten/marblerun?edit='+encodeURIComponent(chain.id);card.append(edit);container.append(card);
         }
-
-        container.innerHTML = chains.map(c => {
-          let steps = [];
-          try { steps = typeof c.steps_json === 'string' ? JSON.parse(c.steps_json) : (c.steps || []); } catch(e) {}
-
-          return `
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem;">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
-                <strong style="color:var(--text);font-size:0.95rem;">⛓️ ${escapeHtml(c.title || c.name)}</strong>
-                <span class="badge badge-accent" style="font-size:0.7rem;">${steps.length} Stationen</span>
-              </div>
-              <p style="font-size:0.75rem;color:var(--text-muted);margin:0 0 0.6rem 0;">${escapeHtml(c.description || '')}</p>
-
-              <div style="display:flex;flex-direction:column;gap:0.4rem;background:var(--bg-dark);padding:0.6rem;border-radius:4px;border:1px solid var(--border);margin-bottom:0.6rem;">
-                ${steps.map(s => {
-                  const curMod = s.model || 'claude-3-7-sonnet';
-                  return `
-                    <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;">
-                      <span style="font-size:0.75rem;color:var(--text);">St. ${s.step}: <strong>${escapeHtml(s.action)}</strong></span>
-                      <select class="chain-step-model-select" data-chain="${c.id}" data-step="${s.step}" style="padding:0.2rem 0.4rem;font-size:0.72rem;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:4px;">
-                        ${AVAILABLE_MODELS.map(mod => `<option value="${mod.id}" ${mod.id === curMod ? 'selected' : ''}>${mod.label}</option>`).join('')}
-                      </select>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <button class="btn btn-sm" style="font-size:0.72rem;color:var(--error);" onclick="deleteStaffelFromRunning(${c.id})">🗑️ Löschen</button>
-                <div style="display:flex;gap:0.35rem;">
-                  <button class="btn btn-sm" style="font-size:0.72rem;" onclick="runStaffelChain(${c.id})">▶ Losschicken</button>
-                  <button class="btn btn-sm btn-primary" style="font-size:0.75rem;" onclick="saveStaffelBeseelung(${c.id})">
-                    ✨ Speichern
-                  </button>
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('');
-      } catch (e) {
-        container.innerHTML = `<p style="color:var(--error);font-size:0.8rem;">Fehler: ${e.message}</p>`;
-      }
-    }
-
-    async function saveStaffelBeseelung(chainId) {
-      const selects = document.querySelectorAll(`.chain-step-model-select[data-chain="${chainId}"]`);
-      const step_models = {};
-      selects.forEach(sel => {
-        const step = sel.getAttribute('data-step');
-        step_models[step] = sel.value;
-      });
-
-      try {
-        const res = await fetch(`/api/marblerun/chains/${chainId}/beseelen`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ step_models })
-        });
-        if (res.ok) {
-          alert('✨ Staffel-Beseelung erfolgreich gespeichert!');
-          loadStaffelnBeseelen();
-        } else {
-          alert('Fehler beim Speichern.');
-        }
-      } catch (e) {
-        alert('Netzwerkfehler: ' + e.message);
-      }
-    }
-
-    async function runStaffelChain(chainId) {
-      try {
-        const res = await fetch(`/api/marblerun/chains/${chainId}/run`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}' });
-        const data = await res.json();
-        alert(`Staffellauf gestartet! Run-ID: ${data.run_id || 'ok'}`);
-      } catch (e) {
-        alert('Fehler: ' + e.message);
-      }
-    }
-
-    async function deleteStaffelFromRunning(chainId) {
-      if (!confirm('Diese Staffel wirklich löschen?')) return;
-      try {
-        const res = await fetch(`/api/marblerun/chains/${chainId}`, { method: 'DELETE' });
-        if (res.ok) loadStaffelnBeseelen();
-      } catch (e) {
-        alert('Fehler: ' + e.message);
-      }
+      } catch(error){container.replaceChildren(coreElement('p','Staffeln nicht verfügbar: '+error.message));}
     }
 
     // ── LIVE-AKTIVITÄT & TIMELINE ──
@@ -1272,8 +1225,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       }
     }
 
-    function openPickupWerkstattModal() { location.assign('/agenten/blueprints?tab=templates'); }
-    function openPickupTeamModal() { location.assign('/agenten/blueprints?tab=teams'); }
+    function openPickupWerkstattModal() { window.BachTemplatePicker.open(); }
+    function openPickupTeamModal() { location.assign('/agenten/blueprints?tab=teams&create=team'); }
 
     // ── ONE-OFF MODAL & BLUEPRINT FORM ──
     async function openOneOffModal() {
@@ -1311,8 +1264,9 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         document.getElementById('worker-blueprint-mode').value = data.defaults.mode === 'safe' ? 'safe' : 'full';
         document.getElementById('worker-blueprint-think').value = data.defaults.think === true ? 'true' : 'false';
         document.getElementById('worker-blueprint-pause-after').value = data.defaults.pause_after ?? 5;
-        document.getElementById('worker-blueprint-pause-basis').value = data.defaults.pause_basis === 'tasks' ? 'tasks' : 'runs';
+        document.getElementById('worker-blueprint-pause-basis').value = Number(data.defaults.pause_after ?? 5) === 0 ? 'none' : data.defaults.pause_basis === 'tasks' ? 'tasks' : 'runs';
         document.getElementById('worker-blueprint-pause-minutes').value = data.defaults.pause_minutes ?? 1;
+        updateWorkerPauseFields();
         document.getElementById('worker-blueprint-run-mode').value = data.defaults.type === 'once' ? 'once' : 'continuous';
         document.getElementById('worker-blueprint-ttl').value = data.defaults.ttl_minutes ?? 0;
         document.getElementById('worker-blueprint-backend').value = data.defaults.backend || 'ollama-cloud';
@@ -1390,9 +1344,9 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         max_tool_rounds: Number(document.getElementById('worker-blueprint-turns').value),
         mode: document.getElementById('worker-blueprint-mode').value,
         think: document.getElementById('worker-blueprint-think').value === 'true',
-        pause_after: Number(document.getElementById('worker-blueprint-pause-after').value),
+        pause_after: document.getElementById('worker-blueprint-pause-basis').value === 'none' ? 0 : Number(document.getElementById('worker-blueprint-pause-after').value),
         pause_minutes: Number(document.getElementById('worker-blueprint-pause-minutes').value),
-        pause_basis: document.getElementById('worker-blueprint-pause-basis').value,
+        pause_basis: document.getElementById('worker-blueprint-pause-basis').value === 'tasks' ? 'tasks' : 'runs',
         type: runMode,
         ttl_minutes: runMode === 'continuous' ? ttlMinutes : 0,
         task_prompt: taskPrompt,
@@ -1443,6 +1397,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           const input=document.getElementById('worker-blueprint-'+id);
           if(input)input.value=config[field]!=null?String(config[field]):'';
         }
+        if (Number(config.pause_after ?? 0) === 0) document.getElementById('worker-blueprint-pause-basis').value = 'none';
+        updateWorkerPauseFields();
         for(const [field,id] of Object.entries({multi_role:'multi-role',include_system_prompt:'system-prompt',allow_tools:'allow-tools'}))
           document.getElementById('worker-blueprint-'+id).checked=config[field]===true;
         document.getElementById('worker-avatar').value=config.avatar||'';
@@ -1459,6 +1415,15 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         await loadWorkerBlueprintModels(config.model);
       } catch (e) {
         status.textContent = 'Ladefehler: ' + e.message;
+      }
+    }
+
+    function updateWorkerPauseFields() {
+      const disabled = document.getElementById('worker-blueprint-pause-basis').value === 'none';
+      for (const suffix of ['pause-after', 'pause-minutes']) {
+        const input = document.getElementById('worker-blueprint-' + suffix);
+        input.disabled = disabled;
+        if (!disabled && Number(input.value) === 0) input.value = '1';
       }
     }
 
@@ -1534,6 +1499,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       document.getElementById('worker-blueprint-backend')?.addEventListener('change', () => loadWorkerBlueprintModels());
       document.getElementById('worker-blueprint-sub-mode')?.addEventListener('change', updateWorkerCreationModeFields);
       document.getElementById('worker-blueprint-run-mode')?.addEventListener('change', updateWorkerRunModeFields);
+      document.getElementById('worker-blueprint-pause-basis')?.addEventListener('change', updateWorkerPauseFields);
       document.getElementById('worker-blueprint-multi-role')?.addEventListener('change', updateWorkerCreationModeFields);
       document.getElementById('worker-blueprint-form')?.addEventListener('submit', createWorkerFromBlueprint);
       refreshAll();
@@ -1543,4 +1509,21 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       setInterval(loadCoreSlots, 6000);
     });
   </script>
+  <dialog id="template-agent-picker" class="core-slot-modal">
+    <form id="template-agent-form">
+      <header><h2>Agent aus Vorlage zusammenstellen</h2><button type="button" class="btn" onclick="document.getElementById('template-agent-picker').close()">Schließen</button></header>
+      <label>Vorlage oder Blueprint<select id="template-agent-blueprint" required></select></label>
+      <p id="template-agent-summary" style="white-space:pre-wrap;"></p>
+      <details><summary>Rollenprompt und Fähigkeiten prüfen</summary><pre id="template-agent-prompt" style="white-space:pre-wrap;overflow-wrap:anywhere;"></pre></details>
+      <label>Anbieter<select id="template-agent-backend" required></select></label>
+      <label>Modell<input id="template-agent-model" list="template-agent-models" required autocomplete="off" /></label><datalist id="template-agent-models"></datalist>
+      <label>Arbeitsmodus<select id="template-agent-mode"><option value="safe">Safe</option><option value="full">Full</option></select></label>
+      <p id="template-agent-status" role="status" aria-live="polite"></p>
+      <footer><button id="template-agent-refresh" type="button" class="btn">Auswahl neu laden</button><button id="template-agent-save" type="submit" class="btn btn-primary" disabled>Als Agent übernehmen</button></footer>
+    </form>
+  </dialog>
 </BachLayout>
+
+<script>
+  import "../../scripts/agent-template-picker.mjs";
+</script>

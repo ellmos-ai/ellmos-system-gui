@@ -124,7 +124,7 @@
     "children": [
       {
         "href": "/agenten/blueprints",
-        "label": "Blueprints (Vorlagen)",
+        "label": "Agenten-Werkstatt",
         "icon": "📐",
         "description": "Vorlagen-Bibliothek: Agenten, Rollen, Workflows, Services & Contractus"
       },
@@ -142,15 +142,15 @@
       },
       {
         "href": "/agenten/sessions",
-        "label": "Sessions & Protokolle",
+        "label": "Verlauf · Chats & Läufe",
         "icon": "📜",
-        "description": "Rohberichte und strukturierte Zusammenfassungen"
+        "description": "Agenten-Chats, Task-Läufe und Session-Protokolle"
       },
       {
-        "href": "/messages",
-        "label": "Messages (User Inbox)",
+        "href": "/user-inbox",
+        "label": "Inbox",
         "icon": "✉️",
-        "description": "Direktnachrichten von Agenten an dich"
+        "description": "Nachrichten an dich"
       },
       {
         "href": "/memory",

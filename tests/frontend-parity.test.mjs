@@ -9,9 +9,9 @@ const page=read('src/pages/agenten/running.astro');
 const start=page.indexOf('function workerReadiness('),end=page.indexOf('async function loadBackgroundWorkers(',start);
 const readiness=vm.runInNewContext('('+page.slice(start,end).trim()+')');
 function paths(directory){return readdirSync(directory,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?paths(new URL(entry.name+'/',directory)):[new URL(entry.name,directory)]);}
-test('all twenty-one productive pages, including the five separate capability boards, are present',()=>{
-  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,21);
-  for(const path of ['agenten/blueprints','skills/plugins','skills/mcp','skills/software','skills/ocean'])assert.ok(read('src/pages/'+path+'.astro'));
+test('all twenty-two productive pages, including the five separate capability boards, are present',()=>{
+  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,22);
+  for(const path of ['user-inbox','agenten/blueprints','skills/plugins','skills/mcp','skills/software','skills/ocean'])assert.ok(read('src/pages/'+path+'.astro'));
 });
 test('the shared branding contract and bundled same-origin authentication stay intact',()=>{
   assert.match(read('src/components/Header.astro'),/\/api\/gui\/brand/);
@@ -19,7 +19,7 @@ test('the shared branding contract and bundled same-origin authentication stay i
   assert.doesNotMatch(read('src/layouts/BachLayout.astro'),/src="\/static\/js\/device-fetch\.js"/);
 });
 test('Idle readiness and activity are never supplied by fixed success text',()=>{
-  assert.match(page,/<p id="idle-wakeup-status">Nicht geprüft<\/p>/);
+  assert.match(page,/<p id="compute-turn-status">Nicht geprüft<\/p>/);
   assert.doesNotMatch(page,/Aktiv \(Bereit\)/);
   assert.match(page,/data\.schema !== 'bach\.workers\.status\.v1'/);
 });
@@ -42,7 +42,7 @@ test('every recorded imported file matches its final working source hash',()=>{
 });
 
 test('verified core errors and unknown states never become ready',()=>{
-  const start=page.indexOf('function coreAgentLabel('),end=page.indexOf('function coreField(',start);
+  const start=page.indexOf('function coreAgentLabel('),end=page.indexOf('function renderRunningSystemSlots(',start);
   const label=vm.runInNewContext('('+page.slice(start,end).trim()+')');
   const base={runtime_verified:true,enabled:true,backend:'ollama',model:'synthetic-local'};
   assert.equal(label({...base,status:'error'}),'Fehler · Status prüfen');
