@@ -32,3 +32,12 @@ test('filled actions use their foreground while underlined tabs retain the accen
  const settings=fs.readFileSync(new URL('../src/pages/settings.astro',import.meta.url),'utf8');
  assert.ok(/\.tab-btn\.active\s*\{[^}]*background:\s*var\(--accent\);[^}]*color:\s*var\(--on-accent\)/.test(settings));
 });
+
+test('the final primary hover rule overrides the generic button hover foreground',()=>{
+ const primary=css.lastIndexOf('\n.btn-primary:hover {');
+ assert.ok(primary>css.lastIndexOf('.btn:hover {'));
+ const body=css.slice(primary).split('}')[0];
+ assert.ok(body.includes('color: var(--on-accent);'));
+ assert.ok(css.includes('[data-theme="colorful"] .btn-primary:hover,'));
+ assert.ok(css.includes('[data-theme="custom"] .btn-primary:hover { color: #fff; }'));
+});

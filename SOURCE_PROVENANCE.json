@@ -59,7 +59,7 @@
     "src/pages/tasks.astro": "e09fef8f440ef91328dab4e9e7e69349285b5097a398a70460098cd28bf135d1",
     "src/scripts/blueprint-studio.mjs": "736857b5f8f657abae6886ea384a8a801210d56dfa1947c044995a4787708b88",
     "src/styles/agent-avatars.css": "fd3aaaea7ad084ed8b2eb585a3309ac6b5f7cf69a986104ea86b000ed2b64501",
-    "src/styles/main.css": "d95bee1e2dcabbc62ef8e485d06f3576900124c8c10de3cb79aaf716b269530c",
+    "src/styles/main.css": "0db8332c26210e95bda13e3a94ee085d4b421ef184a6f59af60efba4f8e81a40",
     "src/styles/ticket-symbols.css": "41cb91fd4b9a84b340cfa9123727ccdb892d5a70266d6329a1b24f5e3cedb057",
     "tests/agent-avatar.test.mjs": "c33b7193379a77f4c800e385b35e54abe8f603d2f3df25b7623844aa8295f6dc",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
@@ -80,7 +80,7 @@
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
     "package.json": "10de53b3758ceab8f08c063722af95a53ee3affba8cd632118e677181062420c",
     "package-lock.json": "a1c831955034d7ab2f6a3c6d323b02d4b54fdeceb9e00eeb81e9b77fcc3b9a7b",
-    "tests/readable-themes.test.mjs": "e62f4f6e3cf18fb354de192d2f5bf937e550230c94985efce80cd54eee4d6e54",
+    "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
     "ellmos-module.v2.json": "df24f9c80d112c6bac827585557680cba4d8afa17c97e25dcf0b748cec8e53a4"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
@@ -438,7 +438,7 @@
         "src/styles/main.css": {
           "source_path": "system/gui/web/src/styles/main.css",
           "source_sha256": "5b603834c336eee5c068ce3673ddb5a747d6092d62d01e73e8c9365cfe94c9b4",
-          "imported_sha256": "d95bee1e2dcabbc62ef8e485d06f3576900124c8c10de3cb79aaf716b269530c",
+          "imported_sha256": "0db8332c26210e95bda13e3a94ee085d4b421ef184a6f59af60efba4f8e81a40",
           "adapted": true
         },
         "src/styles/ticket-symbols.css": {

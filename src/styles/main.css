@@ -1403,6 +1403,7 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
 
 .btn-primary:hover {
     background: var(--accent-light);
+    color: var(--on-accent);
     border-color: var(--accent-light);
 }
 
@@ -1424,3 +1425,7 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
 
 /* Keep active navigation labels legible on the theme accent. */
 .nav-item.active { color: var(--on-accent); }
+
+/* Preserve the existing foreground of custom gradient actions in hover. */
+[data-theme="colorful"] .btn-primary:hover,
+[data-theme="custom"] .btn-primary:hover { color: #fff; }
