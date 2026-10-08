@@ -13,3 +13,5 @@ release/
 *.tar.gz
 .env
 .env.*
+
+.npm-cache/

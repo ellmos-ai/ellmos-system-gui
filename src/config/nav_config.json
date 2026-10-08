@@ -123,16 +123,22 @@
     "icon": "🤖",
     "children": [
       {
-        "href": "/agenten/fabrika",
-        "label": "Agenten-Fabrik",
-        "icon": "🏭",
-        "description": "Baukasten: Einzelagenten, Teambuilding (Swarm) & Ketten-Staffel"
+        "href": "/agenten/blueprints",
+        "label": "Blueprints (Vorlagen)",
+        "icon": "📐",
+        "description": "Vorlagen-Bibliothek: Agenten, Rollen, Workflows, Services & Contractus"
       },
       {
         "href": "/agenten/running",
         "label": "Living & Running",
         "icon": "⚡",
         "description": "Aktive Instanzen, Beseelungen und Health"
+      },
+      {
+        "href": "/agenten/marblerun",
+        "label": "Ketten · MarbleRun",
+        "icon": "⛓️",
+        "description": "Agentenübergaben und Skills in geordneter Folge"
       },
       {
         "href": "/agenten/sessions",
@@ -147,22 +153,47 @@
         "description": "Direktnachrichten von Agenten an dich"
       },
       {
-        "href": "/agents-board",
-        "label": "Agents-Board (Skill-Katalog)",
-        "icon": "📊",
-        "description": "Aufgabenzuweisung & Gesamtübersicht aller 388+ Skills"
-      },
-      {
-        "href": "/skills",
-        "label": "Skill- & Tool-Center",
-        "icon": "🔌",
-        "description": "Steckdosenleiste, MCP Cookbooks & Rollback"
-      },
-      {
         "href": "/memory",
         "label": "Memory",
         "icon": "🧠",
         "description": "Kognitiver Schaltplan, Arbeitsgedächtnis & Wissens-Inspektor"
+      }
+    ]
+  },
+  {
+    "id": "skills",
+    "label": "Skills & Software",
+    "icon": "🔌",
+    "children": [
+      {
+        "href": "/skills/plugins",
+        "label": "Plugins",
+        "icon": "🔌",
+        "description": "Plugin-Quellen und Client-Einstellungen"
+      },
+      {
+        "href": "/skills/mcp",
+        "label": "MCP-Connections",
+        "icon": "📚",
+        "description": "Serverkonfiguration und Rezeptbibliothek"
+      },
+      {
+        "href": "/skills",
+        "label": "Skill-Zentrale",
+        "icon": "📜",
+        "description": "Aktuelle Anleitungen bearbeiten und frühere Fassungen laden"
+      },
+      {
+        "href": "/skills/software",
+        "label": "Software",
+        "icon": "💻",
+        "description": "Vorhandene Software und Module"
+      },
+      {
+        "href": "/agents-board",
+        "label": "Agents-Board",
+        "icon": "📊",
+        "description": "Bisheriger Hierarchie-Editor"
       }
     ]
   },

@@ -1,6 +1,10 @@
 ---
-// running.astro - Living & Running: Status Cockpit, Beseelung von Teams & Staffeln, Core Slots & Live Aktivitäten
+// running.astro - Living & Running: Einsatzbereite Agenten, Teams, Running Slots & Konnektivität
 import BachLayout from "../../layouts/BachLayout.astro";
+import portraitAtlas from '../../assets/agent-portraits.png';
+import '../../styles/agent-avatars.css';
+import '../../styles/ticket-symbols.css';
+import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 ---
 
 <BachLayout title="Living & Running" currentPath="/agenten/running">
@@ -10,13 +14,16 @@ import BachLayout from "../../layouts/BachLayout.astro";
         ⚡ Living & Running
       </h1>
       <p style="color:var(--text-muted);font-size:0.875rem;">
-        Agentenprofile, Teams & Staffeln • Compute-Vorrang • Core-Slots & Live-Aktivitäten
+        Einsatzbereite Agenten, Teams & Ketten • Systemslots & Running Agents • Hardware-Vorrang & Konnektivität
       </p>
     </div>
 
-    <div style="display:flex;gap:0.5rem;align-items:center;">
-      <a href="/agenten/fabrika" class="btn">
-        <span>🏭</span> Zur Agenten-Fabrik
+    <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+      <a href="/agenten/blueprints?new=1" class="btn">
+        <span>＋</span> Blueprint anlegen
+      </a>
+      <a href="/agenten/blueprints" class="btn">
+        <span>📐</span> Zu den Blueprints
       </a>
       <button class="btn btn-primary" onclick="refreshAll(true)">
         <span>🔄</span> Jetzt aktualisieren
@@ -24,12 +31,32 @@ import BachLayout from "../../layouts/BachLayout.astro";
     </div>
   </div>
 
-  <!-- Hardwarebeobachtung steht vor den Agentenkarten. Vorrang ist kein Besitz. -->
-  <section class="card hardware-torch" aria-labelledby="hardware-torch-title">
+  <!-- 1. DUAL ACTIONS HUB (ZWEI MÖGLICHKEITEN) -->
+  <section class="card dual-actions-card" style="margin-bottom:1.5rem;padding:1.25rem;background:linear-gradient(135deg, rgba(30,41,59,0.7) 0%, rgba(15,23,42,0.85) 100%);border:1px solid var(--border);">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h2 style="font-size:1.2rem;font-weight:700;margin:0 0 0.25rem 0;">🚀 Agenten & Teams in Betrieb nehmen</h2>
+        <p style="font-size:0.825rem;color:var(--text-muted);margin:0;">
+          Vorlage übernehmen oder einen eigenen Blueprint mit Rolle, Skills und Modell anlegen.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="openPickupWerkstattModal()">
+          <span>🏭</span> Vorlage auswählen
+        </button>
+        <button class="btn" style="background:var(--bg-dark);border-color:var(--accent);" onclick="openOneOffModal()">
+          <span>✨</span> Eigene Einzelanfertigung erstellen
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. HARDWARE-FACKEL & COMPUTE-VORRANG & KONNEKTIVITÄT -->
+  <section class="card hardware-torch" aria-labelledby="hardware-torch-title" style="margin-bottom:1.5rem;">
     <div class="card-header">
       <div>
-        <h2 class="card-title" id="hardware-torch-title">Hardware-Fackel & Compute-Vorrang</h2>
-        <p class="torch-intro">Besitz, Vorrang, Compute-Meldung und Ollama-Belegung sind getrennte Nachweise.</p>
+        <h2 class="card-title" id="hardware-torch-title">Hardware-Fackel, Compute-Vorrang & Konnektivität</h2>
+        <p class="torch-intro">Besitz, Vorrang, Compute-Meldung, Ollama-Cloud & OpenRouter Free Tier Anbindung</p>
       </div>
       <span class="badge" id="torch-observed-at">Nicht geprüft</span>
     </div>
@@ -50,82 +77,131 @@ import BachLayout from "../../layouts/BachLayout.astro";
         <strong>Compute-Vorrang</strong>
         <p id="fackel-priority">Nicht geprüft</p>
         <button id="btn-toggle-fackel" class="btn btn-sm" type="button" onclick="toggleFackel()" disabled>Vorrang ändern</button>
-        <small>Diese Einstellung erwirbt keine Fackel und startet keinen Agenten.</small>
+        <small>Einstellung ändert die Bevorzugung zwischen Compute und Ollama.</small>
       </div>
       <div class="torch-panel">
-        <strong>Compute-Lock</strong>
-        <p id="fackel-compute">Nicht geprüft</p>
-        <small>Eine Meldung über Rechenjobs ist kein Besitznachweis.</small>
+        <strong>Idle- & Aufwachfunktion</strong>
+        <p id="idle-wakeup-status">Nicht geprüft</p>
+        <small>Der Backendadapter hat die Aufwachbereitschaft noch nicht bestätigt.</small>
       </div>
       <div class="torch-panel">
         <strong>Ollama-Kapazität</strong>
         <p id="fackel-capacity">Nicht geprüft</p>
-        <small>Geladene Modelle und belegte Einheiten sind kein globaler GPU-Zähler.</small>
+        <small id="fackel-compute">Geladene Einheiten & Hostverbindung.</small>
       </div>
     </div>
     <p id="fackel-feedback" class="torch-feedback" role="status" aria-live="polite"></p>
   </section>
 
-  <div class="card" style="margin-bottom:1.5rem;">
-    <div class="card-header"><h2 class="card-title">Verifizierte Agentenprofile</h2></div>
-    <p style="font-size:0.8rem;color:var(--text-muted);">Der Chat prüft Profil, Sitzung und Backend vor dem Senden. Start und Stopp eines Agentenprozesses sind hier derzeit nicht freigegeben.</p>
-    <div id="trusted-profile-list" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.75rem;" role="status">Profile werden geprüft…</div>
-  </div>
-
-  <!-- 2. TEAMS BESEELEn (SWARM-AI) & AGENTEN-STAFFELN (MARBLERUN) BESEELEn -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;align-items:start;">
-    <!-- TEAMS BESEELEN -->
-    <div class="card" id="teams">
-      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <h2 class="card-title">👥 Teams Beseelen (Swarm-AI)</h2>
-          <p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0 0 0;">
-            Mitglieder mit Modellen ausstatten (Claude, Gemini, Codex, Ollama)
-          </p>
-        </div>
-        <a href="/agenten/fabrika" class="btn btn-sm">+ Neues Team</a>
+  <!-- 3. ANSICHT: EINSATZBEREITE FERTIGE AGENTEN (LIVING / READY) -->
+  <section class="card" style="margin-bottom:1.5rem;" aria-labelledby="ready-agents-title">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+      <div>
+        <h2 class="card-title" id="ready-agents-title">✨ Einsatzbereite fertige Agenten (Living / Ready)</h2>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin:0.2rem 0 0 0;">
+          Konfigurierte Agentenprofile in Ruhestellung • Aktionen: Bearbeiten, Löschen, Losschicken (Start), Pausieren
+        </p>
       </div>
-      <div id="teams-beseelen-container" style="display:flex;flex-direction:column;gap:1rem;margin-top:1rem;">
-        <p class="loading-state">Lade konfigurierte Teams...</p>
-      </div>
+      <button class="btn btn-sm" onclick="loadBackgroundWorkers()">Neu prüfen</button>
     </div>
-
-    <!-- AGENTEN-STAFFELN (MARBLERUN) BESEELEN -->
-    <div class="card" id="staffeln">
-      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <h2 class="card-title">⛓️ Agenten-Staffel (MarbleRun) Beseelen</h2>
-          <p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0 0 0;">
-            Stations-Gliedern der Ketten dedizierte Modelle und Backends zuweisen
-          </p>
-        </div>
-        <a href="/agenten/marblerun" class="btn btn-sm">Ketten-Editor ↗</a>
-      </div>
-      <div id="staffel-beseelen-container" style="display:flex;flex-direction:column;gap:1rem;margin-top:1rem;">
-        <p class="loading-state">Lade Agenten-Staffeln...</p>
-      </div>
+    <p id="worker-status-summary" role="status" aria-live="polite" style="font-size:0.8rem;color:var(--text-muted);margin:0.5rem 0 1rem 0;">Workerstatus wird geprüft…</p>
+    <div id="ready-agents-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:1rem;">
+      <p class="loading-state" style="grid-column:1/-1;text-align:center;padding:2rem;">Prüfe einsatzbereite Agenten…</p>
     </div>
-  </div>
-
-  <!-- Drei feste System-Agenten, direkt aus der vorhandenen Control-Konfiguration. -->
-  <section class="card" aria-labelledby="core-agents-title">
-    <div class="card-header">
-      <h2 class="card-title" id="core-agents-title">System-Agenten</h2>
-      <span class="badge badge-accent">Drei feste technische IDs</span>
-    </div>
-    <p class="core-explanation">Buddha Chat, Always-On und Connector verwenden die bestehende Slot-Konfiguration. Speichern ändert Einstellungen; Living und Running erfordern eigene Laufzeitnachweise.</p>
-    <div id="core-agent-feedback" role="status" aria-live="polite"></div>
-    <div id="core-agent-cards" class="core-grid"><p class="loading-state">System-Agenten werden geprüft…</p></div>
   </section>
 
-  <!-- 4. LIVE-AKTIVITÄT & WORKER TIMELINE -->
-  <div class="card">
-    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
-      <h2 class="card-title">📊 Live-Aktivitätsanzeige & Verlauf (Timeline)</h2>
-      <button class="btn btn-sm" onclick="refreshActivity()">Neu laden</button>
+  <!-- 4. ANSICHT: EINSATZBEREITE FERTIGE TEAMS & KETTEN -->
+  <section class="card" style="margin-bottom:1.5rem;">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+      <div>
+        <h2 class="card-title">👥 Einsatzbereite fertige Teams & Ketten/Staffeln</h2>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin:0.2rem 0 0 0;">
+          Kollaborative Multi-Agenten-Teams (Swarm-AI) und sequenzielle Staffeln (MarbleRun)
+        </p>
+      </div>
+      <div style="display:flex;gap:0.4rem;">
+        <button class="btn btn-sm" onclick="loadTeamsBeseelen(); loadStaffelnBeseelen();">Aktualisieren</button>
+      </div>
     </div>
 
-    <div style="overflow-x:auto;margin-top:0.75rem;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:1.5rem;margin-top:1rem;align-items:start;">
+      <!-- TEAMS BESEELEN -->
+      <div class="card" id="teams" style="background:var(--bg-dark);border:1px solid var(--border);">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <h3 style="font-size:1.05rem;font-weight:700;margin:0;">👥 Teams (Swarm-AI)</h3>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin:0.15rem 0 0 0;">
+              Mitglieder mit Modellen ausstatten & starten
+            </p>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openPickupTeamModal()">+ Team abholen</button>
+        </div>
+        <div id="teams-beseelen-container" style="display:flex;flex-direction:column;gap:1rem;margin-top:0.75rem;">
+          <p class="loading-state">Lade konfigurierte Teams...</p>
+        </div>
+      </div>
+
+      <!-- AGENTEN-STAFFELN (MARBLERUN) BESEELEN -->
+      <div class="card" id="staffeln" style="background:var(--bg-dark);border:1px solid var(--border);">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <h3 style="font-size:1.05rem;font-weight:700;margin:0;">⛓️ Agenten-Staffeln (MarbleRun)</h3>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin:0.15rem 0 0 0;">
+              Stations-Gliedern Modelle zuweisen & Ketten ausführen
+            </p>
+          </div>
+          <a href="/agenten/marblerun" class="btn btn-sm">Ketten-Editor ↗</a>
+        </div>
+        <div id="staffel-beseelen-container" style="display:flex;flex-direction:column;gap:1rem;margin-top:0.75rem;">
+          <p class="loading-state">Lade Agenten-Staffeln...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. ANSICHT: RUNNING AGENTS & SYSTEMSLOTS -->
+  <section class="card" aria-labelledby="core-agents-title" style="margin-bottom:1.5rem;">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+      <div>
+        <h2 class="card-title" id="core-agents-title">⚡ Running Agents: Systemslots & Aktive Läufe</h2>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin:0.2rem 0 0 0;">
+          Status und Besetzung der Systemsteckplätze sowie dynamisch aktive Worker
+        </p>
+      </div>
+      <span class="badge badge-accent">Systemagenten + eigene Steckplätze</span>
+    </div>
+
+    <!-- Systemsteckplätze (Persönlicher Assistent, Hintergrundworker, Connector, Erweiterungsplatz) -->
+    <div style="margin:1rem 0;">
+      <h3 style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">
+        Besetzung der System-Steckplätze:
+      </h3>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
+        Jeder Steckplatz kann einen Chat führen. Boss- und Expertenrollen lassen sich als eigene Steckplätze anlegen. Lokale Modelle teilen eine Inferenz; der Vordergrund hat Vorrang.
+      </p>
+
+      <div id="core-agent-feedback" role="status" aria-live="polite"></div>
+      <div id="core-agent-cards" class="core-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;">
+        <p class="loading-state">System-Agenten werden geprüft…</p>
+      </div>
+    </div>
+
+    <!-- Dynamisch laufende Worker (Running Agents) -->
+    <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);">
+      <h3 style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">
+        Weitere Agenten (Aktive Läufe):
+      </h3>
+      <div id="running-workers-list" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;">
+        <p style="grid-column:1/-1;color:var(--text-muted);font-size:0.85rem;">Prüfe aktive Läufe…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. VERLAUF SESSIONS & LÄUFE (TIMELINE) -->
+  <details class="card" id="activity-timeline" style="margin-bottom:1.5rem;">
+    <summary class="card-header" style="cursor:pointer;">📜 Verlauf: Sessions & Task-Läufe <span id="activity-count" class="badge">Wird geladen</span></summary>
+    <button class="btn btn-sm" type="button" onclick="refreshActivity()">Neu laden</button>
+    <div style="overflow:auto;max-height:420px;margin-top:0.75rem;">
       <table class="data-table" style="width:100%;">
         <thead>
           <tr>
@@ -141,9 +217,143 @@ import BachLayout from "../../layouts/BachLayout.astro";
         </tbody>
       </table>
     </div>
+  </details>
+
+  <!-- 7. OPENROUTER FREE TIER KATALOG -->
+  <section class="card" aria-labelledby="openrouter-title" style="margin-bottom:1.5rem;">
+    <div class="card-header">
+      <h2 class="card-title" id="openrouter-title">OpenRouter · kostenlose Modelle (Free Tier)</h2>
+      <span class="badge" id="openrouter-credential-state">Wird geprüft</span>
+    </div>
+    <p class="core-explanation">
+      <code>openrouter/free</code> wird unverändert an OpenRouter gesendet. Die Liste zeigt nur den kostenlosen Router
+      und Modelle, deren Ein- und Ausgabepreise null sind.
+    </p>
+    <datalist id="openrouter-free-models"></datalist>
+    <p id="openrouter-catalog-state" role="status" aria-live="polite">Modellkatalog wird geladen…</p>
+    <div id="openrouter-model-list" class="openrouter-model-list" role="list"></div>
+  </section>
+
+  <!-- POP-UP MODAL 2: EIGENE EINZELANFERTIGUNG (ONE-OFF) -->
+  <div id="modal-create-oneoff" class="modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
+    <div class="card" style="max-width:700px;width:94%;margin:auto;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 15px 35px rgba(0,0,0,0.6);">
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <h2 class="card-title" style="margin:0;">✨ Eigene Einzelanfertigung erstellen</h2>
+          <p style="font-size:0.75rem;color:var(--text-muted);margin:0.2rem 0 0 0;">Maßgeschneidertes Worker-Profil ohne vorherigen Blueprint anlegen</p>
+        </div>
+        <button class="btn btn-sm" onclick="closeOneOffModal()">✕</button>
+      </div>
+
+      <div style="padding:1.25rem;overflow-y:auto;flex:1;">
+        <p id="worker-blueprint-description" class="worker-control-note">Vorlage wird aus der BACH-Rollendefinition geladen…</p>
+        <form id="worker-blueprint-form" class="worker-blueprint-form">
+          <details><summary>Bild & Symbol</summary>
+            <input id="worker-avatar" type="hidden" /><input id="worker-symbol" type="hidden" />
+            <div id="worker-avatar-preview"></div><div id="worker-avatar-presets" class="avatar-preset-picker"></div>
+            <label>Eigenes Bild (PNG, JPEG oder WebP bis 180 KB)<input id="worker-avatar-upload" type="file" accept="image/png,image/jpeg,image/webp" onchange="uploadWorkerAvatar(this.files[0])" /></label>
+            <div id="worker-symbols" class="symbol-picker"></div>
+            <p id="worker-skill-state" role="status"></p>
+            <button type="button" class="btn btn-sm" id="worker-refresh-skills" disabled onclick="refreshWorkerSkills()">Gebundene Skills auf aktuelle Fassung setzen</button>
+          </details>
+          <label>Anzeigename<input id="worker-blueprint-name" type="text" maxlength="120" value="BACH Hintergrundworker" required></label>
+          <label>Worker-Modus<select id="worker-blueprint-sub-mode" required disabled><option value="">Modi werden geladen…</option></select></label>
+          <label>Ausführung<select id="worker-blueprint-run-mode"><option value="continuous">Fortlaufend bis Stopp</option><option value="once">Einzellauf</option></select></label>
+          <label>Task-ID (optional)<input id="worker-blueprint-task-id" type="number" min="1" max="2147483647" inputmode="numeric" placeholder="Für einen gezielten Auftrag"></label>
+          <label>Backend
+            <select id="worker-blueprint-backend">
+              <option value="ollama-cloud">Ollama Cloud</option>
+              <option value="openrouter">OpenRouter · kostenlos</option>
+              <option value="ollama">Ollama lokal</option>
+            </select>
+          </label>
+          <label>Modell<select id="worker-blueprint-model" required disabled><option value="">Modellkatalog wird geladen…</option></select></label>
+          <label>Arbeitsmodus
+            <select id="worker-blueprint-mode">
+              <option value="safe">Sicher</option>
+              <option value="full">Voller Modus</option>
+            </select>
+          </label>
+          <label>Think
+            <select id="worker-blueprint-think">
+              <option value="true">Aktiv</option>
+              <option value="false">Aus</option>
+            </select>
+          </label>
+          <label>Maximale Tool-Runden (0 = unbegrenzt)<input id="worker-blueprint-turns" type="number" min="0" max="100" value="25" required></label>
+          <label>Pausenauslöser<select id="worker-blueprint-pause-basis"><option value="runs">Abgeschlossene Läufe</option><option value="tasks">Abgeschlossene Aufgaben</option></select></label>
+          <label>Pause nach Anzahl Auslöser<input id="worker-blueprint-pause-after" type="number" min="0" max="100" value="5" required></label>
+          <label>Pausendauer (Minuten)<input id="worker-blueprint-pause-minutes" type="number" min="0" max="1440" value="1" required></label>
+          <label>Automatischer Stopp nach (Minuten, 0 = unbegrenzt)<input id="worker-blueprint-ttl" type="number" min="0" max="1440" value="0"></label>
+          <div id="worker-blueprint-expert-fields" class="worker-blueprint-extra" hidden>
+            <label>Fachrolle<select id="worker-blueprint-role" disabled><option value="">Rollen werden geladen…</option></select></label>
+            <label class="worker-blueprint-check"><input id="worker-blueprint-multi-role" type="checkbox"> Flexibler Expertenrollen-Pool</label>
+          </div>
+          <div id="worker-blueprint-boss-fields" class="worker-blueprint-extra" hidden>
+            <label>Maximale Unter-Experten<input id="worker-blueprint-max-experts" type="number" min="1" max="10" value="3" required></label>
+            <label>Modellzuordnung je Experte (JSON, optional)<textarea id="worker-blueprint-expert-models" rows="2" maxlength="2000" placeholder='{"entwickler":"Modell-ID aus dem Katalog"}'></textarea></label>
+          </div>
+          <label class="worker-blueprint-prompt">Zusatzauftrag (optional)<textarea id="worker-blueprint-task-prompt" rows="3" maxlength="20000" placeholder="Leer lassen: Der Worker sucht nach dem Start eine offene BACH-Aufgabe."></textarea></label>
+          <label class="worker-blueprint-check"><input id="worker-blueprint-system-prompt" type="checkbox" checked> BACH-Systemprompt einbinden</label>
+          <label class="worker-blueprint-check"><input id="worker-blueprint-allow-tools" type="checkbox" checked> Werkzeuge erlauben</label>
+          <div class="worker-blueprint-submit">
+            <small id="worker-blueprint-model-status" role="status" aria-live="polite">Modellquelle wird geprüft…</small>
+            <div style="display:flex;gap:0.5rem;">
+              <button class="btn" id="worker-blueprint-cancel-edit" type="button" onclick="closeOneOffModal()">Schließen</button>
+              <button class="btn btn-primary" id="worker-blueprint-create" type="submit" disabled>Blueprint als Living-Profil anlegen</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
+  <dialog id="core-slot-editor" class="core-slot-modal" data-portrait-atlas={portraitAtlas.src} data-ticket-symbols={JSON.stringify(TICKET_SYMBOL_URLS)}>
+    <form onsubmit="event.preventDefault();saveCoreSlot()">
+      <header style="display:flex;justify-content:space-between;align-items:center;gap:1rem">
+        <h2 id="core-slot-title">Steckplatz bearbeiten</h2>
+        <button type="button" class="btn btn-sm" onclick="document.getElementById('core-slot-editor').close()" aria-label="Schließen">✕</button>
+      </header>
+      <div id="core-slot-fields" class="core-fields"></div>
+      <input type="hidden" id="core-slot-symbol" />
+      <label>Symbol aus Ticket-Master<div id="core-slot-symbols" class="symbol-picker"></div></label>
+      <label>Agentenbild
+        <input id="core-slot-avatar-file" type="file" accept="image/png,image/jpeg,image/webp" onchange="uploadCoreAvatar(this.files[0])" />
+      </label>
+      <input id="core-slot-avatar" type="hidden" />
+      <div id="core-slot-avatar-preview"></div>
+      <div id="core-slot-avatar-presets" class="avatar-preset-picker" aria-label="Porträtvorlagen"></div>
+      <button type="button" class="btn btn-sm" onclick="selectCoreAvatar('')">Standardbild verwenden</button>
+      <p id="core-slot-editor-feedback" role="status" aria-live="polite"></p>
+      <footer class="core-actions">
+        <button type="submit" class="btn btn-primary">Speichern</button>
+        <button id="core-slot-reset" type="button" class="btn" onclick="resetCoreSlot()">Werkstandard</button>
+        <button id="core-slot-delete" type="button" class="btn" onclick="deleteCoreSlot()">Steckplatz löschen</button>
+      </footer>
+    </form>
+  </dialog>
+
   <style>
+    #core-agent-cards :global(.core-agent-card) {display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
+    #core-agent-cards :global(.core-slot-header), #core-agent-cards :global(.core-slot-identity) {display:flex;align-items:center;gap:.65rem;justify-content:space-between}
+    #core-agent-cards :global(.core-slot-identity) {justify-content:flex-start}
+    #core-agent-cards :global(.core-avatar) {width:48px;height:48px;border-radius:50%;object-fit:cover;flex:none}
+    #core-agent-cards :global(.core-avatar-default) {display:grid;place-items:center;font-size:1.8rem;background:var(--bg-card)}
+    #core-agent-cards :global(h3) {margin:0;font-size:1rem}
+    #core-agent-cards :global(small) {color:var(--text-muted);overflow-wrap:anywhere}
+    #core-agent-cards :global(.core-slot-model) {overflow-wrap:anywhere;font-size:.85rem}
+    #core-agent-cards :global(.core-slot-toggle[data-enabled="true"]) {background:#166534;color:#fff;border-color:#16a34a}
+    #core-agent-cards :global(.core-slot-toggle[data-enabled="false"]) {background:#7f1d1d;color:#fff;border-color:#ef4444}
+    #core-agent-cards :global(.core-actions), #core-slot-editor .core-actions {display:flex;gap:.5rem;flex-wrap:wrap;margin-top:auto}
+    #core-agent-cards :global(.core-slot-add) {min-height:150px;border:1px dashed var(--accent)}
+    .core-slot-modal {width:min(800px,94vw);max-height:88vh;margin:auto;overflow-y:auto;color:var(--text);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+    .core-slot-modal::backdrop {background:rgba(0,0,0,.7)}
+    #core-slot-editor :global(.core-fields) {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1rem;margin:1rem 0}
+    #core-slot-editor :global(label) {display:flex;flex-direction:column;gap:.3rem;font-size:.85rem}
+    #core-slot-editor :global(input), #core-slot-editor :global(select), #core-slot-editor :global(textarea) {min-width:0;width:100%;padding:.6rem;color:var(--text);background:var(--bg-dark);border:1px solid var(--border);border-radius:4px}
+    #core-slot-editor :global(.core-check) {flex-direction:row;align-items:center}
+    #core-slot-editor :global(.core-check input) {width:auto}
+    #core-slot-editor :global(.core-prompt-field) {grid-column:1/-1}
     .hardware-torch { margin-bottom: 1.5rem; }
     .torch-intro, .core-explanation { color: var(--text-muted); font-size: .85rem; margin: .4rem 0 1rem; }
     .torch-grid, .core-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr)); gap: .85rem; }
@@ -164,6 +374,20 @@ import BachLayout from "../../layouts/BachLayout.astro";
     .core-agent-card .core-check input { width: auto; }
     .core-agent-card .core-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
     .core-agent-card .core-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: auto; }
+    .openrouter-model-list { display: flex; flex-wrap: wrap; gap: .45rem; }
+    .openrouter-model-list code { border: 1px solid var(--border); border-radius: 4px; padding: .25rem .45rem; overflow-wrap: anywhere; }
+    .worker-state { display: inline-block; border: 1px solid var(--border); border-radius: 999px; padding: .12rem .5rem; margin-bottom: .45rem; font-size: .78rem; }
+    .worker-turn-warning { margin: .45rem 0; padding: .5rem .65rem; border-left: .2rem solid var(--accent-warning, #f59e0b); border-radius: 4px; background: color-mix(in srgb, var(--accent-warning, #f59e0b) 12%, transparent); }
+    .worker-control-note { color: var(--text-muted); font-size: .84rem; margin-top: .8rem; }
+    .worker-blueprint-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: .75rem; align-items: end; }
+    .worker-blueprint-form label { display: grid; gap: .35rem; color: var(--text-muted); font-size: .82rem; }
+    .worker-blueprint-form input, .worker-blueprint-form select, .worker-blueprint-form textarea { width: 100%; min-width: 0; padding: .5rem; border: 1px solid var(--border); border-radius: 5px; background: var(--bg-input, var(--bg-card)); color: var(--text); }
+    .worker-blueprint-extra { display: contents; }
+    .worker-blueprint-extra[hidden] { display: none !important; }
+    .worker-blueprint-check { display: flex !important; flex-direction: row; align-items: center; gap: .5rem !important; min-height: 2.4rem; }
+    .worker-blueprint-check input { width: auto !important; }
+    .worker-blueprint-prompt, .worker-blueprint-extra > label:last-child { grid-column: 1 / -1; }
+    .worker-blueprint-submit { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; grid-column: 1 / -1; }
     @media (max-width: 520px) { .core-agent-card .core-fields { grid-template-columns: 1fr; } }
     @media (prefers-reduced-motion: no-preference) {
       .torch-svg.is-owned { animation: torch-glow 1.8s ease-in-out infinite alternate; }
@@ -171,6 +395,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
     }
   </style>
 
+  <script>import '../../lib/agent-avatar.mjs';import '../../lib/ticket-symbol.mjs';</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -181,15 +406,22 @@ import BachLayout from "../../layouts/BachLayout.astro";
       { id: "claude-3-7-sonnet", label: "🧠 Claude 3.7 Sonnet (Anthropic)" },
       { id: "gemini-2.0-flash", label: "⚡ Gemini 2.0 Flash (Google)" },
       { id: "codex-cli", label: "💻 Codex / GPT-4o (OpenAI)" },
-      { id: "ollama/qwen3.8:27b-mlx", label: "🦙 Ollama: Qwen 3.8 27B (Mac Studio)" },
+      { id: "ollama/qwen3.8:27b-mlx", label: "🦙 Ollama: Qwen 3.8 27B (lokal)" },
       { id: "ollama/kimi-k3:cloud", label: "☁️ Kimi K3 Cloud (131k)" },
-      { id: "ollama/gemma4:26b-mlx", label: "💻 Gemma 4 26B (MLX)" }
+      { id: "openrouter/free", label: "🆓 OpenRouter (Kostenlos / Free Tier)" }
     ];
 
     let currentPriority = null;
     let coreConfigVersion = null;
     let coreAgents = [];
+    let openRouterModels = [];
+    let backgroundWorkerBlueprint = null;
+    let editingWorker = null;
+    let workerModelRequest = 0;
+    let workerEditRequest = 0;
+    let _allBlueprintsList = [];
 
+    // ── HARDWARE COCKPIT ──
     function setTorchUnknown(message) {
       currentPriority = null;
       const flame = document.getElementById('hardware-flame');
@@ -217,12 +449,16 @@ import BachLayout from "../../layouts/BachLayout.astro";
         const owned = owner.state === 'owned_by_this_system' && owner.holder_is_this_system === true && owner.flame === true && freshOwner;
         const flame = document.getElementById('hardware-flame');
         flame.classList.toggle('is-owned', owned);
-        document.getElementById('torch-svg-title').textContent = owned ? 'Hardware-Fackel: eigenes System hält sie' : 'Hardware-Fackel ohne bestätigten eigenen Besitz';
+        document.getElementById('torch-svg-title').textContent = owned ? 'Hardware-Fackel: BACH rechnet ohne gemeldete Compute-Konkurrenz' : 'Hardware-Fackel ohne bestätigten eigenen Besitz';
         document.getElementById('fackel-holder').textContent = owned ? String(owner.holder || 'Eigenes System') :
           owner.state === 'foreign' && freshOwner ? String(owner.holder || 'Fremdes System') :
+          owner.state === 'competing_compute_reported' && freshOwner ? 'Rechenjobs melden Konkurrenz' :
+          owner.state === 'idle' && freshOwner ? 'Derzeit kein lokaler BACH-Lauf' :
           owner.state === 'stale' ? 'Status veraltet' : 'Nicht geprüft';
         document.getElementById('fackel-owner-reason').textContent = owned ? 'Frischer Halternachweis für dieses System.' :
           owner.state === 'foreign' && freshOwner ? 'Ein anderes System hält die Fackel.' :
+          owner.state === 'competing_compute_reported' && freshOwner ? 'Ein lokaler Compute-Lock meldet konkurrierende Rechenjobs; BACH-Besitz wird deshalb nicht behauptet.' :
+          owner.state === 'idle' && freshOwner ? 'Der lokale Control-Dienst bestätigt, dass BACH gerade keine Inferenz ausführt.' :
           owner.state === 'stale' ? 'Der letzte Halternachweis ist zu alt.' : 'Der Hardware-Halteradapter fehlt oder liefert keinen Beleg.';
         currentPriority = ['compute', 'ollama'].includes(f.priority?.value) ? f.priority.value : null;
         document.getElementById('fackel-priority').textContent = currentPriority === 'compute' ? 'Compute' :
@@ -273,6 +509,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
       }
     }
 
+    // ── CORE SYSTEM SLOTS ──
     function coreElement(tag, text, className = '') {
       const node = document.createElement(tag);
       if (className) node.className = className;
@@ -280,19 +517,38 @@ import BachLayout from "../../layouts/BachLayout.astro";
       return node;
     }
 
-    function coreField(card, field, labelText, value, type = 'text', options = []) {
+    function coreAgentLabel(agent) {
+      if (agent.runtime_verified !== true) return 'Status unbekannt';
+      if (agent.status === 'stopping') return 'Wird beendet';
+      if (agent.status === 'starting') return 'Startet';
+      if (agent.running === true) return 'Running';
+      if (agent.status === 'error') return 'Fehler · Status prüfen';
+      if (agent.status === 'expired') return 'Abgelaufen';
+      if (agent.status === 'deleted') return 'Entfernt';
+      if (agent.enabled !== true || agent.pause_info?.is_paused || agent.status === 'paused') return 'Pausiert';
+      if (!String(agent.backend || '').trim() || !String(agent.model || '').trim()) return 'Modell oder Anbieter fehlt';
+      return ['idle', 'ready', 'completed'].includes(agent.status) ? 'Ready · Living' : 'Status unbekannt';
+    }
+
+    function coreField(card, field, labelText, value, type = 'text', options = [], backend = '') {
       const label = coreElement('label', labelText);
       let input;
       if (type === 'select') {
         input = document.createElement('select');
-        const values = options.includes(String(value)) ? options : [String(value), ...options];
+        const choices = options.map(choice => typeof choice === 'string'
+          ? {value: choice, label: choice}
+          : {value: String(choice.value), label: String(choice.label ?? choice.value)});
+        const currentValue = String(value ?? '');
+        const values = choices.some(choice => choice.value === currentValue)
+          ? choices
+          : [{value: currentValue, label: currentValue + ' · bestehend, nicht geprüft'}, ...choices];
         for (const choice of values) {
           const option = document.createElement('option');
-          option.value = choice;
-          option.textContent = choice + (options.includes(choice) ? '' : ' · bestehend, nicht geprüft');
+          option.value = choice.value;
+          option.textContent = choice.label;
           input.append(option);
         }
-        input.value = String(value);
+        input.value = currentValue;
       } else {
         input = document.createElement('input');
         input.type = type;
@@ -300,6 +556,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
         else input.value = value == null ? '' : String(value);
         if (type === 'number') { input.min = field === 'max_tool_rounds' ? '0' : '1'; input.max = field === 'max_tool_rounds' ? '100' : '1440'; }
         if (type === 'text') input.maxLength = field === 'icon' ? 8 : 120;
+        if (field === 'model' && backend === 'openrouter') input.setAttribute('list', 'openrouter-free-models');
       }
       input.dataset.coreField = field;
       label.append(input);
@@ -307,153 +564,494 @@ import BachLayout from "../../layouts/BachLayout.astro";
       card.append(label);
     }
 
-    function renderCoreAgents(data, changedId = null) {
-      const target = document.getElementById('core-agent-cards');
-      const previousCards = new Map([...target.querySelectorAll('[data-core-agent-id]')]
-        .map(card => [card.dataset.coreAgentId, card]));
-      const previousAgents = new Map(coreAgents.map(agent => [agent.id, agent]));
+    let coreCatalog = {};
+    let coreEditorAgent = null;
+    let coreEditorVersion = null;
+
+    function renderCoreAgents(data) {
       coreConfigVersion = data.configuration_version;
       coreAgents = data.agents;
-      if (!changedId) target.replaceChildren();
+      coreCatalog = data;
+      const target = document.getElementById('core-agent-cards');
+      target.replaceChildren();
       for (const agent of coreAgents) {
-        const existing = changedId ? previousCards.get(agent.id) : null;
-        if (changedId && agent.id !== changedId && existing) {
-          const before = previousAgents.get(agent.id);
-          const keys = ['name', 'icon', 'backend', 'model', 'mode', 'think',
-            'max_tool_rounds', 'pause_after', 'pause_minutes'];
-          if (before && keys.some(key => before[key] !== agent[key])) existing.dataset.coreStale = 'true';
-          continue;
-        }
         const card = coreElement('article', undefined, 'core-agent-card');
         card.dataset.coreAgentId = agent.id;
-        card.append(coreElement('h3', `${agent.icon || '◇'} ${agent.name || agent.id}`));
-        card.append(coreElement('small', `Technische ID: ${agent.id} · nicht löschbar`));
-        const state = agent.configured_enabled === true ? 'Konfiguration aktiviert' :
-          agent.configured_enabled === false ? 'Konfiguration deaktiviert' : 'Konfiguration vorhanden';
-        card.append(coreElement('small', `${state} · Living: nicht geprüft · Running: nicht geprüft`));
-        const fields = coreElement('div', undefined, 'core-fields');
-        coreField(fields, 'name', 'Anzeigename', agent.name);
-        coreField(fields, 'icon', 'Icon', agent.icon);
-        coreField(fields, 'backend', 'Backend-ID', agent.backend, 'select', data.supported_backend_ids || []);
-        coreField(fields, 'model', 'Modell-ID', agent.model);
-        coreField(fields, 'mode', 'Modus', agent.mode, 'select', ['safe', 'full']);
-        coreField(fields, 'think', 'Think', agent.think, 'checkbox');
-        coreField(fields, 'max_tool_rounds', 'Maximale Runden', agent.max_tool_rounds, 'number');
-        coreField(fields, 'pause_after', 'Pause nach Runden', agent.pause_after, 'number');
-        coreField(fields, 'pause_minutes', 'Pausendauer (Min)', agent.pause_minutes, 'number');
-        card.append(fields);
+        const header = coreElement('div', undefined, 'core-slot-header');
+        const enabled = agent.enabled === true;
+        const toggle = coreElement('button', enabled ? '● AN' : '○ AUS', 'btn btn-sm core-slot-toggle');
+        toggle.type = 'button';
+        toggle.setAttribute('role', 'switch');
+        toggle.setAttribute('aria-checked', String(enabled));
+        toggle.setAttribute('aria-label', agent.name + ' ein- oder ausschalten');
+        toggle.dataset.enabled = String(enabled);
+        toggle.addEventListener('click', () => toggleCoreSlot(agent.id, !enabled));
+        header.append(toggle);
+        const badge = coreElement('span', coreAgentLabel(agent), 'badge');
+        header.append(badge);
+        card.append(header);
+        const identity = coreElement('div', undefined, 'core-slot-identity');
+        identity.append(window.BachAvatars.createAvatar(document, agent.avatar, agent,
+          document.getElementById('core-slot-editor').dataset.portraitAtlas, 'core-avatar'));
+        identity.append(coreElement('h3', agent.name || agent.id));
+        identity.append(window.BachSymbols.createSymbol(document,agent.symbol,
+          JSON.parse(document.getElementById('core-slot-editor').dataset.ticketSymbols)));
+        card.append(identity);
+        card.append(coreElement('small', agent.id, 'core-slot-id'));
+        const kind = ['ollama', 'lmstudio'].includes(agent.backend) && !String(agent.model).endsWith(':cloud')
+          ? 'Lokal' : ['claude', 'codex'].includes(agent.backend) ? 'Subscription / CLI' : 'Cloud / API';
+        card.append(coreElement('small', kind + ' · ' + agent.backend));
+        card.append(coreElement('div', agent.model || 'Modell fehlt', 'core-slot-model'));
+        if (agent.resolved_model && agent.resolved_model !== agent.model) card.append(coreElement('small', 'Ausgeführt: ' + agent.resolved_model));
+        card.append(coreElement('small', agent.runtime_verified === true
+          ? 'Tool: ' + (agent.current_tool || '—') + ' · Runde: ' + (agent.tool_round ?? 0) +
+            (agent.task_id ? ' · Task #' + agent.task_id : '')
+          : 'Tool / Runde: nicht bestätigt'));
         const actions = coreElement('div', undefined, 'core-actions');
-        const save = coreElement('button', 'Einstellungen speichern', 'btn btn-sm btn-primary');
-        save.type = 'button';
-        save.addEventListener('click', () => saveCoreSlot(agent.id));
-        actions.append(save);
-        const reset = coreElement('button', 'Standards wiederherstellen', 'btn btn-sm');
-        reset.type = 'button';
-        reset.addEventListener('click', () => resetCoreSlot(agent.id));
-        actions.append(reset);
+        const edit = coreElement('button', 'Bearbeiten', 'btn btn-sm');
+        edit.addEventListener('click', () => openCoreEditor(agent.id));
+        actions.append(edit);
+        const chat = coreElement('a', 'Chat öffnen', 'btn btn-sm');
+        chat.href = '/chat?slot_id=' + encodeURIComponent(agent.id);
+        actions.append(chat);
         card.append(actions);
-        if (existing) existing.replaceWith(card);
-        else target.append(card);
+        target.append(card);
       }
+      const add = coreElement('button', '+ Systemsteckplatz', 'btn core-slot-add');
+      add.addEventListener('click', () => openCoreEditor());
+      target.append(add);
+    }
+
+    async function coreRequest(path, method = 'GET', body) {
+      const response = await fetch('/api/system/core-agents' + path, {
+        method, headers: body ? {'Content-Type': 'application/json'} : {},
+        ...(body ? {body: JSON.stringify(body)} : {})
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'HTTP ' + response.status);
+      if (data.schema !== 'bach.core-system-agents.v1' || !Array.isArray(data.agents)) throw new Error('Steckplatzantwort ungültig');
+      return data;
     }
 
     async function loadCoreSlots() {
-      const target = document.getElementById('core-agent-cards');
-      try {
-        const res = await fetch('/api/system/core-agents');
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        if (data.schema !== 'bach.core-system-agents.v1' || !Array.isArray(data.agents) ||
-            data.agents.length !== 3 || typeof data.configuration_version !== 'string') throw new Error('System-Agentenantwort ungültig');
-        renderCoreAgents(data);
-      } catch (error) {
+      try { renderCoreAgents(await coreRequest('')); }
+      catch (error) {
         coreConfigVersion = null;
-        target.replaceChildren(coreElement('p', error.message.includes('401') ?
-          'Geräteanmeldung erforderlich. Einstellungen sind derzeit nicht verfügbar.' :
-          'System-Agentenkonfiguration nicht verfügbar. Die vorhandenen Profile bleiben erhalten.'));
+        document.getElementById('core-agent-cards').replaceChildren(
+          coreElement('p', 'System-Agenten nicht verfügbar: ' + error.message));
       }
     }
 
-    function showCoreSaveFailure(message) {
-      const feedback = document.getElementById('core-agent-feedback');
-      const reload = coreElement('button', 'Zustand neu laden (verwirft Eingaben)', 'btn btn-sm');
-      reload.type = 'button';
-      reload.addEventListener('click', () => loadCoreSlots());
-      feedback.replaceChildren(coreElement('span', message + ' Eingaben bleiben bis zum Neuladen erhalten. '), reload);
+    function openCoreEditor(slotId = null) {
+      if (!coreConfigVersion) return;
+      coreEditorAgent = slotId ? coreAgents.find(agent => agent.id === slotId) : null;
+      coreEditorVersion = coreConfigVersion;
+      const source = coreEditorAgent || {...coreAgents.find(agent => agent.id === 'buddha_chat'), name: '', avatar: '', icon: '🤖'};
+      const form = document.getElementById('core-slot-fields');
+      form.replaceChildren();
+      document.getElementById('core-slot-title').textContent = slotId ? 'Steckplatz bearbeiten' : 'Systemsteckplatz anlegen';
+      if (!slotId) coreField(form, 'preset', 'Vorlage', 'assistant', 'select',
+        Object.entries(coreCatalog.slot_presets || {}).map(([value, item]) => ({value, label:item.name})));
+      coreField(form, 'name', 'Bezeichnung', source.name);
+      coreField(form, 'description', 'Beschreibung', source.description || '');
+      coreField(form, 'backend', 'Anbieter', source.backend, 'select', coreCatalog.supported_backend_ids || []);
+      coreField(form, 'model', 'Modell', source.model, 'text', [], source.backend);
+      coreField(form, 'mode', 'Arbeitsmodus', source.mode, 'select', ['safe', 'full']);
+      coreField(form, 'role_id', 'Rolle', source.role_id || 'personal-assistant', 'select', coreCatalog.role_ids || []);
+      coreField(form, 'sub_mode', 'Rollenmodus', source.sub_mode || 'expert_role', 'select',
+        ['expert_role', 'boss_routing', 'task_worker', 'hintergrund_worker']);
+      coreField(form, 'think', 'Denken', source.think, 'checkbox');
+      coreField(form, 'allow_tools', 'Werkzeuge erlauben', source.allow_tools !== false, 'checkbox');
+      coreField(form, 'max_tool_rounds', 'Maximale Tool-Runden', source.max_tool_rounds, 'number');
+      coreField(form, 'pause_after', 'Pause nach', source.pause_after, 'number');
+      coreField(form, 'pause_basis', 'Pausen zählen', source.pause_basis, 'select',
+        [{value:'runs', label:'Läufe'}, {value:'tasks', label:'Tasks'}]);
+      coreField(form, 'pause_minutes', 'Pausendauer (Minuten)', source.pause_minutes, 'number');
+      coreField(form, 'include_system_prompt', 'Systemprompt einbinden', source.include_system_prompt !== false, 'checkbox');
+      const templates = coreCatalog.prompt_templates || {system_default:'', roles:{}};
+      for (const [field, label, defaultText] of [
+        ['custom_system_prompt', 'Systemprompt', templates.system_default],
+        ['custom_role_prompt', 'Rollenprompt', templates.roles[source.sub_mode === 'task_worker' ? 'task_worker' :
+          source.sub_mode === 'hintergrund_worker' ? 'hintergrund_worker' :
+          source.sub_mode === 'boss_routing' ? 'boss_routing' : source.role_id] || '']
+      ]) {
+        const row = coreElement('label', label, 'core-prompt-field');
+        const input = document.createElement('textarea');
+        input.rows = 7; input.maxLength = 20000; input.dataset.coreField = field;
+        input.dataset.defaultText = defaultText;
+        input.dataset.wasCustom = source[field] ? 'true' : 'false';
+        input.value = source[field] || defaultText;
+        row.append(input);
+        const reset = coreElement('button', 'Standard verwenden', 'btn btn-sm');
+        reset.type = 'button';
+        reset.addEventListener('click', () => {input.value = input.dataset.defaultText; input.dataset.wasCustom = 'false';});
+        row.append(reset); form.append(row);
+      }
+      const roleInput = form.querySelector('[data-core-field="role_id"]');
+      const modeInput = form.querySelector('[data-core-field="sub_mode"]');
+      const updateRole = () => {
+        const input = form.querySelector('[data-core-field="custom_role_prompt"]');
+        const key = ['boss_routing', 'task_worker', 'hintergrund_worker'].includes(modeInput.value) ? modeInput.value : roleInput.value;
+        input.dataset.defaultText = templates.roles[key] || '';
+        if (input.dataset.wasCustom !== 'true') input.value = input.dataset.defaultText;
+        drawCoreAvatar();
+      };
+      roleInput.addEventListener('change', updateRole);
+      modeInput.addEventListener('change', updateRole);
+      form.querySelector('[data-core-field="preset"]')?.addEventListener('change', event => {
+        const preset = coreCatalog.slot_presets[event.target.value];
+        if (!preset) return;
+        roleInput.value = preset.role_id;
+        modeInput.value = preset.sub_mode || 'expert_role';
+        if (!form.querySelector('[data-core-field="name"]').value) form.querySelector('[data-core-field="name"]').value = preset.name;
+        updateRole();
+      });
+      document.getElementById('core-slot-avatar').value = source.avatar || '';
+      document.getElementById('core-slot-symbol').value = source.symbol || '';
+      drawCoreSymbols();
+      drawCoreAvatar();
+      document.getElementById('core-slot-avatar-file').value = '';
+      document.getElementById('core-slot-delete').hidden = !coreEditorAgent?.deletable;
+      document.getElementById('core-slot-reset').hidden = !coreEditorAgent;
+      document.getElementById('core-slot-editor-feedback').textContent = '';
+      document.getElementById('core-slot-editor').showModal();
     }
 
-    async function saveCoreSlot(slotId) {
-      const card = [...document.querySelectorAll('[data-core-agent-id]')].find(node => node.dataset.coreAgentId === slotId);
-      if (!card || !coreConfigVersion) return;
-      if (card.dataset.coreStale === 'true') {
-        showCoreSaveFailure('Serverkonfiguration dieses Agenten hat sich verändert.');
+    function drawCoreAvatar() {
+      const value = document.getElementById('core-slot-avatar').value;
+      const identity = {...coreEditorAgent,role_id:document.querySelector('[data-core-field="role_id"]')?.value};
+      const atlas = document.getElementById('core-slot-editor').dataset.portraitAtlas;
+      document.getElementById('core-slot-avatar-preview').replaceChildren(window.BachAvatars.createAvatar(document,value,identity,atlas,'agent-avatar-preview'));
+      window.BachAvatars.mountAvatarPicker(document.getElementById('core-slot-avatar-presets'),value,identity,atlas,selectCoreAvatar);
+    }
+
+    function selectCoreAvatar(value) {
+      document.getElementById('core-slot-avatar').value = value;
+      drawCoreAvatar();
+      document.getElementById('core-slot-editor-feedback').textContent = 'Bild vorbereitet. Mit Speichern übernehmen.';
+    }
+
+    function drawCoreSymbols() {
+      const input=document.getElementById('core-slot-symbol');
+      window.BachSymbols.mountSymbolPicker(document.getElementById('core-slot-symbols'),input.value,
+        JSON.parse(document.getElementById('core-slot-editor').dataset.ticketSymbols),value=>{input.value=value;drawCoreSymbols();});
+    }
+
+    async function uploadCoreAvatar(file) {
+      if (!file) return;
+      if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+        document.getElementById('core-slot-editor-feedback').textContent = 'Bitte PNG, JPEG oder WebP bis 5 MB wählen.';
         return;
       }
-      const original = coreAgents.find(item => item.id === slotId);
-      if (!original) return;
+      const url = URL.createObjectURL(file);
+      try {
+        const image = new Image(); image.src = url; await image.decode();
+        const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 256;
+        const context = canvas.getContext('2d');
+        const size = Math.min(image.width, image.height);
+        context.drawImage(image, (image.width-size)/2, (image.height-size)/2, size, size, 0, 0, 256, 256);
+        document.getElementById('core-slot-avatar').value = canvas.toDataURL('image/webp', 0.85);
+        drawCoreAvatar();
+        document.getElementById('core-slot-editor-feedback').textContent = 'Bild vorbereitet. Mit Speichern übernehmen.';
+      } catch (_error) { document.getElementById('core-slot-editor-feedback').textContent = 'Bild konnte nicht geladen werden.'; }
+      finally { URL.revokeObjectURL(url); }
+    }
+
+    async function saveCoreSlot() {
+      const form = document.getElementById('core-slot-fields');
+      const feedback = document.getElementById('core-slot-editor-feedback');
       const changes = {};
-      for (const input of card.querySelectorAll('[data-core-field]')) {
+      let preset = 'assistant';
+      for (const input of form.querySelectorAll('[data-core-field]')) {
         const field = input.dataset.coreField;
-        const previous = original[field];
-        if (input.type === 'checkbox') {
-          if (previous == null && !input.checked) continue;
-          if (input.checked !== previous) changes[field] = input.checked;
-        } else if (input.type === 'number') {
-          if (input.value.trim() === '' && previous == null) continue;
-          const current = input.value.trim() === '' ? null : Number(input.value);
-          if (current !== previous) changes[field] = current;
+        if (field === 'preset') {preset = input.value; continue;}
+        let value = input.type === 'checkbox' ? input.checked : input.type === 'number' ? Number(input.value) : input.value;
+        if (field.startsWith('custom_') && input.dataset.wasCustom !== 'true' && value === input.dataset.defaultText) value = '';
+        if (!coreEditorAgent || value !== coreEditorAgent[field]) changes[field] = value;
+      }
+      const avatar = document.getElementById('core-slot-avatar').value;
+      if (!coreEditorAgent || avatar !== coreEditorAgent.avatar) changes.avatar = avatar;
+      const symbol = document.getElementById('core-slot-symbol').value;
+      if (!coreEditorAgent || symbol !== coreEditorAgent.symbol) changes.symbol = symbol;
+      if (!Object.keys(changes).length) {feedback.textContent = 'Keine Änderungen.'; return;}
+      try {
+        const data = await coreRequest(coreEditorAgent ? '/' + encodeURIComponent(coreEditorAgent.id) : '',
+          coreEditorAgent ? 'PUT' : 'POST', {configuration_version:coreEditorVersion, changes, preset});
+        renderCoreAgents(data);
+        document.getElementById('core-slot-editor').close();
+        document.getElementById('core-agent-feedback').textContent = 'Steckplatz gespeichert.';
+      } catch (error) {feedback.textContent = 'Speichern fehlgeschlagen: ' + error.message;}
+    }
+
+    async function resetCoreSlot() {
+      if (!coreEditorAgent || !confirm('Steckplatz auf Werkstandard zurücksetzen?')) return;
+      try {
+        renderCoreAgents(await coreRequest('/' + encodeURIComponent(coreEditorAgent.id) + '/reset', 'POST', {configuration_version:coreEditorVersion}));
+        document.getElementById('core-slot-editor').close();
+      } catch (error) {document.getElementById('core-slot-editor-feedback').textContent = error.message;}
+    }
+
+    async function deleteCoreSlot() {
+      if (!coreEditorAgent?.deletable || !confirm('Diesen Systemsteckplatz löschen?')) return;
+      try {
+        renderCoreAgents(await coreRequest('/' + encodeURIComponent(coreEditorAgent.id), 'DELETE', {configuration_version:coreEditorVersion}));
+        document.getElementById('core-slot-editor').close();
+      } catch (error) {document.getElementById('core-slot-editor-feedback').textContent = error.message;}
+    }
+
+    async function toggleCoreSlot(slotId, enabled) {
+      const feedback = document.getElementById('core-agent-feedback');
+      try {
+        const data = await coreRequest('/' + encodeURIComponent(slotId) + '/toggle', 'POST',
+          {configuration_version:coreConfigVersion, enabled});
+        renderCoreAgents(data);
+        feedback.textContent = enabled ? 'Steckplatz eingeschaltet; Live-Status wird geprüft.' :
+          'Steckplatz ausgeschaltet. Laufende Arbeit wird beendet; Status neu prüfen.';
+      } catch (error) {feedback.textContent = 'Schalter nicht bestätigt: ' + error.message; await loadCoreSlots();}
+    }
+
+    // ── OPENROUTER CATALOG ──
+    async function loadOpenRouterCatalog() {
+      const credentialState = document.getElementById('openrouter-credential-state');
+      const catalogState = document.getElementById('openrouter-catalog-state');
+      const list = document.getElementById('openrouter-model-list');
+      const datalist = document.getElementById('openrouter-free-models');
+      try {
+        const [statusResponse, modelsResponse] = await Promise.all([
+          fetch('/api/system/openrouter/status'),
+          fetch('/api/system/openrouter/models')
+        ]);
+        if (!statusResponse.ok || !modelsResponse.ok) throw new Error('Geräteanmeldung oder Dienst fehlt');
+        const [status, catalog] = await Promise.all([statusResponse.json(), modelsResponse.json()]);
+        credentialState.textContent = status.credential?.configured === true ? 'Schlüssel konfiguriert' : 'Schlüssel fehlt';
+        credentialState.className = 'badge ' + (status.credential?.configured === true ? 'badge-accent' : '');
+        openRouterModels = (catalog.models || []).filter(item => item && item.free === true && typeof item.id === 'string');
+        datalist.replaceChildren(...openRouterModels.map(item => {
+          const option = document.createElement('option');
+          option.value = item.id;
+          return option;
+        }));
+        list.replaceChildren(...openRouterModels.map(item => {
+          const code = document.createElement('code');
+          code.textContent = item.id;
+          code.title = item.name || item.id;
+          return code;
+        }));
+        catalogState.textContent = `${openRouterModels.length} kostenlose Auswahl(en) verfügbar · OpenRouter Free Tier`;
+      } catch (_error) {
+        credentialState.textContent = 'Status nicht verfügbar';
+        catalogState.textContent = 'OpenRouter-Katalog nicht erreichbar.';
+        list.replaceChildren();
+      }
+    }
+
+    // ── BACKGROUND WORKERS (EINSATZBEREIT vs. RUNNING) ──
+    function workerReadiness(worker) {
+      const status = String(worker.status || '').toLowerCase();
+      const configured = typeof worker.backend === 'string' && !!worker.backend.trim() &&
+        typeof worker.model === 'string' && !!worker.model.trim();
+      const labels = {idle:'Living · Bereit', paused:'Pausiert', completed:'Abgeschlossen · bereit',
+        error:'Fehler · Status prüfen', expired:'Abgelaufen', deleted:'Entfernt',
+        starting:'Startet', stopping:'Wird beendet'};
+      const canEdit = ['idle', 'paused', 'completed', 'error'].includes(status);
+      const ready = configured && ['idle', 'completed'].includes(status);
+      return {ready, canEdit, canStart:configured && canEdit,
+        label:!configured && canEdit ? 'Modell oder Anbieter fehlt' : labels[status] || 'Status unbekannt'};
+    }
+
+    async function loadBackgroundWorkers() {
+      const summary = document.getElementById('worker-status-summary');
+      const readyGrid = document.getElementById('ready-agents-grid');
+      const runningList = document.getElementById('running-workers-list');
+      try {
+        const response = await fetch('/api/system/workers');
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        if (data.schema !== 'bach.workers.status.v1' || data.availability !== 'available' || !Array.isArray(data.workers))
+          throw new Error('Workerquelle ist nicht bestätigt');
+        const workers = data.workers.filter(worker=>worker && typeof worker === 'object' && worker.system!==true);
+
+        const runningWorkers = workers.filter(w => String(w.status).toLowerCase() === 'running');
+        const profileWorkers = workers.filter(w => String(w.status).toLowerCase() !== 'running');
+        const readyWorkers = profileWorkers.filter(w => workerReadiness(w).ready);
+
+        summary.textContent = `${workers.length} Worker registriert · ${readyWorkers.length} einsatzbereit (Living) · ${runningWorkers.length} aktiv (Running) · ${profileWorkers.length - readyWorkers.length} andere Zustände · Geprüft ${new Date().toLocaleTimeString('de-DE')}`;
+
+        // 1. Render Einsatzbereite Agenten
+        if (profileWorkers.length === 0) {
+          readyGrid.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:2rem;background:var(--bg-dark);border:1px dashed var(--border);border-radius:var(--radius-sm);">
+              <p style="color:var(--text-muted);margin-bottom:0.75rem;">Keine einsatzbereiten Workerprofile vorhanden.</p>
+              <button class="btn btn-sm btn-primary" onclick="openPickupWerkstattModal()">+ Vorlage auswählen</button>
+            </div>
+          `;
         } else {
-          const current = input.value.trim();
-          if (current !== String(previous ?? '').trim()) changes[field] = current;
+          readyGrid.innerHTML = profileWorkers.map(w => {
+            const isPaused = w.status === 'paused';
+            const state = workerReadiness(w);
+            return `
+              <div class="core-agent-card" data-appearance-worker="${escapeHtml(w.id)}" style="display:flex;flex-direction:column;justify-content:space-between;">
+                <div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                    <span class="badge" style="background:${state.ready ? '#059669' : isPaused ? '#92400e' : '#475569'};color:#fff;font-size:0.75rem;">
+                      ${escapeHtml(state.label)}
+                    </span>
+                    <small style="color:var(--text-muted);font-family:monospace;">${escapeHtml(w.backend || 'Anbieter fehlt')}</small>
+                  </div>
+                  <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem;">${escapeHtml(w.name || w.id)}</h3>
+                  <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;">
+                    Modell: <code style="color:var(--accent);">${escapeHtml(w.model || 'Modell fehlt')}</code>
+                    ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--text-muted);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code style="color:var(--accent);">${escapeHtml(w.resolved_model)}</code></span>` : ''}
+                  </p>
+                  <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">
+                    ${escapeHtml(w.task_prompt ? 'Auftrag: ' + w.task_prompt : 'Kein eigener Zusatzauftrag gespeichert')}
+                  </p>
+                </div>
+
+                <div style="border-top:1px solid var(--border);padding-top:0.75rem;margin-top:0.75rem;display:flex;justify-content:space-between;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+                  <button class="btn btn-sm" style="font-size:0.75rem;color:var(--error);" onclick="deleteWorker('${escapeHtml(w.id)}')">
+                    🗑️
+                  </button>
+                  <div style="display:flex;gap:0.35rem;">
+                    <button class="btn btn-sm" style="font-size:0.75rem;" ${state.canEdit ? '' : 'disabled'} onclick="editWorkerConfiguration('${escapeHtml(w.id)}')">
+                      ✏️ Bearbeiten
+                    </button>
+                    ${!state.canStart ? `<span class="text-muted">Start derzeit nicht bestätigt</span>` : isPaused ? `
+                      <button class="btn btn-sm btn-primary" style="font-size:0.75rem;" onclick="runWorkerAction('${escapeHtml(w.id)}', 'start')">
+                        ▶ Fortsetzen
+                      </button>
+                    ` : `
+                      <button class="btn btn-sm" style="font-size:0.75rem;" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">
+                        ⏸ Pause
+                      </button>
+                      <button class="btn btn-sm btn-primary" style="font-size:0.75rem;" onclick="runWorkerAction('${escapeHtml(w.id)}', 'start')">
+                        ▶ Start
+                      </button>
+                    `}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
         }
-      }
-      const feedback = document.getElementById('core-agent-feedback');
-      if (Object.keys(changes).length === 0) {
-        feedback.textContent = 'Keine Änderungen zum Speichern.';
-        return;
-      }
-      feedback.textContent = 'Einstellungen werden gespeichert…';
-      try {
-        const res = await fetch('/api/system/core-agents/' + encodeURIComponent(slotId), {
-          method: 'PUT', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({configuration_version: coreConfigVersion, changes})
+
+        // 2. Render Running Workers
+        if (runningWorkers.length === 0) {
+          runningList.innerHTML = `
+            <p style="grid-column:1/-1;color:var(--text-muted);font-size:0.85rem;padding:0.75rem;background:var(--bg-dark);border-radius:4px;">
+              Der Backendadapter meldet derzeit keinen laufenden Worker.
+            </p>
+          `;
+        } else {
+          runningList.innerHTML = runningWorkers.map(w => {
+            const toolRound = Number(w.tool_round) || 0;
+            const maxRounds = Number(w.max_tool_rounds) || 25;
+            return `
+              <div class="core-agent-card" data-appearance-worker="${escapeHtml(w.id)}" data-worker-id="${escapeHtml(w.id)}" style="border-color:#38bdf8;background:rgba(56,189,248,0.04);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                  <span class="badge" style="background:#0284c7;color:#fff;font-size:0.75rem;">⚡ RUNNING</span>
+                  <small style="color:var(--accent);">Runde ${toolRound}/${maxRounds}</small>
+                </div>
+                <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem;">${escapeHtml(w.name || w.id)}</h3>
+                <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;">
+                  Modell: <code>${escapeHtml(w.model)}</code>
+                  ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--accent);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code>${escapeHtml(w.resolved_model)}</code></span>` : ''}
+                </p>
+                <p style="font-size:0.8rem;color:var(--text);margin-bottom:0.75rem;">
+                  ${escapeHtml(w.current_activity || 'Verarbeitet Aufgabe…')}
+                </p>
+
+                <div style="display:flex;justify-content:flex-end;gap:0.4rem;border-top:1px solid var(--border);padding-top:0.6rem;">
+                  <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
+                  <button class="btn btn-sm" style="color:var(--error);" onclick="runWorkerAction('${escapeHtml(w.id)}', 'stop')">⏹ Stoppen</button>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+        for(const card of document.querySelectorAll('[data-appearance-worker]')) {
+          const worker=workers.find(item=>item.id===card.dataset.appearanceWorker);
+          const heading=card.querySelector('h3');
+          if(worker&&heading)heading.prepend(window.BachAvatars.createAvatar(document,worker.avatar,worker,
+            document.getElementById('core-slot-editor').dataset.portraitAtlas,'agent-avatar-preview'));
+        }
+        runningList.querySelectorAll('[data-worker-id]').forEach(card => {
+          const worker = runningWorkers.find(item => item.id === card.dataset.workerId);
+          if (!worker || typeof worker.generation !== 'string') return;
+          const actions = document.createElement('div');
+          actions.className = 'core-actions';
+          for (const [action, label] of [['handoff', 'Kontext übergeben'], ['decompose', 'Task zerlegen']]) {
+            if (worker.action_capabilities?.[action] !== true) continue;
+            if (action === 'decompose' && !worker.task_action_binding) continue;
+            const button = coreElement('button', label, 'btn btn-sm');
+            button.type = 'button';
+            button.addEventListener('click', () => runWorkerAction(worker.id, action,
+              worker.generation, worker.task_action_binding));
+            actions.append(button);
+          }
+          if (worker.task_action_receipt) {
+            const receipt = worker.task_action_receipt;
+            actions.append(coreElement('small', 'Zerlegung: ' + receipt.state +
+              (receipt.state === 'confirmed' ? ' · ' + receipt.created_ids.map(id => '#' + id).join(', ') : '')));
+          }
+          card.append(actions);
         });
-        const data = await res.json();
-        const saved = data.agents?.find(item => item.id === slotId);
-        if (!res.ok || data.ack?.configuration_saved !== true || data.ack?.worker_started !== false ||
-            !saved || Object.entries(changes).some(([key, value]) => saved[key] !== value)) throw new Error('Speicherung nicht bestätigt');
-        renderCoreAgents(data, slotId);
-        feedback.textContent = 'Konfiguration gespeichert. Andere Eingaben bleiben erhalten. Kein Agent wurde dadurch gestartet.';
-      } catch (_error) {
-        showCoreSaveFailure('Speicherung nicht bestätigt. Bei einem Versionskonflikt müssen Sie vor erneutem Speichern den Zustand laden.');
+      } catch (error) {
+        summary.textContent = 'Workerstatus konnte nicht geladen werden.';
       }
     }
 
-    async function resetCoreSlot(slotId) {
-      if (!coreConfigVersion || !window.confirm('Nur die editierbaren Einstellungen dieses System-Agenten zurücksetzen?')) return;
-      const card = [...document.querySelectorAll('[data-core-agent-id]')].find(node => node.dataset.coreAgentId === slotId);
-      if (card?.dataset.coreStale === 'true') {
-        showCoreSaveFailure('Serverkonfiguration dieses Agenten hat sich verändert.');
-        return;
-      }
-      const feedback = document.getElementById('core-agent-feedback');
-      feedback.textContent = 'Standards werden wiederhergestellt…';
+    async function runWorkerAction(workerId, action, generation, taskBinding) {
+      const summary = document.getElementById('worker-status-summary');
+      const safeActions = new Set(['start', 'pause', 'stop', 'handoff', 'decompose']);
+      if (!safeActions.has(action)) return;
+      summary.textContent = 'Aktion wird angefordert…';
       try {
-        const res = await fetch('/api/system/core-agents/' + encodeURIComponent(slotId) + '/reset', {
+        const response = await fetch(`/api/system/workers/${encodeURIComponent(workerId)}/${action}`, {
           method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({configuration_version: coreConfigVersion})
+          body: JSON.stringify(action === 'decompose' ? {generation, ...taskBinding} :
+            action === 'handoff' ? {generation} : {})
         });
-        const data = await res.json();
-        if (!res.ok || data.ack?.configuration_saved !== true || data.ack?.worker_started !== false ||
-            !data.agents?.some(item => item.id === slotId)) throw new Error('Reset nicht bestätigt');
-        renderCoreAgents(data, slotId);
-        feedback.textContent = 'Einstellungen zurückgesetzt. Andere Eingaben, Aufgaben, Sitzungen und Geräte bleiben erhalten.';
-      } catch (_error) {
-        showCoreSaveFailure('Reset nicht bestätigt. Bitte Serverzustand prüfen.');
+        const data = await response.json();
+        if (!response.ok || data.ok !== true) throw new Error(data.detail || 'Aktion nicht bestätigt');
+        if (action === 'decompose') {
+          summary.textContent = data.receipt?.state === 'confirmed'
+            ? 'Teilaufgabenanlage durch den Lead bestätigt.'
+            : data.receipt?.state === 'error' ? 'Zerlegung ohne bestätigte Teilaufgaben beendet.'
+            : data.receipt?.state === 'cancelled' ? 'Zerlegungsanfrage abgebrochen.'
+            : 'Zerlegung angefordert · Bestätigung folgt im Workerstatus.';
+        } else if (action === 'handoff') {
+          summary.textContent = data.receipt?.state === 'confirmed'
+            ? 'Kontextübergabe durch die Laufzeit bestätigt.'
+            : 'Kontextübergabe angefordert · Bestätigung folgt im Workerstatus.';
+        } else {
+          summary.textContent = 'Aktion bestätigt; Laufstatus wird neu gelesen.';
+        }
+      } catch (error) {
+        summary.textContent = error.message;
+      }
+      await loadBackgroundWorkers();
+    }
+
+    async function deleteWorker(workerId) {
+      if (!confirm('Diesen Worker wirklich löschen?')) return;
+      try {
+        const res = await fetch(`/api/system/workers/${encodeURIComponent(workerId)}/delete`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({})
+        });
+        if (res.ok) {
+          loadBackgroundWorkers();
+        } else {
+          alert('Fehler beim Löschen des Workers.');
+        }
+      } catch (e) {
+        alert('Netzwerkfehler: ' + e.message);
       }
     }
 
-    // ── 2. TEAMS BESEELEn ──
+    // ── TEAMS & STAFFELN BESEELEN ──
     async function loadTeamsBeseelen() {
       const container = document.getElementById('teams-beseelen-container');
       try {
@@ -462,7 +1060,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
         const teams = data.teams || [];
 
         if (teams.length === 0) {
-          container.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Keine Teams vorhanden. Erstelle eines in Tab 2 der Fabrik!</p>';
+          container.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Keine Teams vorhanden. Lege ein Team unter Blueprints an.</p>';
           return;
         }
 
@@ -471,21 +1069,20 @@ import BachLayout from "../../layouts/BachLayout.astro";
           const modelsMap = t.member_models || {};
 
           return `
-            <div style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
                 <strong style="color:var(--text);font-size:0.95rem;">${escapeHtml(t.name)}</strong>
-                <span class="badge badge-accent">${escapeHtml(t.strategy)}</span>
+                <span class="badge badge-accent" style="font-size:0.7rem;">${escapeHtml(t.strategy)}</span>
               </div>
-              <p style="font-size:0.78rem;color:var(--text-muted);margin:0 0 0.75rem 0;">${escapeHtml(t.description || '')}</p>
+              <p style="font-size:0.75rem;color:var(--text-muted);margin:0 0 0.6rem 0;">${escapeHtml(t.description || '')}</p>
 
-              <div style="display:flex;flex-direction:column;gap:0.5rem;background:var(--bg-card);padding:0.75rem;border-radius:4px;border:1px solid var(--border);">
-                <div style="font-size:0.75rem;color:var(--accent);font-weight:600;margin-bottom:0.25rem;">Mitglieder & Modell-Zuweisung (Beseelung):</div>
+              <div style="display:flex;flex-direction:column;gap:0.4rem;background:var(--bg-dark);padding:0.6rem;border-radius:4px;border:1px solid var(--border);margin-bottom:0.6rem;">
                 ${members.map(m => {
                   const curMod = modelsMap[m] || 'ollama/qwen3.8:27b-mlx';
                   return `
-                    <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
-                      <span style="font-size:0.8rem;color:var(--text);font-weight:500;">🤖 ${escapeHtml(m)}</span>
-                      <select class="team-member-model-select" data-team="${t.id}" data-member="${escapeHtml(m)}" style="padding:0.25rem 0.5rem;font-size:0.75rem;background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:4px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;">
+                      <span style="font-size:0.78rem;color:var(--text);">🤖 ${escapeHtml(m)}</span>
+                      <select class="team-member-model-select" data-team="${t.id}" data-member="${escapeHtml(m)}" style="padding:0.2rem 0.4rem;font-size:0.72rem;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:4px;">
                         ${AVAILABLE_MODELS.map(mod => `<option value="${mod.id}" ${mod.id === curMod ? 'selected' : ''}>${mod.label}</option>`).join('')}
                       </select>
                     </div>
@@ -493,9 +1090,10 @@ import BachLayout from "../../layouts/BachLayout.astro";
                 }).join('')}
               </div>
 
-              <div style="display:flex;justify-content:flex-end;margin-top:0.75rem;">
-                <button class="btn btn-sm btn-primary" onclick="saveTeamBeseelung(${t.id})">
-                  ✨ Team-Beseelung speichern
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <button class="btn btn-sm" style="font-size:0.72rem;color:var(--error);" onclick="deleteTeamFromRunning(${t.id})">🗑️ Löschen</button>
+                <button class="btn btn-sm btn-primary" style="font-size:0.75rem;" onclick="saveTeamBeseelung(${t.id})">
+                  ✨ Speichern
                 </button>
               </div>
             </div>
@@ -521,17 +1119,27 @@ import BachLayout from "../../layouts/BachLayout.astro";
           body: JSON.stringify({ member_models })
         });
         if (res.ok) {
-          alert('Team-Beseelung erfolgreich gespeichert!');
+          alert('✨ Team-Beseelung erfolgreich gespeichert!');
           loadTeamsBeseelen();
         } else {
-          alert('Fehler beim Beseelen des Teams.');
+          alert('Fehler beim Speichern.');
         }
       } catch (e) {
         alert('Netzwerkfehler: ' + e.message);
       }
     }
 
-    // ── 3. AGENTEN-STAFFELN (MARBLERUN) BESEELEN ──
+    async function deleteTeamFromRunning(teamId) {
+      if (!confirm('Dieses Team wirklich löschen?')) return;
+      try {
+        const res = await fetch(`/api/agenten/teams/${teamId}`, { method: 'DELETE' });
+        if (res.ok) loadTeamsBeseelen();
+      } catch (e) {
+        alert('Fehler: ' + e.message);
+      }
+    }
+
+    // ── STAFFELN BESEELEN ──
     async function loadStaffelnBeseelen() {
       const container = document.getElementById('staffel-beseelen-container');
       try {
@@ -540,28 +1148,29 @@ import BachLayout from "../../layouts/BachLayout.astro";
         const chains = data.chains || [];
 
         if (chains.length === 0) {
-          container.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Keine Ketten vorhanden. Erstelle eine in MarbleRun!</p>';
+          container.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Keine Ketten vorhanden. Erstelle eine im Ketten-Editor!</p>';
           return;
         }
 
         container.innerHTML = chains.map(c => {
           let steps = [];
-          try { steps = typeof c.steps_json === 'string' ? JSON.parse(c.steps_json) : (c.steps_json || []); } catch(e) {}
+          try { steps = typeof c.steps_json === 'string' ? JSON.parse(c.steps_json) : (c.steps || []); } catch(e) {}
 
           return `
-            <div style="background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
                 <strong style="color:var(--text);font-size:0.95rem;">⛓️ ${escapeHtml(c.title || c.name)}</strong>
-                <span class="badge badge-accent">${steps.length} Stationen</span>
+                <span class="badge badge-accent" style="font-size:0.7rem;">${steps.length} Stationen</span>
               </div>
+              <p style="font-size:0.75rem;color:var(--text-muted);margin:0 0 0.6rem 0;">${escapeHtml(c.description || '')}</p>
 
-              <div style="display:flex;flex-direction:column;gap:0.5rem;background:var(--bg-card);padding:0.75rem;border-radius:4px;border:1px solid var(--border);">
+              <div style="display:flex;flex-direction:column;gap:0.4rem;background:var(--bg-dark);padding:0.6rem;border-radius:4px;border:1px solid var(--border);margin-bottom:0.6rem;">
                 ${steps.map(s => {
                   const curMod = s.model || 'claude-3-7-sonnet';
                   return `
-                    <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
-                      <span style="font-size:0.78rem;color:var(--text);">Station ${s.step}: <strong>${escapeHtml(s.action)}</strong> (${escapeHtml(s.agent || 'Agent')})</span>
-                      <select class="chain-step-model-select" data-chain="${c.id}" data-step="${s.step}" style="padding:0.25rem 0.5rem;font-size:0.75rem;background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:4px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;">
+                      <span style="font-size:0.75rem;color:var(--text);">St. ${s.step}: <strong>${escapeHtml(s.action)}</strong></span>
+                      <select class="chain-step-model-select" data-chain="${c.id}" data-step="${s.step}" style="padding:0.2rem 0.4rem;font-size:0.72rem;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:4px;">
                         ${AVAILABLE_MODELS.map(mod => `<option value="${mod.id}" ${mod.id === curMod ? 'selected' : ''}>${mod.label}</option>`).join('')}
                       </select>
                     </div>
@@ -569,10 +1178,14 @@ import BachLayout from "../../layouts/BachLayout.astro";
                 }).join('')}
               </div>
 
-              <div style="display:flex;justify-content:flex-end;margin-top:0.75rem;">
-                <button class="btn btn-sm btn-primary" onclick="saveStaffelBeseelung(${c.id})">
-                  ✨ Staffel-Beseelung speichern
-                </button>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <button class="btn btn-sm" style="font-size:0.72rem;color:var(--error);" onclick="deleteStaffelFromRunning(${c.id})">🗑️ Löschen</button>
+                <div style="display:flex;gap:0.35rem;">
+                  <button class="btn btn-sm" style="font-size:0.72rem;" onclick="runStaffelChain(${c.id})">▶ Losschicken</button>
+                  <button class="btn btn-sm btn-primary" style="font-size:0.75rem;" onclick="saveStaffelBeseelung(${c.id})">
+                    ✨ Speichern
+                  </button>
+                </div>
               </div>
             </div>
           `;
@@ -597,105 +1210,337 @@ import BachLayout from "../../layouts/BachLayout.astro";
           body: JSON.stringify({ step_models })
         });
         if (res.ok) {
-          alert('Staffel-Beseelung erfolgreich gespeichert!');
+          alert('✨ Staffel-Beseelung erfolgreich gespeichert!');
           loadStaffelnBeseelen();
         } else {
-          alert('Fehler beim Beseelen der Staffel.');
+          alert('Fehler beim Speichern.');
         }
       } catch (e) {
         alert('Netzwerkfehler: ' + e.message);
       }
     }
 
-    // ── 5. LIVE AKTIVITÄT ──
-    async function refreshActivity() {
-      const tbody = document.getElementById('activity-tbody');
+    async function runStaffelChain(chainId) {
       try {
-        const res = await fetch('/api/tasks?limit=6');
+        const res = await fetch(`/api/marblerun/chains/${chainId}/run`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}' });
         const data = await res.json();
-        const tasks = data.tasks || [];
-
-        if (tasks.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Keine aktuellen Tasks</td></tr>';
-          return;
-        }
-
-        tbody.innerHTML = tasks.slice(0, 6).map(t => {
-          const timeStr = t.created_at ? t.created_at.slice(11, 16) : '--:--';
-          const akteur = t.assigned_to || t.assigned_agent || 'Operator';
-          const model = t.required_model || 'Nicht angegeben';
-          const st = t.status || 'todo';
-          const badgeClass = st === 'completed' || st === 'done' ? 'badge-success' : (st === 'running' ? 'badge-accent' : 'badge-warning');
-
-          return `
-            <tr>
-              <td style="color:var(--text-muted);font-family:monospace;font-size:0.8rem;">${escapeHtml(timeStr)}</td>
-              <td><strong>${escapeHtml(akteur)}</strong></td>
-              <td>${escapeHtml(t.title || 'Task')}</td>
-              <td><span style="font-family:monospace;font-size:0.75rem;color:var(--accent);">${escapeHtml(model)}</span></td>
-              <td><span class="badge ${badgeClass}">${escapeHtml(st)}</span></td>
-            </tr>
-          `;
-        }).join('');
+        alert(`Staffellauf gestartet! Run-ID: ${data.run_id || 'ok'}`);
       } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="5" style="color:var(--error);text-align:center;">Aktivitäten konnten nicht geladen werden.</td></tr>`;
+        alert('Fehler: ' + e.message);
       }
     }
 
-    async function loadTrustedProfiles() {
-      const container = document.getElementById('trusted-profile-list');
+    async function deleteStaffelFromRunning(chainId) {
+      if (!confirm('Diese Staffel wirklich löschen?')) return;
       try {
-        const response = await fetch('/api/agents');
+        const res = await fetch(`/api/marblerun/chains/${chainId}`, { method: 'DELETE' });
+        if (res.ok) loadStaffelnBeseelen();
+      } catch (e) {
+        alert('Fehler: ' + e.message);
+      }
+    }
+
+    // ── LIVE-AKTIVITÄT & TIMELINE ──
+    async function refreshActivity() {
+      const tbody = document.getElementById('activity-tbody');
+      try {
+        const response = await fetch('/api/system/core-agents/timeline');
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
-        if (data.success !== true || !Array.isArray(data.agents)) throw new Error('Profilantwort ungültig');
-        const profiles = data.agents.filter(agent => agent.profile_chat_ready === true &&
-          Number.isSafeInteger(Number(agent.id)) && Number(agent.id) > 0);
-        let runtimeById = new Map();
-        let runtimeNote = 'Geräteanmeldung für Prozessstatus erforderlich';
-        try {
-          const runtimeResponse = await fetch('/api/agents/runtime');
-          if (runtimeResponse.ok) {
-            const runtimeData = await runtimeResponse.json();
-            if (runtimeData.success === true && Array.isArray(runtimeData.agents)) {
-              runtimeById = new Map(runtimeData.agents.map(item => [Number(item.agent_id), item.process_state]));
-              runtimeNote = 'Prozessstatus nicht prüfbar';
-            }
-          }
-        } catch (_error) {
-          runtimeNote = 'Prozessstatus nicht prüfbar';
+        if (data.schema !== 'bach.agent-timeline.v1' || !Array.isArray(data.events)) throw new Error('Timeline-Antwort ungültig');
+        document.getElementById('activity-count').textContent = data.events.length + ' jüngste Ereignisse';
+        tbody.replaceChildren();
+        if (!data.events.length) {
+          const row = document.createElement('tr');
+          const cell = coreElement('td', 'Noch keine Session- oder Task-Ereignisse.');
+          cell.colSpan = 5; row.append(cell); tbody.append(row);
         }
-        const stateLabels = { running: 'Prozess läuft', not_started: 'Kein Prozess bestätigt',
-          ended: 'Prozess beendet', unverified: 'Identität nicht bestätigt',
-          mismatch: 'Prozessabweichung', unavailable: 'Prozessstatus nicht prüfbar' };
-        container.innerHTML = profiles.length
-          ? profiles.map(agent => `<span><a class="btn" href="/chat?agent_id=${Number(agent.id)}">💬 ${escapeHtml(agent.display_name || agent.name)}</a><small style="display:block;margin-top:0.3rem;color:var(--text-muted);">${stateLabels[runtimeById.get(Number(agent.id))] || runtimeNote}</small></span>`).join('')
-          : '<span style="color:var(--text-muted);font-size:0.8rem;">Keine verifizierten Chatprofile verfügbar.</span>';
-      } catch (error) {
-        container.textContent = 'Profile können derzeit nicht geprüft werden: ' + error.message;
+        for (const event of data.events) {
+          const row = document.createElement('tr');
+          const stamp = Date.parse(event.timestamp || '');
+          const time = Number.isFinite(stamp) ? new Date(stamp).toLocaleString('de-DE') : 'Zeit unbekannt';
+          const description = event.task_id ? 'Task #' + event.task_id + ' · ' + (event.task_title || event.activity || event.event || '') :
+            (event.activity || event.event || 'Session') + (event.session_id ? ' · ' + event.session_id : '');
+          for (const value of [time, event.slot_id || event.source || 'System', description,
+            event.model_id || event.backend_id || '—', event.status || 'unknown']) row.append(coreElement('td', value));
+          tbody.append(row);
+        }
+      } catch (_error) {
+        const row = document.createElement('tr');
+        const cell = coreElement('td', 'Timeline derzeit nicht verfügbar.');
+        cell.colSpan = 5; row.append(cell); tbody.replaceChildren(row);
       }
+    }
+
+    function openPickupWerkstattModal() { location.assign('/agenten/blueprints?tab=templates'); }
+    function openPickupTeamModal() { location.assign('/agenten/blueprints?tab=teams'); }
+
+    // ── ONE-OFF MODAL & BLUEPRINT FORM ──
+    async function openOneOffModal() {
+      editingWorker=null;
+      document.getElementById('worker-refresh-skills').disabled=true;
+      document.getElementById('worker-skill-state').textContent='';
+      document.getElementById('worker-blueprint-form').reset();
+      document.getElementById('worker-blueprint-create').textContent='Workerprofil anlegen';
+      document.getElementById('modal-create-oneoff').style.display = 'flex';
+      await loadBackgroundWorkerBlueprint();
+    }
+
+    function closeOneOffModal() {
+      document.getElementById('modal-create-oneoff').style.display = 'none';
+    }
+
+    async function loadBackgroundWorkerBlueprint() {
+      const description = document.getElementById('worker-blueprint-description');
+      const create = document.getElementById('worker-blueprint-create');
+      try {
+        const response = await fetch('/api/system/workers/blueprint');
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        backgroundWorkerBlueprint = data;
+        document.getElementById('worker-avatar').value='';document.getElementById('worker-symbol').value='';drawWorkerAppearance();
+        const modeSelect = document.getElementById('worker-blueprint-sub-mode');
+        modeSelect.replaceChildren(...data.sub_modes.map(item => new Option(item.label, item.id)));
+        modeSelect.value = data.sub_mode || 'hintergrund_worker';
+        modeSelect.disabled = false;
+        const roleSelect = document.getElementById('worker-blueprint-role');
+        roleSelect.replaceChildren(...data.expert_roles.map(item => new Option(item.label, item.id)));
+        roleSelect.disabled = false;
+        document.getElementById('worker-blueprint-name').value = data.name || 'BACH Hintergrundworker';
+        document.getElementById('worker-blueprint-turns').value = data.defaults.max_tool_rounds ?? 25;
+        document.getElementById('worker-blueprint-mode').value = data.defaults.mode === 'safe' ? 'safe' : 'full';
+        document.getElementById('worker-blueprint-think').value = data.defaults.think === true ? 'true' : 'false';
+        document.getElementById('worker-blueprint-pause-after').value = data.defaults.pause_after ?? 5;
+        document.getElementById('worker-blueprint-pause-basis').value = data.defaults.pause_basis === 'tasks' ? 'tasks' : 'runs';
+        document.getElementById('worker-blueprint-pause-minutes').value = data.defaults.pause_minutes ?? 1;
+        document.getElementById('worker-blueprint-run-mode').value = data.defaults.type === 'once' ? 'once' : 'continuous';
+        document.getElementById('worker-blueprint-ttl').value = data.defaults.ttl_minutes ?? 0;
+        document.getElementById('worker-blueprint-backend').value = data.defaults.backend || 'ollama-cloud';
+        document.getElementById('worker-blueprint-system-prompt').checked = data.defaults.include_system_prompt === true;
+        document.getElementById('worker-blueprint-allow-tools').checked = data.defaults.allow_tools === true;
+        updateWorkerRunModeFields();
+        updateWorkerCreationModeFields();
+        drawWorkerAppearance();
+        description.textContent = `${data.description} Konfigurationsquelle: ${data.defaults_source}. Profil wird idle angelegt.`;
+        create.disabled = false;
+        await loadWorkerBlueprintModels();
+      } catch (_error) {
+        backgroundWorkerBlueprint = null;
+        description.textContent = 'Standard-Rollenvorlage konnte nicht gelesen werden.';
+        create.disabled = true;
+      }
+    }
+
+    async function loadWorkerBlueprintModels(selectedModel) {
+      const requestId = ++workerModelRequest;
+      const backend = document.getElementById('worker-blueprint-backend').value;
+      const modelSelect = document.getElementById('worker-blueprint-model');
+      const status = document.getElementById('worker-blueprint-model-status');
+      const create = document.getElementById('worker-blueprint-create');
+      modelSelect.replaceChildren(new Option('Modellkatalog wird geladen…', ''));
+      modelSelect.disabled = true;
+      create.disabled = true;
+      status.textContent = 'Aktueller Modellkatalog wird geprüft…';
+      try {
+        const response = await fetch('/api/system/workers/models?backend=' + encodeURIComponent(backend));
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        if (requestId !== workerModelRequest) return;
+        const models = [...new Set(data.models.filter(model => typeof model === 'string' && model.trim()))];
+        modelSelect.replaceChildren(...models.map(model => new Option(model, model)));
+        if (typeof selectedModel === 'string' && models.includes(selectedModel)) modelSelect.value = selectedModel;
+        modelSelect.disabled = models.length === 0;
+        status.textContent = `${models.length} Modell(e) bereitgestellt.`;
+        create.disabled = !backgroundWorkerBlueprint || models.length === 0;
+      } catch (_error) {
+        if (requestId !== workerModelRequest) return;
+        modelSelect.replaceChildren(new Option('Modellkatalog nicht verfügbar', ''));
+        status.textContent = 'Keine Modelle gemeldet.';
+      }
+    }
+
+    async function createWorkerFromBlueprint(event) {
+      event.preventDefault();
+      if (!backgroundWorkerBlueprint) return;
+      const button = document.getElementById('worker-blueprint-create');
+      const status = document.getElementById('worker-blueprint-model-status');
+      const ttlMinutes = Number(document.getElementById('worker-blueprint-ttl').value);
+      const runMode = document.getElementById('worker-blueprint-run-mode').value;
+      const backend = document.getElementById('worker-blueprint-backend').value;
+      const model = document.getElementById('worker-blueprint-model').value;
+      const subMode = document.getElementById('worker-blueprint-sub-mode').value;
+      const taskIdValue = document.getElementById('worker-blueprint-task-id').value.trim();
+      const taskId = taskIdValue ? Number(taskIdValue) : null;
+      const taskPrompt = document.getElementById('worker-blueprint-task-prompt').value.trim();
+      const multiRole = document.getElementById('worker-blueprint-multi-role').checked;
+
+      const payload = {
+        ...(editingWorker?.capabilities||{}),
+        avatar:document.getElementById('worker-avatar').value,
+        symbol:document.getElementById('worker-symbol').value,
+        name: document.getElementById('worker-blueprint-name').value.trim(),
+        backend,
+        model,
+        sub_mode: subMode,
+        role_id: subMode === 'expert_role' && !multiRole ? document.getElementById('worker-blueprint-role').value : '',
+        multi_role: subMode === 'expert_role' && multiRole,
+        max_experts: subMode === 'boss_routing' ? Number(document.getElementById('worker-blueprint-max-experts').value) : 3,
+        expert_models: {},
+        task_id: taskId,
+        max_tool_rounds: Number(document.getElementById('worker-blueprint-turns').value),
+        mode: document.getElementById('worker-blueprint-mode').value,
+        think: document.getElementById('worker-blueprint-think').value === 'true',
+        pause_after: Number(document.getElementById('worker-blueprint-pause-after').value),
+        pause_minutes: Number(document.getElementById('worker-blueprint-pause-minutes').value),
+        pause_basis: document.getElementById('worker-blueprint-pause-basis').value,
+        type: runMode,
+        ttl_minutes: runMode === 'continuous' ? ttlMinutes : 0,
+        task_prompt: taskPrompt,
+        include_system_prompt: document.getElementById('worker-blueprint-system-prompt').checked,
+        allow_tools: document.getElementById('worker-blueprint-allow-tools').checked
+      };
+
+      try {payload.expert_models=JSON.parse(document.getElementById('worker-blueprint-expert-models').value||'{}');}
+      catch(_error) {status.textContent='Modellzuordnung muss ein gültiges JSON-Objekt sein.';return;}
+
+      button.disabled = true;
+      status.textContent = 'Workerprofil wird angelegt…';
+      try {
+        const editing = editingWorker;
+        const response = await fetch(editing
+          ? `/api/system/workers/${encodeURIComponent(editing.id)}/configuration` : '/api/system/workers', {
+          method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(editing
+            ? {configuration_version: editing.version, configuration: payload} : payload)
+        });
+        const data = await response.json();
+        if (!response.ok || data.ok !== true) throw new Error(data.detail || 'Fehler beim Anlegen');
+        alert(editing ? 'Worker-Einstellungen gespeichert!' : 'Profil erfolgreich angelegt!');
+        closeOneOffModal();
+        await loadBackgroundWorkers();
+      } catch (error) {
+        status.textContent = error.message;
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function editWorkerConfiguration(workerId) {
+      await openOneOffModal();
+      document.getElementById('worker-blueprint-create').disabled=true;
+      const status = document.getElementById('worker-blueprint-model-status');
+      try {
+        const response = await fetch(`/api/system/workers/${encodeURIComponent(workerId)}/configuration`);
+        const data = await response.json();
+        if (!response.ok || data.ok !== true) throw new Error(data.detail);
+        const config = data.configuration;
+        document.getElementById('worker-blueprint-name').value = config.name || '';
+        document.getElementById('worker-blueprint-backend').value = config.backend || 'ollama';
+        document.getElementById('worker-blueprint-turns').value = config.max_tool_rounds ?? 25;
+        document.getElementById('worker-blueprint-task-prompt').value = config.task_prompt || '';
+        const fields={sub_mode:'sub-mode',role_id:'role',mode:'mode',think:'think',pause_after:'pause-after',
+          pause_basis:'pause-basis',pause_minutes:'pause-minutes',max_experts:'max-experts',task_id:'task-id'};
+        for(const [field,id] of Object.entries(fields)) {
+          const input=document.getElementById('worker-blueprint-'+id);
+          if(input)input.value=config[field]!=null?String(config[field]):'';
+        }
+        for(const [field,id] of Object.entries({multi_role:'multi-role',include_system_prompt:'system-prompt',allow_tools:'allow-tools'}))
+          document.getElementById('worker-blueprint-'+id).checked=config[field]===true;
+        document.getElementById('worker-avatar').value=config.avatar||'';
+        document.getElementById('worker-blueprint-expert-models').value=JSON.stringify(config.expert_models||{});
+        document.getElementById('worker-symbol').value=config.symbol||'';drawWorkerAppearance();
+        updateWorkerCreationModeFields();
+        editingWorker = { id: workerId, version: data.configuration_version,
+          capabilities:Object.fromEntries(['allowed_tools','skill_refs'].filter(key=>key in config).map(key=>[key,config[key]])) };
+        document.getElementById('worker-refresh-skills').disabled=!(config.skill_refs?.length);
+        document.getElementById('worker-skill-state').textContent=(data.skill_bindings||[]).some(item=>item.state!=='current')
+          ? 'Mindestens eine Skill-Quelle wurde geändert oder fehlt. Die gespeicherte Bindung bleibt sichtbar; vor dem Start neu binden.'
+          : (config.skill_refs?.length||0)+' gebundene Skill-Anleitungen.';
+        document.getElementById('worker-blueprint-create').textContent = 'Einstellungen speichern';
+        await loadWorkerBlueprintModels(config.model);
+      } catch (e) {
+        status.textContent = 'Ladefehler: ' + e.message;
+      }
+    }
+
+    function updateWorkerCreationModeFields() {
+      const subMode = document.getElementById('worker-blueprint-sub-mode').value;
+      const expertFields = document.getElementById('worker-blueprint-expert-fields');
+      const bossFields = document.getElementById('worker-blueprint-boss-fields');
+      const roleSelect = document.getElementById('worker-blueprint-role');
+      const multiRole = document.getElementById('worker-blueprint-multi-role');
+      expertFields.hidden = subMode !== 'expert_role';
+      bossFields.hidden = subMode !== 'boss_routing';
+      roleSelect.required = subMode === 'expert_role' && !multiRole.checked;
+      roleSelect.disabled = subMode !== 'expert_role' || multiRole.checked;
+    }
+
+    function drawWorkerAppearance() {
+      const modal=document.getElementById('core-slot-editor'),atlas=modal.dataset.portraitAtlas;
+      const avatar=document.getElementById('worker-avatar'),symbol=document.getElementById('worker-symbol');
+      const identity={role_id:document.getElementById('worker-blueprint-role').value};
+      document.getElementById('worker-avatar-preview').replaceChildren(window.BachAvatars.createAvatar(document,avatar.value,identity,atlas,'agent-avatar-preview'));
+      window.BachAvatars.mountAvatarPicker(document.getElementById('worker-avatar-presets'),avatar.value,identity,atlas,value=>{avatar.value=value;drawWorkerAppearance();});
+      window.BachSymbols.mountSymbolPicker(document.getElementById('worker-symbols'),symbol.value,JSON.parse(modal.dataset.ticketSymbols),value=>{symbol.value=value;drawWorkerAppearance();});
+    }
+
+    async function uploadWorkerAvatar(file) {
+      if(!file)return;
+      const status=document.getElementById('worker-blueprint-model-status');
+      if(file.size>180000||!['image/png','image/jpeg','image/webp'].includes(file.type)){status.textContent='Bitte PNG, JPEG oder WebP bis 180 KB verwenden.';return;}
+      try {
+        document.getElementById('worker-avatar').value=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});
+        drawWorkerAppearance();
+      }catch(_error){status.textContent='Bild konnte nicht geladen werden.';}
+    }
+
+    async function refreshWorkerSkills() {
+      if(!editingWorker)return;
+      const current=editingWorker,status=document.getElementById('worker-skill-state');
+      try {
+        const pins=[];
+        for(const pin of current.capabilities.skill_refs||[]) {
+          const response=await fetch('/api/capabilities/skills/'+encodeURIComponent(pin.id)+'/source');
+          const source=await response.json();
+          if(!response.ok||source.id!==pin.id||!/^[a-f0-9]{64}$/.test(source.source_version))throw new Error('Aktuelle Skill-Quelle fehlt: '+pin.id);
+          pins.push({id:pin.id,source_version:source.source_version,version:source.version});
+        }
+        if(editingWorker!==current)return;
+        current.capabilities.skill_refs=pins;status.textContent='Aktuelle Skill-Bindungen vorbereitet. Mit Speichern übernehmen.';
+      } catch(error) {status.textContent=error.message;}
+    }
+
+    function updateWorkerRunModeFields() {
+      const once = document.getElementById('worker-blueprint-run-mode').value === 'once';
+      const ttl = document.getElementById('worker-blueprint-ttl');
+      ttl.disabled = once;
+      if (once) ttl.value = '0';
     }
 
     async function refreshAll(interactive = false) {
       await Promise.all([
-        loadTrustedProfiles(),
+
         loadClusterCockpit(),
+        loadBackgroundWorkers(),
         loadTeamsBeseelen(),
         loadStaffelnBeseelen(),
-        refreshActivity(),
-        loadCoreSlots()
+        loadCoreSlots(),
+        loadOpenRouterCatalog(),
+        refreshActivity()
       ]);
-      if (interactive) {
-        // Subtle confirmation
-        console.log("Living & Running Daten aktualisiert");
-      }
+      if (interactive) console.log("Living & Running Daten aktualisiert");
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('worker-blueprint-backend')?.addEventListener('change', () => loadWorkerBlueprintModels());
+      document.getElementById('worker-blueprint-sub-mode')?.addEventListener('change', updateWorkerCreationModeFields);
+      document.getElementById('worker-blueprint-run-mode')?.addEventListener('change', updateWorkerRunModeFields);
+      document.getElementById('worker-blueprint-multi-role')?.addEventListener('change', updateWorkerCreationModeFields);
+      document.getElementById('worker-blueprint-form')?.addEventListener('submit', createWorkerFromBlueprint);
       refreshAll();
-      // Observe hardware and task activity without resetting editable forms.
       setInterval(loadClusterCockpit, 15000);
-      setInterval(refreshActivity, 4000);
+      setInterval(refreshActivity, 5000);
+      setInterval(loadBackgroundWorkers, 6000);
+      setInterval(loadCoreSlots, 6000);
     });
   </script>
 </BachLayout>
