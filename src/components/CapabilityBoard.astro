@@ -1,20 +1,22 @@
 ---
 import {TICKET_SYMBOL_URLS} from '../lib/ticket-symbol-assets.mjs';
 import '../styles/ticket-symbols.css';
-interface Props { board: 'skills' | 'plugins' | 'mcp' | 'software' }
+interface Props { board: 'skills' | 'plugins' | 'mcp' | 'software' | 'ocean' }
 const {board} = Astro.props;
-const titles = {skills:'Skill-Zentrale',plugins:'Plugins',mcp:'MCP-Connections',software:'Software'};
+const titles = {skills:'Skill-Zentrale',plugins:'Plugins',mcp:'MCP-Connections',software:'Software',ocean:'Ocean'};
 const descriptions = {
   skills:'Aktuelle Anleitungen lesen, anpassen und mit ihrer Historie vergleichen.',
   plugins:'Plugin-Bibliotheken und Installationen deiner Agenten-Clients.',
   mcp:'Serverkonfiguration deiner Agenten-Clients und passende Rezeptbücher.',
-  software:'Vorhandene Software und Module dieses Hosts.',
+  software:'Eigenständige Anwendungen aus dem Software-Katalog.',
+  ocean:'Module und Repository-Quellen dieses Hosts.',
 };
 const tabs = [
   {board:'plugins',label:'Plugins',href:'/skills/plugins'},
   {board:'mcp',label:'MCP-Connections',href:'/skills/mcp'},
   {board:'skills',label:'Skill-Zentrale',href:'/skills'},
   {board:'software',label:'Software',href:'/skills/software'},
+  {board:'ocean',label:'Ocean',href:'/skills/ocean'},
 ];
 ---
 <section id="capability-board" data-board={board} data-ticket-symbols={JSON.stringify(TICKET_SYMBOL_URLS)}>
@@ -28,6 +30,7 @@ const tabs = [
   <nav class="board-tabs" aria-label="Skills & Software">
     {tabs.map(tab=><a href={tab.href} class:list={['board-tab', {active:tab.board===board}]} aria-current={tab.board===board?'page':undefined}>{tab.label}</a>)}
   </nav>
+  {board==='software' && <p class="processing-guide">Deterministische Verarbeitung: Software · Leichte und mittlere Aufgaben: lokale Modelle · Schwere Aufgaben: externe Modelle</p>}
   <div class="board-toolbar">
     <label class="board-search">Suchen<input type="search" id="board-search" placeholder="Name oder Beschreibung" autocomplete="off" /></label>
     {board==='skills' && <label>Kategorie<select id="board-category"><option value="">Alle Kategorien</option></select></label>}
