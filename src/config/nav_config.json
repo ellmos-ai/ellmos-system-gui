@@ -147,7 +147,7 @@
         "description": "Agenten-Chats, Task-Läufe und Session-Protokolle"
       },
       {
-        "href": "/inbox",
+        "href": "/user-inbox",
         "label": "Inbox",
         "icon": "✉️",
         "description": "Nachrichten an dich"

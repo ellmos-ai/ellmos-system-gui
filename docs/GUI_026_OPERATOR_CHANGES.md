@@ -22,3 +22,5 @@
 
 Mac-Installation und Providerabnahme erfordern eigene Readbacks. Ein Blueprint besitzt derzeit höchstens eine native Instanz; laufende oder unbestätigte Instanzen werden im Dialog nicht ersetzt.
 Der separate MarbleRun-Designer und die vollständige Verlaufsansicht bleiben für das nächste Arbeitspaket offen.
+
+Die Nachrichtenansicht liegt unter /user-inbox; die bestehende Datei-Inbox bleibt unter /inbox. Während einer Vorlagenübernahme ist ein Entwurfswechsel gesperrt. Unbestätigte Slots ergeben ausdrücklich einen unvollständigen Laufstatus.

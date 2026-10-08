@@ -74,3 +74,5 @@ Blueprint- und Konfigurationsversion werden geprüft; Anbieter und konkretes Mod
 ausgewählt werden. Die Übernahme erzeugt oder aktualisiert ein Profil und startet keinen
 Provider. Pro Blueprint ist derzeit ein nativer Systemsteckplatz vorgesehen; laufende oder
 unbestätigte Instanzen können im Dialog nicht ersetzt werden.
+
+Die Nachrichtenansicht liegt unter /user-inbox; die bestehende Datei-Inbox bleibt unter /inbox. Während einer Vorlagenübernahme ist ein Entwurfswechsel gesperrt. Unbestätigte Slots ergeben ausdrücklich einen unvollständigen Laufstatus.

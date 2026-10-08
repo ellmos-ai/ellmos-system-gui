@@ -29,7 +29,7 @@
     "src/components/Header.astro": "50d3200e3cb814ee1637b2730fe7a944c0ad6eb3946c3a09a942fe615bd56883",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "69d439c1273ad633a247980239c781f0ece0ba42478e4a5ae76adc47b51aa00e",
-    "src/config/nav_config.json": "aaccabb6c78e0850de7f0593b5b52177c3ce38ae3218ced31b845700e4738c40",
+    "src/config/nav_config.json": "d0b24873c49118a521a52bc098d4111c27cf21b759ab1bc8a9b9256f41d0e12d",
     "src/layouts/BachLayout.astro": "8f45bbac50c150ea9d19f91794bb97b94ad103f5abc5cdef01e70a3c9cc43ac6",
     "src/lib/agent-avatar.mjs": "9e94d1aab390a7fde64cc40155b5b044d02e08a79404f445bb8f38c95ab6f3e2",
     "src/lib/capability-board-client.mjs": "436c4dfe46ebd997603f1319039552855c39077c2a818ff04e5217a100ba1a00",
@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "6b75e1a4dbb6eb7348816d41bafec01abd0a6d0bed363a05118a3bba07a1eea7",
-    "src/pages/agenten/running.astro": "d09b563768a72b026aeabafcde276e48bb978b2dcddb432bff36a4e95e2aa4f9",
+    "src/pages/agenten/running.astro": "9e79eb9be6836fe4470c2a619a5e2f57073b2c3150bf6f1f53cd28294449a8aa",
     "src/pages/agenten/sessions.astro": "8117001f267bf411bdf008a36dbbf672fd3964e81b609529905ca6e043aed486",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "23e6bd6241b60edefdc473a3f921d6b78e44d59f8ccfd5d6f80ca884527cd90c",
@@ -95,8 +95,8 @@
     "tests/domain-routes.test.mjs": "95f8b634565e7ded7552436ff5fcd43736a38bc7da09d29cf714c6a61f0ba213",
     "src/assets/agent-workshop/workshop.jpg": "b3b102785c06ef1cef4e74cacff6445b94bddcdc5d9083c45748c4f21ebc5674",
     "src/assets/agent-workshop/provenance.json": "6d9eb6cb901b4505f999905b683f1d70f33ee768814864c502b1f09f626a6f99",
-    "src/pages/inbox.astro": "e6d80e9064a3ce484ece7651c1c2260e8395c19214ce69aface181622b99ab96",
-    "src/scripts/agent-template-picker.mjs": "dcb6cd3ca4f04f353be4cc763ba045ea7809662b55988fcddf8eba4f51bd501b"
+    "src/pages/inbox.astro": "e912b71af66cedada70ae29986f9fb3cf23b2f6ab021c3c838c923b4fab745c7",
+    "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -273,7 +273,7 @@
         "src/config/nav_config.json": {
           "source_path": "system/gui/web/src/config/nav_config.json",
           "source_sha256": "d86348606bae5b0a6d474c6179635f674d362bff5848b1e2318f11135c7c9097",
-          "imported_sha256": "aaccabb6c78e0850de7f0593b5b52177c3ce38ae3218ced31b845700e4738c40",
+          "imported_sha256": "d0b24873c49118a521a52bc098d4111c27cf21b759ab1bc8a9b9256f41d0e12d",
           "adapted": true
         },
         "src/layouts/BachLayout.astro": {
@@ -339,7 +339,7 @@
         "src/pages/agenten/running.astro": {
           "source_path": "system/gui/web/src/pages/agenten/running.astro",
           "source_sha256": "c4700fb05438cdd20df993894f7b649be9f53a1a56b5dea80fa140164b943728",
-          "imported_sha256": "d09b563768a72b026aeabafcde276e48bb978b2dcddb432bff36a4e95e2aa4f9",
+          "imported_sha256": "9e79eb9be6836fe4470c2a619a5e2f57073b2c3150bf6f1f53cd28294449a8aa",
           "adapted": true
         },
         "src/pages/agenten/sessions.astro": {

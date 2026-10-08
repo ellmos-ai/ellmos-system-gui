@@ -1,6 +1,6 @@
 // Template assembly belongs to Living & Running; never starts a provider implicitly.
 const $ = id => document.getElementById(id);
-let state = null, modelRevision = 0;
+let state = null, modelRevision = 0, mutationPending = false;
 const allowed = ["backend","model","mode","think","avatar","symbol","include_system_prompt","custom_system_prompt","pause_after","pause_minutes","pause_basis"];
 async function api(path, options = {}) {
  const response = await fetch(path, options);
@@ -10,6 +10,7 @@ async function api(path, options = {}) {
 }
 function notify(text) { $("template-agent-status").textContent = text; }
 function draw() {
+ if (mutationPending) return;
  const bp = state.blueprints.find(row => row.id === Number($("template-agent-blueprint").value));
  if (!bp) { $("template-agent-save").disabled = true; return; }
  state.selected = bp;
@@ -40,6 +41,7 @@ async function models() {
  $("template-agent-models").replaceChildren(...data.models.filter(name => typeof name === "string").map(name => new Option(name,name)));
 }
 export async function openTemplatePicker() {
+ if (mutationPending) return;
  const dialog = $("template-agent-picker");
  dialog.showModal(); notify("Lade Vorlagen und aktuelle Agentenkonfiguration …"); $("template-agent-save").disabled = true;
  const request = {};
@@ -62,15 +64,20 @@ $("template-agent-backend").addEventListener("change",() => {
 });
 $("template-agent-form").addEventListener("submit",async event => {
  event.preventDefault();
- if (!state?.selected || $("template-agent-save").disabled || !event.target.reportValidity()) return;
+ if (mutationPending || !state?.selected || $("template-agent-save").disabled || !event.target.reportValidity()) return;
  const current = state, bp = current.selected, button = $("template-agent-save");
  const execution = {...current.execution,backend:$("template-agent-backend").value,model:$("template-agent-model").value.trim(),mode:$("template-agent-mode").value};
  if (!execution.backend || !execution.model) { notify("Anbieter und konkretes Modell auswählen."); return; }
+ mutationPending = true;
+ const controls = [...event.target.querySelectorAll('input,select,button')].map(node => ({node,disabled:node.disabled}));
+ for (const control of controls) control.node.disabled = true;
  button.disabled = true;
  try {
   const result = await api("/api/agent-studio/blueprints/" + bp.id + "/materialize",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({expected_version:bp.version,configuration_version:current.core.configuration_version,execution})});
+  if (state !== current) return;
   if (result.success !== true || result.worker_started !== false || result.id !== bp.id || result.slot_id !== "system-blueprint-" + bp.id) throw new Error("Übernahme nicht bestätigt. Vor einem weiteren Versuch den Agentenstatus prüfen.");
   const readback = await api("/api/system/core-agents");
+  if (state !== current) return;
   const actual = readback.agents?.find(slot => slot.id === result.slot_id);
   if (!actual || actual.backend !== execution.backend || actual.model !== execution.model || actual.blueprint_version !== bp.version) throw new Error("Gespeicherte Agentenkonfiguration konnte nicht bestätigt werden.");
   $("template-agent-picker").close(); state = null;
@@ -80,12 +87,17 @@ $("template-agent-form").addEventListener("submit",async event => {
   if (note) note.textContent = actual.runtime_verified === true && actual.living === true ? "Agent übernommen · Living bereit. Den Start ausdrücklich am Agenten auslösen." : "Agent übernommen · Laufzeitstatus wird geprüft.";
  } catch(error) {
   // Keep the draft, but require a fresh catalogue after any ambiguous or failed mutation.
-  notify(error.message + " Auswahl neu laden, bevor erneut gespeichert wird.");
+  if (state === current) notify(error.message + " Auswahl neu laden, bevor erneut gespeichert wird.");
  } finally {
+  mutationPending = false;
+  for (const control of controls) control.node.disabled = control.disabled;
   if (state === current) button.disabled = true;
  }
 });
 $("template-agent-refresh").addEventListener("click",() => {
+ if (mutationPending) return;
  $("template-agent-picker").close();openTemplatePicker();
 });
 window.BachTemplatePicker = {open:openTemplatePicker};
+
+$("template-agent-picker").addEventListener("cancel",event => { if (mutationPending) event.preventDefault(); });

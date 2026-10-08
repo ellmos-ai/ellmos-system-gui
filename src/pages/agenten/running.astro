@@ -523,7 +523,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       const target = document.getElementById('running-system-slots-list');
       target.replaceChildren();
       const active = agents.filter(agent => agent.runtime_verified === true && agent.running === true && !['starting','stopping'].includes(agent.status));
-      if (!active.length) { target.append(coreElement('p','Kein Systemslot arbeitet derzeit an einem Lauf.','text-muted')); return; }
+      const unknown = agents.filter(agent => agent.runtime_verified !== true || typeof agent.running !== 'boolean');
+      const transitioning = agents.some(agent => ['starting','stopping'].includes(agent.status));
+      if (unknown.length) target.append(coreElement('p','Laufstatus unvollständig · ' + unknown.length + ' Systemslot(s) sind nicht bestätigt.','text-muted'));
+      if (!active.length) {
+        if (!unknown.length) target.append(coreElement('p', transitioning ? 'Systemslot startet oder beendet seinen Lauf.' : 'Kein Systemslot arbeitet derzeit an einem Lauf.','text-muted'));
+        return;
+      }
       for (const agent of active) {
         const card = coreElement('article',undefined,'core-agent-card');
         card.dataset.runningSlot = agent.id;
