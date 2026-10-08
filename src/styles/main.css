@@ -125,7 +125,7 @@ body {
     display: flex;
     gap: 0.15rem;
     align-items: center;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     min-width: 0;
     max-width: 100%;
     flex: 1 1 auto;
