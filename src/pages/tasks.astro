@@ -26,12 +26,19 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
   <!-- Filter Bar -->
   <div class="card" style="padding:0.75rem 1.25rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
-    <div style="display:flex;gap:0.5rem;" id="filter-buttons">
-      <button class="btn filter-btn" data-filter="all">Alle Tasks</button>
-      <button class="btn filter-btn" data-filter="user">👤 Persönlich (User)</button>
-      <button class="btn filter-btn" data-filter="auto">🤖 Automatisiert (Ticket-Master / Worker)</button>
-      <button class="btn btn-primary filter-btn active" data-filter="open" aria-pressed="true">⏳ Nur offene</button>
-      <button class="btn filter-btn" data-filter="done">✅ Erledigte</button>
+    <div class="task-filter-controls" aria-label="Aufgaben kombinieren">
+      <label>Zuordnung<select id="tasks-assignment-filter">
+        <option value="all">Alle Aufgaben</option><option value="user">👤 Persönlich (User)</option>
+        <option value="auto">🤖 Automatisiert / Agenten</option><option value="unassigned">Unzugewiesen</option>
+      </select></label>
+      <label>Status<select id="tasks-status-filter">
+        <option value="open" selected>⏳ Offen</option><option value="done">✅ Erledigt</option><option value="all">Alle Status</option>
+      </select></label>
+      <label>Priorität<select id="tasks-priority-filter">
+        <option value="">Alle Prioritäten</option><option value="P1">P1 · Kritisch</option>
+        <option value="P2">P2 · Wichtig</option><option value="P3">P3 · Normal</option><option value="P4">P4 · Niedrig</option>
+      </select></label>
+      <button class="btn" id="tasks-reset-filters" type="button">Zurücksetzen</button>
     </div>
     <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
       <span style="color:var(--text-muted);font-size:0.85rem;" id="tasks-count-badge">Lade...</span>
@@ -95,11 +102,10 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
   <style>
     .hidden { display: none !important; }
-    .filter-btn.active {
-      background: var(--accent) !important;
-      color: #0b0d14 !important;
-      border-color: var(--accent) !important;
-    }
+    .task-filter-controls {display:flex;align-items:end;gap:.65rem;flex-wrap:wrap;min-width:0}
+    .task-filter-controls label {display:flex;flex-direction:column;gap:.35rem;color:var(--text-muted);font-size:.8rem;min-width:0}
+    .task-filter-controls select {background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;max-width:100%;font:inherit}
+    @media(max-width:620px) {.task-filter-controls {width:100%}.task-filter-controls label {flex:1 1 150px}}
     .task-detail { margin-top:1.25rem; padding:1.25rem; }
     .task-table-scroll { overflow-x:auto; }
     .task-detail-head,.task-detail-actions { display:flex; justify-content:space-between; align-items:flex-start; gap:.7rem; flex-wrap:wrap; }
@@ -118,8 +124,11 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
   <script>
     import {createAssignmentController, taskResponseError} from '../lib/task-assignment.mjs';
+    import {readTaskFilters, taskFilterQuery, writeTaskFilters, readTaskPage, taskCountLabel} from '../lib/task-filters.mjs';
     let allTasks = [];
-    let currentFilter = new URLSearchParams(location.search).get('assigned_to')?.toLowerCase() === 'user' ? 'user' : 'open';
+    let currentFilters = readTaskFilters(location.search);
+    let filteredTotal = null;
+    let taskLoadGeneration = 0;
     let currentOffset = 0;
     let hasMoreTasks = false;
     let selectedTask = null;
@@ -127,21 +136,26 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     const editAssignment = createAssignmentController(document.getElementById('task-edit-form'));
 
     async function loadTasks() {
+      const generation = ++taskLoadGeneration;
       const container = document.getElementById('tasks-table-container');
+      const filters = {...currentFilters};
       try {
-        const status = currentFilter === 'open' ? 'nonterminal'
-          : currentFilter === 'done' ? 'done' : 'all';
-        const query = new URLSearchParams({ status, limit: String(pageSize), offset: String(currentOffset) });
-        if (currentFilter === 'user') query.set('assigned_to', 'user');
+        const query = taskFilterQuery(filters, currentOffset, pageSize);
         const res = await fetch('/api/tasks?' + query);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
-        if (data.success !== true || !Array.isArray(data.tasks)) throw new Error('Ungültige Task-Antwort');
-        allTasks = data.tasks;
-        hasMoreTasks = data.has_more === true;
+        if (generation !== taskLoadGeneration) return;
+        const page = readTaskPage(data, filters);
+        allTasks = page.tasks;
+        filteredTotal = page.total;
+        hasMoreTasks = page.hasMore;
         renderTasks();
-      } catch (e) {
-        container.textContent = 'Tasks konnten nicht geladen werden.';
+      } catch (error) {
+        if (generation !== taskLoadGeneration) return;
+        allTasks = [];
+        filteredTotal = null;
+        container.textContent = 'Tasks konnten nicht geladen werden: ' + error.message;
+        document.getElementById('tasks-count-badge').textContent = 'Quelle nicht verfügbar';
         hasMoreTasks = false;
         updateTaskPagination();
       }
@@ -157,22 +171,10 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       const container = document.getElementById('tasks-table-container');
       let filtered = allTasks;
 
-      const getAssignee = t => (t.assigned_to || t.assignee || 'user').toLowerCase();
       const normalizedStatus = status => String(status || '').trim().toLowerCase();
       const isDoneStatus = status => ['done', 'completed', 'closed'].includes(normalizedStatus(status));
       const isTerminalStatus = status => ['done', 'completed', 'closed', 'cancelled', 'canceled', 'duplicate'].includes(normalizedStatus(status));
-
-      if (currentFilter === 'user') {
-        filtered = allTasks.filter(t => getAssignee(t) === 'user');
-      } else if (currentFilter === 'auto') {
-        filtered = allTasks.filter(t => getAssignee(t) !== 'user');
-      } else if (currentFilter === 'open') {
-        filtered = allTasks.filter(t => !isTerminalStatus(t.status));
-      } else if (currentFilter === 'done') {
-        filtered = allTasks.filter(t => isDoneStatus(t.status));
-      }
-
-      document.getElementById('tasks-count-badge').textContent = `${filtered.length} von ${allTasks.length} geladenen Tasks angezeigt`;
+      document.getElementById('tasks-count-badge').textContent = taskCountLabel(filtered.length, filteredTotal, currentOffset);
       updateTaskPagination();
 
       if (filtered.length === 0) {
@@ -233,23 +235,25 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       `;
     }
 
-    // Filter Buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => {
-          b.classList.remove('active', 'btn-primary');
-          b.setAttribute('aria-pressed', 'false');
-        });
-        btn.classList.add('active', 'btn-primary');
-        btn.setAttribute('aria-pressed', 'true');
-        currentFilter = btn.getAttribute('data-filter');
-        const url = new URL(location.href);
-        if (currentFilter === 'user') url.searchParams.set('assigned_to', 'user');
-        else url.searchParams.delete('assigned_to');
-        history.replaceState(null, '', url);
+    function syncTaskFilterControls() {
+      document.getElementById('tasks-assignment-filter').value = currentFilters.assignment;
+      document.getElementById('tasks-status-filter').value = currentFilters.status;
+      document.getElementById('tasks-priority-filter').value = currentFilters.priority;
+    }
+    for (const [id, key] of [['tasks-assignment-filter','assignment'], ['tasks-status-filter','status'], ['tasks-priority-filter','priority']]) {
+      document.getElementById(id).addEventListener('change', event => {
+        currentFilters = {...currentFilters, [key]:event.target.value};
         currentOffset = 0;
+        history.replaceState(null, '', writeTaskFilters(location.href, currentFilters));
         loadTasks();
       });
+    }
+    document.getElementById('tasks-reset-filters').addEventListener('click', () => {
+      currentFilters = {assignment:'all',status:'open',priority:''};
+      currentOffset = 0;
+      syncTaskFilterControls();
+      history.replaceState(null, '', writeTaskFilters(location.href, currentFilters));
+      loadTasks();
     });
     document.getElementById('tasks-prev-page').addEventListener('click', () => {
       if (currentOffset === 0) return;
@@ -427,12 +431,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     });
     Object.assign(window, {loadTasks, openTask, completeTask});
     window.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.filter-btn').forEach(button => {
-        const active = button.dataset.filter === currentFilter;
-        button.classList.toggle('active', active);
-        button.classList.toggle('btn-primary', active);
-        button.setAttribute('aria-pressed', String(active));
-      });
+      syncTaskFilterControls();
       loadTasks();
       const openId = parseInt(new URLSearchParams(location.search).get('task') || new URLSearchParams(location.search).get('id') || '', 10);
       if (Number.isSafeInteger(openId) && openId > 0) openTask(openId);

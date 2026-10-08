@@ -1,6 +1,8 @@
 import {INVENTORIES, SKILL_ID, loadSkill, saveSkill, requestJson, confirmSkillReplacement} from './capability-board-client.mjs';
 import {createSymbol,mountSymbolPicker,withSkillSymbol} from './ticket-symbol.mjs';
 
+import {catalogMatches, publicationLabel, safePublicationUrl} from './software-catalog.mjs';
+
 const board = document.getElementById('capability-board');
 if (board) {
   const kind = board.dataset.board;
@@ -32,7 +34,7 @@ if (board) {
       const card = node('article', null, 'capability-card');
       card.dataset.id = item.id;
       const title=node('h3',item.name||item.id);title.prepend(createSymbol(document,item.symbol,symbolUrls,
-        {skills:'wissen',plugins:'topics_ai',mcp:'scripts',software:'topics_software'}[kind]));
+        {skills:'wissen',plugins:'topics_ai',mcp:'scripts',software:'topics_software',ocean:'topics_ai'}[kind]));
       card.append(title, node('p', item.description || 'Keine Beschreibung in der Quelle.'));
       const meta = node('div', null, 'card-meta');
       if (kind !== 'mcp') meta.append(badge(item.version || 'Ohne Versionsnummer'));
@@ -49,7 +51,20 @@ if (board) {
           card.append(node('p', 'Im Client konfiguriert · ' + item.transport));
           if (item.command_name || item.hostname) card.append(node('p', item.command_name || item.hostname, 'card-caption'));
           card.append(node('p', flag(item.enabled_in_client), 'card-caption'));
-        } else card.append(node('p', 'Programmquellen vorhanden'));
+        } else if (kind === 'software') {
+          if (item.category) meta.append(badge(item.category));
+          card.append(node('p', 'Im Anwendungskatalog erfasst'));
+          card.append(node('p', item.installed === true ? 'Installation bestätigt' : 'Installation nicht erfasst', 'card-caption'));
+          for (const publication of item.publications || []) {
+            const url = safePublicationUrl(publication.url);
+            const label = publicationLabel(publication);
+            if (url) {
+              const link = node('a', label, 'card-caption');
+              link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
+              card.append(link);
+            } else card.append(node('p', label, 'card-caption'));
+          }
+        } else card.append(node('p', 'Modul- oder Repository-Quellen vorhanden'));
         const detail = node('details'), summary = node('summary', 'Quelle');
         detail.append(summary, node('p', item.path || item.source || 'Quelle nicht angegeben'));
         card.append(detail);
@@ -66,6 +81,7 @@ if (board) {
     try {
       const data = await requestJson(INVENTORIES[kind]);
       if (generation !== inventoryGeneration) return;
+      if (!catalogMatches(kind, data)) throw new Error('Der Anwendungskatalog und die Ocean-Quellen sind noch nicht getrennt angebunden.');
       const rows = kind === 'skills' ? data.skills : data.items;
       if (!Array.isArray(rows)) throw new Error('Die Quelle liefert keinen Eintragskatalog.');
       items = rows;
@@ -78,7 +94,8 @@ if (board) {
       const notes = [];
       if (kind === 'plugins') notes.push('Die Einstellungen stammen aus den Client-Dateien. Der Laufzeitstatus der Clients ist nicht erfasst.');
       if (kind === 'mcp') notes.push('Die Verbindungen werden von den jeweiligen Clients verwaltet. Eine laufende MCP-Sitzung ist hier nicht nachgewiesen.');
-      if (kind === 'software') notes.push('Die Liste zeigt Programmquellen auf diesem Host. Eine Installation oder ein laufender Dienst ist damit nicht nachgewiesen.');
+      if (kind === 'software') notes.push('Anwendungen aus dem Software-Register. Veröffentlichungsangaben sind der Registerstand; Installationen und Store-Verfügbarkeit sind nicht geprüft.');
+      if (kind === 'ocean') notes.push('Die Liste zeigt Modul- und Repository-Quellen auf diesem Host. Eine Installation oder ein laufender Dienst ist damit nicht nachgewiesen.');
       if (data.truncated) notes.push('Die Lesegrenze wurde erreicht; die Liste ist unvollständig.');
       if (data.errors?.length) notes.push(data.errors.length + ' Quelle(n) konnten nicht gelesen werden.');
       if (data.sources?.length && data.sources.every(source => !source.available)) notes.push('Keine konfigurierte Quelle ist erreichbar.');

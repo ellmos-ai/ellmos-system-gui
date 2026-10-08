@@ -5,6 +5,7 @@ export const INVENTORIES = {
   plugins: '/api/capabilities/plugins/inventory',
   mcp: '/api/capabilities/mcp/connections',
   software: '/api/capabilities/software',
+  ocean: '/api/capabilities/ocean',
 };
 
 export function confirmSkillReplacement(content, loadedContent, ask) {

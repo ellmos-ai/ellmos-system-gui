@@ -187,7 +187,13 @@
         "href": "/skills/software",
         "label": "Software",
         "icon": "💻",
-        "description": "Vorhandene Software und Module"
+        "description": "Eigenständige Anwendungen für deterministische Verarbeitung"
+      },
+      {
+        "href": "/skills/ocean",
+        "label": "Ocean",
+        "icon": "🌊",
+        "description": "Module und Repository-Quellen dieses Hosts"
       }
     ]
   },
@@ -236,7 +242,7 @@
       {
         "href": "/artefakte",
         "label": "Artefakte & Exporte",
-        "icon": "🎨",
+        "icon": "💾",
         "description": "Generierte Berichte, Diagramme, Pläne und Mockups"
       }
     ]
