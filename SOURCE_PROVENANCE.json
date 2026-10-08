@@ -70,7 +70,7 @@
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
     "tests/worker-decomposition.test.mjs": "c67a1cd692bad66677674aef2cc60c33baa5127d24306d76659e0a27a924d551",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/frontend-parity.test.mjs": "e8d0be4f2c645ec0287957af054be3bba375d6630b00f5d27398e14a1e3fd4fe",
+    "tests/frontend-parity.test.mjs": "1c82e2b32069ba8553eff3572057c3feee905019041190046a7c7d8792864c70",
     "tests/task-assignment.test.mjs": "46cf92f6871208fb21d9503fca0203b5351a228e322c182574438b0a4238a439",
     "src/lib/task-assignment.mjs": "569efade7aa66fd0cc6aa63bb8010b45a480b6d21a93bbdeb61426d28a98bf5a",
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
@@ -95,8 +95,8 @@
     "tests/domain-routes.test.mjs": "95f8b634565e7ded7552436ff5fcd43736a38bc7da09d29cf714c6a61f0ba213",
     "src/assets/agent-workshop/workshop.jpg": "b3b102785c06ef1cef4e74cacff6445b94bddcdc5d9083c45748c4f21ebc5674",
     "src/assets/agent-workshop/provenance.json": "6d9eb6cb901b4505f999905b683f1d70f33ee768814864c502b1f09f626a6f99",
-    "src/pages/inbox.astro": "e912b71af66cedada70ae29986f9fb3cf23b2f6ab021c3c838c923b4fab745c7",
-    "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1"
+    "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
+    "src/pages/user-inbox.astro": "e912b71af66cedada70ae29986f9fb3cf23b2f6ab021c3c838c923b4fab745c7"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [

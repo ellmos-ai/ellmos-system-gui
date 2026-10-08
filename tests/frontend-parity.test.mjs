@@ -11,7 +11,7 @@ const readiness=vm.runInNewContext('('+page.slice(start,end).trim()+')');
 function paths(directory){return readdirSync(directory,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?paths(new URL(entry.name+'/',directory)):[new URL(entry.name,directory)]);}
 test('all twenty-two productive pages, including the five separate capability boards, are present',()=>{
   assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,22);
-  for(const path of ['inbox','agenten/blueprints','skills/plugins','skills/mcp','skills/software','skills/ocean'])assert.ok(read('src/pages/'+path+'.astro'));
+  for(const path of ['user-inbox','agenten/blueprints','skills/plugins','skills/mcp','skills/software','skills/ocean'])assert.ok(read('src/pages/'+path+'.astro'));
 });
 test('the shared branding contract and bundled same-origin authentication stay intact',()=>{
   assert.match(read('src/components/Header.astro'),/\/api\/gui\/brand/);
