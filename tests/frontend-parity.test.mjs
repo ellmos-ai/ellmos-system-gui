@@ -52,3 +52,17 @@ test('verified core errors and unknown states never become ready',()=>{
   assert.equal(label({...base,status:'idle'}),'Ready · Living');
   assert.equal(label({...base,status:'running',running:true,runtime_verified:false}),'Status unbekannt');
 });
+
+test('the deprecated Agents-Board is absent from navigation',()=>{
+  const areas=JSON.parse(read('src/config/nav_config.json'));
+  const dashboard=areas.find(area=>area.href==='/');
+  assert.ok(dashboard);
+  assert.equal(dashboard.children,undefined,'Dashboard must remain a direct link');
+  const hrefs=areas.flatMap(area=>area.children||[]).map(item=>item.href);
+  assert.ok(hrefs.includes('/agenten/blueprints'));
+  assert.ok(hrefs.includes('/agenten/marblerun'));
+  assert.ok(hrefs.includes('/tasks'));
+  assert.ok(hrefs.includes('/skills'));
+  assert.ok(!hrefs.includes('/agents-board'));
+  assert.ok(!hrefs.includes('/skills-board'));
+});
