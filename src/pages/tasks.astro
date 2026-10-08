@@ -16,7 +16,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     </div>
 
     <!-- Actions -->
-    <div style="display:flex;gap:0.5rem;">
+    <div style="display:flex;gap:0.5rem;" id="modal-new-task" class="modal-new-task">
       <TaskCreateForm id="task-create-dialog" label="Neue Aufgabe" />
       <button class="btn" onclick="loadTasks()">
         <span>🔄</span> Aktualisieren
@@ -83,11 +83,12 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         <label>Zugewiesen an<select name="assigned_to"></select></label>
         <label>Erstellt von<input name="created_by" readonly /></label>
         <label>Abhängig von Task-IDs<input name="depends_on" inputmode="numeric" pattern="\s*\d+(\s*,\s*\d+)*\s*" /></label>
+        <label>Fällig am<input name="due_date" type="date" /></label>
         <label>Benötigtes Modell<input name="required_model" /></label>
-        <label>Agenten-Slot<input name="assigned_slot" /></label>
+        <label>Agent oder Blueprint-Instanz<select name="assignment_target" data-task-target><option value="">Manuell zuweisen · ohne Agenten-Slot</option></select></label>
+        <div class="task-edit-wide"><p data-task-target-status aria-live="polite">Agentenauswahl noch nicht geladen.</p><button type="button" class="btn" data-task-target-reload>Agentenauswahl neu laden</button> <a href="/agenten/blueprints">Blueprints bearbeiten</a></div>
         <label class="task-edit-wide">Beschreibung<textarea name="description" rows="5"></textarea></label>
       </div>
-      <p class="muted">Das Fälligkeitsdatum wird angezeigt; die bestehende Bearbeitungs-API unterstützt seine Änderung noch nicht.</p>
       <div class="task-detail-actions"><button type="button" class="btn" id="task-edit-cancel">Abbrechen</button><button type="submit" class="btn btn-primary">Änderungen speichern</button></div>
     </form>
   </section>
@@ -115,13 +116,15 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     @media (max-width:620px) { .task-detail-grid,.task-edit-grid { grid-template-columns:minmax(0,1fr); } .task-edit-wide { grid-column:auto; } }
   </style>
 
-  <script is:inline>
+  <script>
+    import {createAssignmentController, taskResponseError} from '../lib/task-assignment.mjs';
     let allTasks = [];
     let currentFilter = new URLSearchParams(location.search).get('assigned_to')?.toLowerCase() === 'user' ? 'user' : 'open';
     let currentOffset = 0;
     let hasMoreTasks = false;
     let selectedTask = null;
     const pageSize = 100;
+    const editAssignment = createAssignmentController(document.getElementById('task-edit-form'));
 
     async function loadTasks() {
       const container = document.getElementById('tasks-table-container');
@@ -315,7 +318,8 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       if (!selectedTask) return;
       const form = document.getElementById('task-edit-form');
       const task = selectedTask;
-      for (const key of ['title','description','depends_on','created_by','required_model','assigned_slot']) form.elements[key].value = String(task[key] || '');
+      for (const key of ['title','description','depends_on','created_by','required_model']) form.elements[key].value = String(task[key] || '');
+      form.elements.due_date.value = String(task.due_date || '');
       form.elements.project.value = String(task.category || '');
       const priority = String(task.priority || 'P3');
       const prioritySelect = form.elements.priority;
@@ -332,6 +336,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       }
       statusSelect.value = status;
       await loadEditAssignees(form.elements.assigned_to, task.assigned_to);
+      await editAssignment.reload(task);
       document.getElementById('task-detail-view').hidden = true;
       form.hidden = false;
       form.elements.title.focus();
@@ -353,24 +358,36 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       const id = Number(selectedTask.id);
       const values = new FormData(form);
       const payload = { changed_by:'gui' };
-      for (const key of ['title','priority','status','project','assigned_to','depends_on','description','required_model','assigned_slot']) {
-        const value = String(values.get(key) || '').trim();
+      for (const key of ['title','priority','status','project','due_date','depends_on','description']) {
+        const rawVal = values.get(key);
+        const value = rawVal == null ? '' : String(rawVal).trim();
         const before = key === 'project' ? selectedTask.category : selectedTask[key];
-        if (value !== String(before || '').trim()) payload[key] = value;
+        const beforeStr = before == null ? '' : String(before).trim();
+        if (value !== beforeStr) {
+          payload[key] = (key === 'due_date' && !value) ? null : value;
+        }
       }
       try {
+        Object.assign(payload, editAssignment.payload());
         if (Object.keys(payload).length === 1) { document.getElementById('task-edit-cancel').click(); return; }
         const response = await fetch('/api/tasks/' + encodeURIComponent(id), {
           method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
         });
         const result = await response.json().catch(() => ({}));
-        if (!response.ok || result.status !== 'updated') throw new Error(result.detail || result.error || `Änderung nicht gespeichert (HTTP ${response.status}).`);
+        if (!response.ok || result.status !== 'updated') {
+          if (response.status === 409) editAssignment.invalidate();
+          throw new Error(taskResponseError(result, response.status));
+        }
         const stored = await openTask(id);
         if (!stored) throw new Error('Änderung gemeldet, der Kontrollabruf ist fehlgeschlagen.');
         for (const [key, value] of Object.entries(payload)) {
-          if (key === 'changed_by') continue;
+          if (key === 'changed_by' || key === 'assignment_configuration_version') continue;
           const actual = key === 'project' ? stored.category : stored[key];
-          if (String(actual ?? '').trim() !== String(value).trim()) {
+          if (key === 'due_date' && (value === null || value === '')) {
+            if (actual != null && String(actual).trim() !== '') {
+              throw new Error('Fälligkeitsdatum sollte gelöscht werden, ist aber noch gesetzt.');
+            }
+          } else if (String(actual ?? '').trim() !== String(value).trim()) {
             throw new Error('Änderung gemeldet, aber der Kontrollabruf weicht ab. Bitte Task prüfen.');
           }
         }
@@ -408,6 +425,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       loadTasks();
       if (Number.isSafeInteger(event.detail?.id)) openTask(event.detail.id);
     });
+    Object.assign(window, {loadTasks, openTask, completeTask});
     window.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.filter-btn').forEach(button => {
         const active = button.dataset.filter === currentFilter;
@@ -416,6 +434,8 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         button.setAttribute('aria-pressed', String(active));
       });
       loadTasks();
+      const openId = parseInt(new URLSearchParams(location.search).get('task') || new URLSearchParams(location.search).get('id') || '', 10);
+      if (Number.isSafeInteger(openId) && openId > 0) openTask(openId);
     });
   </script>
 </BachLayout>

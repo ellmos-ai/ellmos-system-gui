@@ -54,11 +54,13 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
           <label>Benötigtes Modell
             <input name="required_model" autocomplete="off" />
           </label>
-          <label>Agenten-Slot
-            <input name="assigned_slot" autocomplete="off" />
+          <label hidden={fixedAssignee}>Agent oder Blueprint-Instanz
+            <select name="assignment_target" data-task-target disabled={fixedAssignee}><option value="">Manuell zuweisen · ohne Agenten-Slot</option></select>
           </label>
         </div>
-        <p>Diese Felder speichern Vorgaben. Sie starten keinen Worker.</p>
+        <p data-task-target-status aria-live="polite">Agentenauswahl noch nicht geladen.</p>
+        <p hidden={fixedAssignee}><button type="button" class="btn" data-task-target-reload>Agentenauswahl neu laden</button> <a href="/agenten/blueprints">Blueprints bearbeiten</a></p>
+        <p>Die Auswahl speichert eine Bindung. Sie startet keinen Worker.</p>
       </details>
     </div>
     <p data-task-create-error class="task-create-error" role="alert" hidden></p>
@@ -84,7 +86,8 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
   @media (max-width:600px) { .task-create-grid { grid-template-columns:minmax(0,1fr); } .task-create-wide { grid-column:auto; } }
 </style>
 
-<script is:inline>
+<script>
+  import {createAssignmentController, taskResponseError} from '../lib/task-assignment.mjs';
   (() => {
     const forms = document.querySelectorAll('[data-task-create-form]');
     for (const form of forms) {
@@ -95,14 +98,19 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
       const assignee = form.querySelector('[data-task-assignee]');
       const fallback = form.dataset.defaultAssignee || 'user';
       const fixedAssignee = form.dataset.fixedAssignee === 'true';
+      const assignment = createAssignmentController(form, {fixedAssignee});
       const showError = message => { error.textContent = message; error.hidden = !message; };
       document.querySelectorAll('[data-task-create-open]').forEach(button => {
         if (button.dataset.taskCreateOpen === dialog.id) {
-          button.addEventListener('click', () => { showError(''); dialog.showModal(); form.elements.title.focus(); });
+          button.addEventListener('click', async () => {
+            showError(''); dialog.showModal(); form.elements.title.focus();
+            await legacyAssignees;
+            await assignment.reload();
+          });
         }
       });
       form.querySelectorAll('[data-task-create-cancel]').forEach(button => button.addEventListener('click', () => dialog.close()));
-      if (!fixedAssignee) fetch('/api/assignees').then(async response => {
+      const legacyAssignees = fixedAssignee ? Promise.resolve() : fetch('/api/assignees').then(async response => {
         if (!response.ok) throw new Error('Zuweisungen nicht erreichbar');
         const body = await response.json();
         if (!Array.isArray(body.assignees)) throw new Error('Zuweisungen nicht verfügbar');
@@ -133,19 +141,21 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
           assigned_to:fixedAssignee ? fallback : (text('assigned_to') || 'user'), created_by:'user',
           description:text('description'), status:'pending'
         };
-        for (const key of ['due_date','depends_on','required_model','assigned_slot']) {
+        for (const key of ['due_date','depends_on']) {
           if (text(key)) payload[key] = text(key);
         }
         try {
+          Object.assign(payload, assignment.payload());
           const response = await fetch('/api/tasks', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
           const result = await response.json().catch(() => ({}));
           if (!response.ok || result.success !== true || !Number.isSafeInteger(Number(result.id)) || Number(result.id) < 1) {
-            throw new Error(result.detail || result.error || `Aufgabe konnte nicht erstellt werden (HTTP ${response.status}).`);
+            if (response.status === 409) assignment.invalidate();
+            throw new Error(taskResponseError(result, response.status));
           }
           const check = await fetch('/api/tasks/' + encodeURIComponent(result.id));
           if (!check.ok) throw new Error('Aufgabe wurde gespeichert, der Kontrollabruf ist fehlgeschlagen. Bitte Liste aktualisieren.');
           const stored = await check.json();
-          if (Object.entries(payload).some(([key, expected]) => String(stored[key] ?? '').trim() !== String(expected).trim())) {
+          if (Object.entries(payload).some(([key, expected]) => key !== 'assignment_configuration_version' && String(stored[key] ?? '').trim() !== String(expected).trim())) {
             throw new Error('Aufgabe wurde gespeichert, der Kontrollabruf weicht ab. Bitte Liste aktualisieren.');
           }
           dialog.close(); form.reset();
