@@ -59,7 +59,7 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
           </label>
         </div>
         <p data-task-target-status aria-live="polite">Agentenauswahl noch nicht geladen.</p>
-        <p hidden={fixedAssignee}><button type="button" class="btn" data-task-target-reload>Agentenauswahl neu laden</button> <a href="/agenten/blueprints">Blueprints bearbeiten</a></p>
+        <p hidden={fixedAssignee}><button type="button" class="btn" data-task-target-reload>Agentenauswahl neu laden</button> <a href="/agenten/blueprints">Agenten-Werkstatt</a></p>
         <p>Die Auswahl speichert eine Bindung. Sie startet keinen Worker.</p>
       </details>
     </div>
@@ -100,9 +100,14 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
       const fixedAssignee = form.dataset.fixedAssignee === 'true';
       const assignment = createAssignmentController(form, {fixedAssignee});
       const showError = message => { error.textContent = message; error.hidden = !message; };
+      let unresolvedRequestedSlot = null;
+      form.querySelector('[data-task-target]').addEventListener('change', () => {
+        unresolvedRequestedSlot = null; showError('');
+      });
       document.querySelectorAll('[data-task-create-open]').forEach(button => {
         if (button.dataset.taskCreateOpen === dialog.id) {
           button.addEventListener('click', async () => {
+            unresolvedRequestedSlot = null;
             showError(''); dialog.showModal(); form.elements.title.focus();
             await legacyAssignees;
             await assignment.reload();
@@ -127,9 +132,32 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
         assignee.value = options.has(fallback) ? fallback : 'user';
       }).catch(() => { showError('Weitere Zuweisungen sind nicht erreichbar. Aufgaben für den Benutzer bleiben möglich.'); });
 
+      const params = new URLSearchParams(location.search);
+      if (!fixedAssignee && /^\/tasks(?:\.html)?\/?$/.test(location.pathname) && params.get('create') === '1' && dialog.id === 'task-create-dialog') {
+        (async () => {
+          unresolvedRequestedSlot = params.get('assign_slot');
+          dialog.showModal(); form.elements.title.focus();
+          const submit = form.querySelector('button[type="submit"]');
+          submit.disabled = true;
+          try {
+            await legacyAssignees;
+            await assignment.reload();
+            if (unresolvedRequestedSlot) {
+              assignment.selectSlot(unresolvedRequestedSlot);
+              form.querySelector('details').open = true;
+              unresolvedRequestedSlot = null;
+            }
+          } catch (cause) {
+            form.querySelector('details').open = true;
+            showError(cause instanceof Error ? cause.message : 'Agentenzuweisung nicht verfügbar.');
+          } finally { submit.disabled = false; }
+        })();
+      }
+
       form.addEventListener('submit', async event => {
         event.preventDefault();
         if (!form.reportValidity()) return;
+        if (unresolvedRequestedSlot) { showError('Der gewünschte Agent ist nicht zuweisbar. Bitte das Zuweisungsziel ausdrücklich auswählen.'); return; }
         const submit = form.querySelector('button[type="submit"]');
         if (submit.disabled) return;
         submit.disabled = true;

@@ -138,7 +138,7 @@ function initializeStudio() {
     const execution={backend:$("bp-backend").value,model:$("bp-model").value.trim(),mode:$("bp-mode").value,
       think:$("bp-think").checked,include_system_prompt:$("bp-include-system").checked,
       custom_system_prompt:$("bp-system").value,avatar:state.avatar,symbol:state.symbol,
-      pause_after:Number($("bp-pause-after").value),pause_minutes:Number($("bp-pause-minutes").value),pause_basis:$("bp-pause-basis").value};
+      pause_after:$("bp-pause-basis").value==="none"?0:Number($("bp-pause-after").value),pause_minutes:Number($("bp-pause-minutes").value),pause_basis:$("bp-pause-basis").value==="tasks"?"tasks":"runs"};
     return {name:$("bp-name").value.trim().toLowerCase(),title:$("bp-title").value.trim(),kind:$("bp-kind").value,
       description:$("bp-description").value,persona_role:$("bp-role").value,persona_prompt:$("bp-persona").value,
       expected_version:state.edit?.version||0,is_template:0,skills:checked("bp-skills"),animus_type:["claude","codex"].includes(execution.backend)?"cli":"api",
@@ -159,9 +159,9 @@ function initializeStudio() {
     $("bp-system-default").textContent=state.prompts?.prompts?.system_default?.effective||"Systemvorlage derzeit nicht erreichbar.";
     choose($("bp-backend"),config.backend||"ollama");$("bp-model").value=config.model||"";
     choose($("bp-mode"),config.mode||"safe");$("bp-think").checked=config.think!==false;
-    $("bp-turns").value=bp.contractus?.turns||bp.contractus?.max_turns||20;
+    $("bp-turns").value=bp.contractus?.turns??bp.contractus?.max_turns??20;
     $("bp-pause-after").value=config.pause_after??5;$("bp-pause-minutes").value=config.pause_minutes??1;
-    choose($("bp-pause-basis"),config.pause_basis||"runs");choose($("bp-modus"),bp.modus||"casualis");
+    choose($("bp-pause-basis"),Number(config.pause_after??5)===0?"none":config.pause_basis||"runs");choose($("bp-modus"),bp.modus||"casualis");syncPauseFields();
     state.avatar=config.avatar||"";state.symbol=config.symbol||"";drawAvatar();
     selectOptions($("bp-contractus-preset"),[{value:"",label:"Eigener Arbeitsvertrag"},...state.contracts.map(p=>({value:p.id,label:p.title,disabled:p.execution_supported===false}))],"");
     selectOptions($("bp-governance"),state.governance.map(p=>({value:p.id,label:p.name})),bp.governance?.profile||"fail_closed_standard");
@@ -229,7 +229,15 @@ function initializeStudio() {
     optionList($("team-members"),state.blueprints.filter(bp=>["agent","role"].includes(bp.kind)).map(bp=>({id:bp.name,name:bp.title||bp.name})),members);
     teamLeaders(team?.leader_agent);$("team-title").textContent=team?"Team bearbeiten":"Team anlegen";notify("team-status","");$("team-editor").showModal();
   }
+  function syncPauseFields() {
+    const disabled = $("bp-pause-basis").value === "none";
+    for (const id of ["bp-pause-after","bp-pause-minutes"]) {
+      $(id).disabled = disabled;
+      if (!disabled && Number($(id).value) === 0) $(id).value = "1";
+    }
+  }
   const handle = (id,event,fn,status="studio-status") => $(id).addEventListener(event,async e=>{try{await fn(e);}catch(error){notify(status,error.message,true);}});
+  $("bp-pause-basis").addEventListener("change",syncPauseFields);
   document.querySelectorAll("[data-close]").forEach(button=>button.addEventListener("click",()=>close(button.dataset.close)));
   document.querySelectorAll("[data-library]").forEach(button=>button.addEventListener("click",()=>{state.library=button.dataset.library;render();}));
   handle("studio-refresh","click",loadData);handle("studio-new","click",()=>openEditor());
@@ -298,5 +306,6 @@ function initializeStudio() {
     const bp=id?byId(id):state.blueprints.find(item=>item.name===params.get("blueprint"));
     if(["custom","templates","teams"].includes(params.get("tab"))){state.library=params.get("tab");render();}
     if(bp)openEditor(bp,params.has("copy")||bp.is_template===1);else if(params.has("new"))openEditor();
+    if(params.get("create")==="team")openTeam();
   }).catch(error=>notify("studio-status",error.message,true));
 }

@@ -28,8 +28,8 @@
     "src/components/CapabilityBoard.astro": "2efd1b9bfbc7c8154806c901b1151891703ff4862f9509d61817fa2fac5b5861",
     "src/components/Header.astro": "50d3200e3cb814ee1637b2730fe7a944c0ad6eb3946c3a09a942fe615bd56883",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
-    "src/components/TaskCreateForm.astro": "55a36e2661e10d3cd988ae1b20766ed8edd5b48efabc334276d3f269f33d13a2",
-    "src/config/nav_config.json": "697f41f56eba87950b1758d6c98cb094b675b4b0834e894dcd2374a4bfc0baa8",
+    "src/components/TaskCreateForm.astro": "69d439c1273ad633a247980239c781f0ece0ba42478e4a5ae76adc47b51aa00e",
+    "src/config/nav_config.json": "aaccabb6c78e0850de7f0593b5b52177c3ce38ae3218ced31b845700e4738c40",
     "src/layouts/BachLayout.astro": "8f45bbac50c150ea9d19f91794bb97b94ad103f5abc5cdef01e70a3c9cc43ac6",
     "src/lib/agent-avatar.mjs": "9e94d1aab390a7fde64cc40155b5b044d02e08a79404f445bb8f38c95ab6f3e2",
     "src/lib/capability-board-client.mjs": "436c4dfe46ebd997603f1319039552855c39077c2a818ff04e5217a100ba1a00",
@@ -37,10 +37,10 @@
     "src/lib/task-summary.js": "e28cfddcc7ee559b74be8c9883b946b85571941dda13d5cba97aec3dfcc63d07",
     "src/lib/ticket-symbol-assets.mjs": "207537da4144c4f1627d0086417ad384069085adb1aa8090d6f41f770e6d0b84",
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
-    "src/pages/agenten/blueprints.astro": "bd7b7d88a4265777bcd9ccd0a545399e3d5f060e875b6916f66bc2e358998233",
+    "src/pages/agenten/blueprints.astro": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "6b75e1a4dbb6eb7348816d41bafec01abd0a6d0bed363a05118a3bba07a1eea7",
-    "src/pages/agenten/running.astro": "212b6c5d628fdf4ed8531d69daee446dd6a8a1233a818935ef0547a97fbc74ec",
+    "src/pages/agenten/running.astro": "d09b563768a72b026aeabafcde276e48bb978b2dcddb432bff36a4e95e2aa4f9",
     "src/pages/agenten/sessions.astro": "8117001f267bf411bdf008a36dbbf672fd3964e81b609529905ca6e043aed486",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "23e6bd6241b60edefdc473a3f921d6b78e44d59f8ccfd5d6f80ca884527cd90c",
@@ -50,14 +50,14 @@
     "src/pages/governance/usecases.astro": "82cb21703924d21941b73bfb6dfc7cd73a493e69e2fe9c3be5fdaa7c66cdd15b",
     "src/pages/index.astro": "35342c625e3fb6676e11848f4d0d36ec77e5858e82ecc6260156df258b55b1e6",
     "src/pages/life.astro": "05180c2d12c7c86a4305d18cb41b2281e0cbf37b80daf0ad26b512100e893671",
-    "src/pages/memory.astro": "352512c9d9afd5ffe8d4ebc52374ef43bf2208e000cbf66e79e608fbd2308fd6",
+    "src/pages/memory.astro": "8048c04911ddea2766b3b01dbbda0ae9b3ecda1e81edb1b82b95f7a6ac288a6f",
     "src/pages/settings.astro": "19db6adf8cb5ec0ed0f83410e80e19b11b721c3f6cef504a767285fd54e4ef0d",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/tasks.astro": "9b02cacdfdd9df6870b33a40bbfd98456ec92d219a3157b7fd1f54d5e80d547f",
-    "src/scripts/blueprint-studio.mjs": "736857b5f8f657abae6886ea384a8a801210d56dfa1947c044995a4787708b88",
+    "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "0db8332c26210e95bda13e3a94ee085d4b421ef184a6f59af60efba4f8e81a40",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
@@ -65,23 +65,23 @@
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/fabrika.test.mjs": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
-    "tests/system-slots.test.mjs": "25d73369f55d51f2798a6756cff3e41ced0fabdb72d9ddd08f63b67943021816",
+    "tests/system-slots.test.mjs": "580a36a3a1cca7275960d04f1536980e0c5ff8bad564f77ffdfebdbc2cbdace0",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
     "tests/worker-decomposition.test.mjs": "c67a1cd692bad66677674aef2cc60c33baa5127d24306d76659e0a27a924d551",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/frontend-parity.test.mjs": "86e2403ead0285880dca2731770f3775995be75dd30dba69340f1351d2bc643c",
+    "tests/frontend-parity.test.mjs": "e8d0be4f2c645ec0287957af054be3bba375d6630b00f5d27398e14a1e3fd4fe",
     "tests/task-assignment.test.mjs": "46cf92f6871208fb21d9503fca0203b5351a228e322c182574438b0a4238a439",
-    "src/lib/task-assignment.mjs": "a1d86f5fc06e6abbd0be8fc2f2f8fcca1d80ddbc70c0a8bbd13914c6a5ddf9b5",
+    "src/lib/task-assignment.mjs": "569efade7aa66fd0cc6aa63bb8010b45a480b6d21a93bbdeb61426d28a98bf5a",
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
     "tests/release-provenance.test.mjs": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "8f9c901ba2ccf695639bd44a09f6444d28e5cb75b0d9a813b02b7da3ecb69ec9",
-    "package-lock.json": "e1e31461af0945a5bb719def573f6ed8c83689e1b247543f0e221e420b6927b7",
+    "package.json": "0c2ab8ca468318997358f1ae149e18780f396db94d56bf7d5948b2b1d9b154fe",
+    "package-lock.json": "ac1969127af5de2c48b540da3c5ff11d42412047440e5a3fe4779e40f5100b7c",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "89de22d1be95e6b14e01ef559a85f63d8abb77cff4847df04e1d0b934e5d5149",
+    "ellmos-module.v2.json": "0dcdcdd17cdf7938a1e34295a773043f40d93add3ee39c094bfcc23a0fe2655d",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
     "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
     "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
@@ -92,7 +92,11 @@
     "src/lib/gemini-avatar-assets.mjs": "c300306ebb0de83c7a6038ea1b11817c5f4b263311fff3dfe1d9e3a7b348997e",
     "src/lib/agent-avatar-browser.mjs": "af3fb7d3ba000aee965a535cfe954beab12527ecea77cb2b69bfc71b2957acea",
     "src/lib/domain-routes.mjs": "ba4dd103080f7090c27121009a33efbc4e6af03a7afc75ca77bef4766aa10d08",
-    "tests/domain-routes.test.mjs": "95f8b634565e7ded7552436ff5fcd43736a38bc7da09d29cf714c6a61f0ba213"
+    "tests/domain-routes.test.mjs": "95f8b634565e7ded7552436ff5fcd43736a38bc7da09d29cf714c6a61f0ba213",
+    "src/assets/agent-workshop/workshop.jpg": "b3b102785c06ef1cef4e74cacff6445b94bddcdc5d9083c45748c4f21ebc5674",
+    "src/assets/agent-workshop/provenance.json": "6d9eb6cb901b4505f999905b683f1d70f33ee768814864c502b1f09f626a6f99",
+    "src/pages/inbox.astro": "e6d80e9064a3ce484ece7651c1c2260e8395c19214ce69aface181622b99ab96",
+    "src/scripts/agent-template-picker.mjs": "dcb6cd3ca4f04f353be4cc763ba045ea7809662b55988fcddf8eba4f51bd501b"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -263,13 +267,13 @@
         "src/components/TaskCreateForm.astro": {
           "source_path": "system/gui/web/src/components/TaskCreateForm.astro",
           "source_sha256": "fcfbad55ec1a3a1b4324db717a4ef2e0d7149dba6724d1bfbe95a34b3daf1852",
-          "imported_sha256": "55a36e2661e10d3cd988ae1b20766ed8edd5b48efabc334276d3f269f33d13a2",
+          "imported_sha256": "69d439c1273ad633a247980239c781f0ece0ba42478e4a5ae76adc47b51aa00e",
           "adapted": true
         },
         "src/config/nav_config.json": {
           "source_path": "system/gui/web/src/config/nav_config.json",
           "source_sha256": "d86348606bae5b0a6d474c6179635f674d362bff5848b1e2318f11135c7c9097",
-          "imported_sha256": "697f41f56eba87950b1758d6c98cb094b675b4b0834e894dcd2374a4bfc0baa8",
+          "imported_sha256": "aaccabb6c78e0850de7f0593b5b52177c3ce38ae3218ced31b845700e4738c40",
           "adapted": true
         },
         "src/layouts/BachLayout.astro": {
@@ -317,7 +321,7 @@
         "src/pages/agenten/blueprints.astro": {
           "source_path": "system/gui/web/src/pages/agenten/blueprints.astro",
           "source_sha256": "3725a2ca85f05682b16d5b6e5b5ac7e44fc9431df686e9aed349bcb2d006d316",
-          "imported_sha256": "bd7b7d88a4265777bcd9ccd0a545399e3d5f060e875b6916f66bc2e358998233",
+          "imported_sha256": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
           "adapted": true
         },
         "src/pages/agenten/fabrika.astro": {
@@ -335,7 +339,7 @@
         "src/pages/agenten/running.astro": {
           "source_path": "system/gui/web/src/pages/agenten/running.astro",
           "source_sha256": "c4700fb05438cdd20df993894f7b649be9f53a1a56b5dea80fa140164b943728",
-          "imported_sha256": "212b6c5d628fdf4ed8531d69daee446dd6a8a1233a818935ef0547a97fbc74ec",
+          "imported_sha256": "d09b563768a72b026aeabafcde276e48bb978b2dcddb432bff36a4e95e2aa4f9",
           "adapted": true
         },
         "src/pages/agenten/sessions.astro": {
@@ -395,7 +399,7 @@
         "src/pages/memory.astro": {
           "source_path": "system/gui/web/src/pages/memory.astro",
           "source_sha256": "3b5fdad79017eb50c8146f68c3e162db7f9806197f861c13d1a2a3a8b5749391",
-          "imported_sha256": "352512c9d9afd5ffe8d4ebc52374ef43bf2208e000cbf66e79e608fbd2308fd6",
+          "imported_sha256": "8048c04911ddea2766b3b01dbbda0ae9b3ecda1e81edb1b82b95f7a6ac288a6f",
           "adapted": true
         },
         "src/pages/settings.astro": {
@@ -437,8 +441,8 @@
         "src/scripts/blueprint-studio.mjs": {
           "source_path": "system/gui/web/src/scripts/blueprint-studio.mjs",
           "source_sha256": "736857b5f8f657abae6886ea384a8a801210d56dfa1947c044995a4787708b88",
-          "imported_sha256": "736857b5f8f657abae6886ea384a8a801210d56dfa1947c044995a4787708b88",
-          "adapted": false
+          "imported_sha256": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+          "adapted": true
         },
         "src/styles/agent-avatars.css": {
           "source_path": "system/gui/web/src/styles/agent-avatars.css",
@@ -485,7 +489,7 @@
         "tests/system-slots.test.mjs": {
           "source_path": "system/gui/web/tests/system-slots.test.mjs",
           "source_sha256": "234ff24a5e02b0b0949a01c2179d6e6e6f3dd8279e47b00b3ff933aa2713f2f2",
-          "imported_sha256": "25d73369f55d51f2798a6756cff3e41ced0fabdb72d9ddd08f63b67943021816",
+          "imported_sha256": "580a36a3a1cca7275960d04f1536980e0c5ff8bad564f77ffdfebdbc2cbdace0",
           "adapted": true
         },
         "tests/task-summary.test.mjs": {
@@ -594,6 +598,31 @@
         "src/pages/settings.astro"
       ],
       "pin_followup_task": 1932
+    },
+    {
+      "purpose": "Agenten-Werkstatt template library label and original Gemini decorative workshop background; assembled agent activation belongs to Living & Running",
+      "files": [
+        "src/pages/agenten/blueprints.astro",
+        "src/config/nav_config.json",
+        "src/assets/agent-workshop/workshop.jpg",
+        "src/assets/agent-workshop/provenance.json"
+      ],
+      "image_source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689"
+    },
+    {
+      "purpose": "User clarification: visualize processes and subprocesses, not mandatory module separation; distinguish source support from runtime proof",
+      "files": [
+        "src/pages/memory.astro",
+        "docs/MEMORY_ARCHITECTURE_AUDIT_2026-10-09.md"
+      ]
+    },
+    {
+      "purpose": "Running and history before collapsible default-closed slots/ready agents/teams; native actual-working slots and compact compute-turn card",
+      "files": [
+        "src/pages/agenten/running.astro",
+        "src/scripts/blueprint-studio.mjs",
+        "tests/system-slots.test.mjs"
+      ]
     }
   ],
   "local_amendments": [
@@ -612,6 +641,29 @@
         "src/pages/settings.astro"
       ],
       "origin": "codex GUI browser acceptance 2026-10-08"
+    }
+  ],
+  "followup_changes": [
+    {
+      "purpose": "User Inbox and fresh Task assignment selection; coherent memory process colours and bundled Mermaid renderer",
+      "files": [
+        "src/pages/inbox.astro",
+        "src/pages/memory.astro",
+        "src/lib/task-assignment.mjs",
+        "src/components/TaskCreateForm.astro",
+        "package.json",
+        "package-lock.json",
+        "tests/frontend-parity.test.mjs"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "scope": "Agent pause controls",
+      "changes": [
+        "Explicit Keine Pause projects to canonical pause_after=0",
+        "Tool-round inputs accept 0..1000; 0 is unlimited",
+        "Template picker imports from its actual shared scripts directory"
+      ]
     }
   ]
 }

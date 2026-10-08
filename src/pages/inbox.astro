@@ -1,0 +1,106 @@
+---
+import BachLayout from "../layouts/BachLayout.astro";
+---
+<BachLayout title="Inbox" currentPath="/inbox">
+  <header class="inbox-header"><div><h1>✉️ Inbox</h1><p>Nachrichten an dich</p></div><button id="inbox-refresh" class="btn btn-secondary" type="button">Aktualisieren</button></header>
+  <div class="inbox-toolbar card">
+    <label>Status <select id="inbox-status"><option value="all">Alle · ohne Archiv</option><option value="unread">Ungelesen</option><option value="read">Gelesen</option><option value="archived">Archiv</option></select></label>
+    <form id="inbox-search-form"><label for="inbox-search">Suche</label><div class="search-row"><input id="inbox-search" type="search" maxlength="300" placeholder="Betreff, Inhalt oder Absender" /><button class="btn btn-secondary" type="submit">Suchen</button></div></form>
+    <span id="inbox-count" role="status">Lade Nachrichten …</span>
+  </div>
+  <p id="inbox-error" role="alert" hidden></p>
+  <div class="inbox-columns">
+    <section class="card"><h2>Nachrichten</h2><div id="inbox-list"></div><div class="inbox-pagination"><button id="inbox-back" class="btn btn-secondary" disabled type="button">← Zurück</button><span id="inbox-page"></span><button id="inbox-next" class="btn btn-secondary" disabled type="button">Weitere →</button></div></section>
+    <section class="card" aria-labelledby="inbox-detail-title"><h2 id="inbox-detail-title">Nachricht auswählen</h2><p id="inbox-detail-meta"></p><div id="inbox-actions" hidden><button id="inbox-toggle-read" class="btn btn-secondary" type="button"></button><button id="inbox-archive" class="btn btn-secondary" type="button">Archivieren</button></div><div id="inbox-body"></div></section>
+  </div>
+  <p class="inbox-links">Dialog mit dem Assistenten: <a href="/chat">Persönlicher Assistent</a> · <a href="/agenten/sessions">Agenten-Verlauf</a> · <a href="/tasks">Aufgaben</a></p>
+</BachLayout>
+<style>
+ .inbox-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin:1.5rem 0; }
+ .inbox-header p, #inbox-detail-meta, .inbox-links { color:var(--text-muted); }
+ .inbox-toolbar { display:flex; align-items:end; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; }
+ .inbox-toolbar label { display:grid; gap:.35rem; }
+ #inbox-search-form { flex:1; min-width:14rem; }
+ .search-row { display:flex; gap:.5rem; }
+ .search-row input { min-width:0; flex:1; }
+ .inbox-columns { display:grid; grid-template-columns:minmax(17rem,1fr) minmax(0,2fr); gap:1rem; }
+ .inbox-columns h2 { font-size:1.1rem; margin-bottom:1rem; }
+ #inbox-body { white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.65; margin-top:1rem; }
+ #inbox-actions:not([hidden]), .inbox-pagination { display:flex; flex-wrap:wrap; align-items:center; gap:.6rem; margin:1rem 0; }
+ :global(.inbox-message) { width:100%; text-align:left; display:grid; gap:.4rem; background:var(--bg-panel); color:var(--text); border:1px solid var(--border); padding:.9rem; border-radius:8px; margin-bottom:.5rem; cursor:pointer; overflow-wrap:anywhere; }
+ :global(.inbox-message[aria-pressed="true"]) { border-color:var(--text); }
+ :global(.inbox-message small) { color:var(--text-muted); }
+ #inbox-error { color:var(--danger,var(--text)); }
+ @media(max-width:760px) { .inbox-columns { grid-template-columns:minmax(0,1fr); } }
+</style>
+<script is:inline>
+(() => {
+ const el = id => document.getElementById(id);
+ const limit = 50;
+ let offset = 0, rows = [], selected = null, busy = false, generation = 0;
+ const error = text => { el('inbox-error').textContent = text; el('inbox-error').hidden = !text; };
+ const node = (tag, text) => { const n = document.createElement(tag); n.textContent = text; return n; };
+ function display(row) {
+   selected = row;
+   el('inbox-detail-title').textContent = row ? (row.subject || 'Ohne Betreff') : 'Nachricht auswählen';
+   el('inbox-detail-meta').textContent = row ? [row.sender || 'Unbekannter Absender', row.created_at || '', row.status].join(' · ') : '';
+   el('inbox-body').textContent = row ? (row.body || '') : '';
+   const editable = row && ['unread','read','archived'].includes(row.status);
+   el('inbox-actions').hidden = !editable;
+   el('inbox-toggle-read').textContent = row && row.status === 'unread' ? 'Als gelesen markieren' : 'Als ungelesen markieren';
+   el('inbox-archive').hidden = !row || row.status === 'archived';
+   for (const b of el('inbox-list').querySelectorAll('button')) b.setAttribute('aria-pressed',String(Boolean(row && Number(b.dataset.id) === row.id)));
+ }
+ async function load() {
+   const request = ++generation;
+   error(''); busy = true;
+   el('inbox-back').disabled = true; el('inbox-next').disabled = true;
+   try {
+     const q = new URLSearchParams({status:el('inbox-status').value,search:el('inbox-search').value,offset:String(offset),limit:String(limit)});
+     const response = await fetch('/api/user-inbox?' + q);
+     if (!response.ok) throw new Error('Nachrichten konnten nicht geladen werden.');
+     const data = await response.json();
+     if (request !== generation) return;
+     if (data.schema !== 'bach.user-inbox.v1' || data.recipient !== 'user' || !Array.isArray(data.messages) || !Number.isSafeInteger(data.total) || typeof data.has_more !== 'boolean') throw new Error('Die Inbox-Antwort ist ungültig.');
+     if (data.messages.some(r => !Number.isSafeInteger(r.id) || String(r.recipient).trim().toLowerCase() !== 'user')) throw new Error('Die Inbox enthält eine unpassende Nachricht.');
+     rows = data.messages; el('inbox-list').replaceChildren();
+     for (const row of rows) {
+       const button = node('button',''); button.type = 'button'; button.className = 'inbox-message'; button.dataset.id = String(row.id);
+       button.append(node('strong',row.subject || 'Ohne Betreff'), node('small',[row.sender || 'Unbekannt',row.created_at || '',row.status].join(' · ')));
+       button.addEventListener('click',() => display(row)); el('inbox-list').append(button);
+     }
+     if (!rows.length) el('inbox-list').append(node('p','Keine Nachrichten für diese Auswahl.'));
+     el('inbox-count').textContent = data.total + ' Nachrichten · ' + data.unread + ' ungelesen';
+     el('inbox-page').textContent = 'Seite ' + (Math.floor(offset / limit) + 1);
+     el('inbox-back').disabled = offset === 0; el('inbox-next').disabled = !data.has_more;
+     display(selected ? rows.find(r => r.id === selected.id) || null : null);
+   } catch(e) {
+     if (request !== generation) return;
+     rows = []; el('inbox-list').replaceChildren(); display(null);
+     el('inbox-count').textContent = 'Inbox nicht verfügbar'; error(e.message);
+   } finally { if (request === generation) busy = false; }
+ }
+ async function change(status) {
+   if (!selected || busy) return;
+   busy = true; error('');
+   const id = selected.id, expected = selected.status;
+   for (const button of el('inbox-actions').querySelectorAll('button')) button.disabled = true;
+   try {
+     const response = await fetch('/api/user-inbox/' + id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status,expected_status:expected})});
+     if (!response.ok) throw new Error(response.status === 409 ? 'Der Status hat sich geändert. Bitte aktualisieren.' : 'Nachrichtenstatus konnte nicht geändert werden.');
+     const data = await response.json();
+     if (data.id !== id || data.recipient !== 'user' || data.status !== status) throw new Error('Die Statusänderung konnte nicht bestätigt werden.');
+     await load();
+   } catch(e) { error(e.message); }
+   finally { busy = false; for (const button of el('inbox-actions').querySelectorAll('button')) button.disabled = false; }
+ }
+ el('inbox-refresh').addEventListener('click',load);
+ el('inbox-status').addEventListener('change',() => {offset=0;load();});
+ el('inbox-search-form').addEventListener('submit',e => {e.preventDefault();offset=0;load();});
+ el('inbox-back').addEventListener('click',() => {offset=Math.max(0,offset-limit);load();});
+ el('inbox-next').addEventListener('click',() => {offset+=limit;load();});
+ el('inbox-toggle-read').addEventListener('click',() => change(selected.status === 'unread' ? 'read' : 'unread'));
+ el('inbox-archive').addEventListener('click',() => change('archived'));
+ load();
+})();
+</script>

@@ -1,13 +1,15 @@
 ---
 import BachLayout from "../../layouts/BachLayout.astro";
 import portraitAtlas from '../../assets/agent-portraits.png';
+import workshopBackground from '../../assets/agent-workshop/workshop.jpg';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
 import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 ---
-<BachLayout title="Blueprints & Agenten" currentPath="/agenten/blueprints">
+<BachLayout title="Agenten-Werkstatt" currentPath="/agenten/blueprints">
+  <div class="workshop-scene" style={`--workshop-image: url("${workshopBackground.src}")`}>
   <header class="studio-header" data-portrait-atlas={portraitAtlas.src} data-ticket-symbols={JSON.stringify(TICKET_SYMBOL_URLS)} id="studio-portrait-source">
-    <div><p class="studio-eyebrow">Agenten</p><h1>Blueprints</h1><p class="studio-lead">Rollen vorbereiten, Steckplätze einrichten und Aufgaben zuweisen.</p></div>
+    <div class="workshop-intro"><p class="studio-eyebrow">Vorlagenbibliothek</p><h1>Agenten-Werkstatt</h1><p class="studio-lead">Hier kannst du Vorlagen und Blueprints für Agenten und Rollen erstellen und versionieren.</p><p class="studio-note">Agenten zusammenstellen und aktivieren: <a href="/agenten/running">Living & Running</a>.</p></div>
     <div class="studio-actions">
       <button class="btn" id="studio-refresh">Aktualisieren</button>
       <button class="btn btn-primary" id="studio-new">Neuer Blueprint</button>
@@ -73,10 +75,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
               <label>Arbeitsvertrag<select id="bp-contractus-preset"></select></label>
               <label>Modus<select id="bp-mode"><option value="safe">Safe</option><option value="full">Full</option></select></label>
               <label>Arbeitsweise<select id="bp-modus"><option value="casualis">Ein Arbeitsblock</option><option value="usus">Dauerläufer</option><option value="impetus_temporal" disabled>Zeitlich begrenzt · noch nicht ausführbar</option><option value="impetus_causa" disabled>Ereignisgesteuert · noch nicht ausführbar</option></select></label>
-              <label>Toolrunden<input id="bp-turns" type="number" min="1" max="100" value="20" /></label>
+              <label>Toolrunden (0 = unbegrenzt)<input id="bp-turns" type="number" min="0" max="1000" value="20" /></label>
               <label>Pause nach<input id="bp-pause-after" type="number" min="0" max="1440" value="5" /></label>
               <label>Pause in Minuten<input id="bp-pause-minutes" type="number" min="0" max="1440" value="1" /></label>
-              <label>Pausenbasis<select id="bp-pause-basis"><option value="runs">Worker-Läufe</option><option value="tasks">Aufgaben</option></select></label>
+              <label>Pausenauslöser<select id="bp-pause-basis"><option value="none">Keine Pause</option><option value="runs">Worker-Läufe</option><option value="tasks">Aufgaben</option></select></label>
               <label class="studio-check"><input id="bp-think" type="checkbox" checked /> Think</label>
             </div>
             <p class="studio-note">Ein Arbeitsblock endet nach seinem Toolbudget; eine offene Aufgabe wird dabei zurückgegeben. Dauerläufer arbeiten bis zum Stopp. Zeit- und Ereignissteuerung sind noch nicht ausführbar. Cloud- und API-Worker starten über den Startknopf.</p>
@@ -143,11 +145,20 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <footer class="studio-dialog-footer"><button type="button" class="btn" data-close="team-editor">Abbrechen</button><button type="submit" class="btn btn-primary">Team speichern</button></footer>
     </form>
   </dialog>
+  </div>
 </BachLayout>
 
 <script>import "../../lib/agent-avatar-browser.mjs";import "../../scripts/blueprint-studio.mjs";</script>
 
 <style>
+  .workshop-scene{position:relative;isolation:isolate;padding:1.4rem;border:1px solid var(--border);border-radius:18px;min-height:calc(100vh - 160px)}
+  .workshop-scene::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background-image:linear-gradient(180deg,#0b0d1440,#0b0d14a6),var(--workshop-image);background-size:cover;background-position:center top;pointer-events:none}
+  .studio-header{padding:1.2rem;border:1px solid var(--border);border-radius:12px;background:var(--bg-panel)}
+  .workshop-intro{flex:1;min-width:0}.workshop-intro .studio-note{margin-top:.5rem}
+  .workshop-scene>.studio-message,.workshop-scene>.studio-toolbar,.workshop-scene>.studio-tabs,.workshop-scene>#studio-teams>.studio-section-heading,.workshop-scene>#studio-teams>.studio-note{background:var(--bg-panel);padding:.8rem 1rem;border-radius:8px}
+  .workshop-scene>.studio-tabs{flex-wrap:wrap}.workshop-scene>.studio-toolbar{margin:.6rem 0}
+  @media(max-width:640px){.workshop-scene{padding:.65rem;min-height:calc(100vh - 120px)}.studio-header{padding:1rem}.studio-header h1{font-size:1.7rem}.workshop-scene>.studio-toolbar{padding:.8rem}.studio-search{min-width:0;width:100%}}
+
   .studio-header,.studio-actions,.studio-toolbar,.studio-section-heading,.studio-dialog-header,.studio-dialog-footer,.studio-avatar-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap}
   .studio-header{margin-bottom:1rem}.studio-header h1{font-size:2rem;letter-spacing:-.04em}.studio-eyebrow{text-transform:uppercase;font-size:.7rem;letter-spacing:.15em;color:var(--text-muted);margin-bottom:.4rem}.studio-lead{color:var(--text-muted);font-size:.9rem;margin-top:.5rem}
   .studio-actions{justify-content:flex-end}.studio-toolbar{justify-content:flex-start;padding:1rem 0;gap:1rem}.studio-search{flex:1;min-width:220px}.studio-toolbar>label{margin:0}

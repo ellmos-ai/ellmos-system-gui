@@ -28,9 +28,10 @@ test('core configuration conflicts reject before a success response', async () =
 function renderer() {
   const elements = [];
   const target = {children:[], replaceChildren(...children) {this.children = children;}, append(...children) {this.children.push(...children);}};
+  const runningTarget = {children:[],replaceChildren(...children){this.children=children;},append(...children){this.children.push(...children);}};
   const document = {
     getElementById: id => id==='core-slot-editor'?{dataset:{portraitAtlas:'/_astro/portraits.abc.png',
-      ticketSymbols:JSON.stringify({topics_ai:'/_astro/topics_ai.abc.svg'})}}:target,
+      ticketSymbols:JSON.stringify({topics_ai:'/_astro/topics_ai.abc.svg'})}}:id==='running-system-slots-list'?runningTarget:target,
     createElement(tag) {
       const node = {tag, dataset:{}, style:{}, attributes:{}, children:[], handlers:{},
         append(...children) {this.children.push(...children);},
@@ -46,7 +47,7 @@ function renderer() {
     openCoreEditor(){}, toggleCoreSlot(...args){switches.push(args);}});
   vm.runInContext(snippet('function coreElement(', 'function coreField('), context);
   const render = vm.runInContext('(' + snippet('function renderCoreAgents(', 'async function coreRequest(') + ')', context);
-  return {render, elements, target, switches};
+  return {render, elements, target, runningTarget, switches};
 }
 
 test('stored Running alone cannot produce a Running badge or visible editor form', () => {

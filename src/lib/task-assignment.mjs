@@ -153,5 +153,12 @@ export function createAssignmentController(form, {fixedAssignee = false, fetchIm
     catalogue = null; invalidated = true;
     note.textContent = 'Die Konfiguration hat sich geändert. Agentenauswahl neu laden und das Ziel erneut auswählen.';
   }
-  return {reload, payload, invalidate};
+  function selectSlot(slotId) {
+    const target = catalogue?.targets.find(item => item.assignable && item.binding.assigned_slot === text(slotId));
+    if (fixedAssignee || invalidated || !target) throw new Error('Dieser Agent ist aktuell nicht zuweisbar. Bitte ein verfügbares Ziel auswählen.');
+    select.value = target.id;
+    fillFields();
+    note.textContent = 'Aufgabe wird ' + target.name + ' zugewiesen. Ein Workerstart erfolgt dadurch nicht.';
+  }
+  return {reload, payload, invalidate, selectSlot};
 }

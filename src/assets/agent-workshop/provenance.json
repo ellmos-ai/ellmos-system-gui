@@ -1,0 +1,9 @@
+{
+  "schema": "ellmos-workshop-image.source.v1",
+  "origin": "Gemini Antigravity image artifact",
+  "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+  "source_file": "workshop_master_1791155964265.jpg",
+  "file": "workshop.jpg",
+  "source_sha256": "b3b102785c06ef1cef4e74cacff6445b94bddcdc5d9083c45748c4f21ebc5674",
+  "transformation": "none; original JPEG bytes; decorative background"
+}

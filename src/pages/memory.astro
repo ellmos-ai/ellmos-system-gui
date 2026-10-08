@@ -2,68 +2,73 @@
 // memory.astro - Kognitiver Memory-Schaltplan & Prozess-Topologie
 // Arbeitsgedächtnismodell (Baddeley) • Zentrale Exekutive mit Sensoren & Messtechnik
 // Selbstkontroll-Guards (Deterministische Skripte & Lebendige LLM-Guards)
-// Berechtigungskontrolle & Hooker-Injektoren (Reine Zustell-Pipeline)
+// Soll-Modell mit getrennt belegten Memory-Seams und providerabhängigen Hook-Events
 // Startprompt-Synthese (Einmaliger Boot-Bus) • Langzeitgedächtnis (bach.db)
 import BachLayout from "../layouts/BachLayout.astro";
 
 const mermaidCode = `flowchart TD
-    subgraph ZE ["1. Zentrale Exekutive & Messtechnik"]
-        EXEC["Zentrale Exekutive (Aufsicht & Willensbildung / SAS)"]
-        SENS["Sensoren & Messtechnik (Context-Reader, Token-Monitor, Stress-Detektor)"]
-        EXEC -->|"Aufsichts-Auftrag"| SENS
+    subgraph STEUERUNG ["Steuerung: Ziel und Arbeitsauftrag"]
+        EXEC["Ziel, Regeln und Aufsicht (Soll-Prozess)"]
+        SENS["1. Bedarf erkennen (Ereignis, Prompt, Arbeitszustand)"]
+        EXEC --> SENS
     end
-
-    subgraph SK ["2. Selbstkontroll-Mechanismen (Die eigentlichen Kontrolleure)"]
-        DG["Deterministische Skript-Guards (P-001 Git-Sperre, Pfad-Locks, Regex-Filter)"]
-        LG["Lebendige LLM-Guards (/goal Evaluator, Disambiguierung, Konsistenz)"]
-        SENS -->|"Messdaten & Limits"| DG
-        SENS -->|"CoT-Auszüge & Drift"| LG
+    subgraph KONTEXTPROZESS ["Teilprozesse der Kontextbereitstellung"]
+        SELECT["2. Kontext auswählen (Quellen, Trigger, Relevanz)"]
+        CHECK["3. Regeln und Grenzen prüfen (Cooldown, Budget, Filter)"]
+        DEC{"4. Zusatzkontext bereitstellen?"}
+        DELIVERY["5. Kontext zustellen (Payload und Providerformat)"]
+        SENS --> SELECT --> CHECK --> DEC
+        DEC -->|"Ja"| DELIVERY
+        DEC -->|"Nein"| SKIP["Keine zusätzliche Injektion"]
     end
-
-    subgraph GATE ["3. Berechtigungskontrolle (Decision Gate)"]
-        DEC{"Injektion freigegeben?"}
-        DG -->|"Skript-Check OK"| DEC
-        LG -->|"Guard-Freigabe"| DEC
+    subgraph AKTIONSPROZESS ["Teilprozess: Aktionskontrolle (anschlussabhängig)"]
+        ACTION["Angeforderte Aktion"]
+        GUARD["Regeln und Rechte prüfen"]
+        ALLOW{"allow / ask / deny"}
+        ACTION --> GUARD --> ALLOW
     end
-
-    subgraph HOOK ["4. Hooker (Reine Injektoren / Zustell-Kanal)"]
-        HK["Hooker Injektor-Pipeline (Reine Zustellung ohne eigene Kontrolllogik)"]
-        DEC -->|"Autorisierter Payload (Gedanke / Faktenanker)"| HK
+    subgraph LAUFZEIT ["Laufzeit: Nachrichten zusammenstellen"]
+        SP["Start- und Systemkontext"]
+        INPUT["Nutzereingaben und Werkzeugresultate"]
+        KW["Aktives Kontextfenster"]
+        SP --> KW
+        INPUT --> KW
+        DELIVERY --> KW
     end
-
-    subgraph BOOT ["5. Startprompt-Synthese (Einmaliger Start)"]
-        SP["Startprompt: Agent (Rolle + Persona + Skills + Governance) + System + Aufgabe"]
+    subgraph GEDAECHTNIS ["Speichern und Lernen"]
+        LTM[("Fakten, Lessons, Working und Sessions")]
+        LEARN["Konsolidierung (Soll-Prozess; separat prüfen)"]
+        LTM --> SELECT
+        KW -->|"Aktiver Memory-Toolzugriff"| LTM
+        KW -.-> LEARN -.-> LTM
     end
-
-    subgraph CTX ["6. Zentrum: Aktives Kontextfenster"]
-        KW["Aktives Kontextfenster (Phonologische Schleife & CoT)"]
-        SP -->|"Einmaliger Boot-Bus"| KW
-        HK -->|"Einziger dynamischer Einlass"| KW
-    end
-
-    subgraph MEM ["7. Langzeitgedächtnis (bach.db)"]
-        LTM[("Langzeitgedächtnis (Fakten, Sessions, Lessons)")]
-        LTM -.->|"Pfad A: Boot-Kontext"| SP
-        KW -->|"Pfad B: Aktiver Tool-Pull (z.B. bach mem query)"| LTM
-        LTM -.->|"Pfad C: Reaktiv über Guards"| SK
-    end
-
-    subgraph LEARN ["8. Lern- & Konsolidierungssystem"]
-        CL["Kognitives Lernen (Konzept)"]
-        KW -->|"Rohdaten-Strom"| CL
-        CL -->|"Destilliertes Wissen"| LTM
-    end`;
+    NOTE["Prozessgrenzen sind keine Modulgrenzen: Mehrere Schritte können im selben Hooker liegen."]
+    NOTE -.-> SELECT
+    NOTE -.-> GUARD
+    classDef control fill:#27364a,stroke:#8c9fbc,color:#eef2f6
+    classDef context fill:#233b3c,stroke:#86aaa8,color:#eef2f6
+    classDef storage fill:#393630,stroke:#aba292,color:#eef2f6
+    classDef annotation fill:#292e36,stroke:#8a929e,color:#eef2f6
+    class EXEC,SENS,SELECT,CHECK,DEC,DELIVERY,SKIP,ACTION,GUARD,ALLOW control
+    class SP,INPUT,KW context
+    class LTM,LEARN storage
+    class NOTE annotation
+    style STEUERUNG fill:transparent,stroke:#8a929e
+    style KONTEXTPROZESS fill:transparent,stroke:#8a929e
+    style AKTIONSPROZESS fill:transparent,stroke:#8a929e
+    style LAUFZEIT fill:transparent,stroke:#8a929e
+    style GEDAECHTNIS fill:transparent,stroke:#8a929e`;
 ---
 
 <BachLayout title="Kognitiver Memory-Schaltplan" currentPath="/memory">
-  <!-- Header mit echten kognitiven Status-Indikatoren -->
+  <!-- Soll-Architektur; Laufzeitbelege gelten nur für ausdrücklich gemessene Quellen. -->
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
     <div>
       <h1 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;color:var(--text);">
         🧠 Kognitiver Memory-Schaltplan & Prozess-Topologie
       </h1>
       <p style="color:var(--text-muted);font-size:0.875rem;">
-        Arbeitsgedächtnismodell (Baddeley) • Zentrale Exekutive mit Sensoren & Messtechnik • Selbstkontroll-Guards • Hooker-Zustellpipeline • Langzeitgedächtnis (bach.db)
+        Soll-Modell als kognitive Analogie. Tabellenzahlen werden gemessen; Architektur und Hook-Anschlüsse sind getrennt zu prüfen.
       </p>
     </div>
 
@@ -72,7 +77,7 @@ const mermaidCode = `flowchart TD
       <span class="badge" id="chip-sys-status">● Laufzeit nicht geprüft</span>
       <span class="badge">👑 Exekutive: Konzept</span>
       <span class="badge">🛡️ Guards: nicht geprüft</span>
-      <span class="badge">💉 Hooker: nicht geprüft</span>
+      <span class="badge">💉 Hooker: Anschlüsse getrennt prüfen</span>
       <span class="badge" style="background:var(--bg-elevated);color:var(--text);border:1px solid var(--border);" id="chip-tokens">🗣️ Tokens nicht geprüft</span>
     </div>
   </div>
@@ -80,7 +85,11 @@ const mermaidCode = `flowchart TD
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <!-- 1. PROZESS-VISUALISIERUNG & SCHALTPLAN (THEME-AWARE SVG & MERMAID) -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
-  <div class="card process-board" style="margin-bottom:2rem;border:1px solid var(--border);background:var(--bg-card);position:relative;overflow:hidden;padding:1.25rem;">
+  <details open class="card process-board" id="memory-process-map" style="margin-bottom:2rem;border:1px solid var(--border);background:var(--bg-card);position:relative;overflow:hidden;padding:1.25rem;">
+    <summary style="cursor:pointer;font-weight:700;padding:.3rem 0 1rem;">Map: Soll-Modell · ein- und ausklappen</summary>
+    <p class="architecture-note">Die Map zeigt Prozesse und Teilprozesse. Ihre Grenzen verlangen keine getrennten Module: Ein Hooker kann Bedarf prüfen, Kontext auswählen, Regeln anwenden und den Payload zustellen. Aktive Ausführung ist nur dort belegt, wo ein Anschlussnachweis vorliegt.</p>
+
+    <p class="process-legend"><span class="legend-control">Steuerung und ihre Teilprozesse</span><span class="legend-context">Aktiver Kontext</span><span class="legend-storage">Speichern und Lernen</span></p>
 
     <!-- Oberer Steuerungsbalken mit Darstellungs-Umschalter -->
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:1rem;border-bottom:1px solid var(--border);padding-bottom:0.75rem;">
@@ -88,7 +97,7 @@ const mermaidCode = `flowchart TD
         <span style="font-size:1.3rem;">⚡</span>
         <div>
           <h2 style="margin:0;font-size:1.1rem;font-weight:700;color:var(--text);">
-            Kognitive Prozess-Topologie: Signale, Sensoren & Injektions-Engpass
+            Prozesse und Teilprozesse: Bedarf, Prüfung und Zustellung
           </h2>
           <span style="font-size:0.75rem;color:var(--text-muted);">
             Klick auf einen Baustein öffnet direkt den zugehörigen Inspektions- und Bearbeitungsbereich darunter.
@@ -102,7 +111,7 @@ const mermaidCode = `flowchart TD
           📊 Interaktiver Prozess-Graph
         </button>
         <button class="view-btn" id="btn-view-mermaid" onclick="switchView('mermaid')" type="button">
-          🧜‍♀️ Mermaid Live-Diagramm
+          🧜‍♀️ Mermaid-Diagramm
         </button>
         <button class="view-btn" id="btn-view-code" onclick="switchView('code')" type="button">
           📋 Mermaid-Code & Export
@@ -142,7 +151,7 @@ const mermaidCode = `flowchart TD
         <text x="355" y="152" class="svg-wire-label" fill="var(--text-muted)" font-size="9.5">Limits & PreTool</text>
 
         <path d="M 650,135 L 750,175" stroke="var(--border-hover)" stroke-width="2" marker-end="url(#arrow-default)" fill="none" class="flow-wire"></path>
-        <text x="690" y="152" class="svg-wire-label" fill="var(--text-muted)" font-size="9.5">CoT-Auszüge & Drift</text>
+        <text x="690" y="152" class="svg-wire-label" fill="var(--text-muted)" font-size="9.5">Modellgestützte Prüfung (Soll)</text>
 
         <!-- Guards -> Berechtigungskontrolle (Diamond) -->
         <path d="M 350,225 L 490,265" stroke="var(--border-hover)" stroke-width="2" marker-end="url(#arrow-default)" fill="none" class="flow-wire"></path>
@@ -150,11 +159,11 @@ const mermaidCode = `flowchart TD
 
         <!-- Berechtigungskontrolle -> Hooker (Injektor) -->
         <path d="M 550,300 L 550,345" stroke="var(--success)" stroke-width="2.5" marker-end="url(#arrow-success)" fill="none" class="flow-wire" stroke-dasharray="4 2"></path>
-        <text x="558" y="325" class="svg-wire-label" fill="var(--success)" font-size="10" font-weight="600">Autorisierter Payload</text>
+        <text x="558" y="325" class="svg-wire-label" fill="var(--success)" font-size="10" font-weight="600">Zusatzkontext ausgewählt</text>
 
         <!-- Hooker -> Kontextfenster -->
         <path d="M 550,395 L 550,440" stroke="var(--success)" stroke-width="3" marker-end="url(#arrow-success)" fill="none" class="flow-wire"></path>
-        <text x="558" y="420" class="svg-wire-label" fill="var(--success)" font-size="10.5" font-weight="bold">Physische Injektion</text>
+        <text x="558" y="420" class="svg-wire-label" fill="var(--success)" font-size="10.5" font-weight="bold">Payload zustellen</text>
 
         <!-- Startprompt -> Kontextfenster (Boot-Bus) -->
         <path d="M 170,395 L 170,470 L 370,470" stroke="var(--accent-blue)" stroke-width="2.5" marker-end="url(#arrow-blue)" fill="none" class="flow-wire"></path>
@@ -162,7 +171,7 @@ const mermaidCode = `flowchart TD
 
         <!-- Kontextfenster -> Lernen -->
         <path d="M 550,520 L 550,565" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow-accent)" fill="none" class="flow-wire"></path>
-        <text x="558" y="546" class="svg-wire-label" fill="var(--text-muted)" font-size="10">Rohdaten-Strom</text>
+        <text x="558" y="546" class="svg-wire-label" fill="var(--text-muted)" font-size="10">Konsolidierung (Soll)</text>
 
         <!-- Lernen -> Langzeitgedächtnis -->
         <path d="M 670,590 L 890,590" stroke="var(--success)" stroke-width="2" marker-end="url(#arrow-success)" fill="none" class="flow-wire"></path>
@@ -170,7 +179,7 @@ const mermaidCode = `flowchart TD
 
         <!-- Kontextfenster -> Langzeitgedächtnis (Aktiver Tool-Pull) -->
         <path d="M 730,475 L 890,475" stroke="var(--warning)" stroke-width="2" marker-end="url(#arrow-warning)" fill="none" class="flow-wire"></path>
-        <text x="745" y="467" class="svg-wire-label" fill="var(--warning)" font-size="10" font-weight="600">Aktiver Tool-Pull (Pull-Request)</text>
+        <text x="745" y="467" class="svg-wire-label" fill="var(--warning)" font-size="10" font-weight="600">Aktiver Memory-Toolzugriff</text>
 
         <!-- Langzeitgedächtnis -> Startprompt (Pfad A) -->
         <path d="M 975,445 L 975,340 L 250,340" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrow-blue)" fill="none" class="flow-wire"></path>
@@ -186,27 +195,27 @@ const mermaidCode = `flowchart TD
         <g class="svg-node" data-target="ze" style="cursor:pointer;" onclick="selectInspector('ze')">
           <rect x="350" y="12" width="400" height="44" rx="8" class="node-box node-box-ze"></rect>
           <text x="550" y="32" text-anchor="middle" class="node-title" font-weight="700" font-size="13">👑 ZENTRALE EXEKUTIVE (Aufsicht & Willensbildung)</text>
-          <text x="550" y="47" text-anchor="middle" class="node-sub" font-size="9.5">Norman & Shallice (SAS) • Miller TOTE (/plan, /goal) • Notfall-Circuit-Breaker</text>
+          <text x="550" y="47" text-anchor="middle" class="node-sub" font-size="9.5">Ziele • Regeln • Bedarf • Auswahl • Prüfung • Entscheidung • Zustellung (Soll)</text>
         </g>
 
         <!-- 2. SENSOREN & MESSTECHNIK -->
         <g class="svg-node" data-target="sensors" style="cursor:pointer;" onclick="selectInspector('sensors')">
           <rect x="360" y="86" width="380" height="48" rx="8" class="node-box"></rect>
-          <text x="550" y="105" text-anchor="middle" class="node-title" font-weight="600" font-size="12">📡 Sensoren & Messtechnik (der Exekutive)</text>
-          <text x="550" y="122" text-anchor="middle" class="node-sub" font-size="9.5">Context-Reader Tool • Token- & Health-Monitor • CoT-Loop & Stress-Detektor</text>
+          <text x="550" y="105" text-anchor="middle" class="node-title" font-weight="600" font-size="12">📡 Teilprozesse: Bedarf erkennen und Kontext auswählen</text>
+          <text x="550" y="122" text-anchor="middle" class="node-sub" font-size="9.5">Ereignisse • Trigger • Quellen • Relevanz (je Anschluss)</text>
         </g>
 
         <!-- 3A. DETERMINISTISCHE SKRIPT-GUARDS -->
         <g class="svg-node" data-target="guards" style="cursor:pointer;" onclick="selectInspector('guards')">
           <rect x="180" y="175" width="280" height="52" rx="8" class="node-box"></rect>
-          <text x="320" y="196" text-anchor="middle" class="node-title" font-weight="600" font-size="11.5">⚙️ Deterministische Skript-Guards</text>
+          <text x="320" y="196" text-anchor="middle" class="node-title" font-weight="600" font-size="11.5">⚙️ Teilprozess: Regeln und Grenzen prüfen</text>
           <text x="320" y="213" text-anchor="middle" class="node-sub" font-size="9">P-001 Push-Sperre • Pfad-Locks • Regex & Limits</text>
         </g>
 
         <!-- 3B. LEBENDIGE LLM-GUARDS -->
         <g class="svg-node" data-target="guards" style="cursor:pointer;" onclick="selectInspector('guards')">
           <rect x="640" y="175" width="280" height="52" rx="8" class="node-box"></rect>
-          <text x="780" y="196" text-anchor="middle" class="node-title" font-weight="600" font-size="11.5">🧠 Lebendige LLM-Guards (Aufsichts-Modell)</text>
+          <text x="780" y="196" text-anchor="middle" class="node-title" font-weight="600" font-size="11.5">🧠 Teilprozess: Modellgestützte Prüfung (Soll)</text>
           <text x="780" y="213" text-anchor="middle" class="node-sub" font-size="9">Goal-Evaluator (/goal) • Disambiguierung • Anti-Konfabulation</text>
         </g>
 
@@ -214,14 +223,14 @@ const mermaidCode = `flowchart TD
         <g class="svg-node" data-target="auth" style="cursor:pointer;" onclick="selectInspector('auth')">
           <polygon points="550,250 630,280 550,310 470,280" class="node-diamond"></polygon>
           <text x="550" y="278" text-anchor="middle" class="node-title" font-weight="700" font-size="11">Entscheidung</text>
-          <text x="550" y="291" text-anchor="middle" class="node-sub" font-size="8.5">Injektion erlaubt?</text>
+          <text x="550" y="291" text-anchor="middle" class="node-sub" font-size="8.5">Zusatzkontext bereit?</text>
         </g>
 
         <!-- 5. HOOKER (REINER INJEKTOR) -->
         <g class="svg-node" data-target="hooker" style="cursor:pointer;" onclick="selectInspector('hooker')">
           <rect x="400" y="345" width="300" height="50" rx="8" class="node-box node-box-hooker"></rect>
-          <text x="550" y="366" text-anchor="middle" class="node-title" font-weight="700" font-size="12">💉 HOOKER (Reine Injektoren / Zustell-Kanal)</text>
-          <text x="550" y="382" text-anchor="middle" class="node-sub" font-size="9.5">Reines Ausführungsorgan • Keine Kontrolllogik • Sichere Zustellung</text>
+          <text x="550" y="366" text-anchor="middle" class="node-title" font-weight="700" font-size="12">💉 TEILPROZESS: KONTEXT ZUSTELLEN</text>
+          <text x="550" y="382" text-anchor="middle" class="node-sub" font-size="9.5">Providerformat und Zusatzkontext • Kann im selben Hooker liegen</text>
         </g>
 
         <!-- 6. STARTPROMPT-SYNTHESE (LINKS) -->
@@ -236,7 +245,7 @@ const mermaidCode = `flowchart TD
           <rect x="370" y="440" width="360" height="80" rx="14" class="node-box node-box-center"></rect>
           <text x="550" y="468" text-anchor="middle" class="node-title-center" font-weight="800" font-size="15">🗣️ ZENTRUM: AKTIVES KONTEXTFENSTER</text>
           <text x="550" y="488" text-anchor="middle" class="node-sub-center" font-size="10.5">Phonologische Schleife • CoT-Planung • Arbeitsgedächtnis</text>
-          <text x="550" y="505" text-anchor="middle" class="node-sub-center" font-size="9" fill="var(--accent)">Einlass nur über Boot-Bus (Start) ODER autorisierte Hooker-Injektion!</text>
+          <text x="550" y="505" text-anchor="middle" class="node-sub-center" font-size="9" fill="var(--accent)">Eingaben, Werkzeugresultate, Systemkontext und optionaler Hook-Kontext</text>
         </g>
 
         <!-- 8. LERN- & KONSOLIDIERUNGSSYSTEM -->
@@ -279,7 +288,7 @@ const mermaidCode = `flowchart TD
       <pre id="mermaid-raw-code" style="background:var(--bg-dark);color:var(--text);padding:1rem;border-radius:var(--radius-sm);font-family:monospace;font-size:0.8rem;overflow-x:auto;border:1px solid var(--border);line-height:1.5;">{mermaidCode}</pre>
     </div>
 
-  </div>
+  </details>
 
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <!-- 2. SYNCHRONISIERTE INSPEKTOR-TABS (TIEFENINSPEKTION & DETAILS) -->
@@ -375,7 +384,7 @@ const mermaidCode = `flowchart TD
 
     <!-- PANEL 3: SENSOREN & MESSTECHNIK -->
     <div class="insp-panel" id="panel-sensors" style="display:none;">
-      <h3 style="margin:0 0 0.5rem 0;font-size:1.2rem;color:var(--text);">📡 Sensoren & Messtechnik (der Exekutive)</h3>
+      <h3 style="margin:0 0 0.5rem 0;font-size:1.2rem;color:var(--text);">📡 Teilprozesse: Bedarf erkennen und Kontext auswählen</h3>
       <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1rem;">
         Die Messtechnik beobachtet das Modell von außen und innen, ohne selbst Aktionen zu sperren oder zu injizieren. Sie liefert die Rohbefunde an die Guards.
       </p>
@@ -437,9 +446,19 @@ const mermaidCode = `flowchart TD
 
     <!-- PANEL 5: BERECHTIGUNG & HOOKER -->
     <div class="insp-panel" id="panel-auth" style="display:none;">
-      <h3 style="margin:0 0 0.5rem 0;font-size:1.2rem;color:var(--text);">⚖️ Berechtigungskontrolle & Hooker (Zustell-Pipeline)</h3>
+      <h3 style="margin:0 0 0.5rem 0;font-size:1.2rem;color:var(--text);">⚖️ Teilprozesse: Prüfen, Freigeben und Zustellen</h3>
+      <div class="architecture-evidence">
+        <strong>Geprüfter Anschlussstand · Mac-BACH</strong>
+        <ul>
+          <li>MemoryHooker 0.3.0 und WorkflowHooker 0.2.1 installiert.</li>
+          <li>BACHs In-process-Memory-Seam besitzt protokollierte Injektionen. Profilgebundene Chats umgehen diesen allgemeinen Kontextpfad bewusst.</li>
+          <li>Der Chat-Eventadapter ruft PostToolUse auf. Die gemessene lokale Eventkonfiguration enthält nur Stop; dafür ist im geprüften Chat-Loop kein Aufruf vorhanden.</li>
+          <li>WorkflowHooker-Guards sind im Modul implementiert. Ihre Durchsetzung in BACH ist damit nicht belegt.</li>
+        </ul>
+        <p>Quellenprüfung: 9. Oktober 2026. Diese Beobachtung ist ein datierter Stand; die Seite führt keinen aktuellen Hook-Ausführungstest aus.</p>
+      </div>
       <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1rem;">
-        Klare Aufgabentrennung: Das Berechtigungsgatter erteilt die Freigabe – der Hooker ist das reine Ausführungsorgan zur Zustellung.
+        Die Darstellung trennt Tätigkeiten: Bedarf erkennen, Kontext auswählen, Regeln und Grenzen prüfen sowie Kontext zustellen. Diese Tätigkeiten dürfen im selben Hooker implementiert sein. Aktionskontrolle ist ein eigener Teilprozess; welche Entscheidungen durchgesetzt werden, hängt vom tatsächlichen Laufzeitanschluss ab.
       </p>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:1rem;">
@@ -453,12 +472,12 @@ const mermaidCode = `flowchart TD
         </div>
 
         <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;">
-          <h4 style="margin:0 0 0.5rem 0;font-size:0.95rem;color:var(--text);">Der Hooker als reine Zustell-Pipeline</h4>
+          <h4 style="margin:0 0 0.5rem 0;font-size:0.95rem;color:var(--text);">Umsetzung der Teilprozesse in den Hookern</h4>
           <p style="font-size:0.825rem;color:var(--text-muted);line-height:1.5;margin-bottom:0.75rem;">
-            Der Hooker besitzt <strong>keine eigene Kontrolllogik</strong>. Er empfängt das autorisierte Paket und führt die technische Injektion direkt in das Kontextfenster aus.
+            <strong>MemoryHooker</strong> prüft Trigger, filtert Kontext und begrenzt Injektionen mit Cooldowns. <strong>WorkflowHooker</strong> enthält eigene Aktionsguards und Abschluss-Gates. Installiert oder konfiguriert bedeutet noch nicht, dass der jeweilige Hook im laufenden Agenten feuert.
           </p>
           <div style="font-size:0.75rem;font-family:monospace;background:var(--bg-dark);padding:0.5rem;border-radius:4px;border:1px solid var(--border);">
-            Payload freigegeben ➔ Hooker liefert: [Gedanke/Fakt] ➔ Kontextfenster
+            Quelle auswählen ➔ Regeln und Limits prüfen ➔ Anschluss liefert Zusatzkontext
           </div>
         </div>
       </div>
@@ -618,7 +637,7 @@ const mermaidCode = `flowchart TD
         </div>
         <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;">
           <strong style="color:var(--success);font-size:0.9rem;">Pfad C: Reaktiv über Guards</strong>
-          <p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0;">Sensor meldet Bedarf ➔ Guard autorisiert ➔ Hooker injiziert.</p>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0;">Soll: Bedarf erfassen ➔ Regeln und Limits prüfen ➔ Zustellung am jeweiligen Anschluss belegen.</p>
         </div>
       </div>
 
@@ -762,6 +781,8 @@ const mermaidCode = `flowchart TD
 </BachLayout>
 
 <style>
+  .architecture-note,.architecture-evidence{padding:.8rem 1rem;border:1px solid var(--border);border-radius:8px;background:var(--bg-panel);color:var(--text-muted);font-size:.82rem;line-height:1.6;margin-bottom:1rem}.architecture-evidence ul{padding-left:1.2rem;margin:.6rem 0}.architecture-evidence strong{color:var(--text)}#memory-process-map>summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
   /* ═══════════════════════════════════════════════════════════════
      THEME-AWARE STYLING (DARK, LIGHT, OCEAN, WARM)
      ═══════════════════════════════════════════════════════════════ */
@@ -794,45 +815,40 @@ const mermaidCode = `flowchart TD
     color: var(--text);
   }
 
-  /* SVG Node Styling */
-  .node-box {
-    fill: var(--bg-panel);
-    stroke: var(--border);
-    stroke-width: 1.5;
-    transition: all 180ms ease;
+  /* Farbe beschreibt Prozesszugehörigkeit, keinen Laufzeitstatus. */
+  .process-board {
+    --process-control-fill: #27364a; --process-control-line: #8c9fbc;
+    --process-context-fill: #233b3c; --process-context-line: #86aaa8;
+    --process-storage-fill: #393630; --process-storage-line: #aba292;
+    --process-wire: #8993a1;
   }
-
-  .node-diamond {
-    fill: var(--bg-panel);
-    stroke: var(--warning);
-    stroke-width: 1.5;
-    transition: all 180ms ease;
+  :global([data-theme="light"]) .process-board {
+    --process-control-fill: #e9edf5; --process-control-line: #586e8e;
+    --process-context-fill: #e6eeee; --process-context-line: #507978;
+    --process-storage-fill: #efede8; --process-storage-line: #796f5c;
+    --process-wire: #697586;
   }
-
-  .node-box-ze {
-    stroke: var(--accent);
-    stroke-width: 2;
+  .node-box, .node-diamond {
+    fill: var(--process-control-fill); stroke: var(--process-control-line);
+    stroke-width: 1.8; transition: stroke-width 180ms ease;
   }
-
-  .node-box-hooker {
-    stroke: var(--success);
-    stroke-width: 2;
+  .node-box-ze { stroke-width: 2.5; }
+  .node-box-start, .node-box-center {
+    fill: var(--process-context-fill); stroke: var(--process-context-line);
   }
-
-  .node-box-start {
-    stroke: var(--accent-blue);
-    stroke-width: 1.5;
+  .svg-node[data-target="learn"] .node-box, .node-box-db {
+    fill: var(--process-storage-fill); stroke: var(--process-storage-line);
   }
-
-  .node-box-center {
-    fill: var(--bg-elevated);
-    stroke: var(--accent);
-    stroke-width: 2.5;
-  }
-
-  .node-box-db {
-    stroke: var(--border);
-  }
+  .flow-wire { stroke: var(--process-wire); }
+  #cognitive-svg marker path { fill: var(--process-wire); }
+  .svg-wire-label { fill: var(--text-muted); }
+  .process-legend { display:flex; gap:.6rem; flex-wrap:wrap; font-size:.78rem; }
+  .process-legend span { padding:.3rem .55rem; border:1px solid; border-radius:6px; }
+  .legend-control { background:var(--process-control-fill); border-color:var(--process-control-line)!important; }
+  .legend-context { background:var(--process-context-fill); border-color:var(--process-context-line)!important; }
+  .legend-storage { background:var(--process-storage-fill); border-color:var(--process-storage-line)!important; }
+  #mermaid-render-target { min-height:12rem; }
+  :global(#mermaid-render-target svg) { width:100%; height:auto; min-width:700px; }
 
   .node-title {
     fill: var(--text);
@@ -861,14 +877,13 @@ const mermaidCode = `flowchart TD
   /* Hover & Active Node State */
   .svg-node:hover .node-box,
   .svg-node:hover .node-diamond {
-    stroke: var(--accent-light);
+    stroke-width: 2.8;
     filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
   }
 
   .svg-node.active-node .node-box,
   .svg-node.active-node .node-diamond {
-    stroke: var(--accent);
-    stroke-width: 2.5;
+    stroke-width: 3;
   }
 
   /* Inspector Tabs */
@@ -903,29 +918,6 @@ const mermaidCode = `flowchart TD
     background: #ffffff;
     border-color: #cbd5e1;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  }
-
-  :global([data-theme="light"]) .node-box {
-    fill: #ffffff;
-    stroke: #cbd5e1;
-  }
-
-  :global([data-theme="light"]) .node-diamond {
-    fill: #ffffff;
-    stroke: #d97706;
-  }
-
-  :global([data-theme="light"]) .node-box-center {
-    fill: #f8fafc;
-    stroke: #c83a4e;
-  }
-
-  :global([data-theme="light"]) .node-box-ze {
-    stroke: #c83a4e;
-  }
-
-  :global([data-theme="light"]) .node-box-hooker {
-    stroke: #16a34a;
   }
 
   :global([data-theme="light"]) .node-title,
@@ -1007,7 +999,7 @@ const mermaidCode = `flowchart TD
       const themeName = isLight ? 'default' : 'dark';
 
       if (!mermaidLoaded) {
-        const module = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
+        const module = await window.loadMemoryMermaid();
         window.mermaid = module.default;
         mermaidLoaded = true;
       }
@@ -1015,17 +1007,25 @@ const mermaidCode = `flowchart TD
       window.mermaid.initialize({
         startOnLoad: false,
         theme: themeName,
-        securityLevel: 'loose',
-        flowchart: { curve: 'basis', htmlLabels: true }
+        securityLevel: 'strict',
+        flowchart: { curve: 'basis', htmlLabels: false }
       });
 
-      const rawCode = document.getElementById('mermaid-raw-code').innerText;
+      let rawCode = document.getElementById('mermaid-raw-code').textContent;
+      if (isLight) {
+        const palette = { '#27364a':'#e9edf5', '#8c9fbc':'#586e8e', '#233b3c':'#e6eeee', '#86aaa8':'#507978', '#393630':'#efede8', '#aba292':'#796f5c', '#292e36':'#f1f3f6', '#8a929e':'#697586', '#eef2f6':'#202a3b' };
+        for (const [dark, light] of Object.entries(palette)) rawCode = rawCode.replaceAll(dark, light);
+      }
       const { svg } = await window.mermaid.render('mermaid-svg-chart', rawCode);
       target.innerHTML = svg;
+      target.dataset.renderState = 'rendered';
     } catch (err) {
-      target.innerHTML = `<div style="color:var(--text-muted);font-size:0.875rem;padding:1rem;">
-        Mermaid-Renderer offline oder blockiert. Nutze den interaktiven Prozess-Graphen. (Info: ${err.message})
-      </div>`;
+      const notice = document.createElement('p');
+      notice.textContent = 'Mermaid konnte nicht gerendert werden. Der Prozess-Graph und der Diagramm-Code bleiben verfügbar.';
+      notice.setAttribute('role', 'status');
+      target.replaceChildren(notice);
+      target.dataset.renderState = 'error';
+      console.error('Memory Mermaid rendering failed', err);
     }
   }
 
@@ -1549,4 +1549,9 @@ const mermaidCode = `flowchart TD
     loadHermesStats();
     document.getElementById('memory-search-form').addEventListener('submit', searchMemory);
   });
+</script>
+
+<script>
+  // Lokales Release-Bundle: Diagramme brauchen keinen externen CDN-Zugriff.
+  (window as any).loadMemoryMermaid = () => import('mermaid');
 </script>
