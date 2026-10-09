@@ -50,7 +50,7 @@
     "src/pages/governance/usecases.astro": "82cb21703924d21941b73bfb6dfc7cd73a493e69e2fe9c3be5fdaa7c66cdd15b",
     "src/pages/index.astro": "35342c625e3fb6676e11848f4d0d36ec77e5858e82ecc6260156df258b55b1e6",
     "src/pages/life.astro": "05180c2d12c7c86a4305d18cb41b2281e0cbf37b80daf0ad26b512100e893671",
-    "src/pages/memory.astro": "8048c04911ddea2766b3b01dbbda0ae9b3ecda1e81edb1b82b95f7a6ac288a6f",
+    "src/pages/memory.astro": "5fe2eff73b949da1d4ebf07489e72360dc6849bb67f07f072f59e34ea673c187",
     "src/pages/settings.astro": "19db6adf8cb5ec0ed0f83410e80e19b11b721c3f6cef504a767285fd54e4ef0d",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
@@ -78,10 +78,10 @@
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "cd2a60c002da44e8083f1b4ccd5e8654054d75b8caac1a5766ce49e295eaf83c",
-    "package-lock.json": "b8dbb816609a322d321e142214c1241af688cf7f0fdc7d852ef1b5e374095340",
+    "package.json": "ba8c88afdeb866638fe96de246d466b6880d1477098a9cd8032dbf6596bb0450",
+    "package-lock.json": "bf207f9448d1c870f30a6834ee7527dd8dede3ac3157854908e913a0039586df",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "4ba61d697e2d3960be4b06165824e594d64fa95b33db24c4aa0c3f0c72d8f009",
+    "ellmos-module.v2.json": "930339776ffb110a369bc935bc217e22b7d3fdb7b4d5d7241fc41a4a0852c7c0",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
     "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
     "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
@@ -104,7 +104,8 @@
     "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
     "src/lib/agent-history.mjs": "9262398aac30160b5433bb3cbc572559e0e1fac4a33a68442bffe552f0c975aa",
     "src/scripts/agent-history.mjs": "16a5ee980b075cc957af8ccd061c4fb2e4ff5fbeb9bafb6bc330025569a5eb5a",
-    "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c"
+    "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
+    "tests/memory-facts.test.mjs": "8be5410afab2074934db3a5a1d62e8b3eb9c9569d480ef033b62157c17484f38"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -774,6 +775,20 @@
       ],
       "files": [
         "src/pages/agenten/running.astro"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "scope": "Task1991: native Memory-Facts contract",
+      "changes": [
+        "Offer only user, project, system and domain for Facts; Lessons stay separate",
+        "Display structured API errors as text and preserve unconfirmed drafts",
+        "Unavailable Facts reads remain errors rather than empty tables",
+        "Freeze the pending Facts draft and form actions; clear only an acknowledged native create response"
+      ],
+      "files": [
+        "src/pages/memory.astro",
+        "tests/memory-facts.test.mjs"
       ]
     }
   ]
