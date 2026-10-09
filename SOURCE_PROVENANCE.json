@@ -26,7 +26,7 @@
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "2efd1b9bfbc7c8154806c901b1151891703ff4862f9509d61817fa2fac5b5861",
-    "src/components/Header.astro": "50d3200e3cb814ee1637b2730fe7a944c0ad6eb3946c3a09a942fe615bd56883",
+    "src/components/Header.astro": "e615c2825bc2910db34d7b975984cf9ae752af551fe8513222fa0e65d938fd84",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "34eedcae269aabc9577a4ea4a302bd323c7647e159cee41d711d5ccb1b4ca877",
     "src/config/nav_config.json": "4a50f0dba5296f86b49a6192145e4cd7fb5c6de6e4cff42378b50713270c4140",
@@ -43,7 +43,7 @@
     "src/pages/agenten/running.astro": "9e79eb9be6836fe4470c2a619a5e2f57073b2c3150bf6f1f53cd28294449a8aa",
     "src/pages/agenten/sessions.astro": "8117001f267bf411bdf008a36dbbf672fd3964e81b609529905ca6e043aed486",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
-    "src/pages/domains.astro": "23e6bd6241b60edefdc473a3f921d6b78e44d59f8ccfd5d6f80ca884527cd90c",
+    "src/pages/domains.astro": "57c14deae14d57a65c7e96236a6107a7e11b4425a8d5f52d1784c7f6f8b21834",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
     "src/pages/governance/index.astro": "fe59dfe98bf013287b3e459152e3d6fd7faf14ccb4ea76e895c8610c482998da",
     "src/pages/governance/logs.astro": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
@@ -78,10 +78,10 @@
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "439923a17f2c0b01a00c2e0e7cf965a6caf8a660f25469fcaa3387a10f6ba470",
-    "package-lock.json": "515f8880c6ad22f805d766fb26adee079faffa7394342ebf1b3f058bcb437c34",
+    "package.json": "27d4629b49a9e6379ac9ca4dbdcec10a6f97fe5c4bcebb4aaec3c773f160f3b0",
+    "package-lock.json": "a83a1d2db72ed271983bcf74db6668a78e795fcbe8a9974ccc214d8821e5400e",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "6cf7c5a60e7dfd335f1480b3ea8bdd14d5f3073ce4ce3f2e20245eab407e7e0e",
+    "ellmos-module.v2.json": "e491a09e0d481eb2b2c4c7a2c8e9204cc1e3e01749e43ab2b8f36bb9d856c424",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
     "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
     "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
@@ -92,13 +92,16 @@
     "src/lib/gemini-avatar-assets.mjs": "c300306ebb0de83c7a6038ea1b11817c5f4b263311fff3dfe1d9e3a7b348997e",
     "src/lib/agent-avatar-browser.mjs": "af3fb7d3ba000aee965a535cfe954beab12527ecea77cb2b69bfc71b2957acea",
     "src/lib/domain-routes.mjs": "ba4dd103080f7090c27121009a33efbc4e6af03a7afc75ca77bef4766aa10d08",
-    "tests/domain-routes.test.mjs": "95f8b634565e7ded7552436ff5fcd43736a38bc7da09d29cf714c6a61f0ba213",
+    "tests/domain-routes.test.mjs": "bdcc11061fbb9a12f670fe6917c890d722d46b9ba6b8f1f87adbe58b1579d353",
     "src/assets/agent-workshop/workshop.jpg": "b3b102785c06ef1cef4e74cacff6445b94bddcdc5d9083c45748c4f21ebc5674",
     "src/assets/agent-workshop/provenance.json": "ce9d3c13bceb267452aa813371ae9eb8126f54d283521730b3a917bd4f68d764",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
     "src/pages/user-inbox.astro": "e912b71af66cedada70ae29986f9fb3cf23b2f6ab021c3c838c923b4fab745c7",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
-    "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3"
+    "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
+    "src/lib/domain-pins.mjs": "0bc813215764e5e6fb77044bbd68756351b60ddb38035c188548b95d1a527bd3",
+    "src/scripts/domain-studio.mjs": "2b40b55a952eba22b1494a0405379bf3b6e7724e97845306ecdde115bea00283",
+    "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -691,6 +694,21 @@
         "Explicit Keine Pause projects to canonical pause_after=0",
         "Tool-round inputs accept 0..1000; 0 is unlimited",
         "Template picker imports from its actual shared scripts directory"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "scope": "Task1932 native domain pin navigation",
+      "changes": [
+        "Shared header and domain cards consume one versioned native pin state",
+        "Explicit desired pin status and CAS; unknown save does not retry",
+        "Actual handlers or selected catalog cards replace nonexistent workbench links"
+      ],
+      "files": [
+        "src/lib/domain-pins.mjs",
+        "src/scripts/domain-studio.mjs",
+        "src/components/Header.astro",
+        "src/pages/domains.astro"
       ]
     }
   ]

@@ -9,11 +9,10 @@ test('only implemented exact workbench routes can be active links',()=>{
     '/financial?redirect=https://foreign.example','/financial#stub','/financial/',' /financial',null,{}])
     assert.equal(domainWorkbenchRoute(route),null);
 });
-test('domain placeholders and unfinished menu pin action stay disabled without a write request',()=>{
-  const source=readFileSync(new URL('../src/pages/domains.astro',import.meta.url),'utf8');
-  assert.match(source,/domainWorkbenchRoute\(declaredWorkbench\)/);
-  assert.match(source,/pinBtn\.disabled = true/);
-  assert.match(source,/Aufgabe #1932/);
+test('unimplemented workbench links remain disabled when pinning is available',()=>{
+  const source=readFileSync(new URL('../src/scripts/domain-studio.mjs',import.meta.url),'utf8');
+  assert.match(source,/domainWorkbenchRoute\(declared\)/);
   assert.match(source,/Fachseite noch nicht angebunden/);
-  assert.doesNotMatch(source,/method:\s*['"]POST|togglePin/);
+  assert.match(source,/aria-disabled/);
+  assert.match(source,/makePinButton\(domain.id\)/);
 });
