@@ -116,7 +116,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
   </section>
 
   <style>
-    .hidden { display: none !important; }
+    .hidden, [hidden] { display: none !important; }
     .task-filter-controls {display:flex;align-items:end;gap:.65rem;flex-wrap:wrap;min-width:0}
     .task-filter-controls label {display:flex;flex-direction:column;gap:.35rem;color:var(--text-muted);font-size:.8rem;min-width:0}
     .task-filter-controls select {background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;max-width:100%;font:inherit}
