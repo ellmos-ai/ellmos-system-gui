@@ -42,8 +42,12 @@ Acceptance binds the result ID, digest, task version and status revision. A dedi
 operator credential is held only in sessionStorage and sent as
 `X-BACH-Result-Operator` to the same origin, with redirects rejected. General device
 credentials do not grant this permission. Missing consumer adapters are shown as
-unavailable. Provisioning, browser acceptance and release verification remain open
-for this implementation draft.
+unavailable. Consumers provision the separate operator credential locally and
+verify their own installed backend and GUI distribution before activation.
+
+The creation controls, ready agents and ready teams share one visual group. Its
+cards use white backgrounds with blue accents in light mode and normal text
+colors for the creation subtitle. Ready sections remain collapsed initially.
 
 BACH provides the reference REST adapters. Ocean must implement its own compatible handlers. The [consumer contract](docs/CONSUMER_CONTRACT.md) distinguishes configured adapter routes, runtime verification, installed modules and verified GUI artifacts. Missing adapters remain unavailable; a catalogue entry, saved profile or HTTP success alone cannot establish a running agent.
 
