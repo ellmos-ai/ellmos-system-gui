@@ -99,9 +99,9 @@
     "src/pages/user-inbox.astro": "e912b71af66cedada70ae29986f9fb3cf23b2f6ab021c3c838c923b4fab745c7",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
-    "src/lib/domain-pins.mjs": "7d049951441d9d81a379c7000c2d703e238c940685f47b5df81e601328faefb5",
-    "src/scripts/domain-studio.mjs": "dff1d1d82fdce3a35d109924e87c066936ff52e2b8ffc6c1afa7689b9408de36",
-    "tests/domain-pins.test.mjs": "e0633e130bd0407c4cac469f560a1f22ef0477247324b8d8c4738f162d0996e2"
+    "src/lib/domain-pins.mjs": "0bc813215764e5e6fb77044bbd68756351b60ddb38035c188548b95d1a527bd3",
+    "src/scripts/domain-studio.mjs": "2b40b55a952eba22b1494a0405379bf3b6e7724e97845306ecdde115bea00283",
+    "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
