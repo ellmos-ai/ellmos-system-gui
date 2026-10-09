@@ -15,6 +15,34 @@ test('the canonical binding and catalogue CAS version are copied exactly', () =>
   assert.deepEqual(assignmentPayload(catalogue(), slot.id), {...slot.binding, assignment_configuration_version:'version-one'});
 });
 
+test('dynamic worker profiles retain exact provider model and CAS in the task form', async () => {
+  const binding = {assigned_slot:'worker-free', assigned_to:'OPENROUTER', required_model:'openrouter/free'};
+  const profile = {...slot, id:'worker:worker-free', type:'worker-profile', slot_id:'worker-free',
+    name:'Free queue', backend:'openrouter', model:'openrouter/free', runtime_verified:true, binding};
+  const dto = body([profile]);
+  const c = assignmentCatalogue(dto);
+  assert.equal(c.targets[0].assignable,true);
+  assert.deepEqual(assignmentPayload(c,profile.id), {...binding,assignment_configuration_version:'version-one'});
+  const h = harness(async()=>ok(dto));
+  await h.controller.reload();
+  h.controller.selectSlot('worker-free');
+  assert.equal(h.select.value,profile.id);
+  assert.equal(h.assignee.value,'OPENROUTER');
+  assert.equal(h.model.value,'openrouter/free');
+  assert.deepEqual(h.controller.payload(), {...binding,assignment_configuration_version:'version-one'});
+  assert.equal(h.assignee.disabled,true);
+  assert.equal(h.model.readOnly,true);
+});
+
+test('a profile cannot masquerade as a core slot or another worker binding', () => {
+  const profile={...slot, id:'worker:synthetic-worker', type:'worker-profile'};
+  for (const patch of [{id:'slot:synthetic-worker'}, {binding:{...slot.binding,assigned_slot:'other'}}]) {
+    const c=assignmentCatalogue(body([{...profile,...patch}]));
+    assert.equal(c.targets[0].assignable,false);
+    assert.throws(()=>assignmentPayload(c,c.targets[0].id),/nicht zuweisbar/);
+  }
+});
+
 test('missing or ambiguous catalogue contracts fail closed', () => {
   for (const invalid of [null, {}, {...body(),schema:'legacy'}, {...body(),configuration_version:''},
     {...body(),source:'other'}, body([slot,slot])]) assert.throws(() => assignmentCatalogue(invalid), /Backendvertrag|Zielkatalog/);

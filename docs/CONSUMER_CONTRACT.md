@@ -96,6 +96,25 @@ available_excerpt=true beschreibt den vorhandenen Speicherstand: regulär höchs
 GET /api/agent-history/tasks liefert schema bach.task-history.v1, source=task_history, events, total, offset, limit und has_more. task_id und status sind kombinierbar; status bezeichnet den aktuellen Aufgabenstatus. Übertragen werden Metadaten und Statusänderungen, keine Akteure oder Inhalte geänderter Beschreibungen.
 HTTP 503 bedeutet eine nicht verfügbare Speicherquelle, nicht einen leeren Verlauf. Alle History-Anfragen sind GET; Lesen startet weder Provider noch Worker. Gedächtnisnotizen aus /api/memory/sessions bleiben als eigener Tab erkennbar. Ein Ocean-Konsument benötigt entsprechende verifizierte Adapter.
 
+## Dynamische Worker als Aufgabenziele (GUI 0.2.15)
+
+GET /api/task-assignees ergänzt im bestehenden Schema bach.task-assignees.v1
+den Zieltyp worker-profile mit id=worker:<Profilkennung>. slot_id und
+binding.assigned_slot enthalten die native Profilkennung ohne Präfix.
+binding.assigned_to ist der konfigurierte Anbieter in Großbuchstaben;
+binding.required_model bleibt das konfigurierte Modell, auch openrouter/free.
+Die GUI übernimmt diese Bindung und assignment_configuration_version beim
+Anlegen oder Ändern einer Aufgabe. Sie startet dadurch keinen Worker.
+
+assignable verlangt einen verifizierten nativen Laufzeitstand, ein nicht
+pausiertes oder abgelaufenes Profil und task_manage in seinen Werkzeugrechten.
+Unbestätigte, fehlerhafte und private Staffelprofile sind nicht auswählbar.
+Der Konsument prüft den globalen Konfigurationsstand nach der Statusabfrage
+und unter seinem Konfigurationslock bis zum Task-Commit. HTTP 409 verlangt
+eine neue Auswahl; HTTP 422 meldet ein inzwischen ungeeignetes Profil.
+Task-Leases bleiben für die tatsächliche Übernahme erforderlich. Ocean muss
+diesen Zieltyp aus seinem eigenen Controller anbinden oder nicht anbieten.
+
 ## Hintergrundworker: Dienst und tatsächliche Arbeit
 
 GET /api/system/workers liefert weiter bach.workers.status.v1. Jeder Worker
