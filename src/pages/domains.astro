@@ -36,7 +36,7 @@ import BachLayout from "../layouts/BachLayout.astro";
       <div class="stat-card">
         <div class="stat-label">Gespeicherte Pins</div>
         <div class="stat-value" id="stat-count-pins">...</div>
-        <div class="stat-sub">Menüübernahme noch nicht angebunden</div>
+        <div class="stat-sub">Nach aktuellem Backendstand im Domänenmenü</div>
       </div>
     </div>
 
@@ -46,6 +46,7 @@ import BachLayout from "../layouts/BachLayout.astro";
       <p class="section-desc">Ein Manifest belegt die Modulbeschreibung. Installation und laufende Arbeit werden getrennt geprüft.</p>
     </div>
 
+    <p id="domains-pin-status" role="status" aria-live="polite"></p>
     <div class="domains-grid" id="domains-grid">
       <p class="loading-state">Lade Fachmodule...</p>
     </div>
@@ -64,10 +65,11 @@ import BachLayout from "../layouts/BachLayout.astro";
       <p>Das vorhandene Aufgabenboard liest die BACH-Taskdatenbank. Die Übernahme von Task-Master-Claims und Leases als autoritative Steuerung ist noch nicht angebunden; Ticket Master bleibt für Aufnahme und Triage vorgesehen. Bestehende ATI-Aufgaben bleiben erhalten.</p>
       <a href="/tasks" class="btn btn-secondary">Aufgabenboard öffnen ↗</a>
     </div>
+    <section id="domains-orphan-pins" aria-label="Pins ohne Katalogeintrag"></section>
   </div>
 </BachLayout>
 
-<style>
+<style is:global>
   .domains-container {
     max-width: 1280px;
     margin: 0 auto;
@@ -144,6 +146,9 @@ import BachLayout from "../layouts/BachLayout.astro";
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1.25rem;
   }
+  .selected-domain {outline:2px solid var(--accent);outline-offset:3px;}
+  .domain-orphan-pin {display:flex;align-items:center;gap:1rem;margin:.5rem 0;}
+  #domains-pin-status[data-error="true"] {color:var(--danger);}
   .domain-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -233,131 +238,4 @@ import BachLayout from "../layouts/BachLayout.astro";
   }
 </style>
 
-<script>import "../lib/domain-routes.mjs";</script>
-<script is:inline>
-  let pinnedIds = new Set();
-
-  async function loadPins() {
-    try {
-      const res = await fetch('/api/domains/pins');
-      if (res.ok) {
-        const data = await res.json();
-        const pins = data.pins || [];
-        pinnedIds = new Set(pins.map(p => p.id));
-        const pinCountEl = document.getElementById('stat-count-pins');
-        if (pinCountEl) pinCountEl.textContent = String(pins.length);
-      }
-    } catch (e) {
-      console.error("Fehler beim Laden der Pins:", e);
-    }
-  }
-
-  function domainElement(tag, className, value) {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    node.textContent = String(value ?? '');
-    return node;
-  }
-
-  async function loadDomains() {
-    const grid = document.getElementById('domains-grid');
-    const statModules = document.getElementById('stat-count-modules');
-    const statInstalled = document.getElementById('stat-count-installed');
-    const statRunning = document.getElementById('stat-count-running');
-
-    if (!grid) return;
-    grid.replaceChildren(domainElement('p', 'loading-state', 'Lade Fachmodule...'));
-
-    await loadPins();
-
-    try {
-      const res = await fetch('/api/domains/installed?scope=all&probe=true');
-      if (!res.ok) throw new Error('domain_inventory_unavailable');
-      const data = await res.json();
-      const domains = Array.isArray(data.domains) ? data.domains : [];
-
-      if (statModules) statModules.textContent = data.source_available ? String(domains.length) : '?';
-      if (statInstalled) statInstalled.textContent = data.installed_count != null ? String(data.installed_count) : '?';
-      if (statRunning) statRunning.textContent = data.running_count != null ? String(data.running_count) : '?';
-
-      grid.replaceChildren();
-      if (!data.source_available) {
-        grid.append(domainElement('p', 'text-muted', 'Manifestquelle nicht erreichbar. Modulregister am Host anbinden.'));
-        return;
-      }
-      if (!domains.length) {
-        grid.append(domainElement('p', 'text-muted', 'Keine Fachmodule gefunden. Modulregister prüfen.'));
-        return;
-      }
-
-      for (const domain of domains) {
-        const card = domainElement('div', 'domain-card', '');
-        const body = document.createElement('div');
-        const header = domainElement('div', 'domain-header', '');
-        header.append(domainElement('span', 'domain-icon', domain.icon || '🧩'));
-        const title = domainElement('div', 'domain-title-wrap', '');
-        title.append(domainElement('h3', '', domain.name || domain.id));
-        title.append(domainElement('span', 'domain-type-badge', (domain.kind || 'Fachmodul') + ' · ' + (domain.category || 'domain')));
-        header.append(title);
-        body.append(header);
-
-        const capabilities = Array.isArray(domain.capabilities) ? domain.capabilities : [];
-        body.append(domainElement('p', 'domain-desc', domain.description || (capabilities.length
-          ? 'Manifest-Funktionen: ' + capabilities.join(', ')
-          : 'Fachmodul für domänenspezifische Aufgaben.')));
-
-        // 4 separate states: Defined, Installed, Probe, Runtime (GUX-069)
-        const states = domain.states || {};
-        const statesWrap = domainElement('div', 'domain-states', '');
-
-        const badgeDefined = domainElement('span', 'domain-state-badge', '📜 Manifest');
-        statesWrap.append(badgeDefined);
-
-        const badgeInstalled = domainElement('span', 'domain-state-badge' + (states.installed ? ' installed' : ''), states.installed ? '📦 Installiert' : '⚪ Nicht installiert');
-        statesWrap.append(badgeInstalled);
-
-        const probeOk = states.probe === 'healthy' || states.probe === 'available';
-        const badgeProbe = domainElement('span', 'domain-state-badge' + (probeOk ? ' healthy' : ' gated'), probeOk ? '🟢 Probe OK' : '🟡 ' + (states.probe || 'Probe'));
-        statesWrap.append(badgeProbe);
-
-        const runtimeReady = states.runtime === 'ready' || states.runtime === 'running' || states.runtime === 'active';
-        const badgeRuntime = domainElement('span', 'domain-state-badge' + (runtimeReady ? ' healthy' : ' gated'), runtimeReady ? '⚡ Bereit' : '⏸️ ' + (states.runtime || 'Inert'));
-        statesWrap.append(badgeRuntime);
-
-        if (domain.visibility === 'private' || domain.is_private) {
-          statesWrap.append(domainElement('span', 'domain-state-badge private', '🔒 Privat'));
-        }
-        body.append(statesWrap);
-
-        const footer = domainElement('div', 'domain-footer', '');
-        const isPinned = pinnedIds.has(domain.id);
-        const pinBtn = domainElement('button', 'btn btn-secondary btn-sm', isPinned ? '📍 Pin gespeichert' : '📌 Anpinnen in Arbeit');
-        pinBtn.type = 'button';pinBtn.disabled = true;
-        pinBtn.title = 'Die Übernahme ins Menü ist noch nicht angebunden. Aufgabe #1932.';
-        footer.append(pinBtn);
-
-        const declaredWorkbench = domain.workbench_url || domain.fachseite_url;
-        const workbench = window.BachDomainRoutes?.domainWorkbenchRoute(declaredWorkbench);
-        if (workbench) {
-          const link = domainElement('a', 'btn btn-primary btn-sm', 'Fachseite ↗');
-          link.href = workbench;
-          footer.append(link);
-        } else {
-          const hint = domainElement('span', 'text-muted', declaredWorkbench ? 'Fachseite noch nicht angebunden' : 'Keine Fachseite angebunden');
-          hint.setAttribute('aria-disabled','true');footer.append(hint);
-        }
-
-        card.append(body, footer);
-        grid.append(card);
-      }
-    } catch (_) {
-      if (statModules) statModules.textContent = '?';
-      grid.replaceChildren(domainElement('p', 'text-danger', 'Fachmodule nicht verfügbar. API- und Modulquelle prüfen.'));
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('domains-refresh')?.addEventListener('click',loadDomains);
-    loadDomains();
-  });
-</script>
+<script>import "../scripts/domain-studio.mjs";</script>

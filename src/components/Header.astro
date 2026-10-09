@@ -60,7 +60,7 @@ function hasActiveChild(item: any) {
               <span class="dropdown-arrow">▾</span>
             </button>
             <div class="dropdown-menu">
-              {item.children.map((child: any) => (
+              {item.children.filter((child: any) => item.id !== "domains" || child.href === "/domains").map((child: any) => (
                 <a
                   href={child.href}
                   target={child.target || undefined}
@@ -74,6 +74,7 @@ function hasActiveChild(item: any) {
                   </div>
                 </a>
               ))}
+              {item.id === "domains" && <div id="domain-pins-menu" aria-live="polite"><span class="dropdown-item">Pins werden geprüft…</span></div>}
             </div>
           </div>
         ) : (
@@ -356,3 +357,5 @@ function hasActiveChild(item: any) {
     }
   });
 </script>
+
+<script>import {initializeDomainMenu} from "../lib/domain-pins.mjs";initializeDomainMenu();</script>
