@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "2d6d67f019ba34d9cf5d95b1fac576b41c7a97a659355e32cc055cd820d6d6a0",
+    "src/pages/agenten/running.astro": "b2922327a2c4f9b44ccdd355a76ff07ffb0b97e1d6a3b69adad2bb5ded8dd5c6",
     "src/pages/agenten/sessions.astro": "3fe9769f49fbbf4d6f5ebebca16e8e13415d5773e96e13b4d42d5b52a0a05a1d",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "57c14deae14d57a65c7e96236a6107a7e11b4425a8d5f52d1784c7f6f8b21834",
@@ -78,10 +78,10 @@
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "47d8204adda0febfaeae7b5d58b9925607a556111776bcd03415fda1999a2bee",
-    "package-lock.json": "3d9be874ee821e485e160c513cc00c51d141b2f570c70f9ad3724b2ade076947",
+    "package.json": "0223b437d8967d335cf83e73da951501f0057d3b282153f5e297102cf9b66bed",
+    "package-lock.json": "d18a4941f5d3fbcb89de2e954e4f066f64af1f119b6c6aea50eb306ddb1b7c24",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "1efa2e6693d6abdc9210389d3500cdd8ff85f980c6405f067be78bf00cac7051",
+    "ellmos-module.v2.json": "f33bc4655fa05b516c35ab0b2a4da8dd284ced8526089cae6a2200c12c366ab5",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
     "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
     "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
@@ -263,7 +263,7 @@
         "src/components/Header.astro": {
           "source_path": "system/gui/web/src/components/Header.astro",
           "source_sha256": "50d3200e3cb814ee1637b2730fe7a944c0ad6eb3946c3a09a942fe615bd56883",
-          "imported_sha256": "50d3200e3cb814ee1637b2730fe7a944c0ad6eb3946c3a09a942fe615bd56883",
+          "imported_sha256": "e615c2825bc2910db34d7b975984cf9ae752af551fe8513222fa0e65d938fd84",
           "adapted": false
         },
         "src/components/SystemClusterStatus.astro": {
@@ -293,7 +293,7 @@
         "src/lib/agent-avatar.mjs": {
           "source_path": "system/gui/web/src/lib/agent-avatar.mjs",
           "source_sha256": "020b31b014f9e719775e7f199bd588eb133552e56eab606f8c76a11034965ccc",
-          "imported_sha256": "9e94d1aab390a7fde64cc40155b5b044d02e08a79404f445bb8f38c95ab6f3e2",
+          "imported_sha256": "41b75aa34c5082b6efdb8176be552b63df77047a775ab9b2ab6ebaaa87c37d78",
           "adapted": true
         },
         "src/lib/capability-board-client.mjs": {
@@ -347,13 +347,13 @@
         "src/pages/agenten/running.astro": {
           "source_path": "system/gui/web/src/pages/agenten/running.astro",
           "source_sha256": "c4700fb05438cdd20df993894f7b649be9f53a1a56b5dea80fa140164b943728",
-          "imported_sha256": "2d6d67f019ba34d9cf5d95b1fac576b41c7a97a659355e32cc055cd820d6d6a0",
+          "imported_sha256": "b2922327a2c4f9b44ccdd355a76ff07ffb0b97e1d6a3b69adad2bb5ded8dd5c6",
           "adapted": true
         },
         "src/pages/agenten/sessions.astro": {
           "source_path": "system/gui/web/src/pages/agenten/sessions.astro",
           "source_sha256": "8117001f267bf411bdf008a36dbbf672fd3964e81b609529905ca6e043aed486",
-          "imported_sha256": "8117001f267bf411bdf008a36dbbf672fd3964e81b609529905ca6e043aed486",
+          "imported_sha256": "3fe9769f49fbbf4d6f5ebebca16e8e13415d5773e96e13b4d42d5b52a0a05a1d",
           "adapted": false
         },
         "src/pages/artefakte.astro": {
@@ -365,7 +365,7 @@
         "src/pages/domains.astro": {
           "source_path": "system/gui/web/src/pages/domains.astro",
           "source_sha256": "e5dc8fe8fdc9f562cd509a0c563263b9fc2a3896e1eba6aad31e7c40be4727ee",
-          "imported_sha256": "23e6bd6241b60edefdc473a3f921d6b78e44d59f8ccfd5d6f80ca884527cd90c",
+          "imported_sha256": "57c14deae14d57a65c7e96236a6107a7e11b4425a8d5f52d1784c7f6f8b21834",
           "adapted": true
         },
         "src/pages/governance/funk.astro": {
@@ -473,7 +473,7 @@
         "tests/agent-avatar.test.mjs": {
           "source_path": "system/gui/web/tests/agent-avatar.test.mjs",
           "source_sha256": "c33b7193379a77f4c800e385b35e54abe8f603d2f3df25b7623844aa8295f6dc",
-          "imported_sha256": "7b47347624caeb424e6568f04213f0bdee6c8440dd9e827f1a947e5addcdef13",
+          "imported_sha256": "1555a19503d12a7667e80e133097679a7129cc5cab88853071f1d53ea4305e90",
           "adapted": true
         },
         "tests/blueprint-studio.test.mjs": {
@@ -656,6 +656,13 @@
         "src/pages/agenten/running.astro",
         "src/scripts/blueprint-studio.mjs",
         "tests/system-slots.test.mjs"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "description": "Aggregate Running empty state across slots and dynamic workers; compact open torch first, closed Systemslots after teams, closed OpenRouter catalog. Group creation, Living and teams on a common theme background with blue borders and readable creation subtitle. Per-source request epochs reject stale success and error replies and are invalidated by mutations.",
+      "files": [
+        "src/pages/agenten/running.astro"
       ]
     }
   ],
