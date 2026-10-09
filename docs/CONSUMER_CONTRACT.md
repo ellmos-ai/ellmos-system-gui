@@ -95,3 +95,19 @@ GET /api/agent-history/sessions/{id} liefert schema bach.chat-session.v1, source
 available_excerpt=true beschreibt den vorhandenen Speicherstand: regulär höchstens 40 Nachrichten und 24000 Zeichen pro Nachricht. Frühere abgeschnittene Nachrichten sind nicht wiederherstellbar. Das ist kein vollständiges Nachrichtenjournal. Systemnachrichten und private Reasoning-Felder werden nicht angezeigt.
 GET /api/agent-history/tasks liefert schema bach.task-history.v1, source=task_history, events, total, offset, limit und has_more. task_id und status sind kombinierbar; status bezeichnet den aktuellen Aufgabenstatus. Übertragen werden Metadaten und Statusänderungen, keine Akteure oder Inhalte geänderter Beschreibungen.
 HTTP 503 bedeutet eine nicht verfügbare Speicherquelle, nicht einen leeren Verlauf. Alle History-Anfragen sind GET; Lesen startet weder Provider noch Worker. Gedächtnisnotizen aus /api/memory/sessions bleiben als eigener Tab erkennbar. Ein Ocean-Konsument benötigt entsprechende verifizierte Adapter.
+
+## Hintergrundworker: Dienst und tatsächliche Arbeit
+
+GET /api/system/workers liefert weiter bach.workers.status.v1. Jeder Worker
+meldet runtime_verified, worker_active und running als boolesche native
+Laufzeitwerte. worker_active bestätigt einen lebenden Hintergrundthread;
+running bestätigt eine aktive Taskbindung dieses Threads. active_task_id
+ist nur für die aktuell gebundene Task gesetzt. Gespeicherte status- oder
+task_id-Werte sind allein kein Arbeitsnachweis. Ein wartender kontinuierlicher
+Worker bleibt Living und besitzt Pause/Stop; ein weiterer Start ist gesperrt.
+
+has_task_prompt meldet ausschließlich das Vorhandensein eines gespeicherten
+Zusatzauftrags. Promptinhalte gehören nicht in die allgemeine Statusprojektion.
+current_activity zeigt auch Fehler und Wartegründe. Fehlende Laufzeitfelder
+werden als unbestätigt dargestellt; Ocean muss die Werte aus seinem eigenen
+Controller liefern.
