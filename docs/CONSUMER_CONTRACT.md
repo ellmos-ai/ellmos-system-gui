@@ -76,3 +76,8 @@ Provider. Pro Blueprint ist derzeit ein nativer Systemsteckplatz vorgesehen; lau
 unbestätigte Instanzen können im Dialog nicht ersetzt werden.
 
 Die Nachrichtenansicht liegt unter /user-inbox; die bestehende Datei-Inbox bleibt unter /inbox. Während einer Vorlagenübernahme ist ein Entwurfswechsel gesperrt. Unbestätigte Slots ergeben ausdrücklich einen unvollständigen Laufstatus.
+
+## Native Staffeln
+Der Designer erwartet GET /api/marblerun/catalog mit schema=bach.native-sequences.v1, service_instance, configuration_version (SHA-256), runtime_available, chains, agents, skills und runs.
+Eine Definition enthält name, title, description, mode=agents|skills, agent_slot und steps mit label, agent_slot, skill_ids und instructions. Anlage: POST /api/marblerun/chains; Änderung: PUT /api/marblerun/chains/{id} mit version und definition. Antworten müssen ok=true und chain mit bestätigter ID, Kennung und neuer Version enthalten. DELETE /api/marblerun/chains/{id}?version=... bestätigt deleted=true und chain_id.
+POST /api/marblerun/chains/{id}/run benötigt request_id, version, configuration_version, expected_service_instance und input. Der Start wird ausschließlich nach ausdrücklicher Nutzeraktion gesendet. accepted=true und der korrelierte run bestätigen Zulassung; eine Laufphase allein bestätigt kein fachliches Ergebnis. Bei unbestätigter Antwort bleibt dieselbe Startkennung gebunden. GET /api/marblerun/runs/{id} und POST /api/marblerun/runs/{id}/stop gehören dem Controller. Ocean muss diese Fähigkeit explizit anbinden oder nicht verfügbar melden.
