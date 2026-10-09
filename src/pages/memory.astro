@@ -691,7 +691,7 @@ const mermaidCode = `flowchart TD
           <div id="dbtab-facts" class="dbtab-pane">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
               <span style="font-size:0.8rem;color:var(--text-muted);">Tabelle: <code>memory_facts</code></span>
-              <button class="btn btn-sm btn-primary" onclick="toggleAddFactForm()">+ Neuer Fakt</button>
+              <button id="btn-add-fact" class="btn btn-sm btn-primary" onclick="toggleAddFactForm()">+ Neuer Fakt</button>
             </div>
             <!-- Add Fact Form -->
             <form id="form-add-fact" style="display:none;background:rgba(255,255,255,0.02);padding:1rem;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:1rem;" onsubmit="event.preventDefault(); submitNewFact();">
@@ -1089,7 +1089,10 @@ const mermaidCode = `flowchart TD
     else if (tab === 'sessions') loadSessionsTable();
   }
 
+  let factSavePending = false;
+
   function toggleAddFactForm() {
+    if (factSavePending) return;
     const f = document.getElementById('form-add-fact');
     if (f) f.style.display = f.style.display === 'none' ? 'block' : 'none';
   }
@@ -1163,15 +1166,20 @@ const mermaidCode = `flowchart TD
   }
 
   async function submitNewFact() {
+    if (factSavePending) return;
     const category = document.getElementById('new-fact-cat').value.trim();
     const key = document.getElementById('new-fact-key').value.trim();
     const value = document.getElementById('new-fact-val').value.trim();
     if (!key || !value) return;
     const error = document.getElementById('fact-error');
-    const button = document.querySelector('#form-add-fact button[type="submit"]');
+    const form = document.getElementById('form-add-fact');
+    const controls = [...form.querySelectorAll('input, select, button'), document.getElementById('btn-add-fact')].filter(Boolean);
+    const previouslyDisabled = controls.map(control => control.disabled);
     error.hidden = true;
     error.textContent = '';
-    button.disabled = true;
+    factSavePending = true;
+    form.setAttribute('aria-busy', 'true');
+    controls.forEach(control => control.disabled = true);
     try {
       const res = await fetch('/api/memory/facts', {
         method: 'POST',
@@ -1179,7 +1187,13 @@ const mermaidCode = `flowchart TD
         body: JSON.stringify({ category, key, value, confidence: 1.0 })
       });
       if (res.ok) {
-        toggleAddFactForm();
+        const saved = await res.json().catch(() => null);
+        if (saved?.status !== 'created' || !Number.isSafeInteger(saved.id) || saved.id <= 0 || saved.key !== key || saved.category !== category) {
+          error.textContent = 'Speichern wurde nicht bestätigt. Bitte prüfe die Faktenliste vor einem erneuten Versuch.';
+          error.hidden = false;
+          return;
+        }
+        form.style.display = 'none';
         document.getElementById('new-fact-key').value = '';
         document.getElementById('new-fact-val').value = '';
         loadFactsTable();
@@ -1192,7 +1206,9 @@ const mermaidCode = `flowchart TD
       error.textContent = 'Fakt konnte wegen eines Netzwerkfehlers nicht gespeichert werden.';
       error.hidden = false;
     } finally {
-      button.disabled = false;
+      controls.forEach((control, index) => control.disabled = previouslyDisabled[index]);
+      form.removeAttribute('aria-busy');
+      factSavePending = false;
     }
   }
 

@@ -50,7 +50,7 @@
     "src/pages/governance/usecases.astro": "82cb21703924d21941b73bfb6dfc7cd73a493e69e2fe9c3be5fdaa7c66cdd15b",
     "src/pages/index.astro": "35342c625e3fb6676e11848f4d0d36ec77e5858e82ecc6260156df258b55b1e6",
     "src/pages/life.astro": "05180c2d12c7c86a4305d18cb41b2281e0cbf37b80daf0ad26b512100e893671",
-    "src/pages/memory.astro": "801e2437e8893e04ae7e4414b708c17daf1b7eef683cd6acda96e61b80662d7c",
+    "src/pages/memory.astro": "5fe2eff73b949da1d4ebf07489e72360dc6849bb67f07f072f59e34ea673c187",
     "src/pages/settings.astro": "19db6adf8cb5ec0ed0f83410e80e19b11b721c3f6cef504a767285fd54e4ef0d",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
@@ -104,7 +104,8 @@
     "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
     "src/lib/agent-history.mjs": "9262398aac30160b5433bb3cbc572559e0e1fac4a33a68442bffe552f0c975aa",
     "src/scripts/agent-history.mjs": "16a5ee980b075cc957af8ccd061c4fb2e4ff5fbeb9bafb6bc330025569a5eb5a",
-    "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c"
+    "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
+    "tests/memory-facts.test.mjs": "8be5410afab2074934db3a5a1d62e8b3eb9c9569d480ef033b62157c17484f38"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -782,7 +783,8 @@
       "changes": [
         "Offer only user, project, system and domain for Facts; Lessons stay separate",
         "Display structured API errors as text and preserve unconfirmed drafts",
-        "Unavailable Facts reads remain errors rather than empty tables"
+        "Unavailable Facts reads remain errors rather than empty tables",
+        "Freeze the pending Facts draft and form actions; clear only an acknowledged native create response"
       ],
       "files": [
         "src/pages/memory.astro",
