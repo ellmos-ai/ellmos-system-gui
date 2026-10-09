@@ -6,7 +6,84 @@ export const ATLAS_PRESETS = [
   {id:'preset:engineer',name:'Entwicklung',x:1,y:1},
   {id:'preset:researcher',name:'Recherche',x:2,y:1},
 ];
-export const GEMINI_AVATAR_PRESETS = [{"id": "preset:gemini-claude-friendly", "name": "Claude · Begleiter"}, {"id": "preset:gemini-claude-neon", "name": "Claude · Neon"}, {"id": "preset:gemini-claude-opus", "name": "Claude · Opus"}, {"id": "preset:gemini-copilot", "name": "Copilot"}, {"id": "preset:gemini-gemini", "name": "Gemini · Sternenlicht"}, {"id": "preset:gemini-gemini-umbruch", "name": "Gemini · Um:bruch"}];
+export const GEMINI_AVATAR_PRESETS = [
+  {
+    "id": "preset:gemini-claude-friendly",
+    "name": "Claude · Begleiter"
+  },
+  {
+    "id": "preset:gemini-claude-neon",
+    "name": "Claude · Neon"
+  },
+  {
+    "id": "preset:gemini-claude-opus",
+    "name": "Claude · Opus"
+  },
+  {
+    "id": "preset:gemini-copilot",
+    "name": "Copilot"
+  },
+  {
+    "id": "preset:gemini-gemini",
+    "name": "Gemini · Sternenlicht"
+  },
+  {
+    "id": "preset:gemini-gemini-umbruch",
+    "name": "Gemini · Um:bruch"
+  },
+  {
+    "id": "preset:gemini-buddha-chat",
+    "name": "Buddha · Gespräch"
+  },
+  {
+    "id": "preset:gemini-always-on",
+    "name": "Always-On · Hintergrund"
+  },
+  {
+    "id": "preset:gemini-operator",
+    "name": "Operator"
+  },
+  {
+    "id": "preset:gemini-ticket-master",
+    "name": "Ticket-Master"
+  },
+  {
+    "id": "preset:gemini-maintenance",
+    "name": "Wartung"
+  },
+  {
+    "id": "preset:gemini-system-auditor",
+    "name": "System-Auditor"
+  },
+  {
+    "id": "preset:gemini-law-checker",
+    "name": "Rechtsprüfung"
+  },
+  {
+    "id": "preset:gemini-researcher",
+    "name": "Recherche · Gemini"
+  },
+  {
+    "id": "preset:gemini-connector-a",
+    "name": "Connector · Türkis"
+  },
+  {
+    "id": "preset:gemini-connector-b",
+    "name": "Connector · Blau"
+  },
+  {
+    "id": "preset:gemini-maintainer",
+    "name": "Maintainer"
+  },
+  {
+    "id": "preset:gemini-task-solver",
+    "name": "Task-Solver"
+  },
+  {
+    "id": "preset:gemini-task-writer",
+    "name": "Task-Writer"
+  }
+];
 export const AVATAR_PRESETS = [...ATLAS_PRESETS,...GEMINI_AVATAR_PRESETS];
 let presetUrls = Object.freeze({});
 export function setAvatarPresetUrls(urls) {

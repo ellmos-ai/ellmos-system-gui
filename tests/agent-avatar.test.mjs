@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {AVATAR_PRESETS,ATLAS_PRESETS,GEMINI_AVATAR_PRESETS,setAvatarPresetUrls,avatarVisual,createAvatar,mountAvatarPicker} from '../src/lib/agent-avatar.mjs';
 
 test('six atlas portraits use explicit atlas positions and default roles',()=>{
-  assert.equal(ATLAS_PRESETS.length,6);assert.equal(AVATAR_PRESETS.length,12);
+  assert.equal(ATLAS_PRESETS.length,6);assert.equal(AVATAR_PRESETS.length,25);
   assert.equal(avatarVisual('',{id:'buddha_always_on'}).id,'preset:guardian');
   assert.equal(avatarVisual('',{role_id:'boss_routing'}).id,'preset:coordinator');
   assert.equal(avatarVisual('preset:researcher',{}).position,'100% 100%');
@@ -32,7 +32,7 @@ test('a preset choice passes its ID and marks the current selection',()=>{
   const document=fakeDocument(),container=document.createElement('div');let selected;
   setAvatarPresetUrls(Object.fromEntries(GEMINI_AVATAR_PRESETS.map((p,i)=>[p.id,'/_astro/gemini-'+i+'.png'])));
   mountAvatarPicker(container,'preset:coordinator',{},'/_astro/portraits.abc.png',value=>{selected=value;});
-  assert.equal(container.children.length,12);
+  assert.equal(container.children.length,25);
   assert.equal(container.children[3].attributes['aria-pressed'],'true');
   container.children[4].click();assert.equal(selected,'preset:engineer');
 });
@@ -50,4 +50,25 @@ test('Gemini portraits use local immutable preset assets and keep ID on reselect
   assert.throws(()=>setAvatarPresetUrls({...urls,[GEMINI_AVATAR_PRESETS[0].id]:'https://foreign.example/a.png'}),/Porträtquelle/);
   assert.throws(()=>setAvatarPresetUrls({}),/Porträtquelle/);
   assert.equal(createAvatar(fakeDocument(),GEMINI_AVATAR_PRESETS[0].id,{},null).style.backgroundImage,'url("'+urls[GEMINI_AVATAR_PRESETS[0].id]+'")');
+});
+
+test('all nineteen Gemini originals are hash-bound, uniquely registered and imported',async()=>{
+  const {readFile}=await import('node:fs/promises');
+  const {createHash}=await import('node:crypto');
+  const assetRoot=new URL('../src/assets/gemini-agent-portraits/',import.meta.url);
+  const provenance=JSON.parse(await readFile(new URL('provenance.json',assetRoot),'utf8'));
+  const imports=await readFile(new URL('../src/lib/gemini-avatar-assets.mjs',import.meta.url),'utf8');
+  assert.equal(GEMINI_AVATAR_PRESETS.length,19);
+  assert.equal(provenance.files.length,19);
+  assert.equal(new Set(GEMINI_AVATAR_PRESETS.map(x=>x.id)).size,19);
+  assert.deepEqual(provenance.files.map(({id,name})=>({id,name})),GEMINI_AVATAR_PRESETS);
+  for(const item of provenance.files){
+    assert.match(item.file,/^[a-z0-9-]+\.jpg$/);
+    assert.ok(provenance.source_sessions.includes(item.source_session));
+    const bytes=await readFile(new URL(item.file,assetRoot));
+    assert.equal(bytes.subarray(0,3).toString('hex'),'ffd8ff');
+    assert.equal(createHash('sha256').update(bytes).digest('hex'),item.source_sha256);
+    assert.ok(imports.includes("gemini-agent-portraits/"+item.file+"?url&no-inline"));
+    assert.ok(imports.includes("'"+item.id+"':image"));
+  }
 });
