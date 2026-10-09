@@ -36,6 +36,15 @@ python scripts/package_release.py
 
 ## API and availability
 
+Task detail can display canonical worker output and a separate operator acceptance
+through `GET /api/tasks/{id}/result` and `POST /api/tasks/{id}/result/accept`.
+Acceptance binds the result ID, digest, task version and status revision. A dedicated
+operator credential is held only in sessionStorage and sent as
+`X-BACH-Result-Operator` to the same origin, with redirects rejected. General device
+credentials do not grant this permission. Missing consumer adapters are shown as
+unavailable. Provisioning, browser acceptance and release verification remain open
+for this implementation draft.
+
 BACH provides the reference REST adapters. Ocean must implement its own compatible handlers. The [consumer contract](docs/CONSUMER_CONTRACT.md) distinguishes configured adapter routes, runtime verification, installed modules and verified GUI artifacts. Missing adapters remain unavailable; a catalogue entry, saved profile or HTTP success alone cannot establish a running agent.
 
 The bundled `device-fetch.js` forwards an existing device credential only to same-origin `/api/` requests. Provider-session cookies remain browser-managed. Task assignment uses `/api/task-assignees` (`bach.task-assignees.v1`) and explicit catalogue CAS. Existing unknown slots remain visible and unchanged until the user selects a new binding.

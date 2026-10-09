@@ -6,7 +6,7 @@
   "license": "MIT",
   "files_sha256": {
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
-    "public/device-fetch.js": "e5de851843b8b04095eba6c3ddc87f2cc9ec911ec4afbfc4b70c9db850b2898c",
+    "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "src/assets/agent-portraits.png": "a733ce82439cad152bc2e7f055f88f377f000d51c61e34939a5309b27093f5d8",
     "src/assets/ticket-symbols/README.md": "88cced00eb2652e91337b6a561c629696cf301e6c2f2533f13a8063703a131ae",
     "src/assets/ticket-symbols/githubbot.svg": "b26066f87ef31061813b75694b7054bac108f2154f69055319103389c5470bde",
@@ -56,7 +56,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "9b02cacdfdd9df6870b33a40bbfd98456ec92d219a3157b7fd1f54d5e80d547f",
+    "src/pages/tasks.astro": "5f17bea1b9c1c749fd90df240f276847977755bd882b4503275ac21cc191263c",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "0db8332c26210e95bda13e3a94ee085d4b421ef184a6f59af60efba4f8e81a40",
@@ -78,10 +78,10 @@
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "0223b437d8967d335cf83e73da951501f0057d3b282153f5e297102cf9b66bed",
-    "package-lock.json": "d18a4941f5d3fbcb89de2e954e4f066f64af1f119b6c6aea50eb306ddb1b7c24",
+    "package.json": "cd2a60c002da44e8083f1b4ccd5e8654054d75b8caac1a5766ce49e295eaf83c",
+    "package-lock.json": "b8dbb816609a322d321e142214c1241af688cf7f0fdc7d852ef1b5e374095340",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "f33bc4655fa05b516c35ab0b2a4da8dd284ced8526089cae6a2200c12c366ab5",
+    "ellmos-module.v2.json": "4ba61d697e2d3960be4b06165824e594d64fa95b33db24c4aa0c3f0c72d8f009",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
     "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
     "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
@@ -109,6 +109,7 @@
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
     ".gitattributes",
+    "ellmos-module.v2.json",
     "package-lock.json",
     "package.json",
     "public/device-fetch.js",
@@ -124,6 +125,7 @@
     "src/pages/governance/logs.astro",
     "src/pages/index.astro",
     "src/pages/settings.astro",
+    "src/pages/tasks.astro",
     "src/styles/main.css",
     "tests/device-fetch.test.mjs",
     "tests/fabrika.test.mjs",
@@ -143,8 +145,8 @@
         "public/device-fetch.js": {
           "source_path": "system/gui/static/js/device-fetch.js",
           "source_sha256": "e5de851843b8b04095eba6c3ddc87f2cc9ec911ec4afbfc4b70c9db850b2898c",
-          "imported_sha256": "e5de851843b8b04095eba6c3ddc87f2cc9ec911ec4afbfc4b70c9db850b2898c",
-          "adapted": false
+          "imported_sha256": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
+          "adapted": true
         },
         "src/assets/agent-portraits.png": {
           "source_path": "system/gui/web/src/assets/agent-portraits.png",
@@ -443,7 +445,7 @@
         "src/pages/tasks.astro": {
           "source_path": "system/gui/web/src/pages/tasks.astro",
           "source_sha256": "cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9",
-          "imported_sha256": "9b02cacdfdd9df6870b33a40bbfd98456ec92d219a3157b7fd1f54d5e80d547f",
+          "imported_sha256": "5f17bea1b9c1c749fd90df240f276847977755bd882b4503275ac21cc191263c",
           "adapted": true
         },
         "src/scripts/blueprint-studio.mjs": {
@@ -663,6 +665,17 @@
       "description": "Aggregate Running empty state across slots and dynamic workers; compact open torch first, closed Systemslots after teams, closed OpenRouter catalog. Group creation, Living and teams on a common theme background with blue borders and readable creation subtitle. Per-source request epochs reject stale success and error replies and are invalidated by mutations.",
       "files": [
         "src/pages/agenten/running.astro"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "description": "Worker result details, separately provisioned operator acceptance, fresh canonical readback and dedicated operator authorization. Version 0.2.13 remains a release candidate until the backend contract and acceptance gates are verified.",
+      "files": [
+        "ellmos-module.v2.json",
+        "package.json",
+        "package-lock.json",
+        "public/device-fetch.js",
+        "src/pages/tasks.astro"
       ]
     }
   ],

@@ -80,6 +80,21 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         <div><dt>Abgeschlossen am</dt><dd id="task-view-completed_at"></dd></div>
       </dl>
       <h3>Beschreibung</h3><p id="task-view-description" class="task-description"></p>
+      <section class="task-worker-result" aria-live="polite">
+        <h3>Worker-Ergebnis</h3>
+        <p id="task-result-status">Noch nicht geprüft.</p>
+        <p id="task-result-content" class="task-description" hidden></p>
+        <p id="task-result-meta" class="muted" hidden></p>
+        <details>
+          <summary>Persönliche Freigabe einrichten</summary>
+          <p>Eine Freigabe erlaubt dir, geprüfte Ergebnisse abzunehmen. Der Schlüssel gilt in diesem Browser bis zum Schließen des Tabs.</p>
+          <label>Freigabeschlüssel<input id="task-result-operator-key" type="password" autocomplete="off" /></label>
+          <button type="button" class="btn" id="task-result-save-key">Freigabe merken</button>
+          <button type="button" class="btn" id="task-result-forget-key">Freigabe vergessen</button>
+          <p id="task-result-key-status" class="muted"></p>
+        </details>
+        <button type="button" class="btn btn-primary" id="task-result-accept" hidden disabled>Geprüftes Ergebnis abnehmen</button>
+      </section>
     </div>
     <form id="task-edit-form" hidden>
       <div class="task-edit-grid">
@@ -115,6 +130,10 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     .task-detail-grid dt,.muted { color:var(--text-muted); font-size:.8rem; }
     .task-detail-grid dd { margin:.25rem 0 0; overflow-wrap:anywhere; }
     .task-description { white-space:pre-wrap; overflow-wrap:anywhere; }
+    .task-worker-result {border-top:1px solid var(--border);margin-top:1rem;padding-top:.5rem;}
+    .task-worker-result details {margin:.8rem 0;}
+    .task-worker-result label {display:flex;flex-direction:column;gap:.35rem;}
+    .task-worker-result input {color:var(--text);background:var(--bg-card);border:1px solid var(--border);padding:.6rem;margin-bottom:.6rem;max-width:100%;box-sizing:border-box;}
     .task-edit-grid label { min-width:0; display:flex; flex-direction:column; gap:.35rem; }
     .task-edit-grid input,.task-edit-grid select,.task-edit-grid textarea { min-width:0; width:100%; box-sizing:border-box; padding:.6rem; background:var(--bg-dark); color:var(--text); border:1px solid var(--border); border-radius:var(--radius-sm); font:inherit; }
     .task-edit-wide { grid-column:1/-1; }
@@ -221,7 +240,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
                   </td>
                   <td style="padding:0.75rem 0.5rem;text-align:right;">
                     <button class="btn" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="openTask(${Number(t.id)})">Öffnen</button>
-                    ${!isTerminal ? `
+                    ${normalizedStatus(t.status) === 'review' ? `<button class="btn" onclick="openTask(${Number(t.id)})">Ergebnis prüfen</button>` : !isTerminal ? `
                       <button class="btn" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="completeTask(${Number(t.id)})">
                         ✓ Erledigt
                       </button>
@@ -272,8 +291,118 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       node.hidden = !message;
     }
 
+    let taskDetailRevision = 0;
+    let selectedResult = null;
+    let taskResultReadback = null;
+    const resultOperatorStorage = 'bach_task_result_operator';
+    function operatorKey() {
+      try { return sessionStorage.getItem(resultOperatorStorage) || ''; } catch (_) { return ''; }
+    }
+    function resultKeyStatus() {
+      document.getElementById('task-result-key-status').textContent = operatorKey()
+        ? 'Persönliche Freigabe für diesen Tab hinterlegt.' : 'Keine persönliche Freigabe hinterlegt.';
+    }
+    async function loadTaskResult(id, revision) {
+      const status = document.getElementById('task-result-status');
+      const text = document.getElementById('task-result-content');
+      const meta = document.getElementById('task-result-meta');
+      const accept = document.getElementById('task-result-accept');
+      selectedResult = null; taskResultReadback = null; accept.hidden = true; accept.disabled = true;
+      status.textContent = 'Ergebnis wird geprüft.'; text.hidden = meta.hidden = true;
+      resultKeyStatus();
+      try {
+        const response = await fetch('/api/tasks/' + encodeURIComponent(id) + '/result');
+        if (!response.ok) throw new Error(`Ergebnisansicht nicht verfügbar (HTTP ${response.status}).`);
+        const data = await response.json();
+        if (revision !== taskDetailRevision) return;
+        if (data.schema !== 'bach.task-result-readback.v1' || data.task_id !== id
+            || data.verified !== true || !Number.isSafeInteger(data.status_revision)
+            || data.task_version !== selectedTask?.task_version) {
+          throw new Error('Ergebnis und Auftrag stimmen nicht überein. Task erneut öffnen.');
+        }
+        const result = data.result;
+        taskResultReadback = data;
+        if (result == null) { status.textContent = 'Kein Worker-Ergebnis gespeichert.'; return; }
+        if (result.schema !== 'bach.worker-result.v1' || result.task_id !== id || typeof result.result !== 'string') {
+          throw new Error('Der Ergebnisinhalt ist nicht bestätigt.');
+        }
+        text.textContent = result.result; text.hidden = false;
+        const accepted = result.accepted === true && ['done','completed'].includes(data.status);
+        status.textContent = accepted ? 'Abgenommen · erledigt.'
+          : result.reason === 'awaiting_review' ? 'Ergebnis abgegeben · wartet auf deine Prüfung.'
+          : result.reason === 'legacy_result_without_acceptance' ? 'Früheres Ergebnis · keine getrennte Abnahme belegt.'
+          : 'Ergebnis vorhanden · aktuelle Abnahme nicht bestätigt.';
+        meta.textContent = accepted ? `Abgenommen von ${result.accepted_by} · ${result.accepted_at}`
+          : result.submitted_at ? `Abgegeben von ${result.submitted_by} · ${result.submitted_at}` : '';
+        meta.hidden = !meta.textContent;
+        if (data.status === 'review' && result.reason === 'awaiting_review' && result.accepted === false
+            && Number.isSafeInteger(result.result_id) && result.result_id > 0
+            && /^[a-f0-9]{64}$/.test(result.result_sha256) && result.task_version === data.task_version) {
+          selectedResult = data; accept.hidden = false; accept.disabled = false;
+        }
+      } catch (cause) {
+        if (revision !== taskDetailRevision) return;
+        status.textContent = cause instanceof Error ? cause.message : 'Ergebnisquelle nicht bestätigt.';
+      }
+    }
+
+    document.getElementById('task-result-save-key').addEventListener('click', () => {
+      const input = document.getElementById('task-result-operator-key');
+      if (!input.value.trim()) { detailError('Bitte deinen persönlichen Freigabeschlüssel eingeben.'); return; }
+      try { sessionStorage.setItem(resultOperatorStorage, input.value.trim()); input.value = ''; detailError(''); resultKeyStatus(); }
+      catch (_) { detailError('Dieser Browser kann die Freigabe nicht speichern.'); }
+    });
+    document.getElementById('task-result-forget-key').addEventListener('click', () => {
+      try { sessionStorage.removeItem(resultOperatorStorage); } catch (_) {}
+      document.getElementById('task-result-operator-key').value = ''; resultKeyStatus();
+    });
+    document.getElementById('task-result-accept').addEventListener('click', async event => {
+      const observed = selectedResult;
+      const key = operatorKey();
+      if (!observed || !selectedTask || selectedTask.id !== observed.task_id) return;
+      if (!key) { detailError('Für die Abnahme zuerst deine persönliche Freigabe einrichten.'); return; }
+      const button = event.currentTarget;
+      let revision = taskDetailRevision;
+      button.disabled = true; detailError('');
+      try {
+        const result = observed.result;
+        const response = await fetch('/api/tasks/' + encodeURIComponent(observed.task_id) + '/result/accept', {
+          method:'POST', redirect:'error', headers:{'Content-Type':'application/json', 'X-BACH-Result-Operator':key},
+          body:JSON.stringify({result_id:result.result_id, result_sha256:result.result_sha256,
+            task_version:observed.task_version, status_revision:observed.status_revision})
+        });
+        const answer = await response.json().catch(() => ({}));
+        if (revision !== taskDetailRevision) return;
+        if (!response.ok) throw new Error(taskResponseError(answer, response.status));
+        if (answer.verified !== true || !['done','completed'].includes(answer.status)
+            || !Number.isSafeInteger(answer.status_revision) || answer.status_revision <= observed.status_revision
+            || answer.task_id !== observed.task_id || answer.task_version !== observed.task_version
+            || answer.result?.result_id !== result.result_id
+            || answer.result?.result_sha256 !== result.result_sha256 || answer.result?.accepted !== true) {
+          throw new Error('Die Abnahme wurde nicht bestätigt. Task erneut öffnen.');
+        }
+        const readbackRevision = revision + 1;
+        await openTask(observed.task_id);
+        if (taskDetailRevision !== readbackRevision) return;
+        revision = readbackRevision;
+        if (taskResultReadback?.result?.accepted !== true
+            || taskResultReadback.result.result_id !== result.result_id
+            || taskResultReadback.status_revision !== answer.status_revision) {
+          throw new Error('Aktuelle Abnahme beim Kontrollabruf nicht bestätigt. Task erneut öffnen.');
+        }
+        await loadTasks();
+      } catch (cause) {
+        if (revision === taskDetailRevision) detailError(cause instanceof Error ? cause.message : 'Abnahme nicht bestätigt.');
+      } finally {
+        if (revision === taskDetailRevision) button.disabled = false;
+      }
+    });
+
     async function openTask(id) {
       if (!Number.isSafeInteger(id) || id <= 0) return;
+      const revision = ++taskDetailRevision;
+      selectedResult = null; taskResultReadback = null;
+      document.getElementById('task-result-accept').hidden = true;
       const panel = document.getElementById('task-detail');
       panel.hidden = false;
       detailError('');
@@ -281,6 +410,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         const response = await fetch('/api/tasks/' + encodeURIComponent(id));
         if (!response.ok) throw new Error(`Task #${id} konnte nicht geladen werden (HTTP ${response.status}).`);
         const task = await response.json();
+        if (revision !== taskDetailRevision) return null;
         if (Number(task.id) !== id) throw new Error('Die Task-Antwort enthält eine andere ID.');
         selectedTask = task;
         document.getElementById('task-detail-id').textContent = `Task #${id}`;
@@ -291,8 +421,10 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         document.getElementById('task-detail-view').hidden = false;
         document.getElementById('task-edit-form').hidden = true;
         panel.scrollIntoView({ behavior:'smooth', block:'start' });
+        await loadTaskResult(id, revision);
         return task;
       } catch (cause) {
+        if (revision !== taskDetailRevision) return null;
         selectedTask = null;
         detailError(cause instanceof Error ? cause.message : 'Task konnte nicht geladen werden.');
         return null;
@@ -351,6 +483,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       detailError('');
     });
     document.getElementById('task-detail-close').addEventListener('click', () => {
+      ++taskDetailRevision; selectedResult = null;
       selectedTask = null; document.getElementById('task-detail').hidden = true;
     });
     document.getElementById('task-edit-form').addEventListener('submit', async event => {
@@ -402,6 +535,8 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
     async function completeTask(id) {
       try {
+        const task = allTasks.find(item => Number(item.id) === Number(id));
+        if (normalizedStatus(task?.status) === 'review') { await openTask(Number(id)); return; }
         const res = await fetch('/api/tasks/' + encodeURIComponent(id), {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
