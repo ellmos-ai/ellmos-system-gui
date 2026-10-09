@@ -334,6 +334,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     .agent-creation-group > .card { margin-bottom: .75rem; background: var(--bg-card); border-color: rgb(59 130 246 / .2); }
     .agent-creation-group > .card:last-child { margin-bottom: 0; }
     .agent-creation-group .dual-actions-card { padding: 1.1rem; }
+    :global([data-theme="light"]) .agent-creation-group,
+    :global([data-theme="light"]) .agent-creation-group > .card { background: #fff; }
     .hardware-torch { margin-bottom: .85rem; padding: .7rem .85rem; }
     .torch-summary { display: list-item; cursor: pointer; font-size: .85rem; font-weight: 600; }
     .torch-summary .badge { margin-left: .6rem; font-size: .7rem; font-weight: 400; }

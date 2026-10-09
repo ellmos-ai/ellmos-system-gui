@@ -16,7 +16,7 @@
             } catch (_) { /* Storage may be disabled; the API still fails closed. */ }
         }
         const response = await originalFetch(input, {...options, headers});
-        if ((response.status === 401 || response.status === 403) &&
+        if ((response.status === 401 || response.status === 403 && !headers.has('X-BACH-Result-Operator')) &&
                 document.body && !document.getElementById('bach-device-login-needed')) {
             const notice = document.createElement('p');
             notice.id = 'bach-device-login-needed';

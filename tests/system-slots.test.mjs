@@ -20,6 +20,7 @@ test('Running inline scripts parse', () => {
 
 test('core configuration conflicts reject before a success response', async () => {
   const request = vm.runInNewContext('(' + snippet('async function coreRequest(', 'async function loadCoreSlots(') + ')', {
+    coreRefreshEpoch: 0,
     fetch: async () => ({ok:false, status:409, json:async () => ({detail:'Konfiguration wurde inzwischen geändert'})})
   });
   await assert.rejects(request('/buddha_chat', 'PUT', {configuration_version:'a'.repeat(64)}), /inzwischen geändert/);
@@ -42,7 +43,7 @@ function renderer() {
     }
   };
   const switches = [];
-  const context = vm.createContext({document, coreConfigVersion:null, coreAgents:[], coreCatalog:{},
+  const context = vm.createContext({document, coreRefreshEpoch:0, coreConfigVersion:null, coreAgents:[], coreCatalog:{},
     window:{BachAvatars:{createAvatar},BachSymbols:{createSymbol}},
     openCoreEditor(){}, toggleCoreSlot(...args){switches.push(args);}});
   vm.runInContext(snippet('function coreElement(', 'function coreField('), context);

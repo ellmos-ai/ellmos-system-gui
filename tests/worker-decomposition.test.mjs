@@ -13,6 +13,7 @@ function actionHarness(state, ok = true) {
   const calls = [];
   let refreshes = 0;
   const run = vm.runInNewContext(`(${source})`, {
+    workerRefreshEpoch: 0,
     document: {getElementById: () => summary},
     fetch: async (url, options) => {
       calls.push({url, body: JSON.parse(options.body)});
