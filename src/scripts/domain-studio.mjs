@@ -1,5 +1,5 @@
 import {domainWorkbenchRoute} from '../lib/domain-routes.mjs';
-import {loadDomainPins,setDomainPin,subscribePins} from '../lib/domain-pins.mjs';
+import {loadDomainPins,setDomainPin,subscribePins,pinReadbackMatches} from '../lib/domain-pins.mjs';
 
 const node=(tag,className,text)=>{const n=document.createElement(tag);if(className)n.className=className;if(text!==undefined)n.textContent=String(text??'');return n;};
 function initialize(){
@@ -15,7 +15,11 @@ function initialize(){
       feedback('Pinänderung wird gespeichert…');
       try{
         await setDomainPin(id,desired);
-        await loadDomainPins();
+        const readback=await loadDomainPins();
+        if(!pinReadbackMatches(readback,id,desired)){
+          feedback('Pinstand wurde inzwischen geändert. Menü und Karte zeigen den aktuellen Stand.',true);
+          return;
+        }
         feedback(desired?'Domäne ist angepinnt. Menü und gespeicherter Pinstand wurden geprüft.':'Pin ist entfernt. Menü und gespeicherter Pinstand wurden geprüft.');
       }catch(error){
         try{await loadDomainPins();feedback('Speichern nicht bestätigt; aktuellen Pinstand geladen. '+error.message,true);}

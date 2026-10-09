@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {validatePins,pinMenuRoute,validatePinAck,loadDomainPins,setDomainPin,subscribePins} from '../src/lib/domain-pins.mjs';
+import {validatePins,pinMenuRoute,validatePinAck,pinReadbackMatches,loadDomainPins,setDomainPin,subscribePins} from '../src/lib/domain-pins.mjs';
 const pin=id=>({id,name:'Grüße '+id,icon:'🧩',workbench_url:'/domains/'+id});
 const snapshot=(ids=['ati'],version='a'.repeat(64))=>({schema:'bach.domain-pins.v1',version,persisted:true,pins:ids.map(pin),total:ids.length});
 const response=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json'}});
@@ -82,4 +82,17 @@ test('header and page subscribe to the same native pin state',()=>{
   assert.match(header,/domain-pins-menu/);assert.match(header,/initializeDomainMenu/);
   assert.match(page,/domain-studio.mjs/);assert.match(studio,/subscribePins/);assert.match(studio,/setDomainPin/);
   assert.doesNotMatch(studio,/innerHTML/);
+});
+
+test('readback verifies membership after an intervening client change',()=>{
+  assert.equal(pinReadbackMatches(snapshot(['ati','new']),'new',true),true);
+  assert.equal(pinReadbackMatches(snapshot(['ati']),'new',true),false);
+  assert.equal(pinReadbackMatches(snapshot(['ati','new']),'new',false),false);
+  assert.equal(pinReadbackMatches(snapshot(['ati']),'new',false),true);
+  assert.throws(()=>pinReadbackMatches({pins:[]},'new',true));
+  assert.throws(()=>pinReadbackMatches(snapshot(),'../escape',true));
+  assert.throws(()=>pinReadbackMatches(snapshot(),'new','false'));
+  const studio=readFileSync(new URL('../src/scripts/domain-studio.mjs',import.meta.url),'utf8');
+  assert.match(studio,/pinReadbackMatches\(readback,id,desired\)/);
+  assert.match(studio,/Pinstand wurde inzwischen geändert/);
 });

@@ -13,6 +13,11 @@ export function validatePins(data){
   }
   return data;
 }
+export function pinReadbackMatches(data,id,pinned){
+  validatePins(data);
+  if(typeof id!=='string'||!ID.test(id)||typeof pinned!=='boolean')throw new Error('Ungültige Pinprüfung.');
+  return data.pins.some(pin=>pin.id===id)===pinned;
+}
 export function pinMenuRoute(pin){
   if(!pin||typeof pin.id!=='string'||!ID.test(pin.id))throw new Error('Ungültige Domain-ID');
   return domainWorkbenchRoute(pin.workbench_url)||'/domains?domain='+encodeURIComponent(pin.id);
