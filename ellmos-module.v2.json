@@ -1,7 +1,7 @@
 {
   "schema": "ellmos.module.v2",
   "id": "ellmos-system-gui",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "display_name": "ELLMOS System GUI",
   "category": "runtime",
   "kind": "ui",

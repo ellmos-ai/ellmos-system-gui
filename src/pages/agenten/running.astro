@@ -1058,6 +1058,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           const heading=card.querySelector('h3');
           if(worker&&heading)heading.prepend(window.BachAvatars.createAvatar(document,worker.avatar,worker,
             document.getElementById('core-slot-editor').dataset.portraitAtlas,'agent-avatar-preview'));
+          if (worker?.runtime_verified === true && ['idle', 'completed', 'running'].includes(worker.status)) {
+            const actions = coreElement('div', undefined, 'core-actions');
+            const assign = coreElement('a', 'Aufgabe zuweisen', 'btn btn-sm');
+            assign.href = '/tasks?create=1&assign_slot=' + encodeURIComponent(worker.id);
+            actions.append(assign);
+            card.append(actions);
+          }
         }
         runningList.querySelectorAll('[data-worker-id]').forEach(card => {
           const worker = runningWorkers.find(item => item.id === card.dataset.workerId);

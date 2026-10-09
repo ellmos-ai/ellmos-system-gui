@@ -15,13 +15,14 @@ export function assignmentCatalogue(body) {
       !Array.isArray(body.targets)) throw new Error('Agentenauswahl: Backendvertrag nicht verfügbar.');
   const ids = new Set();
   const targets = body.targets.map(item => {
-    if (!item || !['system-slot', 'blueprint'].includes(item.type) || !text(item.id) ||
+    if (!item || !['system-slot', 'worker-profile', 'blueprint'].includes(item.type) || !text(item.id) ||
         !text(item.name) || ids.has(item.id)) throw new Error('Agentenauswahl: Zielkatalog ungültig.');
     ids.add(item.id);
     const binding = Object.fromEntries(bindingKeys.map(key => [key, text(item.binding?.[key])]));
-    const identityId = item.type === 'system-slot' ? text(item.slot_id) : blueprintIdentity(item.blueprint_id);
+    const profile = item.type === 'worker-profile';
+    const identityId = item.type !== 'blueprint' ? text(item.slot_id) : blueprintIdentity(item.blueprint_id);
     if (!identityId) throw new Error('Agentenauswahl: Zielkatalog enthält eine ungültige ID.');
-    const identity = (item.type === 'system-slot' ? 'slot:' : 'blueprint:') + identityId;
+    const identity = (profile ? 'worker:' : item.type === 'system-slot' ? 'slot:' : 'blueprint:') + identityId;
     const validBinding = item.id === identity && binding.assigned_slot === text(item.slot_id) &&
       !!binding.assigned_slot && !!binding.assigned_to && !!binding.required_model &&
       binding.required_model === text(item.model);

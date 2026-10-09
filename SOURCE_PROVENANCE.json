@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "0dfdf0f135bacaf4361cb295bb9a009b61be60c38919efa5ffb7087851143355",
+    "src/pages/agenten/running.astro": "e0f468fa03e6094a811a9022a27b939922e10fd7c682d05d13002c86605cef9f",
     "src/pages/agenten/sessions.astro": "3fe9769f49fbbf4d6f5ebebca16e8e13415d5773e96e13b4d42d5b52a0a05a1d",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "57c14deae14d57a65c7e96236a6107a7e11b4425a8d5f52d1784c7f6f8b21834",
@@ -71,17 +71,17 @@
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
     "tests/frontend-parity.test.mjs": "3ce84ede6584722d42a456d869b4556df29679eb50533c88375100ccdc10c1de",
-    "tests/task-assignment.test.mjs": "46cf92f6871208fb21d9503fca0203b5351a228e322c182574438b0a4238a439",
-    "src/lib/task-assignment.mjs": "c9fc54c99355e59f45f6e43a1538a300342c4d41088345019e707524b374fb40",
+    "tests/task-assignment.test.mjs": "5ee7ae0defcdc8ef36edc76c4da821f59ea078399c0c6d30c2a5d94115aef3e3",
+    "src/lib/task-assignment.mjs": "99fdaf57c0eb093cd46eb3f1bdcaa58cea1fbfd89bef5142aab7224cbf4dfd7d",
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
     "tests/release-provenance.test.mjs": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "ba8c88afdeb866638fe96de246d466b6880d1477098a9cd8032dbf6596bb0450",
-    "package-lock.json": "bf207f9448d1c870f30a6834ee7527dd8dede3ac3157854908e913a0039586df",
+    "package.json": "86dee3ceaf9e4cc0093fc3f8fade9477b33d743c91a1fb94c8df50b0eca73892",
+    "package-lock.json": "f15dcc172320e18ab4817bb82179071c40cfb262ebd66931d0d52d8a0205d8d9",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "930339776ffb110a369bc935bc217e22b7d3fdb7b4d5d7241fc41a4a0852c7c0",
+    "ellmos-module.v2.json": "4abe114f2cc0f8270d6711fe80bb22b2328276e74479cf09f10b4480769472fa",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
     "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
     "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
@@ -789,6 +789,20 @@
       "files": [
         "src/pages/memory.astro",
         "tests/memory-facts.test.mjs"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "scope": "Task1954: dynamic worker task destinations",
+      "changes": [
+        "Recognize the native worker-profile destination identity without converting it to a core slot",
+        "Preserve exact profile, provider, model and global configuration CAS in task forms",
+        "Offer task creation from observed Living and Running worker profiles without starting a worker"
+      ],
+      "files": [
+        "src/lib/task-assignment.mjs",
+        "src/pages/agenten/running.astro",
+        "tests/task-assignment.test.mjs"
       ]
     }
   ]
