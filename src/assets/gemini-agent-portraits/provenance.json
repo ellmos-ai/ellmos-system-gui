@@ -1,50 +1,163 @@
 {
   "schema": "ellmos-agent-portraits.sources.v1",
   "origin": "Gemini Antigravity image artifacts",
-  "source_session": "daee3cf3-7af5-47a6-a2a6-4cbe50d6823a",
-  "transformation": "none; original JPEG bytes; source names used .png",
+  "transformation": "none; original JPEG bytes; some older source names used .png",
   "files": [
     {
       "id": "preset:gemini-claude-friendly",
       "name": "Claude · Begleiter",
       "file": "claude-friendly.jpg",
       "source_file": "claude_code_avatar_1775081955041.png",
-      "source_sha256": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15"
+      "source_sha256": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
+      "source_session": "daee3cf3-7af5-47a6-a2a6-4cbe50d6823a"
     },
     {
       "id": "preset:gemini-claude-neon",
       "name": "Claude · Neon",
       "file": "claude-neon.jpg",
       "source_file": "claude_code_avatar_variation_1775082003902.png",
-      "source_sha256": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7"
+      "source_sha256": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
+      "source_session": "daee3cf3-7af5-47a6-a2a6-4cbe50d6823a"
     },
     {
       "id": "preset:gemini-claude-opus",
       "name": "Claude · Opus",
       "file": "claude-opus.jpg",
       "source_file": "claude_code_opus_avatar_1775082307177.png",
-      "source_sha256": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c"
+      "source_sha256": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
+      "source_session": "daee3cf3-7af5-47a6-a2a6-4cbe50d6823a"
     },
     {
       "id": "preset:gemini-copilot",
       "name": "Copilot",
       "file": "copilot.jpg",
       "source_file": "copilot_smart_plus_avatar_1775082422630.png",
-      "source_sha256": "c673a9651e44f11a7be116562eb082411d7127d397550fd062d42c61a93c8a4c"
+      "source_sha256": "c673a9651e44f11a7be116562eb082411d7127d397550fd062d42c61a93c8a4c",
+      "source_session": "daee3cf3-7af5-47a6-a2a6-4cbe50d6823a"
     },
     {
       "id": "preset:gemini-gemini",
       "name": "Gemini · Sternenlicht",
       "file": "gemini.jpg",
       "source_file": "gemini_avatar_1775082104242.png",
-      "source_sha256": "f18b2731f1a1cf528d03bc3ebc64aceacce04d5d7cf34e3abfa098c5f0713dd3"
+      "source_sha256": "f18b2731f1a1cf528d03bc3ebc64aceacce04d5d7cf34e3abfa098c5f0713dd3",
+      "source_session": "daee3cf3-7af5-47a6-a2a6-4cbe50d6823a"
     },
     {
       "id": "preset:gemini-gemini-umbruch",
       "name": "Gemini · Um:bruch",
       "file": "gemini-umbruch.jpg",
       "source_file": "gemini_avatar_umbruch_1775082525313.png",
-      "source_sha256": "514a9f32a3956175bbb1f1fc90158401a00e042020e690d56f35b4f902070751"
+      "source_sha256": "514a9f32a3956175bbb1f1fc90158401a00e042020e690d56f35b4f902070751",
+      "source_session": "daee3cf3-7af5-47a6-a2a6-4cbe50d6823a"
+    },
+    {
+      "id": "preset:gemini-buddha-chat",
+      "name": "Buddha · Gespräch",
+      "file": "role-buddha-chat.jpg",
+      "source_file": "buddha_chat_1791156068514.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "c7ff0b44cd539bde87d03d3cb27cfdf5e7f433faf682470a5ac6081f017abbec"
+    },
+    {
+      "id": "preset:gemini-always-on",
+      "name": "Always-On · Hintergrund",
+      "file": "role-always-on.jpg",
+      "source_file": "always_on_worker_1791156083761.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "9a42e8b7d1d0c4caf6ed89f8a61eef4e5837e316968ab0f5dfd6cf6d127f20e6"
+    },
+    {
+      "id": "preset:gemini-operator",
+      "name": "Operator",
+      "file": "role-operator.jpg",
+      "source_file": "agent_operator_png_1791156071527.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "bd061422e8a720ada2776743c435be9b0c30f41259a4b6cf56401bc74f2521d4"
+    },
+    {
+      "id": "preset:gemini-ticket-master",
+      "name": "Ticket-Master",
+      "file": "role-ticket-master.jpg",
+      "source_file": "agent_ticket_master_png_1791156087315.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "1d771ffbdcfb4741d5ed5fed8b42cd594bbf24e92f4f7d7baecdcbaae04f457c"
+    },
+    {
+      "id": "preset:gemini-maintenance",
+      "name": "Wartung",
+      "file": "role-maintenance.jpg",
+      "source_file": "agent_wartungsagent_png_1791156100995.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "63fa4873e34161b757463709ef48ed3c5501f9907efd3172885266632997c0ca"
+    },
+    {
+      "id": "preset:gemini-system-auditor",
+      "name": "System-Auditor",
+      "file": "role-system-auditor.jpg",
+      "source_file": "agent_system_auditor_png_1791156115843.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "b16c38fcbd51b3172d90ca82ba118c51e7ce99a29fcf08e238ee9d22bd72b61a"
+    },
+    {
+      "id": "preset:gemini-law-checker",
+      "name": "Rechtsprüfung",
+      "file": "role-law-checker.jpg",
+      "source_file": "agent_law_checker_png_1791156130779.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "209e6068edecc1cb401543a2c467d5039184bfd114f3da142027d01687d1e1f9"
+    },
+    {
+      "id": "preset:gemini-researcher",
+      "name": "Recherche · Gemini",
+      "file": "role-researcher.jpg",
+      "source_file": "agent_researcher_png_1791156145204.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "0639d57602ae6eb377bc5bd408e9aa30a35efaa5118d0597412fa816a5dccf94"
+    },
+    {
+      "id": "preset:gemini-connector-a",
+      "name": "Connector · Türkis",
+      "file": "role-connector-a.jpg",
+      "source_file": "connector_1791156100115.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "9a05c001e9b43c054586f4f1b9504cb006418e0a6f523f742bdae80cab9697ec"
+    },
+    {
+      "id": "preset:gemini-connector-b",
+      "name": "Connector · Blau",
+      "file": "role-connector-b.jpg",
+      "source_file": "connector_1791156114250.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "108defc2fc17c156ed452667f2b59f3f6eedd6ff6de5cae34c660734e592a555"
+    },
+    {
+      "id": "preset:gemini-maintainer",
+      "name": "Maintainer",
+      "file": "role-maintainer.jpg",
+      "source_file": "maintainer_1791156166665.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "73cf0f8a4e17ebcfca078e92e2a684c459e9804b0abb49dd4399aaf469cd83c2"
+    },
+    {
+      "id": "preset:gemini-task-solver",
+      "name": "Task-Solver",
+      "file": "role-task-solver.jpg",
+      "source_file": "task_solver_1791156128480.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "137e2db007b06d4b3e2a35b9fde0f6a5d7989fd7a4871163636c5d97f6ca1bb5"
+    },
+    {
+      "id": "preset:gemini-task-writer",
+      "name": "Task-Writer",
+      "file": "role-task-writer.jpg",
+      "source_file": "task_writer_1791156144638.jpg",
+      "source_session": "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689",
+      "source_sha256": "38efd8499f7296fbececce8db9f4ad91d00019da661bdb4a3f59bbeca568bd89"
     }
+  ],
+  "source_sessions": [
+    "daee3cf3-7af5-47a6-a2a6-4cbe50d6823a",
+    "ba8fc38c-8bbd-4959-9b1a-1c6384f5e689"
   ]
 }
