@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "b2922327a2c4f9b44ccdd355a76ff07ffb0b97e1d6a3b69adad2bb5ded8dd5c6",
+    "src/pages/agenten/running.astro": "0dfdf0f135bacaf4361cb295bb9a009b61be60c38919efa5ffb7087851143355",
     "src/pages/agenten/sessions.astro": "3fe9769f49fbbf4d6f5ebebca16e8e13415d5773e96e13b4d42d5b52a0a05a1d",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "57c14deae14d57a65c7e96236a6107a7e11b4425a8d5f52d1784c7f6f8b21834",
@@ -696,6 +696,16 @@
         "tests/frontend-parity.test.mjs",
         "tests/system-slots.test.mjs",
         "tests/worker-decomposition.test.mjs"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "scope": "User: creation and ready profiles use white background in light theme",
+      "changes": [
+        "The common group and all three cards use white with existing blue borders in light mode"
+      ],
+      "files": [
+        "src/pages/agenten/running.astro"
       ]
     }
   ],
