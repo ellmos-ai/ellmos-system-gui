@@ -65,12 +65,12 @@
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/fabrika.test.mjs": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
-    "tests/system-slots.test.mjs": "580a36a3a1cca7275960d04f1536980e0c5ff8bad564f77ffdfebdbc2cbdace0",
+    "tests/system-slots.test.mjs": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
-    "tests/worker-decomposition.test.mjs": "c67a1cd692bad66677674aef2cc60c33baa5127d24306d76659e0a27a924d551",
+    "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/frontend-parity.test.mjs": "1c82e2b32069ba8553eff3572057c3feee905019041190046a7c7d8792864c70",
+    "tests/frontend-parity.test.mjs": "3ce84ede6584722d42a456d869b4556df29679eb50533c88375100ccdc10c1de",
     "tests/task-assignment.test.mjs": "46cf92f6871208fb21d9503fca0203b5351a228e322c182574438b0a4238a439",
     "src/lib/task-assignment.mjs": "c9fc54c99355e59f45f6e43a1538a300342c4d41088345019e707524b374fb40",
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
@@ -683,6 +683,19 @@
       "description": "Browser acceptance: honor native hidden attributes on the tasks page so button display rules cannot expose result acceptance when the current source is unavailable or already accepted.",
       "files": [
         "src/pages/tasks.astro"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "scope": "Task1985: existing Running fixture compatibility",
+      "changes": [
+        "Keep all existing assertions; provide current refresh epoch state in isolated VM fixtures",
+        "Extract coreAgentLabel before the following Running group state declaration"
+      ],
+      "files": [
+        "tests/frontend-parity.test.mjs",
+        "tests/system-slots.test.mjs",
+        "tests/worker-decomposition.test.mjs"
       ]
     }
   ],

@@ -42,7 +42,7 @@ test('every recorded imported file matches its final working source hash',()=>{
 });
 
 test('verified core errors and unknown states never become ready',()=>{
-  const start=page.indexOf('function coreAgentLabel('),end=page.indexOf('function renderRunningSystemSlots(',start);
+  const start=page.indexOf('function coreAgentLabel('),end=page.indexOf('const runningGroupStates',start);
   const label=vm.runInNewContext('('+page.slice(start,end).trim()+')');
   const base={runtime_verified:true,enabled:true,backend:'ollama',model:'synthetic-local'};
   assert.equal(label({...base,status:'error'}),'Fehler · Status prüfen');
