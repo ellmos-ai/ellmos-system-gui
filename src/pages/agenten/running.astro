@@ -887,9 +887,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         error:'Fehler · Status prüfen', expired:'Abgelaufen', deleted:'Entfernt',
         starting:'Startet', stopping:'Wird beendet'};
       const canEdit = ['idle', 'paused', 'completed', 'error'].includes(status);
-      const ready = configured && ['idle', 'completed'].includes(status);
+      const waiting = worker.runtime_verified === true && worker.worker_active === true && worker.running === false && status === 'running';
+      const ready = configured && (waiting || ['idle', 'completed'].includes(status));
       return {ready, canEdit, canStart:configured && canEdit,
-        label:!configured && canEdit ? 'Modell oder Anbieter fehlt' : labels[status] || 'Status unbekannt'};
+        waiting, label:waiting ? 'Living · Wartet auf Aufgaben' : !configured && canEdit ? 'Modell oder Anbieter fehlt' : status === 'running' ? 'Laufstatus nicht bestätigt' : labels[status] || 'Status unbekannt'};
     }
 
     async function loadBackgroundWorkers() {
@@ -904,11 +905,12 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           throw new Error('Workerquelle ist nicht bestätigt');
         const workers = data.workers.filter(worker=>worker && typeof worker === 'object' && worker.system!==true);
 
-        const runningWorkers = workers.filter(w => String(w.status).toLowerCase() === 'running');
-        const profileWorkers = workers.filter(w => String(w.status).toLowerCase() !== 'running');
+        const runningWorkers = workers.filter(w => w.runtime_verified === true && w.running === true);
+        const waitingWorkers = workers.filter(w => workerReadiness(w).waiting);
+        const profileWorkers = workers.filter(w => !runningWorkers.includes(w));
         const readyWorkers = profileWorkers.filter(w => workerReadiness(w).ready);
 
-        summary.textContent = `${workers.length} Worker registriert · ${readyWorkers.length} einsatzbereit (Living) · ${runningWorkers.length} aktiv (Running) · ${profileWorkers.length - readyWorkers.length} andere Zustände · Geprüft ${new Date().toLocaleTimeString('de-DE')}`;
+        summary.textContent = `${workers.length} Worker registriert · ${readyWorkers.length} einsatzbereit (Living) · ${runningWorkers.length} aktiv (Running) · ${waitingWorkers.length} warten auf Aufgaben · ${profileWorkers.length - readyWorkers.length} andere Zustände · Geprüft ${new Date().toLocaleTimeString('de-DE')}`;
 
         // 1. Render Einsatzbereite Agenten
         if (profileWorkers.length === 0) {
@@ -937,7 +939,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                     ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--text-muted);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code style="color:var(--accent);">${escapeHtml(w.resolved_model)}</code></span>` : ''}
                   </p>
                   <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">
-                    ${escapeHtml(w.task_prompt ? 'Auftrag: ' + w.task_prompt : 'Kein eigener Zusatzauftrag gespeichert')}
+                    ${escapeHtml(w.has_task_prompt === true ? 'Eigener Zusatzauftrag gespeichert' : w.has_task_prompt === false ? 'Kein eigener Zusatzauftrag gespeichert' : 'Zusatzauftrag hier nicht bestätigt')}
+                  </p>
+                  <p style="font-size:0.8rem;color:var(--text);line-height:1.4;">
+                    ${escapeHtml(w.current_activity || '')}
                   </p>
                 </div>
 
@@ -949,7 +954,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                     <button class="btn btn-sm" style="font-size:0.75rem;" ${state.canEdit ? '' : 'disabled'} onclick="editWorkerConfiguration('${escapeHtml(w.id)}')">
                       ✏️ Bearbeiten
                     </button>
-                    ${!state.canStart ? `<span class="text-muted">Start derzeit nicht bestätigt</span>` : isPaused ? `
+                    ${state.waiting ? `
+                      <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
+                      <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'stop')">⏹ Stoppen</button>
+                    ` : !state.canStart ? `<span class="text-muted">Start derzeit nicht bestätigt</span>` : isPaused ? `
                       <button class="btn btn-sm btn-primary" style="font-size:0.75rem;" onclick="runWorkerAction('${escapeHtml(w.id)}', 'start')">
                         ▶ Fortsetzen
                       </button>
@@ -972,7 +980,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         if (runningWorkers.length === 0) {
           runningList.innerHTML = `
             <p style="grid-column:1/-1;color:var(--text-muted);font-size:0.85rem;padding:0.75rem;background:var(--bg-dark);border-radius:4px;">
-              Der Backendadapter meldet derzeit keinen laufenden Worker.
+              Der Backendadapter meldet derzeit keine aktiv bearbeitete Worker-Aufgabe.
             </p>
           `;
         } else {

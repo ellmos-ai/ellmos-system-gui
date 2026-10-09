@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "3b8bdfce36ae9d2d3c46dcdfd0dc831cf40a5f58ff029b7e59bb242232a01ff1",
+    "src/pages/agenten/running.astro": "2d6d67f019ba34d9cf5d95b1fac576b41c7a97a659355e32cc055cd820d6d6a0",
     "src/pages/agenten/sessions.astro": "3fe9769f49fbbf4d6f5ebebca16e8e13415d5773e96e13b4d42d5b52a0a05a1d",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "57c14deae14d57a65c7e96236a6107a7e11b4425a8d5f52d1784c7f6f8b21834",
@@ -347,7 +347,7 @@
         "src/pages/agenten/running.astro": {
           "source_path": "system/gui/web/src/pages/agenten/running.astro",
           "source_sha256": "c4700fb05438cdd20df993894f7b649be9f53a1a56b5dea80fa140164b943728",
-          "imported_sha256": "9e79eb9be6836fe4470c2a619a5e2f57073b2c3150bf6f1f53cd28294449a8aa",
+          "imported_sha256": "2d6d67f019ba34d9cf5d95b1fac576b41c7a97a659355e32cc055cd820d6d6a0",
           "adapted": true
         },
         "src/pages/agenten/sessions.astro": {
@@ -712,6 +712,18 @@
         "src/scripts/domain-studio.mjs",
         "src/components/Header.astro",
         "src/pages/domains.astro"
+      ]
+    },
+    {
+      "date": "2026-10-09",
+      "scope": "Task1950: actual background-worker work",
+      "changes": [
+        "Native running and worker_active are separate; waiting workers remain Living",
+        "Configured task_prompt presence is shown without exposing private prompts",
+        "Current errors remain visible on worker profiles"
+      ],
+      "files": [
+        "src/pages/agenten/running.astro"
       ]
     }
   ]
