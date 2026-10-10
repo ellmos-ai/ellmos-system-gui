@@ -38,7 +38,7 @@ export function plugState(item) {
   }
   if (flag === true) return build('plugged', consumer, 'Die Konfiguration schaltet das Plugin ein.', item, source);
   if (flag === false) return build('unplugged', consumer, 'Die Konfiguration schaltet das Plugin aus.', item, source);
-  return build('unknown', consumer, 'Die Konfiguration enthält keinen Eintrag für dieses Plugin.', item, source);
+  return build('unknown', consumer, 'Kein boolescher Aktivierungswert im Inventar (Quelle nicht lesbar, ungültig oder kein Eintrag).', item, source);
 }
 
 function build(state, consumer, reason, item = {}, source = null) {
@@ -51,7 +51,8 @@ function build(state, consumer, reason, item = {}, source = null) {
     reason,
     consumer,
     source: source || 'keine native Quelle',
-    scope: source ? 'Nur der Benutzer-Scope wurde geprüft; Projekt- und lokale Einstellungen sind nicht erfasst.' : null,
+    // Der Geltungsbereich wird nur für einen belegten Wert erklärt; bei unknown ist nicht bekannt, was gelesen wurde.
+    scope: source && (state === 'plugged' || state === 'unplugged') ? 'Der Wert stammt aus dem Benutzer-Scope; Projekt- und lokale Einstellungen sind nicht erfasst.' : null,
     host: 'Host nicht angegeben (die Antwort nennt keinen Hostnamen).',
     runtime,
   };
