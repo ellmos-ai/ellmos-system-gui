@@ -25,6 +25,19 @@ Die Frontend-Voraussetzungen des aktuellen Imports sind in [BACH_FRONTEND_IMPORT
 
 Trithon, Muschelgrund und Salt haben eigene Architekturverträge. Die BACH-Teiladapter für Dispatch und Receipt-Projektion sind kein vollständiger Nachweis ihres Systemzustands. Die Systemkarten zeigen ohne Modulprobe `unbekannt`. Die Fackel bleibt bei Agenten als Compute-Vorrang; eine Prozess-ID allein belegt keine laufende Aufgabenarbeit.
 
+## Aufgabenauswahl der Worker
+
+Die optionale Projektion `workers[].queue_status` verwendet `bach.worker-queue.v1`.
+Sie stammt aus dem tatsächlichen kanonischen Auswahlversuch: `source=canonical_task_api`,
+`authority_mode=local|remote`, `observed_at`, Zustand, Grund, Zähler und erlaubte
+Ablehnungsgründe. Die GUI zeigt sie als standardmäßig eingeklappten letzten Auswahlbeleg,
+auch für Buddha aus derselben Workerquelle. Weder Kandidatenzahlen noch eine frühere
+Übernahme beweisen aktuelle Inferenz oder Ergebnisqualität. Fehlende/ungültige Daten
+bleiben unbestätigt, eine fehlgeschlagene Statusroute nicht verfügbar. Der Konsument
+behält Aufgaben, Filter, Rechte und Leases; diese Anzeige löst keine Aktion aus.
+Der vollständige Referenzvertrag steht in BACHs `docs/worker-queue.md`. Ocean muss
+seine eigene kanonische Auswahl entsprechend projizieren, bevor die Ansicht Daten zeigt.
+
 ## Task-Zuweisung
 
 Die beiden Task-Formulare verwenden `GET /api/task-assignees` mit Schema `bach.task-assignees.v1`, Quelle `native_control_and_blueprints`, `configuration_version` und `targets`. Ein auswählbares Ziel liefert die kanonische `binding` aus `assigned_slot`, `assigned_to` und `required_model`. Das Frontend sendet diese Felder zusammen mit `assignment_configuration_version`; das Backend prüft die neue Bindung und die Konfigurationsversion. Auch ein bewusstes Entfernen eines Slots benötigt die aktuelle Version. Der Versionswert ist ein Anfrageparameter und kein gespeichertes Task-Feld.

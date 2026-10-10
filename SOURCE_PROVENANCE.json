@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "e0f468fa03e6094a811a9022a27b939922e10fd7c682d05d13002c86605cef9f",
+    "src/pages/agenten/running.astro": "ca343f07d31ae30ff03561d5df816226d7a8939a1a8e0f2803dc8b6bda977cc7",
     "src/pages/agenten/sessions.astro": "3fe9769f49fbbf4d6f5ebebca16e8e13415d5773e96e13b4d42d5b52a0a05a1d",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "57c14deae14d57a65c7e96236a6107a7e11b4425a8d5f52d1784c7f6f8b21834",
@@ -78,10 +78,10 @@
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "0a17fecbf6eb5823842f8a1d6108fb467284641f68efe1b02f00d9bff061b3eb",
-    "package-lock.json": "b191cd45f14b073282d8f2d6e8952ca841d9febb08a1be7184360814255b1b48",
+    "package.json": "ce2fe612815fc29ab1a01648eb44af38481e4da365bdb424ccc66799698f3158",
+    "package-lock.json": "b6a2ddb99c03f2cfbe7302a60dc9f08e4690229cf8d22bccebec3f4603c86d74",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "dcf5b94d68a9122e2797621ef8003ff2fc778fa415ba0084bdc8b33ef8ba9835",
+    "ellmos-module.v2.json": "7a1f93d529d454e45ba5cfcff421a7a26c5db20d10c04a6691dfec88cfb23dc4",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
     "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
     "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
@@ -350,7 +350,7 @@
         "src/pages/agenten/running.astro": {
           "source_path": "system/gui/web/src/pages/agenten/running.astro",
           "source_sha256": "c4700fb05438cdd20df993894f7b649be9f53a1a56b5dea80fa140164b943728",
-          "imported_sha256": "b2922327a2c4f9b44ccdd355a76ff07ffb0b97e1d6a3b69adad2bb5ded8dd5c6",
+          "imported_sha256": "ca343f07d31ae30ff03561d5df816226d7a8939a1a8e0f2803dc8b6bda977cc7",
           "adapted": true
         },
         "src/pages/agenten/sessions.astro": {
@@ -838,6 +838,57 @@
           "path": "src/lib/agent-avatar-browser.mjs",
           "previous_sha256": "af3fb7d3ba000aee965a535cfe954beab12527ecea77cb2b69bfc71b2957acea",
           "sha256": "13bbd8fd864fcd5fafc4580322d2c19f50c94f36645d723fc812803acc17f68d"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-10",
+      "change": "Task1943: dated canonical worker queue diagnostics, collapsed default, unknown-safe and no task authority",
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "857440fe0b6e17b92f2a327d9b20e56d7b6d1a6dae0c499a562050b854e41d18",
+          "sha256": "5c50bea86634abde735400c3cdc55d5eaeff0d5c5bc94b6f39d1303dff6a8fac"
+        },
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "28a3804ee9e196a5716899fce5a348c6b9adfbc46bc1470fd5081d1a6d68d0ed",
+          "sha256": "c4a62eb92f967eca96c1bd651068923ed8599a9bd10b386f19863da38a13ab48"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "e0f468fa03e6094a811a9022a27b939922e10fd7c682d05d13002c86605cef9f",
+          "sha256": "ca343f07d31ae30ff03561d5df816226d7a8939a1a8e0f2803dc8b6bda977cc7"
+        },
+        {
+          "path": "src/lib/worker-queue-ui.mjs",
+          "previous_sha256": null,
+          "sha256": "dc9ff8b347f19ee344040774358df60d7322a8226f8e13824263d70c184584a1"
+        },
+        {
+          "path": "src/lib/worker-queue-browser.mjs",
+          "previous_sha256": null,
+          "sha256": "dc205df954d0262f56dfd79647e0ebeaeb15e8a901c0d5e88af28d81fd71c165"
+        },
+        {
+          "path": "tests/worker-queue.test.mjs",
+          "previous_sha256": null,
+          "sha256": "a367d9bfc32f2e21198b7f5d37892f29a7edb23d4a6cbbd844f7e9bfa7367576"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "0a17fecbf6eb5823842f8a1d6108fb467284641f68efe1b02f00d9bff061b3eb",
+          "sha256": "ce2fe612815fc29ab1a01648eb44af38481e4da365bdb424ccc66799698f3158"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "b191cd45f14b073282d8f2d6e8952ca841d9febb08a1be7184360814255b1b48",
+          "sha256": "b6a2ddb99c03f2cfbe7302a60dc9f08e4690229cf8d22bccebec3f4603c86d74"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "dcf5b94d68a9122e2797621ef8003ff2fc778fa415ba0084bdc8b33ef8ba9835",
+          "sha256": "7a1f93d529d454e45ba5cfcff421a7a26c5db20d10c04a6691dfec88cfb23dc4"
         }
       ]
     }
