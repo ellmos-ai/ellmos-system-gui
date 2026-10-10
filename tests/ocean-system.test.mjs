@@ -2,29 +2,44 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {parseCatalog, containsAbsolutePath} from '../src/lib/catalog-projection.mjs';
-import {VIEWS, viewFromSearch, parseAuthored, statusClass, isPublic, safeRepoUrl, moduleOrg, capabilityLinks, schaltplanModel,
+import {VIEWS, viewFromSearch, statusClass, isPublic, safeRepoUrl, moduleOrg, capabilityLinks, schaltplanModel,
   gesamtModel, satelliteModel, satelliteRows} from '../src/lib/ocean-system.mjs';
 
 const read = name => readFileSync(new URL(name, import.meta.url), 'utf8');
 const body = () => JSON.parse(read('./fixtures/catalog-projection.v1.json'));
 const catalog = (mutate = () => {}) => { const b = body(); mutate(b); return parseCatalog(b); };
-const authoredRaw = () => JSON.parse(read('../src/config/schaltplan-authored.json'));
-const authored = () => parseAuthored(authoredRaw());
 
-test('the authored data is declared, bilingual, path-free and references only known areas', () => {
-  const data = authored();
-  assert.equal(data._meta.basis, 'declared');
-  assert.equal(data.areas.length, 11);
-  assert.equal(data.edges.length, 8);
-  assert.equal(containsAbsolutePath(read('../src/config/schaltplan-authored.json')), false);
-  assert.match(data._meta.source_sha256, /^[a-f0-9]{64}$/);
+test('the architecture comes from the projection: declared, bilingual, path-free', () => {
+  const arch = catalog().architecture;
+  assert.equal(arch.basis, 'declared');
+  assert.equal(arch.available, true);
+  assert.equal(arch.sourceId, 'schaltplan_authored');
+  assert.deepEqual(arch.areas.map(a => a.id), ['runtime', 'tools', 'memory']);
+  assert.equal(arch.edges.length, 2);
+  assert.equal(containsAbsolutePath(JSON.stringify(arch)), false);
+  const source = catalog().sources.find(x => x.id === 'schaltplan_authored');
+  assert.equal(source.availability, 'available');
+  assert.match(source.sourceVersion, /^[a-f0-9]{64}$/); // pin of the curated file
 });
 
-test('invalid authored data fails loudly', () => {
-  const broken = mutate => () => { const d = authoredRaw(); mutate(d); parseAuthored(d); };
-  assert.throws(broken(d => { d._meta.basis = 'measured'; }), /declared/);
-  assert.throws(broken(d => { d.edges[0].to = 'nope'; }), /unbekannten Bereich/);
-  assert.throws(broken(d => { d.areas[1].id = d.areas[0].id; }), /Bereich/);
+test('a malformed architecture is a contract error, never silently reinterpreted', () => {
+  const broken = mutate => () => { const b = body(); mutate(b); parseCatalog(b); };
+  assert.throws(broken(b => { b.architecture.basis = 'measured'; }), /declared/);
+  assert.throws(broken(b => { b.architecture.edges[0].to = 'nope'; }), /unbekannten Bereich/);
+  assert.throws(broken(b => { b.architecture.areas[1].id = b.architecture.areas[0].id; }), /Bereich/);
+  assert.throws(broken(b => { delete b.architecture; }), /architecture/);
+  assert.throws(broken(b => { b.architecture.available = false; }), /nicht verfügbar, aber mit Inhalt/);
+  assert.throws(broken(b => { b.architecture.areas[0].desc = {de: 'x'}; }), /Bereich\.desc/);
+});
+
+test('an unavailable architecture leaves every module unassigned and wires nothing', () => {
+  const none = catalog(b => { b.architecture = {basis: 'declared', source_id: 'schaltplan_authored', available: false, areas: [], edges: [], layers: [], icons: {}, ui: {}, edges_note: null}; });
+  const model = schaltplanModel(none);
+  assert.equal(model.zones.length, 0);
+  assert.equal(model.edges.length, 0);
+  assert.equal(model.architecture.available, false);
+  assert.deepEqual(model.unassigned.modules.map(m => m.id).sort(), ['alpha-core', 'beta-tool']);
+  assert.equal(model.total, 2);
 });
 
 test('the view comes from ?view= and falls back to the Schaltplan', () => {
@@ -64,26 +79,26 @@ test('satellite org, provenance and upstream come through the contract (null whe
 });
 
 test('Schaltplan: zones follow the authored areas, modules come from the catalog, counts from counts', () => {
-  const model = schaltplanModel(catalog(), authored());
-  assert.equal(model.zones.length, 11);
+  const model = schaltplanModel(catalog());
+  assert.equal(model.zones.length, 3);
   assert.deepEqual(model.zones.find(z => z.id === 'runtime').modules.map(m => m.id), ['alpha-core']);
   assert.deepEqual(model.zones.find(z => z.id === 'tools').modules.map(m => m.id), ['beta-tool']);
   assert.equal(model.total, 2);
   assert.equal(model.hits, 2);
   assert.equal(model.unassigned, null);
   assert.ok(model.emptyZones.includes('memory'));
-  assert.equal(model.edges.length, 8);
+  assert.equal(model.edges.length, 2);
 });
 
 test('Schaltplan: filters change the hit count, never the total; unknown categories stay visible', () => {
   const c = catalog();
-  const searched = schaltplanModel(c, authored(), {query: 'alpha'});
+  const searched = schaltplanModel(c, {query: 'alpha'});
   assert.equal(searched.total, 2);
   assert.equal(searched.hits, 1);
   assert.equal(searched.zones.find(z => z.id === 'tools').modules[0].hit, false);
-  assert.equal(schaltplanModel(c, authored(), {publicOnly: true}).hits, 1);
+  assert.equal(schaltplanModel(c, {publicOnly: true}).hits, 1);
   const odd = catalog(b => { b.items.find(i => i.id === 'beta-tool').category = 'erfunden'; });
-  const model = schaltplanModel(odd, authored());
+  const model = schaltplanModel(odd);
   assert.deepEqual(model.unassigned.modules.map(m => m.id), ['beta-tool']);
 });
 
@@ -101,14 +116,14 @@ test('capability links are declared: providers/consumers resolved, missing provi
 
 test('Gesamtschaltplan: total is fixed while filtering; no tier is invented', () => {
   const c = catalog();
-  const all = gesamtModel(c, authored());
+  const all = gesamtModel(c);
   assert.equal(all.total, 4); // 2 modules + 2 satellites from counts
   assert.equal(all.hits, 4);
   assert.match(all.tierNote, /keine Repo-Tiers/);
-  const byOrg = gesamtModel(c, authored(), {org: 'example-org'});
+  const byOrg = gesamtModel(c, {org: 'example-org'});
   assert.equal(byOrg.total, 4);
   assert.equal(byOrg.hits, 4);
-  const none = gesamtModel(c, authored(), {org: 'nobody'});
+  const none = gesamtModel(c, {org: 'nobody'});
   assert.equal(none.total, 4);
   assert.equal(none.hits, 0);
   assert.deepEqual(all.orgs, [['example-org', 4]]);
@@ -141,10 +156,10 @@ test('module cards carry the host git snapshot as its own record (source, host, 
     const git = b.items.find(i => i.id === 'alpha-core').git;
     Object.assign(git, {state: 'clean', host: 'TEST-HOST', source: 'repos_manifest:slot-a', observed_at: '2026-01-02T03:04:05Z', observed_at_basis: 'declared'});
   });
-  const card = schaltplanModel(dated, authored()).zones.find(z => z.id === 'runtime').modules[0];
+  const card = schaltplanModel(dated).zones.find(z => z.id === 'runtime').modules[0];
   assert.equal(card.git.dated, true);
   assert.match(card.git.text, /Host TEST-HOST, Quelle repos_manifest:slot-a\): Clean · beobachtet 2026-01-02T03:04:05Z/);
-  const undated = schaltplanModel(catalog(b => Object.assign(b.items.find(i => i.id === 'alpha-core').git, {state: 'clean', host: 'H'})), authored()).zones.find(z => z.id === 'runtime').modules[0];
+  const undated = schaltplanModel(catalog(b => Object.assign(b.items.find(i => i.id === 'alpha-core').git, {state: 'clean', host: 'H'}))).zones.find(z => z.id === 'runtime').modules[0];
   assert.match(undated.git.text, /unbekannt \(undatiert\)/);
   assert.equal(undated.git.dated, false);
 });
@@ -152,8 +167,8 @@ test('module cards carry the host git snapshot as its own record (source, host, 
 test('empty catalogs render honest zeros', () => {
   const empty = catalog(b => { b.items = []; b.counts = {}; b.count = 0; b.errors = []; });
   assert.equal(satelliteModel(empty).total, 0);
-  assert.equal(gesamtModel(empty, authored()).total, 0);
-  assert.equal(schaltplanModel(empty, authored()).total, 0);
+  assert.equal(gesamtModel(empty).total, 0);
+  assert.equal(schaltplanModel(empty).total, 0);
 });
 
 test('UI sources never use innerHTML or inline handlers', () => {

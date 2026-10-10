@@ -1,7 +1,6 @@
 // Browser wiring for System/Ocean (#2017/#2019). DOM via createElement/textContent only; no inline handlers.
 import {loadCatalog} from './catalog-projection.mjs';
-import authoredRaw from '../config/schaltplan-authored.json';
-import {VIEWS, viewFromSearch, parseAuthored, schaltplanModel, gesamtModel, satelliteModel, STATUS_LABEL} from './ocean-system.mjs';
+import {VIEWS, viewFromSearch, schaltplanModel, gesamtModel, satelliteModel, STATUS_LABEL} from './ocean-system.mjs';
 
 const root = document.getElementById('ocean-system');
 const SVG = 'http://www.w3.org/2000/svg';
@@ -12,7 +11,6 @@ const badge = (text, tone) => el('span', 'os-badge' + (tone ? ' os-' + tone : ''
 
 let redraw = null;
 let catalog = null;
-let authored = null;
 let view = viewFromSearch(location.search);
 let lang = 'de';
 const state = {query: '', publicOnly: false, org: '', visibility: '', domain: '', gitState: '', pinned: null, hovered: null};
@@ -158,7 +156,7 @@ function drawWires(model) {
 }
 
 function renderSchaltplan(host) {
-  const model = schaltplanModel(catalog, authored, {query: state.query, publicOnly: state.publicOnly});
+  const model = schaltplanModel(catalog, {query: state.query, publicOnly: state.publicOnly});
   const bar = el('div', 'os-toolbar');
   bar.append(searchBox(() => renderSchaltplan(host)));
   const pub = el('input'); pub.type = 'checkbox'; pub.checked = state.publicOnly;
@@ -174,8 +172,8 @@ function renderSchaltplan(host) {
   const layout = el('div', 'os-layout');
   const wrap = el('div', 'os-boardwrap'); wrap.dataset.part = 'boardwrap';
   const board = el('div', 'os-board'); board.dataset.part = 'board';
-  for (const z of model.zones) board.append(zoneBox(z, authored.icons));
-  if (model.unassigned) board.append(zoneBox(model.unassigned, authored.icons));
+  for (const z of model.zones) board.append(zoneBox(z, model.icons));
+  if (model.unassigned) board.append(zoneBox(model.unassigned, model.icons));
   const svg = document.createElementNS(SVG, 'svg'); svg.setAttribute('class', 'os-wires'); svg.dataset.part = 'wires'; svg.append(document.createElementNS(SVG, 'g'));
   wrap.append(board, svg);
   const panel = el('aside', 'os-panel'); const panelBody = el('div'); panelBody.dataset.part = 'panel'; panel.append(panelBody);
@@ -184,18 +182,23 @@ function renderSchaltplan(host) {
   redraw = () => drawWires(model);
   layout.addEventListener('mouseover', ev => { const m = ev.target.closest('.os-mod'), z = ev.target.closest('.os-zone'); const next = m ? m.dataset.key : z ? z.dataset.key : null; if (next !== state.hovered) { state.hovered = next; refreshAll(); } });
   layout.addEventListener('click', ev => { const m = ev.target.closest('.os-mod'), z = ev.target.closest('.os-zone'); const next = m ? m.dataset.key : z ? z.dataset.key : null; state.pinned = next && next === state.pinned ? null : next; refreshAll(); });
-  const layers = el('section', 'os-layers'); layers.append(el('h4', null, authored.ui[lang].layersH), el('p', 'os-muted', authored.ui[lang].layersSub));
-  const stack = el('div', 'os-stack');
-  for (const l of model.layers) { const d = el('div', 'os-layer'); d.append(el('strong', null, l.n[lang]), el('p', 'os-muted', l.d[lang])); stack.append(d); }
-  layers.append(stack, el('p', 'os-muted', authored._meta.note));
-  host.append(layers);
+  if (!model.architecture.available) {
+    host.append(el('p', 'os-problem', 'Die kuratierte Architektur ist nicht verfügbar (Quelle ' + model.architecture.sourceId + '): alle Module stehen ohne Bereich und ohne Verbindungen.'));
+  } else {
+    const ui = model.ui[lang] || {};
+    const layers = el('section', 'os-layers'); layers.append(el('h4', null, ui.layersH || 'Schichten'), el('p', 'os-muted', ui.layersSub || ''));
+    const stack = el('div', 'os-stack');
+    for (const l of model.layers) { const d = el('div', 'os-layer'); d.append(el('strong', null, l.n[lang]), el('p', 'os-muted', l.d[lang])); stack.append(d); }
+    layers.append(stack, el('p', 'os-muted', 'Kuratierte Architektur (deklariert, Quelle ' + model.architecture.sourceId + '). Keine Messung; Module kommen aus dem Katalog.'));
+    host.append(layers);
+  }
   refreshAll();
   requestAnimationFrame(redraw);
 }
 
 // ------------------------------------------------------------ Gesamtschaltplan
 function renderGesamt(host) {
-  const model = gesamtModel(catalog, authored, {query: state.query, org: state.org, visibility: state.visibility});
+  const model = gesamtModel(catalog, {query: state.query, org: state.org, visibility: state.visibility});
   const rerender = () => renderGesamt(host);
   clear(host);
   const bar = el('div', 'os-toolbar'); bar.append(searchBox(rerender), select('Sichtbarkeit', model.visibilities, 'visibility', rerender, 'Alle'), kpi(model.total, model.hits, 'Module und Satelliten'));
@@ -265,7 +268,6 @@ function render() {
 async function load() {
   const status = part('status');
   status.className = 'os-muted'; status.textContent = 'Katalog wird geladen …';
-  try { authored = parseAuthored(authoredRaw); } catch (error) { status.textContent = error.message; status.className = 'os-problem'; return; }
   try { catalog = await loadCatalog({}); }
   catch (error) {
     catalog = null;

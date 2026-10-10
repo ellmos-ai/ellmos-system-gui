@@ -1,6 +1,7 @@
 // View models for System/Ocean (#2017 Schaltplan + Gesamtschaltplan, #2019 Satelliten).
-// Input: a catalog validated by parseCatalog() plus the AUTHORED architecture (areas, edges, layers). The authored part is
-// curated intent ("declared"), never a measurement; modules, counts and git facts come only from the catalog projection.
+// Input: a catalog validated by parseCatalog(). Its `architecture` (areas, edges, layers) is the CURATED intent projected by the
+// adapter from the authored Schaltplan file (basis "declared"), never a measurement; modules, counts and git facts come
+// from the other catalog sources. Without an available architecture every module is shown as unassigned.
 import {itemsOfType} from './catalog-projection.mjs';
 import {gitSnapshot} from './catalog-views.mjs';
 
@@ -13,28 +14,6 @@ export const viewFromSearch = search => {
   const view = new URLSearchParams(search).get('view');
   return VIEWS.some(v => v.id === view) ? view : VIEWS[0].id;
 };
-
-const isObject = v => !!v && typeof v === 'object' && !Array.isArray(v);
-const fail = what => { throw new Error('Architekturdaten ungültig: ' + what); };
-const bilingual = (v, where) => { if (!isObject(v) || typeof v.de !== 'string' || typeof v.en !== 'string') fail(where); return v; };
-
-export function parseAuthored(data) {
-  if (!isObject(data) || !isObject(data._meta) || data._meta.basis !== 'declared') fail('_meta.basis muss "declared" sein');
-  if (!Array.isArray(data.areas) || !data.areas.length || !Array.isArray(data.edges) || !Array.isArray(data.layers)) fail('areas/edges/layers');
-  const ids = new Set();
-  for (const area of data.areas) {
-    if (typeof area.id !== 'string' || !area.id || ids.has(area.id) || typeof area.dir !== 'string') fail('Bereich ' + area.id);
-    ids.add(area.id);
-    bilingual(area.name, 'name ' + area.id); bilingual(area.q, 'q ' + area.id); bilingual(area.desc, 'desc ' + area.id);
-  }
-  for (const edge of data.edges) {
-    if (!ids.has(edge.from) || !ids.has(edge.to)) fail('Kante verweist auf unbekannten Bereich');
-    bilingual(edge.label, 'edge.label'); bilingual(edge.desc, 'edge.desc');
-  }
-  for (const layer of data.layers) { bilingual(layer.n, 'layer.n'); bilingual(layer.d, 'layer.d'); }
-  if (!isObject(data.ui) || !isObject(data.ui.de) || !isObject(data.ui.en) || !isObject(data.icons)) fail('ui/icons');
-  return data;
-}
 
 // Status buckets follow the legacy map: ok = active/released, plan = planned, everything else with a value = dev.
 // No status at all stays "unknown" - it is never rounded up to "ok".
@@ -87,7 +66,8 @@ export function moduleCard(catalog, item) {
 }
 
 // ---------------------------------------------------------------- Schaltplan
-export function schaltplanModel(catalog, authored, filters = {}) {
+export function schaltplanModel(catalog, filters = {}) {
+  const authored = catalog.architecture;
   const modules = itemsOfType(catalog, 'module');
   const areaIds = new Set(authored.areas.map(a => a.id));
   const visible = item => matches(item, filters.query) && (!filters.publicOnly || isPublic(item));
@@ -98,7 +78,8 @@ export function schaltplanModel(catalog, authored, filters = {}) {
     {de: 'Kategorie nicht im kuratierten Schaltplan', en: 'Category not in the curated map'},
     {de: 'Diese Module tragen eine Kategorie, die der kuratierte Schaltplan nicht kennt. Sie sind nicht verdrahtet.', en: 'These modules carry a category the curated map does not know. They are not wired.'}, orphans) : null;
   return {
-    zones, unassigned, edges: authored.edges, layers: authored.layers,
+    zones, unassigned, edges: authored.edges, layers: authored.layers, icons: authored.icons, ui: authored.ui,
+    architecture: {available: authored.available, sourceId: authored.sourceId, note: authored.edgesNote},
     total: catalog.counts.module ?? 0, hits: modules.filter(visible).length,
     emptyZones: zones.filter(z => !z.modules.length).map(z => z.id),
   };
@@ -114,7 +95,8 @@ function entry(catalog, item) {
   };
 }
 
-export function gesamtModel(catalog, authored, filters = {}) {
+export function gesamtModel(catalog, filters = {}) {
+  const authored = catalog.architecture;
   const items = itemsOfType(catalog, 'module').concat(itemsOfType(catalog, 'satellite'));
   const all = items.map(item => entry(catalog, item));
   const areaIds = new Set(authored.areas.map(a => a.id));
