@@ -75,7 +75,8 @@ import TaskCreateForm from "../../components/TaskCreateForm.astro";
   .history-dialog-content,.history-message{margin-top:.8rem}
   .history-message pre{white-space:pre-wrap;overflow-wrap:anywhere;font-family:inherit;line-height:1.6}
   .history-message[data-role="user"]{border-left:3px solid var(--accent)}
-  #history-status[data-error="true"],.history-error{color:#fca5a5}
+  #history-status[data-error="true"],.history-error{color:color-mix(in srgb,var(--error) 65%,var(--text))}
+  #inbox-panel p a{color:color-mix(in srgb,var(--accent-light) 70%,var(--text));text-decoration:underline}
   #native-history [hidden]{display:none!important}
   [data-task-create-open="inbox-task-create"]{display:none}
   .inbox-columns{display:grid;grid-template-columns:minmax(17rem,1fr) minmax(0,2fr);gap:1rem;margin-top:1rem}
