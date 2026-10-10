@@ -84,7 +84,192 @@ export const GEMINI_AVATAR_PRESETS = [
     "name": "Task-Writer"
   }
 ];
-export const AVATAR_PRESETS = [...ATLAS_PRESETS,...GEMINI_AVATAR_PRESETS];
+// These choices use the existing image-upload storage contract.
+export const PORTABLE_AVATAR_PRESETS = [
+{
+    "id": "preset:comic-01-ati-technik",
+    "name": "ATI · Comic"
+  },
+  {
+    "id": "preset:comic-02-bueroassistenz",
+    "name": "Büro · Comic"
+  },
+  {
+    "id": "preset:comic-03-finanzassistenz",
+    "name": "Finanzen · Comic"
+  },
+  {
+    "id": "preset:comic-04-gesundheitsassistenz",
+    "name": "Gesundheit · Comic"
+  },
+  {
+    "id": "preset:comic-05-persoenliche-assistenz",
+    "name": "Persönliche Assistenz · Comic"
+  },
+  {
+    "id": "preset:comic-06-medienproduktion",
+    "name": "Medienproduktion · Comic"
+  },
+  {
+    "id": "preset:comic-07-forschung",
+    "name": "Forschung · Comic"
+  },
+  {
+    "id": "preset:comic-08-reflexion",
+    "name": "Reflexion · Comic"
+  },
+  {
+    "id": "preset:comic-09-versicherungen",
+    "name": "Versicherungen · Comic"
+  },
+  {
+    "id": "preset:comic-10-bewerbungen",
+    "name": "Bewerbungen · Comic"
+  },
+  {
+    "id": "preset:gemini-role-01-ati-developer",
+    "name": "ATI · Gemini"
+  },
+  {
+    "id": "preset:gemini-role-02-buero-office-assistant",
+    "name": "Büro · Gemini"
+  },
+  {
+    "id": "preset:gemini-role-03-finanz-finance-assistant",
+    "name": "Finanzen · Gemini"
+  },
+  {
+    "id": "preset:gemini-role-04-gesundheit-health-assistant",
+    "name": "Gesundheit · Gemini"
+  },
+  {
+    "id": "preset:gemini-role-05-persoenlich-personal-assistant",
+    "name": "Persönliche Assistenz · Gemini"
+  },
+  {
+    "id": "preset:gemini-role-06-produktion-media-producer",
+    "name": "Medienproduktion · Gemini"
+  },
+  {
+    "id": "preset:gemini-role-07-versicherung-protection-agent",
+    "name": "Versicherungen · Gemini"
+  },
+  {
+    "id": "preset:gemini-role-08-research-science-analyst",
+    "name": "Forschung · Gemini"
+  },
+  {
+    "id": "preset:gemini-role-09-test-qa-inspector",
+    "name": "Test & QA · Gemini"
+  },
+  {
+    "id": "preset:gemini-role-10-ocean-system-navigator",
+    "name": "Ocean · Systemnavigation · Gemini"
+  },
+  {
+    "id": "preset:robot-01-raupen-tueftler",
+    "name": "Roboter · Raupen-Tüftler"
+  },
+  {
+    "id": "preset:robot-02-schwebende-perle",
+    "name": "Roboter · Schwebende Perle"
+  },
+  {
+    "id": "preset:robot-03-kupfer-spinne",
+    "name": "Roboter · Kupfer-Spinne"
+  },
+  {
+    "id": "preset:robot-04-mint-gaertner",
+    "name": "Roboter · Mint-Gärtner"
+  },
+  {
+    "id": "preset:robot-05-roter-kugelbot",
+    "name": "Roboter · Roter Kugelbot"
+  },
+  {
+    "id": "preset:robot-06-lila-astronom",
+    "name": "Roboter · Lila Astronom"
+  },
+  {
+    "id": "preset:robot-07-teekessel-archivar",
+    "name": "Roboter · Teekessel-Archivar"
+  },
+  {
+    "id": "preset:robot-08-blauer-krabbenbot",
+    "name": "Roboter · Blauer Krabbenbot"
+  },
+  {
+    "id": "preset:robot-09-rosa-stoffbot",
+    "name": "Roboter · Rosa Stoffbot"
+  },
+  {
+    "id": "preset:robot-10-gruener-froschbot",
+    "name": "Roboter · Grüner Froschbot"
+  },
+  {
+    "id": "preset:fantasy-01-tuerkis-wolkenriese",
+    "name": "Monster · Türkiser Wolkenriese"
+  },
+  {
+    "id": "preset:fantasy-02-korall-gestaltwandler",
+    "name": "Monster · Korall-Gestaltwandler"
+  },
+  {
+    "id": "preset:fantasy-03-lila-traumsammler",
+    "name": "Monster · Lila Traumsammler"
+  },
+  {
+    "id": "preset:fantasy-04-orange-feuerfreund",
+    "name": "Monster · Oranger Feuerfreund"
+  },
+  {
+    "id": "preset:fantasy-05-mint-pflanzenhueter",
+    "name": "Monster · Mint-Pflanzenhüter"
+  },
+  {
+    "id": "preset:fantasy-06-blau-eiszauber",
+    "name": "Monster · Blauer Eiszauber"
+  },
+  {
+    "id": "preset:fantasy-07-gelb-lichtfunke",
+    "name": "Monster · Gelber Lichtfunke"
+  },
+  {
+    "id": "preset:fantasy-08-indigo-teleporter",
+    "name": "Monster · Indigo-Teleporter"
+  },
+  {
+    "id": "preset:fantasy-09-pfirsich-klangkuenstler",
+    "name": "Monster · Pfirsich-Klangkünstler"
+  },
+  {
+    "id": "preset:fantasy-10-rosa-sternenschweber",
+    "name": "Monster · Rosa Sternenschweber"
+  },
+  {
+    "id": "preset:fantasy-11-slime-smaragd",
+    "name": "Slime · Smaragd"
+  },
+  {
+    "id": "preset:fantasy-12-slime-himmelblau",
+    "name": "Slime · Himmelblau"
+  },
+  {
+    "id": "preset:fantasy-13-slime-rosa",
+    "name": "Slime · Rosa"
+  },
+  {
+    "id": "preset:fantasy-14-slime-goldgelb",
+    "name": "Slime · Goldgelb"
+  },
+  {
+    "id": "preset:fantasy-15-slime-violett",
+    "name": "Slime · Violett"
+  }
+
+];
+export const AVATAR_PRESETS = [...ATLAS_PRESETS,...GEMINI_AVATAR_PRESETS,...PORTABLE_AVATAR_PRESETS];
+let presetImages = Object.freeze({});
 let presetUrls = Object.freeze({});
 export function setAvatarPresetUrls(urls) {
   const next = {};
@@ -96,13 +281,29 @@ export function setAvatarPresetUrls(urls) {
   }
   presetUrls = Object.freeze(next);
 }
+export function setAvatarPresetImages(images) {
+  const next = {};
+  for (const preset of PORTABLE_AVATAR_PRESETS) {
+    const value = images?.[preset.id];
+    if (typeof value !== 'string' || value.length > 240000 ||
+        !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(value))
+      throw new Error('Porträtquelle nicht verfügbar.');
+    next[preset.id] = value;
+  }
+  if (new Set(Object.values(next)).size !== PORTABLE_AVATAR_PRESETS.length)
+    throw new Error('Porträtvorlagen müssen eindeutige Bilder verwenden.');
+  presetImages = Object.freeze(next);
+}
 const DEFAULTS = {buddha_chat:'companion',buddha_always_on:'guardian',buddha_connector:'connector',
   buddha_boss:'coordinator',buddha_developer:'engineer',buddha_research:'researcher',
   boss_routing:'coordinator',entwickler:'engineer',recherche:'researcher',connector:'connector'};
 
 export function avatarVisual(value, identity={}) {
-  if (typeof value === 'string' && value.length <= 240000 && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(value))
+  if (typeof value === 'string' && value.length <= 240000 && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(value)) {
+    const preset = PORTABLE_AVATAR_PRESETS.find(item => presetImages[item.id] === value);
+    if (preset) return {kind:'preset',id:preset.id,name:preset.name,asset:true,position:null};
     return {kind:'upload',url:value};
+  }
   const fallback = 'preset:' + (DEFAULTS[identity.id] || DEFAULTS[identity.role_id || identity.persona_role] || 'companion');
   const preset = AVATAR_PRESETS.find(item=>item.id===value) || AVATAR_PRESETS.find(item=>item.id===fallback);
   return {kind:'preset',id:preset.id,name:preset.name,asset:!('x' in preset),position:('x' in preset)?(preset.x*50)+'% '+(preset.y*100)+'%':null};
@@ -116,7 +317,7 @@ export function createAvatar(document, value, identity, atlasUrl, className='') 
   if(visual.kind==='upload') {element.src=visual.url;element.alt='';}
   else {
     if (visual.asset) {
-      const url=presetUrls[visual.id];
+      const url=presetImages[visual.id] || presetUrls[visual.id];
       if (!url) throw new Error('Porträtquelle nicht verfügbar.');
       element.dataset.avatarPreset=visual.id;
       element.style.backgroundImage='url("'+url+'")';
@@ -142,7 +343,7 @@ export function mountAvatarPicker(container,value,identity,atlasUrl,onSelect) {
     button.setAttribute('aria-pressed',String(selected.kind==='preset'&&selected.id===preset.id));
     button.append(createAvatar(container.ownerDocument,preset.id,identity,atlasUrl,'avatar-preset-image'));
     const name=container.ownerDocument.createElement('span');name.textContent=preset.name;button.append(name);
-    button.addEventListener('click',()=>onSelect(preset.id));container.append(button);
+    button.addEventListener('click',()=>onSelect(presetImages[preset.id] || preset.id));container.append(button);
   }
 }
 

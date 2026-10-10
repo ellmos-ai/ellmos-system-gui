@@ -1,0 +1,862 @@
+{
+  "schema": "ellmos-agent-portraits.sources.v1",
+  "date": "2026-10-10",
+  "originals_modified": false,
+  "files": [
+    {
+      "id": "preset:comic-01-ati-technik",
+      "name": "ATI · Comic",
+      "origin": "image_gen",
+      "source_file": "01-ati-technik.png",
+      "source_sha256": "6ce4e4c5eff1e7461fbfc000e19d5304ba1a7dee7395cb1ad96608714ceaa8c6",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "comic-01-ati-technik.png",
+      "sha256": "880af49168e8e39f7683b6f039729df37f90a340bbaa8364fae26824f9cee746",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 60541,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:comic-02-bueroassistenz",
+      "name": "Büro · Comic",
+      "origin": "image_gen",
+      "source_file": "02-bueroassistenz.png",
+      "source_sha256": "7225662cd89f0c865e2bcfd2cd3d8c3bb9f4e67aacc6c95f65294ed920ef5be8",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "comic-02-bueroassistenz.png",
+      "sha256": "fef2f39f8659fb0941ce723792d3bd0155622d0e4a050c8663f8101ff6b81e10",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 58266,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:comic-03-finanzassistenz",
+      "name": "Finanzen · Comic",
+      "origin": "image_gen",
+      "source_file": "03-finanzassistenz.png",
+      "source_sha256": "fdb7322f4d452f55ca484d035dd4d3636eafc9f5a384ca1c315714ef5813a2e5",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "comic-03-finanzassistenz.png",
+      "sha256": "f089700f2161b75b88ce4aea79f4431d2f45a00f70578f713d95da71394303c4",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 55669,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:comic-04-gesundheitsassistenz",
+      "name": "Gesundheit · Comic",
+      "origin": "image_gen",
+      "source_file": "04-gesundheitsassistenz.png",
+      "source_sha256": "20fa4e6bedecf02a2ed37ad713a68183f552c070a990f256d8bf091981460d3f",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "comic-04-gesundheitsassistenz.png",
+      "sha256": "244240f86812291eb0f071d0bfaef135e775deecf4cab07ce27edae643221982",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 56067,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:comic-05-persoenliche-assistenz",
+      "name": "Persönliche Assistenz · Comic",
+      "origin": "image_gen",
+      "source_file": "05-persoenliche-assistenz.png",
+      "source_sha256": "6c1568b9858c6ccadfa7f10a692b1e55c2e21d0ca00d72eff144cdd3c80b4b1b",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "comic-05-persoenliche-assistenz.png",
+      "sha256": "0f1f2e7229a983bd3500f490aeac349765dc9472b6d56f8b216143934d51165b",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 59697,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:comic-06-medienproduktion",
+      "name": "Medienproduktion · Comic",
+      "origin": "image_gen",
+      "source_file": "06-medienproduktion.png",
+      "source_sha256": "f3e31b07ebca0341eef9ab256f6c7acf09a65e96ea9edc6339ef2d5b3572158c",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "comic-06-medienproduktion.png",
+      "sha256": "6f0b0e1c17efebb545f56716efff32806b18b7116b0c36e7bef99947d5e8b803",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 64577,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:comic-07-forschung",
+      "name": "Forschung · Comic",
+      "origin": "image_gen",
+      "source_file": "07-forschung.png",
+      "source_sha256": "ac6031e5e000c03dc2e1d7d84d261426a8d839303c21be867f313096dc890119",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "comic-07-forschung.png",
+      "sha256": "5f2ddcf8fdb5b259cbac5b4ff362620af6e0cdf8a72826224288437d934581c2",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 56549,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:comic-08-reflexion",
+      "name": "Reflexion · Comic",
+      "origin": "image_gen",
+      "source_file": "08-reflexion.png",
+      "source_sha256": "e537842736f78f5a22fda22dc38d94efd1b5c293c30598622a4aa7f4c84f17a1",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "comic-08-reflexion.png",
+      "sha256": "d6b6a6e1c299a83b933a47619f56097f86439f2a3921dae2ffce8e36bd9e7cb0",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 56583,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:comic-09-versicherungen",
+      "name": "Versicherungen · Comic",
+      "origin": "image_gen",
+      "source_file": "09-versicherungen.png",
+      "source_sha256": "ab84c43ad2ce7269a4617429133e3aaea7c72efd4b26ad91894eddd8d0f189dc",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "comic-09-versicherungen.png",
+      "sha256": "e348ca193f8df3a9f76dfda1a79425d7b91bb1d8afae95baf0c99f6d6451415f",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 55469,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:comic-10-bewerbungen",
+      "name": "Bewerbungen · Comic",
+      "origin": "image_gen",
+      "source_file": "10-bewerbungen.png",
+      "source_sha256": "320b3202100518a04e2bcc9a36d351a05ff7eddb6a1f1c6676aa09770a63db1f",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "comic-10-bewerbungen.png",
+      "sha256": "323b4f4cd6d0d3456cb2921aa62c10ce53bfa637c898f2c8f0441f852f1a4d3b",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 57049,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:gemini-role-01-ati-developer",
+      "name": "ATI · Gemini",
+      "origin": "Gemini",
+      "source_file": "01_ati_developer.png",
+      "source_sha256": "39c4fd30e3b5417268eb686386dfafd8e8d4a55738294deef3ae7921da4943ea",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "file": "gemini-role-01-ati-developer.png",
+      "sha256": "3ba30c7cfb7740669c5446563459e190e76328eed7abdb59948c8b5e78745fa6",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 47371,
+      "preparation": "256-pixel PNG thumbnail via sharp 0.35.5; no crop"
+    },
+    {
+      "id": "preset:gemini-role-02-buero-office-assistant",
+      "name": "Büro · Gemini",
+      "origin": "Gemini",
+      "source_file": "02_buero_office_assistant.png",
+      "source_sha256": "07a8670353673971c27fa082bd21fa16bb002c7e73c9e3fd800771c1d8bdc931",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "file": "gemini-role-02-buero-office-assistant.png",
+      "sha256": "a2b067ea6a44cc4db65281cc54247596f2da857ee32036b46b688ca7d220f2d7",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 61823,
+      "preparation": "256-pixel PNG thumbnail via sharp 0.35.5; no crop"
+    },
+    {
+      "id": "preset:gemini-role-03-finanz-finance-assistant",
+      "name": "Finanzen · Gemini",
+      "origin": "Gemini",
+      "source_file": "03_finanz_finance_assistant.png",
+      "source_sha256": "9380b973e97335b75bf2509f98c840b03026aa68eacaaa7efd473925ad787f5c",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "file": "gemini-role-03-finanz-finance-assistant.png",
+      "sha256": "7b111adc15a6f77f7d309dddeee3994e7a7c8c757fefd5febf7a8012aa70132b",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 102939,
+      "preparation": "256-pixel PNG thumbnail via sharp 0.35.5; no crop"
+    },
+    {
+      "id": "preset:gemini-role-04-gesundheit-health-assistant",
+      "name": "Gesundheit · Gemini",
+      "origin": "Gemini",
+      "source_file": "04_gesundheit_health_assistant.png",
+      "source_sha256": "3662f199b1820ae989ccc181e47d28606847a15ee913a3bbbae5d273488ada1e",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "file": "gemini-role-04-gesundheit-health-assistant.png",
+      "sha256": "4dffa4df07aee8c13a128067f8e58599cf015632ea7ef8a96f02288462430d47",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 54453,
+      "preparation": "256-pixel PNG thumbnail via sharp 0.35.5; no crop"
+    },
+    {
+      "id": "preset:gemini-role-05-persoenlich-personal-assistant",
+      "name": "Persönliche Assistenz · Gemini",
+      "origin": "Gemini",
+      "source_file": "05_persoenlich_personal_assistant.png",
+      "source_sha256": "9363355a8ea535b05ccf776724255ae3da0b8e8d28849f3c5d0c16c8649cca7b",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "file": "gemini-role-05-persoenlich-personal-assistant.png",
+      "sha256": "6263f8cdd43ce0e23114e18b96ac98377457cb3ae5e4bbdb8e71d5ce1e827f21",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 60126,
+      "preparation": "256-pixel PNG thumbnail via sharp 0.35.5; no crop"
+    },
+    {
+      "id": "preset:gemini-role-06-produktion-media-producer",
+      "name": "Medienproduktion · Gemini",
+      "origin": "Gemini",
+      "source_file": "06_produktion_media_producer.png",
+      "source_sha256": "113d114afdbc6d33669a1c9e0e814419e8cb8cc6fdb7e512acc9b50249fcba35",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "file": "gemini-role-06-produktion-media-producer.png",
+      "sha256": "db6127d69b76013d3a5a9c8d6efe1b9b73ad6c62d7e2154b199369a423baae09",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 59668,
+      "preparation": "256-pixel PNG thumbnail via sharp 0.35.5; no crop"
+    },
+    {
+      "id": "preset:gemini-role-07-versicherung-protection-agent",
+      "name": "Versicherungen · Gemini",
+      "origin": "Gemini",
+      "source_file": "07_versicherung_protection_agent.png",
+      "source_sha256": "c3f7c5a821d8fa5eac14d9b1020c18f5118defdcc46065104f54f718f107b9da",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "file": "gemini-role-07-versicherung-protection-agent.png",
+      "sha256": "86e010db54f94fd8c2e4e49656d6d02d49c1c673a14acea5f161c3ca176b8138",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 63993,
+      "preparation": "256-pixel PNG thumbnail via sharp 0.35.5; no crop"
+    },
+    {
+      "id": "preset:gemini-role-08-research-science-analyst",
+      "name": "Forschung · Gemini",
+      "origin": "Gemini",
+      "source_file": "08_research_science_analyst.png",
+      "source_sha256": "a716f5eb962d6d49cee2a016f504bc830aea04e9e7874a2a1a8f758d2a790a11",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "file": "gemini-role-08-research-science-analyst.png",
+      "sha256": "7d4e6ebd72f99e26ad23c6e4b6c83a5408d7dccece69c76643132b53c43c0302",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 79172,
+      "preparation": "256-pixel PNG thumbnail via sharp 0.35.5; no crop"
+    },
+    {
+      "id": "preset:gemini-role-09-test-qa-inspector",
+      "name": "Test & QA · Gemini",
+      "origin": "Gemini",
+      "source_file": "09_test_qa_inspector.png",
+      "source_sha256": "c03898bf61e7aa73b450afe2da1def464f580fe8d7a6c2bc30df8c9dba98397d",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "file": "gemini-role-09-test-qa-inspector.png",
+      "sha256": "3415f0b9e0f1989d15179f7738f5014c0229b8ffc1d9ab1c2da4aee386eaa138",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 88435,
+      "preparation": "256-pixel PNG thumbnail via sharp 0.35.5; no crop"
+    },
+    {
+      "id": "preset:gemini-role-10-ocean-system-navigator",
+      "name": "Ocean · Systemnavigation · Gemini",
+      "origin": "Gemini",
+      "source_file": "10_ocean_system_navigator.png",
+      "source_sha256": "f6a684c1b9aa94bb12d154bd130a4a4c3fb7f29dfa452d220780e4df027fd44e",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "file": "gemini-role-10-ocean-system-navigator.png",
+      "sha256": "9e95614f5c322f278c6461a38d2e7528e74b076ad87c3862c29ae5c49ece2559",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 83461,
+      "preparation": "256-pixel PNG thumbnail via sharp 0.35.5; no crop"
+    },
+    {
+      "id": "preset:robot-01-raupen-tueftler",
+      "name": "Roboter · Raupen-Tüftler",
+      "origin": "image_gen",
+      "source_file": "01-raupen-tueftler.png",
+      "source_sha256": "52c8e7ebf3219ccbfa741d9b8c7696b389926c14c43c798f3a74447fb795ae85",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "robot-01-raupen-tueftler.png",
+      "sha256": "977c27c057a5f79c78eb9363056cc711552f189f6b45c802a81660235f0ca100",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 90577,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:robot-02-schwebende-perle",
+      "name": "Roboter · Schwebende Perle",
+      "origin": "image_gen",
+      "source_file": "02-schwebende-perle.png",
+      "source_sha256": "f509d08d095a720d36540f8bc247eb342354bdb977f6f7e42ad1e16fd7400850",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "robot-02-schwebende-perle.png",
+      "sha256": "4147a8452eeab3ec7a3d5ba696c408781efd362f6d4e8755c801056d3269b5d4",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 85735,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:robot-03-kupfer-spinne",
+      "name": "Roboter · Kupfer-Spinne",
+      "origin": "image_gen",
+      "source_file": "03-kupfer-spinne.png",
+      "source_sha256": "867d2675675fc6e1956da5ff5c4d7cf99c21852ad0976fa1ba23e5eb924d1168",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "robot-03-kupfer-spinne.png",
+      "sha256": "3758d76ecfeab298ba268565c4633d0dcd1c9c2e24b633e0edaba265821797dd",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 106519,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:robot-04-mint-gaertner",
+      "name": "Roboter · Mint-Gärtner",
+      "origin": "image_gen",
+      "source_file": "04-mint-gaertner.png",
+      "source_sha256": "562217f57b9c72989c6b2dec6ac3080a167ef632c4b3d342fe599e6ec68735db",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "robot-04-mint-gaertner.png",
+      "sha256": "b1684fff6c8f6577bdc522c31836de7bbac809a8d42d1ec2eadfcb3a33cbc232",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 96609,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:robot-05-roter-kugelbot",
+      "name": "Roboter · Roter Kugelbot",
+      "origin": "image_gen",
+      "source_file": "05-roter-kugelbot.png",
+      "source_sha256": "2d6232fe0f81c7c3522d2d3592322eae830c4a90848eae3b88d63c9045dc089a",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "robot-05-roter-kugelbot.png",
+      "sha256": "1126bea1d1115c921713c6ffdea7497f755b3895fd5abe308e25810df4b6c152",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 96103,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:robot-06-lila-astronom",
+      "name": "Roboter · Lila Astronom",
+      "origin": "image_gen",
+      "source_file": "06-lila-astronom.png",
+      "source_sha256": "94261761fc97d873d322696d3ac37464ab263a4ed302410e2d001336ea80282c",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "robot-06-lila-astronom.png",
+      "sha256": "949e29964884a8b4c86ca03a01f2852edaa05663ba9b48d18422d6afca688aed",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 89949,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:robot-07-teekessel-archivar",
+      "name": "Roboter · Teekessel-Archivar",
+      "origin": "image_gen",
+      "source_file": "07-teekessel-archivar.png",
+      "source_sha256": "c8eb6cdc79b6096ecde8445933debda6aff82109470521d7339be8ffce809a12",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "robot-07-teekessel-archivar.png",
+      "sha256": "8327b6063b1e7b1ca890108ced6ba96f48335b459942b824ff33c93c6dbc6761",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 106409,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:robot-08-blauer-krabbenbot",
+      "name": "Roboter · Blauer Krabbenbot",
+      "origin": "image_gen",
+      "source_file": "08-blauer-krabbenbot.png",
+      "source_sha256": "dfc6999017e038dae9e08ce38727b0170ef38e772f4e13ed94883251922eec79",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "robot-08-blauer-krabbenbot.png",
+      "sha256": "67fdaf033715587938fbdb3e03dff973bd873019288698a22b707f2a47bb4455",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 100442,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:robot-09-rosa-stoffbot",
+      "name": "Roboter · Rosa Stoffbot",
+      "origin": "image_gen",
+      "source_file": "09-rosa-stoffbot.png",
+      "source_sha256": "7a7811178856f84c59bd9ea400e0be0a48eb14cd6967df614e22fe438552c78c",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "robot-09-rosa-stoffbot.png",
+      "sha256": "81f57145b075476339848110b36ff9b352e97c60c4c66ad1cf70f504e40916f2",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 103717,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:robot-10-gruener-froschbot",
+      "name": "Roboter · Grüner Froschbot",
+      "origin": "image_gen",
+      "source_file": "10-gruener-froschbot.png",
+      "source_sha256": "eb9fe407e6fc15ca59c83de7417f4522fd7e6c1eb194de5b730ea4d3049525a8",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "robot-10-gruener-froschbot.png",
+      "sha256": "f24739dfa18d6e2f96c86adbe9c81374fcdde760b6dc7a66884efb3ea1886f99",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 98887,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-01-tuerkis-wolkenriese",
+      "name": "Monster · Türkiser Wolkenriese",
+      "origin": "image_gen",
+      "source_file": "01-tuerkis-wolkenriese.png",
+      "source_sha256": "ae9ebd1c2e56bad081076b43ef1ac509f005524b4cc131a6d0c7757142559f63",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-01-tuerkis-wolkenriese.png",
+      "sha256": "b88f1d8ebe2d7d1494acce0a21704c984d4180accb2aaad28c2036d82ad82e50",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 65521,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-02-korall-gestaltwandler",
+      "name": "Monster · Korall-Gestaltwandler",
+      "origin": "image_gen",
+      "source_file": "02-korall-gestaltwandler.png",
+      "source_sha256": "5d8604fab14b09eef962c57048ffff2240d2d86cb2949a5716d6215cfe3a4f6a",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-02-korall-gestaltwandler.png",
+      "sha256": "08349423b16ed293c9f07efa1c844ca826c7a53e7441f1413892ff194b173270",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 67966,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-03-lila-traumsammler",
+      "name": "Monster · Lila Traumsammler",
+      "origin": "image_gen",
+      "source_file": "03-lila-traumsammler.png",
+      "source_sha256": "346fc0e90599e98e4da00304cdee81b48de0099ea1f8f156100f8da5af50b01e",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-03-lila-traumsammler.png",
+      "sha256": "5f361b52204818cd8fedf9c2688e053a89842bfb3128d8508ece658ac1df9d03",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 88919,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-04-orange-feuerfreund",
+      "name": "Monster · Oranger Feuerfreund",
+      "origin": "image_gen",
+      "source_file": "04-orange-feuerfreund.png",
+      "source_sha256": "e15fa323cc3ee104020470fc720c034dbe661e4c062811611b95c524b64e94b0",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-04-orange-feuerfreund.png",
+      "sha256": "ac51bc78d77fc86f00dee5fd1f446d9a0a41c117e4a1f5b4a8b54ca6789e11f3",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 79367,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-05-mint-pflanzenhueter",
+      "name": "Monster · Mint-Pflanzenhüter",
+      "origin": "image_gen",
+      "source_file": "05-mint-pflanzenhueter.png",
+      "source_sha256": "68f090c4d5cce72c2771f2e97aeb3cacd9124b7e48f5a0d2f054f0b688737e11",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-05-mint-pflanzenhueter.png",
+      "sha256": "b0d1e18f94beb3f18b21f78a3795fbc709a8604db82fa884a31d175b1fddd7a4",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 84840,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-06-blau-eiszauber",
+      "name": "Monster · Blauer Eiszauber",
+      "origin": "image_gen",
+      "source_file": "06-blau-eiszauber.png",
+      "source_sha256": "7db92a99ad1885faacfa2425f1462023a422c366fb21ec0a74ef3090d7a7b6e1",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-06-blau-eiszauber.png",
+      "sha256": "d25dd31cec1a858cc6eb53f73ed80ff43ce26933336d54eed1f9ffa67d39c209",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 77055,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-07-gelb-lichtfunke",
+      "name": "Monster · Gelber Lichtfunke",
+      "origin": "image_gen",
+      "source_file": "07-gelb-lichtfunke.png",
+      "source_sha256": "fdae2e678dcd1cd0217148a7cdb5c138e2cb3b0ea411f0f0b72930ce39f5ed7f",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-07-gelb-lichtfunke.png",
+      "sha256": "f08b54d35c99ed5939973da0d8ac09afeff5baee34b1acddec5836fabffd9e01",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 74656,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-08-indigo-teleporter",
+      "name": "Monster · Indigo-Teleporter",
+      "origin": "image_gen",
+      "source_file": "08-indigo-teleporter.png",
+      "source_sha256": "1569ca368a4ad9527dab2e6eb84e67f39cf5a8f4a1cfa7b266c889b0a8b6d14a",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-08-indigo-teleporter.png",
+      "sha256": "588fb83caed50dd12468c590de4fdf308d248bc01934df7c5478e2a97869e706",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 83904,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-09-pfirsich-klangkuenstler",
+      "name": "Monster · Pfirsich-Klangkünstler",
+      "origin": "image_gen",
+      "source_file": "09-pfirsich-klangkuenstler.png",
+      "source_sha256": "bdcf9eba32c01016c8ae8a5350538ab8610bc906719275f05f54fa95db5c0cab",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-09-pfirsich-klangkuenstler.png",
+      "sha256": "021994474d9001cb6f3b74332904193918c065bbe96c3c6f368f242c085839e2",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 76727,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-10-rosa-sternenschweber",
+      "name": "Monster · Rosa Sternenschweber",
+      "origin": "image_gen",
+      "source_file": "10-rosa-sternenschweber.png",
+      "source_sha256": "b9e3553b084232532f40bd300d2ce8d64320ce32f13d248e90480a35accd3a46",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-10-rosa-sternenschweber.png",
+      "sha256": "82735a5c284ef186d864107ffc083c44786cbad549da6276199407bbe500d686",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 83812,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-11-slime-smaragd",
+      "name": "Slime · Smaragd",
+      "origin": "image_gen",
+      "source_file": "11-slime-smaragd.png",
+      "source_sha256": "9378331cd5121629cf2db89a1c4696a60cf63b8a6e8b7838cdf67bff00882d08",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-11-slime-smaragd.png",
+      "sha256": "069efe6b4bada88c1dec500f7f23ae91fe927eeed2e204e2e4304497b580263d",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 82078,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-12-slime-himmelblau",
+      "name": "Slime · Himmelblau",
+      "origin": "image_gen",
+      "source_file": "12-slime-himmelblau.png",
+      "source_sha256": "fcc5bade44ea7ff6c7ca5e0c723ef8c40c86cb0118f7341648c0ee98f5201b7a",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-12-slime-himmelblau.png",
+      "sha256": "697dc46f50dbf2f1a876b7709330db99934d2dc37f49d0e96aab13de6c4da78f",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 72435,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-13-slime-rosa",
+      "name": "Slime · Rosa",
+      "origin": "image_gen",
+      "source_file": "13-slime-rosa.png",
+      "source_sha256": "07e11135cf87923847579f97bf75859cf2d41af912863a58f26e3f01b1760da0",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-13-slime-rosa.png",
+      "sha256": "1f3fb4d9ddd32e0f5eb46672322e1bf896b5cedad6fea33e016577f1f484c70f",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 73605,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-14-slime-goldgelb",
+      "name": "Slime · Goldgelb",
+      "origin": "image_gen",
+      "source_file": "14-slime-goldgelb.png",
+      "source_sha256": "c3da7489c6e501c6a6e9d7c714c2b7c72e68fc94d946bab7aa8139bb7e440ca2",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-14-slime-goldgelb.png",
+      "sha256": "a630b4a5b28efbc300cf76440b7785e7cb312cb951ede015a2fce40bdd625886",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 79269,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-15-slime-violett",
+      "name": "Slime · Violett",
+      "origin": "image_gen",
+      "source_file": "15-slime-violett.png",
+      "source_sha256": "b69d30a18270a9dd284955c03fd388ecaa7d819471c218487465bde81422cbf3",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-15-slime-violett.png",
+      "sha256": "f9a3dc979a9ff4e4a89b1fbdadc44b14ad468339219510e5d7da3ed91320bb70",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 82422,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    }
+  ]
+}
