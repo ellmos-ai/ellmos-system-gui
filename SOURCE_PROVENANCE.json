@@ -45,7 +45,7 @@
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "57c14deae14d57a65c7e96236a6107a7e11b4425a8d5f52d1784c7f6f8b21834",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
-    "src/pages/governance/index.astro": "fe59dfe98bf013287b3e459152e3d6fd7faf14ccb4ea76e895c8610c482998da",
+    "src/pages/governance/index.astro": "cdbafcc6f34eb479d82b4f8cd4cd48ac3b4a67076058c9178b8548b0c5b33546",
     "src/pages/governance/logs.astro": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
     "src/pages/governance/usecases.astro": "82cb21703924d21941b73bfb6dfc7cd73a493e69e2fe9c3be5fdaa7c66cdd15b",
     "src/pages/index.astro": "35342c625e3fb6676e11848f4d0d36ec77e5858e82ecc6260156df258b55b1e6",
@@ -386,7 +386,7 @@
         "src/pages/governance/index.astro": {
           "source_path": "system/gui/web/src/pages/governance/index.astro",
           "source_sha256": "7e97d0d5130ff9d0161b836f37783c6ef4db3a5f0d2b3d3ce2b19ff48610c503",
-          "imported_sha256": "fe59dfe98bf013287b3e459152e3d6fd7faf14ccb4ea76e895c8610c482998da",
+          "imported_sha256": "cdbafcc6f34eb479d82b4f8cd4cd48ac3b4a67076058c9178b8548b0c5b33546",
           "adapted": true
         },
         "src/pages/governance/logs.astro": {
