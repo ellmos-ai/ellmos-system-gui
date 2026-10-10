@@ -1,18 +1,21 @@
 ---
 import BachLayout from "../../layouts/BachLayout.astro";
+import TaskCreateForm from "../../components/TaskCreateForm.astro";
 ---
 <BachLayout title="Sessions & Protokolle" currentPath="/agenten/sessions">
   <section id="native-history" aria-label="Sessions und Protokolle" class="history-container">
     <header class="history-heading">
-      <div><h1>📜 Sessions & Protokolle</h1><p class="text-muted">Gespeicherte Dialoge, Aufgabenereignisse und Gedächtnisnotizen.</p></div>
+      <div><h1>📜 Sessions & Protokolle</h1><p class="text-muted">Gespeicherte Dialoge, Aufgabenereignisse, Gedächtnisnotizen und deine Nutzer-Inbox.</p></div>
       <button id="history-refresh" class="btn btn-secondary" type="button">🔄 Aktualisieren</button>
     </header>
     <nav class="history-tabs" aria-label="Verlaufsquelle">
       <button class="btn btn-secondary" type="button" data-history-tab="sessions" aria-pressed="true">💬 Dialoge</button>
       <button class="btn btn-secondary" type="button" data-history-tab="tasks" aria-pressed="false">📋 Taskereignisse</button>
       <button class="btn btn-secondary" type="button" data-history-tab="notes" aria-pressed="false">📝 Gedächtnisnotizen</button>
+      <button class="btn btn-secondary" type="button" data-history-tab="inbox" aria-pressed="false">✉️ Nutzer-Inbox</button>
       <a class="btn btn-secondary" href="/memory">🧠 Gedächtnis & Prozessmodell</a>
     </nav>
+    <div id="history-panel" class="history-panel">
     <section id="history-session-filters" class="history-filters" aria-label="Dialogfilter">
       <label>Dialogkontext<select id="history-profile"><option value="">Systemslots & globale Dialoge</option></select></label>
       <label>Speicherstand<select id="history-archive"><option value="all">Alle gespeicherten Ausschnitte</option><option value="current">Aktuell gespeichert</option><option value="archived">Archiviert</option></select></label>
@@ -32,6 +35,24 @@ import BachLayout from "../../layouts/BachLayout.astro";
       <button id="history-next" class="btn btn-secondary btn-sm" type="button" disabled>Weitere →</button>
     </div>
     <div id="history-content" class="history-list"></div>
+    </div>
+    <section id="inbox-panel" aria-label="Nutzer-Inbox" hidden>
+      <div class="history-filters">
+        <label>Status<select id="inbox-status"><option value="all">Alle · ohne Archiv</option><option value="unread">Ungelesen</option><option value="read">Gelesen</option><option value="archived">Archiv</option></select></label>
+        <form id="inbox-search-form" class="history-filters"><label for="inbox-search">Suche</label><input id="inbox-search" type="search" maxlength="300" placeholder="Betreff, Inhalt oder Absender"><button class="btn btn-secondary" type="submit">Suchen</button></form>
+        <span id="inbox-count" role="status">Lade Nachrichten …</span>
+      </div>
+      <p id="inbox-error" class="history-error" role="alert" hidden></p>
+      <div class="inbox-columns">
+        <section aria-label="Nachrichten"><div id="inbox-list"></div>
+          <div class="history-pager"><button id="inbox-back" class="btn btn-secondary btn-sm" disabled type="button">← Zurück</button><span id="inbox-page" aria-live="polite"></span><button id="inbox-next" class="btn btn-secondary btn-sm" disabled type="button">Weitere →</button></div></section>
+        <section class="history-card" aria-labelledby="inbox-detail-title"><h2 id="inbox-detail-title">Nachricht auswählen</h2><p id="inbox-detail-meta" class="text-muted"></p>
+          <div id="inbox-actions" hidden><button id="inbox-toggle-read" class="btn btn-secondary" type="button"></button><button id="inbox-archive" class="btn btn-secondary" type="button">Archivieren</button><button id="inbox-make-task" class="btn btn-secondary" type="button">Als Task anlegen</button></div>
+          <div id="inbox-body"></div></section>
+      </div>
+      <p class="text-muted">Dialog mit dem Assistenten: <a href="/chat">Persönlicher Assistent</a> · Aufgaben zuweisen: <a href="/tasks">Taskboard</a>. Eine Aufgabe aus der Nachricht wird nur angelegt, nicht gestartet.</p>
+      <TaskCreateForm id="inbox-task-create" label="Neue Aufgabe" />
+    </section>
     <dialog id="history-dialog" class="history-dialog" aria-labelledby="history-dialog-title">
       <header class="history-heading"><h2 id="history-dialog-title">Gespeicherter Dialog</h2><button class="btn btn-secondary" type="button" data-close>Schließen</button></header>
       <div id="history-dialog-content"></div>
@@ -56,5 +77,13 @@ import BachLayout from "../../layouts/BachLayout.astro";
   .history-message[data-role="user"]{border-left:3px solid var(--accent)}
   #history-status[data-error="true"],.history-error{color:#fca5a5}
   #native-history [hidden]{display:none!important}
+  [data-task-create-open="inbox-task-create"]{display:none}
+  .inbox-columns{display:grid;grid-template-columns:minmax(17rem,1fr) minmax(0,2fr);gap:1rem;margin-top:1rem}
+  #inbox-body{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;margin-top:1rem}
+  #inbox-actions:not([hidden]){display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+  .inbox-message{width:100%;text-align:left;display:grid;gap:.4rem;background:var(--bg-card);color:var(--text);border:1px solid var(--border);padding:.9rem;border-radius:8px;margin-bottom:.5rem;cursor:pointer;overflow-wrap:anywhere}
+  .inbox-message[aria-pressed="true"]{border-color:var(--accent)}
+  .inbox-message small{color:var(--text-muted)}
+  @media(max-width:760px){.inbox-columns{grid-template-columns:minmax(0,1fr)}}
 </style>
-<script>import '../../scripts/agent-history.mjs';</script>
+<script>import '../../scripts/agent-history.mjs';import '../../scripts/user-inbox-tab.mjs';</script>
