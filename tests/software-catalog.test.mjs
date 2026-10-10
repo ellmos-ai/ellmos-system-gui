@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {INVENTORIES} from '../src/lib/capability-board-client.mjs';
+import {INVENTORIES, describeSourceError} from '../src/lib/capability-board-client.mjs';
 import {catalogMatches, publicationLabel, safePublicationUrl} from '../src/lib/software-catalog.mjs';
 
 test('application catalog and Ocean source inventory use separate adapters', () => {
@@ -31,7 +31,7 @@ test('refresh failures clear stale applications and show the actual failure', as
   let answer = {kind:'software', catalog:'software-applications', items:[{name:'Routinika'}]};
   const nodes = {'board-status':{textContent:''},'board-refresh':{disabled:false}};
   const context = vm.createContext({
-    kind:'software', INVENTORIES, catalogMatches,
+    kind:'software', INVENTORIES, catalogMatches, describeSourceError,
     byId: id => nodes[id] || null,
     renderItems: () => {},
     requestJson: async () => {if (answer instanceof Error) throw answer; return answer;}

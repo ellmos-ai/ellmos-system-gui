@@ -140,7 +140,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     .task-edit-grid label { min-width:0; display:flex; flex-direction:column; gap:.35rem; }
     .task-edit-grid input,.task-edit-grid select,.task-edit-grid textarea { min-width:0; width:100%; box-sizing:border-box; padding:.6rem; background:var(--bg-dark); color:var(--text); border:1px solid var(--border); border-radius:var(--radius-sm); font:inherit; }
     .task-edit-wide { grid-column:1/-1; }
-    #task-detail-error { color:var(--error); overflow-wrap:anywhere; }
+    #task-detail-error { color:var(--error-text); overflow-wrap:anywhere; }
     @media (max-width:620px) { .task-detail-grid,.task-edit-grid { grid-template-columns:minmax(0,1fr); } .task-edit-wide { grid-column:auto; } }
   </style>
 
@@ -248,7 +248,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
                       <button class="btn" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="completeTask(${Number(t.id)})">
                         ✓ Erledigt
                       </button>
-                    ` : (isDone ? '<span style="color:var(--success);font-size:0.8rem;">✓ Erledigt</span>' : '<span style="color:var(--text-muted);font-size:0.8rem;">Beendet</span>')}
+                    ` : (isDone ? '<span style="color:var(--success-text);font-size:0.8rem;">✓ Erledigt</span>' : '<span style="color:var(--text-muted);font-size:0.8rem;">Beendet</span>')}
                   </td>
                 </tr>
               `;
