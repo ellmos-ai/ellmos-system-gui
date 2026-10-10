@@ -1,6 +1,7 @@
 ---
 // running.astro - Living & Running: Einsatzbereite Agenten, Teams, Running Slots & Konnektivität
 import BachLayout from "../../layouts/BachLayout.astro";
+import ModelSockets from '../../components/ModelSockets.astro';
 import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
@@ -174,22 +175,25 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
   <!-- 5. ANSICHT: RUNNING AGENTS & SYSTEMSLOTS -->
   <details class="card collapsible-section" aria-labelledby="core-agents-title" style="margin-bottom:1.5rem;">
-<summary class="card-header"><span><span class="card-title" id="core-agents-title">Systemslots</span><span class="section-description">Status und Besetzung der Systemsteckplätze.</span></span></summary>
+<summary class="card-header"><span><span class="card-title" id="core-agents-title">Modellsteckplätze & Agentenslots</span><span class="section-description">Lokale Modelle und ihre zugeordneten Agenten.</span></span></summary>
+
+    <ModelSockets />
 
     <!-- Systemsteckplätze (Persönlicher Assistent, Hintergrundworker, Connector, Erweiterungsplatz) -->
-    <div style="margin:1rem 0;">
+    <details style="margin:1rem 0;">
+      <summary style="cursor:pointer;font-weight:600">Agentenprofile bearbeiten</summary>
       <h3 style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">
-        Besetzung der System-Steckplätze:
+        Vorhandene Systemprofile:
       </h3>
       <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
-        Jeder Steckplatz kann einen Chat führen. Boss- und Expertenrollen lassen sich als eigene Steckplätze anlegen. Lokale Modelle teilen eine Inferenz; der Vordergrund hat Vorrang.
+        Profile legen Rolle, Hauptmodell und Verhalten fest. Ein lokales Haupt- oder Fallbackmodell benötigt zusätzlich eine Zuordnung zum passenden Modellsteckplatz. Vollständig externe Agenten benötigen keine lokalen Slots.
       </p>
 
       <div id="core-agent-feedback" role="status" aria-live="polite"></div>
       <div id="core-agent-cards" class="core-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;">
         <p class="loading-state">System-Agenten werden geprüft…</p>
       </div>
-    </div>
+    </details>
 
   </details>
 
@@ -285,7 +289,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
   <dialog id="core-slot-editor" class="core-slot-modal" data-portrait-atlas={portraitAtlas.src} data-ticket-symbols={JSON.stringify(TICKET_SYMBOL_URLS)}>
     <form onsubmit="event.preventDefault();saveCoreSlot()">
       <header style="display:flex;justify-content:space-between;align-items:center;gap:1rem">
-        <h2 id="core-slot-title">Steckplatz bearbeiten</h2>
+        <h2 id="core-slot-title">Agentenprofil bearbeiten</h2>
         <button type="button" class="btn btn-sm" onclick="document.getElementById('core-slot-editor').close()" aria-label="Schließen">✕</button>
       </header>
       <div id="core-slot-fields" class="core-fields"></div>
@@ -302,7 +306,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <footer class="core-actions">
         <button type="submit" class="btn btn-primary">Speichern</button>
         <button id="core-slot-reset" type="button" class="btn" onclick="resetCoreSlot()">Werkstandard</button>
-        <button id="core-slot-delete" type="button" class="btn" onclick="deleteCoreSlot()">Steckplatz löschen</button>
+        <button id="core-slot-delete" type="button" class="btn" onclick="deleteCoreSlot()">Agentenprofil löschen</button>
       </footer>
     </form>
   </dialog>
@@ -626,6 +630,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       coreConfigVersion = data.configuration_version;
       coreAgents = data.agents;
       coreCatalog = data;
+      if (typeof window.dispatchEvent === 'function' && typeof window.CustomEvent === 'function')
+        window.dispatchEvent(new window.CustomEvent('bach:core-config-observed', {detail:{configuration_version:data.configuration_version}}));
       renderRunningSystemSlots(coreAgents);
       const target = document.getElementById('core-agent-cards');
       target.replaceChildren();
@@ -675,7 +681,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         card.append(actions);
         target.append(card);
       }
-      const add = coreElement('button', '+ Systemsteckplatz', 'btn core-slot-add');
+      const add = coreElement('button', '+ Agentenprofil', 'btn core-slot-add');
       add.addEventListener('click', () => openCoreEditor());
       target.append(add);
       if (typeof renderCoreQueueDiagnostics === 'function') renderCoreQueueDiagnostics();
@@ -689,7 +695,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       });
       const data = await response.json();
       if (!response.ok) throw new Error(typeof data.detail === 'string' ? data.detail : 'HTTP ' + response.status);
-      if (data.schema !== 'bach.core-system-agents.v1' || !Array.isArray(data.agents)) throw new Error('Steckplatzantwort ungültig');
+      if (data.schema !== 'bach.core-system-agents.v1' || !Array.isArray(data.agents)) throw new Error('Agentenprofilantwort ungültig');
       return data;
     }
 
@@ -716,7 +722,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       const source = coreEditorAgent || {...coreAgents.find(agent => agent.id === 'buddha_chat'), name: '', avatar: '', icon: '🤖'};
       const form = document.getElementById('core-slot-fields');
       form.replaceChildren();
-      document.getElementById('core-slot-title').textContent = slotId ? 'Steckplatz bearbeiten' : 'Systemsteckplatz anlegen';
+      document.getElementById('core-slot-title').textContent = slotId ? 'Agentenprofil bearbeiten' : 'Agentenprofil anlegen';
       if (!slotId) coreField(form, 'preset', 'Vorlage', 'assistant', 'select',
         Object.entries(coreCatalog.slot_presets || {}).map(([value, item]) => ({value, label:item.name})));
       coreField(form, 'name', 'Bezeichnung', source.name);
@@ -861,12 +867,12 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           coreEditorAgent ? 'PUT' : 'POST', {configuration_version:coreEditorVersion, changes, preset});
         renderCoreAgents(data);
         document.getElementById('core-slot-editor').close();
-        document.getElementById('core-agent-feedback').textContent = 'Steckplatz gespeichert.';
+        document.getElementById('core-agent-feedback').textContent = 'Agentenprofil gespeichert.';
       } catch (error) {feedback.textContent = 'Speichern fehlgeschlagen: ' + error.message;}
     }
 
     async function resetCoreSlot() {
-      if (!coreEditorAgent || !confirm('Steckplatz auf Werkstandard zurücksetzen?')) return;
+      if (!coreEditorAgent || !confirm('Agentenprofil auf Werkstandard zurücksetzen?')) return;
       try {
         renderCoreAgents(await coreRequest('/' + encodeURIComponent(coreEditorAgent.id) + '/reset', 'POST', {configuration_version:coreEditorVersion}));
         document.getElementById('core-slot-editor').close();
@@ -887,8 +893,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         const data = await coreRequest('/' + encodeURIComponent(slotId) + '/toggle', 'POST',
           {configuration_version:coreConfigVersion, enabled});
         renderCoreAgents(data);
-        feedback.textContent = enabled ? 'Steckplatz eingeschaltet; Live-Status wird geprüft.' :
-          'Steckplatz ausgeschaltet. Laufende Arbeit wird beendet; Status neu prüfen.';
+        feedback.textContent = enabled ? 'Agentenprofil eingeschaltet; Live-Status wird geprüft.' :
+          'Agentenprofil ausgeschaltet. Laufende Arbeit wird beendet; Status neu prüfen.';
       } catch (error) {feedback.textContent = 'Schalter nicht bestätigt: ' + error.message; await loadCoreSlots();}
     }
 
@@ -1586,12 +1592,14 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         loadTeamsBeseelen(),
         loadStaffelnBeseelen(),
         loadCoreSlots(),
+        window.BachModelSockets?.refresh(),
         loadOpenRouterCatalog(),
         refreshActivity()
       ]);
       if (interactive) console.log("Living & Running Daten aktualisiert");
     }
 
+    window.addEventListener('bach:model-sockets-changed', () => { void loadCoreSlots(); });
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('worker-blueprint-backend')?.addEventListener('change', () => loadWorkerBlueprintModels());
       document.getElementById('worker-blueprint-sub-mode')?.addEventListener('change', updateWorkerCreationModeFields);

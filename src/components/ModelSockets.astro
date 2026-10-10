@@ -1,0 +1,48 @@
+---
+// Views and edits the consumer's single model registry; owns no runtime state.
+---
+<div id="model-socket-editor" class="model-sockets">
+  <p>Ein Steckplatz ist ein lokales Modell. Seine Agentenslots sind Zuordnungen zu diesem Modell.</p>
+  <div class="model-actions">
+    <button type="button" class="btn btn-sm" data-sockets-refresh>Zuordnungen neu prüfen</button>
+    <button type="button" class="btn btn-sm" data-sockets-add disabled>＋ Lokales Modell zuordnen</button>
+  </div>
+  <p data-sockets-status role="status" aria-live="polite">Modellzuordnungen werden geprüft…</p>
+  <p data-sockets-catalogue-status class="model-note">Modellkatalog noch nicht geprüft.</p>
+  <div data-sockets-targets class="model-targets"></div>
+  <dialog class="model-dialog" data-sockets-dialog aria-labelledby="model-sockets-dialog-title">
+    <form data-sockets-form>
+      <header class="model-socket-heading">
+        <h2 id="model-sockets-dialog-title" data-sockets-title>Modellzuordnung bearbeiten</h2>
+        <button type="button" class="btn btn-sm" data-sockets-close aria-label="Schließen">✕</button>
+      </header>
+      <div data-sockets-fields class="model-fields"></div>
+      <p data-sockets-feedback role="status" aria-live="polite"></p>
+      <button type="submit" class="btn btn-primary" data-sockets-save>Zuordnung speichern</button>
+    </form>
+  </dialog>
+</div>
+<script>
+  import {mountModelSockets} from '../lib/model-sockets-ui.mjs';
+  const root = document.getElementById('model-socket-editor');
+  if (root) (window as any).BachModelSockets = mountModelSockets(root);
+</script>
+<style>
+  .model-sockets {margin:1rem 0;line-height:1.5;color:var(--text)}
+  .model-sockets :global(.model-actions) {display:flex;flex-wrap:wrap;gap:.5rem;margin:.7rem 0}
+  .model-sockets :global(.model-targets) {display:flex;flex-direction:column;gap:.8rem}
+  .model-sockets :global(.model-socket) {min-width:0;padding:1rem;border:1px solid var(--border-hover);border-left:3px solid var(--accent-blue);border-radius:var(--radius-sm);background:var(--bg-dark)}
+  .model-sockets :global(.model-socket-heading) {display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap}
+  .model-sockets :global(h3) {font-size:1rem;overflow-wrap:anywhere;margin:0}
+  .model-sockets :global(.model-note) {font-size:.8rem;color:var(--text-muted);margin:.5rem 0}
+  .model-sockets :global(.model-slot-list)>summary {cursor:pointer;font-weight:600}
+  .model-sockets :global(.model-slot) {padding:.75rem 0;margin-top:.5rem;border-top:1px solid var(--border-hover)}
+  .model-sockets :global(.model-slot small) {display:block;overflow-wrap:anywhere}
+  .model-dialog {width:min(620px,94vw);max-height:88vh;overflow:auto;margin:auto;padding:1.2rem;color:var(--text);background:var(--bg-card);border:1px solid var(--border-hover);border-radius:var(--radius-sm)}
+  .model-dialog::backdrop {background:rgba(0,0,0,.7)}
+  .model-sockets :global(.model-fields label) {display:flex;flex-direction:column;gap:.35rem;margin:.8rem 0}
+  .model-sockets :global(.model-fields .model-check) {flex-direction:row;align-items:center}
+  .model-sockets :global(.model-fields input:not([type="checkbox"])), .model-sockets :global(.model-fields select) {min-width:0;width:100%;padding:.6rem;color:var(--text);background:var(--bg-panel);border:1px solid var(--border-hover);border-radius:var(--radius-sm)}
+  .model-sockets :global(button:focus-visible), .model-sockets :global(summary:focus-visible), .model-sockets :global(input:focus-visible), .model-sockets :global(select:focus-visible) {outline:2px solid var(--accent-blue);outline-offset:3px}
+  .model-sockets :global(button:disabled) {opacity:.65;cursor:not-allowed}
+</style>
