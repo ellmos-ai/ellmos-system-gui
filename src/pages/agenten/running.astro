@@ -308,6 +308,11 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
   </dialog>
 
   <style>
+    :global(.worker-queue-details) {font-size:.8rem;line-height:1.45;margin:.5rem 0;color:var(--text);overflow-wrap:anywhere}
+    :global(details.worker-queue-details summary) {cursor:pointer;font-weight:600}
+    :global(.worker-queue-details p), :global(.worker-queue-details li) {margin:.3rem 0}
+    :global(.worker-queue-details ul) {padding-left:1.25rem}
+    :global(.worker-queue-details small) {display:block;color:var(--text-muted)}
     .collapsible-section>summary{cursor:pointer}.section-description{display:block;margin-top:.25rem;font-size:.8rem;color:var(--text-muted)}.collapsible-section>summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px}.active-runs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1rem;margin:.6rem 0}.staffel-card{padding:.85rem;border:1px solid var(--border);border-radius:8px;background:var(--bg-card)}.staffel-card>summary{cursor:pointer;font-weight:600}.staffel-card p,.staffel-card ol{font-size:.82rem;margin:.6rem 0}.staffel-card ol{padding-left:1.2rem}.creation-actions{display:flex;gap:.5rem;flex-wrap:wrap}.hardware-torch .card-header{margin-bottom:.6rem}.hardware-torch .card-title{font-size:1rem}.hardware-torch .torch-intro{font-size:.76rem}.hardware-torch .torch-panel strong{font-size:.82rem}.hardware-torch .torch-panel p{font-size:.8rem;margin:.3rem 0}.hardware-torch .torch-panel small{font-size:.72rem}
 
     #core-agent-cards :global(.core-agent-card) {display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
@@ -389,7 +394,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     #template-agent-picker pre { max-height:15rem; overflow:auto; font-size:.8rem; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -673,6 +678,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       const add = coreElement('button', '+ Systemsteckplatz', 'btn core-slot-add');
       add.addEventListener('click', () => openCoreEditor());
       target.append(add);
+      if (typeof renderCoreQueueDiagnostics === 'function') renderCoreQueueDiagnostics();
     }
 
     async function coreRequest(path, method = 'GET', body) {
@@ -922,6 +928,21 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     }
 
     // ── BACKGROUND WORKERS (EINSATZBEREIT vs. RUNNING) ──
+    let workerQueueSnapshots = new Map();
+    let workerQueueAvailable = false;
+
+    function renderCoreQueueDiagnostics() {
+      if (!window.BachWorkerQueue) return;
+      for (const card of document.querySelectorAll('[data-core-agent-id]')) {
+        const worker = workerQueueSnapshots.get(card.dataset.coreAgentId);
+        if (card.dataset.coreAgentId !== 'buddha_always_on' && worker?.system !== true
+            && card.querySelectorAll('.worker-queue-details').length === 0) continue;
+        window.BachWorkerQueue.appendQueueDetails(document,card,
+          worker?.system === true && worker.runtime_verified === true ? worker.queue_status : null,
+          {key:card.dataset.coreAgentId,available:workerQueueAvailable});
+      }
+    }
+
     function workerReadiness(worker) {
       const status = String(worker.status || '').toLowerCase();
       const configured = typeof worker.backend === 'string' && !!worker.backend.trim() &&
@@ -948,6 +969,9 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         if (epoch !== workerRefreshEpoch) return;
         if (data.schema !== 'bach.workers.status.v1' || data.availability !== 'available' || !Array.isArray(data.workers))
           throw new Error('Workerquelle ist nicht bestätigt');
+        workerQueueAvailable = true;
+        workerQueueSnapshots = new Map(data.workers.filter(worker=>worker && typeof worker.id==='string').map(worker=>[worker.id,worker]));
+        renderCoreQueueDiagnostics();
         const workers = data.workers.filter(worker=>worker && typeof worker === 'object' && worker.system!==true);
 
         const runningWorkers = workers.filter(w => w.runtime_verified === true && w.running === true);
@@ -1055,6 +1079,9 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         }
         for(const card of document.querySelectorAll('[data-appearance-worker]')) {
           const worker=workers.find(item=>item.id===card.dataset.appearanceWorker);
+          if (window.BachWorkerQueue) window.BachWorkerQueue.appendQueueDetails(document,card,
+            worker?.runtime_verified === true ? worker.queue_status : null,
+            {key:worker?.id,available:true});
           const heading=card.querySelector('h3');
           if(worker&&heading)heading.prepend(window.BachAvatars.createAvatar(document,worker.avatar,worker,
             document.getElementById('core-slot-editor').dataset.portraitAtlas,'agent-avatar-preview'));
@@ -1090,6 +1117,11 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       } catch (error) {
         if (epoch !== workerRefreshEpoch) return;
         summary.textContent = 'Workerstatus konnte nicht geladen werden.';
+        workerQueueAvailable = false;
+        workerQueueSnapshots = new Map();
+        renderCoreQueueDiagnostics();
+        if (window.BachWorkerQueue) for (const card of document.querySelectorAll('[data-appearance-worker]'))
+          window.BachWorkerQueue.appendQueueDetails(document,card,null,{available:false});
         runningList.replaceChildren(coreElement('p','Worker-Laufstatus nicht verfügbar.','text-muted'));
         updateRunningGroupState('workers', 0, 'unavailable');
       }
