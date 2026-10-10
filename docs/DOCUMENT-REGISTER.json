@@ -4,8 +4,8 @@
   "owner_repo": "ellmos-ai/ellmos-system-gui",
   "authority": "repo-local-register-no-cutover",
   "cutover_performed": false,
-  "observed_at": "2026-10-10T23:24:11Z",
-  "source_revision": "151bcca",
+  "observed_at": "2026-10-10T23:55:57Z",
+  "source_revision": "f67174d",
   "documents": [
     {
       "document_id": "gui:agents",
@@ -24,7 +24,7 @@
         "path": "AGENTS.md",
         "revision": "2dc7534",
         "sha256": "4fb38d2ec3fa76769885fedeb7a72c5260a2e5f1a309a4afb30f3382e4e85869",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "de",
       "generator": {
@@ -38,7 +38,14 @@
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:AGENTS.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "2dc7534"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -58,7 +65,7 @@
         "path": "README.md",
         "revision": "5b9238d",
         "sha256": "8a9568794e2bf3fac494164eb5098604adb64f75a9894a296dc0c1df098c4de0",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "en",
       "generator": {
@@ -74,13 +81,20 @@
           "kind": "tool",
           "ref": "SOURCE_PROVENANCE.json",
           "active": true,
-          "last_checked_at": "2026-10-10T23:24:11Z"
+          "last_checked_at": "2026-10-10T23:55:57Z"
         }
       ],
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:README.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "5b9238d"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -100,7 +114,7 @@
         "path": "RELEASE_GATE.md",
         "revision": "85dbe25",
         "sha256": "f4afcb7a604d4c98791cc3cc18fbfdf8befabfcd27f64bea8fcfa9a013950b50",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "en",
       "generator": {
@@ -114,7 +128,14 @@
       "authority_claim": "repo-local",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:RELEASE_GATE.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "85dbe25"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -134,7 +155,7 @@
         "path": "SECURITY.md",
         "revision": "2943605",
         "sha256": "7868463ac80bf8615a3b1fdf6996e6e1970399f82639c873f7cafb98a7f6db81",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "en",
       "generator": {
@@ -148,7 +169,14 @@
       "authority_claim": "repo-local",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:SECURITY.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "2943605"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -168,7 +196,7 @@
         "path": "TODO.md",
         "revision": "117cf0e",
         "sha256": "cbac444644d5f63e9b99842013af29e5ad4326fb3c8089c0d7afbad0236cea27",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "en",
       "generator": {
@@ -182,7 +210,14 @@
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:TODO.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "117cf0e"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -204,7 +239,7 @@
         "path": "docs/CONSUMER_CONTRACT.md",
         "revision": "5b9238d",
         "sha256": "686a82e417f237f4a3d1b0c4630f94352d1758305e4f47a7df339ec2fd2ac49e",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "de",
       "generator": {
@@ -220,20 +255,27 @@
           "kind": "link",
           "ref": "README.md",
           "active": true,
-          "last_checked_at": "2026-10-10T23:24:11Z"
+          "last_checked_at": "2026-10-10T23:55:57Z"
         },
         {
           "reader_id": "r2",
           "kind": "tool",
           "ref": "SOURCE_PROVENANCE.json",
           "active": true,
-          "last_checked_at": "2026-10-10T23:24:11Z"
+          "last_checked_at": "2026-10-10T23:55:57Z"
         }
       ],
       "authority_claim": "repo-local",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:docs/CONSUMER_CONTRACT.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "5b9238d"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -254,7 +296,7 @@
         "path": "docs/BACH_FRONTEND_IMPORT_2026-10-08.md",
         "revision": "117cf0e",
         "sha256": "ac82e1f6a18434cfff2bc2bec66203aee11f660eecfc13194b7af2e8be00bb0d",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "en",
       "generator": {
@@ -270,27 +312,34 @@
           "kind": "link",
           "ref": "README.md",
           "active": true,
-          "last_checked_at": "2026-10-10T23:24:11Z"
+          "last_checked_at": "2026-10-10T23:55:57Z"
         },
         {
           "reader_id": "r2",
           "kind": "tool",
           "ref": "SOURCE_PROVENANCE.json",
           "active": true,
-          "last_checked_at": "2026-10-10T23:24:11Z"
+          "last_checked_at": "2026-10-10T23:55:57Z"
         },
         {
           "reader_id": "r3",
           "kind": "link",
           "ref": "docs/CONSUMER_CONTRACT.md",
           "active": true,
-          "last_checked_at": "2026-10-10T23:24:11Z"
+          "last_checked_at": "2026-10-10T23:55:57Z"
         }
       ],
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:docs/BACH_FRONTEND_IMPORT_2026-10-08.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "117cf0e"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -310,7 +359,7 @@
         "path": "docs/GUI_026_OPERATOR_CHANGES.md",
         "revision": "6fed8a3",
         "sha256": "ec2421cda23b72a12b50db0416a03c04339f064664c17c6ba7d55dc84d000052",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "de",
       "generator": {
@@ -324,7 +373,14 @@
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:docs/GUI_026_OPERATOR_CHANGES.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "6fed8a3"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -344,7 +400,7 @@
         "path": "docs/GUI_027_NATIVE_MARBLERUN.md",
         "revision": "0557fab",
         "sha256": "9e38b29c032c1850e8a1c25f7ea76561aa30a609b6c5ae3b539fc7d5ce886b1e",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "de",
       "generator": {
@@ -358,7 +414,14 @@
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:docs/GUI_027_NATIVE_MARBLERUN.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "0557fab"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -378,7 +441,7 @@
         "path": "docs/GUI_028_DOMAIN_PINS.md",
         "revision": "77a93ca",
         "sha256": "d6a5b83941a1f00b88fa4cb8fc8460c17df24ec6af57885bf0ca68a080296290",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "de",
       "generator": {
@@ -392,7 +455,14 @@
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:docs/GUI_028_DOMAIN_PINS.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "77a93ca"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -412,7 +482,7 @@
         "path": "docs/GUI_029_NATIVE_HISTORY.md",
         "revision": "3b31d19",
         "sha256": "8978a0a5aea02d2f4f330adfb3b9d03a5c3f97c5fb72c5f74515f2507e377ff3",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "de",
       "generator": {
@@ -426,7 +496,14 @@
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:docs/GUI_029_NATIVE_HISTORY.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "3b31d19"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -446,7 +523,7 @@
         "path": "docs/GUI_030_GEMINI_PORTRAITS.md",
         "revision": "7565da2",
         "sha256": "41151323bf7ddeb5af7db96e90149b0bc4f68cf7121a23dcdde538f702ab1462",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "de",
       "generator": {
@@ -460,7 +537,14 @@
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:docs/GUI_030_GEMINI_PORTRAITS.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "7565da2"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -480,7 +564,7 @@
         "path": "docs/MEMORY_ARCHITECTURE_AUDIT_2026-10-09.md",
         "revision": "eec39c2",
         "sha256": "9d14b3823fd1efedde8275dc60efa1f3c62b7ce7096266883decc1046312b39e",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "de",
       "generator": {
@@ -496,13 +580,20 @@
           "kind": "tool",
           "ref": "SOURCE_PROVENANCE.json",
           "active": true,
-          "last_checked_at": "2026-10-10T23:24:11Z"
+          "last_checked_at": "2026-10-10T23:55:57Z"
         }
       ],
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:docs/MEMORY_ARCHITECTURE_AUDIT_2026-10-09.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "eec39c2"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     },
     {
@@ -522,7 +613,7 @@
         "path": "src/assets/ticket-symbols/README.md",
         "revision": "117cf0e",
         "sha256": "88cced00eb2652e91337b6a561c629696cf301e6c2f2533f13a8063703a131ae",
-        "observed_at": "2026-10-10T23:24:11Z"
+        "observed_at": "2026-10-10T23:55:57Z"
       },
       "language": "de",
       "generator": {
@@ -538,13 +629,20 @@
           "kind": "tool",
           "ref": "SOURCE_PROVENANCE.json",
           "active": true,
-          "last_checked_at": "2026-10-10T23:24:11Z"
+          "last_checked_at": "2026-10-10T23:55:57Z"
         }
       ],
       "authority_claim": "none",
       "review_date": "2026-10-10",
       "evidence": [
-        "git show 151bcca:src/assets/ticket-symbols/README.md measured, sha256 over the blob; readers by git grep of the file name on 151bcca"
+        {
+          "type": "commit",
+          "ref": "117cf0e"
+        },
+        {
+          "type": "command-output",
+          "ref": "git-show-sha256-and-git-grep-readers@f67174d"
+        }
       ]
     }
   ]
