@@ -99,10 +99,66 @@ für Agenten unbegrenzt. Werkzeugfreigaben und explizites Stoppen bleiben eigene
 Die Vorlagenauswahl bei Living und Running ruft den nativen Materialize-Endpunkt auf.
 Blueprint- und Konfigurationsversion werden geprüft; Anbieter und konkretes Modell müssen
 ausgewählt werden. Die Übernahme erzeugt oder aktualisiert ein Profil und startet keinen
-Provider. Pro Blueprint ist derzeit ein nativer Systemsteckplatz vorgesehen; laufende oder
+Provider. Pro Blueprint ist derzeit ein natives Agentenprofil vorgesehen; laufende oder
 unbestätigte Instanzen können im Dialog nicht ersetzt werden.
 
-Die Nachrichtenansicht liegt unter /user-inbox; die bestehende Datei-Inbox bleibt unter /inbox. Während einer Vorlagenübernahme ist ein Entwurfswechsel gesperrt. Unbestätigte Slots ergeben ausdrücklich einen unvollständigen Laufstatus.
+Die Nachrichtenansicht liegt unter /user-inbox; die bestehende Datei-Inbox bleibt unter /inbox. Während einer Vorlagenübernahme ist ein Entwurfswechsel gesperrt. Unbestätigte Profile ergeben ausdrücklich einen unvollständigen Laufstatus. Historische API-/Taskfelder wie slot_id und assigned_slot behalten ihre bestehenden Profilkennungen; sie bezeichnen keine Modellsteckplätze.
+
+## Lokale Modellsteckplätze und Agentenslots (GUI 0.2.18)
+
+Ein Steckplatz ist ein angebotenes lokales Modell, ein Agentenslot dessen Bindung
+an ein bestehendes Agentenprofil. Die GUI speichert keine eigene Registry.
+Vollständig externe Anbieter und Ollama-Modelle mit :cloud gehören nicht in
+diese lokale Modellansicht. Ein lokaler Fallback benötigt ebenfalls eine Bindung;
+die Bindung ändert weder das Hauptmodell noch die Fallbackkette des Profils.
+
+| Route | Vertrag |
+|---|---|
+| GET /api/system/model-sockets | bach.model-sockets.v1, host_id, configuration_version, source, migration_required, sockets, unbound_agent_ids und host_inference_limit |
+| GET /api/system/model-sockets/catalog | bach.local-model-catalog.v1, derselbe native host_id, source=configured_native_provider_metadata, observed_at, models, excluded und providers |
+| PUT /api/system/model-sockets | configuration_version und changes mit backend, model, enabled, max_active_slots und residency_policy |
+| PUT /api/system/model-sockets/bindings/{agent_id}/{socket_id} | configuration_version und changes mit enabled, priority und context_tokens |
+| DELETE /api/system/model-sockets/bindings/{binding_id} | configuration_version im JSON-Body; entfernt nur die Bindung, das Agentenprofil bleibt erhalten |
+
+Die BACH-Referenz liegt im geprüften Quellstand 9984a14c5364caae873e57f137ae57393d2056a3
+von PR #297. Der Konsument muss diesen Adapter installieren und native Konfiguration
+und Caller gesondert prüfen. Die GUI zeigt fehlende Adapter als nicht verfügbar.
+Ocean benötigt einen eigenen kompatiblen Adapter und seine eigene Hostidentität.
+
+GET schreibt keine Konfiguration. source=legacy_projection und
+migration_required=true kennzeichnen die Vorschau vorhandener Profile. Die GUI
+bietet dann keine Schreibaktion und löst keine Migration aus. Die native Route
+POST /api/system/model-sockets/migrate gehört zur ausdrücklich gesteuerten
+Konsumentenmigration mit CAS und Vorabbild; sie ist kein GUI-Automatismus.
+
+Steckplatz-IDs haben die Form model-<24 Hexzeichen>, Bindungs-IDs
+binding-<24 Hexzeichen>. max_active_slots ist die geplante Parallelität von 1..1000,
+residency_policy ist exclusive oder shared. effective_max_active_slots und
+capacity_verified bleiben getrennt; der aktuelle Referenzcontroller begrenzt
+die tatsächliche Hostinferenz auf eins. priority ist foreground oder background,
+context_tokens ist null oder ein geplantes Limit von 1..1048576. Kontextbudgets,
+gemeinsame Residenz und Ressourcenanteile sind damit nicht als umgesetzt bestätigt.
+Verwaiste Bindungen bleiben sichtbar und entfernbar; sie sind keine aktiven Agenten.
+
+Das Formular hält seine geladene configuration_version (SHA-256) bis zum Speichern.
+HTTP 409 führt zu keiner automatischen Wiederholung mit einer neuen Version;
+der Entwurf bleibt sichtbar. Alle Schreibaktionen benötigen die bestehende
+Konsumentenauthentifizierung. Same-Origin-Anfragen verweigern Redirects und
+besitzen eine begrenzte Wartezeit. Ein erfolgreicher Speicherbeleg bestätigt
+ack.configuration_saved=true, ack.worker_started=false und ack.runtime_verified=false.
+Ein anschließendes unabhängiges GET muss denselben Host, dieselbe Version und
+dieselben Konfigurationsfelder liefern und die gewünschte Änderung bestätigen.
+Eine erfolgreiche HTTP-Antwort allein ergibt keinen Speichererfolg.
+
+Die Katalogfelder local_metadata_verified, capabilities, chat_eligible und
+native_tools_capable stammen aus den nativen Anbieter-Metadaten. Nur bestätigte
+Chatmodelle aus einem höchstens fünf Minuten alten Katalog sind neu auswählbar;
+Embeddingmodelle sind keine Chatoption. Die BACH-Referenz liest Ollama-Metadaten,
+führt keine Inferenz und keinen Modell-Pull aus. LM Studio bleibt bis zu einem
+Fähigkeitenadapter unbekannt. Gewichtedateigröße, Residenz und RAM-Verbrauch sind
+verschiedene Größen; die GUI erfindet daraus keine Kapazität oder Fackelanteile.
+Running-Klassifikation, aktive Fallbackziele und die hierarchische Fackelanzeige
+bleiben eigene Laufzeitverträge und sind durch diesen Konfigurationseditor nicht abgenommen.
 
 ## Native Staffeln
 Der Designer erwartet GET /api/marblerun/catalog mit schema=bach.native-sequences.v1, service_instance, configuration_version (SHA-256), runtime_available, chains, agents, skills und runs.

@@ -53,6 +53,24 @@ so consumers do not need new preset allowlists or a controller restart. The pick
 recognizes the picture again after loading. Source and derivative hashes are in
 [src/assets/agent-portraits-20261010/provenance.json](src/assets/agent-portraits-20261010/provenance.json).
 
+## Local model sockets
+
+The Living & Running page groups local models into sockets and their existing
+agent profiles into bindings. Model settings and bindings use the consumer's
+single versioned configuration, explicit saves and independent readback. Large
+forms open in a dialog; agent slots and the existing profile editor start collapsed.
+The optional native model catalogue lists verified local chat capabilities;
+embedding-only models are excluded from new chat choices, while unavailable
+provider metadata remains unknown. Configuration never starts a worker or loads
+a model. Legacy projections remain read-only until the consumer explicitly
+migrates its existing configuration. The reference backend source is BACH PR #297;
+installing this GUI alone does not install that adapter or migrate its data.
+
+Measured resource shares, runtime budget enforcement and the separate local
+Running section remain consumer integration work. Saved planned limits do not
+prove available RAM or active inference. See the model socket section of the
+[consumer contract](docs/CONSUMER_CONTRACT.md).
+
 ## API and availability
 
 Task detail can display canonical worker output and a separate operator acceptance
