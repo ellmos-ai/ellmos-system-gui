@@ -1,0 +1,463 @@
+{
+ "_meta": {
+  "basis": "declared",
+  "note": "Kuratierte Architektur (Bereiche, Kanten, Schichten). Keine Messung; Module kommen aus dem Katalog.",
+  "source": "ELLMOS-SCHALTPLAN.authored.json",
+  "source_sha256": "bd76abd1ec7cd0dff0286ec41e1792a13078c5ddccfec5ae4ddba5ceb97c38fa",
+  "extracted_on": "2026-10-10"
+ },
+ "icons": {
+  "runtime": "🖥️",
+  "connectors": "🔌",
+  "orchestration": "🧭",
+  "control": "⚙️",
+  "tools": "🛠️",
+  "memory": "🧠",
+  "knowledge": "📚",
+  "sync": "🔄",
+  "domains": "🧩",
+  "quality": "🧪",
+  "meta": "🚧"
+ },
+ "ui": {
+  "de": {
+   "title": "Der Schaltplan",
+   "sub": "Alle Funktionsbereiche und Module des ellmos-Baukastens auf einer Platine — fahre über einen Bereich, um zu sehen, wie er mit den anderen zusammenarbeitet; fahre über ein Modul, um seinen Zweck zu lesen.",
+   "search": "Modul suchen …",
+   "pubonly": "nur Öffentliches",
+   "hint": "Fahre über einen Bereich oder ein Modul — hier erscheinen Zweck, Status und Zusammenspiel. Ein Klick pinnt die Ansicht (für Links).",
+   "edgesOut": "So arbeitet dieser Bereich mit anderen zusammen",
+   "layersH": "Wo diese Karte im Gesamtbild liegt",
+   "layersSub": "Der Baukasten ist geschichtet: Jede Schicht nutzt die darunter über stabile Verträge — nie über Kopien. Diese Karte zeigt die Modul-Schicht.",
+   "legOk": "im Einsatz",
+   "legDev": "in Entwicklung",
+   "legPlan": "geplant",
+   "legPriv": "privat / intern",
+   "source_tpl": "Quelle: modules.catalog.json + ARCHITECTURE.md · {n} Module in {nareas} Funktionsbereichen · Stand {date}",
+   "status": {
+    "ok": "im Einsatz",
+    "dev": "in Entwicklung",
+    "plan": "geplant"
+   },
+   "vis": {
+    "public": "öffentlich",
+    "cand": "Veröffentlichung vorbereitet",
+    "priv": "privat"
+   },
+   "area": "Bereich",
+   "repo": "Repository ansehen",
+   "provides": "stellt bereit",
+   "pinnote": "Klick auf ein anderes Element wechselt · Klick auf dasselbe löst die Pinnung.",
+   "crossnote": "wirkt bereichsübergreifend",
+   "world": "Außenwelt",
+   "worldpins": "Telegram · Discord · Signal · Mail · Webhook · Mensch",
+   "driftnote": "Kataloglücke: keine sauberen provides/requires oder kein Manifest — die Karte zeigt das, statt es zu verstecken."
+  },
+  "en": {
+   "title": "The Circuit Diagram",
+   "sub": "Every functional area and module of the ellmos construction kit on one board — hover over an area to see how it works with the others; hover over a module to read its purpose.",
+   "search": "Search modules …",
+   "pubonly": "public only",
+   "hint": "Hover over an area or a module — purpose, status and interplay appear here. Click to pin the view (for links).",
+   "edgesOut": "How this area works with the others",
+   "layersH": "Where this map sits in the big picture",
+   "layersSub": "The kit is layered: each layer uses the one below through stable contracts — never through copies. This map shows the module layer.",
+   "legOk": "in use",
+   "legDev": "in development",
+   "legPlan": "planned",
+   "legPriv": "private / internal",
+   "source_tpl": "Source: modules.catalog.json + ARCHITECTURE.md · {n} modules in {nareas} functional areas · as of {date}",
+   "status": {
+    "ok": "in use",
+    "dev": "in development",
+    "plan": "planned"
+   },
+   "vis": {
+    "public": "public",
+    "cand": "publication in preparation",
+    "priv": "private"
+   },
+   "area": "Area",
+   "repo": "View repository",
+   "provides": "provides",
+   "pinnote": "Clicking another element switches · clicking the same one unpins.",
+   "crossnote": "cross-cutting",
+   "world": "Outside world",
+   "worldpins": "Telegram · Discord · Signal · Mail · Webhook · Human",
+   "driftnote": "Catalog gap: no clean provides/requires, or no manifest — the map shows this instead of hiding it."
+  }
+ },
+ "areas": [
+  {
+   "id": "runtime",
+   "dir": ".RUNTIME",
+   "name": {
+    "de": "Laufzeit & Oberflächen",
+    "en": "Runtime & Interfaces"
+   },
+   "q": {
+    "de": "Worin läuft der Agent — und wo bedient man ihn?",
+    "en": "What does the agent run in — and where do you operate it?"
+   },
+   "desc": {
+    "de": "Die Umgebung, in der ein Agent lebt: Chat-Laufzeit, Host-Shell mit Auth und Spaces, Operator-Konsole, Sprach-Ein-/Ausgabe. Von hier aus greift alles andere ineinander.",
+    "en": "The environment an agent lives in: chat runtime, host shell with auth and spaces, operator console, voice I/O. From here, everything else interlocks."
+   }
+  },
+  {
+   "id": "connectors",
+   "dir": ".CONNECTORS",
+   "name": {
+    "de": "Kanäle & Provider",
+    "en": "Channels & Providers"
+   },
+   "q": {
+    "de": "Wie erreiche ich Mensch, Agent oder Dienst?",
+    "en": "How do I reach a human, agent, or service?"
+   },
+   "desc": {
+    "de": "Verbindungen nach draußen: Messaging-Kanäle wie Telegram oder Signal, Mail-Postfächer, Webhooks — und Adapter, die fremde Agenten-CLIs anschließbar machen.",
+    "en": "Connections to the outside: messaging channels like Telegram or Signal, mailboxes, webhooks — and adapters that make third-party agent CLIs pluggable."
+   }
+  },
+  {
+   "id": "orchestration",
+   "dir": ".ORCHESTRATION",
+   "name": {
+    "de": "Routing & Delegation",
+    "en": "Routing & Delegation"
+   },
+   "q": {
+    "de": "Wer macht es — mit welchem Modell und Muster?",
+    "en": "Who does it — with which model and pattern?"
+   },
+   "desc": {
+    "de": "Entscheidet, WAS laufen soll: welches Modell eine Aufgabe bekommt, ob ein Schwarm sie besser löst, an welchen Partner delegiert wird, welcher Workflow anspringt.",
+    "en": "Decides WHAT should run: which model gets a task, whether a swarm solves it better, which partner it is delegated to, which workflow kicks in."
+   }
+  },
+  {
+   "id": "control",
+   "dir": ".CONTROL",
+   "name": {
+    "de": "Steuerung & Ausführung",
+    "en": "Control & Execution"
+   },
+   "q": {
+    "de": "Wer darf was — und was ist zu tun?",
+    "en": "Who may do what — and what needs doing?"
+   },
+   "desc": {
+    "de": "Die zentrale Exekutive: Locks und Rechte, Tickets und Tasks, Zeitpläne, Ketten und Gates. Hier wird ausgeführt und koordiniert, was die Orchestrierung entschieden hat.",
+    "en": "The central executive: locks and permissions, tickets and tasks, schedules, chains and gates. This is where decisions from orchestration are executed and coordinated."
+   }
+  },
+  {
+   "id": "tools",
+   "dir": ".TOOLS",
+   "name": {
+    "de": "Scharfe Einzelwerkzeuge",
+    "en": "Sharp Single-Purpose Tools"
+   },
+   "q": {
+    "de": "Womit wird konkret hantiert?",
+    "en": "What is actually handled with?"
+   },
+   "desc": {
+    "de": "Eng umrissene technische Werkzeuge, die ein Agent zubuchen kann wie einen Skill mit Laufzeit: Computer-Use, Web-Abruf, API-Erkundung, Demonstrations-Aufnahmen.",
+    "en": "Sharply scoped technical tools an agent can add like a skill with a runtime: computer use, web fetching, API probing, demonstration recordings."
+   }
+  },
+  {
+   "id": "memory",
+   "dir": ".MEMORY",
+   "name": {
+    "de": "Gedächtnis & Nutzer-Modell",
+    "en": "Memory & User Model"
+   },
+   "q": {
+    "de": "Was weiß ich schon?",
+    "en": "What do I already know?"
+   },
+   "desc": {
+    "de": "Alles, was ein Agent behält: kuratierte Fakten, organisch wachsende Volltext-Indizes, Notizen, ein Modell seines Nutzers — und der Abgleich dieser Datenbanken zwischen Maschinen.",
+    "en": "Everything an agent retains: curated facts, organically growing full-text indexes, notes, a model of its user — and keeping these databases in sync across machines."
+   }
+  },
+  {
+   "id": "knowledge",
+   "dir": ".KNOWLEDGE",
+   "name": {
+    "de": "Dokumentwissen & Korpora",
+    "en": "Document Knowledge & Corpora"
+   },
+   "q": {
+    "de": "Wo steht das — in meinen Dokumenten?",
+    "en": "Where is that written — in my documents?"
+   },
+   "desc": {
+    "de": "Wissen aus Dokumenten: Einlesen, Zerlegen, Volltextsuche über große Bestände — plus Startdatensätze zum Füttern neuer Systeme.",
+    "en": "Knowledge from documents: ingesting, chunking, full-text search over large collections — plus seed datasets for bootstrapping new systems."
+   }
+  },
+  {
+   "id": "sync",
+   "dir": ".SYNC",
+   "name": {
+    "de": "Dateien & Sicherungen",
+    "en": "Files & Backups"
+   },
+   "q": {
+    "de": "Wie kommt es konsistent aufs andere System?",
+    "en": "How does it get to the other machine consistently?"
+   },
+   "desc": {
+    "de": "Der klassische Datei- und Backup-Fall zwischen Maschinen. Der Datenbank-Abgleich wandert bewusst ins Gedächtnis, die System-Abstimmung in die Steuerung.",
+    "en": "The classic file-and-backup case between machines. Database sync deliberately lives in Memory; system coordination lives in Control."
+   }
+  },
+  {
+   "id": "domains",
+   "dir": ".DOMAINS",
+   "name": {
+    "de": "Fachliche Pakete",
+    "en": "Domain Packages"
+   },
+   "q": {
+    "de": "Für welches Fachgebiet?",
+    "en": "For which field?"
+   },
+   "desc": {
+    "de": "Optionale Fachmodule: Recht, Steuern, Bildung, Medien, Marktdaten, Anonymisierung. Sie setzen auf den Kern auf, statt eigene Infrastruktur zu bauen.",
+    "en": "Optional domain modules: law, taxes, education, media, market data, anonymization. They build on the core instead of building their own infrastructure."
+   }
+  },
+  {
+   "id": "quality",
+   "dir": ".QUALITY",
+   "cross": true,
+   "name": {
+    "de": "Standards & Tests",
+    "en": "Standards & Tests"
+   },
+   "q": {
+    "de": "Ist es gut — und dokumentiert?",
+    "en": "Is it good — and documented?"
+   },
+   "desc": {
+    "de": "Testbatterien und Doku-Gerüste, die für alle Bereiche gelten: Jedes Modul wird geprüft und agent-tauglich dokumentiert. Wirkt quer über die ganze Platine.",
+    "en": "Test batteries and documentation scaffolds that apply to every area: each module gets tested and documented agent-ready. Cuts across the whole board."
+   }
+  },
+  {
+   "id": "meta",
+   "dir": "(Root)",
+   "cross": true,
+   "name": {
+    "de": "Meta-Ebene",
+    "en": "Meta Level"
+   },
+   "q": {
+    "de": "Wer entscheidet über die Module selbst?",
+    "en": "Who decides about the modules themselves?"
+   },
+   "desc": {
+    "de": "Module, die den Baukasten selbst regeln — etwa Veröffentlichungs-Gates. Liegt bewusst über den Familien: Ein Modul kann nicht in einer Kategorie liegen, über die es entscheidet.",
+    "en": "Modules that govern the kit itself — e.g. release gates. Deliberately sits above the families: a module cannot live inside a category it rules over."
+   }
+  }
+ ],
+ "edges": [
+  {
+   "from": "orchestration",
+   "to": "control",
+   "label": {
+    "de": "entscheidet → ausführen",
+    "en": "decides → execute"
+   },
+   "desc": {
+    "de": "Die Orchestrierung entscheidet, WAS laufen soll — ausgeführt und überwacht wird es in der Steuerung, nie umgekehrt.",
+    "en": "Orchestration decides WHAT should run — Control executes and supervises it, never the other way round."
+   }
+  },
+  {
+   "from": "control",
+   "to": "memory",
+   "label": {
+    "de": "steuert den Speicher",
+    "en": "steers the memory"
+   },
+   "desc": {
+    "de": "Gedächtnis vs. zentrale Exekutive: das Gedächtnis hält den Speicher, die Steuerung bedient ihn — Hooks schieben Wissen in die Session, Tasks bestimmen die Arbeit, Locks regeln, wer schreiben darf.",
+    "en": "Memory vs. central executive: Memory holds the store, Control operates it — hooks push knowledge into the session, tasks define the work, locks decide who may write."
+   }
+  },
+  {
+   "from": "memory",
+   "to": "knowledge",
+   "both": true,
+   "label": {
+    "de": "eine Standard-Suche",
+    "en": "one default search"
+   },
+   "desc": {
+    "de": "Suche braucht einen Owner: Standard-Suche ist entweder der Gedächtnis-Index (GARDENER) oder der Dokumentkorpus (KnowledgeDigest) — nie beide zugleich.",
+    "en": "Search needs an owner: the default is either the memory index (GARDENER) or the document corpus (KnowledgeDigest) — never both at once."
+   }
+  },
+  {
+   "from": "memory",
+   "to": "sync",
+   "both": true,
+   "label": {
+    "de": "DB-Abgleich ≠ Datei-Backup",
+    "en": "DB sync ≠ file backup"
+   },
+   "desc": {
+    "de": "Wissens-Datenbanken werden im Gedächtnis abgeglichen; der Bereich Dateien & Sicherungen trägt nur noch den klassischen Backup-Fall.",
+    "en": "Knowledge databases are reconciled inside Memory; Files & Backups carries only the classic backup case."
+   }
+  },
+  {
+   "from": "runtime",
+   "to": "orchestration",
+   "label": {
+    "de": "fragt den Router",
+    "en": "asks the router"
+   },
+   "desc": {
+    "de": "Die Laufzeit fragt Routing & Delegation, welches Modell oder Muster eine Aufgabe bekommt, bevor sie startet.",
+    "en": "The runtime asks Routing & Delegation which model or pattern a task gets before it starts."
+   }
+  },
+  {
+   "from": "runtime",
+   "to": "connectors",
+   "label": {
+    "de": "erreicht die Welt",
+    "en": "reaches the world"
+   },
+   "desc": {
+    "de": "Chat, Konsole und Stimme erreichen Menschen, fremde Agenten und Dienste über die Kanäle — Telegram, Mail, Webhook und Adapter.",
+    "en": "Chat, console and voice reach humans, other agents and services through the channels — Telegram, mail, webhooks and adapters."
+   }
+  },
+  {
+   "from": "runtime",
+   "to": "tools",
+   "label": {
+    "de": "hantiert mit Werkzeug",
+    "en": "wields the tools"
+   },
+   "desc": {
+    "de": "Der laufende Agent greift zu den scharfen Einzelwerkzeugen: Bildschirm bedienen, Web abrufen, APIs erkunden, Demonstrationen aufzeichnen.",
+    "en": "The running agent picks up the sharp tools: operate the screen, fetch the web, probe APIs, record demonstrations."
+   }
+  },
+  {
+   "from": "domains",
+   "to": "memory",
+   "label": {
+    "de": "nutzen den Kern",
+    "en": "use the core"
+   },
+   "desc": {
+    "de": "Fachpakete setzen auf Gedächtnis, Steuerung und Werkzeuge auf, statt eigene Infrastruktur zu bauen — deshalb bleiben sie schlank und austauschbar.",
+    "en": "Domain packages build on memory, control and tools instead of building their own infrastructure — which keeps them lean and replaceable."
+   }
+  }
+ ],
+ "edges_note": "Die 8 Kanten oben sind KURATIERT (konzeptionelle Zusammenarbeit), keine Ableitung aus provides/requires: die Manifeste tragen aktuell nur 7 requires-Eintraege ueber alle 68 Module, daraus liessen sich nur 4 Bereichspaare ableiten (siehe DRIFT.edge_probe im generierten Output) -- zu duenn, um die kuratierte Erzaehlung zu ersetzen, ohne Inhalt zu verlieren. gen_ellmos_maps.py berechnet die ableitbaren Paare zusaetzlich und meldet sie separat als Beleg/Drift-Probe; sobald requires/consumes in den Manifesten breiter befuellt sind, kann diese Kante hier durch echte Ableitung ersetzt werden.",
+ "layers": [
+  {
+   "id": "skills",
+   "n": {
+    "de": "Skills",
+    "en": "Skills"
+   },
+   "s_tpl": {
+    "de": "~{n} Fähigkeiten in {ncat} Gruppen",
+    "en": "~{n} skills in {ncat} groups"
+   },
+   "d": {
+    "de": "Prompt-, Wissens- und Workflow-Fähigkeiten ohne eigene Laufzeit: Sie bestimmen das WIE — Prozess, Methode, Domänenwissen — und rufen Werkzeuge über MCP oder CLI.",
+    "en": "Prompt, knowledge and workflow capabilities without their own runtime: they define the HOW — process, method, domain knowledge — and call tools via MCP or CLI."
+   }
+  },
+  {
+   "id": "mcp",
+   "n": {
+    "de": "MCP-Oberflächen",
+    "en": "MCP Surfaces"
+   },
+   "s": {
+    "de": "9 eigene Server",
+    "en": "9 own servers"
+   },
+   "d": {
+    "de": "Protokoll-Oberflächen, keine zweiten Fachwahrheiten: Funktions-Server bündeln Aktionen (Dateien, Code, Deploy, Computer-Use), der Stack-Server bündelt Module, die Control-Plane verwaltet alle.",
+    "en": "Protocol surfaces, not second sources of truth: function servers bundle actions (files, code, deploy, computer use), the stack server bundles modules, the control plane manages them all."
+   }
+  },
+  {
+   "id": "modules",
+   "n": {
+    "de": "Module",
+    "en": "Modules"
+   },
+   "s_tpl": {
+    "de": "diese Karte — {n} Bausteine",
+    "en": "this map — {n} building blocks"
+   },
+   "d": {
+    "de": "Der Baukasten selbst: eigenständige Bausteine in 11 Funktionsbereichen. Eine Familie ist eine Ordnungs-Kategorie, keine Installationseinheit.",
+    "en": "The construction kit itself: independent building blocks in 11 functional areas. A family is an ordering category, not an installation unit."
+   }
+  },
+  {
+   "id": "bundles",
+   "n": {
+    "de": "Bundles",
+    "en": "Bundles"
+   },
+   "s_tpl": {
+    "de": "{n} Rezepte, {npillar} Säulen",
+    "en": "{n} recipes, {npillar} pillars"
+   },
+   "d": {
+    "de": "Vorgedachte Funktionseinheiten zwischen Modul und Stack: Rezepte aus Seed + Komponentenliste, gegliedert in die Säulen Gedächtnis, Steuerung, Nutzer-Assistenz und Fachlichkeit.",
+    "en": "Pre-designed functional units between module and stack: recipes of seed + component list, organized into the pillars memory, control, user assistance and domain."
+   }
+  },
+  {
+   "id": "stacks",
+   "n": {
+    "de": "Stacks",
+    "en": "Stacks"
+   },
+   "s": {
+    "de": "betreibbare Kompositionen",
+    "en": "operable compositions"
+   },
+   "d": {
+    "de": "Manifest-getriebene Kompositionen aus Modulen, Skills, MCP-Servern und Software — vom fokussierten Bundle-Stack bis zum vollen, betreibbaren System.",
+    "en": "Manifest-driven compositions of modules, skills, MCP servers and software — from a focused bundle stack to a full, operable system."
+   }
+  },
+  {
+   "id": "os",
+   "n": {
+    "de": "OS-Stacks",
+    "en": "OS Stacks"
+   },
+   "s": {
+    "de": "BACH · rinnsal",
+    "en": "BACH · rinnsal"
+   },
+   "d": {
+    "de": "Besondere Stacks in Betriebssystem-Größe: breite, zweckoffene Allrounder, die Module als Abhängigkeit konsumieren statt alles selbst zu bauen.",
+    "en": "Special stacks at operating-system scale: broad, open-purpose all-rounders that consume modules as dependencies instead of building everything themselves."
+   }
+  }
+ ]
+}
