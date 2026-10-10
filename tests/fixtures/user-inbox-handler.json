@@ -1,0 +1,52 @@
+{
+  "list_all": {
+    "schema": "bach.user-inbox.v1",
+    "source": "assistant-core.messages",
+    "recipient": "user",
+    "messages": [
+      {
+        "id": 2,
+        "sender": "gemini",
+        "recipient": "user",
+        "subject": "Bericht",
+        "body": "Fertig.",
+        "status": "read",
+        "created_at": "2026-10-09T11:00:00",
+        "read_at": null
+      },
+      {
+        "id": 1,
+        "sender": "claude",
+        "recipient": "user",
+        "subject": "Rechnung prüfen",
+        "body": "Bitte bis Freitag.",
+        "status": "unread",
+        "created_at": "2026-10-09T10:00:00",
+        "read_at": null
+      }
+    ],
+    "total": 2,
+    "unread": 1,
+    "offset": 0,
+    "limit": 2,
+    "has_more": false
+  },
+  "patch_ok": {
+    "id": 1,
+    "recipient": "user",
+    "status": "read"
+  },
+  "patch_conflict": {
+    "status_code": 409,
+    "body": {
+      "detail": "Nachrichtenstatus wurde inzwischen geändert. Bitte aktualisieren."
+    }
+  },
+  "patch_missing": {
+    "status_code": 404,
+    "body": {
+      "detail": "Nachricht nicht gefunden"
+    }
+  },
+  "_origin": "Erzeugt aus BACH system/gui/api/user_inbox.py @ c71e4605 gegen eine temporaere Test-DB (Handler-Antworten unveraendert)."
+}
