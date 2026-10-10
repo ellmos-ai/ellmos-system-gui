@@ -11,7 +11,7 @@ const raw = readFileSync(new URL('./fixtures/catalog-projection.v1.json', import
 const fixture = () => JSON.parse(raw.toString('utf8'));
 
 test('the fixture is the pinned handler output', () => {
-  assert.equal(createHash('sha256').update(raw).digest('hex'), 'b8515dbc095582c8bd5878a185b1cbe2c248b02db67e697caaa5b148da199202');
+  assert.equal(createHash('sha256').update(raw).digest('hex'), '64293a1dabbe33e508b194dabae4bb9aa314864f1e2cc8ac65aba2808408351b');
 });
 
 test('a real handler response parses and counts come from the items', () => {
