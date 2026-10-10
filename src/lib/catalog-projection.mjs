@@ -147,6 +147,8 @@ function itemRecord(item) {
     git: gitRecord(item.git, where), gitHosts: item.git_hosts.map(entry => gitRecord(entry, where + ' git_hosts')),
     sourceIds: item.source_ids, pathLabel: typeof item.path_label === 'string' ? item.path_label : null,
     languages: Array.isArray(item.languages) ? item.languages : null,
+    org: typeof item.org === 'string' ? item.org : null, provenance: typeof item.provenance === 'string' ? item.provenance : null,
+    upstream: typeof item.upstream === 'string' ? item.upstream : null,
   };
 }
 
