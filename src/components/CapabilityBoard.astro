@@ -90,6 +90,23 @@ const tabs = [
   #recipe-content :global(article) {padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);margin:1rem 0}
   #recipe-content :global(pre) {white-space:pre-wrap;overflow-wrap:anywhere;font-size:.85rem;background:var(--bg-dark);padding:.8rem}
   #recipe-content :global(.copy-status) {font-size:.75rem;color:var(--text-muted)}
+  .board-grid :global(.plug-state) {display:flex;flex-direction:column;gap:.35rem;padding:.55rem .65rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark);--plug-color:color-mix(in srgb,var(--text-muted) 45%,var(--text))}
+  .board-grid :global(.plug-state[data-state="plugged"]) {--plug-color:color-mix(in srgb,var(--success) 50%,var(--text))}
+  .board-grid :global(.plug-state[data-state="unknown"]) {--plug-color:color-mix(in srgb,var(--warning) 50%,var(--text))}
+  .board-grid :global(.plug-state[data-state="error"]) {--plug-color:color-mix(in srgb,var(--error) 55%,var(--text))}
+  .board-grid :global(.plug-headline) {color:var(--text);font-size:.85rem;line-height:1.35}
+  .board-grid :global(.plug-graphic) {width:100%;max-width:150px;height:auto}
+  .board-grid :global(.plug-cable) {fill:none;stroke:var(--plug-color);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .board-grid :global(.plug-body) {fill:var(--bg-card);stroke:var(--plug-color);stroke-width:2}
+  .board-grid :global(.plug-socket) {fill:var(--bg-card);stroke:var(--plug-color);stroke-width:2}
+  .board-grid :global(.plug-slot) {fill:var(--plug-color)}
+  .board-grid :global(.plug-led) {fill:none;stroke:var(--plug-color);stroke-width:1.4}
+  .board-grid :global(.plug-state[data-state="plugged"] .plug-led) {fill:var(--plug-color)}
+  .board-grid :global(.plug-dashed) {stroke-dasharray:4 3}
+  .board-grid :global(.plug-mark) {fill:var(--plug-color);font-size:12px;font-weight:700}
+  .board-grid :global(.plug-evidence summary) {cursor:pointer;color:var(--text)}
+  .board-grid :global(.plug-evidence summary:focus-visible) {outline:2px solid var(--accent);outline-offset:2px}
+  .board-grid :global(.plug-evidence p) {margin:.3rem 0 0;color:var(--text-muted)}
 </style>
 <script>
   import '../lib/capability-board-ui.mjs';

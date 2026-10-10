@@ -2,6 +2,8 @@ import {INVENTORIES, SKILL_ID, loadSkill, saveSkill, requestJson, confirmSkillRe
 import {createSymbol,mountSymbolPicker,withSkillSymbol} from './ticket-symbol.mjs';
 
 import {catalogMatches, publicationLabel, safePublicationUrl} from './software-catalog.mjs';
+import {plugCableElement} from './plugin-plug-ui.mjs';
+import {plugSummaryText} from './plugin-plug-state.mjs';
 
 const board = document.getElementById('capability-board');
 if (board) {
@@ -21,7 +23,7 @@ if (board) {
   };
   const badge = text => node('span', text, 'badge');
   const flag = value => value === true ? 'Aktivierung eingestellt' : value === false ? 'Deaktivierung eingestellt' : 'Aktivierung nicht erfasst';
-  let items = [], inventoryGeneration = 0;
+  let items = [], inventoryGeneration = 0, fetchedAt = new Date();
 
   function renderItems() {
     const query = byId('board-search').value.trim().toLocaleLowerCase('de');
@@ -46,7 +48,7 @@ if (board) {
         card.append(meta);
         if (kind === 'plugins') {
           card.append(node('p', item.code_present ? 'Plugin-Dateien vorhanden' : 'Installationsverweis ohne erreichbare Dateien'));
-          card.append(node('p', flag(item.enabled_in_client), 'card-caption'));
+          card.append(plugCableElement(item, fetchedAt));
         } else if (kind === 'mcp') {
           card.append(node('p', 'Im Client konfiguriert · ' + item.transport));
           if (item.command_name || item.hostname) card.append(node('p', item.command_name || item.hostname, 'card-caption'));
@@ -85,6 +87,7 @@ if (board) {
       const rows = kind === 'skills' ? data.skills : data.items;
       if (!Array.isArray(rows)) throw new Error('Die Quelle liefert keinen Eintragskatalog.');
       items = rows;
+      fetchedAt = new Date();
       if (kind === 'skills') {
         const select = byId('board-category'), previous = select.value;
         select.replaceChildren(new Option('Alle Kategorien', ''));
@@ -92,7 +95,7 @@ if (board) {
         if ([...select.options].some(option => option.value === previous)) select.value = previous;
       }
       const notes = [];
-      if (kind === 'plugins') notes.push('Die Einstellungen stammen aus den Client-Dateien. Der Laufzeitstatus der Clients ist nicht erfasst.');
+      if (kind === 'plugins') notes.push(plugSummaryText(items) + '. Die Einstellungen stammen aus den Client-Dateien (Claude und Codex); der Laufzeitstatus der Clients ist nicht erfasst. Diese Ansicht schaltet nichts.');
       if (kind === 'mcp') notes.push('Die Verbindungen werden von den jeweiligen Clients verwaltet. Eine laufende MCP-Sitzung ist hier nicht nachgewiesen.');
       if (kind === 'software') notes.push('Anwendungen aus dem Software-Register. Veröffentlichungsangaben sind der Registerstand; Installationen und Store-Verfügbarkeit sind nicht geprüft.');
       if (kind === 'ocean') notes.push('Die Liste zeigt Modul- und Repository-Quellen auf diesem Host. Eine Installation oder ein laufender Dienst ist damit nicht nachgewiesen.');
