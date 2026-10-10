@@ -74,3 +74,13 @@ test('missing or invalid unread count is a contract error, never an invented zer
   }
   assert.equal(readInboxPage({...ok, unread: 0}).unread, 0);
 });
+
+test('missing, negative, fractional or string total is a contract error; total 0 is valid', () => {
+  const ok = handler.list_all;
+  for (const total of [undefined, null, -1, 1.5, '2', NaN]) {
+    const bad = {...ok}; if (total === undefined) delete bad.total; else bad.total = total;
+    assert.throws(() => readInboxPage(bad), /ungültig/, String(total));
+  }
+  const empty = readInboxPage({...ok, messages: [], total: 0, unread: 0});
+  assert.equal(empty.total, 0); assert.equal(empty.messages.length, 0);
+});
