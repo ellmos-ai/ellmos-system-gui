@@ -492,10 +492,10 @@ const mermaidCode = `flowchart TD
 
       <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.25rem;margin-bottom:1rem;">
         <div style="font-family:monospace;font-size:1rem;color:var(--text);margin-bottom:0.5rem;">
-          Startprompt = <strong style="color:var(--accent);">Agent</strong> + (<strong style="color:var(--accent-blue);">Systemprompt</strong>) + (<strong style="color:var(--warning);">Aufgabenprompt</strong>)
+          Startprompt = <strong style="color:var(--accent-text);">Agent</strong> + (<strong style="color:var(--accent-blue-text);">Systemprompt</strong>) + (<strong style="color:var(--warning-text);">Aufgabenprompt</strong>)
         </div>
         <div style="font-family:monospace;font-size:0.875rem;color:var(--text-muted);">
-          wobei: <strong style="color:var(--accent);">Agent</strong> = Rolle + Persona + Skills + Governance (P-001/P-004 Locks)
+          wobei: <strong style="color:var(--accent-text);">Agent</strong> = Rolle + Persona + Skills + Governance (P-001/P-004 Locks)
         </div>
       </div>
 
@@ -531,19 +531,19 @@ const mermaidCode = `flowchart TD
           <div style="font-size:0.72rem;color:var(--text-muted);">Destillations-Läufe</div>
         </div>
         <div style="padding:0.75rem;background:var(--bg-panel);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;">
-          <div style="font-size:1.2rem;font-weight:700;color:var(--accent);" id="hermes-stat-noise">-</div>
+          <div style="font-size:1.2rem;font-weight:700;color:var(--accent-text);" id="hermes-stat-noise">-</div>
           <div style="font-size:0.72rem;color:var(--text-muted);">Ø Rauschfilterung</div>
         </div>
         <div style="padding:0.75rem;background:var(--bg-panel);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;">
-          <div style="font-size:1.2rem;font-weight:700;color:var(--warning);" id="hermes-stat-pending">-</div>
+          <div style="font-size:1.2rem;font-weight:700;color:var(--warning-text);" id="hermes-stat-pending">-</div>
           <div style="font-size:0.72rem;color:var(--text-muted);">Kandidaten in Prüfung</div>
         </div>
         <div style="padding:0.75rem;background:var(--bg-panel);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;">
-          <div style="font-size:1.2rem;font-weight:700;color:var(--success);" id="hermes-stat-approved">-</div>
+          <div style="font-size:1.2rem;font-weight:700;color:var(--success-text);" id="hermes-stat-approved">-</div>
           <div style="font-size:0.72rem;color:var(--text-muted);">Freigegebene Skills</div>
         </div>
         <div style="padding:0.75rem;background:var(--bg-panel);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center;">
-          <div style="font-size:1.2rem;font-weight:700;color:var(--accent-blue);" id="hermes-stat-lessons">-</div>
+          <div style="font-size:1.2rem;font-weight:700;color:var(--accent-blue-text);" id="hermes-stat-lessons">-</div>
           <div style="font-size:0.72rem;color:var(--text-muted);">memory_lessons</div>
         </div>
       </div>
@@ -628,15 +628,15 @@ const mermaidCode = `flowchart TD
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;margin-bottom:1rem;">
         <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;">
-          <strong style="color:var(--accent-blue);font-size:0.9rem;">Pfad A: Boot-Kontext</strong>
+          <strong style="color:var(--accent-blue-text);font-size:0.9rem;">Pfad A: Boot-Kontext</strong>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0;">Wird einmalig beim Start in den Startprompt kompiliert.</p>
         </div>
         <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;">
-          <strong style="color:var(--warning);font-size:0.9rem;">Pfad B: Aktiver Tool-Pull</strong>
+          <strong style="color:var(--warning-text);font-size:0.9rem;">Pfad B: Aktiver Tool-Pull</strong>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0;">Modell sucht aktiv via <code>bach mem query</code> im inneren Monolog.</p>
         </div>
         <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;">
-          <strong style="color:var(--success);font-size:0.9rem;">Pfad C: Reaktiv über Guards</strong>
+          <strong style="color:var(--success-text);font-size:0.9rem;">Pfad C: Reaktiv über Guards</strong>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0;">Soll: Bedarf erfassen ➔ Regeln und Limits prüfen ➔ Zustellung am jeweiligen Anschluss belegen.</p>
         </div>
       </div>
