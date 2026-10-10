@@ -8,7 +8,7 @@ import {VIEWS, viewFromSearch, parseAuthored, statusClass, isPublic, safeRepoUrl
 const read = name => readFileSync(new URL(name, import.meta.url), 'utf8');
 const body = () => JSON.parse(read('./fixtures/catalog-projection.v1.json'));
 const catalog = (mutate = () => {}) => { const b = body(); mutate(b); return parseCatalog(b); };
-const authoredRaw = () => JSON.parse(read('../src/data/schaltplan-authored.json'));
+const authoredRaw = () => JSON.parse(read('../src/config/schaltplan-authored.json'));
 const authored = () => parseAuthored(authoredRaw());
 
 test('the authored data is declared, bilingual, path-free and references only known areas', () => {
@@ -16,7 +16,7 @@ test('the authored data is declared, bilingual, path-free and references only kn
   assert.equal(data._meta.basis, 'declared');
   assert.equal(data.areas.length, 11);
   assert.equal(data.edges.length, 8);
-  assert.equal(containsAbsolutePath(read('../src/data/schaltplan-authored.json')), false);
+  assert.equal(containsAbsolutePath(read('../src/config/schaltplan-authored.json')), false);
   assert.match(data._meta.source_sha256, /^[a-f0-9]{64}$/);
 });
 

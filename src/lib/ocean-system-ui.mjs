@@ -1,6 +1,6 @@
 // Browser wiring for System/Ocean (#2017/#2019). DOM via createElement/textContent only; no inline handlers.
 import {loadCatalog} from './catalog-projection.mjs';
-import authoredRaw from '../data/schaltplan-authored.json';
+import authoredRaw from '../config/schaltplan-authored.json';
 import {VIEWS, viewFromSearch, parseAuthored, schaltplanModel, gesamtModel, satelliteModel, STATUS_LABEL} from './ocean-system.mjs';
 
 const root = document.getElementById('ocean-system');
