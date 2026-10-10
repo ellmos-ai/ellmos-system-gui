@@ -26,9 +26,10 @@ const PATH_PATTERNS = [
   new RegExp('\\\\\\\\[^\\s"\'<>|,;)]+', 'u'),                                       // \\server\share
   new RegExp('(?<![' + W + '])~[\\\\/]' + TAIL, 'u'),                                // ~/x
   new RegExp('%[A-Za-z_]+%[\\\\/]' + TAIL, 'u'),                                     // %USERPROFILE%\x
-  // absolute POSIX path: ONE slash followed by a non-slash that starts a token (text start, whitespace, quote, opening
-  // bracket, "=", ":", "," or ";" before it); not part of a word, glob or URL ("//host/..."); "/api/..." routes stay
-  new RegExp('(?<![^\\s"\'(=\\[:,;])/(?!api/)(?![\\s/])[^\\s"\'<>|,;)]+', 'u'),
+  // absolute POSIX path with at least TWO segments ("/a/b") starting a token (text start, whitespace, quote, opening
+  // bracket, "=", ":", "," or ";" before it); single segments ("/bugsweep", "/tmp") stay; not part of a word, glob or
+  // URL ("//host/..."); "/api/..." routes stay
+  new RegExp('(?<![^\\s"\'(=\\[:,;])/(?!api/)[^\\s/"\'<>|,;)]+/[^\\s"\'<>|,;)]+', 'u'),
 ];
 export const containsAbsolutePath = value => PATH_PATTERNS.some(pattern => pattern.test(value));
 
