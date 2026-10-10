@@ -1,0 +1,188 @@
+{
+  "_origin": "GET /api/capabilities/plugins/inventory von BACH c71e4605 (hub/_services/capability_inventory_service.py:85-190) gegen eine Wegwerf-Instanz mit synthetischem Client-Home; der Temp-Pfad ist durch <home> ersetzt, sonst unveraendert.",
+  "response": {
+    "schema": "bach.capability-inventory.v1",
+    "kind": "plugins",
+    "items": [
+      {
+        "id": "Claude:alpha-tools@demo-market:40f89f4fc696",
+        "name": "alpha-tools",
+        "description": "Synthetisches Claude-Plugin alpha-tools",
+        "version": "1.0.0",
+        "source_version": "89cc99b2fcea2d39993e393ab8ed3572839432093ae56d915eb12663b0677efd",
+        "consumer": "Claude",
+        "code_present": true,
+        "evidence": "installed_plugins.json",
+        "enabled_in_client": true,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\.claude\\plugins\\cache\\demo-market\\alpha-tools\\1.0.0"
+      },
+      {
+        "id": "Claude:beta-tools@demo-market:fa4439aaf84d",
+        "name": "beta-tools",
+        "description": "Synthetisches Claude-Plugin beta-tools",
+        "version": "1.0.0",
+        "source_version": "e532dad93d4f5f26f95e758c3981d714e15d543c126162d734163757f0309510",
+        "consumer": "Claude",
+        "code_present": true,
+        "evidence": "installed_plugins.json",
+        "enabled_in_client": false,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\.claude\\plugins\\cache\\demo-market\\beta-tools\\1.0.0"
+      },
+      {
+        "id": "Claude:delta-tools@demo-market:f8e618f3c1b3",
+        "name": "delta-tools",
+        "description": "Synthetisches Claude-Plugin delta-tools",
+        "version": "1.0.0",
+        "source_version": "690a1ee3743bf473d520a72099b78f3867a184d1e24a0ca706a2af2041ccadd2",
+        "consumer": "Claude",
+        "code_present": true,
+        "evidence": "installed_plugins.json",
+        "enabled_in_client": null,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\.claude\\plugins\\cache\\demo-market\\delta-tools\\1.0.0"
+      },
+      {
+        "id": "Claude:epsilon-tools@demo-market:445fd4ad1b13",
+        "name": "epsilon-tools",
+        "description": "Synthetisches Claude-Plugin epsilon-tools",
+        "version": "1.0.0",
+        "source_version": "2df3fec22ba4f6dd3525463899dc9ba2256f4c802f961bf8642fac7c82d91d19",
+        "consumer": "Claude",
+        "code_present": true,
+        "evidence": "installed_plugins.json",
+        "enabled_in_client": null,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\.claude\\plugins\\cache\\demo-market\\epsilon-tools\\1.0.0"
+      },
+      {
+        "id": "Claude:gamma-tools@demo-market:25da7c5e6f6b",
+        "name": "gamma-tools",
+        "description": "Synthetisches Claude-Plugin gamma-tools",
+        "version": "1.0.0",
+        "source_version": "45cf9c09adc9d98ab4cdfdf880874bbbfb98e3c0f378ba106dcccb8aa73d36df",
+        "consumer": "Claude",
+        "code_present": true,
+        "evidence": "installed_plugins.json",
+        "enabled_in_client": null,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\.claude\\plugins\\cache\\demo-market\\gamma-tools\\1.0.0"
+      },
+      {
+        "id": "Claude:ghost-tools@demo-market:bbca6a3fd4ba",
+        "name": "ghost-tools@demo-market",
+        "description": "",
+        "version": null,
+        "source_version": null,
+        "consumer": "Claude",
+        "code_present": false,
+        "evidence": "installed_plugins.json",
+        "enabled_in_client": null,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\.claude\\plugins\\cache\\demo-market\\ghost-tools\\1.0.0"
+      },
+      {
+        "id": "Codex:omega@demo-curated:d1ca64b931c0",
+        "name": "omega",
+        "description": "Synthetisches Codex-Plugin omega",
+        "version": "1.0.0",
+        "source_version": "7e7f9ce0abadb8c700dcd37319511b638e2dee24979778d5d6e39b62c6bc9674",
+        "consumer": "Codex",
+        "code_present": true,
+        "evidence": "cached_plugin_manifest",
+        "enabled_in_client": true,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\.codex\\plugins\\cache\\demo-curated\\omega\\1.0.0"
+      },
+      {
+        "id": "Codex:sigma@demo-curated:4afc65acb7f2",
+        "name": "sigma",
+        "description": "Synthetisches Codex-Plugin sigma",
+        "version": "1.0.0",
+        "source_version": "eea3a811dab69055527d90cea3fcd3fc5c4477473af129e9ada937cc1673e1f6",
+        "consumer": "Codex",
+        "code_present": true,
+        "evidence": "cached_plugin_manifest",
+        "enabled_in_client": false,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\.codex\\plugins\\cache\\demo-curated\\sigma\\1.0.0"
+      },
+      {
+        "id": "Codex:tau@demo-curated:4cb92458875e",
+        "name": "tau",
+        "description": "Synthetisches Codex-Plugin tau",
+        "version": "1.0.0",
+        "source_version": "dacc4d4ed762fa07cc86d43be031fc5bbacd929f6d0f5f04e97ff95fb677ce40",
+        "consumer": "Codex",
+        "code_present": true,
+        "evidence": "cached_plugin_manifest",
+        "enabled_in_client": null,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\.codex\\plugins\\cache\\demo-curated\\tau\\1.0.0"
+      },
+      {
+        "id": "Gemini:gem-one:df9b1ad8d234",
+        "name": "gem-one",
+        "description": "Synthetische Gemini-Erweiterung",
+        "version": "0.1.0",
+        "source_version": "9907f6502bdf582664bf34354f630354ace2f8a2f598068ea89ad2bdd8c47794",
+        "consumer": "Gemini",
+        "code_present": true,
+        "evidence": "manifest_present",
+        "enabled_in_client": null,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\.gemini\\config\\plugins\\gem-one"
+      },
+      {
+        "id": "Host-Bibliothek:lib-plugin:364d9d813842",
+        "name": "lib-plugin",
+        "description": "Synthetisches Bibliotheks-Plugin",
+        "version": "0.2.0",
+        "source_version": "93a4e1b00611bc304f52f955d7395626cf5d95934647d06ebf9728a91ee70c8f",
+        "consumer": "Host-Bibliothek",
+        "code_present": true,
+        "evidence": "manifest_present",
+        "enabled_in_client": null,
+        "runtime_active": null,
+        "connection_state": "unverified",
+        "path": "<home>\\OneDrive\\.TOPICS\\.AI\\.PLUGINS\\lib-plugin"
+      }
+    ],
+    "sources": [
+      {
+        "path": "<home>\\OneDrive\\.TOPICS\\.AI\\.PLUGINS",
+        "available": true
+      },
+      {
+        "path": "<home>\\.gemini\\config\\plugins",
+        "available": true
+      },
+      {
+        "path": "<home>\\.gemini\\extensions",
+        "available": false
+      },
+      {
+        "path": "<home>\\.claude\\plugins",
+        "available": true
+      },
+      {
+        "path": "<home>\\.codex\\plugins",
+        "available": true
+      }
+    ],
+    "errors": [],
+    "truncated": false,
+    "count": 11
+  }
+}
