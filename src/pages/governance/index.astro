@@ -29,6 +29,18 @@ import BachLayout from "../../layouts/BachLayout.astro";
     <a href="/governance/logs" class="btn btn-sm">📜 Logs & Audit</a>
   </div>
 
+  <!-- Seiteninterne Lese-Tabs (#2014): ?tab= wird ausgewertet, alles read-only -->
+  <div role="tablist" aria-label="Governance-Ansichten" id="gov-tablist" class="gov-tabs">
+    <a role="tab" id="tab-status" href="/governance?tab=status" data-tab="status" aria-controls="gov-panel-status">Control Room</a>
+    <a role="tab" id="tab-locks" href="/governance?tab=locks" data-tab="locks" aria-controls="gov-panel-reader">Locks</a>
+    <a role="tab" id="tab-decisions" href="/governance?tab=decisions" data-tab="decisions" aria-controls="gov-panel-reader">Entscheidungen</a>
+    <a role="tab" id="tab-policies" href="/governance?tab=policies" data-tab="policies" aria-controls="gov-panel-reader">Policies</a>
+    <a role="tab" id="tab-registry" href="/governance?tab=registry" data-tab="registry" aria-controls="gov-panel-reader">Registry</a>
+    <a role="tab" id="tab-effective" href="/governance?tab=effective" data-tab="effective" aria-controls="gov-panel-reader">Wirksame Policy</a>
+  </div>
+
+  <div id="gov-panel-status" role="tabpanel" aria-labelledby="tab-status">
+
   <!-- Oberer Bereich: Decision-Clicker (Human-in-the-Loop) -->
   <div class="card" style="margin-bottom:1.5rem;border-left:4px solid var(--warning);">
     <div class="card-header">
@@ -179,6 +191,225 @@ import BachLayout from "../../layouts/BachLayout.astro";
       </div>
     </div>
   </div>
+
+  </div>
+
+  <section id="gov-panel-reader" role="tabpanel" tabindex="-1" hidden aria-labelledby="gov-reader-title">
+    <h2 id="gov-reader-title" class="card-title"></h2>
+    <p class="gov-banner" id="gov-banner">
+      <strong>Nur lesend.</strong> Diese Ansicht ändert nichts. Lock-Vorbehalt: Locks stammen aus einem Scan-Cache; ein leerer,
+      veralteter oder fehlender Scan ist keine Schreibfreigabe. Gesperrte Bereiche bleiben fail-closed.
+    </p>
+    <form id="gov-filters" class="gov-filters" hidden>
+      <label>scope <input name="scope" maxlength="256" autocomplete="off" /></label>
+      <label>consumer <input name="consumer" maxlength="256" autocomplete="off" /></label>
+      <label>query <input name="query" maxlength="512" autocomplete="off" /></label>
+      <label id="gov-kind-label">kind
+        <select name="kind">
+          <option value="">alle</option><option>policy</option><option>rule</option>
+          <option>decision</option><option>evidence</option><option>decision-candidate</option>
+        </select>
+      </label>
+      <button type="submit" class="btn btn-sm">Laden</button>
+      <button type="button" class="btn btn-sm" id="gov-reload">Neu laden</button>
+    </form>
+    <p id="gov-state" role="status" aria-live="polite" class="gov-state"></p>
+    <dl id="gov-meta" class="gov-meta"></dl>
+    <ul id="gov-notices" class="gov-notices"></ul>
+    <div id="gov-rows"></div>
+  </section>
+
+  <style>
+    .gov-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+    .gov-tabs [role="tab"]{padding:.4rem .8rem;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-muted);text-decoration:none;font-size:.85rem}
+    .gov-tabs [role="tab"][aria-selected="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+    .gov-tabs [role="tab"]:focus-visible,#gov-filters :focus-visible{outline:2px solid var(--accent-blue);outline-offset:2px}
+    .gov-banner{padding:.6rem .8rem;border:1px solid var(--border);border-left:4px solid var(--warning);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text);font-size:.82rem;margin:.5rem 0 1rem}
+    .gov-filters{display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;margin-bottom:1rem}
+    .gov-filters label{display:flex;flex-direction:column;font-size:.75rem;color:var(--text-muted);gap:.2rem}
+    .gov-filters input,.gov-filters select{padding:.4rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:4px;color:var(--text)}
+    .gov-state{font-size:.9rem;color:var(--text);min-height:1.4rem}
+    .gov-state[data-state="auth"],.gov-state[data-state="unavailable"],.gov-state[data-state="route"],.gov-state[data-state="error"],.gov-state[data-state="network"],.gov-state[data-state="changed"],.gov-state[data-state="stale"],.gov-state[data-state="contract"]{color:var(--warning)}
+    .gov-meta{display:grid;grid-template-columns:max-content 1fr;gap:.2rem 1rem;font-size:.8rem;margin:.75rem 0}
+    .gov-meta dt{color:var(--text-muted)} .gov-meta dd{margin:0;color:var(--text);overflow-wrap:anywhere}
+    .gov-notices{list-style:none;padding:0;margin:0 0 1rem;display:flex;flex-direction:column;gap:.4rem;font-size:.8rem}
+    .gov-notices li{padding:.5rem .7rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text)}
+    .gov-table{width:100%;border-collapse:collapse;font-size:.8rem}
+    .gov-table th,.gov-table td{text-align:left;padding:.4rem .5rem;border-bottom:1px solid var(--border);vertical-align:top;overflow-wrap:anywhere}
+    .gov-table th{color:var(--text-muted);font-weight:600}
+  </style>
+
+  <script>
+    import {readTab, registryQuery, effectiveQuery, describeFailure, ageLabel, viewState, writerNotice,
+      parseLocks, parseDecisions, parsePolicies, parseRegistry, parseEffective} from '../../lib/governance-readers.mjs';
+
+    const UNKNOWN = 'unbekannt';
+    const READERS = {
+      locks: {title: 'Locks (Lock-Scan-Cache)', url: () => '/api/governance/locks', parse: parseLocks},
+      decisions: {title: 'Entscheidungen (Registry-Zeiger)', url: () => '/api/governance/decisions', parse: parseDecisions},
+      policies: {title: 'Policies und Regeln (Registry-Zeiger)', url: () => '/api/governance/policies', parse: parsePolicies},
+      registry: {title: 'Policy-Registry', filters: true, parse: parseRegistry,
+        url: f => '/api/governance/policy-registry?' + registryQuery(f)},
+      effective: {title: 'Wirksame Policy (Einzelauflösung)', filters: true, parse: parseEffective,
+        url: f => '/api/governance/effective-policy?' + effectiveQuery(f)},
+    };
+    const ENTRY_COLUMNS = [['id', 'id'], ['kind', 'kind'], ['title', 'title'], ['scope', 'scope'], ['version', 'version'],
+      ['status', 'status'], ['adoption', 'adoption'], ['privacy', 'privacy'], ['sourceState', 'Quellenprüfung'], ['enforcementVerified', 'Durchsetzung']];
+
+    const $ = id => document.getElementById(id);
+    const tab = readTab(location.search);
+    for (const link of document.querySelectorAll('#gov-tablist [role="tab"]')) {
+      const selected = link.dataset.tab === tab;
+      link.setAttribute('aria-selected', String(selected));
+      link.tabIndex = selected ? 0 : -1;
+      if (selected) link.setAttribute('aria-current', 'page');
+    }
+    // Arrow keys move between tabs (the tabs are real links, so Enter navigates).
+    $('gov-tablist').addEventListener('keydown', event => {
+      const links = [...document.querySelectorAll('#gov-tablist [role="tab"]')];
+      const index = links.indexOf(document.activeElement);
+      if (index < 0 || !['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? links.length - 1
+        : (index + (event.key === 'ArrowRight' ? 1 : -1) + links.length) % links.length;
+      links[next].focus();
+    });
+
+    const show = value => value === null || value === undefined || value === '' ? UNKNOWN : String(value);
+    const add = (parent, tag, content, attrs = {}) => {
+      const node = document.createElement(tag);
+      node.textContent = content;
+      for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+      parent.appendChild(node);
+      return node;
+    };
+
+    function renderMeta(model) {
+      const meta = $('gov-meta');
+      meta.replaceChildren();
+      const rows = [
+        ['Quelle', model.source ? model.source + (model.providerId ? ' (' + model.providerId + ')' : '') : UNKNOWN],
+        ['Host', UNKNOWN + ' (liefert die Antwort nicht)'],
+        ['Version', show(model.version)],
+        ['Schema', show(model.schema)],
+        ['Verfügbarkeit', show(model.availability) + (model.error ? ' · ' + model.error : '')],
+        ['Stand', show(model.observedAt) + ' (' + ageLabel(model.observedAt) + ')'],
+      ];
+      if (model.scannedAt !== null) rows.push(['Scan', show(model.scannedAt) + ' (' + ageLabel(model.scannedAt) + ')']);
+      if (model.kind !== 'locks') {
+        rows.push(['Zugriff', model.readOnly ? 'nur lesend (read_only)' : 'read_only nicht bestätigt']);
+        rows.push(['Registry-Version', show(model.registryVersion)]);
+        rows.push(['Durchsetzung', model.enforcementVerified ? 'verifiziert' : 'Durchsetzung nicht verifiziert']);
+        rows.push(['Quellenprüfung', model.sourceVerificationComplete ? 'vollständig' : 'nicht vollständig']);
+      }
+      for (const [name, value] of rows) { add(meta, 'dt', name); add(meta, 'dd', value); }
+    }
+
+    function renderNotices(model) {
+      const list = $('gov-notices');
+      list.replaceChildren();
+      if (model.kind === 'locks') return;
+      add(list, 'li', writerNotice(model));
+      if (!model.consumersProjected)
+        add(list, 'li', 'Geltung je Agent nicht verfügbar: Die Registry-Projektion enthält kein consumers-Feld (#2026).');
+      if (model.kind === 'effective') {
+        add(list, 'li', 'effective.selected ist eine Einzelauflösung, nicht der gesamte wirksame Regelsatz.');
+        const eff = model.effective;
+        add(list, 'li', 'Auflösung: status ' + show(eff.status) + ' · Grund ' + show(eff.reason) + ' · Modus ' + show(eff.interactionMode) +
+          ' (' + show(eff.interactionSource) + ') · Kandidaten: ' + (eff.candidateIds.length ? eff.candidateIds.join(', ') : 'keine'));
+      }
+    }
+
+    function table(columns, rows) {
+      const el = document.createElement('table');
+      el.className = 'gov-table';
+      const head = add(el, 'thead', '').appendChild(document.createElement('tr'));
+      for (const [, label] of columns) add(head, 'th', label, {scope: 'col'});
+      const body = add(el, 'tbody', '');
+      for (const row of rows) {
+        const tr = add(body, 'tr', '');
+        for (const [key] of columns) {
+          const value = row[key];
+          add(tr, 'td', typeof value === 'boolean' ? (value ? 'verifiziert' : 'nicht verifiziert') : show(value));
+        }
+      }
+      return el;
+    }
+
+    function renderRows(model) {
+      const target = $('gov-rows');
+      target.replaceChildren();
+      if (model.kind === 'locks') {
+        target.appendChild(table([['name', 'Lock'], ['scope', 'Scope'], ['type', 'Typ'], ['status', 'Status']], model.rows));
+      } else if (model.kind === 'effective') {
+        const selected = model.effective.selected;
+        add(target, 'h3', 'Ausgewählte Einzelpolicy (effective.selected)');
+        if (selected) target.appendChild(table(ENTRY_COLUMNS, [selected]));
+        else add(target, 'p', 'Keine Einzelpolicy ausgewählt.');
+        add(target, 'h3', 'Treffer im Scope (entries)');
+        target.appendChild(table(ENTRY_COLUMNS, model.rows));
+      } else {
+        target.appendChild(table(ENTRY_COLUMNS, model.rows));
+      }
+    }
+
+    const STATE_TEXT = {
+      ok: model => model.rows.length + ' Einträge',
+      empty: () => 'Quelle verfügbar, aber leer. Das ist keine Aussage über Freigaben oder Sperren.',
+      stale: () => 'Quelle veraltet: Stand nicht belastbar.',
+      unavailable: () => 'Quelle nicht verfügbar: Zustand unbekannt.',
+    };
+
+    async function load(reader, filters) {
+      const state = $('gov-state');
+      $('gov-meta').replaceChildren(); $('gov-notices').replaceChildren(); $('gov-rows').replaceChildren();
+      let url;
+      try { url = reader.url(filters); } catch (error) { state.dataset.state = 'error'; state.textContent = error.message; return; }
+      state.dataset.state = 'loading'; state.textContent = 'Lade ' + url.split('?')[0] + ' ...';
+      let response;
+      try { response = await fetch(url); } catch (_) {
+        const failure = describeFailure(0, null);
+        state.dataset.state = failure.state; state.textContent = failure.label; return;
+      }
+      let body = null;
+      try { body = await response.json(); } catch (_) { /* handled below */ }
+      if (!response.ok) {
+        const failure = describeFailure(response.status, body);
+        state.dataset.state = failure.state;
+        state.textContent = failure.label + (failure.detail ? ' · ' + failure.detail : '') + '. Es werden keine Ersatzdaten angezeigt.';
+        return;
+      }
+      let model;
+      try { model = reader.parse(body); } catch (error) {
+        state.dataset.state = 'contract'; state.textContent = error.message + ' Es werden keine Ersatzdaten angezeigt.'; return;
+      }
+      const kind = viewState(model);
+      state.dataset.state = kind;
+      state.textContent = STATE_TEXT[kind](model);
+      renderMeta(model); renderNotices(model);
+      if (kind === 'ok' || kind === 'empty') renderRows(model);
+    }
+
+    if (tab !== 'status') {
+      const reader = READERS[tab];
+      $('gov-panel-status').hidden = true;
+      $('gov-panel-reader').hidden = false;
+      $('gov-reader-title').textContent = reader.title;
+      const form = $('gov-filters');
+      form.hidden = !reader.filters;
+      $('gov-kind-label').hidden = tab === 'effective';
+      const params = new URLSearchParams(location.search);
+      for (const name of ['scope', 'consumer', 'query', 'kind']) if (form.elements[name] && params.get(name)) form.elements[name].value = params.get(name);
+      const run = () => load(reader, Object.fromEntries(new FormData(form).entries()));
+      form.addEventListener('submit', event => { event.preventDefault(); run(); });
+      $('gov-reload').addEventListener('click', run);
+      // Effective policy needs a scope first; everything else loads at once.
+      if (tab === 'effective' && !form.elements.scope.value) {
+        $('gov-state').dataset.state = 'idle';
+        $('gov-state').textContent = 'Scope eingeben und laden. Ohne scope wird nichts abgefragt.';
+      } else run();
+    }
+  </script>
 
   <script is:inline>
     async function loadGovernanceStatus() {
