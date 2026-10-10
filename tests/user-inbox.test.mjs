@@ -1,8 +1,10 @@
 import test from 'node:test';
+import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import {readInboxState, inboxQuery, writeInboxUrl, redirectTarget, readInboxPage, changeBody, changeError, confirmChange, taskDraft} from '../src/lib/user-inbox.mjs';
 
-// Fixtures nach BACH system/gui/api/user_inbox.py:44-47 (Liste) und :63 (PATCH-Antwort).
+// Handlerantworten: tests/fixtures/user-inbox-handler.json (erzeugt aus BACH system/gui/api/user_inbox.py @ c71e4605, Zeilen 44-47 Liste, 63 PATCH).
+const handler = JSON.parse(readFileSync(new URL('./fixtures/user-inbox-handler.json', import.meta.url), 'utf8'));
 const row = (id, status = 'unread') => ({id, sender: 'claude', recipient: 'user', subject: `Betreff ${id}`, body: 'Text', status, created_at: '2026-10-10T10:00:00', read_at: null});
 const list = (messages, extra = {}) => ({schema: 'bach.user-inbox.v1', source: 'assistant-core.messages', recipient: 'user', messages,
   total: messages.length, unread: 1, offset: 0, limit: 50, has_more: false, ...extra});
@@ -52,4 +54,23 @@ test('task draft only prefills the form and keeps its source', () => {
   assert.match(d.description, /^Bitte bis Freitag\.\n\nQuelle: Inbox-Nachricht #7 von claude/);
   assert.equal(taskDraft({...row(8), subject: ''}).title, 'Nachricht von claude');
   assert.equal(taskDraft({...row(9), subject: 'x'.repeat(600)}).title.length, 500);
+});
+
+test('real handler responses pass the validators and drive status changes', () => {
+  const page = readInboxPage(handler.list_all);
+  assert.equal(page.unread, 1); assert.equal(page.messages.length, 2); assert.equal(page.total, 2);
+  const unread = page.messages.find(m => m.status === 'unread');
+  assert.deepEqual(changeBody(unread, 'read'), {status: 'read', expected_status: 'unread'});
+  confirmChange(handler.patch_ok, unread.id, 'read');
+  assert.equal(handler.patch_conflict.status_code, 409); assert.match(changeError(handler.patch_conflict.status_code), /nichts überschrieben/);
+  assert.equal(handler.patch_missing.status_code, 404); assert.match(changeError(handler.patch_missing.status_code), /existiert nicht mehr/);
+});
+
+test('missing or invalid unread count is a contract error, never an invented zero', () => {
+  const ok = handler.list_all;
+  for (const unread of [undefined, null, -1, 1.5, '1', NaN]) {
+    const bad = {...ok}; if (unread === undefined) delete bad.unread; else bad.unread = unread;
+    assert.throws(() => readInboxPage(bad), /ungültig/, String(unread));
+  }
+  assert.equal(readInboxPage({...ok, unread: 0}).unread, 0);
 });

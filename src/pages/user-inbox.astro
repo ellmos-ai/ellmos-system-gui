@@ -2,7 +2,8 @@
 import BachLayout from "../layouts/BachLayout.astro";
 ---
 <BachLayout title="Inbox" currentPath="/user-inbox">
-  <p>Die Nutzer-Inbox ist jetzt ein Tab unter <a id="inbox-redirect-link" href="/agenten/sessions?tab=inbox">Sessions &amp; Protokolle</a>. Du wirst weitergeleitet …</p>
+  <p>Die Nutzer-Inbox ist jetzt ein Tab unter <a id="inbox-redirect-link" href="/agenten/sessions?tab=inbox">Sessions &amp; Protokolle</a>.</p>
+  <p class="text-muted">Mit aktiviertem JavaScript wirst du automatisch weitergeleitet (Statusfilter und Suche werden dabei übernommen). Ohne JavaScript öffnet nur der Link den Tab; Filter werden dann nicht übernommen.</p>
 </BachLayout>
 <script>
   import {redirectTarget} from '../lib/user-inbox.mjs';

@@ -96,7 +96,7 @@
     "src/assets/agent-workshop/workshop.jpg": "b3b102785c06ef1cef4e74cacff6445b94bddcdc5d9083c45748c4f21ebc5674",
     "src/assets/agent-workshop/provenance.json": "ce9d3c13bceb267452aa813371ae9eb8126f54d283521730b3a917bd4f68d764",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/pages/user-inbox.astro": "c90dad288d439bb8d34a711d25ae0a1d62a18e0935e42abe0d30071ec10a35ff",
+    "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
     "src/lib/domain-pins.mjs": "0bc813215764e5e6fb77044bbd68756351b60ddb38035c188548b95d1a527bd3",

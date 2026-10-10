@@ -35,11 +35,12 @@ export function redirectTarget(search = '', hash = '') {
 // user_inbox.py:44-47: Antwortform der Liste.
 export function readInboxPage(data) {
   if (!data || data.schema !== 'bach.user-inbox.v1' || data.recipient !== 'user' || !Array.isArray(data.messages) ||
-      !Number.isSafeInteger(data.total) || typeof data.has_more !== 'boolean')
+      !Number.isSafeInteger(data.total) || data.total < 0 ||
+      !Number.isSafeInteger(data.unread) || data.unread < 0 || typeof data.has_more !== 'boolean')
     throw new Error('Die Inbox-Antwort ist ungültig.');
   if (data.messages.some(r => !Number.isSafeInteger(r.id) || String(r.recipient).trim().toLowerCase() !== 'user'))
     throw new Error('Die Inbox enthält eine unpassende Nachricht.');
-  return {messages: data.messages, total: data.total, unread: Number.isSafeInteger(data.unread) ? data.unread : 0, hasMore: data.has_more};
+  return {messages: data.messages, total: data.total, unread: data.unread, hasMore: data.has_more};
 }
 
 // user_inbox.py:51-64: PATCH mit expected_status, 409 bei Konflikt, 404 unbekannt.
