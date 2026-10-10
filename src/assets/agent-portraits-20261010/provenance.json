@@ -572,6 +572,291 @@
       ],
       "bytes": 98887,
       "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-01-tuerkis-wolkenriese",
+      "name": "Monster · Türkiser Wolkenriese",
+      "origin": "image_gen",
+      "source_file": "01-tuerkis-wolkenriese.png",
+      "source_sha256": "ae9ebd1c2e56bad081076b43ef1ac509f005524b4cc131a6d0c7757142559f63",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-01-tuerkis-wolkenriese.png",
+      "sha256": "b88f1d8ebe2d7d1494acce0a21704c984d4180accb2aaad28c2036d82ad82e50",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 65521,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-02-korall-gestaltwandler",
+      "name": "Monster · Korall-Gestaltwandler",
+      "origin": "image_gen",
+      "source_file": "02-korall-gestaltwandler.png",
+      "source_sha256": "5d8604fab14b09eef962c57048ffff2240d2d86cb2949a5716d6215cfe3a4f6a",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-02-korall-gestaltwandler.png",
+      "sha256": "08349423b16ed293c9f07efa1c844ca826c7a53e7441f1413892ff194b173270",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 67966,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-03-lila-traumsammler",
+      "name": "Monster · Lila Traumsammler",
+      "origin": "image_gen",
+      "source_file": "03-lila-traumsammler.png",
+      "source_sha256": "346fc0e90599e98e4da00304cdee81b48de0099ea1f8f156100f8da5af50b01e",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-03-lila-traumsammler.png",
+      "sha256": "5f361b52204818cd8fedf9c2688e053a89842bfb3128d8508ece658ac1df9d03",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 88919,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-04-orange-feuerfreund",
+      "name": "Monster · Oranger Feuerfreund",
+      "origin": "image_gen",
+      "source_file": "04-orange-feuerfreund.png",
+      "source_sha256": "e15fa323cc3ee104020470fc720c034dbe661e4c062811611b95c524b64e94b0",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-04-orange-feuerfreund.png",
+      "sha256": "ac51bc78d77fc86f00dee5fd1f446d9a0a41c117e4a1f5b4a8b54ca6789e11f3",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 79367,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-05-mint-pflanzenhueter",
+      "name": "Monster · Mint-Pflanzenhüter",
+      "origin": "image_gen",
+      "source_file": "05-mint-pflanzenhueter.png",
+      "source_sha256": "68f090c4d5cce72c2771f2e97aeb3cacd9124b7e48f5a0d2f054f0b688737e11",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-05-mint-pflanzenhueter.png",
+      "sha256": "b0d1e18f94beb3f18b21f78a3795fbc709a8604db82fa884a31d175b1fddd7a4",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 84840,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-06-blau-eiszauber",
+      "name": "Monster · Blauer Eiszauber",
+      "origin": "image_gen",
+      "source_file": "06-blau-eiszauber.png",
+      "source_sha256": "7db92a99ad1885faacfa2425f1462023a422c366fb21ec0a74ef3090d7a7b6e1",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-06-blau-eiszauber.png",
+      "sha256": "d25dd31cec1a858cc6eb53f73ed80ff43ce26933336d54eed1f9ffa67d39c209",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 77055,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-07-gelb-lichtfunke",
+      "name": "Monster · Gelber Lichtfunke",
+      "origin": "image_gen",
+      "source_file": "07-gelb-lichtfunke.png",
+      "source_sha256": "fdae2e678dcd1cd0217148a7cdb5c138e2cb3b0ea411f0f0b72930ce39f5ed7f",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-07-gelb-lichtfunke.png",
+      "sha256": "f08b54d35c99ed5939973da0d8ac09afeff5baee34b1acddec5836fabffd9e01",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 74656,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-08-indigo-teleporter",
+      "name": "Monster · Indigo-Teleporter",
+      "origin": "image_gen",
+      "source_file": "08-indigo-teleporter.png",
+      "source_sha256": "1569ca368a4ad9527dab2e6eb84e67f39cf5a8f4a1cfa7b266c889b0a8b6d14a",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-08-indigo-teleporter.png",
+      "sha256": "588fb83caed50dd12468c590de4fdf308d248bc01934df7c5478e2a97869e706",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 83904,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-09-pfirsich-klangkuenstler",
+      "name": "Monster · Pfirsich-Klangkünstler",
+      "origin": "image_gen",
+      "source_file": "09-pfirsich-klangkuenstler.png",
+      "source_sha256": "bdcf9eba32c01016c8ae8a5350538ab8610bc906719275f05f54fa95db5c0cab",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-09-pfirsich-klangkuenstler.png",
+      "sha256": "021994474d9001cb6f3b74332904193918c065bbe96c3c6f368f242c085839e2",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 76727,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-10-rosa-sternenschweber",
+      "name": "Monster · Rosa Sternenschweber",
+      "origin": "image_gen",
+      "source_file": "10-rosa-sternenschweber.png",
+      "source_sha256": "b9e3553b084232532f40bd300d2ce8d64320ce32f13d248e90480a35accd3a46",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-10-rosa-sternenschweber.png",
+      "sha256": "82735a5c284ef186d864107ffc083c44786cbad549da6276199407bbe500d686",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 83812,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-11-slime-smaragd",
+      "name": "Slime · Smaragd",
+      "origin": "image_gen",
+      "source_file": "11-slime-smaragd.png",
+      "source_sha256": "9378331cd5121629cf2db89a1c4696a60cf63b8a6e8b7838cdf67bff00882d08",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-11-slime-smaragd.png",
+      "sha256": "069efe6b4bada88c1dec500f7f23ae91fe927eeed2e204e2e4304497b580263d",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 82078,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-12-slime-himmelblau",
+      "name": "Slime · Himmelblau",
+      "origin": "image_gen",
+      "source_file": "12-slime-himmelblau.png",
+      "source_sha256": "fcc5bade44ea7ff6c7ca5e0c723ef8c40c86cb0118f7341648c0ee98f5201b7a",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-12-slime-himmelblau.png",
+      "sha256": "697dc46f50dbf2f1a876b7709330db99934d2dc37f49d0e96aab13de6c4da78f",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 72435,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-13-slime-rosa",
+      "name": "Slime · Rosa",
+      "origin": "image_gen",
+      "source_file": "13-slime-rosa.png",
+      "source_sha256": "07e11135cf87923847579f97bf75859cf2d41af912863a58f26e3f01b1760da0",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-13-slime-rosa.png",
+      "sha256": "1f3fb4d9ddd32e0f5eb46672322e1bf896b5cedad6fea33e016577f1f484c70f",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 73605,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-14-slime-goldgelb",
+      "name": "Slime · Goldgelb",
+      "origin": "image_gen",
+      "source_file": "14-slime-goldgelb.png",
+      "source_sha256": "c3da7489c6e501c6a6e9d7c714c2b7c72e68fc94d946bab7aa8139bb7e440ca2",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-14-slime-goldgelb.png",
+      "sha256": "a630b4a5b28efbc300cf76440b7785e7cb312cb951ede015a2fce40bdd625886",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 79269,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
+    },
+    {
+      "id": "preset:fantasy-15-slime-violett",
+      "name": "Slime · Violett",
+      "origin": "image_gen",
+      "source_file": "15-slime-violett.png",
+      "source_sha256": "b69d30a18270a9dd284955c03fd388ecaa7d819471c218487465bde81422cbf3",
+      "source_dimensions": [
+        1254,
+        1254
+      ],
+      "file": "fantasy-15-slime-violett.png",
+      "sha256": "f9a3dc979a9ff4e4a89b1fbdadc44b14ad468339219510e5d7da3ed91320bb70",
+      "dimensions": [
+        256,
+        256
+      ],
+      "bytes": 82422,
+      "preparation": "supplied 256-pixel PNG; bytes unchanged"
     }
   ]
 }

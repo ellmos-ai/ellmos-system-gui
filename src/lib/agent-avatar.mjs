@@ -86,7 +86,7 @@ export const GEMINI_AVATAR_PRESETS = [
 ];
 // These choices use the existing image-upload storage contract.
 export const PORTABLE_AVATAR_PRESETS = [
-  {
+{
     "id": "preset:comic-01-ati-technik",
     "name": "ATI · Comic"
   },
@@ -205,7 +205,68 @@ export const PORTABLE_AVATAR_PRESETS = [
   {
     "id": "preset:robot-10-gruener-froschbot",
     "name": "Roboter · Grüner Froschbot"
+  },
+  {
+    "id": "preset:fantasy-01-tuerkis-wolkenriese",
+    "name": "Monster · Türkiser Wolkenriese"
+  },
+  {
+    "id": "preset:fantasy-02-korall-gestaltwandler",
+    "name": "Monster · Korall-Gestaltwandler"
+  },
+  {
+    "id": "preset:fantasy-03-lila-traumsammler",
+    "name": "Monster · Lila Traumsammler"
+  },
+  {
+    "id": "preset:fantasy-04-orange-feuerfreund",
+    "name": "Monster · Oranger Feuerfreund"
+  },
+  {
+    "id": "preset:fantasy-05-mint-pflanzenhueter",
+    "name": "Monster · Mint-Pflanzenhüter"
+  },
+  {
+    "id": "preset:fantasy-06-blau-eiszauber",
+    "name": "Monster · Blauer Eiszauber"
+  },
+  {
+    "id": "preset:fantasy-07-gelb-lichtfunke",
+    "name": "Monster · Gelber Lichtfunke"
+  },
+  {
+    "id": "preset:fantasy-08-indigo-teleporter",
+    "name": "Monster · Indigo-Teleporter"
+  },
+  {
+    "id": "preset:fantasy-09-pfirsich-klangkuenstler",
+    "name": "Monster · Pfirsich-Klangkünstler"
+  },
+  {
+    "id": "preset:fantasy-10-rosa-sternenschweber",
+    "name": "Monster · Rosa Sternenschweber"
+  },
+  {
+    "id": "preset:fantasy-11-slime-smaragd",
+    "name": "Slime · Smaragd"
+  },
+  {
+    "id": "preset:fantasy-12-slime-himmelblau",
+    "name": "Slime · Himmelblau"
+  },
+  {
+    "id": "preset:fantasy-13-slime-rosa",
+    "name": "Slime · Rosa"
+  },
+  {
+    "id": "preset:fantasy-14-slime-goldgelb",
+    "name": "Slime · Goldgelb"
+  },
+  {
+    "id": "preset:fantasy-15-slime-violett",
+    "name": "Slime · Violett"
   }
+
 ];
 export const AVATAR_PRESETS = [...ATLAS_PRESETS,...GEMINI_AVATAR_PRESETS,...PORTABLE_AVATAR_PRESETS];
 let presetImages = Object.freeze({});

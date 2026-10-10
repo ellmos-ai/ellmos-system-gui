@@ -59,7 +59,8 @@ als Anwendungen auszugeben.
 
 ## Zusätzliche Agentenbilder (GUI 0.2.16)
 
-Die drei neuen Zehnerserien verwenden beim Auswählen den bestehenden Bildvertrag:
+Die 45 neuen Comic-, Gemini-, Roboter-, Monster- und Slime-Bilder verwenden
+beim Auswählen den bestehenden Bildvertrag:
 PNG als data:image/png;base64, höchstens 180000 Bytes und 240000 Zeichen.
 Die interne Auswahlkennung wird nicht als neue Presetkennung an den Konsumenten
 gesendet. Bestehende Atlas- und Gemini-Presetkennungen bleiben unverändert.

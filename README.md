@@ -36,9 +36,9 @@ python scripts/package_release.py
 
 ## Agent portraits
 
-The shared portrait picker contains 55 choices: the six original atlas portraits,
+The shared portrait picker contains 70 choices: the six original atlas portraits,
 19 existing Gemini portraits, ten image_gen comic portraits and ten additional
-Gemini role portraits, plus ten colorful workshop robots. The new series use
+Gemini role portraits, plus ten colorful workshop robots, ten monsters and five slime balls. The new series use
 256-pixel PNGs and the existing consumer
 image-upload contract. A selected new picture is stored as bounded image data,
 so consumers do not need new preset allowlists or a controller restart. The picker
