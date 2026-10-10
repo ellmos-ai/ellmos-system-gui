@@ -57,6 +57,19 @@ Katalogkennung, zeigt die GUI die fehlende Anbindung statt Repository-Einträge
 als Anwendungen auszugeben.
 
 
+## Zusätzliche Agentenbilder (GUI 0.2.16)
+
+Die drei neuen Zehnerserien verwenden beim Auswählen den bestehenden Bildvertrag:
+PNG als data:image/png;base64, höchstens 180000 Bytes und 240000 Zeichen.
+Die interne Auswahlkennung wird nicht als neue Presetkennung an den Konsumenten
+gesendet. Bestehende Atlas- und Gemini-Presetkennungen bleiben unverändert.
+Der Konsument speichert das Bild in avatar beziehungsweise contractus.execution.avatar
+und gibt es unverändert zurück. Die gemeinsame Darstellung erkennt diese Bildwerte
+beim erneuten Laden und zeigt die gewählte Vorlage und Vorschau. Eine zusätzliche
+Backend-Freigabeliste für diese Bilder ist nicht erforderlich. Ein Ocean-Adapter
+braucht denselben begrenzten Bildvertrag. Quellbilder bleiben erhalten; die GUI
+verwendet ausschließlich die in der Provenienz festgehaltenen Vorschaubilder.
+
 ## Inbox und Agenten-Konfiguration
 
 Die Inbox liest GET /api/user-inbox mit Schema bach.user-inbox.v1 und recipient=user.

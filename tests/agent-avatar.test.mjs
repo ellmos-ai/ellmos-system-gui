@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {AVATAR_PRESETS,ATLAS_PRESETS,GEMINI_AVATAR_PRESETS,setAvatarPresetUrls,avatarVisual,createAvatar,mountAvatarPicker} from '../src/lib/agent-avatar.mjs';
+import {AVATAR_PRESETS,ATLAS_PRESETS,GEMINI_AVATAR_PRESETS,PORTABLE_AVATAR_PRESETS,setAvatarPresetImages,setAvatarPresetUrls,avatarVisual,createAvatar,mountAvatarPicker} from '../src/lib/agent-avatar.mjs';
 
 test('six atlas portraits use explicit atlas positions and default roles',()=>{
-  assert.equal(ATLAS_PRESETS.length,6);assert.equal(AVATAR_PRESETS.length,25);
+  assert.equal(ATLAS_PRESETS.length,6);assert.equal(AVATAR_PRESETS.length,55);
   assert.equal(avatarVisual('',{id:'buddha_always_on'}).id,'preset:guardian');
   assert.equal(avatarVisual('',{role_id:'boss_routing'}).id,'preset:coordinator');
   assert.equal(avatarVisual('preset:researcher',{}).position,'100% 100%');
@@ -31,8 +31,9 @@ test('preset images use owned Astro assets without copying image bytes into sett
 test('a preset choice passes its ID and marks the current selection',()=>{
   const document=fakeDocument(),container=document.createElement('div');let selected;
   setAvatarPresetUrls(Object.fromEntries(GEMINI_AVATAR_PRESETS.map((p,i)=>[p.id,'/_astro/gemini-'+i+'.png'])));
+  setAvatarPresetImages(Object.fromEntries(PORTABLE_AVATAR_PRESETS.map((p,i)=>[p.id,'data:image/png;base64,'+Buffer.from([137,80,78,71,13,10,26,10,i]).toString('base64')])));
   mountAvatarPicker(container,'preset:coordinator',{},'/_astro/portraits.abc.png',value=>{selected=value;});
-  assert.equal(container.children.length,25);
+  assert.equal(container.children.length,55);
   assert.equal(container.children[3].attributes['aria-pressed'],'true');
   container.children[4].click();assert.equal(selected,'preset:engineer');
 });

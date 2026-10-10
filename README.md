@@ -34,6 +34,17 @@ python scripts/package_release.py
 
 `ellmos-module.v2.json` registers only `gui.static.distribution` and `gui.same-origin.client`. It owns no runtime state. Authentication, backend adapters, task authority and worker execution belong to the consumer; installing this static distribution does not make those capabilities available.
 
+## Agent portraits
+
+The shared portrait picker contains 55 choices: the six original atlas portraits,
+19 existing Gemini portraits, ten image_gen comic portraits and ten additional
+Gemini role portraits, plus ten colorful workshop robots. The new series use
+256-pixel PNGs and the existing consumer
+image-upload contract. A selected new picture is stored as bounded image data,
+so consumers do not need new preset allowlists or a controller restart. The picker
+recognizes the picture again after loading. Source and derivative hashes are in
+[src/assets/agent-portraits-20261010/provenance.json](src/assets/agent-portraits-20261010/provenance.json).
+
 ## API and availability
 
 Task detail can display canonical worker output and a separate operator acceptance
