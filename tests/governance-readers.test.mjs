@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {readTab, registryQuery, effectiveQuery, describeFailure, ageLabel, viewState, writerNotice,
+import {readTab, registryQuery, effectiveQuery, describeFailure, ageLabel, viewState, writerNotice, nextTabIndex,
   parseLocks, parseStatus, parseDecisions, parsePolicies, parseRegistry, parseEffective} from '../src/lib/governance-readers.mjs';
 
 // Synthetic fixtures. Field names are copied from the BACH handlers at c71e4605 (system/ prefix omitted):
@@ -16,7 +16,7 @@ const registry = (entries = [entry()], extra = {}) => ({schema: 'bach.policy-reg
   observed_at: '2026-10-10T12:00:00+00:00', source: 'policy-registry',
   provider: {id: 'policy-registry', version: '0.2.4', source_commit: 'c'.repeat(40), repository: 'https://example.invalid/r', verified: true},
   registry_version: 'b'.repeat(64), read_only: true, enforcement_verified: false, entries, count: entries.length,
-  source_verification_complete: true,
+  source_verification_complete: entries.length > 0, // adapter line 92: bool(entries) and all(...)
   decision_writer: {id: 'decision-clicker', available: false, reason: 'separate_explicit_adoption_required'}, ...extra});
 
 test('tab is read from the query and defaults to status', () => {
@@ -66,6 +66,27 @@ test('status: fields of /api/governance/status (unified_api.py:1044-1063)', () =
   assert.equal(model.enforcementVerified, false);
 });
 
+test('status: a missing list is unknown (null), an empty list is a real answer (unified_api.py:1054-1063)', () => {
+  const base = {status: 'observed', timestamp: '2026-10-10T12:00:00+00:00', source: 'lock_scan_cache', availability: 'available',
+    scanned_at: null, error: null, active_locks: [], lock_count: 0, policy_source: 'policy-registry', enforcement_verified: false};
+  const missing = parseStatus(base);
+  assert.equal(missing.decisions, null);
+  assert.equal(missing.policies, null);
+  const empty = parseStatus({...base, recent_decisions: [], policies: []});
+  assert.deepEqual(empty.decisions, []);
+  assert.deepEqual(empty.policies, []);
+  assert.throws(() => parseStatus({...base, active_locks: undefined}), /status/);
+});
+
+test('arrow-key tab movement wraps and ignores other keys', () => {
+  assert.equal(nextTabIndex('ArrowRight', 5, 6), 0);
+  assert.equal(nextTabIndex('ArrowLeft', 0, 6), 5);
+  assert.equal(nextTabIndex('Home', 3, 6), 0);
+  assert.equal(nextTabIndex('End', 3, 6), 5);
+  assert.equal(nextTabIndex('a', 3, 6), null);
+  assert.equal(nextTabIndex('ArrowRight', -1, 6), null);
+});
+
 test('registry: pointer fields incl. missing ones become null, never invented (policy_registry_adapter.py:54-67)', () => {
   const model = parseRegistry(registry([entry({valid_from: undefined, supersedes: undefined})]));
   const row = model.rows[0];
@@ -79,9 +100,9 @@ test('registry: pointer fields incl. missing ones become null, never invented (p
   assert.equal(model.enforcementVerified, false);
 });
 
-test('consumers are not projected: the gap is reported, not simulated (#2026)', () => {
+test('consumers are never in the handler projection, so the gap is reported (#2026; adapter pointer() allowlist :54-55)', () => {
   assert.equal(parseRegistry(registry()).consumersProjected, false);
-  assert.equal(parseRegistry(registry([entry({consumers: ['agent-1']})])).consumersProjected, true);
+  assert.equal(parseRegistry(registry([])).consumersProjected, false);
 });
 
 test('writer notice reflects decision_writer.available=false and its reason (policy_registry_adapter.py:95-96)', () => {
@@ -93,8 +114,10 @@ test('writer notice reflects decision_writer.available=false and its reason (pol
 
 test('decisions and policies use the handler selection lists (unified_api.py:1113-1128)', () => {
   const all = [entry({id: 'p', kind: 'policy'}), entry({id: 'd', kind: 'decision'})];
-  const decisions = parseDecisions({...registry(all), decisions: [all[1]]});
+  // /decisions calls read_registry(kind="decision"): entries is already filtered (unified_api.py:1117).
+  const decisions = parseDecisions({...registry([all[1]]), decisions: [all[1]]});
   assert.deepEqual(decisions.rows.map(r => r.id), ['d']);
+  assert.deepEqual(decisions.rows.map(r => r.kind), ['decision']);
   // /policies rewrites "count" to the filtered length and adds name/desc/enforcement.
   const policies = parsePolicies({...registry(all), policies: [{...all[0], name: 'Synthetic policy', desc: 'x', enforcement: 'unverified'}], count: 1});
   assert.deepEqual(policies.rows.map(r => r.id), ['p']);
@@ -115,6 +138,19 @@ test('effective: selected is a single resolution and is kept apart from entries 
   assert.equal(none.effective.selected, null);
   assert.equal(viewState(none), 'empty');
   assert.throws(() => parseEffective(registry()), /effective/);
+});
+
+test('effective: absent selected / candidate_ids is a contract error, null and [] are real answers (adapter :98-108)', () => {
+  const eff = {status: 'none', reason: 'no_match', selected: null, candidate_ids: []};
+  assert.equal(parseEffective(registry([], {effective: eff})).effective.selected, null);
+  assert.deepEqual(parseEffective(registry([], {effective: eff})).effective.candidateIds, []);
+  const {selected, ...noSelected} = eff;
+  assert.throws(() => parseEffective(registry([], {effective: noSelected})), /selected/);
+  const {candidate_ids, ...noCandidates} = eff;
+  assert.throws(() => parseEffective(registry([], {effective: noCandidates})), /candidate_ids/);
+  assert.throws(() => parseEffective(registry([], {effective: {...eff, selected: 'x'}})), /selected/);
+  assert.throws(() => parseEffective(registry([], {effective: {...eff, candidate_ids: 'a'}})), /candidate_ids/);
+  assert.equal(parseEffective(registry([], {effective: eff})).sourceVerificationComplete, false);
 });
 
 test('contract violations throw instead of showing partial data', () => {
@@ -143,6 +179,9 @@ test('age labels never invent a time', () => {
   assert.equal(ageLabel('2026-10-10T11:50:00Z', now), 'vor 10 Min.');
   assert.equal(ageLabel('2026-10-10T09:00:00Z', now), 'vor 3 Std.');
   assert.match(ageLabel('2026-10-10T13:00:00Z', now), /Zukunft/);
+  assert.equal(ageLabel('2026-10-10T12:00:30Z', now), 'Zeitstempel in der Zukunft');
+  assert.equal(ageLabel('2026-10-10T12:00:01Z', now), 'Zeitstempel in der Zukunft');
+  assert.equal(ageLabel('2026-10-10T12:00:00Z', now), 'vor weniger als 1 Min.');
 });
 
 test('the governance page wires tabs, keeps the old view and offers no approval control', () => {
@@ -152,6 +191,9 @@ test('the governance page wires tabs, keeps the old view and offers no approval 
     assert.match(page, new RegExp('href="/governance\\?tab=' + tab + '"'));
   assert.match(page, /governance-readers\.mjs/);
   assert.match(page, /\/api\/governance\/status/);
+  assert.match(page, /parseStatus/);
+  assert.doesNotMatch(page, /loadGovernanceStatus/);
+  assert.match(page, /nextTabIndex/);
   assert.doesNotMatch(page, /method:\s*['"](POST|PUT|PATCH|DELETE)/);
   assert.doesNotMatch(page, /Freigeben|Approve/i);
   const nav = JSON.parse(readFileSync(new URL('../src/config/nav_config.json', import.meta.url), 'utf8'));

@@ -49,7 +49,7 @@ export function ageLabel(iso, now = Date.now()) {
   const stamp = typeof iso === 'string' ? Date.parse(iso) : NaN;
   if (Number.isNaN(stamp)) return 'unbekannt';
   const seconds = Math.round((now - stamp) / 1000);
-  if (seconds < -60) return 'Zeitstempel liegt in der Zukunft';
+  if (seconds < 0) return 'Zeitstempel in der Zukunft';
   if (seconds < 60) return 'vor weniger als 1 Min.';
   if (seconds < 3600) return 'vor ' + Math.round(seconds / 60) + ' Min.';
   if (seconds < 86400) return 'vor ' + Math.round(seconds / 3600) + ' Std.';
@@ -83,8 +83,9 @@ export function parseStatus(body) {
     kind: 'status', availability: body.availability, source: text(body.source), error: text(body.error),
     observedAt: text(body.timestamp), scannedAt: text(body.scanned_at), schema: null, version: null,
     lockCount: Number.isInteger(body.lock_count) ? body.lock_count : null, locks: lockRows(body.active_locks),
-    decisions: (body.recent_decisions || []).map(registryEntry),
-    policies: (body.policies || []).map(registryEntry),
+    // A missing list is unknown (null), an empty list is a real answer.
+    decisions: Array.isArray(body.recent_decisions) ? body.recent_decisions.map(registryEntry) : null,
+    policies: Array.isArray(body.policies) ? body.policies.map(registryEntry) : null,
     policiesAvailability: text(body.policies_availability), policiesReason: text(body.policies_reason),
     enforcementVerified: body.enforcement_verified === true,
   };
@@ -139,6 +140,9 @@ export function parseEffective(body) {
   const meta = registryMeta(body, 'effective');
   const eff = body.effective;
   if (!isObject(eff)) fail('effective fehlt');
+  // adapter lines 98-108 always send both keys: null / [] are real answers, absence is a contract error.
+  if (!('selected' in eff) || !(eff.selected === null || isObject(eff.selected))) fail('effective.selected fehlt oder hat falschen Typ');
+  if (!Array.isArray(eff.candidate_ids)) fail('effective.candidate_ids fehlt oder ist keine Liste');
   return {
     ...meta,
     effective: {
@@ -163,4 +167,14 @@ export function writerNotice(model) {
   return model.writer.available
     ? 'Writer gemeldet (' + (model.writer.id || 'unbekannt') + '); diese Ansicht schreibt nicht.'
     : 'Writer nicht angebunden (' + (model.writer.id || 'decision-clicker') + '): ' + (model.writer.reason || 'Grund unbekannt');
+}
+
+// Arrow-key movement inside the tab list (wraps around). Returns null for other keys.
+export function nextTabIndex(key, index, length) {
+  if (!(length > 0) || !(index >= 0 && index < length)) return null;
+  if (key === 'Home') return 0;
+  if (key === 'End') return length - 1;
+  if (key === 'ArrowRight') return (index + 1) % length;
+  if (key === 'ArrowLeft') return (index - 1 + length) % length;
+  return null;
 }

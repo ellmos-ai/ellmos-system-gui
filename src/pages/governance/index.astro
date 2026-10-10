@@ -40,6 +40,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
   </div>
 
   <div id="gov-panel-status" role="tabpanel" aria-labelledby="tab-status">
+    <p id="gov-status-meta" role="status" aria-live="polite" class="gov-state" style="font-size:.78rem;color:var(--text-muted)"></p>
 
   <!-- Oberer Bereich: Decision-Clicker (Human-in-the-Loop) -->
   <div class="card" style="margin-bottom:1.5rem;border-left:4px solid var(--warning);">
@@ -240,8 +241,8 @@ import BachLayout from "../../layouts/BachLayout.astro";
   </style>
 
   <script>
-    import {readTab, registryQuery, effectiveQuery, describeFailure, ageLabel, viewState, writerNotice,
-      parseLocks, parseDecisions, parsePolicies, parseRegistry, parseEffective} from '../../lib/governance-readers.mjs';
+    import {readTab, registryQuery, effectiveQuery, describeFailure, ageLabel, viewState, writerNotice, nextTabIndex,
+      parseStatus, parseLocks, parseDecisions, parsePolicies, parseRegistry, parseEffective} from '../../lib/governance-readers.mjs';
 
     const UNKNOWN = 'unbekannt';
     const READERS = {
@@ -267,11 +268,9 @@ import BachLayout from "../../layouts/BachLayout.astro";
     // Arrow keys move between tabs (the tabs are real links, so Enter navigates).
     $('gov-tablist').addEventListener('keydown', event => {
       const links = [...document.querySelectorAll('#gov-tablist [role="tab"]')];
-      const index = links.indexOf(document.activeElement);
-      if (index < 0 || !['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return;
+      const next = nextTabIndex(event.key, links.indexOf(document.activeElement), links.length);
+      if (next === null) return;
       event.preventDefault();
-      const next = event.key === 'Home' ? 0 : event.key === 'End' ? links.length - 1
-        : (index + (event.key === 'ArrowRight' ? 1 : -1) + links.length) % links.length;
       links[next].focus();
     });
 
@@ -390,6 +389,55 @@ import BachLayout from "../../layouts/BachLayout.astro";
       if (kind === 'ok' || kind === 'empty') renderRows(model);
     }
 
+    const STATUS_FAIL = 'Status nicht geladen: ';
+    async function loadStatus() {
+      const badge = $('governance-status-badge'), lockBadge = $('locks-count-badge'), decisionBadge = $('decisions-count-badge');
+      const list = $('locks-list'), meta = $('gov-status-meta'), decisions = $('decisions-list');
+      const failed = text => {
+        badge.textContent = '● ' + text; lockBadge.textContent = 'Lock-Lage unbekannt';
+        decisionBadge.textContent = 'Entscheidungen unbekannt';
+        list.textContent = text + '. Es werden keine Ersatzdaten angezeigt.'; meta.textContent = '';
+      };
+      let response;
+      try { response = await fetch('/api/governance/status'); } catch (_) { failed(STATUS_FAIL + describeFailure(0, null).label); return; }
+      let body = null;
+      try { body = await response.json(); } catch (_) { /* reported below */ }
+      if (!response.ok) { const f = describeFailure(response.status, body); failed(STATUS_FAIL + f.label + (f.detail ? ' · ' + f.detail : '')); return; }
+      if (body === null) { failed(STATUS_FAIL + 'Antwort nicht lesbar (kein JSON)'); return; }
+      let model;
+      try { model = parseStatus(body); } catch (error) { failed(STATUS_FAIL + error.message); return; }
+      badge.textContent = model.availability === 'available'
+        ? '● Lock-Feed verfügbar; Durchsetzung nicht geprüft' : '● Lock-Lage unbekannt (' + model.availability + ')';
+      meta.textContent = 'Quelle: ' + show(model.source) + ' · Stand: ' + show(model.observedAt) + ' (' + ageLabel(model.observedAt) +
+        ') · Scan: ' + show(model.scannedAt) + (model.scannedAt ? ' (' + ageLabel(model.scannedAt) + ')' : '') +
+        ' · Host: ' + UNKNOWN + ' · Version: ' + UNKNOWN + ' · Zugriff: nur lesend' +
+        (model.error ? ' · Fehler: ' + model.error : '') + ' · Durchsetzung ' + (model.enforcementVerified ? 'verifiziert' : 'nicht verifiziert');
+      list.replaceChildren();
+      if (model.availability === 'available' && model.lockCount !== null) {
+        lockBadge.textContent = model.lockCount + ' Locks im Scan';
+        for (const lock of model.locks) {
+          const row = add(list, 'div', '');
+          row.style.cssText = 'padding:0.75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm)';
+          add(row, 'strong', lock.name);
+          const scope = add(row, 'span', 'Scope: ' + show(lock.scope));
+          scope.style.cssText = 'display:block;font-size:0.75rem;color:var(--text-muted)';
+        }
+        if (model.lockCount === 0) list.textContent = 'Keine Locks im letzten Scan. Schreibzugriff separat prüfen.';
+      } else {
+        lockBadge.textContent = 'Lock-Lage unbekannt';
+        list.textContent = 'Kein gültiger, frischer Lock-Scan verfügbar.';
+      }
+      const label = decisions.querySelector('strong');
+      if (model.decisions === null) {
+        decisionBadge.textContent = 'Entscheidungsliste unbekannt (Feld recent_decisions fehlt)';
+        if (label) label.textContent = 'Entscheidungsregister unbekannt';
+      } else {
+        decisionBadge.textContent = model.decisions.length + ' Registerdateien; offener Status nicht geprüft';
+        if (label) label.textContent = model.decisions.length ? 'Entscheidungsregister geladen' : 'Keine Registerdateien gefunden';
+      }
+    }
+    if (tab === 'status') loadStatus();
+
     if (tab !== 'status') {
       const reader = READERS[tab];
       $('gov-panel-status').hidden = true;
@@ -412,50 +460,8 @@ import BachLayout from "../../layouts/BachLayout.astro";
   </script>
 
   <script is:inline>
-    async function loadGovernanceStatus() {
-      try {
-        const response = await fetch('/api/governance/status');
-        if (!response.ok) throw new Error('Status nicht erreichbar');
-        const data = await response.json();
-        document.getElementById('governance-status-badge').textContent =
-          data.availability === 'available' ? '● Lock-Feed verfügbar; Durchsetzung nicht geprüft' : '● Lock-Lage unbekannt';
-        const badge = document.getElementById('locks-count-badge');
-        const list = document.getElementById('locks-list');
-        list.replaceChildren();
-        if (data.availability === 'available' && Number.isInteger(data.lock_count)) {
-          badge.textContent = data.lock_count + ' Locks im Scan';
-          for (const lock of data.active_locks || []) {
-            const row = document.createElement('div');
-            row.style.cssText = 'padding:0.75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm)';
-            const name = document.createElement('strong');
-            name.textContent = lock.name;
-            const scope = document.createElement('span');
-            scope.style.cssText = 'display:block;font-size:0.75rem;color:var(--text-muted)';
-            scope.textContent = 'Scope: ' + lock.scope;
-            row.append(name, scope);
-            list.appendChild(row);
-          }
-          if (data.lock_count === 0) list.textContent = 'Keine Locks im letzten Scan. Schreibzugriff separat prüfen.';
-        } else {
-          badge.textContent = 'Lock-Lage unbekannt';
-          list.textContent = 'Kein gültiger, frischer Lock-Scan verfügbar.';
-        }
-        document.getElementById('decisions-count-badge').textContent =
-          (data.recent_decisions || []).length + ' Registerdateien; offener Status nicht geprüft';
-        const decisions = document.getElementById('decisions-list');
-        const registerLabel = decisions.querySelector('strong');
-        if (registerLabel) registerLabel.textContent =
-          (data.recent_decisions || []).length ? 'Entscheidungsregister geladen' : 'Keine Registerdateien gefunden';
-      } catch (_) {
-        document.getElementById('governance-status-badge').textContent = '● Status nicht geprüft';
-        document.getElementById('locks-count-badge').textContent = 'Lock-Lage unbekannt';
-        document.getElementById('decisions-count-badge').textContent = 'Entscheidungen nicht geprüft';
-      }
-    }
-
     function sendFunkMessage() {
       document.getElementById('funk-msg').setCustomValidity('Kein Zustell-Endpunkt angebunden');
     }
-    loadGovernanceStatus();
   </script>
 </BachLayout>
