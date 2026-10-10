@@ -8,7 +8,7 @@ import BachLayout from "../layouts/BachLayout.astro";
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
     <div>
       <h1 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;">
-        Willkommen in der <span style="color:var(--accent);" data-gui-brand-product>System GUI</span>
+        Willkommen in der <span style="color:var(--accent-text);" data-gui-brand-product>System GUI</span>
       </h1>
       <p style="color:var(--text-muted);font-size:0.875rem;">
         Zentrale Multi-Agenten-Workstation • Systemstatus unter Einstellungen
@@ -27,15 +27,15 @@ import BachLayout from "../layouts/BachLayout.astro";
       </div>
       <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:1rem;text-align:center;">
         <div>
-          <span style="display:block;font-size:2rem;font-weight:800;color:var(--accent);" id="stat-tasks">-</span>
+          <span style="display:block;font-size:2rem;font-weight:800;color:var(--accent-text);" id="stat-tasks">-</span>
           <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Offene Tasks</span>
         </div>
         <div>
-          <span style="display:block;font-size:2rem;font-weight:800;color:var(--accent-blue);" id="stat-messages">–</span>
+          <span style="display:block;font-size:2rem;font-weight:800;color:var(--accent-blue-text);" id="stat-messages">–</span>
           <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Ungelesene</span>
         </div>
         <div>
-          <span style="display:block;font-size:2rem;font-weight:800;color:var(--warning);" id="stat-deadlines">–</span>
+          <span style="display:block;font-size:2rem;font-weight:800;color:var(--warning-text);" id="stat-deadlines">–</span>
           <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Fristen</span>
         </div>
       </div>
@@ -49,11 +49,11 @@ import BachLayout from "../layouts/BachLayout.astro";
       </div>
       <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:1rem;text-align:center;">
         <div>
-          <span style="display:block;font-size:2rem;font-weight:800;color:var(--success);" id="stat-agents-active">–</span>
+          <span style="display:block;font-size:2rem;font-weight:800;color:var(--success-text);" id="stat-agents-active">–</span>
           <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Laufstatus unbekannt</span>
         </div>
         <div>
-          <span style="display:block;font-size:2rem;font-weight:800;color:var(--accent-blue);" id="stat-agents-total">–</span>
+          <span style="display:block;font-size:2rem;font-weight:800;color:var(--accent-blue-text);" id="stat-agents-total">–</span>
           <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Schablonen</span>
         </div>
       </div>

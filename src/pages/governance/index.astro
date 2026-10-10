@@ -135,7 +135,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
     <div class="card-header">
       <div style="display:flex;align-items:center;gap:0.5rem;">
         <h2 class="card-title">📻 Agentenfunk (Inter-Agenten Kommunikation & Signale)</h2>
-        <a href="/governance/funk" style="font-size:0.8rem;color:var(--accent);text-decoration:none;">➔ Zur Vollansicht</a>
+        <a href="/governance/funk" style="font-size:0.8rem;color:var(--accent-text);text-decoration:none;">➔ Zur Vollansicht</a>
       </div>
       <span class="badge">Zustellung nicht geprüft</span>
     </div>
@@ -148,14 +148,14 @@ import BachLayout from "../../layouts/BachLayout.astro";
       <div style="display:flex;flex-direction:column;gap:0.5rem;">
         <h4 style="margin:0 0 0.25rem 0;font-size:0.85rem;color:var(--text);">Letzte Signale & Handshakes</h4>
         <div style="padding:0.75rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:0.8rem;">
-          <div style="display:flex;justify-content:space-between;color:var(--accent);">
+          <div style="display:flex;justify-content:space-between;color:var(--accent-text);">
             <strong>Letzter Handshake</strong>
             <span style="font-size:0.7rem;color:var(--text-muted);">Nicht geprüft</span>
           </div>
           <p style="margin:0.25rem 0 0 0;color:var(--text-muted);">Kein Live-Signalfeed angebunden.</p>
         </div>
         <div style="padding:0.75rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:0.8rem;">
-          <div style="display:flex;justify-content:space-between;color:var(--success);">
+          <div style="display:flex;justify-content:space-between;color:var(--success-text);">
             <strong>Policy-Durchsetzung</strong>
             <span style="font-size:0.7rem;color:var(--text-muted);">Nicht geprüft</span>
           </div>
@@ -230,7 +230,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
     .gov-filters label{display:flex;flex-direction:column;font-size:.75rem;color:var(--text-muted);gap:.2rem}
     .gov-filters input,.gov-filters select{padding:.4rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:4px;color:var(--text)}
     .gov-state{font-size:.9rem;color:var(--text);min-height:1.4rem}
-    .gov-state[data-state="auth"],.gov-state[data-state="unavailable"],.gov-state[data-state="route"],.gov-state[data-state="error"],.gov-state[data-state="network"],.gov-state[data-state="changed"],.gov-state[data-state="stale"],.gov-state[data-state="contract"]{color:var(--warning)}
+    .gov-state[data-state="auth"],.gov-state[data-state="unavailable"],.gov-state[data-state="route"],.gov-state[data-state="error"],.gov-state[data-state="network"],.gov-state[data-state="changed"],.gov-state[data-state="stale"],.gov-state[data-state="contract"]{color:var(--warning-text)}
     .gov-meta{display:grid;grid-template-columns:max-content 1fr;gap:.2rem 1rem;font-size:.8rem;margin:.75rem 0}
     .gov-meta dt{color:var(--text-muted)} .gov-meta dd{margin:0;color:var(--text);overflow-wrap:anywhere}
     .gov-notices{list-style:none;padding:0;margin:0 0 1rem;display:flex;flex-direction:column;gap:.4rem;font-size:.8rem}

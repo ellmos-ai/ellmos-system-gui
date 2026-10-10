@@ -33,6 +33,14 @@
     --warning: #f5c542;
     --error: #ef5350;
 
+    /* Text variants of the status/accent colors: >= 4.5:1 on every surface of the theme, including the
+       tinted badge backgrounds. Surfaces and borders keep the base colors. */
+    --success-text: var(--success);
+    --warning-text: var(--warning);
+    --error-text: #f2706e;
+    --accent-text: var(--accent);
+    --accent-blue-text: #6f9bf1;
+
     /* Radius */
     --radius-sm: 8px;
     --radius-md: 14px;
@@ -308,11 +316,11 @@ body {
 
 .dropdown-item:hover {
     background: var(--bg-card);
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 .dropdown-item.active {
-    color: var(--accent);
+    color: var(--accent-text);
     background: var(--accent-glow);
 }
 
@@ -481,7 +489,7 @@ body {
     display: block;
     font-size: 2rem;
     font-weight: 800;
-    color: var(--accent);
+    color: var(--accent-text);
     letter-spacing: -0.03em;
     line-height: 1.2;
 }
@@ -547,7 +555,7 @@ body {
 
 .btn-danger {
     background: rgba(239, 83, 80, 0.12);
-    color: var(--error);
+    color: var(--error-text);
     border: 1px solid rgba(239, 83, 80, 0.2);
 }
 
@@ -726,7 +734,7 @@ label {
 }
 
 .tab-btn.active {
-    color: var(--accent);
+    color: var(--accent-text);
     border-bottom-color: var(--accent);
 }
 
@@ -744,25 +752,25 @@ label {
 }
 
 .badge-success {
-    color: var(--success);
+    color: var(--success-text);
     border-color: rgba(74, 222, 128, 0.25);
     background: rgba(74, 222, 128, 0.08);
 }
 
 .badge-warning {
-    color: var(--warning);
+    color: var(--warning-text);
     border-color: rgba(245, 197, 66, 0.25);
     background: rgba(245, 197, 66, 0.08);
 }
 
 .badge-error {
-    color: var(--error);
+    color: var(--error-text);
     border-color: rgba(239, 83, 80, 0.25);
     background: rgba(239, 83, 80, 0.08);
 }
 
 .badge-info {
-    color: var(--accent-blue);
+    color: var(--accent-blue-text);
     border-color: rgba(91, 141, 239, 0.25);
     background: rgba(91, 141, 239, 0.08);
 }
@@ -916,10 +924,10 @@ pre {
 
 /* ── Utility Classes ── */
 
-.text-accent { color: var(--accent); }
-.text-success { color: var(--success); }
-.text-warning { color: var(--warning); }
-.text-error { color: var(--error); }
+.text-accent { color: var(--accent-text); }
+.text-success { color: var(--success-text); }
+.text-warning { color: var(--warning-text); }
+.text-error { color: var(--error-text); }
 .text-muted { color: var(--text-muted); }
 .text-dim { color: var(--text-dim); }
 
@@ -944,7 +952,7 @@ pre {
 /* ── Error display ── */
 
 .error {
-    color: var(--error);
+    color: var(--error-text);
     padding: 1rem;
     text-align: center;
     font-weight: 500;
@@ -1110,6 +1118,11 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
     --success: #22a854;
     --warning: #c49000;
     --error: #d43d3d;
+    --success-text: #166f37;
+    --warning-text: #7d5c00;
+    --error-text: #a53030;
+    --accent-text: #b63547;
+    --accent-blue-text: #3a5a99;
 }
 
 [data-theme="light"] .main-header {
@@ -1163,6 +1176,11 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
     --success: #4f8a55;
     --warning: #b27b20;
     --error: #b5483f;
+    --success-text: #375f3b;
+    --warning-text: #755115;
+    --error-text: #88362f;
+    --accent-text: #924225;
+    --accent-blue-text: #345088;
 }
 
 [data-theme="warm"] .main-header {
@@ -1197,8 +1215,8 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
     --accent-glow: rgba(255, 107, 138, 0.15);
 
     --text: #f0ecff;
-    --text-muted: #8a82b0;
-    --text-dim: #5a5280;
+    --text-muted: #a7a1c7;
+    --text-dim: #9a94ba;
 
     --border: #342a5c;
     --border-hover: #453a72;
@@ -1206,6 +1224,8 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
     --success: #4aedb0;
     --warning: #ffd166;
     --error: #ff5577;
+    --error-text: #ff7994;
+    --accent-blue-text: #a99ef5;
 }
 
 [data-theme="colorful"] .main-header,
@@ -1311,6 +1331,9 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
     --success: #10b981;
     --warning: #f59e0b;
     --error: #f43f5e;
+    --success-text: #45c89d;
+    --error-text: #f87e93;
+    --accent-blue-text: #62b3dc;
 }
 
 /* ── Layout Container & Card Utilities ── */
@@ -1418,10 +1441,10 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
     letter-spacing: 0.5px;
 }
 
-.badge-success { background: rgba(74, 222, 128, 0.15); color: var(--success); }
-.badge-warning { background: rgba(245, 197, 66, 0.15); color: var(--warning); }
-.badge-error { background: rgba(239, 83, 80, 0.15); color: var(--error); }
-.badge-accent { background: rgba(91, 141, 239, 0.15); color: var(--accent-blue); }
+.badge-success { background: rgba(74, 222, 128, 0.15); color: var(--success-text); }
+.badge-warning { background: rgba(245, 197, 66, 0.15); color: var(--warning-text); }
+.badge-error { background: rgba(239, 83, 80, 0.15); color: var(--error-text); }
+.badge-accent { background: rgba(91, 141, 239, 0.15); color: var(--accent-blue-text); }
 
 /* Keep active navigation labels legible on the theme accent. */
 .nav-item.active { color: var(--on-accent); }
