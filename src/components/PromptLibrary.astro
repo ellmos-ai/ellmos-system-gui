@@ -1,0 +1,66 @@
+---
+// Prompt-Bibliothek (P-1963-P3). Data: the existing /api/prompt-library* APIs (BACH tables prompt_templates/prompt_versions).
+---
+<section id="prompt-library" aria-labelledby="pl-title">
+  <header class="pl-head">
+    <div>
+      <p class="pl-eyebrow">Prompts</p>
+      <h1 id="pl-title">Prompt-Bibliothek</h1>
+      <p class="pl-muted">Datenbasis: BACH-Tabellen <code>prompt_templates</code> und <code>prompt_versions</code> (wie <code>bach prompt</code>). Jede Textänderung archiviert den vorherigen Stand als Version.</p>
+    </div>
+    <div class="pl-head-actions">
+      <button type="button" class="btn btn-primary" data-part="new">Neuer Prompt</button>
+      <button type="button" class="btn" data-part="import">Import aus PromptBoard</button>
+      <button type="button" class="btn" data-part="refresh">Aktualisieren</button>
+    </div>
+  </header>
+  <p data-part="status" role="status" aria-live="polite" class="pl-muted"></p>
+  <div class="pl-grid">
+    <div class="pl-panel">
+      <div class="pl-toolbar">
+        <label>Suchen<input type="search" data-part="search" placeholder="Name, Text, Tags, Zweck" autocomplete="off" /></label>
+        <label>Kategorie<select data-part="category"><option value="">Alle Kategorien</option></select></label>
+        <span class="pl-badge" data-part="count">Wird geladen …</span>
+      </div>
+      <div class="pl-list" data-part="list"></div>
+    </div>
+    <div class="pl-panel">
+      <h2 data-part="detail-title">Kein Prompt gewählt</h2>
+      <div data-part="detail"><p class="pl-muted">Links einen Prompt wählen, oben neu anlegen oder aus PromptBoard importieren.</p></div>
+    </div>
+  </div>
+</section>
+<style>
+  #prompt-library {--pl-muted:var(--text-muted)}
+  /* colorful/custom: --text-muted is 3.9-4.4:1 on cards there; muted text uses --text (can be dropped once the global token fix is merged) */
+  :global([data-theme="colorful"]) #prompt-library, :global([data-theme="custom"]) #prompt-library {--pl-muted:var(--text)}
+  .pl-head {display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-start;margin-bottom:1.2rem}
+  .pl-head-actions {display:flex;gap:.5rem;flex-wrap:wrap}
+  #prompt-library h1 {font-size:1.9rem;margin:.25rem 0;font-weight:800}
+  #prompt-library h2 {font-size:1.15rem;margin:0 0 .8rem;overflow-wrap:anywhere}
+  .pl-eyebrow {font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--pl-muted);margin:0}
+  #prompt-library :global(.pl-muted), .pl-muted {color:var(--pl-muted);font-size:.84rem;margin:.25rem 0;line-height:1.5}
+  #prompt-library :global(.pl-problem) {color:var(--text);font-size:.9rem;border-left:4px solid var(--error);padding:.4rem .7rem;background:var(--bg-elevated);border-radius:var(--radius-sm)}
+  .pl-grid {display:grid;grid-template-columns:minmax(260px,1fr) minmax(0,2fr);gap:1rem;align-items:start}
+  .pl-panel {background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;min-width:0}
+  .pl-toolbar {display:flex;gap:.7rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.8rem}
+  #prompt-library :global(label) {display:flex;flex-direction:column;gap:.35rem;font-size:.8rem;color:var(--pl-muted);flex:1 1 150px;min-width:0}
+  #prompt-library :global(input), #prompt-library :global(select), #prompt-library :global(textarea) {background:var(--bg-panel);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem;font:inherit;min-width:0}
+  #prompt-library :global(.pl-textarea) {min-height:16rem;resize:vertical;font-family:var(--font-mono,monospace);font-size:.85rem;line-height:1.5}
+  #prompt-library :global(.pl-badge) {display:inline-block;padding:.12rem .55rem;border:1px solid var(--border-hover);border-radius:999px;font-size:.74rem;background:var(--bg-elevated);color:var(--text)}
+  .pl-list {display:flex;flex-direction:column;gap:.4rem;max-height:70vh;overflow:auto}
+  #prompt-library :global(.pl-item) {display:flex;flex-direction:column;gap:.15rem;text-align:left;background:var(--bg-panel);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .7rem;font:inherit;cursor:pointer}
+  #prompt-library :global(.pl-item.active) {border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+  #prompt-library :global(.pl-item-name) {font-weight:600;overflow-wrap:anywhere}
+  #prompt-library :global(.pl-item-meta) {font-size:.78rem;color:var(--pl-muted);overflow-wrap:anywhere}
+  #prompt-library :global(.pl-actions) {display:flex;gap:.5rem;flex-wrap:wrap;margin:.9rem 0}
+  #prompt-library :global(.pl-danger) {margin-left:auto}
+  #prompt-library :global(.pl-version) {border-top:1px dashed var(--border);padding:.5rem 0}
+  #prompt-library :global(.pl-version pre) {white-space:pre-wrap;overflow-wrap:anywhere;font-size:.8rem;background:var(--bg-dark);color:var(--text);padding:.6rem;border-radius:var(--radius-sm);max-height:14rem;overflow:auto}
+  #prompt-library :global(h4) {margin:1rem 0 .3rem;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--pl-muted)}
+  #prompt-library :global(code) {font-size:.8rem;background:var(--bg-elevated);padding:.05rem .3rem;border-radius:4px}
+  @media (max-width:860px) {.pl-grid {grid-template-columns:1fr}.pl-list {max-height:none}}
+</style>
+<script>
+  import '../lib/prompt-library-ui.mjs';
+</script>
