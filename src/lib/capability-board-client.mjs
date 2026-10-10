@@ -16,15 +16,30 @@ export async function requestJson(url, options = {}, fetcher = globalThis.fetch)
   const response = await fetcher(url, options);
   let data;
   try { data = await response.json(); }
-  catch { throw new Error('Die Quelle liefert keine lesbare Antwort.'); }
+  catch {
+    const error = new Error('Die Quelle liefert keine lesbare Antwort.');
+    error.status = response.status; // der Statuscode bleibt auch bei unlesbarem Körper erhalten
+    throw error;
+  }
   if (!response.ok) {
     const error = new Error(response.status === 409
       ? 'Die Quelle wurde inzwischen geändert. Lade die aktuelle Fassung vor dem Speichern.'
-      : typeof data.detail === 'string' ? data.detail : 'Die Anfrage konnte nicht bestätigt werden.');
+      : typeof data?.detail === 'string' ? data.detail : 'Die Anfrage konnte nicht bestätigt werden.');
     error.status = response.status;
     throw error;
   }
   return data;
+}
+
+// Fehleranzeige für Inventare: 401, 403, 503 und sonstige Statuscodes bleiben unterscheidbar.
+export function describeSourceError(error) {
+  const status = Number.isInteger(error?.status) ? error.status : null;
+  const detail = typeof error?.message === 'string' && error.message ? error.message : 'unbekannter Fehler';
+  if (status === 401) return 'Nicht angemeldet (HTTP 401): Die Geräteanmeldung fehlt oder ist abgelaufen. ' + detail;
+  if (status === 403) return 'Zugriff verweigert (HTTP 403): Das Gerät ist für diese Quelle nicht freigegeben. ' + detail;
+  if (status === 503) return 'Quelle nicht verfügbar (HTTP 503): Der Dienst oder die Konfiguration ist nicht bereit. ' + detail;
+  if (status !== null) return 'Quelle antwortet mit HTTP ' + status + '. ' + detail;
+  return detail;
 }
 
 export async function loadSkill(id, fetcher = globalThis.fetch) {
