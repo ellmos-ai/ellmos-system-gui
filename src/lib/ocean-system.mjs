@@ -1,7 +1,8 @@
 // View models for System/Ocean (#2017 Schaltplan + Gesamtschaltplan, #2019 Satelliten).
 // Input: a catalog validated by parseCatalog() plus the AUTHORED architecture (areas, edges, layers). The authored part is
 // curated intent ("declared"), never a measurement; modules, counts and git facts come only from the catalog projection.
-import {itemsOfType, gitLabel} from './catalog-projection.mjs';
+import {itemsOfType} from './catalog-projection.mjs';
+import {gitSnapshot} from './catalog-views.mjs';
 
 export const VIEWS = [
   {id: 'schaltplan', label: 'Schaltplan'},
@@ -81,7 +82,7 @@ export function moduleCard(catalog, item) {
   return {
     key: 'module:' + item.id, id: item.id, name: item.name, description: item.description, version: item.version, area: item.category,
     status: statusClass(item.status), statusRaw: item.status, visibility: visibilityLabel(item), isPublic: isPublic(item),
-    repoUrl: safeRepoUrl(item), git: gitLabel(item.git), links: capabilityLinks(catalog, item),
+    repoUrl: safeRepoUrl(item), git: gitSnapshot(item.git), links: capabilityLinks(catalog, item),
   };
 }
 
@@ -109,7 +110,7 @@ function entry(catalog, item) {
   return {
     key: item.type + ':' + item.id, type: item.type, kind: item.type === 'module' ? 'Modul' : 'Satellit', id: item.id, name: item.name,
     org: moduleOrg(item), visibility: visibilityLabel(item), isPublic: isPublic(item), column: item.category,
-    provides: item.provides.length, requires: item.requires.length + item.optional.length, git: gitLabel(item.git), description: item.description,
+    provides: item.provides.length, requires: item.requires.length + item.optional.length, git: gitSnapshot(item.git), description: item.description,
   };
 }
 
@@ -136,7 +137,7 @@ export function satelliteRows(catalog) {
   return itemsOfType(catalog, 'satellite').map(item => ({
     key: 'satellite:' + item.id, id: item.id, name: item.name, description: item.description, org: item.org, domain: item.category,
     visibility: visibilityLabel(item), provenance: item.provenance, upstream: item.upstream,
-    gitState: item.git.state, git: gitLabel(item.git), gitHost: item.git.host, gitBranch: item.git.branch, observedAt: item.git.observedAt,
+    gitState: item.git.state, git: gitSnapshot(item.git), gitHost: item.git.host, gitBranch: item.git.branch, observedAt: item.git.observedAt,
     gitHosts: item.gitHosts.map(g => g.host).filter(Boolean),
   }));
 }

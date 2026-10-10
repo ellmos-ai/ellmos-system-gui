@@ -120,8 +120,11 @@ test('Gesamtschaltplan: total is fixed while filtering; no tier is invented', ()
 test('Satelliten: git unknown is visible and counted, KPI stays, hits are separate', () => {
   const c = catalog();
   const rows = satelliteRows(c);
-  assert.equal(rows.find(r => r.id === 'example-org/sat-unknown').git, 'Git unbekannt');
-  assert.match(rows.find(r => r.id === 'example-org/sat-known').git, /Änderungen offen \(TEST-HOST\)/);
+  assert.equal(rows.find(r => r.id === 'example-org/sat-unknown').git.known, false);
+  assert.match(rows.find(r => r.id === 'example-org/sat-unknown').git.text, /unbekannt \(kein Hostbeleg\)/);
+  const known = rows.find(r => r.id === 'example-org/sat-known').git;
+  assert.match(known.text, /Host TEST-HOST, Quelle .*Änderungen offen · beobachtet unbekannt \(undatiert\)/);
+  assert.equal(known.dated, false);
   const model = satelliteModel(c);
   assert.equal(model.total, c.counts.satellite);
   assert.deepEqual(model.gitStates, [['dirty', 1], ['unknown', 1]]);
@@ -131,6 +134,19 @@ test('Satelliten: git unknown is visible and counted, KPI stays, hits are separa
   assert.equal(satelliteModel(c, {domain: 'x'}).hits, 1);
   assert.equal(satelliteModel(c, {query: 'zzz'}).hits, 0);
   assert.deepEqual(satelliteModel(c, {org: 'example-org'}).orgs, [['example-org', 2]]);
+});
+
+test('module cards carry the host git snapshot as its own record (source, host, observation time)', () => {
+  const dated = catalog(b => {
+    const git = b.items.find(i => i.id === 'alpha-core').git;
+    Object.assign(git, {state: 'clean', host: 'TEST-HOST', source: 'repos_manifest:slot-a', observed_at: '2026-01-02T03:04:05Z', observed_at_basis: 'declared'});
+  });
+  const card = schaltplanModel(dated, authored()).zones.find(z => z.id === 'runtime').modules[0];
+  assert.equal(card.git.dated, true);
+  assert.match(card.git.text, /Host TEST-HOST, Quelle repos_manifest:slot-a\): Clean · beobachtet 2026-01-02T03:04:05Z/);
+  const undated = schaltplanModel(catalog(b => Object.assign(b.items.find(i => i.id === 'alpha-core').git, {state: 'clean', host: 'H'})), authored()).zones.find(z => z.id === 'runtime').modules[0];
+  assert.match(undated.git.text, /unbekannt \(undatiert\)/);
+  assert.equal(undated.git.dated, false);
 });
 
 test('empty catalogs render honest zeros', () => {

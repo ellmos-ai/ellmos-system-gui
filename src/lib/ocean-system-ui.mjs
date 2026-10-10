@@ -110,8 +110,9 @@ function panelFor(model) {
   if (!mod) return;
   body.append(el('h4', null, mod.name));
   const meta = el('div', 'os-meta');
-  meta.append(badge(STATUS_LABEL[mod.status] + (mod.statusRaw ? ' (' + mod.statusRaw + ')' : '')), badge(mod.visibility), badge(mod.version ? 'v' + mod.version : 'Version unbekannt', mod.version ? '' : 'unknown'), badge(mod.git, 'unknown'));
+  meta.append(badge(STATUS_LABEL[mod.status] + (mod.statusRaw ? ' (' + mod.statusRaw + ')' : '')), badge(mod.visibility), badge(mod.version ? 'v' + mod.version : 'Version unbekannt', mod.version ? '' : 'unknown'));
   body.append(meta, el('p', 'os-desc', mod.description || 'Keine Beschreibung im Katalog.'));
+  body.append(el('h5', null, 'Git-Snapshot (Host)'), el('p', mod.git.known && mod.git.dated ? 'os-desc' : 'os-muted', mod.git.text));
   const links = (title, rows, kind) => {
     if (!rows.length) return;
     body.append(el('h5', null, title));
@@ -204,7 +205,7 @@ function renderGesamt(host) {
     const c = el('section', 'os-col'); c.append(el('h4', null, title + ' (' + entries.length + ')'));
     for (const e of entries) {
       const row = el('div', 'os-entry'); row.append(el('strong', null, e.name), ' ', badge(e.kind), ' ', badge(e.visibility, e.isPublic ? '' : 'unknown'));
-      row.append(el('p', 'os-muted', (e.org || 'Organisation unbekannt') + ' · stellt bereit: ' + e.provides + ' · benötigt: ' + e.requires + ' · ' + e.git)); c.append(row);
+      row.append(el('p', 'os-muted', (e.org || 'Organisation unbekannt') + ' · stellt bereit: ' + e.provides + ' · benötigt: ' + e.requires + ' · ' + e.git.text)); c.append(row);
     }
     if (!entries.length) c.append(el('p', 'os-muted', 'Keine Treffer.'));
     return c;
@@ -239,8 +240,8 @@ function renderSatelliten(host) {
     const tr = el('tr'); const name = el('td'); name.append(el('strong', null, r.name), el('div', 'os-muted', r.description || 'Keine Beschreibung.'));
     tr.append(name, el('td', null, r.org || 'unbekannt'), el('td', null, r.domain || 'unbekannt'), el('td', null, r.visibility));
     tr.append(el('td', null, (r.provenance || 'Herkunft unbekannt') + (r.upstream ? ' · ' + r.upstream : '')));
-    const git = el('td'); git.append(badge(r.git, r.gitState === 'unknown' ? 'unknown' : r.gitState === 'dirty' ? 'bad' : ''));
-    git.append(el('div', 'os-muted', r.gitState === 'unknown' ? 'kein Hostbeleg' : (r.gitBranch ? r.gitBranch + ' · ' : '') + (r.observedAt ? 'beobachtet ' + r.observedAt : 'Zeitpunkt unbekannt')));
+    const git = el('td'); git.append(badge(r.gitState === 'unknown' ? 'Git unbekannt' : r.gitState === 'dirty' ? 'Änderungen offen' : 'Clean', r.gitState === 'unknown' || !r.git.dated ? 'unknown' : r.gitState === 'dirty' ? 'bad' : ''));
+    git.append(el('div', 'os-muted', r.git.text + (r.gitBranch ? ' · Branch ' + r.gitBranch : '')));
     tr.append(git); tbody.append(tr);
   }
   table.append(tbody);
