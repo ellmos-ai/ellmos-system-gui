@@ -49,8 +49,14 @@ test('times: a value without time zone is null with its raw text, never UTC', ()
   assert.equal(satellite.generatedAtBasis, 'no_timezone');
   assert.equal(satellite.generatedAtRaw, '2026-10-10T08:00:00');
   assert.throws(broken(b => { b.sources.find(s => s.id === 'satellite_catalog').generated_at = '2026-10-10T08:00:00'; }), /Zeitzone|UTC/);
-  assert.throws(broken(b => { item(b, 'example-org/sat-known').git.last_commit = '2026-10-01T00:00:00'; }), /UTC-\/Offset-Zeit/);
+  assert.throws(broken(b => { item(b, 'example-org/sat-known').git.last_commit = '2026-10-01T00:00:00'; }), /UTC-Zeit/);
   assert.throws(broken(b => { b.generated_at = '2026-10-10T08:00:00'; }), /generated_at/);
+  // any non-UTC offset is a violation: the adapter normalises to UTC (Z or +00:00 only)
+  assert.throws(broken(b => { b.generated_at = '2026-10-10T10:00:00+02:00'; }), /generated_at/);
+  assert.throws(broken(b => { b.sources[0].generated_at = '2026-10-10T10:00:00+02:00'; b.sources[0].generated_at_basis = 'declared'; }), /UTC-Zeit/);
+  assert.throws(broken(b => { b.sources[0].modified_at = '2026-10-10T10:00:00-05:00'; }), /UTC-Zeit/);
+  assert.throws(broken(b => { item(b, 'alpha-core').git_hosts[0].observed_at = '2026-10-10T10:00:00+02:00'; }), /UTC-Zeit/);
+  assert.doesNotThrow(broken(b => { b.generated_at = '2026-10-10T08:00:00Z'; }));
   assert.throws(broken(b => { b.sources[0].generated_at_basis = 'no_timezone'; b.sources[0].generated_at = '2026-10-10T08:00:00+00:00'; b.sources[0].generated_at_raw = 'x'; }), /Zeitzone/);
 });
 
@@ -122,21 +128,37 @@ test('counts must list every present type and match the items', () => {
   assert.throws(broken(b => { b.items[0].type = 'plugin'; }), /Eintrag/);
 });
 
-test('absolute paths are detected anywhere in a string, including embedded ones', () => {
-  const leaks = [String.raw`C:\Users\someone\repo`, '/Users/someone/repo', String.raw`\\server\share`, '/root/x', '/usr/local/bin',
-    'text before /root/x and after', String.raw`see C:\Temp\x in text`, 'at ~/notes/y here', 'D:/x/y', '(/home/u/f)', 'p=/opt/app/z',
-    String.raw`%USERPROFILE%\x\y`, 'two segments /srv/data/x'];
-  for (const leaked of leaks) {
-    assert.ok(containsAbsolutePath(leaked), leaked);
-    const body = fixture();
-    body.items[0].description = leaked;
-    assert.throws(() => parseCatalog(body), /absoluter Pfad/, leaked);
-    const nested = fixture();
-    nested.errors.push({source: 'x', reason: 'y', item: leaked});
-    assert.throws(() => parseCatalog(nested), /absoluter Pfad/, 'errors.item ' + leaked);
+// Same vector list as the BACH test (byte-identical file): the client flags exactly what the server redacts.
+const vectors = JSON.parse(readFileSync(new URL('./fixtures/catalog-redaction-vectors.json', import.meta.url), 'utf8')).vectors;
+
+test('shared redaction vectors: the client flags exactly the strings the server would redact', () => {
+  assert.ok(vectors.length >= 30);
+  for (const {text, redacted} of vectors) {
+    assert.equal(containsAbsolutePath(text), redacted !== text, JSON.stringify(text));
+    assert.equal(containsAbsolutePath(redacted), false, 'redacted form must be clean: ' + JSON.stringify(redacted));
   }
-  for (const fine of ['https://github.com/o/r', 'and/or', '/api/capabilities/catalog', 'CI/CD pipeline', 'a-b/c', '<pfad>', 'relative/dir/file.json'])
-    assert.equal(containsAbsolutePath(fine), false, fine);
+});
+
+test('an absolute path anywhere in the response (every vector, in description and errors.item) is a contract violation', () => {
+  for (const {text, redacted} of vectors.filter(v => v.text !== v.redacted)) {
+    const body = fixture();
+    body.items[0].description = text;
+    assert.throws(() => parseCatalog(body), /absoluter Pfad/, JSON.stringify(text));
+    const nested = fixture();
+    nested.errors.push({source: 'x', reason: 'y', item: text});
+    assert.throws(() => parseCatalog(nested), /absoluter Pfad/, 'errors.item ' + JSON.stringify(text));
+    const clean = fixture();
+    clean.items[0].description = redacted;
+    assert.doesNotThrow(() => parseCatalog(clean), JSON.stringify(redacted));
+  }
+});
+
+test('aliases are not unique keys: the same alias may belong to different items, items are keyed by type + id', () => {
+  const catalog = parseCatalog(fixture());
+  const [a, b] = catalog.items.filter(i => i.type === 'stack');
+  assert.deepEqual(a.aliases, b.aliases);
+  assert.notEqual(a.id, b.id);
+  assert.equal(new Set(catalog.items.map(i => i.type + ':' + i.id)).size, catalog.items.length);
 });
 
 test('query building mirrors the route parameters', () => {

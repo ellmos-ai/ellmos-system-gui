@@ -2,6 +2,8 @@
 // The backend projects existing catalog files at request time; this module only validates the
 // response and derives view data. EVERY contract key must be present (nullable ones as null):
 // a missing key is a contract error and is never reinterpreted as null / "unverified".
+// Items are keyed by type + id only. `aliases` are NOT unique keys: the alias "homebase-stack" belongs to two different stacks
+// (ids "systems/homebase-stack" and "stacks/homebase-stack").
 export const CATALOG_SCHEMA = 'bach.catalog.v1';
 export const ITEM_TYPES = ['module', 'bundle', 'stack', 'skill', 'satellite'];
 const AVAILABILITY = ['available', 'missing', 'error'];
@@ -15,15 +17,18 @@ const text = value => typeof value === 'string' && value.trim() ? value.trim() :
 
 // Mirrors catalog_projection.py (_PATH_PATTERNS). The server redacts to "<pfad>"; an embedded absolute path
 // that still arrives is a contract violation, anywhere in a string.
-const BOUND = '(?<![^\\s"\'(=\\[])';
+// Unicode-aware like Python's \w: [\p{L}\p{N}_] with the u flag. Shared test vectors prove both sides agree.
+const W = '\\p{L}\\p{N}_';
 const TAIL = '[^\\s"\'<>|,;)]*';
 const PATH_PATTERNS = [
-  new RegExp('(?<!\\w)[A-Za-z]:[\\\\/]' + TAIL),
-  new RegExp('\\\\\\\\[^\\s"\'<>|,;)]+'),
-  new RegExp(BOUND + '~[\\\\/]' + TAIL),
-  new RegExp('%[A-Za-z_]+%[\\\\/]' + TAIL),
-  new RegExp(BOUND + '/(?!api/)(?:root|usr|etc|home|var|opt|mnt|tmp|srv|bin|Users|Library|Volumes|private)(?:/' + TAIL + ')?'),
-  new RegExp(BOUND + '/(?!api/)[\\w.\\-]+(?:/[\\w.\\-]+)+/?'),
+  new RegExp('file://[^\\s"\'<>|,;)]+', 'u'),                                       // file:// URLs with a path
+  new RegExp('(?<![' + W + '])[A-Za-z]:[\\\\/]' + TAIL, 'u'),                       // C:\x, C:/x (also after ":")
+  new RegExp('\\\\\\\\[^\\s"\'<>|,;)]+', 'u'),                                       // \\server\share
+  new RegExp('(?<![' + W + '])~[\\\\/]' + TAIL, 'u'),                                // ~/x
+  new RegExp('%[A-Za-z_]+%[\\\\/]' + TAIL, 'u'),                                     // %USERPROFILE%\x
+  // absolute POSIX path: ONE slash followed by a non-slash that starts a token (text start, whitespace, quote, opening
+  // bracket, "=", ":", "," or ";" before it); not part of a word, glob or URL ("//host/..."); "/api/..." routes stay
+  new RegExp('(?<![^\\s"\'(=\\[:,;])/(?!api/)(?![\\s/])[^\\s"\'<>|,;)]+', 'u'),
 ];
 export const containsAbsolutePath = value => PATH_PATTERNS.some(pattern => pattern.test(value));
 
@@ -41,11 +46,12 @@ const nullableString = (value, where) => {
   if (value !== null && typeof value !== 'string') fail(where + ' muss String oder null sein');
   return value;
 };
-// A time value is either null or timezone-aware ISO text; a naive time never counts as UTC.
-const TZ_AWARE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})$/;
+// A time value is either null or UTC ISO text ("Z" or "+00:00"): the adapter normalises every offset to UTC, a
+// naive time is null (original only in *_raw), and any other offset is a contract violation.
+const UTC_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|\+00:00)$/;
 const nullableTime = (value, where) => {
   nullableString(value, where);
-  if (value !== null && !TZ_AWARE.test(value)) fail(where + ' ist keine UTC-/Offset-Zeit');
+  if (value !== null && !UTC_TIME.test(value)) fail(where + ' ist keine UTC-Zeit (Z oder +00:00)');
   return value;
 };
 
@@ -147,7 +153,7 @@ export function parseCatalog(body) {
   requireKeys(body, ['schema', 'generated_at', 'host', 'sources', 'items', 'counts', 'count', 'errors', 'truncated', 'redactions'], 'Antwort');
   if (body.schema !== CATALOG_SCHEMA) fail('schema');
   assertNoAbsolutePath(body, 'Antwort');
-  if (!text(body.generated_at) || !TZ_AWARE.test(body.generated_at)) fail('generated_at fehlt oder ohne Zeitzone');
+  if (!text(body.generated_at) || !UTC_TIME.test(body.generated_at)) fail("generated_at fehlt oder ist keine UTC-Zeit");
   requireKeys(body.host, ['id', 'source'], 'host');
   if (!['measured', 'declared'].includes(body.host.source)) fail('host.source');
   nullableString(body.host.id, 'host.id');
