@@ -1,7 +1,7 @@
 // View data for the Ocean catalog views (#2018): bundle and stack cards, skill library, source status.
 // Input is ALWAYS a catalog validated by parseCatalog() (catalog-projection.mjs). Nothing here reads files or
 // guesses: what the projection does not say stays "unbekannt". Counts come only from catalog.counts.
-import {itemsOfType, gitLabel, sourceProblems} from './catalog-projection.mjs';
+import {itemsOfType, sourceProblems} from './catalog-projection.mjs';
 import {SKILL_ID} from './capability-board-client.mjs';
 
 export const REQUIREMENTS = [
@@ -24,18 +24,31 @@ export function resolveTarget(catalog, relation) {
   return catalog.items.find(item => item.type === relation.targetType && wanted.includes(item.id)) || null;
 }
 
+// Measurement state: "unverified" is the explicit not-measured value. Any other state without measured fields is a
+// CLAIM without evidence and is shown as such - never as "not measured" and never as a measurement.
 export function measuredSummary(item) {
   const m = item.measured;
-  const nothing = m.installed === null && m.runtimeActive === null && m.observedAt === null && m.evidence === null;
-  if (nothing) return {measured: false, text: 'Nicht gemessen (Zustand: ' + m.connectionState + ')'};
+  const fields = m.installed !== null || m.runtimeActive !== null || m.observedAt !== null || m.evidence !== null;
+  if (!fields && m.connectionState === 'unverified') return {kind: 'unmeasured', measured: false, text: 'Nicht gemessen'};
+  if (!fields) return {kind: 'unevidenced', measured: false, text: 'Zustand "' + m.connectionState + '" gemeldet, ohne Messwerte, Beleg und Beobachtungszeit (nicht belegt)'};
   const parts = [];
   if (m.installed !== null) parts.push(m.installed ? 'installiert' : 'nicht installiert');
   if (m.runtimeActive !== null) parts.push(m.runtimeActive ? 'läuft' : 'läuft nicht');
   parts.push('Zustand: ' + m.connectionState);
   if (m.host) parts.push('Host ' + m.host);
-  if (m.observedAt) parts.push('beobachtet ' + m.observedAt);
+  parts.push(m.observedAt ? 'beobachtet ' + m.observedAt : 'Beobachtungszeit unbekannt (undatiert)');
   if (m.evidence) parts.push('Beleg: ' + m.evidence);
-  return {measured: true, text: parts.join(' · ')};
+  return {kind: 'measured', measured: true, text: parts.join(' · ')};
+}
+
+// Host git snapshot: a separate record from installation measurement, always with source and observation time.
+// Without an observation time the snapshot is "undatiert": it may be old and is not presented as a current fact.
+export function gitSnapshot(git) {
+  if (git.state === 'unknown') return {known: false, dated: false, text: 'Git-Snapshot: unbekannt (kein Hostbeleg)'};
+  const dated = !!git.observedAt;
+  const where = [git.host ? 'Host ' + git.host : 'Host unbekannt', git.source ? 'Quelle ' + git.source : 'Quelle unbekannt'].join(', ');
+  const label = git.state === 'dirty' ? 'Änderungen offen' : 'Clean';
+  return {known: true, dated, text: 'Git-Snapshot (' + where + '): ' + label + ' · beobachtet ' + (dated ? git.observedAt : 'unbekannt (undatiert)')};
 }
 
 function itemProblems(catalog, item) {
@@ -63,23 +76,41 @@ export function compositionCard(catalog, item) {
     key: itemKey(item), type: item.type, id: item.id, name: item.name, version: item.version, description: item.description,
     category: item.category, status: item.status, visibility: item.visibility,
     declared: {groups, total: item.relations.length, empty: item.relations.length === 0},
-    measured: measuredSummary(item), git: gitLabel(item.git), problems,
+    measured: measuredSummary(item), git: gitSnapshot(item.git), problems,
   };
 }
 
 export const bundleCards = catalog => itemsOfType(catalog, 'bundle').map(item => compositionCard(catalog, item));
 export const stackCards = catalog => itemsOfType(catalog, 'stack').map(item => compositionCard(catalog, item));
 
-// The full text is read lazily from /api/capabilities/skills/{id}/source. That endpoint addresses the library id,
-// which for catalog skills is the skill name; a name that is not a valid library id has NO readable full text.
-export const skillTextId = item => (SKILL_ID.test(item.name) ? item.name : null);
+// Library id of a catalog skill: the directory that holds its SKILL.md (that is how the skill library keys its entries,
+// skill_source_service.source_catalog). NEVER item.name: the display name is a separate field. null = no path, no id.
+export function libraryCandidate(item) {
+  const match = /(?:^|\/)([^/]+)\/SKILL\.md$/.exec(item.pathLabel || '');
+  return match && SKILL_ID.test(match[1]) ? match[1] : null;
+}
 
 export function skillRows(catalog) {
   return itemsOfType(catalog, 'skill').map(item => ({
     key: itemKey(item), id: item.id, name: item.name, version: item.version, category: item.category,
     description: item.description, status: item.status, pathLabel: item.pathLabel, languages: item.languages,
-    textId: skillTextId(item), problems: itemProblems(catalog, item),
+    candidate: libraryCandidate(item), problems: itemProblems(catalog, item),
   }));
+}
+
+// Maps catalog skill rows to library ids. Full text is only enabled for an UNAMBIGUOUS match: the candidate must exist in
+// the library and exactly one catalog skill may claim it. Otherwise the reason is returned and the reader stays disabled.
+export function resolveLibraryIds(rows, libraryIds) {
+  const claims = new Map();
+  for (const row of rows) if (row.candidate) claims.set(row.candidate, (claims.get(row.candidate) || 0) + 1);
+  const result = new Map();
+  for (const row of rows) {
+    if (!row.candidate) result.set(row.key, {id: null, reason: 'Kein Bibliothekspfad im Katalog: Volltext nicht zuordenbar.'});
+    else if (claims.get(row.candidate) > 1) result.set(row.key, {id: null, reason: 'Mehrdeutig: mehrere Katalog-Skills verweisen auf die Bibliotheks-ID "' + row.candidate + '".'});
+    else if (!libraryIds.has(row.candidate)) result.set(row.key, {id: null, reason: 'Nicht in der Skill-Bibliothek dieses Hosts gefunden.'});
+    else result.set(row.key, {id: row.candidate, reason: null});
+  }
+  return result;
 }
 
 export function filterRows(rows, query) {

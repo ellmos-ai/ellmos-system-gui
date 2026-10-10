@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {parseCatalog} from '../src/lib/catalog-projection.mjs';
-import {bundleCards, stackCards, skillRows, filterRows, countsLine, sourceRows, catalogNotes, resolveTarget, skillTextId,
-  measuredSummary} from '../src/lib/catalog-views.mjs';
+import {bundleCards, stackCards, skillRows, filterRows, countsLine, sourceRows, catalogNotes, resolveTarget, libraryCandidate,
+  resolveLibraryIds, measuredSummary, gitSnapshot} from '../src/lib/catalog-views.mjs';
 
 // Same byte-identical handler response the catalog-projection tests pin (SHA there); views are derived from it only.
 const raw = () => JSON.parse(readFileSync(new URL('./fixtures/catalog-projection.v1.json', import.meta.url), 'utf8'));
@@ -57,12 +57,15 @@ test('declared and measured are separate; nothing measured says so', () => {
   const one = card(bundleCards(catalog()), 'bundle-one');
   assert.equal(one.measured.measured, false);
   assert.match(one.measured.text, /^Nicht gemessen/);
-  assert.equal(one.git, 'Git unbekannt');
+  assert.equal(one.measured.kind, 'unmeasured');
+  assert.equal(one.git.known, false);
+  assert.match(one.git.text, /^Git-Snapshot: unbekannt \(kein Hostbeleg\)/);
   const body = raw();
   const item = body.items.find(i => i.id === 'bundle-one');
   Object.assign(item.measured, {installed: true, runtime_active: false, connection_state: 'connected', host: 'TEST-HOST', observed_at: '2026-01-01T00:00:00Z', evidence: 'probe'});
   const m = measuredSummary(parseCatalog(body).items.find(i => i.id === 'bundle-one'));
   assert.equal(m.measured, true);
+  assert.equal(m.kind, 'measured');
   assert.match(m.text, /installiert · läuft nicht · Zustand: connected · Host TEST-HOST · beobachtet 2026-01-01T00:00:00Z · Beleg: probe/);
 });
 
@@ -75,15 +78,58 @@ test('counts come only from the projection counts', () => {
   assert.equal(skillRows(empty).length, 0);
 });
 
-test('skill rows carry version and the library id for the lazy full text; invalid names have none', () => {
+test('skill rows carry version and a library candidate from the catalog PATH, never from the display name', () => {
   const rows = skillRows(catalog());
   const note = rows.find(r => r.id === 'skill:assist:note');
   assert.equal(note.version, '1.0.0');
-  assert.equal(note.textId, 'note');
+  assert.equal(note.candidate, 'note');
   assert.deepEqual(note.languages, ['de', 'en']);
   assert.equal(rows.find(r => r.id === 'tool:util:abs').version, null);
-  assert.equal(skillTextId({name: '../etc'}), null);
-  assert.equal(skillTextId({name: 'a b'}), null);
+  assert.equal(libraryCandidate({pathLabel: 'skills/assist/note/SKILL.md'}), 'note');
+  assert.equal(libraryCandidate({pathLabel: 'SKILL.md'}), null);
+  assert.equal(libraryCandidate({pathLabel: null}), null);
+  assert.equal(libraryCandidate({pathLabel: 'skills/x/a b/SKILL.md'}), null);
+  const renamed = catalog(b => { b.items.find(x => x.id === 'skill:assist:note').name = 'Anzeigename Ganz Anders'; });
+  assert.equal(skillRows(renamed).find(r => r.id === 'skill:assist:note').candidate, 'note');
+});
+
+test('library ids resolve only unambiguously and only when the library knows them', () => {
+  const rows = [{key: 'a', candidate: 'note'}, {key: 'b', candidate: 'dup'}, {key: 'c', candidate: 'dup'}, {key: 'd', candidate: null}, {key: 'e', candidate: 'ghost'}];
+  const resolved = resolveLibraryIds(rows, new Set(['note', 'dup']));
+  assert.deepEqual(resolved.get('a'), {id: 'note', reason: null});
+  assert.match(resolved.get('b').reason, /Mehrdeutig/);
+  assert.equal(resolved.get('c').id, null);
+  assert.match(resolved.get('d').reason, /Kein Bibliothekspfad/);
+  assert.match(resolved.get('e').reason, /Nicht in der Skill-Bibliothek/);
+});
+
+test('a state other than "unverified" without measured fields is an unevidenced claim, not "not measured"', () => {
+  const body = raw();
+  body.items.find(i => i.id === 'bundle-one').measured.connection_state = 'connected';
+  const m = measuredSummary(parseCatalog(body).items.find(i => i.id === 'bundle-one'));
+  assert.equal(m.kind, 'unevidenced');
+  assert.equal(m.measured, false);
+  assert.match(m.text, /"connected" gemeldet, ohne Messwerte, Beleg und Beobachtungszeit \(nicht belegt\)/);
+  assert.doesNotMatch(m.text, /^Nicht gemessen/);
+  const timeless = raw();
+  Object.assign(timeless.items.find(i => i.id === 'bundle-one').measured, {installed: true, connection_state: 'connected'});
+  assert.match(measuredSummary(parseCatalog(timeless).items.find(i => i.id === 'bundle-one')).text, /Beobachtungszeit unbekannt \(undatiert\)/);
+});
+
+test('the host git snapshot is separate, names host and source, and is undated without an observation time', () => {
+  const body = raw();
+  const bundle = body.items.find(i => i.id === 'bundle-one');
+  Object.assign(bundle.git, {state: 'clean', host: 'TEST-HOST', source: 'repos_manifest:slot-a'});
+  const undated = gitSnapshot(parseCatalog(body).items.find(i => i.id === 'bundle-one').git);
+  assert.equal(undated.known, true);
+  assert.equal(undated.dated, false);
+  assert.match(undated.text, /Host TEST-HOST, Quelle repos_manifest:slot-a\): Clean · beobachtet unbekannt \(undatiert\)/);
+  Object.assign(bundle.git, {observed_at: '2026-01-02T03:04:05Z', observed_at_basis: 'declared'});
+  const dated = gitSnapshot(parseCatalog(body).items.find(i => i.id === 'bundle-one').git);
+  assert.equal(dated.dated, true);
+  assert.match(dated.text, /beobachtet 2026-01-02T03:04:05Z/);
+  const card = bundleCards(parseCatalog(body)).find(c => c.id === 'bundle-one');
+  assert.doesNotMatch(card.measured.text, /Clean/);
 });
 
 test('the skill search filters rows but never changes the counts', () => {

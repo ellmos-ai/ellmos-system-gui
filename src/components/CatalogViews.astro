@@ -32,14 +32,16 @@
   </details>
 </section>
 <style>
-  #catalog-views {margin-top:2.4rem;border-top:1px solid var(--border);padding-top:1.6rem}
+  #catalog-views {margin-top:2.4rem;border-top:1px solid var(--border);padding-top:1.6rem;--cv-muted:var(--text-muted)}
+  /* colorful/custom: --text-muted is only 3.9-4.4:1 on cards and elevated surfaces, so muted text uses --text there */
+  :global([data-theme="colorful"]) #catalog-views, :global([data-theme="custom"]) #catalog-views {--cv-muted:var(--text)}
   .cv-head {display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   #catalog-views h2 {font-size:1.35rem;margin:0 0 .25rem}
   #catalog-views h3 {font-size:1.1rem;margin:1.8rem 0 .8rem}
   #catalog-views :global(h4) {margin:0;font-size:1rem;overflow-wrap:anywhere}
-  #catalog-views :global(h5) {margin:.2rem 0 .4rem;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)}
+  #catalog-views :global(h5) {margin:.2rem 0 .4rem;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--cv-muted)}
   #catalog-views :global(h6) {margin:.5rem 0 .2rem;font-size:.82rem}
-  #catalog-views :global(.cv-muted) {color:var(--text-muted);font-size:.84rem;margin:.2rem 0}
+  #catalog-views :global(.cv-muted) {color:var(--cv-muted);font-size:.84rem;margin:.2rem 0}
   #catalog-views :global(p) {line-height:1.5}
   #catalog-views :global(.cv-problem), #catalog-views :global(.cv-problems) {color:var(--text);font-size:.82rem}
   #catalog-views :global(.cv-problems) {margin:.4rem 0;padding:.5rem .8rem .5rem 1.6rem;border-left:4px solid var(--error);background:var(--bg-elevated);border-radius:var(--radius-sm)}
@@ -48,16 +50,16 @@
   .cv-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:1rem}
   #catalog-views :global(.cv-card) {padding:1.1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);min-width:0}
   #catalog-views :global(.cv-card-head) {display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
-  #catalog-views :global(.cv-id) {font-family:var(--font-mono,monospace);font-size:.74rem;color:var(--text-muted);margin:.2rem 0;overflow-wrap:anywhere}
+  #catalog-views :global(.cv-id) {font-family:var(--font-mono,monospace);font-size:.74rem;color:var(--cv-muted);margin:.2rem 0;overflow-wrap:anywhere}
   #catalog-views :global(.cv-desc) {font-size:.86rem;color:var(--text);margin:.4rem 0}
   #catalog-views :global(.cv-block) {margin-top:.8rem;padding-top:.6rem;border-top:1px dashed var(--border)}
   #catalog-views :global(.cv-block ul) {margin:.2rem 0;padding-left:1.1rem;font-size:.84rem}
-  #catalog-views :global(.cv-type) {font-size:.72rem;color:var(--text-muted)}
+  #catalog-views :global(.cv-type) {font-size:.72rem;color:var(--cv-muted)}
   #catalog-views :global(.cv-badge) {display:inline-block;padding:.12rem .55rem;border:1px solid var(--border-hover);border-radius:999px;font-size:.74rem;background:var(--bg-elevated);color:var(--text)}
-  #catalog-views :global(.cv-unknown) {border-style:dashed;color:var(--text-muted)}
+  #catalog-views :global(.cv-unknown) {border-style:dashed;color:var(--cv-muted)}
   #catalog-views :global(.cv-bad) {border-color:var(--error)}
   .cv-toolbar {display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:.8rem}
-  .cv-toolbar label {display:flex;flex-direction:column;gap:.35rem;font-size:.8rem;color:var(--text-muted);min-width:min(100%,260px)}
+  .cv-toolbar label {display:flex;flex-direction:column;gap:.35rem;font-size:.8rem;color:var(--cv-muted);min-width:min(100%,260px)}
   .cv-toolbar input {background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;font:inherit}
   .cv-skills {display:flex;flex-direction:column;gap:.5rem}
   #catalog-views :global(.cv-skill) {background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem .9rem}

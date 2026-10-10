@@ -1,7 +1,7 @@
 // Browser wiring for the Ocean catalog views (#2018). DOM is built with createElement/textContent only:
 // catalog values (names, descriptions, ids) are only ever set as text.
 import {loadCatalog} from './catalog-projection.mjs';
-import {loadSkill} from './capability-board-client.mjs';
+import {createSkillReader} from './catalog-skill-reader.mjs';
 import {bundleCards, stackCards, skillRows, filterRows, countsLine, sourceRows, catalogNotes} from './catalog-views.mjs';
 
 const root = document.getElementById('catalog-views');
@@ -46,8 +46,10 @@ function compositionCard(card) {
     declared.append(list);
   }
   const measured = el('section', 'cv-block');
-  measured.append(el('h5', null, 'Gemessen'), el('p', card.measured.measured ? '' : 'cv-muted', card.measured.text), el('p', 'cv-muted', card.git));
-  article.append(declared, measured);
+  measured.append(el('h5', null, 'Gemessen (Installation/Laufzeit)'), el('p', card.measured.measured ? '' : 'cv-muted', card.measured.text));
+  const git = el('section', 'cv-block');
+  git.append(el('h5', null, 'Git-Snapshot (Host)'), el('p', card.git.known && card.git.dated ? '' : 'cv-muted', card.git.text));
+  article.append(declared, measured, git);
   return article;
 }
 
@@ -57,11 +59,7 @@ function renderCards(target, cards, emptyText) {
   for (const card of cards) target.append(compositionCard(card));
 }
 
-const fullTexts = new Map();
-async function readFullText(row) {
-  if (!fullTexts.has(row.textId)) fullTexts.set(row.textId, loadSkill(row.textId).catch(error => { fullTexts.delete(row.textId); throw error; }));
-  return fullTexts.get(row.textId);
-}
+const reader = createSkillReader();
 
 function skillRow(row) {
   const details = el('details', 'cv-skill');
@@ -70,54 +68,41 @@ function skillRow(row) {
   if (row.category) summary.append(' ', badge(row.category));
   details.append(summary);
   details.append(el('p', 'cv-desc', row.description || 'Keine Beschreibung deklariert.'));
-  details.append(el('p', 'cv-muted', row.id + (row.pathLabel ? ' · ' + row.pathLabel : '') + (row.languages ? ' · Sprachen: ' + row.languages.join(', ') : '')));
+  details.append(el('p', 'cv-muted', 'Katalog-ID: ' + row.id + (row.pathLabel ? ' · ' + row.pathLabel : '') + (row.languages ? ' · Sprachen: ' + row.languages.join(', ') : '')));
   for (const problem of row.problems) details.append(el('p', 'cv-problem', problem));
   const status = el('p', 'cv-muted');
   status.setAttribute('role', 'status');
   const pre = el('pre', 'cv-fulltext');
   pre.hidden = true;
   const actions = el('div', 'cv-actions');
-  const copyId = el('button', 'btn', 'Kennung kopieren');
-  copyId.type = 'button';
-  const copyText = el('button', 'btn', 'Volltext kopieren');
-  copyText.type = 'button';
-  const copy = async (value, label) => {
-    try { await navigator.clipboard.writeText(value); status.textContent = label + ' kopiert.'; }
-    catch { status.textContent = 'Kopieren nicht möglich (Zwischenablage gesperrt).'; }
-  };
-  copyId.addEventListener('click', () => copy(row.textId || row.id, 'Kennung'));
-  actions.append(copyId, copyText);
+  const button = label => { const b = el('button', 'btn', label); b.type = 'button'; return b; };
+  const copyCatalogId = button('Katalog-ID kopieren'), copyLibId = button('Bibliotheks-ID kopieren'), copyText = button('Volltext kopieren');
+  actions.append(copyCatalogId, copyLibId, copyText);
   details.append(actions, status, pre);
-  if (!row.textId) {
-    copyText.disabled = true;
-    status.textContent = 'Volltext nicht lesbar: Der Skillname ist keine gültige Bibliothekskennung.';
-  }
-  let loaded = false;
+  const say = result => { status.textContent = result.message; };
+  copyCatalogId.addEventListener('click', async () => say(await reader.copyCatalogId(row)));
+  copyLibId.addEventListener('click', async () => say(await reader.copyLibraryId(row)));
+  copyText.addEventListener('click', async () => say(await reader.copyFullText(row)));
+  let shown = false;
   const show = async () => {
     status.textContent = 'Volltext wird geladen …';
-    try {
-      const source = await readFullText(row);
-      pre.textContent = source.content;
-      pre.hidden = false;
-      loaded = true;
-      status.textContent = 'Quellenversion ' + source.source_version.slice(0, 12) + ' · ' + source.content.length + ' Zeichen';
-      return source;
-    } catch (error) {
+    const result = await reader.open(row);
+    if (result.state === 'loaded') {
+      pre.textContent = result.source.content; pre.hidden = false; shown = true;
+      status.textContent = 'Bibliotheks-ID ' + result.id + ' · Quellenversion ' + result.source.source_version.slice(0, 12) + ' · ' + result.source.content.length + ' Zeichen';
+    } else {
       pre.hidden = true;
-      status.textContent = 'Volltext nicht verfügbar: ' + error.message;
-      return null;
+      status.textContent = result.state === 'disabled' ? 'Volltext deaktiviert: ' + result.reason : 'Volltext nicht verfügbar: ' + result.message;
+      if (result.state === 'disabled') { copyText.disabled = true; copyLibId.disabled = true; }
     }
   };
-  copyText.addEventListener('click', async () => {
-    const source = loaded ? await readFullText(row) : await show();
-    if (source) await copy(source.content, 'Volltext');
-  });
-  if (row.textId) details.addEventListener('toggle', () => { if (details.open && !loaded) show(); });
+  details.addEventListener('toggle', () => { if (details.open && !shown) show(); });
   return details;
 }
 
 function renderSkills(catalog, query) {
   const rows = skillRows(catalog);
+  reader.setRows(rows);
   const hits = filterRows(rows, query);
   const target = clear(part('skills'));
   part('skill-hits').textContent = query ? hits.length + ' Treffer von ' + catalog.counts.skill : '';
