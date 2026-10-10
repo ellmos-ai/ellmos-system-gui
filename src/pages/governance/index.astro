@@ -198,7 +198,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
   <section id="gov-panel-reader" role="tabpanel" tabindex="-1" hidden aria-labelledby="gov-reader-title">
     <h2 id="gov-reader-title" class="card-title"></h2>
     <p class="gov-banner" id="gov-banner">
-      <strong>Nur lesend.</strong> Diese Ansicht ändert nichts. Lock-Vorbehalt: Locks stammen aus einem Scan-Cache; ein leerer,
+      <strong>Diese Ansicht schreibt nicht.</strong> Lock-Vorbehalt: Locks stammen aus einem Scan-Cache; ein leerer,
       veralteter oder fehlender Scan ist keine Schreibfreigabe. Gesperrte Bereiche bleiben fail-closed.
     </p>
     <form id="gov-filters" class="gov-filters" hidden>
@@ -241,7 +241,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
   </style>
 
   <script>
-    import {readTab, registryQuery, effectiveQuery, describeFailure, ageLabel, viewState, writerNotice, nextTabIndex,
+    import {readTab, registryQuery, effectiveQuery, describeFailure, ageLabel, viewState, writerNotice, nextTabIndex, decisionsView, classifyBody, BODY_PROBLEM,
       parseStatus, parseLocks, parseDecisions, parsePolicies, parseRegistry, parseEffective} from '../../lib/governance-readers.mjs';
 
     const UNKNOWN = 'unbekannt';
@@ -296,7 +296,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
       ];
       if (model.scannedAt !== null) rows.push(['Scan', show(model.scannedAt) + ' (' + ageLabel(model.scannedAt) + ')']);
       if (model.kind !== 'locks') {
-        rows.push(['Zugriff', model.readOnly ? 'nur lesend (read_only)' : 'read_only nicht bestätigt']);
+        rows.push(['Zugriff laut Antwort', model.readOnly === true ? 'nur lesend (read_only)' : model.readOnly === false ? 'nicht nur lesend (read_only=false)' : UNKNOWN]);
         rows.push(['Registry-Version', show(model.registryVersion)]);
         rows.push(['Durchsetzung', model.enforcementVerified ? 'verifiziert' : 'Durchsetzung nicht verifiziert']);
         rows.push(['Quellenprüfung', model.sourceVerificationComplete ? 'vollständig' : 'nicht vollständig']);
@@ -370,13 +370,18 @@ import BachLayout from "../../layouts/BachLayout.astro";
         const failure = describeFailure(0, null);
         state.dataset.state = failure.state; state.textContent = failure.label; return;
       }
-      let body = null;
-      try { body = await response.json(); } catch (_) { /* handled below */ }
+      let raw = '';
+      try { raw = await response.text(); } catch (_) { /* classified as empty below */ }
+      const parsed = classifyBody(raw);
+      const body = parsed.value;
       if (!response.ok) {
         const failure = describeFailure(response.status, body);
         state.dataset.state = failure.state;
         state.textContent = failure.label + (failure.detail ? ' · ' + failure.detail : '') + '. Es werden keine Ersatzdaten angezeigt.';
         return;
+      }
+      if (parsed.kind !== 'ok') {
+        state.dataset.state = 'contract'; state.textContent = BODY_PROBLEM[parsed.kind] + '. Es werden keine Ersatzdaten angezeigt.'; return;
       }
       let model;
       try { model = reader.parse(body); } catch (error) {
@@ -400,17 +405,19 @@ import BachLayout from "../../layouts/BachLayout.astro";
       };
       let response;
       try { response = await fetch('/api/governance/status'); } catch (_) { failed(STATUS_FAIL + describeFailure(0, null).label); return; }
-      let body = null;
-      try { body = await response.json(); } catch (_) { /* reported below */ }
-      if (!response.ok) { const f = describeFailure(response.status, body); failed(STATUS_FAIL + f.label + (f.detail ? ' · ' + f.detail : '')); return; }
-      if (body === null) { failed(STATUS_FAIL + 'Antwort nicht lesbar (kein JSON)'); return; }
+      let raw = '';
+      try { raw = await response.text(); } catch (_) { /* classified as empty below */ }
+      const parsed = classifyBody(raw);
+      if (!response.ok) { const f = describeFailure(response.status, parsed.value); failed(STATUS_FAIL + f.label + (f.detail ? ' · ' + f.detail : '')); return; }
+      if (parsed.kind !== 'ok') { failed(STATUS_FAIL + BODY_PROBLEM[parsed.kind]); return; }
+      const body = parsed.value;
       let model;
       try { model = parseStatus(body); } catch (error) { failed(STATUS_FAIL + error.message); return; }
       badge.textContent = model.availability === 'available'
         ? '● Lock-Feed verfügbar; Durchsetzung nicht geprüft' : '● Lock-Lage unbekannt (' + model.availability + ')';
       meta.textContent = 'Quelle: ' + show(model.source) + ' · Stand: ' + show(model.observedAt) + ' (' + ageLabel(model.observedAt) +
         ') · Scan: ' + show(model.scannedAt) + (model.scannedAt ? ' (' + ageLabel(model.scannedAt) + ')' : '') +
-        ' · Host: ' + UNKNOWN + ' · Version: ' + UNKNOWN + ' · Zugriff: nur lesend' +
+        ' · Host: ' + UNKNOWN + ' · Version: ' + UNKNOWN + ' · Zugriff laut Antwort: ' + UNKNOWN + ' (diese Ansicht schreibt nicht)' +
         (model.error ? ' · Fehler: ' + model.error : '') + ' · Durchsetzung ' + (model.enforcementVerified ? 'verifiziert' : 'nicht verifiziert');
       list.replaceChildren();
       if (model.availability === 'available' && model.lockCount !== null) {
@@ -428,13 +435,10 @@ import BachLayout from "../../layouts/BachLayout.astro";
         list.textContent = 'Kein gültiger, frischer Lock-Scan verfügbar.';
       }
       const label = decisions.querySelector('strong');
-      if (model.decisions === null) {
-        decisionBadge.textContent = 'Entscheidungsliste unbekannt (Feld recent_decisions fehlt)';
-        if (label) label.textContent = 'Entscheidungsregister unbekannt';
-      } else {
-        decisionBadge.textContent = model.decisions.length + ' Registerdateien; offener Status nicht geprüft';
-        if (label) label.textContent = model.decisions.length ? 'Entscheidungsregister geladen' : 'Keine Registerdateien gefunden';
-      }
+      const view = decisionsView(model);
+      decisionBadge.textContent = view.label;
+      if (label) label.textContent = view.state === 'unknown' ? 'Entscheidungsregister unbekannt'
+        : view.state === 'empty' ? 'Keine Registerdateien gefunden' : 'Entscheidungsregister geladen';
     }
     if (tab === 'status') loadStatus();
 

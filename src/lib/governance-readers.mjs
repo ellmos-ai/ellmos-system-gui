@@ -48,8 +48,9 @@ export function describeFailure(status, body) {
 export function ageLabel(iso, now = Date.now()) {
   const stamp = typeof iso === 'string' ? Date.parse(iso) : NaN;
   if (Number.isNaN(stamp)) return 'unbekannt';
-  const seconds = Math.round((now - stamp) / 1000);
-  if (seconds < 0) return 'Zeitstempel in der Zukunft';
+  const deltaMs = now - stamp;
+  if (deltaMs < 0) return 'Zeitstempel in der Zukunft'; // before rounding: -1 ms is already the future
+  const seconds = Math.round(deltaMs / 1000);
   if (seconds < 60) return 'vor weniger als 1 Min.';
   if (seconds < 3600) return 'vor ' + Math.round(seconds / 60) + ' Min.';
   if (seconds < 86400) return 'vor ' + Math.round(seconds / 3600) + ' Std.';
@@ -116,7 +117,7 @@ function registryMeta(body, kind, listKey = 'entries') {
     observedAt: text(body.observed_at), scannedAt: null, schema: text(body.schema),
     version: text(body.provider?.version), providerId: text(body.provider?.id),
     providerCommit: text(body.provider?.source_commit), providerVerified: body.provider?.verified === true,
-    registryVersion: text(body.registry_version), readOnly: body.read_only === true,
+    registryVersion: text(body.registry_version), readOnly: typeof body.read_only === 'boolean' ? body.read_only : null,
     enforcementVerified: body.enforcement_verified === true,
     sourceVerificationComplete: body.source_verification_complete === true,
     count: Number.isInteger(body.count) ? body.count : null,
@@ -142,13 +143,14 @@ export function parseEffective(body) {
   if (!isObject(eff)) fail('effective fehlt');
   // adapter lines 98-108 always send both keys: null / [] are real answers, absence is a contract error.
   if (!('selected' in eff) || !(eff.selected === null || isObject(eff.selected))) fail('effective.selected fehlt oder hat falschen Typ');
-  if (!Array.isArray(eff.candidate_ids)) fail('effective.candidate_ids fehlt oder ist keine Liste');
+  if (!Array.isArray(eff.candidate_ids) || eff.candidate_ids.some(id => typeof id !== 'string'))
+    fail('effective.candidate_ids fehlt oder enthält Nicht-Strings');
   return {
     ...meta,
     effective: {
       status: text(eff.status), reason: text(eff.reason),
       selected: eff.selected ? registryEntry(eff.selected) : null,
-      candidateIds: Array.isArray(eff.candidate_ids) ? eff.candidate_ids.filter(id => typeof id === 'string') : [],
+      candidateIds: eff.candidate_ids,
       interactionMode: text(eff.interaction_mode), interactionSource: text(eff.interaction_source),
       governanceBinding: eff.governance_binding ?? null, externalEffectGates: eff.external_effect_gates ?? null,
     },
@@ -161,6 +163,28 @@ export function viewState(model) {
   const rows = model.kind === 'status' ? model.locks : model.rows;
   return rows.length ? 'ok' : 'empty';
 }
+
+// Decision list of the status tab. The handler (unified_api.py:1051-1058) returns an empty list
+// when the registry is unavailable, so "empty" is only meaningful with an available registry.
+export function decisionsView(status) {
+  if (status.decisions === null) return {state: 'unknown', label: 'Entscheidungsliste unbekannt (Feld recent_decisions fehlt)'};
+  if (status.policiesAvailability !== 'available')
+    return {state: 'unknown', label: 'Entscheidungen unbekannt (Registry nicht verfügbar' +
+      (status.policiesReason ? ': ' + status.policiesReason : '') + ')'};
+  if (!status.decisions.length) return {state: 'empty', label: 'Keine Registerdateien gefunden'};
+  return {state: 'list', label: status.decisions.length + ' Registerdateien; offener Status nicht geprüft'};
+}
+
+// Empty body, invalid JSON and JSON null are three different failures.
+export function classifyBody(rawText) {
+  if (typeof rawText !== 'string' || !rawText.trim()) return {kind: 'empty', value: null};
+  let value;
+  try { value = JSON.parse(rawText); } catch (_) { return {kind: 'invalid', value: null}; }
+  return value === null ? {kind: 'null', value: null} : {kind: 'ok', value};
+}
+
+export const BODY_PROBLEM = {empty: 'Antwort leer (kein Inhalt)', invalid: 'Antwort nicht lesbar (kein gültiges JSON)',
+  null: 'Antwort ist JSON null'};
 
 export function writerNotice(model) {
   if (!model.writer) return 'Writer-Status unbekannt (Antwort enthält kein decision_writer).';
