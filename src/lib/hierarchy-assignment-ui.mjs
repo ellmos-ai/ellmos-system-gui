@@ -1,6 +1,6 @@
 // Browser wiring for the "Zuordnung" tab of /skills (P-1963-P2). DOM via createElement/textContent only; no inline handlers.
 // The draft lives in memory only: the database behind /api/skills-board/hierarchy is the single store.
-import {GROUPS, createHierarchyClient, cloneLists, diffAssignments, hasChanges} from './hierarchy-assignment.mjs';
+import {GROUPS, createHierarchyClient, cloneLists, diffAssignments, hasChanges, loadedView, derivedExpertNote} from './hierarchy-assignment.mjs';
 
 const root = document.getElementById('assignment-panel');
 if (root) {
@@ -101,7 +101,7 @@ if (root) {
       if (verification.ok) status('Gespeichert und per Lesen bestätigt (' + summary.inserted + ' neu, ' + summary.updated + ' geändert, ' + summary.deleted + ' entfernt).');
       else {
         const lines = verification.problems.map(p => p.group + ': fehlt ' + (p.missing.join(', ') || '–') + ' · unerwartet ' + (p.extra.join(', ') || '–'));
-        status('Abweichung beim Zurücklesen – die Datenbank zeigt nicht, was gespeichert werden sollte: ' + lines.join(' | '), true);
+        status('Abweichung beim Zurücklesen – die Datenbank zeigt nicht, was gespeichert werden sollte: ' + lines.join(' | ') + ' ' + derivedExpertNote(verification.problems), true);
       }
     } catch (error) {
       status('Nicht gespeichert: ' + error.message, true);
@@ -114,6 +114,7 @@ if (root) {
     const v = state.view;
     if (v === 'loading') box.append(el('p', 'as-muted', 'Zuordnungen werden geladen …'));
     else if (v === 'empty') box.append(el('p', 'as-muted', 'Die Quelle meldet keine Agenten. Das ist ein leerer Bestand, kein Fehler.'));
+    else if (v === 'source-unavailable') box.append(el('p', 'as-problem', 'Datenquelle nicht verfügbar: die Antwort enthält keine Agenten und stammt nicht aus der Datenbank (_meta.source ' + (state.data.source ?? 'fehlt') + ').'), el('p', 'as-muted', 'Nur Lesen. Das ist ein Fehler, kein leerer Bestand; es wird nichts gespeichert.'));
     else if (v.startsWith('error:')) {
       const kind = v.slice(6);
       const title = {unavailable: 'Zuordnung nicht verfügbar: dieses System bietet den Adapter nicht an.', auth: 'Keine Berechtigung: Geräteanmeldung fehlt oder ungültig.', 'table-missing': 'Zuordnungstabelle nicht verfügbar (Tabelle fehlt im Backend).',
@@ -155,7 +156,8 @@ if (root) {
       const data = await client.load();
       if (token !== state.token) return;
       state.data = data;
-      if (!data.items.agents.length) { state.view = 'empty'; render(); return; }
+      const view = loadedView(data);
+      if (view !== 'ready') { state.view = view; render(); return; }
       setDraftFor(data.items.agents.some(a => a.id === state.agent) ? state.agent : data.items.agents[0].id);
       state.view = 'ready';
     } catch (error) {

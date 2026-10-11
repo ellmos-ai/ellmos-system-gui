@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {ApiError, GROUPS, failureOf, parseHierarchy, diffAssignments, hasChanges, buildPutBody, verifyReadback, declarationState, createHierarchyClient} from '../src/lib/hierarchy-assignment.mjs';
+import {ApiError, GROUPS, failureOf, parseHierarchy, diffAssignments, hasChanges, buildPutBody, verifyReadback, declarationState, loadedView, derivedExpertNote, DERIVED_EXPERT_NOTE, createHierarchyClient} from '../src/lib/hierarchy-assignment.mjs';
 
 const json = (status, body) => ({ok: status < 400, status, json: async () => body});
 const answer = (over = {}) => ({
@@ -153,4 +153,22 @@ test('UI source: no innerHTML/outerHTML/insertAdjacentHTML, no inline handlers, 
   assert.doesNotMatch(css, /[^-]color:\s*var\(--(accent|success|warning|error|accent-blue)\)/);
   assert.match(css, /--error-text/);
   assert.match(css, /--success-text/);
+});
+
+test('an empty agent list is an empty stock only for source bach.db; the DB-error fallback ("empty") is a source problem', () => {
+  const noAgents = over => parseHierarchy(answer({items: {agents: [], experts: [], skills: [], services: [], workflows: []}, assignments: {}, ...over}));
+  assert.equal(loadedView(noAgents({})), 'empty');
+  assert.equal(loadedView(noAgents({_meta: {source: 'empty'}})), 'source-unavailable');
+  assert.equal(loadedView(noAgents({_meta: undefined})), 'source-unavailable');
+  assert.equal(loadedView(parseHierarchy(answer())), 'ready');
+  assert.equal(loadedView(parseHierarchy(answer({_meta: {source: 'empty'}}))), 'ready'); // agents present: the read-only note handles it
+});
+
+test('derived experts: a note appears only when an expert reappears after the readback', () => {
+  const parsed = parseHierarchy(answer());
+  const bad = verifyReadback('boss', {experts: [], skills: ['s1'], services: [], workflows: []}, parsed);
+  assert.equal(derivedExpertNote(bad.problems), DERIVED_EXPERT_NOTE);
+  const skillsOnly = verifyReadback('boss', {experts: ['e1'], skills: ['s1', 's2'], services: [], workflows: []}, parsed);
+  assert.equal(derivedExpertNote(skillsOnly.problems), '');
+  assert.equal(derivedExpertNote([]), '');
 });

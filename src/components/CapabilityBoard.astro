@@ -143,7 +143,7 @@ const tabs = [
   .as-muted {color:var(--text-muted);font-size:.85rem;line-height:1.5}
   .as-problem {color:var(--error-text);font-size:.88rem;line-height:1.5;overflow-wrap:anywhere}
   .as-toolbar,.as-actions {display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;margin:1rem 0}
-  .as-toolbar label {min-width:0}.as-toolbar select {max-width:100%}.as-search {flex:1;min-width:180px}
+  .as-toolbar label {min-width:0}.as-toolbar select {max-width:100%}.as-toolbar label.as-search {flex:1 1 180px;min-width:min(180px,100%)}.as-toolbar input[type=search] {width:100%;box-sizing:border-box}
   .as-group {margin:1.2rem 0;padding:1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md)}
   .as-group h3 {margin:0 0 .6rem;font-size:1rem}.as-group h4 {margin:.2rem 0 .4rem;font-size:.82rem;color:var(--text-muted)}
   .as-cols {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:1rem}

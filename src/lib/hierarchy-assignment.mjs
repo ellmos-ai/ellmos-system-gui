@@ -62,6 +62,13 @@ export function parseHierarchy(body) {
   return {items, assignments, source, writable: source === 'bach.db'};
 }
 
+// An empty agent list is an empty stock ONLY when the answer says it came from the database: the server's fallback for database
+// errors is the same empty structure with another source.
+export const loadedView = parsed => (parsed.items.agents.length ? 'ready' : parsed.writable ? 'empty' : 'source-unavailable');
+
+export const DERIVED_EXPERT_NOTE = 'Experten, die aus den Experten-Stammdaten abgeleitet werden, sind hier nicht entfernbar.';
+export const derivedExpertNote = problems => (problems.some(p => p.group === 'experts' && p.extra.length) ? DERIVED_EXPERT_NOTE : '');
+
 const norm = lists => Object.fromEntries(GROUPS.map(({key}) => [key, [...new Set(lists?.[key] ?? [])].sort((a, b) => a.toLowerCase() < b.toLowerCase() ? -1 : a.toLowerCase() > b.toLowerCase() ? 1 : a < b ? -1 : a > b ? 1 : 0)]));
 const cloneLists = lists => Object.fromEntries(GROUPS.map(({key}) => [key, [...(lists?.[key] ?? [])]]));
 export {cloneLists};
