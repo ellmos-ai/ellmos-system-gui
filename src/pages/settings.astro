@@ -175,7 +175,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
         <!-- Live KPI Bar -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
           <div class="repo-item" style="text-align: center;">
-            <span style="font-size: 1.25rem; font-weight: bold; color: var(--accent);" id="nf-kpi-runs">-</span>
+            <span style="font-size: 1.25rem; font-weight: bold; color: var(--accent-text);" id="nf-kpi-runs">-</span>
             <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Synthese-Läufe</span>
           </div>
           <div class="repo-item" style="text-align: center;">
@@ -183,7 +183,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
             <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">In Prüfung</span>
           </div>
           <div class="repo-item" style="text-align: center;">
-            <span style="font-size: 1.25rem; font-weight: bold; color: var(--success);" id="nf-kpi-approved">-</span>
+            <span style="font-size: 1.25rem; font-weight: bold; color: var(--success-text);" id="nf-kpi-approved">-</span>
             <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Freigegeben</span>
           </div>
           <div class="repo-item" style="text-align: center;">
@@ -663,7 +663,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
             <div style="font-size:0.75rem; color:var(--text-muted);">${c.chain_name}</div>
           </td>
           <td><span class="badge badge-secondary">${c.steps ? c.steps.length : 0} Schritte</span></td>
-          <td><span style="font-weight:600; color:var(--accent);">${Math.round((c.confidence_score || 0.8) * 100)}%</span></td>
+          <td><span style="font-weight:600; color:var(--accent-text);">${Math.round((c.confidence_score || 0.8) * 100)}%</span></td>
           <td>
             <span class="badge ${c.tuv_status === 'certified' ? 'badge-success' : 'badge-warning'}">
               ${c.tuv_status === 'certified' ? '🛡️ TÜV OK' : '⚠️ Prüfung'}
@@ -678,7 +678,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
             <div style="display:flex; gap:0.25rem;">
               ${c.status === 'pending' ? `
                 <button class="btn btn-primary" style="padding:0.2rem 0.5rem; font-size:0.75rem;" onclick="approveNemoFoldCandidate(${c.id})">Freigeben</button>
-                <button class="btn" style="padding:0.2rem 0.5rem; font-size:0.75rem; color:var(--error);" onclick="rejectNemoFoldCandidate(${c.id})">Ablehnen</button>
+                <button class="btn" style="padding:0.2rem 0.5rem; font-size:0.75rem; color:var(--error-text);" onclick="rejectNemoFoldCandidate(${c.id})">Ablehnen</button>
               ` : `
                 <span style="font-size:0.75rem; color:var(--text-muted);">${c.reviewed_by ? 'Geprüft (' + c.reviewed_by + ')' : '-'}</span>
               `}
@@ -688,7 +688,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
       `).join('');
       loadNemoFoldStats();
     } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="7" style="color:var(--error); text-align:center; padding:1rem;">Fehler: ${e.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="color:var(--error-text); text-align:center; padding:1rem;">Fehler: ${e.message}</td></tr>`;
     }
   }
 

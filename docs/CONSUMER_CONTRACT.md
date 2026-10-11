@@ -25,6 +25,25 @@ Die Frontend-Voraussetzungen des aktuellen Imports sind in [BACH_FRONTEND_IMPORT
 
 Trithon, Muschelgrund und Salt haben eigene Architekturverträge. Die BACH-Teiladapter für Dispatch und Receipt-Projektion sind kein vollständiger Nachweis ihres Systemzustands. Die Systemkarten zeigen ohne Modulprobe `unbekannt`. Die Fackel bleibt bei Agenten als Compute-Vorrang; eine Prozess-ID allein belegt keine laufende Aufgabenarbeit.
 
+## Seiten-Lesepfade (`ellmos.gui.page-reads.v1`)
+
+Welche Backendaufrufe eine Seite macht, steht in genau einer Datei der GUI: `public/page-reads.v1.json`. Der Build legt sie als `dist/page-reads.v1.json` ab; sie steht damit im Dist-Manifest und im Release-Beleg. Konsumenten (BACH, Ocean) leiten daraus die Seiten in `GET /api/gui/capabilities` ab, statt eine eigene Seiten-zu-Endpunkt-Tabelle von Hand zu pflegen.
+
+- `layout`: Aufrufe, die jede Seite über das Layout macht (Marke, Backend-Herkunft, Domänen-Pins). Einmal deklariert, immer optional.
+- `pages`: je Seitenpfad (`/`, `/skills/mcp`, ...) eine Liste von Einträgen. Eine Seite ohne Backendaufruf (Weiterleitung) hat die leere Liste.
+- Eintrag: `method` (GET, POST, PUT, PATCH, DELETE), `path` (Muster mit Parametern in `{...}`, ohne Query), `required`, optional `query` (nur Dokumentation) und für Pfade, die der Code aus Teilen zusammensetzt, `dynamic: true` mit `found_in: "Datei#Funktion"`.
+- `required: true` heißt: ohne diesen Lesezugriff erfüllt die Seite ihren Zweck nicht. `required: false` heißt: die Seite bleibt benutzbar (Rückfall, eingeschränkte Anzeige) oder der Aufruf ist Detail, Benutzeraktion oder Schreibzugriff. Eine Seite ist beim Konsumenten nur `configured`, wenn alle Pflicht-Lesezugriffe (GET, `required`) bedient werden.
+- Parameternamen sind beim Abgleich egal (`{id}` entspricht `{snapshot_id}`). Query-Strings gehören nicht zum Routenabgleich.
+- Die Methode steht fest: `fetch` ohne Optionen ist GET; sonst gilt `method` der Aufrufstelle (auch als Argument eines Helfers wie `changeRoutine(path, 'POST')`, auch als Ausdruck `a ? 'PUT' : 'POST'`). Eine falsche Methode im Manifest macht den Test rot.
+
+Der Wächter (`scripts/page-reads-check.mjs`, Test `tests/page-reads.test.mjs`) wertet jede **Aufrufstelle** aus, nicht den Dateitext: jeder Aufruf von `fetch` (auch `window.fetch`, Aliase wie `fetchImpl = fetch`) und jedem registrierten Helfer (`scripts/page-reads-helpers.mjs`) in `src/` und in den Skripten unter `public/` wird mit eigener URL und eigener Methode ausgewertet.
+- Literaler Pfad (auch mit angehängter Query): braucht einen statischen Eintrag mit gleicher Methode und gleichem Pfad.
+- Zusammengesetzter Pfad (`'/api/x/' + id`, Template): braucht einen `dynamic`-Eintrag, dessen `found_in` `Datei#Funktion` der Aufrufstelle ist und dessen Pfad dem zusammengesetzten Muster gleicht. `/result` wird nicht durch `/result/accept` gestützt. Aufrufe außerhalb einer benannten Funktion heißen `(module)`.
+- Nicht allein vom Code entschiedene Aufrufstelle (undurchsichtige URL wie `INVENTORIES[kind]`, offener Pfad `'/api/x' + suffix`, Methode in einer Variable): bekommt die ID `Datei#Funktion@n` und muss in `scripts/page-reads-bindings.mjs` an eine ausdrückliche Liste `METHODE Pfad` gebunden werden; jede Alternative braucht einen `dynamic`-Eintrag mit `found_in` `Datei#Funktion`. Eine neue solche Aufrufstelle, ein Eintrag außerhalb der Bindung oder eine veraltete Bindung ist rot.
+- Ein Helfer, der einen Parameter an `fetch` weiterreicht, muss in `scripts/page-reads-helpers.mjs` stehen, sonst ist der Test rot; seine Aufrufer sind dann die Fundstellen. Das Options-Objekt wird der Reihe nach ausgewertet (letzter Schreibzugriff gewinnt): ein späteres Spread, ein berechneter Schlüssel oder `{method}` aus einer Variable macht die Methode unbekannt und die Stelle damit bindungspflichtig. Aliase von `fetch` werden transitiv verfolgt; jede andere Verwendung des Namens `fetch` (weitergereicht, `.call`, Ternary) ist rot. Der Importgraph folgt `import`, `import()` mit Literal, `export ... from` und lokalen `<script src>`; nicht auflösbare lokale Kanten, berechnete `import()` und externe Skripte sind rot.
+- Jeder Eintrag braucht mindestens eine passende Aufrufstelle auf seiner Seite; ein toter Eintrag ist rot. Gleiche Lesezugriffe aus verschiedenen Funktionen stehen als getrennte Einträge (verschiedenes `found_in`).
+Grenzen: Aufrufe in Astro-Template-Ausdrücken (`{...}` außerhalb von `<script>`), `EventSource`, `XMLHttpRequest`, Navigation auf `/api/`-Links und Pfadangaben, die nur zur Laufzeit entstehen und nirgends als Literal vorkommen, sieht der Test nicht; für letztere gilt zusätzlich die Literalprüfung (jedes `/api/`-Literal muss im Manifest stehen).
+
 ## Aufgabenauswahl der Worker
 
 Die optionale Projektion `workers[].queue_status` verwendet `bach.worker-queue.v1`.

@@ -373,7 +373,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       color: var(--text);
     }
     .tab-btn.active {
-      color: var(--accent);
+      color: var(--accent-text);
       border-bottom-color: var(--accent);
       font-weight: 700;
     }
@@ -663,7 +663,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       font-size: 3.5rem;
       font-weight: 700;
       font-family: monospace;
-      color: var(--accent);
+      color: var(--accent-text);
     }
     .timer-controls, .timer-modes {
       display: flex;
@@ -708,7 +708,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     .stat-value {
       font-size: 1.75rem;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--accent-text);
       margin: 0.25rem 0;
     }
     .balance-bars {
@@ -950,7 +950,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
         html += `
           <button type="button" class="month-day-cell ${isToday ? 'today' : ''}" data-date="${iso}" aria-label="${day}. ${MONTH_NAMES[month]} ${year}, ${dayEvents.length} Termine">
-            <div class="month-day-num" style="${isToday ? 'color:var(--accent);font-weight:800;' : ''}">${day}</div>
+            <div class="month-day-num" style="${isToday ? 'color:var(--accent-text);font-weight:800;' : ''}">${day}</div>
             <div style="flex:1;overflow-y:auto;">
               ${dayEvents.slice(0, 3).map(e => {
                 const chipClass = e.is_routine ? 'chip-routine' : (e.event_type === 'fokusblock' ? 'chip-fokus' : 'chip-termin');

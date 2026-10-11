@@ -1,4 +1,4 @@
-import {INVENTORIES, SKILL_ID, loadSkill, saveSkill, requestJson, confirmSkillReplacement} from './capability-board-client.mjs';
+import {INVENTORIES, SKILL_ID, loadSkill, saveSkill, requestJson, confirmSkillReplacement, describeSourceError} from './capability-board-client.mjs';
 import {createSymbol,mountSymbolPicker,withSkillSymbol} from './ticket-symbol.mjs';
 
 import {catalogMatches, publicationLabel, safePublicationUrl} from './software-catalog.mjs';
@@ -83,7 +83,9 @@ if (board) {
     try {
       const data = await requestJson(INVENTORIES[kind]);
       if (generation !== inventoryGeneration) return;
-      if (!catalogMatches(kind, data)) throw new Error('Der Anwendungskatalog und die Ocean-Quellen sind noch nicht getrennt angebunden.');
+      if (!catalogMatches(kind, data)) throw new Error(kind === 'plugins'
+        ? 'Die Antwort ist kein Plugin-Inventar (erwartet: Schema bach.capability-inventory.v1, Art plugins).'
+        : 'Der Anwendungskatalog und die Ocean-Quellen sind noch nicht getrennt angebunden.');
       const rows = kind === 'skills' ? data.skills : data.items;
       if (!Array.isArray(rows)) throw new Error('Die Quelle liefert keinen Eintragskatalog.');
       items = rows;
@@ -113,7 +115,7 @@ if (board) {
     } catch (error) {
       if (generation !== inventoryGeneration) return;
       items = []; renderItems();
-      byId('board-status').textContent = 'Quelle nicht geladen: ' + error.message;
+      byId('board-status').textContent = 'Quelle nicht geladen: ' + describeSourceError(error);
     } finally { if (generation === inventoryGeneration) byId('board-refresh').disabled = false; }
   }
 

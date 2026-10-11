@@ -23,7 +23,7 @@ const tabs = [
   {board === 'ocean' && <p class="text-muted">Module und Quellen finden · <a href="/system?tab=ocean">Ocean-Modulschaltplan in System öffnen ↗</a></p>}
   <header class="board-heading">
     <div><p class="board-eyebrow">Skills & Software</p><h1>{titles[board]}</h1><p>{descriptions[board]}</p></div>
-    <div class="board-actions">
+    <div class="board-actions" id="board-actions">
       {board === 'skills' && <button type="button" class="btn btn-primary" id="skill-create">+ Neuer Skill</button>}
       <button type="button" class="btn" id="board-refresh">Aktualisieren</button>
     </div>
@@ -31,6 +31,11 @@ const tabs = [
   <nav class="board-tabs" aria-label="Skills & Software">
     {tabs.map(tab=><a href={tab.href} class:list={['board-tab', {active:tab.board===board}]} aria-current={tab.board===board?'page':undefined}>{tab.label}</a>)}
   </nav>
+  {board==='skills' && <div class="skills-tabs" role="tablist" aria-label="Skill-Zentrale">
+    <button type="button" role="tab" id="tab-anleitungen" data-skills-tab="anleitungen" aria-controls="skills-panel" aria-selected="true">Anleitungen</button>
+    <button type="button" role="tab" id="tab-zuordnung" data-skills-tab="zuordnung" aria-controls="assignment-panel" aria-selected="false" tabindex="-1">Zuordnung</button>
+  </div>}
+  <div id="skills-panel" role={board==='skills'?'tabpanel':undefined} aria-labelledby={board==='skills'?'tab-anleitungen':undefined}>
   {board==='software' && <p class="processing-guide">Deterministische Verarbeitung: Software · Leichte und mittlere Aufgaben: lokale Modelle · Schwere Aufgaben: externe Modelle</p>}
   <div class="board-toolbar">
     <label class="board-search">Suchen<input type="search" id="board-search" placeholder="Name oder Beschreibung" autocomplete="off" /></label>
@@ -45,6 +50,26 @@ const tabs = [
     <p id="recipe-status" role="status"></p>
   </section>}
   {board!=='skills' && <details class="board-sources"><summary>Quellen dieses Hosts</summary><div id="board-sources"></div></details>}
+  </div>
+  {board==='skills' && <section id="assignment-panel" role="tabpanel" aria-labelledby="tab-zuordnung" hidden>
+    <p class="as-muted">Welche Experten, Skills, Dienste und Workflows gehören zu welchem Agenten. Gespeichert wird in der Datenbank des verbundenen Systems; die Zuordnung in der Agenten-Werkstatt bleibt der Hauptweg, dieser Tab ist der zusätzliche.</p>
+    <div data-part="view" role="status" hidden></div>
+    <div data-part="workspace" hidden>
+      <div class="as-toolbar">
+        <label>Agent<select data-part="agent"></select></label>
+        <label class="as-search">Suchen<input type="search" data-part="filter" placeholder="Name oder Kennung" autocomplete="off" /></label>
+        <button type="button" class="btn" data-part="reload">Neu laden</button>
+      </div>
+      <div data-part="readonly" hidden></div>
+      <div data-part="groups"></div>
+      <div class="as-actions">
+        <button type="button" class="btn btn-primary" data-part="review">Änderung prüfen</button>
+        <button type="button" class="btn" data-part="reset">Änderungen verwerfen</button>
+      </div>
+      <div data-part="preview" class="as-preview" hidden></div>
+    </div>
+    <p data-part="status" role="status" aria-live="polite" class="as-muted"></p>
+  </section>}
 </section>
 <dialog id="skill-editor" class="board-dialog" aria-labelledby="skill-editor-title">
   <div class="dialog-heading"><div><p class="board-eyebrow">SKILL.md</p><h2 id="skill-editor-title">Skill bearbeiten</h2></div><button class="btn" type="button" id="skill-close" aria-label="Schließen">✕</button></div>
@@ -68,7 +93,7 @@ const tabs = [
   .board-eyebrow {font-size:.7rem!important;letter-spacing:.14em;text-transform:uppercase;margin:0}
   .board-tabs {display:flex;gap:.3rem;padding:.35rem;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);flex-wrap:wrap}
   .board-tab {padding:.7rem 1.1rem;color:var(--text-muted);text-decoration:none;border-radius:var(--radius-sm);font-size:.85rem;font-weight:600}
-  .board-tab.active {background:var(--bg-card);color:var(--accent);box-shadow:var(--shadow-sm)}
+  .board-tab.active {background:var(--bg-card);color:var(--accent-text);box-shadow:var(--shadow-sm)}
   .board-toolbar {justify-content:flex-start;margin:1.4rem 0}.board-search {flex:1;min-width:200px}
   label {display:flex;flex-direction:column;gap:.4rem;font-size:.8rem;color:var(--text-muted)}
   input,select,textarea {background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.65rem;font:inherit}
@@ -108,6 +133,30 @@ const tabs = [
   .board-grid :global(.plug-evidence summary:focus-visible) {outline:2px solid var(--accent);outline-offset:2px}
   .board-grid :global(.plug-evidence p) {margin:.3rem 0 0;color:var(--text-muted)}
 </style>
+<style is:global>
+  .skills-tabs {display:flex;gap:.3rem;margin:1.2rem 0 0;flex-wrap:wrap}
+  .skills-tabs button {background:transparent;color:var(--text-muted);border:0;border-bottom:3px solid transparent;padding:.6rem 1rem;font:inherit;font-weight:600;cursor:pointer}
+  .skills-tabs button[aria-selected="true"] {color:var(--text);border-bottom-color:var(--accent)}
+  .skills-tabs button:focus-visible {outline:2px solid var(--accent);outline-offset:2px}
+  #assignment-panel {margin-top:1.2rem}
+  #assignment-panel [hidden],#board-actions[hidden],#skills-panel[hidden] {display:none!important}
+  .as-muted {color:var(--text-muted);font-size:.85rem;line-height:1.5}
+  .as-problem {color:var(--error-text);font-size:.88rem;line-height:1.5;overflow-wrap:anywhere}
+  .as-toolbar,.as-actions {display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;margin:1rem 0}
+  .as-toolbar label {min-width:0}.as-toolbar select {max-width:100%}.as-toolbar label.as-search {flex:1 1 180px;min-width:min(180px,100%)}.as-toolbar input[type=search] {width:100%;box-sizing:border-box}
+  .as-group {margin:1.2rem 0;padding:1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md)}
+  .as-group h3 {margin:0 0 .6rem;font-size:1rem}.as-group h4 {margin:.2rem 0 .4rem;font-size:.82rem;color:var(--text-muted)}
+  .as-cols {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:1rem}
+  .as-list {list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.35rem;min-height:2rem}
+  .as-item {display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;padding:.4rem .5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm)}
+  .as-item[draggable="true"] {cursor:grab}.as-name {flex:1;min-width:0;overflow-wrap:anywhere;color:var(--text)}.as-id {font-size:.72rem;overflow-wrap:anywhere}
+  .as-preview {margin-top:1rem;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-card)}
+  .as-preview ul {padding-left:1.2rem}.as-added {color:var(--success-text)}.as-removed {color:var(--error-text)}
+  .as-preview .btn {margin:.4rem .6rem .2rem 0}
+  #assignment-panel button:focus-visible,#assignment-panel select:focus-visible,#assignment-panel input:focus-visible {outline:2px solid var(--accent);outline-offset:2px}
+  #assignment-panel button:disabled {opacity:1;color:var(--text-muted);background:var(--bg-dark);background-image:none;border:1px solid var(--border);cursor:not-allowed}
+</style>
 <script>
   import '../lib/capability-board-ui.mjs';
+  import '../lib/hierarchy-assignment-ui.mjs';
 </script>
