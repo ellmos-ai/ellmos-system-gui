@@ -25,7 +25,7 @@
     "src/assets/ticket-symbols/topics_uni.svg": "45b565524ec66eff4b5f87a12729afc958d5ff2027af337f8472ecde0fe1bd19",
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
-    "src/components/CapabilityBoard.astro": "7768701617beb6d8f46c360309d35805a351fa2f142896a036bb7796cb0edd01",
+    "src/components/CapabilityBoard.astro": "a1637eac0d23650f7cd3bc4c5816e410295eeffefb5366791667a706813664ba",
     "src/components/Header.astro": "c997c4aa86d16d0ab70edaaf3c6c3332d0e566cc629386d2872fd7ebd57a44e7",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "78295d99e1673edf101efae42498f518e6b2a73334998c5bdb3a5ff10be704e3",
