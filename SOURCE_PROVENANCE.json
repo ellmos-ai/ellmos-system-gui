@@ -107,7 +107,7 @@
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/memory-facts.test.mjs": "8be5410afab2074934db3a5a1d62e8b3eb9c9569d480ef033b62157c17484f38",
     "README.md": "f7700138a0599453f65bf983ccbc81197c9df137b62f3618de6fce1f55303442",
-    "docs/CONSUMER_CONTRACT.md": "534d216d2baae1756805a5232fa251eac9577b265ca5fe6d47ae614cceb0b7a6",
+    "docs/CONSUMER_CONTRACT.md": "dd33fbaf8a3f92e0d9bba1ab8eeff84f979c55f739fadb65edd206a183bf3a11",
     "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
     "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
@@ -912,7 +912,7 @@
         {
           "path": "docs/CONSUMER_CONTRACT.md",
           "previous_sha256": "c4a62eb92f967eca96c1bd651068923ed8599a9bd10b386f19863da38a13ab48",
-          "sha256": "534d216d2baae1756805a5232fa251eac9577b265ca5fe6d47ae614cceb0b7a6"
+          "sha256": "dd33fbaf8a3f92e0d9bba1ab8eeff84f979c55f739fadb65edd206a183bf3a11"
         },
         {
           "path": "package.json",

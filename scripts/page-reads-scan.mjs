@@ -6,7 +6,10 @@ import {analyzeCalls} from './page-reads-lex.mjs';
 import {HELPERS, PASSTHROUGH_FILES} from './page-reads-helpers.mjs';
 
 const IMPORT_RE = /(?:\bimport\s*(?:[^'"`;]*?\bfrom\s*)?|\bimport\s*\(\s*)(['"])(\.{1,2}\/[^'"]+)\1/g;
-const API_RE = /(['"`])(\/api\/[^'"`\s]*)\1|(`)(\/api\/[^`\s]*)`/g;
+const EXPORT_RE = /\bexport\s*(?:\*(?:\s*as\s+[\w$]+)?|\{[^}]*\})\s*from\s*(['"])(\.{1,2}\/[^'"]+)\1/g;
+const SCRIPT_SRC_RE = /<script\b[^>]*?\bsrc\s*=\s*(['"])([^'"]+)\1/g;
+const DYNAMIC_IMPORT_RE = /\bimport\s*\(\s*(?!['"`])/;
+const API_RE =/(['"`])(\/api\/[^'"`\s]*)\1|(`)(\/api\/[^`\s]*)`/g;
 const EXT = ['', '.mjs', '.js', '.astro', '.ts'];
 
 export function normalizePattern(raw) {
@@ -48,7 +51,17 @@ export function scan(rootArg, opts = {}) {
   const callProblems = [];
   for (const file of files) {
     const text = readFileSync(file, 'utf8');
-    const imports = [...text.matchAll(IMPORT_RE)].map(m => resolveImport(file, m[2])).filter(Boolean);
+    // edges: import ... from, import(), export ... from (barrels) and local <script src>; an edge the guard cannot
+    // resolve, an external script or a computed import() fails the guard instead of hiding calls
+    const imports = [];
+    for (const m of [...text.matchAll(IMPORT_RE), ...text.matchAll(EXPORT_RE), ...text.matchAll(SCRIPT_SRC_RE)]) {
+      const spec = m[2];
+      if (/^https?:|^\/\//.test(spec)) { callProblems.push(`${rel(file)}: external script ${spec} cannot be checked`); continue; }
+      if (spec.startsWith('/')) continue; // served from public/, scanned as layout code
+      const target = resolveImport(file, spec);
+      if (target) imports.push(target); else callProblems.push(`${rel(file)}: cannot resolve local import ${spec}`);
+    }
+    if (DYNAMIC_IMPORT_RE.test(text)) callProblems.push(`${rel(file)}: import() with a computed specifier cannot be followed`);
     const literals = [];
     text.split('\n').forEach((line, index) => {
       for (const m of line.matchAll(API_RE)) literals.push({line: index + 1, pattern: normalizePattern(m[2] ?? m[4])});

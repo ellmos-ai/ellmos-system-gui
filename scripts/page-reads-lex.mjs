@@ -288,17 +288,17 @@ function optionsMethods(ts, consts) {
   if (!ts) return [{v: 'GET', conds: []}];
   ts = trimParens(ts);
   if (!(ts[0]?.v === '{' && ts[0].t === 'p' && matchClose(ts, 0) === ts.length - 1)) return null;
-  let unknown = false;
+  // Evaluated in source order, last write wins: a later spread, computed key or accessor may override the method
+  // at run time, so the method is unknown (null) from there on, unless a literal `method:` follows it again.
+  let current = [{v: 'GET', conds: []}];
   for (const prop of splitTop(ts, 1, ts.length - 1, ',')) {
     if (!prop.length) continue;
-    if (prop[0].v === '...') { unknown = true; continue; }
     const key = prop[0];
-    if ((key.t === 'id' || key.t === 'str') && key.v === 'method') {
-      if (prop[1]?.v !== ':') return null; // shorthand: the value lives in a parameter
-      return methodsOf(prop.slice(2), consts);
-    }
+    if (key.v === '...' || (key.t === 'p' && key.v === '[') || (['get', 'set', 'async'].includes(key.v) && prop[1]?.v === 'method')) { current = null; continue; }
+    if ((key.t === 'id' || key.t === 'str') && key.v === 'method')
+      current = prop[1]?.v === ':' ? methodsOf(prop.slice(2), consts) : null; // shorthand: the value lives in a variable
   }
-  return unknown ? null : [{v: 'GET', conds: []}];
+  return current;
 }
 
 // Analyze one file. helpers: [{file, name, url, options?, method?: number|string, prefix?, scope?}]
@@ -308,21 +308,35 @@ export function analyzeCalls(file, source, helpers, passthroughFiles = []) {
   const consts = stringConsts(toks);
   const calls = [], problems = [];
   // aliases of the global fetch: `fetchImpl = fetch`, `f = globalThis.fetch`, `orig = window.fetch.bind(window)`
+  // (followed transitively: `a = fetch; b = a;`). Any other use of the bare name fetch (passed on, .call, ternary ...)
+  // cannot be followed and fails the guard instead of being tolerated.
   const sinks = new Set(SINKS);
+  const passthrough = passthroughFiles.includes(file);
+  const globalFetch = i => toks[i].v === 'fetch' && toks[i - 1]?.v === '.' && GLOBAL_OBJECTS.has(toks[i - 2]?.v);
+  const aliasTarget = i => { const k = globalFetch(i) ? i - 2 : i; return toks[k - 1]?.v === '=' && toks[k - 2]?.t === 'id' ? toks[k - 2].v : null; };
+  for (let grew = true; grew;) {
+    grew = false;
+    toks.forEach((t, i) => {
+      if (t.t !== 'id' || toks[i + 1]?.v === '(' || !(sinks.has(t.v) || t.v === 'fetch')) return;
+      if (toks[i - 1]?.v === '.' && !globalFetch(i)) return;
+      const name = aliasTarget(i);
+      if (name && !sinks.has(name)) { sinks.add(name); grew = true; }
+    });
+  }
   toks.forEach((t, i) => {
-    if (t.t !== 'id' || t.v !== 'fetch' || toks[i + 1]?.v === '(') return;
-    const k = toks[i - 1]?.v === '.' && GLOBAL_OBJECTS.has(toks[i - 2]?.v) ? i - 2 : i;
-    if (toks[k - 1]?.v === '=' && toks[k - 2]?.t === 'id') sinks.add(toks[k - 2].v);
+    if (passthrough || t.t !== 'id' || t.v !== 'fetch' || toks[i + 1]?.v === '(') return;
+    if (toks[i - 1]?.v === '.' && !globalFetch(i)) return; // property of another object
+    if (aliasTarget(i) || (toks[i + 1]?.v === ':' && ['{', ','].includes(toks[i - 1]?.v)) || toks[i - 1]?.v === 'typeof') return;
+    problems.push(`${file}:${t.line}: fetch is used in a form the guard cannot follow (not a call, not a plain alias) - call it directly`);
   });
   const mine = helpers.filter(h => h.scope === 'global' || h.file === file);
   const helperOf = name => mine.find(h => h.name === name);
-  const passthrough = passthroughFiles.includes(file);
+  const ordinals = new Map();
   for (let i = 0; i < toks.length; i++) {
     const t = toks[i];
     if (t.t !== 'id' || toks[i + 1]?.v !== '(') continue;
     const before = toks[i - 1];
-    const globalFetch = t.v === 'fetch' && before?.v === '.' && GLOBAL_OBJECTS.has(toks[i - 2]?.v);
-    if (before?.v === '.' && !globalFetch) continue;
+    if (before?.v === '.' && !globalFetch(i)) continue;
     if (before?.t === 'id' && before.v === 'function') continue;
     const helper = helperOf(t.v);
     if (!sinks.has(t.v) && !helper) continue;
@@ -344,6 +358,7 @@ export function analyzeCalls(file, source, helpers, passthroughFiles = []) {
     else if (helper && typeof helper.method === 'number') methods = args[helper.method] ? methodsOf(args[helper.method], consts) : [{v: 'GET', conds: []}];
     else methods = optionsMethods(args[helper ? (helper.options ?? 99) : 1], consts);
     const fn = frame?.name ?? '(module)';
+    const site = [];
     for (const alt of alts) {
       const c = classify(alt.pieces);
       if (c.kind === 'O' && urlArg.length === 1 && urlArg[0].t === 'id' && frame?.params.includes(urlArg[0].v))
@@ -351,10 +366,18 @@ export function analyzeCalls(file, source, helpers, passthroughFiles = []) {
       const chosen = methods ? methods.filter(m => compatible(alt.conds, m.conds)) : [{v: null, conds: []}];
       for (const m of chosen) {
         const call = {file, line: t.line, fn, kind: c.kind, pattern: c.pattern, open: c.open, head: c.head ?? null, method: m.v};
-        if (m.v === null && c.kind === 'L') problems.push(`${where}: HTTP method of ${t.v}(${c.pattern}) is not determinable`);
-        calls.push(call);
+        site.push(call);
       }
     }
+    // A call site whose URL is opaque, open-ended or whose method is unknown is not decided by the code alone:
+    // it gets an ID (file#function@n) that must be bound to explicit alternatives (scripts/page-reads-bindings.mjs).
+    if (site.some(c => c.kind === 'O' || c.method === null || (c.kind === 'T' && c.open))) {
+      const key = `${file}#${fn}`;
+      const id = `${key}@${(ordinals.get(key) ?? 0) + 1}`;
+      ordinals.set(key, (ordinals.get(key) ?? 0) + 1);
+      for (const c of site) if (c.kind === 'O' || c.method === null || (c.kind === 'T' && c.open)) c.id = id;
+    }
+    calls.push(...site);
   }
   return {calls, problems, functions};
 }
