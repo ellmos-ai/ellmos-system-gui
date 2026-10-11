@@ -34,7 +34,15 @@ export function parseSteps(stepsJson) {
 }
 
 export const isParallel = step => step.parallel === true;
+// Display only (summaries). The editor uses argsEditText: a JSON array, so argument boundaries survive unchanged.
 export const argsText = step => (Array.isArray(step.args) ? step.args.join(' ') : typeof step.args === 'string' ? step.args : '');
+export const argsEditText = step => (step.args === undefined ? '[]' : JSON.stringify(step.args));
+function parseArgs(text) {
+  let value;
+  try { value = JSON.parse(text); } catch { throw new ApiError('invalid', 'Argumente: kein gültiges JSON (erwartet z. B. ["run", "hello world"])', 0); }
+  if (!Array.isArray(value) || value.some(a => typeof a !== 'string')) throw new ApiError('invalid', 'Argumente müssen ein JSON-Array aus Texten sein', 0);
+  return value;
+}
 export function stepSummary(step) {
   if (isParallel(step)) {
     const tools = Array.isArray(step.tools) ? step.tools : [];
@@ -51,14 +59,16 @@ export function collectSteps(rows) {
     if (row.original && isParallel(row.original)) { steps.push(row.original); continue; }
     const tool = String(row.tool ?? '').trim();
     if (!tool) continue;
-    const argText = String(row.args ?? '').trim();
-    steps.push({...(row.original || {}), tool, args: argText ? argText.split(/\s+/) : []});
+    const rest = row.original || {};
+    // Untouched argument text keeps the original value (any type); only edited text is parsed.
+    const args = row.original && row.args === argsEditText(row.original) ? row.original.args : parseArgs(String(row.args ?? '[]').trim() || '[]');
+    steps.push(args === undefined ? {...rest, tool} : {...rest, tool, args});
   }
   return steps;
 }
 
 export function rowsFromSteps(steps) {
-  return steps.map(original => (isParallel(original) ? {original, parallel: true, tool: '', args: ''} : {original, parallel: false, tool: typeof original.tool === 'string' ? original.tool : '', args: argsText(original)}));
+  return steps.map(original => (isParallel(original) ? {original, parallel: true, tool: '', args: ''} : {original, parallel: false, tool: typeof original.tool === 'string' ? original.tool : '', args: argsEditText(original)}));
 }
 
 function parseChain(c) {
@@ -105,8 +115,11 @@ export function createChainClient(fetcher = globalThis.fetch) {
     const clean = String(name ?? '').trim();
     if (!clean) throw new ApiError('invalid', 'Name ist Pflicht', 0);
     if (!TRIGGER_TYPES.some(t => t.value === triggerType)) throw new ApiError('invalid', 'Unbekannter Trigger-Typ', 0);
-    if (!Array.isArray(steps) || !steps.length) throw new ApiError('invalid', 'Mindestens ein Schritt mit Tool-Name ist erforderlich', 0);
-    return {name: clean, description: String(description ?? '').trim(), trigger_type: triggerType, trigger_value: String(triggerValue ?? '').trim(), steps_json: JSON.stringify(steps)};
+    // steps undefined (update only) = keep the stored steps_json untouched: the field is not sent, the server then leaves it as is.
+    if (steps !== undefined && (!Array.isArray(steps) || !steps.length)) throw new ApiError('invalid', 'Mindestens ein Schritt mit Tool-Name ist erforderlich', 0);
+    const body = {name: clean, description: String(description ?? '').trim(), trigger_type: triggerType, trigger_value: String(triggerValue ?? '').trim()};
+    if (steps !== undefined) body.steps_json = JSON.stringify(steps);
+    return body;
   };
   return {
     async list() {
@@ -116,7 +129,7 @@ export function createChainClient(fetcher = globalThis.fetch) {
         throw error;
       }
     },
-    async create(chain) { const d = await request('POST', BASE, {...payload(chain), is_active: 1}); return requireId(d.id, 'id der Neuanlage'); },
+    async create(chain) { if (chain.steps === undefined) throw new ApiError('invalid', 'Mindestens ein Schritt mit Tool-Name ist erforderlich', 0); const d = await request('POST', BASE, {...payload(chain), is_active: 1}); return requireId(d.id, 'id der Neuanlage'); },
     async update(id, chain) { const d = await request('PUT', idPath(id), payload(chain)); if (d.status !== 'updated' && d.status !== 'no_changes') fail('Update-Status'); return d.status; },
     async toggle(id) { const d = await request('PUT', idPath(id) + '/toggle'); if (typeof d.is_active !== 'boolean') fail('is_active der Umschaltung'); return d.is_active; },
     async remove(id) { await request('DELETE', idPath(id)); },
@@ -125,6 +138,9 @@ export function createChainClient(fetcher = globalThis.fetch) {
   };
 }
 
+// Run history is capped (10): detect a finished run by an id above the highest known one, never by list length.
+export const maxRunId = runs => runs.reduce((m, r) => Math.max(m, r.id), 0);
+export const hasNewRun = (runs, knownMaxId) => runs.some(r => r.id > knownMaxId);
 export const durationText = seconds => (typeof seconds === 'number' ? seconds.toFixed(1) + ' s' : 'Dauer unbekannt');
 
 // The list state is exactly one of: loading, error:<kind>, empty, list.

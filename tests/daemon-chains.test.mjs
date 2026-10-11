@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {ApiError, failureOf, parseSteps, stepSummary, argsText, collectSteps, rowsFromSteps, parseChainList, parseRuns, createChainClient, durationText,
+import {ApiError, failureOf, parseSteps, stepSummary, argsText, argsEditText, maxRunId, hasNewRun, collectSteps, rowsFromSteps, parseChainList, parseRuns, createChainClient, durationText,
   listState, createLatest, TRIGGER_TYPES} from '../src/lib/daemon-chains.mjs';
 
 const json = (status, body) => ({ok: status < 400, status, json: async () => body});
@@ -36,13 +36,49 @@ test('editing keeps parallel steps and unknown keys; rows without a tool are dro
   assert.equal(rows[1].parallel, true);
   assert.deepEqual(collectSteps(rows), original); // untouched rows round-trip exactly
   rows[0].tool = ' newtool ';
-  rows[0].args = 'run   --mode quick';
-  rows.push({original: null, parallel: false, tool: '  ', args: 'ignored'}, {original: null, parallel: false, tool: 'task', args: ''});
+  rows[0].args = '["run", "--mode", "quick"]';
+  rows.push({original: null, parallel: false, tool: '  ', args: 'ignored'}, {original: null, parallel: false, tool: 'task', args: '[]'});
   assert.deepEqual(collectSteps(rows), [
     {tool: 'newtool', args: ['run', '--mode', 'quick'], on_failure: 'continue'},
     {parallel: true, tools: [{tool: 'x'}]},
     {tool: 'task', args: []},
   ]);
+});
+
+test('argument boundaries survive: a name-only save keeps ["hello world", "a\"b"] exactly; edits must be a JSON array of strings', () => {
+  const original = [{tool: 'scan', args: ['hello world', 'a"b']}, {tool: 'x', args: 'one string'}, {tool: 'y'}];
+  const rows = rowsFromSteps(original);
+  assert.equal(rows[0].args, JSON.stringify(['hello world', 'a"b']));
+  assert.deepEqual(collectSteps(rows), original);
+  rows[0].args = JSON.stringify(['hello world', 'a"b', 'c d']);
+  assert.deepEqual(collectSteps(rows)[0].args, ['hello world', 'a"b', 'c d']);
+  for (const bad of ['hello world', '{"a":1}', '[1]', '["ok", 2]'])
+    assert.throws(() => collectSteps([{original: null, parallel: false, tool: 't', args: bad}]), e => e.kind === 'invalid', bad);
+});
+
+test('unreadable steps_json: a metadata-only update does not send steps_json (stored raw value stays); replacing sends the new steps', async () => {
+  const {fetcher, calls} = recorder(() => json(200, {status: 'updated', id: 9}));
+  const client = createChainClient(fetcher);
+  const chain = parseChainList({chains: [chainRow({id: 9, steps_json: 'kaputt'})]})[0];
+  assert.ok(chain.stepsError);
+  await client.update(9, {name: 'Neuer Name', description: 'd', triggerType: 'manual', triggerValue: '', steps: undefined});
+  assert.ok(!('steps_json' in calls[0].body));
+  assert.equal(calls[0].body.name, 'Neuer Name');
+  await client.update(9, {name: 'n', description: '', triggerType: 'manual', triggerValue: '', steps: [{tool: 'a', args: []}]});
+  assert.equal(calls[1].body.steps_json, '[{"tool":"a","args":[]}]');
+  await assert.rejects(client.update(9, {name: 'n', triggerType: 'manual', steps: []}), e => e.kind === 'invalid');
+  await assert.rejects(client.create({name: 'n', triggerType: 'manual'}), e => e.kind === 'invalid');
+});
+
+test('history detection uses the highest known run id, not the list length (capped at 10)', () => {
+  const ten = Array.from({length: 10}, (_, i) => ({id: 100 - i}));
+  assert.equal(maxRunId(ten), 100);
+  assert.equal(hasNewRun(ten, 100), false);
+  const afterNew = [{id: 101}, ...ten.slice(0, 9)];
+  assert.equal(afterNew.length, ten.length);
+  assert.equal(hasNewRun(afterNew, maxRunId(ten)), true);
+  assert.equal(maxRunId([]), 0);
+  assert.equal(hasNewRun([{id: 1}], 0), true);
 });
 
 test('the list parser keeps ids as API integers and rejects contract violations', () => {

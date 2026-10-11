@@ -1,5 +1,5 @@
 // Browser wiring for /daemon?tab=chains (P-1963-P4). DOM via createElement/textContent only; no inline handlers.
-import {createChainClient, createLatest, listState, stepSummary, isParallel, rowsFromSteps, collectSteps, durationText, TRIGGER_TYPES} from './daemon-chains.mjs';
+import {createChainClient, createLatest, listState, stepSummary, isParallel, rowsFromSteps, collectSteps, maxRunId, hasNewRun, durationText, TRIGGER_TYPES} from './daemon-chains.mjs';
 
 const root = document.getElementById('daemon-chains');
 const el = (tag, className, text) => { const n = document.createElement(tag); if (className) n.className = className; if (text !== undefined && text !== null) n.textContent = text; return n; };
@@ -38,13 +38,13 @@ async function loadRuns(chain, box) {
 }
 
 // A run is recorded when it FINISHES: poll the history (every 3 s, at most 20 times) until a run newer than the known ones appears.
-async function awaitNewRun(chain, box, before) {
+async function awaitNewRun(chain, box, knownMaxId) {
   for (let attempt = 0; attempt < 20; attempt += 1) {
     await new Promise(resolve => setTimeout(resolve, 3000));
     if (!box.isConnected || box.hidden) return;
     try {
       const runs = await client.runs(chain.id, 10);
-      if (runs.length > before) { renderRuns(box, runs); status('Lauf abgeschlossen: ' + runs[0].status); load(); return; }
+      if (hasNewRun(runs, knownMaxId)) { renderRuns(box, runs); status('Lauf abgeschlossen: ' + runs.find(r => r.id > knownMaxId).status); load(); return; }
     } catch (error) { status('Verlauf nicht verfügbar: ' + error.message, true); return; }
   }
   status('Noch kein abgeschlossener Lauf im Verlauf; mit "Verlauf" später erneut prüfen.');
@@ -57,7 +57,7 @@ function chainCard(chain) {
   if (chain.description) title.append(el('p', 'dc-muted', chain.description));
   head.append(title, el('span', 'dc-badge' + (chain.active ? '' : ' dc-off'), chain.active ? 'Aktiv' : 'Inaktiv'));
   card.append(head);
-  if (chain.stepsError) card.append(el('p', 'dc-problem', 'Schritte nicht lesbar: ' + chain.stepsError + '. Beim Bearbeiten wird nichts erfunden; bitte Schritte neu eingeben.'));
+  if (chain.stepsError) card.append(el('p', 'dc-problem', 'Schritte nicht lesbar: ' + chain.stepsError + '. Beim Bearbeiten bleibt der gespeicherte Rohwert unverändert, außer die Schritte werden ausdrücklich ersetzt.'));
   else if (!chain.steps.length) card.append(el('p', 'dc-muted', 'Keine Schritte definiert.'));
   else { const ol = el('ol', 'dc-steps'); for (const s of chain.steps) ol.append(el('li', isParallel(s) ? 'dc-parallel' : null, stepSummary(s))); card.append(ol); }
   card.append(el('p', 'dc-muted', 'Trigger: ' + chain.triggerType + (chain.triggerValue ? ' (' + chain.triggerValue + ')' : '') + ' · Letzter Lauf: ' + (chain.lastRun ? when(chain.lastRun) : 'noch nie') + ' · ' + chain.steps.length + ' Schritt(e)'));
@@ -67,7 +67,7 @@ function chainCard(chain) {
     button('Ausführen', async () => {
       if (!confirm('Kette "' + chain.name + '" jetzt ausführen?')) return;
       try {
-        const before = (await client.runs(chain.id, 10)).length;
+        const before = maxRunId(await client.runs(chain.id, 10));
         await client.run(chain.id); status('Kette gestartet. Das Ergebnis erscheint im Verlauf.'); state.openRuns.add(chain.id); runsBox.hidden = false;
         awaitNewRun(chain, runsBox, before);
       }
@@ -121,7 +121,7 @@ function stepRow(row, container) {
     wrap.append(el('span', 'dc-parallel', stepSummary(row.original) + ' (bleibt unverändert erhalten)'));
   } else {
     const tool = el('input'); tool.type = 'text'; tool.className = 'dc-tool'; tool.value = row.tool; tool.placeholder = 'Tool, z. B. scan'; tool.setAttribute('aria-label', 'Tool');
-    const args = el('input'); args.type = 'text'; args.className = 'dc-args'; args.value = row.args; args.placeholder = 'Argumente, z. B. run --mode quick'; args.setAttribute('aria-label', 'Argumente');
+    const args = el('input'); args.type = 'text'; args.className = 'dc-args'; args.value = row.args; args.placeholder = 'Argumente als JSON-Array, z. B. ["run", "hello world"]'; args.setAttribute('aria-label', 'Argumente (JSON-Array, ein Eintrag je Argument)');
     wrap.append(tool, args);
   }
   wrap.append(button('Entfernen', () => { if (container.children.length > 1) wrap.remove(); }));
@@ -145,14 +145,29 @@ function startEdit(chain) {
   type.value = chain ? chain.triggerType : 'manual';
   if (type.value !== (chain ? chain.triggerType : 'manual')) { type.append(Object.assign(el('option', null, chain.triggerType), {value: chain.triggerType})); type.value = chain.triggerType; }
   const steps = el('div', 'dc-steps-editor');
-  const initial = chain && !chain.stepsError && chain.steps.length ? rowsFromSteps(chain.steps) : [{original: null, parallel: false, tool: '', args: ''}];
+  const blank = () => ({original: null, parallel: false, tool: '', args: '[]'});
+  const initial = chain && !chain.stepsError && chain.steps.length ? rowsFromSteps(chain.steps) : [blank()];
   for (const row of initial) steps.append(stepRow(row, steps));
+  // Unreadable steps_json: the raw value is kept on save (steps not sent). Replacing it is a separate, confirmed step.
+  const broken = !!(chain && chain.stepsError);
+  let replacing = !broken;
+  const addStep = button('+ Schritt', () => steps.append(stepRow(blank(), steps)));
   box.append(field('Name', name), field('Beschreibung', description), field('Trigger-Typ', type), field('Trigger-Wert (z. B. 02:00 oder task_completed)', value));
-  box.append(el('h3', null, 'Schritte (Befehle)'), steps, button('+ Schritt', () => steps.append(stepRow({original: null, parallel: false, tool: '', args: ''}, steps))));
+  box.append(el('h3', null, 'Schritte (Befehle)'));
+  if (broken) {
+    steps.hidden = true; addStep.hidden = true;
+    const note = el('p', 'dc-problem', 'Die gespeicherten Schritte sind nicht lesbar (' + chain.stepsError + '). Beim Speichern bleiben sie unverändert.');
+    const replace = button('Schritte ersetzen …', () => {
+      if (!confirm('Die gespeicherten (unlesbaren) Schritte durch neu eingegebene ersetzen? Der alte Rohwert geht dabei verloren.')) return;
+      replacing = true; steps.hidden = false; addStep.hidden = false; note.textContent = 'Die unlesbaren Schritte werden beim Speichern durch die folgenden ersetzt.'; replace.hidden = true;
+    });
+    box.append(note, replace);
+  }
+  box.append(steps, addStep);
   const actions = el('div', 'dc-actions');
   actions.append(
     button('Speichern', async () => {
-      const collected = {name: name.value, description: description.value, triggerType: type.value, triggerValue: value.value, steps: collectSteps(readRows(steps))};
+      const collected = {name: name.value, description: description.value, triggerType: type.value, triggerValue: value.value, steps: replacing ? collectSteps(readRows(steps)) : undefined};
       try {
         if (chain) await client.update(chain.id, collected); else await client.create(collected);
         status(chain ? 'Gespeichert.' : 'Angelegt.'); box.hidden = true; clear(box); state.editing = null; load();
