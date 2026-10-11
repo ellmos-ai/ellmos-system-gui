@@ -1,0 +1,55 @@
+---
+// Daemon-Ketten (P-1963-P4). Data: the existing /api/daemon/chains* APIs of the connected system (no store of its own).
+// Served for /daemon?tab=chains; Jobs and Scheduler stay in the classic /daemon view until they have a counterpart.
+---
+<section id="daemon-chains" aria-labelledby="dc-title">
+  <header class="dc-head">
+    <div>
+      <p class="dc-eyebrow">Daemon</p>
+      <h1 id="dc-title">Toolchains</h1>
+      <p class="dc-muted">Toolchains führen mehrere Befehle nacheinander oder parallel aus. Jobs und Scheduler: <a href="/daemon">klassische Daemon-Ansicht</a>.</p>
+    </div>
+    <div class="dc-head-actions">
+      <button type="button" class="btn btn-primary" data-part="new">Neue Kette</button>
+      <button type="button" class="btn" data-part="refresh">Aktualisieren</button>
+    </div>
+  </header>
+  <p data-part="status" role="status" aria-live="polite" class="dc-muted"></p>
+  <section class="dc-editor" data-part="editor" hidden></section>
+  <p class="dc-count"><span class="dc-badge" data-part="count">Wird geladen …</span></p>
+  <div class="dc-list" data-part="list"></div>
+</section>
+<style>
+  .dc-head {display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-start;margin-bottom:1rem}
+  .dc-head-actions {display:flex;gap:.5rem;flex-wrap:wrap}
+  #daemon-chains h1 {font-size:1.9rem;margin:.25rem 0;font-weight:800}
+  #daemon-chains :global(h2) {font-size:1.15rem;margin:0 0 .8rem}
+  #daemon-chains :global(h3) {font-size:1rem;margin:.2rem 0;overflow-wrap:anywhere}
+  .dc-eyebrow {font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin:0}
+  #daemon-chains :global(.dc-muted), .dc-muted {color:var(--text-muted);font-size:.84rem;margin:.25rem 0;line-height:1.5}
+  #daemon-chains a {color:var(--accent-text);text-decoration:underline}
+  #daemon-chains :global(.dc-problem) {color:var(--text);font-size:.9rem;border-left:4px solid var(--error);padding:.4rem .7rem;background:var(--bg-elevated);border-radius:var(--radius-sm);margin:.4rem 0}
+  #daemon-chains :global(.dc-badge), .dc-badge {display:inline-block;padding:.12rem .55rem;border:1px solid var(--border-hover);border-radius:999px;font-size:.74rem;background:var(--bg-elevated);color:var(--text)}
+  #daemon-chains :global(.dc-off) {border-style:dashed}
+  .dc-count {margin:.2rem 0 .8rem}
+  .dc-list {display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr));gap:1rem}
+  #daemon-chains :global(.dc-card), .dc-editor {background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;min-width:0}
+  .dc-editor {margin-bottom:1rem}
+  #daemon-chains :global(.dc-card-head) {display:flex;justify-content:space-between;gap:.6rem;align-items:flex-start}
+  #daemon-chains :global(.dc-steps) {margin:.5rem 0;padding-left:1.4rem;font-size:.84rem;overflow-wrap:anywhere}
+  #daemon-chains :global(.dc-parallel) {border-left:3px solid var(--accent);padding-left:.4rem}
+  #daemon-chains :global(.dc-actions) {display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0 .2rem}
+  #daemon-chains :global(.dc-danger) {margin-left:auto}
+  #daemon-chains :global(.dc-runs) {border-top:1px dashed var(--border);margin-top:.6rem;padding-top:.5rem}
+  #daemon-chains :global(.dc-run) {padding:.35rem 0;font-size:.84rem}
+  #daemon-chains :global(.dc-run pre) {white-space:pre-wrap;overflow-wrap:anywhere;font-size:.78rem;background:var(--bg-dark);color:var(--text);padding:.6rem;border-radius:var(--radius-sm);max-height:14rem;overflow:auto}
+  #daemon-chains :global(label) {display:flex;flex-direction:column;gap:.35rem;font-size:.8rem;color:var(--text-muted);margin:.5rem 0}
+  #daemon-chains :global(input), #daemon-chains :global(select) {background:var(--bg-panel);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.5rem;font:inherit;min-width:0}
+  #daemon-chains :global(input::placeholder) {color:var(--text-muted);opacity:1}
+  #daemon-chains :global(.dc-step-row) {display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:.4rem 0}
+  #daemon-chains :global(.dc-tool) {flex:1 1 9rem}
+  #daemon-chains :global(.dc-args) {flex:3 1 14rem}
+</style>
+<script>
+  import '../lib/daemon-chains-ui.mjs';
+</script>
