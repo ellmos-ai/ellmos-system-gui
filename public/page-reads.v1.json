@@ -1246,6 +1246,44 @@
     "path": "/api/capabilities/catalog",
     "required": true
    }
+  ],
+  "/prompt-library": [
+   {
+    "method": "GET",
+    "path": "/api/prompt-library",
+    "required": true
+   },
+   {
+    "method": "POST",
+    "path": "/api/prompt-library",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/prompt-library/import-promptboard",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/prompt-library/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/prompt-library.mjs#createPromptClient"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/prompt-library/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/prompt-library.mjs#createPromptClient"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/prompt-library/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/prompt-library.mjs#createPromptClient"
+   }
   ]
  }
 }

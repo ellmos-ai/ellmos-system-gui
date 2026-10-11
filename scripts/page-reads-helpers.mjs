@@ -13,6 +13,7 @@ export const HELPERS = [
   {file: 'src/lib/hierarchy-assignment.mjs', name: 'request', method: 0, url: 1},
   {file: 'src/lib/model-sockets.mjs', name: 'request', url: 0, options: 1, prefix: '/api/system/model-sockets'},
   {file: 'src/lib/daemon-chains.mjs', name: 'request', method: 0, url: 1},
+  {file: 'src/lib/prompt-library.mjs', name: 'request', method: 0, url: 1},
   {file: 'src/pages/governance/usecases.astro', name: 'request', url: 0, options: 1},
   {file: 'src/pages/agenten/running.astro', name: 'coreRequest', url: 0, method: 1, prefix: '/api/system/core-agents'},
   {file: 'src/scripts/agent-template-picker.mjs', name: 'api', url: 0, options: 1},

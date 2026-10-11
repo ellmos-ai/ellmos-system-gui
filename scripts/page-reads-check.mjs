@@ -129,7 +129,14 @@ export function loadManifest(root) {
   return JSON.parse(readFileSync(resolve(root, 'public', 'page-reads.v1.json'), 'utf8'));
 }
 
+// JSON.parse keeps the last of two equal keys silently (a merge can duplicate a page block); consumers reject such a file.
+export function duplicatePages(text) {
+  const keys = [...text.matchAll(/^ {2}"(\/[^"]*)": \[/gm)].map(m => m[1]);
+  return [...new Set(keys.filter((key, i) => keys.indexOf(key) !== i))];
+}
+
 export function checkRoot(root) {
   const absolute = resolve(root);
-  return checkManifest(loadManifest(absolute), scan(absolute), file => readFileSync(resolve(absolute, file), 'utf8'));
+  const duplicates = duplicatePages(readFileSync(resolve(absolute, 'public', 'page-reads.v1.json'), 'utf8')).map(page => `page ${page}: declared twice in the manifest file`);
+  return [...duplicates, ...checkManifest(loadManifest(absolute), scan(absolute), file => readFileSync(resolve(absolute, file), 'utf8'))];
 }

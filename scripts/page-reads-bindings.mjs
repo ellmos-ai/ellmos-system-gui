@@ -30,4 +30,8 @@ export const BINDINGS = {
   'src/lib/daemon-chains.mjs#createChainClient@3': ['DELETE /api/daemon/chains/{id}'],
   'src/lib/daemon-chains.mjs#createChainClient@4': ['POST /api/daemon/chains/{id}/run'],
   'src/lib/daemon-chains.mjs#createChainClient@5': ['GET /api/daemon/chains/{id}/runs'],
+  // idPath(id) = BASE + '/' + id in prompt-library.mjs
+  'src/lib/prompt-library.mjs#createPromptClient@1': ['GET /api/prompt-library/{id}'],
+  'src/lib/prompt-library.mjs#createPromptClient@2': ['PUT /api/prompt-library/{id}'],
+  'src/lib/prompt-library.mjs#createPromptClient@3': ['DELETE /api/prompt-library/{id}'],
 };
