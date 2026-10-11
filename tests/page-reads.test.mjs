@@ -6,7 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {dirname, join, resolve} from 'node:path';
 import {createHash} from 'node:crypto';
 import {scan} from '../scripts/page-reads-scan.mjs';
-import {checkManifest, checkRoot, loadManifest} from '../scripts/page-reads-check.mjs';
+import {checkManifest, checkRoot, duplicatePages, loadManifest} from '../scripts/page-reads-check.mjs';
 import {writeReleaseManifest} from '../scripts/release-manifest.mjs';
 import {INVENTORIES} from '../src/lib/capability-board-client.mjs';
 
@@ -312,4 +312,11 @@ test('fixture: a "/api/..." text in a comment of a module is no read, the same t
   });
   assert.deepEqual(check(lib('// "/api/..." routes stay\n/* \'/api/nowhere\' */\nexport const x = () => 1;\n'), manifestOf([])), []);
   has(check(lib('export const x = () => "/api/inCode";\n'), manifestOf([])), 'undeclared read /api/inCode');
+});
+
+test('a page block that appears twice in the manifest file is found (JSON.parse would hide it)', () => {
+  const text = readFileSync(resolve(root, 'public', 'page-reads.v1.json'), 'utf8');
+  assert.deepEqual(duplicatePages(text), []);
+  const block = text.match(/\n {2}"\/daemon": \[[\s\S]*?\n {2}\]/)[0];
+  assert.deepEqual(duplicatePages(text.replace(block, block + ',' + block)), ['/daemon']);
 });

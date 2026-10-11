@@ -1181,6 +1181,16 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/capability-board-client.mjs#saveSkill"
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/catalog",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/skills/library",
+    "required": false
    }
   ],
   "/daemon": [
@@ -1228,6 +1238,13 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/daemon-chains.mjs#createChainClient"
+   }
+  ],
+  "/system/ocean": [
+   {
+    "method": "GET",
+    "path": "/api/capabilities/catalog",
+    "required": true
    }
   ],
   "/prompt-library": [
