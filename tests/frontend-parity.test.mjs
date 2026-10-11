@@ -53,6 +53,23 @@ test('verified core errors and unknown states never become ready',()=>{
   assert.equal(label({...base,status:'running',running:true,runtime_verified:false}),'Status unbekannt');
 });
 
+test('the Agenten-Werkstatt icon is consistent across navigation, heading, and shortcut',()=>{
+  const robot=String.fromCodePoint(0x1f916);
+  const areas=JSON.parse(read('src/config/nav_config.json'));
+  const agents=areas.find(area=>area.id==='agenten');
+  const workshop=agents?.children?.find(item=>item.href==='/agenten/blueprints');
+  assert.equal(workshop?.label,'Agenten-Werkstatt');
+  assert.equal(workshop?.icon,robot);
+  const blueprintPage=read('src/pages/agenten/blueprints.astro');
+  assert.ok(blueprintPage.includes(`<h1><span aria-hidden="true">${robot}</span> Agenten-Werkstatt</h1>`));
+  const dashboard=read('src/pages/index.astro');
+  const expectedLink=`<a href="/agenten/blueprints" class="btn">
+        <span aria-hidden="true">${robot}</span> Agenten-Werkstatt
+      </a>`;
+  assert.ok(dashboard.includes(expectedLink));
+  assert.doesNotMatch(dashboard,/href="\/agenten\/fabrika"/);
+});
+
 test('the deprecated Agents-Board is absent from navigation',()=>{
   const areas=JSON.parse(read('src/config/nav_config.json'));
   const dashboard=areas.find(area=>area.href==='/');
