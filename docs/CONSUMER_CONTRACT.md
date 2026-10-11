@@ -25,6 +25,19 @@ Die Frontend-Voraussetzungen des aktuellen Imports sind in [BACH_FRONTEND_IMPORT
 
 Trithon, Muschelgrund und Salt haben eigene Architekturverträge. Die BACH-Teiladapter für Dispatch und Receipt-Projektion sind kein vollständiger Nachweis ihres Systemzustands. Die Systemkarten zeigen ohne Modulprobe `unbekannt`. Die Fackel bleibt bei Agenten als Compute-Vorrang; eine Prozess-ID allein belegt keine laufende Aufgabenarbeit.
 
+## Seiten-Lesepfade (`ellmos.gui.page-reads.v1`)
+
+Welche Backendaufrufe eine Seite macht, steht in genau einer Datei der GUI: `public/page-reads.v1.json`. Der Build legt sie als `dist/page-reads.v1.json` ab; sie steht damit im Dist-Manifest und im Release-Beleg. Konsumenten (BACH, Ocean) leiten daraus die Seiten in `GET /api/gui/capabilities` ab, statt eine eigene Seiten-zu-Endpunkt-Tabelle von Hand zu pflegen.
+
+- `layout`: Aufrufe, die jede Seite über das Layout macht (Marke, Backend-Herkunft, Domänen-Pins). Einmal deklariert, immer optional.
+- `pages`: je Seitenpfad (`/`, `/skills/mcp`, ...) eine Liste von Einträgen. Eine Seite ohne Backendaufruf (Weiterleitung) hat die leere Liste.
+- Eintrag: `method` (GET, POST, PUT, PATCH, DELETE), `path` (Muster mit Parametern in `{...}`, ohne Query), `required`, optional `query` (nur Dokumentation) und für Pfade, die der Code aus Teilen zusammensetzt, `dynamic: true` mit `found_in: "Datei#Funktion"`.
+- `required: true` heißt: ohne diesen Lesezugriff erfüllt die Seite ihren Zweck nicht. `required: false` heißt: die Seite bleibt benutzbar (Rückfall, eingeschränkte Anzeige) oder der Aufruf ist Detail, Benutzeraktion oder Schreibzugriff. Eine Seite ist beim Konsumenten nur `configured`, wenn alle Pflicht-Lesezugriffe (GET, `required`) bedient werden.
+- Parameternamen sind beim Abgleich egal (`{id}` entspricht `{snapshot_id}`). Query-Strings gehören nicht zum Routenabgleich.
+- Methoden sind dort geprüft, wo die Aufrufstelle sie ausdrücklich nennt (`method: 'PUT'`); sonst gilt die Angabe im Manifest.
+
+`tests/page-reads.test.mjs` bindet das Manifest an den Code: jedes `/api/`-Literal in den Dateien, die eine Seite über ihre Importe erreicht, muss im Manifest stehen (gemeinsame Client-Module müssen von mindestens einer erreichenden Seite deklariert sein); jeder Eintrag muss in erreichbarem Code vorkommen; ein dynamischer Eintrag braucht eine existierende Fundstelle mit Pfadanfang, Pfadende und Funktionsname; die Inventar-Seiten (`/skills*`) verlangen genau das Inventar ihres Boards. Ein neuer Aufruf ohne Manifesteintrag oder ein toter Eintrag macht den Test rot. Grenze: Aufrufe über eine URL aus einer Variablen ohne `/api/`-Literal sieht der Test nicht; sie gehören mit `dynamic: true` ins Manifest.
+
 ## Aufgabenauswahl der Worker
 
 Die optionale Projektion `workers[].queue_status` verwendet `bach.worker-queue.v1`.

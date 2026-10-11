@@ -71,6 +71,8 @@ Running section remain consumer integration work. Saved planned limits do not
 prove available RAM or active inference. See the model socket section of the
 [consumer contract](docs/CONSUMER_CONTRACT.md).
 
+Page reads: `public/page-reads.v1.json` (shipped as `dist/page-reads.v1.json`, schema `ellmos.gui.page-reads.v1`) lists per page the backend calls it makes, with method, path pattern and required/optional. Consumers derive their page status from it instead of keeping a hand-written table; `tests/page-reads.test.mjs` fails when code and manifest drift apart (see the consumer contract, section Seiten-Lesepfade).
+
 ## API and availability
 
 Task detail can display canonical worker output and a separate operator acceptance
