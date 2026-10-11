@@ -59,7 +59,7 @@
     "src/pages/tasks.astro": "3a7b0a00f1b2356247c8c0c794bdac3723b4bf9afefebd9e449fb852c7bf4ccf",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
-    "src/styles/main.css": "11718a9790806791f85ded90135be608b3ca1a52efbe8dc8e9392469369df265",
+    "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "cbb6f8ad9eb5516bd8f21e001bb35cdc80b3b2e247485709679c5248d7fe6341",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
