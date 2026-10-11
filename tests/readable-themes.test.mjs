@@ -39,5 +39,5 @@ test('the final primary hover rule overrides the generic button hover foreground
  const body=css.slice(primary).split('}')[0];
  assert.ok(body.includes('color: var(--on-accent);'));
  assert.ok(css.includes('[data-theme="colorful"] .btn-primary:hover,'));
- assert.ok(css.includes('[data-theme="custom"] .btn-primary:hover { color: #fff; }'));
+ assert.ok(css.includes('[data-theme="custom"] .btn-primary:hover { color: var(--on-accent); }'));
 });

@@ -86,3 +86,26 @@ test('no stylesheet or page uses a base status/accent color as text any more', (
   walk(new URL('../src', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
   assert.deepEqual(offenders, []);
 });
+
+test('primary buttons and active navigation reach 4.5:1 in every state and theme, also over the whole gradient', () => {
+  const GRADIENT_THEMES = new Set(['colorful']);
+  for (const [name, theme] of Object.entries(themes)) {
+    const on = resolve(theme, '--on-accent');
+    const stops = GRADIENT_THEMES.has(name)
+      ? Array.from({length: 21}, (_, i) => blend(resolve(theme, '--accent'), resolve(theme, '--accent-blue'), 1 - i / 20))
+      : [resolve(theme, '--accent')];
+    for (const background of [...stops, resolve(theme, '--accent-light')]) {
+      const value = ratio(on, background);
+      assert.ok(value >= 4.5, `${name} --on-accent on primary background ${background}: ${value.toFixed(2)}`);
+    }
+  }
+});
+
+test('colorful/custom primary rules use the on-accent token, not a fixed white', () => {
+  for (const selector of [String.raw`\.btn-primary`, String.raw`\.btn-primary:hover`, String.raw`\.nav-item\.active`]) {
+    const rules = [...css.matchAll(new RegExp(String.raw`\[data-theme="colorful"\] ` + selector + String.raw`,\s*\[data-theme="custom"\] ` + selector + String.raw`\s*\{([^}]*)\}`, 'g'))].map(m => m[1]);
+    assert.ok(rules.length > 0, 'rule missing for ' + selector);
+    assert.ok(rules.some(body => /color:\s*var\(--on-accent\)/.test(body)), selector);
+    assert.ok(rules.every(body => !/color:\s*#fff/i.test(body)), selector);
+  }
+});

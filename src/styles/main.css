@@ -1212,6 +1212,8 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
     --accent: #ff6b8a;
     --accent-light: #ff8fa8;
     --accent-blue: #7c6cf0;
+    /* Text on the pink-to-violet primary gradient (and hover): dark, AA on the whole gradient. */
+    --on-accent: #0b0720;
     --accent-glow: rgba(255, 107, 138, 0.15);
 
     --text: #f0ecff;
@@ -1236,13 +1238,13 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
 [data-theme="colorful"] .nav-item.active,
 [data-theme="custom"] .nav-item.active {
     background: linear-gradient(135deg, var(--accent), var(--accent-blue));
-    color: #fff;
+    color: var(--on-accent);
 }
 
 [data-theme="colorful"] .btn-primary,
 [data-theme="custom"] .btn-primary {
     background: linear-gradient(135deg, var(--accent), var(--accent-blue));
-    color: #fff;
+    color: var(--on-accent);
 }
 
 [data-theme="colorful"] .btn-primary:hover,
@@ -1451,4 +1453,4 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
 
 /* Preserve the existing foreground of custom gradient actions in hover. */
 [data-theme="colorful"] .btn-primary:hover,
-[data-theme="custom"] .btn-primary:hover { color: #fff; }
+[data-theme="custom"] .btn-primary:hover { color: var(--on-accent); }
