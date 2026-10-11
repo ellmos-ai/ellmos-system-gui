@@ -1,3 +1,5 @@
+![ellmos System GUI – ship’s bridge, radar and radio](assets/readme-bridge-banner.png)
+
 # ellmos System GUI
 
 One shared Astro 7 frontend for **BACH and Ocean**. Both consumers use the same versioned static build and supply their own API adapters and validated runtime branding through `GET /api/gui/brand`.
