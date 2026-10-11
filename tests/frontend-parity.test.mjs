@@ -83,3 +83,11 @@ test('the deprecated Agents-Board is absent from navigation',()=>{
   assert.ok(!hrefs.includes('/agents-board'));
   assert.ok(!hrefs.includes('/skills-board'));
 });
+
+test('the Agenten-Werkstatt keeps its editor without an image background',()=>{
+  const page=read('src/pages/agenten/blueprints.astro');
+  assert.doesNotMatch(page,/workshopBackground|--workshop-image|workshop-scene::before|background-image/);
+  assert.ok(page.includes('<div class="workshop-scene">'));
+  for (const id of ['studio-new','bp-persona','bp-contractus-preset','bp-save'])
+    assert.ok(page.includes('id="'+id+'"'));
+});

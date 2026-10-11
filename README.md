@@ -16,9 +16,11 @@ node --test tests/*.test.mjs
 npm run build
 ```
 
-The frontend contains 22 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance.
+The frontend contains 25 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance.
 
 ## Release
+
+Version 0.2.19 includes the System/Ocean and capability catalogue views, the prompt library, daemon chains, document register and the shipped page-read manifest. The Agenten-Werkstatt uses a robot icon and has no image background. These frontend capabilities still require compatible consumer adapters.
 
 After the reviewed source has been committed, with a clean checkout including untracked files:
 
