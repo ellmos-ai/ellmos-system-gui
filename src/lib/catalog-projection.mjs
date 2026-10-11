@@ -159,6 +159,10 @@ const bilingual = (value, where) => {
   if (typeof value.de !== 'string' || typeof value.en !== 'string') fail(where + ' muss Text enthalten');
   return {de: value.de, en: value.en};
 };
+// An adapter that predates the architecture field (BACH main without #310) simply has no architecture: the rest of the catalog
+// renders normally and the architecture is "not available" (adapterSupport false). A PRESENT but malformed field stays a contract error.
+const MISSING_ARCHITECTURE = Object.freeze({basis: 'declared', sourceId: 'schaltplan_authored', available: false, areas: [], edges: [], layers: [],
+  icons: {}, ui: {}, edgesNote: null, adapterSupport: false});
 function architectureRecord(arch) {
   requireKeys(arch, ['basis', 'source_id', 'available', 'areas', 'edges', 'layers', 'icons', 'ui', 'edges_note'], 'architecture');
   if (arch.basis !== 'declared') fail('architecture.basis muss "declared" sein');
@@ -183,11 +187,11 @@ function architectureRecord(arch) {
     return {id: layer.id, n: bilingual(layer.n, 'Schicht.n'), d: bilingual(layer.d, 'Schicht.d')};
   });
   for (const [key, value] of Object.entries(arch.icons)) if (!ids.has(key) || typeof value !== 'string') fail('architecture.icons');
-  return {basis: 'declared', sourceId: arch.source_id, available: arch.available, areas, edges, layers, icons: arch.icons, ui: arch.ui, edgesNote: arch.edges_note};
+  return {basis: 'declared', sourceId: arch.source_id, available: arch.available, areas, edges, layers, icons: arch.icons, ui: arch.ui, edgesNote: arch.edges_note, adapterSupport: true};
 }
 
 export function parseCatalog(body) {
-  requireKeys(body, ['schema', 'generated_at', 'host', 'sources', 'items', 'counts', 'count', 'errors', 'truncated', 'redactions', 'architecture'], 'Antwort');
+  requireKeys(body, ['schema', 'generated_at', 'host', 'sources', 'items', 'counts', 'count', 'errors', 'truncated', 'redactions'], 'Antwort');
   if (body.schema !== CATALOG_SCHEMA) fail('schema');
   assertNoAbsolutePath(body, 'Antwort');
   if (!text(body.generated_at) || !UTC_TIME.test(body.generated_at)) fail("generated_at fehlt oder ist keine UTC-Zeit");
@@ -222,7 +226,8 @@ export function parseCatalog(body) {
   });
   return {
     generatedAt: body.generated_at, host: {id: body.host.id, source: body.host.source}, sources, items, counts, errors,
-    truncated: body.truncated, redactions: body.redactions, architecture: architectureRecord(body.architecture),
+    truncated: body.truncated, redactions: body.redactions,
+    architecture: 'architecture' in body ? architectureRecord(body.architecture) : MISSING_ARCHITECTURE,
   };
 }
 

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {parseCatalog, containsAbsolutePath} from '../src/lib/catalog-projection.mjs';
-import {VIEWS, viewFromSearch, statusClass, isPublic, safeRepoUrl, moduleOrg, capabilityLinks, schaltplanModel,
+import {VIEWS, viewFromSearch, STATUS_LABEL, statusClass, isPublic, safeRepoUrl, moduleOrg, capabilityLinks, schaltplanModel,
   gesamtModel, satelliteModel, satelliteRows} from '../src/lib/ocean-system.mjs';
 
 const read = name => readFileSync(new URL(name, import.meta.url), 'utf8');
@@ -27,7 +27,8 @@ test('a malformed architecture is a contract error, never silently reinterpreted
   assert.throws(broken(b => { b.architecture.basis = 'measured'; }), /declared/);
   assert.throws(broken(b => { b.architecture.edges[0].to = 'nope'; }), /unbekannten Bereich/);
   assert.throws(broken(b => { b.architecture.areas[1].id = b.architecture.areas[0].id; }), /Bereich/);
-  assert.throws(broken(b => { delete b.architecture; }), /architecture/);
+  assert.throws(broken(b => { b.architecture = null; }), /architecture/);   // present but not an object
+  assert.throws(broken(b => { delete b.architecture.areas; }), /Pflichtschlüssel areas/);
   assert.throws(broken(b => { b.architecture.available = false; }), /nicht verfügbar, aber mit Inhalt/);
   assert.throws(broken(b => { b.architecture.areas[0].desc = {de: 'x'}; }), /Bereich\.desc/);
 });
@@ -175,4 +176,47 @@ test('UI sources never use innerHTML or inline handlers', () => {
   for (const file of ['../src/lib/ocean-system-ui.mjs', '../src/components/OceanSystem.astro', '../src/pages/system/ocean.astro']) {
     assert.doesNotMatch(read(file), /innerHTML|outerHTML|insertAdjacentHTML|set:html|<iframe|document\.write|\son[a-z]+\s*=/, file);
   }
+});
+
+test('a response WITHOUT architecture (adapter without #310) still renders the whole catalog', () => {
+  const c = catalog(b => { delete b.architecture; });
+  assert.equal(c.items.length, 11);
+  assert.equal(c.architecture.available, false);
+  assert.equal(c.architecture.adapterSupport, false);
+  assert.equal(Object.isFrozen(c.architecture), true);
+  const model = schaltplanModel(c);
+  assert.equal(model.architecture.adapterSupport, false);
+  assert.deepEqual(model.unassigned.modules.map(m => m.id).sort(), ['alpha-core', 'beta-tool']);
+  assert.equal(gesamtModel(c).total, 4);
+  assert.equal(satelliteModel(c).total, 2);
+  assert.equal(catalog().architecture.adapterSupport, true);
+});
+
+test('Gesamtschaltplan shows provided capabilities with their consumers, not only a count', () => {
+  const wired = catalog(b => { b.items.find(i => i.id === 'beta-tool').requires = ['alpha.store']; });
+  const model = gesamtModel(wired);
+  const alpha = model.provisions.find(p => p.module === 'Alpha Core');
+  assert.deepEqual(alpha.capabilities, [{capability: 'alpha.store', consumers: ['beta-tool']}]);
+  const lonely = gesamtModel(catalog()).provisions.find(p => p.module === 'Alpha Core');
+  assert.deepEqual(lonely.capabilities, [{capability: 'alpha.store', consumers: []}]);
+  assert.deepEqual(gesamtModel(catalog()).provisions.map(p => p.module), ['Alpha Core']); // modules without provides are not listed
+});
+
+test('the catalog status is labelled as declared and never reads as a runtime state', () => {
+  for (const label of Object.values(STATUS_LABEL)) assert.match(label, /Katalogstatus/);
+  assert.match(STATUS_LABEL.ok, /deklariert/);
+  assert.doesNotMatch(Object.values(STATUS_LABEL).join(' '), /im Einsatz|läuft/);
+  const card = schaltplanModel(catalog()).zones.find(z => z.id === 'runtime').modules[0];
+  assert.equal(card.status, 'ok');
+  assert.equal(card.measured.measured, false);          // "active" in the catalog without measured values
+  assert.equal(card.measured.kind, 'unmeasured');
+  const measured = catalog(b => Object.assign(b.items.find(i => i.id === 'alpha-core').measured, {installed: true, runtime_active: true, connection_state: 'connected', observed_at: '2026-01-01T00:00:00Z', evidence: 'probe'}));
+  assert.equal(schaltplanModel(measured).zones.find(z => z.id === 'runtime').modules[0].measured.kind, 'measured');
+});
+
+test('filtered-out modules keep their text colour (no opacity on text) and the status marks are not green', () => {
+  const css = readFileSync(new URL('../src/components/OceanSystem.astro', import.meta.url), 'utf8');
+  const dim = /\.os-mod\.dim\)\s*\{([^}]*)\}/.exec(css)[1];
+  assert.doesNotMatch(dim, /opacity/);
+  assert.doesNotMatch(css, /var\(--success\)|var\(--warning\)/);
 });

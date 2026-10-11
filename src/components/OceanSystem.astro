@@ -67,10 +67,13 @@
   #ocean-system :global(.os-mods) {display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}
   #ocean-system :global(.os-mod) {display:inline-flex;align-items:center;gap:.4rem;background:var(--bg-elevated);color:var(--text);border:1px solid var(--border-hover);border-radius:7px;padding:.25rem .55rem;font:inherit;font-size:.78rem;cursor:pointer}
   #ocean-system :global(.os-mod.pinned) {border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-glow)}
-  #ocean-system :global(.os-mod.dim) {opacity:.4}
+  /* filtered-out modules: only non-text decoration is weakened (dashed, transparent frame); the label keeps full contrast */
+  #ocean-system :global(.os-mod.dim) {background:transparent;border-style:dashed;border-color:var(--border-hover)}
+  #ocean-system :global(.os-mod.dim .os-led) {opacity:.5}
   #ocean-system :global(.os-led) {width:.55rem;height:.55rem;border-radius:50%;background:var(--os-muted-c);flex:0 0 auto}
-  #ocean-system :global(.os-led-ok) {background:var(--success)}
-  #ocean-system :global(.os-led-dev) {background:var(--warning)}
+  /* declared catalog status (not a runtime signal): filled = aktiv, half = in Entwicklung, ring = geplant/unbekannt; no green */
+  #ocean-system :global(.os-led-ok) {background:var(--text)}
+  #ocean-system :global(.os-led-dev) {background:linear-gradient(90deg,var(--text) 50%,transparent 50%);border:1.5px solid var(--text)}
   #ocean-system :global(.os-led-plan), #ocean-system :global(.os-led-unknown) {background:transparent;border:2px solid var(--os-muted-c)}
   #ocean-system :global(.os-lock) {font-size:.66rem;color:var(--os-muted-c)}
   #ocean-system :global(.os-wires) {position:absolute;inset:0;pointer-events:none;overflow:visible;z-index:1}

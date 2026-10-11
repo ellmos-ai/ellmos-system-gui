@@ -68,6 +68,7 @@ function kpi(total, hits, noun) {
 // ------------------------------------------------------------ Schaltplan
 function moduleButton(m) {
   const b = el('button', 'os-mod' + (m.hit ? '' : ' dim') + (state.pinned === m.key ? ' pinned' : '')); b.type = 'button'; b.dataset.key = m.key;
+  b.title = STATUS_LABEL[m.status];
   b.append(el('span', 'os-led os-led-' + m.status), m.name);
   if (!m.isPublic) b.append(el('span', 'os-lock', m.visibility === 'Sichtbarkeit unbekannt' ? '?' : 'nicht öffentlich'));
   return b;
@@ -110,6 +111,7 @@ function panelFor(model) {
   const meta = el('div', 'os-meta');
   meta.append(badge(STATUS_LABEL[mod.status] + (mod.statusRaw ? ' (' + mod.statusRaw + ')' : '')), badge(mod.visibility), badge(mod.version ? 'v' + mod.version : 'Version unbekannt', mod.version ? '' : 'unknown'));
   body.append(meta, el('p', 'os-desc', mod.description || 'Keine Beschreibung im Katalog.'));
+  body.append(el('h5', null, 'Gemessen (Installation/Laufzeit)'), el('p', mod.measured.measured ? 'os-desc' : 'os-muted', mod.measured.text));
   body.append(el('h5', null, 'Git-Snapshot (Host)'), el('p', mod.git.known && mod.git.dated ? 'os-desc' : 'os-muted', mod.git.text));
   const links = (title, rows, kind) => {
     if (!rows.length) return;
@@ -167,7 +169,7 @@ function renderSchaltplan(host) {
   bar.append(pl, langBtn, kpi(model.total, model.hits, 'Module'));
   clear(host).append(bar);
   const note = el('p', 'os-muted');
-  note.textContent = 'Deklariert: Bereiche, Verbindungen und Schichten (kuratiert). Aus dem Katalog: Module, Status, Sichtbarkeit. Die Verbindungen sind keine Messung.';
+  note.textContent = 'Deklariert: Bereiche, Verbindungen und Schichten (kuratiert) sowie der Katalogstatus der Module (kein Laufzeitzustand). Aus dem Katalog: Module, Sichtbarkeit. Gemessene Werte stehen im Detailpanel. Die Verbindungen sind keine Messung.';
   host.append(note);
   const layout = el('div', 'os-layout');
   const wrap = el('div', 'os-boardwrap'); wrap.dataset.part = 'boardwrap';
@@ -183,7 +185,9 @@ function renderSchaltplan(host) {
   layout.addEventListener('mouseover', ev => { const m = ev.target.closest('.os-mod'), z = ev.target.closest('.os-zone'); const next = m ? m.dataset.key : z ? z.dataset.key : null; if (next !== state.hovered) { state.hovered = next; refreshAll(); } });
   layout.addEventListener('click', ev => { const m = ev.target.closest('.os-mod'), z = ev.target.closest('.os-zone'); const next = m ? m.dataset.key : z ? z.dataset.key : null; state.pinned = next && next === state.pinned ? null : next; refreshAll(); });
   if (!model.architecture.available) {
-    host.append(el('p', 'os-problem', 'Die kuratierte Architektur ist nicht verfügbar (Quelle ' + model.architecture.sourceId + '): alle Module stehen ohne Bereich und ohne Verbindungen.'));
+    host.append(el('p', 'os-problem', model.architecture.adapterSupport
+      ? 'Die kuratierte Architektur ist nicht verfügbar (Quelle ' + model.architecture.sourceId + '): alle Module stehen ohne Bereich und ohne Verbindungen.'
+      : 'Der Katalogadapter liefert noch keine kuratierte Architektur (Feld fehlt, Quelle ' + model.architecture.sourceId + '): alle Module stehen ohne Bereich und ohne Verbindungen.'));
   } else {
     const ui = model.ui[lang] || {};
     const layers = el('section', 'os-layers'); layers.append(el('h4', null, ui.layersH || 'Schichten'), el('p', 'os-muted', ui.layersSub || ''));
@@ -223,6 +227,13 @@ function renderGesamt(host) {
   }
   wiring.append(model.wiring.length ? ul : el('p', 'os-muted', 'Kein Modul deklariert Anforderungen.'));
   host.append(wiring);
+  const provided = el('section', 'os-wiring'); provided.append(el('h4', null, 'Deklarierte bereitgestellte Capabilities und ihre Verbraucher (provides in den Modulmanifesten)'));
+  const pul = el('ul');
+  for (const entry of model.provisions) for (const c of entry.capabilities) {
+    const li = el('li'); li.append(el('strong', null, entry.module), ' stellt ', el('code', null, c.capability), ' bereit ', el('span', 'os-muted', c.consumers.length ? '→ genutzt von ' + c.consumers.join(', ') : '→ kein Verbraucher im Katalog')); pul.append(li);
+  }
+  provided.append(model.provisions.length ? pul : el('p', 'os-muted', 'Kein Modul deklariert bereitgestellte Capabilities.'));
+  host.append(provided);
 }
 
 // ------------------------------------------------------------ Satelliten

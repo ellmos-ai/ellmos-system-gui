@@ -3,7 +3,7 @@
 // adapter from the authored Schaltplan file (basis "declared"), never a measurement; modules, counts and git facts come
 // from the other catalog sources. Without an available architecture every module is shown as unassigned.
 import {itemsOfType} from './catalog-projection.mjs';
-import {gitSnapshot} from './catalog-views.mjs';
+import {gitSnapshot, measuredSummary} from './catalog-views.mjs';
 
 export const VIEWS = [
   {id: 'schaltplan', label: 'Schaltplan'},
@@ -24,7 +24,9 @@ export function statusClass(status) {
   if (s === 'planned' || s === 'plan') return 'plan';
   return 'dev';
 }
-export const STATUS_LABEL = {ok: 'im Einsatz', dev: 'in Entwicklung', plan: 'geplant', unknown: 'Status unbekannt'};
+// The catalog status is DECLARED. "aktiv" here never means "läuft": runtime semantics only come from measured values.
+export const STATUS_LABEL = {ok: 'Katalogstatus aktiv (deklariert)', dev: 'Katalogstatus in Entwicklung (deklariert)',
+  plan: 'Katalogstatus geplant (deklariert)', unknown: 'Katalogstatus unbekannt'};
 export const isPublic = item => typeof item.visibility === 'string' && item.visibility.toLowerCase().startsWith('public');
 export const visibilityLabel = item => item.visibility || 'Sichtbarkeit unbekannt';
 
@@ -61,7 +63,7 @@ export function moduleCard(catalog, item) {
   return {
     key: 'module:' + item.id, id: item.id, name: item.name, description: item.description, version: item.version, area: item.category,
     status: statusClass(item.status), statusRaw: item.status, visibility: visibilityLabel(item), isPublic: isPublic(item),
-    repoUrl: safeRepoUrl(item), git: gitSnapshot(item.git), links: capabilityLinks(catalog, item),
+    repoUrl: safeRepoUrl(item), git: gitSnapshot(item.git), measured: measuredSummary(item), links: capabilityLinks(catalog, item),
   };
 }
 
@@ -79,7 +81,7 @@ export function schaltplanModel(catalog, filters = {}) {
     {de: 'Diese Module tragen eine Kategorie, die der kuratierte Schaltplan nicht kennt. Sie sind nicht verdrahtet.', en: 'These modules carry a category the curated map does not know. They are not wired.'}, orphans) : null;
   return {
     zones, unassigned, edges: authored.edges, layers: authored.layers, icons: authored.icons, ui: authored.ui,
-    architecture: {available: authored.available, sourceId: authored.sourceId, note: authored.edgesNote},
+    architecture: {available: authored.available, adapterSupport: authored.adapterSupport, sourceId: authored.sourceId, note: authored.edgesNote},
     total: catalog.counts.module ?? 0, hits: modules.filter(visible).length,
     emptyZones: zones.filter(z => !z.modules.length).map(z => z.id),
   };
@@ -106,10 +108,11 @@ export function gesamtModel(catalog, filters = {}) {
   const other = hits.filter(e => !areaIds.has(e.column));
   const countBy = key => { const m = new Map(); for (const e of all) { const k = e[key] || 'unbekannt'; m.set(k, (m.get(k) || 0) + 1); } return [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])); };
   const modules = itemsOfType(catalog, 'module');
+  const provisions = modules.filter(m => m.provides.length).map(m => ({module: m.name, capabilities: capabilityLinks(catalog, m).provides}));
   const wiring = modules.filter(m => m.requires.length || m.optional.length).map(m => ({module: m.name, links: capabilityLinks(catalog, m).requires}));
   return {
     columns, other, orgs: countBy('org'), visibilities: countBy('visibility'),
-    total: (catalog.counts.module ?? 0) + (catalog.counts.satellite ?? 0), hits: hits.length, wiring,
+    total: (catalog.counts.module ?? 0) + (catalog.counts.satellite ?? 0), hits: hits.length, wiring, provisions,
     tierNote: 'Die Katalogprojektion enthält keine Repo-Tiers; sie werden hier weder gezeigt noch ergänzt.',
   };
 }
