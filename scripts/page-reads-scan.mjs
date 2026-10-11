@@ -2,6 +2,8 @@
 // Used by tests/page-reads.test.mjs (guard) and scripts/release-manifest.mjs (receipt); it executes no GUI code.
 import {readFileSync, readdirSync, existsSync, statSync} from 'node:fs';
 import {dirname, join, relative, resolve} from 'node:path';
+import {analyzeCalls} from './page-reads-lex.mjs';
+import {HELPERS, PASSTHROUGH_FILES} from './page-reads-helpers.mjs';
 
 const IMPORT_RE = /(?:\bimport\s*(?:[^'"`;]*?\bfrom\s*)?|\bimport\s*\(\s*)(['"])(\.{1,2}\/[^'"]+)\1/g;
 const API_RE = /(['"`])(\/api\/[^'"`\s]*)\1|(`)(\/api\/[^`\s]*)`/g;
@@ -34,10 +36,16 @@ export function pageRoute(root, file) {
   return route === '/' ? '/' : route.replace(/\/$/, '');
 }
 
-export function scan(rootArg) {
+// opts.helpers / opts.passthrough let fixtures run the guard against their own helper table.
+export function scan(rootArg, opts = {}) {
   const root = resolve(rootArg);
+  const helpers = opts.helpers ?? HELPERS, passthrough = opts.passthrough ?? PASSTHROUGH_FILES;
   const files = walk(join(root, 'src'));
-  const info = new Map();
+  // public/*.js scripts are loaded by the layout, not imported: they count as layout code.
+  const publicFiles = existsSync(join(root, 'public')) ? walk(join(root, 'public')) : [];
+  const info = new Map(), publicLayout = new Set();
+  const rel = file => relative(root, file).replaceAll('\\', '/');
+  const callProblems = [];
   for (const file of files) {
     const text = readFileSync(file, 'utf8');
     const imports = [...text.matchAll(IMPORT_RE)].map(m => resolveImport(file, m[2])).filter(Boolean);
@@ -45,7 +53,17 @@ export function scan(rootArg) {
     text.split('\n').forEach((line, index) => {
       for (const m of line.matchAll(API_RE)) literals.push({line: index + 1, pattern: normalizePattern(m[2] ?? m[4])});
     });
-    info.set(file, {imports, literals});
+    const analysis = analyzeCalls(rel(file), text, helpers, passthrough);
+    callProblems.push(...analysis.problems);
+    info.set(file, {imports, literals, calls: analysis.calls, functions: analysis.functions});
+  }
+  for (const file of publicFiles) {
+    const text = readFileSync(file, 'utf8');
+    const analysis = analyzeCalls(rel(file), text, helpers, passthrough);
+    callProblems.push(...analysis.problems);
+    // public scripts are checked by their call sites only
+    info.set(file, {imports: [], literals: [], calls: analysis.calls, functions: analysis.functions});
+    publicLayout.add(file);
   }
   const reach = start => {
     const seen = new Set();
@@ -64,15 +82,19 @@ export function scan(rootArg) {
       out.push({file: relative(root, file).replaceAll('\\', '/'), line: l.line, pattern: l.pattern});
     return out;
   };
-  const layoutFiles = new Set();
+  const layoutFiles = new Set(publicLayout);
   for (const file of files) if (file.includes(join('src', 'layouts'))) reach(file).forEach(f => layoutFiles.add(f));
-  const pages = {};
+  const callsOf = set => [...set].flatMap(file => info.get(file).calls);
+  const functions = {};
+  for (const [file, data] of info) functions[rel(file)] = [...data.functions];
+  const pages = {}, calls = {};
   for (const file of files) {
     if (!file.includes(join('src', 'pages'))) continue;
     const own = new Set([...reach(file)].filter(f => !layoutFiles.has(f)));
     pages[pageRoute(root, file)] = collect(own);
+    calls[pageRoute(root, file)] = callsOf(own);
   }
-  return {layout: collect(layoutFiles), pages};
+  return {layout: collect(layoutFiles), pages, calls: {layout: callsOf(layoutFiles), pages: calls}, callProblems: [...new Set(callProblems)], functions};
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === resolve(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'))) {

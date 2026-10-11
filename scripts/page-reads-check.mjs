@@ -1,4 +1,8 @@
-// Guard: binds public/page-reads.v1.json to the code in src/ (see docs/CONSUMER_CONTRACT.md, "Seiten-Lesepfade").
+// Guard: binds public/page-reads.v1.json to the CALL SITES in src/ and public/ (see docs/CONSUMER_CONTRACT.md, "Seiten-Lesepfade").
+// Every call of fetch or of a registered fetch helper is evaluated for its own URL and method (scripts/page-reads-lex.mjs):
+//  L  literal path        -> needs a static entry with the same method and path
+//  T  composed path       -> needs a dynamic entry whose found_in is "file#function" of THAT call and whose path equals the composed pattern
+//  O  opaque URL (map, variable) -> needs dynamic entries with found_in "file#function"; each path must occur as a literal in reachable code
 import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {scan, normalizePattern} from './page-reads-scan.mjs';
@@ -6,8 +10,6 @@ import {scan, normalizePattern} from './page-reads-scan.mjs';
 const METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
 
 const norm = path => normalizePattern(path);
-const head = path => path.split('{')[0];
-const tail = path => path.includes('{') ? path.slice(path.lastIndexOf('}') + 1) : '';
 
 // A scanned literal covers a manifest path when equal, or when it is the static head of a concatenated path
 // ('/api/x/' + id + '/source' is scanned as '/api/x/{}') and the entry says so with dynamic: true.
@@ -17,15 +19,12 @@ export function covers(literal, entry) {
   return entry.dynamic === true && literal.endsWith('{}') && path.startsWith(literal.slice(0, -2));
 }
 
-export function explicitMethod(lines, line) {
-  const window = lines.slice(line - 1, line + 2).join(' ');
-  const m = window.match(/method\s*:\s*['"`](GET|POST|PUT|PATCH|DELETE)['"`]/);
-  return m ? m[1] : null;
-}
+export const callId = call => `${call.file}#${call.fn}`;
+const label = call => `${call.method ?? '?'} ${call.pattern} at ${call.file}:${call.line} in ${call.fn}`;
 
 // manifest: parsed JSON. found: result of scan(). read: (relative path) => text.
 export function checkManifest(manifest, found, read) {
-  const problems = [];
+  const problems = [...(found.callProblems ?? [])];
   if (manifest?.schema !== 'ellmos.gui.page-reads.v1') return ['schema: not ellmos.gui.page-reads.v1'];
   const pageNames = Object.keys(found.pages).sort();
   const declared = Object.keys(manifest.pages ?? {}).sort();
@@ -42,50 +41,60 @@ export function checkManifest(manifest, found, read) {
       if (typeof entry?.path !== 'string' || !entry.path.startsWith('/api/')) problems.push(`${id}: path must start with /api/`);
       if (typeof entry?.required !== 'boolean') problems.push(`${id}: required must be boolean`);
       if (where === 'layout' && entry?.required === true) problems.push(`${id}: layout reads must be optional`);
-      if (seen.has(id)) problems.push(`${id}: duplicate`);
-      seen.add(id);
+      const key = `${id}#${entry?.dynamic === true ? entry.found_in : ''}`; // the same read may be made by several functions
+      if (seen.has(key)) problems.push(`${id}: duplicate`);
+      seen.add(key);
       if (entry?.dynamic === true) {
-        const [file, via] = String(entry.found_in ?? '').split('#');
-        let text = null;
-        try { text = file ? read(file) : null; } catch { /* reported below */ }
-        if (text === null) problems.push(`${id}: dynamic entry needs found_in "file#function" with an existing file`);
-        else {
-          if (!text.includes(head(entry.path))) problems.push(`${id}: ${file} does not contain ${head(entry.path)}`);
-          if (tail(entry.path) && !text.includes(tail(entry.path))) problems.push(`${id}: ${file} does not contain ${tail(entry.path)}`);
-          if (via && !text.includes(via)) problems.push(`${id}: ${file} does not contain ${via}`);
-        }
+        const [file, fn] = String(entry.found_in ?? '').split('#');
+        let ok = false;
+        try { read(file); ok = !!fn && (fn === '(module)' || (found.functions?.[file] ?? []).includes(fn)); } catch { /* reported below */ }
+        if (!ok) problems.push(`${id}: dynamic entry needs found_in "file#function" naming an existing function of an existing file`);
       } else if (entry?.dynamic !== undefined || entry?.found_in !== undefined) problems.push(`${id}: found_in only with dynamic: true`);
     }
   }
 
-  // Which pages reach which literal (file+line): needed to allow shared client modules.
-  const reachers = new Map();
-  const note = (page, literal) => {
-    const key = `${literal.file}:${literal.line}:${literal.pattern}`;
-    if (!reachers.has(key)) reachers.set(key, {literal, pages: new Set()});
-    reachers.get(key).pages.add(page);
-  };
-  for (const [page, literals] of Object.entries(found.pages)) for (const l of literals) note(page, l);
-  for (const l of found.layout) note('layout', l);
+  const callsOf = page => (page === 'layout' ? found.calls?.layout : found.calls?.pages?.[page]) ?? [];
+  const literalsOf = page => (page === 'layout' ? found.layout : found.pages[page]) ?? [];
   const entriesOf = page => (page === 'layout' ? manifest.layout : manifest.pages[page]) ?? [];
+  const anchored = (page, entry) => literalsOf(page).some(l => covers(l.pattern, entry));
 
-  // (1) every scanned literal is declared by some page that reaches it; a page-private literal by that page.
-  const textCache = new Map();
-  const lines = file => textCache.get(file) ?? (textCache.set(file, read(file).split('\n')), textCache.get(file));
-  for (const {literal, pages} of reachers.values()) {
-    const owners = [...pages].filter(p => entriesOf(p).some(e => covers(literal.pattern, e)));
-    if (!owners.length) problems.push(`undeclared read ${literal.pattern} at ${literal.file}:${literal.line} (reached by ${[...pages].join(', ')})`);
-    // (3) a method stated at the call site must be declared on the covering entry
-    const method = explicitMethod(lines(literal.file), literal.line);
-    if (method && owners.length && !owners.some(p => entriesOf(p).some(e => covers(literal.pattern, e) && e.method === method)))
-      problems.push(`method ${method} at ${literal.file}:${literal.line} (${literal.pattern}) is not declared`);
+  // Does this entry declare this call? (page = the page whose list the entry belongs to)
+  const declares = (page, entry, call) => {
+    if (typeof entry?.path !== 'string') return false;
+    if (call.kind === 'L') return entry.dynamic !== true && entry.method === call.method && norm(entry.path) === call.pattern;
+    if (entry.dynamic !== true || entry.found_in !== callId(call)) return false;
+    if (call.method !== null && entry.method !== call.method) return false;
+    if (call.kind === 'T') return call.open ? norm(entry.path).startsWith(call.head) : norm(entry.path) === call.pattern;
+    return anchored(page, entry);
+  };
+
+  // (1) every call site is declared by a page that reaches it
+  const reachers = new Map();
+  const note = (page, key, item) => { if (!reachers.has(key)) reachers.set(key, {item, pages: new Set()}); reachers.get(key).pages.add(page); };
+  for (const page of ['layout', ...pageNames]) {
+    for (const call of callsOf(page)) note(page, `${callId(call)}:${call.line}:${call.method}:${call.pattern}`, call);
+    for (const l of literalsOf(page)) note(page, `lit:${l.file}:${l.line}:${l.pattern}`, {literal: l});
   }
-  // (2) every entry is backed by a reachable literal (no dead or over-declared entries)
+  for (const {item, pages} of reachers.values()) {
+    if (item.literal) {
+      const l = item.literal;
+      if (![...pages].some(p => entriesOf(p).some(e => covers(l.pattern, e))))
+        problems.push(`undeclared read ${l.pattern} at ${l.file}:${l.line} (reached by ${[...pages].join(', ')})`);
+      continue;
+    }
+    const call = item;
+    if ([...pages].some(p => entriesOf(p).some(e => declares(p, e, call)))) continue;
+    const samePath = [...pages].flatMap(p => entriesOf(p)).find(e => typeof e?.path === 'string' && norm(e.path) === call.pattern && e.method !== call.method);
+    problems.push(samePath
+      ? `method ${call.method} at ${call.file}:${call.line} (${call.pattern}) is not declared; the manifest says ${samePath.method}`
+      : `undeclared read ${label(call)} [${call.kind === 'L' ? 'literal path: needs a static entry' : `composed path: needs a dynamic entry with found_in ${callId(call)}`}] (reached by ${[...pages].join(', ')})`);
+  }
+
+  // (2) every entry is backed by a call site that reaches its page (no dead or over-declared entries)
   for (const [where, list] of lists) {
-    const literals = where === 'layout' ? found.layout : (found.pages[where] ?? []);
     for (const entry of Array.isArray(list) ? list : [])
-      if (typeof entry?.path === 'string' && !literals.some(l => covers(l.pattern, entry)))
-        problems.push(`dead entry ${where}: ${entry.method} ${entry.path} (no matching call in the files this page reaches)`);
+      if (typeof entry?.path === 'string' && !callsOf(where).some(call => declares(where, entry, call)))
+        problems.push(`dead entry ${where}: ${entry.method} ${entry.path}${entry.dynamic ? ` (no call in ${entry.found_in} produces it)` : ' (no matching call in the files this page reaches)'}`);
   }
   return problems;
 }
