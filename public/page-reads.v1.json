@@ -1181,6 +1181,70 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/capability-board-client.mjs#saveSkill"
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/catalog",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/skills/library",
+    "required": false
+   }
+  ],
+  "/daemon": [
+   {
+    "method": "GET",
+    "path": "/api/daemon/chains",
+    "required": true
+   },
+   {
+    "method": "POST",
+    "path": "/api/daemon/chains",
+    "required": false
+   },
+   {
+    "method": "PUT",
+    "path": "/api/daemon/chains/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/daemon-chains.mjs#createChainClient"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/daemon/chains/{id}/toggle",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/daemon-chains.mjs#createChainClient"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/daemon/chains/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/daemon-chains.mjs#createChainClient"
+   },
+   {
+    "method": "POST",
+    "path": "/api/daemon/chains/{id}/run",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/daemon-chains.mjs#createChainClient"
+   },
+   {
+    "method": "GET",
+    "path": "/api/daemon/chains/{id}/runs",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/daemon-chains.mjs#createChainClient"
+   }
+  ],
+  "/system/ocean": [
+   {
+    "method": "GET",
+    "path": "/api/capabilities/catalog",
+    "required": true
    }
   ]
  }

@@ -2,7 +2,7 @@
 // Used by tests/page-reads.test.mjs (guard) and scripts/release-manifest.mjs (receipt); it executes no GUI code.
 import {readFileSync, readdirSync, existsSync, statSync} from 'node:fs';
 import {dirname, join, relative, resolve} from 'node:path';
-import {analyzeCalls} from './page-reads-lex.mjs';
+import {analyzeCalls, apiLiterals} from './page-reads-lex.mjs';
 import {HELPERS, PASSTHROUGH_FILES} from './page-reads-helpers.mjs';
 
 const IMPORT_RE = /(?:\bimport\s*(?:[^'"`;]*?\bfrom\s*)?|\bimport\s*\(\s*)(['"])(\.{1,2}\/[^'"]+)\1/g;
@@ -63,9 +63,11 @@ export function scan(rootArg, opts = {}) {
     }
     if (DYNAMIC_IMPORT_RE.test(text)) callProblems.push(`${rel(file)}: import() with a computed specifier cannot be followed`);
     const literals = [];
-    text.split('\n').forEach((line, index) => {
-      for (const m of line.matchAll(API_RE)) literals.push({line: index + 1, pattern: normalizePattern(m[2] ?? m[4])});
-    });
+    if (file.endsWith('.astro')) { // markup is scanned as text (links, forms); script code below as tokens
+      text.split('\n').forEach((line, index) => {
+        for (const m of line.matchAll(API_RE)) literals.push({line: index + 1, pattern: normalizePattern(m[2] ?? m[4])});
+      });
+    } else for (const l of apiLiterals(text)) literals.push({line: l.line, pattern: normalizePattern(l.raw)}); // comments are no reads
     const analysis = analyzeCalls(rel(file), text, helpers, passthrough);
     callProblems.push(...analysis.problems);
     info.set(file, {imports, literals, calls: analysis.calls, functions: analysis.functions});

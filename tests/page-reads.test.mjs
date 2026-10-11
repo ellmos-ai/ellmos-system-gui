@@ -304,3 +304,12 @@ test('fixture: dist copy and release receipt carry the manifest byte for byte', 
   assert.equal(record.files['page-reads.v1.json'], createHash('sha256').update(bytes).digest('hex'));
   assert.equal(JSON.parse(readFileSync(join(dir, 'dist', 'page-reads.v1.json'), 'utf8')).schema, 'ellmos.gui.page-reads.v1');
 });
+
+test('fixture: a "/api/..." text in a comment of a module is no read, the same text in code is', () => {
+  const lib = text => tree({
+    'src/pages/index.astro': page("import {x} from '../lib/x.mjs';\nasync function load() { x(); }"),
+    'src/lib/x.mjs': text,
+  });
+  assert.deepEqual(check(lib('// "/api/..." routes stay\n/* \'/api/nowhere\' */\nexport const x = () => 1;\n'), manifestOf([])), []);
+  has(check(lib('export const x = () => "/api/inCode";\n'), manifestOf([])), 'undeclared read /api/inCode');
+});

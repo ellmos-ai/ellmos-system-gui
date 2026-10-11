@@ -382,4 +382,17 @@ export function analyzeCalls(file, source, helpers, passthroughFiles = []) {
   return {calls, problems, functions};
 }
 
+// '/api/...' string and template literals of real code (comments are not tokens)
+export function apiLiterals(source) {
+  const out = [];
+  for (const t of tokenize(source)) {
+    if (t.t === 'str' && t.v.startsWith('/api/') && !/\s/.test(t.v)) out.push({line: t.line, raw: t.v});
+    else if (t.t === 'tpl') {
+      const raw = t.parts.map(p => p.s ?? '${' + p.e + '}').join('');
+      if (raw.startsWith('/api/') && !t.parts.some(p => p.s !== undefined && /\s/.test(p.s))) out.push({line: t.line, raw});
+    }
+  }
+  return out;
+}
+
 export const readText = path => readFileSync(path, 'utf8');

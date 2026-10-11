@@ -24,4 +24,10 @@ export const BINDINGS = {
   'src/lib/model-sockets.mjs#saveSocketChange@1': [
     'PUT /api/system/model-sockets', 'PUT /api/system/model-sockets/bindings/{id}/{id2}', 'DELETE /api/system/model-sockets/bindings/{id}',
   ],
+  // idPath(id) = BASE + '/' + id in daemon-chains.mjs: one operation per client method
+  'src/lib/daemon-chains.mjs#createChainClient@1': ['PUT /api/daemon/chains/{id}'],
+  'src/lib/daemon-chains.mjs#createChainClient@2': ['PUT /api/daemon/chains/{id}/toggle'],
+  'src/lib/daemon-chains.mjs#createChainClient@3': ['DELETE /api/daemon/chains/{id}'],
+  'src/lib/daemon-chains.mjs#createChainClient@4': ['POST /api/daemon/chains/{id}/run'],
+  'src/lib/daemon-chains.mjs#createChainClient@5': ['GET /api/daemon/chains/{id}/runs'],
 };

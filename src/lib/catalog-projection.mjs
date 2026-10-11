@@ -147,7 +147,47 @@ function itemRecord(item) {
     git: gitRecord(item.git, where), gitHosts: item.git_hosts.map(entry => gitRecord(entry, where + ' git_hosts')),
     sourceIds: item.source_ids, pathLabel: typeof item.path_label === 'string' ? item.path_label : null,
     languages: Array.isArray(item.languages) ? item.languages : null,
+    org: typeof item.org === 'string' ? item.org : null, provenance: typeof item.provenance === 'string' ? item.provenance : null,
+    upstream: typeof item.upstream === 'string' ? item.upstream : null,
   };
+}
+
+// Curated architecture (areas, wires, layers) projected by the adapter from the authored Schaltplan file.
+// Always basis "declared": curated intent, never a measurement. Unavailable = empty lists + available:false.
+const bilingual = (value, where) => {
+  requireKeys(value, ['de', 'en'], where);
+  if (typeof value.de !== 'string' || typeof value.en !== 'string') fail(where + ' muss Text enthalten');
+  return {de: value.de, en: value.en};
+};
+// An adapter that predates the architecture field (BACH main without #310) simply has no architecture: the rest of the catalog
+// renders normally and the architecture is "not available" (adapterSupport false). A PRESENT but malformed field stays a contract error.
+const MISSING_ARCHITECTURE = Object.freeze({basis: 'declared', sourceId: 'schaltplan_authored', available: false, areas: [], edges: [], layers: [],
+  icons: {}, ui: {}, edgesNote: null, adapterSupport: false});
+function architectureRecord(arch) {
+  requireKeys(arch, ['basis', 'source_id', 'available', 'areas', 'edges', 'layers', 'icons', 'ui', 'edges_note'], 'architecture');
+  if (arch.basis !== 'declared') fail('architecture.basis muss "declared" sein');
+  if (!text(arch.source_id) || typeof arch.available !== 'boolean') fail('architecture.source_id/available');
+  if (!Array.isArray(arch.areas) || !Array.isArray(arch.edges) || !Array.isArray(arch.layers) || !isObject(arch.icons) || !isObject(arch.ui)) fail('architecture-Struktur');
+  nullableString(arch.edges_note, 'architecture.edges_note');
+  if (!arch.available && (arch.areas.length || arch.edges.length || arch.layers.length)) fail('architecture nicht verfügbar, aber mit Inhalt');
+  const ids = new Set();
+  const areas = arch.areas.map(area => {
+    requireKeys(area, ['id', 'dir', 'name', 'q', 'desc', 'cross'], 'Bereich');
+    if (!text(area.id) || ids.has(area.id) || typeof area.dir !== 'string' || typeof area.cross !== 'boolean') fail('Bereich ' + area.id);
+    ids.add(area.id);
+    return {id: area.id, dir: area.dir, name: bilingual(area.name, 'Bereich.name'), q: bilingual(area.q, 'Bereich.q'), desc: bilingual(area.desc, 'Bereich.desc'), cross: area.cross};
+  });
+  const edges = arch.edges.map(edge => {
+    requireKeys(edge, ['from', 'to', 'label', 'desc', 'both'], 'Kante');
+    if (!ids.has(edge.from) || !ids.has(edge.to) || typeof edge.both !== 'boolean') fail('Kante verweist auf unbekannten Bereich');
+    return {from: edge.from, to: edge.to, label: bilingual(edge.label, 'Kante.label'), desc: bilingual(edge.desc, 'Kante.desc'), both: edge.both};
+  });
+  const layers = arch.layers.map(layer => {
+    requireKeys(layer, ['id', 'n', 'd', 's_tpl'], 'Schicht');
+    return {id: layer.id, n: bilingual(layer.n, 'Schicht.n'), d: bilingual(layer.d, 'Schicht.d')};
+  });
+  for (const [key, value] of Object.entries(arch.icons)) if (!ids.has(key) || typeof value !== 'string') fail('architecture.icons');
+  return {basis: 'declared', sourceId: arch.source_id, available: arch.available, areas, edges, layers, icons: arch.icons, ui: arch.ui, edgesNote: arch.edges_note, adapterSupport: true};
 }
 
 export function parseCatalog(body) {
@@ -187,6 +227,7 @@ export function parseCatalog(body) {
   return {
     generatedAt: body.generated_at, host: {id: body.host.id, source: body.host.source}, sources, items, counts, errors,
     truncated: body.truncated, redactions: body.redactions,
+    architecture: 'architecture' in body ? architectureRecord(body.architecture) : MISSING_ARCHITECTURE,
   };
 }
 

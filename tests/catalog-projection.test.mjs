@@ -10,7 +10,7 @@ import {parseCatalog, catalogQuery, itemsOfType, gitLabel, sourceProblems, catal
 // sources, BACH_WRITE_CATALOG_FIXTURE, LF). It is a handler response, not hand-written.
 const raw = readFileSync(new URL('./fixtures/catalog-projection.v1.json', import.meta.url));
 const fixture = () => JSON.parse(raw.toString('utf8'));
-const PINNED_SHA256 = 'b1e9aef1cabfa675e368442ef2a51dc2a5d917d64b8ef880da1547f6999fefc9';
+const PINNED_SHA256 = 'e3811c515a7963ad161b90d7da865976f4a37d5aacfa0d71e2a6fa7ebcd51975';
 const broken = mutate => { const body = fixture(); mutate(body); return () => parseCatalog(body); };
 const item = (body, id) => body.items.find(i => i.id === id);
 
