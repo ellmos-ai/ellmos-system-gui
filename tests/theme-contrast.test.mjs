@@ -86,3 +86,33 @@ test('no stylesheet or page uses a base status/accent color as text any more', (
   walk(new URL('../src', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
   assert.deepEqual(offenders, []);
 });
+
+test('colorful/custom primary gradient (normal, hover, active nav) keeps white text at 4.5:1 over all 21 steps', () => {
+  const theme = themes.colorful;
+  const white = [255, 255, 255];
+  for (const [from, to] of [['--primary-grad-from', '--primary-grad-to'], ['--primary-grad-hover-from', '--primary-grad-hover-to']]) {
+    for (let i = 0; i <= 20; i++) {
+      const stop = blend(resolve(theme, from), resolve(theme, to), 1 - i / 20);
+      const value = ratio(white, stop);
+      assert.ok(value >= 4.5, `${from}..${to} step ${i}: ${value.toFixed(2)}`);
+    }
+  }
+  assert.equal(theme['--accent'], '#ff6b8a', 'accent itself stays unchanged for all other uses');
+  assert.equal(theme['--accent-blue'], '#7c6cf0');
+});
+
+test('colorful/custom primary rules use the gradient tokens (not accent) and keep white text', () => {
+  const rules = {
+    '.btn-primary': /\[data-theme="colorful"\] \.btn-primary,\s*\[data-theme="custom"\] \.btn-primary\s*\{([^}]*)\}/,
+    '.nav-item.active': /\[data-theme="colorful"\] \.nav-item\.active,\s*\[data-theme="custom"\] \.nav-item\.active\s*\{([^}]*)\}/,
+  };
+  for (const [selector, pattern] of Object.entries(rules)) {
+    const rule = pattern.exec(css);
+    assert.ok(rule, 'rule missing for ' + selector);
+    assert.match(rule[1], /linear-gradient\(135deg,\s*var\(--primary-grad-from\),\s*var\(--primary-grad-to\)\)/, selector);
+    assert.match(rule[1], /color:\s*#fff;/, selector);
+  }
+  const hover = [...css.matchAll(/\[data-theme="colorful"\] \.btn-primary:hover,\s*\[data-theme="custom"\] \.btn-primary:hover\s*\{([^}]*)\}/g)].map(m => m[1]).join('\n');
+  assert.match(hover, /var\(--primary-grad-hover-from\),\s*var\(--primary-grad-hover-to\)/);
+  assert.match(css, /\[data-theme="custom"\] \.btn-primary:hover \{ color: #fff; \}/);
+});

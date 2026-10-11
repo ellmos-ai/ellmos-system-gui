@@ -25,7 +25,7 @@
     "src/assets/ticket-symbols/topics_uni.svg": "45b565524ec66eff4b5f87a12729afc958d5ff2027af337f8472ecde0fe1bd19",
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
-    "src/components/CapabilityBoard.astro": "7768701617beb6d8f46c360309d35805a351fa2f142896a036bb7796cb0edd01",
+    "src/components/CapabilityBoard.astro": "1cda4d163d9baf87aac8aa747f4b42c1ec6262044bf8d620ee93215288bea546",
     "src/components/Header.astro": "c997c4aa86d16d0ab70edaaf3c6c3332d0e566cc629386d2872fd7ebd57a44e7",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "78295d99e1673edf101efae42498f518e6b2a73334998c5bdb3a5ff10be704e3",
@@ -59,7 +59,7 @@
     "src/pages/tasks.astro": "3a7b0a00f1b2356247c8c0c794bdac3723b4bf9afefebd9e449fb852c7bf4ccf",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
-    "src/styles/main.css": "11718a9790806791f85ded90135be608b3ca1a52efbe8dc8e9392469369df265",
+    "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "cbb6f8ad9eb5516bd8f21e001bb35cdc80b3b2e247485709679c5248d7fe6341",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
@@ -70,7 +70,7 @@
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/frontend-parity.test.mjs": "7650f67d51aa48ccbe460d0263d520789e4241ae1f7070e57771cd87f4da5849",
+    "tests/frontend-parity.test.mjs": "f35f2605757b4f02a6f7a9889eac20fb8b22d86ab043ac3bbfa903d15e926334",
     "tests/task-assignment.test.mjs": "5ee7ae0defcdc8ef36edc76c4da821f59ea078399c0c6d30c2a5d94115aef3e3",
     "src/lib/task-assignment.mjs": "99fdaf57c0eb093cd46eb3f1bdcaa58cea1fbfd89bef5142aab7224cbf4dfd7d",
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
@@ -106,8 +106,8 @@
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/memory-facts.test.mjs": "8be5410afab2074934db3a5a1d62e8b3eb9c9569d480ef033b62157c17484f38",
-    "README.md": "8a9568794e2bf3fac494164eb5098604adb64f75a9894a296dc0c1df098c4de0",
-    "docs/CONSUMER_CONTRACT.md": "686a82e417f237f4a3d1b0c4630f94352d1758305e4f47a7df339ec2fd2ac49e",
+    "README.md": "f7700138a0599453f65bf983ccbc81197c9df137b62f3618de6fce1f55303442",
+    "docs/CONSUMER_CONTRACT.md": "dd33fbaf8a3f92e0d9bba1ab8eeff84f979c55f739fadb65edd206a183bf3a11",
     "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
     "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
@@ -907,12 +907,12 @@
         {
           "path": "README.md",
           "previous_sha256": "5c50bea86634abde735400c3cdc55d5eaeff0d5c5bc94b6f39d1303dff6a8fac",
-          "sha256": "8a9568794e2bf3fac494164eb5098604adb64f75a9894a296dc0c1df098c4de0"
+          "sha256": "f7700138a0599453f65bf983ccbc81197c9df137b62f3618de6fce1f55303442"
         },
         {
           "path": "docs/CONSUMER_CONTRACT.md",
           "previous_sha256": "c4a62eb92f967eca96c1bd651068923ed8599a9bd10b386f19863da38a13ab48",
-          "sha256": "686a82e417f237f4a3d1b0c4630f94352d1758305e4f47a7df339ec2fd2ac49e"
+          "sha256": "dd33fbaf8a3f92e0d9bba1ab8eeff84f979c55f739fadb65edd206a183bf3a11"
         },
         {
           "path": "package.json",
