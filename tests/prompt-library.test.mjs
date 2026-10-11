@@ -101,6 +101,14 @@ test('HTTP errors keep their kind and server detail; 409 means the name exists',
   await assert.rejects(broken.list(), e => e.kind === 'network');
 });
 
+test('a 404 on the LIST means the adapter is unavailable, a 404 on one prompt stays not-found', async () => {
+  const client = createPromptClient(recorder(() => json(404, {detail: 'Not Found'})).fetcher);
+  await assert.rejects(client.list(), e => e.kind === 'unavailable' && /Adapter oder Quelle nicht verfügbar/.test(e.message) && e.status === 404);
+  await assert.rejects(client.get(5), e => e.kind === 'notfound');
+  await assert.rejects(client.remove(5), e => e.kind === 'notfound');
+  assert.equal(listState({loading: false, error: {kind: 'unavailable'}, prompts: [], filtered: false}), 'error:unavailable');
+});
+
 test('a non-JSON or malformed success response is a contract error, not an empty library', async () => {
   const noJson = createPromptClient(async () => ({ok: true, status: 200, json: async () => { throw new SyntaxError('x'); }}));
   await assert.rejects(noJson.list(), e => e.kind === 'contract');

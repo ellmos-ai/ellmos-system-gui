@@ -1,12 +1,12 @@
 ---
-// Prompt-Bibliothek (P-1963-P3). Data: the existing /api/prompt-library* APIs (BACH tables prompt_templates/prompt_versions).
+// Prompt-Bibliothek (P-1963-P3). Data: the existing /api/prompt-library* APIs of the connected system (no store of its own).
 ---
 <section id="prompt-library" aria-labelledby="pl-title">
   <header class="pl-head">
     <div>
       <p class="pl-eyebrow">Prompts</p>
       <h1 id="pl-title">Prompt-Bibliothek</h1>
-      <p class="pl-muted">Datenbasis: BACH-Tabellen <code>prompt_templates</code> und <code>prompt_versions</code> (wie <code>bach prompt</code>). Jede Textänderung archiviert den vorherigen Stand als Version.</p>
+      <p class="pl-muted">Datenbasis: die Prompt-Bibliothek des angeschlossenen Systems, nicht diese Seite. Jede Textänderung archiviert den vorherigen Stand als Version.</p>
     </div>
     <div class="pl-head-actions">
       <button type="button" class="btn btn-primary" data-part="new">Neuer Prompt</button>
@@ -44,6 +44,8 @@
   .pl-grid {display:grid;grid-template-columns:minmax(260px,1fr) minmax(0,2fr);gap:1rem;align-items:start}
   .pl-panel {background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;min-width:0}
   .pl-toolbar {display:flex;gap:.7rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:.8rem}
+  /* placeholders are text too: explicit, contrast-checked colour (own token, so the page meets AA with or without the global token fix) */
+  #prompt-library :global(input::placeholder), #prompt-library :global(textarea::placeholder) {color:var(--pl-muted);opacity:1}
   #prompt-library :global(label) {display:flex;flex-direction:column;gap:.35rem;font-size:.8rem;color:var(--pl-muted);flex:1 1 150px;min-width:0}
   #prompt-library :global(input), #prompt-library :global(select), #prompt-library :global(textarea) {background:var(--bg-panel);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem;font:inherit;min-width:0}
   #prompt-library :global(.pl-textarea) {min-height:16rem;resize:vertical;font-family:var(--font-mono,monospace);font-size:.85rem;line-height:1.5}

@@ -1,5 +1,5 @@
-// Prompt library client (P-1963-P3): the existing BACH APIs /api/prompt-library* are the ONLY store (tables
-// prompt_templates / prompt_versions, same data as `bach prompt`). This module holds no data of its own: it validates the
+// Prompt library client (P-1963-P3): the existing APIs /api/prompt-library* of the connected system are the ONLY store.
+// This module holds no data of its own: it validates the
 // responses strictly, classifies failures into separate states and keeps all ids as integers taken from the API,
 // never from display names.
 export const DRAFT_KEY = 'bach.chat.draft.v1';   // same key and payload as static/js/prompt-chat-draft.js (BachChatDraft)
@@ -71,7 +71,12 @@ export function createPromptClient(fetcher = globalThis.fetch) {
       if (q && q.trim()) params.set('q', q.trim());
       if (category) params.set('category', category);
       const query = params.toString();
-      return parsePromptList(await request('GET', BASE + (query ? '?' + query : '')));
+      try { return parsePromptList(await request('GET', BASE + (query ? '?' + query : ''))); }
+      catch (error) {
+        // The LIST endpoint itself missing means the adapter/source is not there; a 404 on ONE prompt stays "not found".
+        if (error instanceof ApiError && error.kind === 'notfound') throw new ApiError('unavailable', 'Prompt-Bibliothek: Adapter oder Quelle nicht verfügbar (HTTP 404 auf der Liste)', 404, error.detail);
+        throw error;
+      }
     },
     async get(id) { return parsePromptDetail(await request('GET', idPath(id))); },
     async create({name, text, category, purpose, tags}) {
