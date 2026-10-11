@@ -106,12 +106,13 @@
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/memory-facts.test.mjs": "8be5410afab2074934db3a5a1d62e8b3eb9c9569d480ef033b62157c17484f38",
-    "README.md": "0009bdbc74c1a3176e2bc84ed150d0080d780857a77f578d033ee76d24aa60cb",
+    "README.md": "a178ee52165bbfd1c1596c864343290738a097fb5510bd50a394a89e95401428",
     "docs/CONSUMER_CONTRACT.md": "dd33fbaf8a3f92e0d9bba1ab8eeff84f979c55f739fadb65edd206a183bf3a11",
     "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
     "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
-    "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6"
+    "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
+    "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -956,5 +957,13 @@
         }
       ]
     }
-  ]
+  ],
+  "readme_banner": {
+    "path": "assets/readme-bridge-banner.png",
+    "generator": "image_gen",
+    "description": "Comic ship's bridge overlooking the open sea, with radar, radio and captain's hat.",
+    "usage": "GitHub README only; not a frontend background.",
+    "sha256": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
+    "added_on": "2026-10-11"
+  }
 }
