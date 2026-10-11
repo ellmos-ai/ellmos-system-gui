@@ -1,6 +1,8 @@
 export function catalogMatches(kind, data) {
   if (kind === 'software') return data?.kind === 'software' && data?.catalog === 'software-applications';
   if (kind === 'ocean') return data?.kind === 'ocean' && data?.catalog === 'ocean-host-sources';
+  // Plugin-Zustände dürfen nur aus einem Plugin-Inventar kommen, nie aus einer fremden Antwort (z. B. MCP).
+  if (kind === 'plugins') return data?.schema === 'bach.capability-inventory.v1' && data?.kind === 'plugins';
   return true;
 }
 
