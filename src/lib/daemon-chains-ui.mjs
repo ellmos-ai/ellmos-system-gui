@@ -1,5 +1,5 @@
 // Browser wiring for /daemon?tab=chains (P-1963-P4). DOM via createElement/textContent only; no inline handlers.
-import {createChainClient, createLatest, listState, stepSummary, isParallel, rowsFromSteps, collectSteps, maxRunId, hasNewRun, durationText, TRIGGER_TYPES} from './daemon-chains.mjs';
+import {createChainClient, createLatest, listState, stepSummary, isParallel, rowsFromSteps, saveChain, pollForNewRun, maxRunId, durationText, TRIGGER_TYPES} from './daemon-chains.mjs';
 
 const root = document.getElementById('daemon-chains');
 const el = (tag, className, text) => { const n = document.createElement(tag); if (className) n.className = className; if (text !== undefined && text !== null) n.textContent = text; return n; };
@@ -39,15 +39,11 @@ async function loadRuns(chain, box) {
 
 // A run is recorded when it FINISHES: poll the history (every 3 s, at most 20 times) until a run newer than the known ones appears.
 async function awaitNewRun(chain, box, knownMaxId) {
-  for (let attempt = 0; attempt < 20; attempt += 1) {
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    if (!box.isConnected || box.hidden) return;
-    try {
-      const runs = await client.runs(chain.id, 10);
-      if (hasNewRun(runs, knownMaxId)) { renderRuns(box, runs); status('Lauf abgeschlossen: ' + runs.find(r => r.id > knownMaxId).status); load(); return; }
-    } catch (error) { status('Verlauf nicht verfügbar: ' + error.message, true); return; }
-  }
-  status('Noch kein abgeschlossener Lauf im Verlauf; mit "Verlauf" später erneut prüfen.');
+  try {
+    const result = await pollForNewRun(() => client.runs(chain.id, 10), knownMaxId, {active: () => box.isConnected && !box.hidden});
+    if (result.status === 'found') { renderRuns(box, result.runs); status('Lauf abgeschlossen: ' + result.runs.find(r => r.id > knownMaxId).status); load(); }
+    else if (result.status === 'none') status('Noch kein abgeschlossener Lauf im Verlauf; mit "Verlauf" später erneut prüfen.');
+  } catch (error) { status('Verlauf nicht verfügbar: ' + error.message, true); }
 }
 
 function chainCard(chain) {
@@ -160,18 +156,21 @@ function startEdit(chain) {
     const replace = button('Schritte ersetzen …', () => {
       if (!confirm('Die gespeicherten (unlesbaren) Schritte durch neu eingegebene ersetzen? Der alte Rohwert geht dabei verloren.')) return;
       replacing = true; steps.hidden = false; addStep.hidden = false; note.textContent = 'Die unlesbaren Schritte werden beim Speichern durch die folgenden ersetzt.'; replace.hidden = true;
+      const firstTool = steps.querySelector('.dc-tool'); if (firstTool) firstTool.focus();
     });
     box.append(note, replace);
   }
   box.append(steps, addStep);
+  const editorError = el('p', 'dc-problem'); editorError.setAttribute('role', 'alert'); editorError.hidden = true;
+  box.append(editorError);
   const actions = el('div', 'dc-actions');
   actions.append(
     button('Speichern', async () => {
-      const collected = {name: name.value, description: description.value, triggerType: type.value, triggerValue: value.value, steps: replacing ? collectSteps(readRows(steps)) : undefined};
-      try {
-        if (chain) await client.update(chain.id, collected); else await client.create(collected);
-        status(chain ? 'Gespeichert.' : 'Angelegt.'); box.hidden = true; clear(box); state.editing = null; load();
-      } catch (error) { status(error.message, true); }
+      const fields = {name: name.value, description: description.value, triggerType: type.value, triggerValue: value.value};
+      const result = await saveChain(client, chain, fields, readRows(steps), replacing);
+      editorError.textContent = result.ok ? '' : result.message; editorError.hidden = result.ok;
+      status(result.message, !result.ok);
+      if (result.ok) { box.hidden = true; clear(box); state.editing = null; load(); } else editorError.scrollIntoView({block: 'nearest'});
     }, 'btn-primary'),
     button('Abbrechen', () => { box.hidden = true; clear(box); state.editing = null; }),
   );

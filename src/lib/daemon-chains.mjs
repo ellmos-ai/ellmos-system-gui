@@ -141,6 +141,27 @@ export function createChainClient(fetcher = globalThis.fetch) {
 // Run history is capped (10): detect a finished run by an id above the highest known one, never by list length.
 export const maxRunId = runs => runs.reduce((m, r) => Math.max(m, r.id), 0);
 export const hasNewRun = (runs, knownMaxId) => runs.some(r => r.id > knownMaxId);
+// Poll the history until a run newer than knownMaxId appears. Returns {status: 'found'|'none'|'stopped', runs}; a failing read throws.
+export async function pollForNewRun(fetchRuns, knownMaxId, {attempts = 20, wait = () => new Promise(resolve => setTimeout(resolve, 3000)), active = () => true} = {}) {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    await wait();
+    if (!active()) return {status: 'stopped', runs: null};
+    const runs = await fetchRuns();
+    if (hasNewRun(runs, knownMaxId)) return {status: 'found', runs};
+  }
+  return {status: 'none', runs: null};
+}
+
+// Save from the editor rows. EVERY failure (also invalid argument JSON while collecting the rows) becomes a message, never a thrown event-handler error.
+export async function saveChain(client, chain, fields, rows, replacing) {
+  try {
+    const steps = replacing ? collectSteps(rows) : undefined;
+    const data = {...fields, steps};
+    if (chain) await client.update(chain.id, data); else await client.create(data);
+    return {ok: true, message: chain ? 'Gespeichert.' : 'Angelegt.'};
+  } catch (error) { return {ok: false, message: error.message || 'Speichern fehlgeschlagen'}; }
+}
+
 export const durationText = seconds => (typeof seconds === 'number' ? seconds.toFixed(1) + ' s' : 'Dauer unbekannt');
 
 // The list state is exactly one of: loading, error:<kind>, empty, list.

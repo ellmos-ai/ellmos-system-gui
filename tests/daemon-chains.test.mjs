@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {ApiError, failureOf, parseSteps, stepSummary, argsText, argsEditText, maxRunId, hasNewRun, collectSteps, rowsFromSteps, parseChainList, parseRuns, createChainClient, durationText,
+import {ApiError, failureOf, parseSteps, stepSummary, argsText, argsEditText, maxRunId, hasNewRun, pollForNewRun, saveChain, collectSteps, rowsFromSteps, parseChainList, parseRuns, createChainClient, durationText,
   listState, createLatest, TRIGGER_TYPES} from '../src/lib/daemon-chains.mjs';
 
 const json = (status, body) => ({ok: status < 400, status, json: async () => body});
@@ -182,4 +182,34 @@ test('the UI never writes API text through innerHTML or inline handlers and only
     assert.doesNotMatch(readFileSync(new URL(file, import.meta.url), 'utf8'), /innerHTML|outerHTML|insertAdjacentHTML|set:html|<iframe|document\.write|\son[a-z]+\s*=|\balert\(/, file);
   }
   assert.doesNotMatch(readFileSync(new URL('../src/lib/daemon-chains-ui.mjs', import.meta.url), 'utf8'), /fetch\(/);
+});
+
+test('saveChain turns invalid argument JSON into a visible message and sends nothing', async () => {
+  const {fetcher, calls} = recorder(() => json(200, {status: 'updated'}));
+  const client = createChainClient(fetcher);
+  const chain = parseChainList({chains: [chainRow()]})[0];
+  const fields = {name: 'n', description: '', triggerType: 'manual', triggerValue: ''};
+  const bad = await saveChain(client, chain, fields, [{original: null, parallel: false, tool: 't', args: 'hello world'}], true);
+  assert.equal(bad.ok, false);
+  assert.match(bad.message, /kein gültiges JSON/);
+  assert.equal(calls.length, 0);
+  const good = await saveChain(client, chain, fields, [{original: null, parallel: false, tool: 't', args: '["a b"]'}], true);
+  assert.deepEqual([good.ok, calls.length, calls[0].body.steps_json], [true, 1, '[{"tool":"t","args":["a b"]}]']);
+  const server = await saveChain(createChainClient(recorder(() => json(400, {detail: 'Ungueltiges JSON in steps_json'})).fetcher), chain, fields, rowsFromSteps(chain.steps), true);
+  assert.equal(server.ok, false);
+  assert.match(server.message, /Ungueltiges JSON/);
+});
+
+test('pollForNewRun finds a new run when 10 runs already exist (id based), and reports none/stopped/failure separately', async () => {
+  const ten = Array.from({length: 10}, (_, i) => ({id: 100 - i}));
+  const afterNew = [{id: 101}, ...ten.slice(0, 9)];
+  let reads = 0;
+  const wait = async () => {};
+  const found = await pollForNewRun(async () => (++reads < 3 ? ten : afterNew), maxRunId(ten), {wait});
+  assert.equal(found.status, 'found');
+  assert.equal(reads, 3);
+  assert.equal(found.runs[0].id, 101);
+  assert.equal((await pollForNewRun(async () => ten, 100, {wait, attempts: 3})).status, 'none');
+  assert.equal((await pollForNewRun(async () => ten, 100, {wait, active: () => false})).status, 'stopped');
+  await assert.rejects(pollForNewRun(async () => { throw new ApiError('server', 'x'); }, 0, {wait}), e => e.kind === 'server');
 });
