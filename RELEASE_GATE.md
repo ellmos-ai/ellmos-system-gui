@@ -1,13 +1,16 @@
 # Release gate: ellmos-system-gui
 
-**Current candidate: 0.2.20. Source tests and development build are verified; clean committed release build, archive review, publication and native consumer deployment remain separate pending gates.**
+**Current candidate: 0.2.21. This source preparation updates the version metadata for the already reviewed shared GUI changes; it does not claim publication, consumer pinning, browser acceptance, or native installation.**
 
-## Current candidate evidence (2026-10-12)
+## Current candidate scope and checks (2026-10-12)
 
-- Source base: shared main 2d1e059ef90aac23932e33266764a1dfa801028f, including the reviewed Subscription-Agents board and collapsed memory map.
-- npm ci: exit 0. npm test: 371 passed, 0 failed, 0 skipped. Development build: exit 0, 26 pages. These are source checks, not a released artifact.
-- Release procedure: commit the reviewed source, require a clean checkout including untracked files, run npm run build:release, package with scripts/package_release.py, and independently verify the source commit, file hashes, archive hash and MIT license. Publish only after these checks pass.
-- Consumer pins and installation/readback are separate. The board needs compatible backend adapters; neither static installation nor a prompt preview proves BACH/Ocean readiness or starts an agent.
+- Source base: `0843531b32fe37bb4f7335a78bf2f3c73998833e`, after the reviewed Task-Result UI merge. The candidate includes the previously merged data-age display, read-only/refresh safeguards, and task-result history and correction UI.
+- Task-result corrections require the dedicated operator capability and current result/task bindings. Ambiguous acknowledgements require an explicit reopen before another correction can be sent. `result_max_chars` is sent only when the backend advertises the strict capability; unsupported legacy backends keep their existing behavior.
+- The optional Ocean source timestamp is presented as source metadata, not as proof of live truth. Missing Ocean source data preserves the established BACH display. Read-only or invalid source states do not enable mutation controls; absent source support preserves legacy behavior.
+- Source checks: `npm ci` exited 0; `npm test` passed 412/412 with no skips; `npm run build` exited 0 and built 26 pages. These are source checks, not a released artifact.
+- `npm audit --json` reported two low-severity advisories (Mermaid and transitive KaTeX). Its suggested fix is Mermaid 10.8.0, a downgrade from the pinned 11.17.2; no dependency change is included in this version-metadata preparation. Resolve that dependency decision before publication.
+- Release procedure: commit the reviewed source, require a clean checkout including untracked files, run `npm run build:release`, package with `scripts/package_release.py`, and independently verify source commit, file hashes, archive hash, and the MIT license.
+- Consumer pins, protected API behavior, browser/CSP acceptance, and installed/native readback remain separate. This candidate does not claim those gates.
 
 ## Historical remediation record (2026-10-03)
 
