@@ -10,8 +10,8 @@ import BachLayout from "../../layouts/BachLayout.astro";
     </div>
     <div class="uc-actions">
       <button type="button" class="btn" id="uc-refresh">Aktualisieren</button>
-      <button type="button" class="btn" id="uc-check-all">Alle Definitionen prüfen</button>
-      <button type="button" class="btn btn-primary" id="uc-create">+ Neuer Usecase</button>
+      <button type="button" class="btn" id="uc-check-all" hidden disabled>Alle Definitionen prüfen</button>
+      <button type="button" class="btn btn-primary" id="uc-create" hidden disabled>+ Neuer Usecase</button>
     </div>
   </header>
   <p id="uc-page-status" role="status" hidden></p>
@@ -54,9 +54,9 @@ import BachLayout from "../../layouts/BachLayout.astro";
         <div class="uc-detail-head">
           <div><span id="uc-id" class="uc-muted"></span><h2 id="uc-title"></h2></div>
           <div class="uc-actions">
-            <button type="button" class="btn" id="uc-edit">Bearbeiten</button>
-            <button type="button" class="btn btn-primary" id="uc-check">Definition prüfen</button>
-            <button type="button" class="btn" id="uc-delete">Löschen</button>
+            <button type="button" class="btn" id="uc-edit" hidden disabled>Bearbeiten</button>
+            <button type="button" class="btn btn-primary" id="uc-check" hidden disabled>Definition prüfen</button>
+            <button type="button" class="btn" id="uc-delete" hidden disabled>Löschen</button>
           </div>
         </div>
         <p id="uc-detail-source" class="uc-muted uc-source" hidden></p>
@@ -138,7 +138,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
   </style>
 
   <script>
-    import {sourceNotice} from '../../lib/usecase-source.mjs';
+    import {sourceErrorMessage, sourceNotice, sourceReadOnlyState} from '../../lib/usecase-source.mjs';
     (() => {
       const byId = id => document.getElementById(id);
       const api = '/api/usecases';
@@ -146,6 +146,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
       let selectedId = null;
       let editorId = null;
       let notice = null;
+      let sourceAccess = 'unverified';
       let listGeneration = 0;
       let detailGeneration = 0;
       let listLoading = false;
@@ -156,17 +157,58 @@ import BachLayout from "../../layouts/BachLayout.astro";
       const display = value => value == null || value === '' ? '–' : String(value);
       const validId = value => Number.isSafeInteger(Number(value)) && Number(value) > 0;
       const listHas = id => rows.some(row => Number(row.id) === Number(id));
+      const mutationButtons = ['uc-check-all','uc-create','uc-edit','uc-check','uc-delete'];
+      const accessMessage = () => sourceAccess === 'read-only'
+        ? 'Die verbundene Usecase-Quelle ist schreibgeschützt.'
+        : 'Die Quelle ist nicht aktuell verifiziert; Änderungen sind deaktiviert.';
+
+      function applySourceAccess() {
+        const allowed = sourceAccess === 'legacy';
+        for (const id of mutationButtons) {
+          const button=byId(id);
+          button.hidden=!allowed;
+          button.disabled=!allowed;
+        }
+        if (allowed) message('uc-page-status','');
+        else if (sourceAccess === 'read-only') message('uc-page-status','Die verbundene Usecase-Quelle ist schreibgeschützt; Änderungen sind deaktiviert.');
+        else if (sourceAccess === 'unverified') message('uc-page-status','Die Datenquelle wird geprüft; Änderungen sind bis dahin deaktiviert.');
+        else message('uc-page-status','Der Quellenstatus ist nicht verifiziert; Änderungen sind deaktiviert.');
+        const dialog=byId('uc-editor');
+        if (!allowed && dialog.open) {
+          dialog.close();
+          editorId=null;
+        }
+      }
+
+      function setSourceAccess(value) {
+        sourceAccess=value;
+        applySourceAccess();
+        renderSource(notice);
+      }
+
+      function canMutate() { return sourceAccess === 'legacy'; }
 
       async function request(url, options) {
         const response = await fetch(url, options);
         const body = await response.json().catch(() => ({}));
-        if (!response.ok || body.success !== true) throw new Error(body.detail || body.error || `API nicht erreichbar (HTTP ${response.status}).`);
+        if (!response.ok || body.success !== true) {
+          if (body && body.available === false) throw new Error(sourceErrorMessage(body.reason));
+          const detail=typeof body.detail==='string' ? body.detail : null;
+          const error=typeof body.error==='string' ? body.error : null;
+          throw new Error(detail || error || `API nicht erreichbar (HTTP ${response.status}).`);
+        }
         return body;
       }
 
       function renderSource(sourceNoticeValue) {
-        const value = sourceNoticeValue;
-        message('uc-source', value ? value.line + (value.derivedNote ? ' · ' + value.derivedNote : '') : '');
+        const parts=[];
+        if (sourceNoticeValue) {
+          parts.push(sourceNoticeValue.line);
+          if (sourceNoticeValue.derivedNote) parts.push(sourceNoticeValue.derivedNote);
+        }
+        if (sourceAccess === 'read-only') parts.push('Nur Lesezugriff');
+        else if (sourceAccess === 'unknown') parts.push('Quelle nicht verifiziert; Änderungen deaktiviert');
+        message('uc-source',parts.join(' · '));
       }
 
       function hideDetail() {
@@ -179,7 +221,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
 
       function invalidateCheck() {
         checkGeneration++;
-        byId('uc-check').disabled=false;
+        byId('uc-check').disabled=!canMutate();
       }
 
       async function load(selected = (selectedId ?? pendingSelectionId), preserveCheck = false) {
@@ -192,6 +234,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
         listLoading=true;
         rows=[];
         notice=null;
+        setSourceAccess('unverified');
         hideDetail();
         message('uc-list-error','');
         renderSource(null);
@@ -202,7 +245,10 @@ import BachLayout from "../../layouts/BachLayout.astro";
           if (generation!==listGeneration) return null;
           if (!Array.isArray(body.usecases) || !body.stats) throw new Error('Ungültige Usecase-Antwort.');
           rows=body.usecases.filter(row => validId(row.id));
-          notice=sourceNotice(body.source);
+          const hasSource=Object.prototype.hasOwnProperty.call(body,'source');
+          sourceAccess=!hasSource ? 'legacy' : sourceReadOnlyState(body.source);
+          notice=sourceAccess === 'read-only' ? sourceNotice(body.source) : null;
+          applySourceAccess();
           renderSource(notice);
           const stats=body.stats;
           for (const [key,value] of [['total',stats.total],['pass',stats.pass],['fail',stats.fail],['pending',stats.pending]]) {
@@ -227,6 +273,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
           listLoading=false;
           rows=[];
           notice=null;
+          setSourceAccess('unknown');
           selectedId=null;
           pendingSelectionId=null;
           hideDetail();
@@ -285,6 +332,15 @@ import BachLayout from "../../layouts/BachLayout.astro";
           if (generation!==detailGeneration || expectedListGeneration!==listGeneration) return null;
           const item=body.usecase;
           if (!item || Number(item.id)!==requested || !listHas(requested)) throw new Error('Usecase-Detail stimmt nicht mit der ID überein.');
+          const hasDetailSource=Object.prototype.hasOwnProperty.call(body,'source');
+          let detailNotice=null;
+          if (hasDetailSource) {
+            const detailAccess=sourceReadOnlyState(body.source);
+            if (detailAccess === 'read-only') {
+              detailNotice=sourceNotice(body.source);
+              if (sourceAccess === 'legacy' || sourceAccess === 'unverified') setSourceAccess('read-only');
+            } else setSourceAccess('unknown');
+          }
           byId('uc-empty').hidden=true; byId('uc-detail-content').hidden=false;
           for (const [name,value] of Object.entries({id:`Usecase #${requested}`,title:display(item.title),workflow:display(item.workflow_name),
             result:label(item.test_result),score:item.test_score == null ? '–' : `${item.test_score} %`,
@@ -292,8 +348,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
             description:display(item.description),input:display(item.test_input),expected:display(item.expected_output)})) {
             byId('uc-'+name).textContent=value;
           }
-          const hasDetailSource=Object.prototype.hasOwnProperty.call(body,'source');
-          const detailSource=hasDetailSource ? sourceNotice(body.source) : notice;
+          const detailSource=hasDetailSource ? detailNotice : notice;
           const distinctDetailSource=hasDetailSource && detailSource && (!notice || detailSource.line!==notice.line);
           message('uc-detail-source',distinctDetailSource ? 'Detailherkunft: '+detailSource.line.slice('Herkunft: '.length) : '');
           const note=detailSource && detailSource.derivedNote;
@@ -302,6 +357,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
           return item;
         } catch (cause) {
           if (generation!==detailGeneration || expectedListGeneration!==listGeneration) return null;
+          if (sourceAccess !== 'read-only') setSourceAccess('unknown');
           hideDetail();
           message('uc-list-error',cause instanceof Error ? cause.message : 'Detail konnte nicht geladen werden.');
           return null;
@@ -309,20 +365,22 @@ import BachLayout from "../../layouts/BachLayout.astro";
       }
 
       function editor(item) {
+        if (!canMutate()) return;
         editorId=item?.id ?? null;
         const form=byId('uc-editor-form');form.reset();message('uc-editor-error','');
         byId('uc-editor-title').textContent=editorId ? 'Usecase bearbeiten' : 'Neuer Usecase';
         for (const field of ['title','description','workflow_name','test_input','expected_output']) form.elements[field].value=String(item?.[field] || '');
         byId('uc-editor').showModal();form.elements.title.focus();
       }
-      byId('uc-create').addEventListener('click',()=>editor(null));
-      byId('uc-edit').addEventListener('click',async()=>{if(selectedId){const item=await open(selectedId);if(item)editor(item);}});
+      byId('uc-create').addEventListener('click',()=>{if(canMutate())editor(null);});
+      byId('uc-edit').addEventListener('click',async()=>{if(canMutate() && selectedId){const item=await open(selectedId);if(item && canMutate())editor(item);}});
       for(const id of ['uc-editor-close','uc-editor-cancel'])byId(id).addEventListener('click',()=>byId('uc-editor').close());
       byId('uc-refresh').addEventListener('click',()=>load());
       byId('uc-search').addEventListener('input',renderList);
 
       byId('uc-editor-form').addEventListener('submit',async event=>{
         event.preventDefault();const form=event.currentTarget;if(!form.reportValidity())return;
+        if(!canMutate()){message('uc-editor-error',accessMessage());return;}
         const submit=form.querySelector('button[type="submit"]');submit.disabled=true;message('uc-editor-error','');
         const values=new FormData(form);
         const payload=Object.fromEntries(['title','description','workflow_name','test_input','expected_output'].map(key=>[key,String(values.get(key)||'').trim()]));
@@ -341,6 +399,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
       });
 
       byId('uc-check').addEventListener('click',async()=>{
+        if(!canMutate())return;
         const id=selectedId;
         if(!id)return;
         if(!confirm('Nur die Usecase-Definition prüfen? Workflow und Modell werden nicht ausgeführt; der Prüfstatus wird gespeichert.'))return;
@@ -364,18 +423,22 @@ import BachLayout from "../../layouts/BachLayout.astro";
         }
       });
       byId('uc-check-all').addEventListener('click',async()=>{
+        if(!canMutate())return;
         if(!rows.length)return;
         if(!confirm(`${rows.length} Usecase-Definitionen prüfen und ihren Prüfstatus speichern? Kein Workflow wird ausgeführt.`))return;
+        const expectedListGeneration=listGeneration;
         const button=byId('uc-check-all');button.disabled=true;message('uc-list-error','');
         try {
           const body=await request(`${api}/test-all`,{method:'POST'});
+          if(expectedListGeneration!==listGeneration || !canMutate())return;
           if(!Number.isSafeInteger(body.total))throw new Error('Ungültige Prüfantwort.');
           await load();
-          message('uc-page-status',`${body.total} Definitionen geprüft. Kein Workflow wurde ausgeführt.`);
+          if(canMutate())message('uc-page-status',`${body.total} Definitionen geprüft. Kein Workflow wurde ausgeführt.`);
         }catch(cause){message('uc-list-error',cause instanceof Error?cause.message:'Definitionsprüfung fehlgeschlagen.');}
-        finally{button.disabled=false;}
+        finally{button.disabled=!canMutate();}
       });
       byId('uc-delete').addEventListener('click',async()=>{
+        if(!canMutate())return;
         if(!selectedId)return;
         const id=selectedId;
         if(!confirm(`Usecase #${id} wirklich löschen? Diese Aktion entfernt die gespeicherte Definition.`))return;
@@ -388,8 +451,9 @@ import BachLayout from "../../layouts/BachLayout.astro";
             throw new Error('Löschung gemeldet, aber der Kontrollabruf ist nicht eindeutig. Bitte Daten prüfen.');
           clearDetail();await load(null);
         }catch(cause){message('uc-action-status',cause instanceof Error?cause.message:'Usecase konnte nicht gelöscht werden.');}
-        finally{button.disabled=false;}
+        finally{button.disabled=!canMutate();}
       });
+      applySourceAccess();
       load();
     })();
   </script>

@@ -2,6 +2,15 @@
 // usecases_reader); BACH nicht. Fehlt es oder ist es ungueltig, gibt es keine Anzeige (null).
 const text = value => typeof value === 'string' && value.trim() ? value.trim() : null;
 
+const USECASE_SOURCE_ID = 'ellmos-tests';
+const USECASE_SOURCE_FILE = 'usecases.json';
+const SOURCE_ERROR_MESSAGES = Object.freeze({
+  'source-missing': 'Die Usecase-Quelle fehlt.',
+  'source-too-large': 'Die Usecase-Quelle überschreitet die zulässige Größe.',
+  'source-unreadable': 'Die Usecase-Quelle konnte nicht gelesen werden.',
+  'source-invalid': 'Die Usecase-Quelle ist ungültig.',
+});
+
 function formatDate(value) {
   const iso = /^(\d{4}-\d{2}-\d{2})(?:T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-](\d{2}):(\d{2})))?$/.exec(value);
   if (!iso) return null;
@@ -13,6 +22,19 @@ function formatDate(value) {
   if (Number.isNaN(stamp.getTime())) return null;
   // Reines Datum ist UTC-Mitternacht und darf durch die lokale Zeitzone nicht um einen Tag springen.
   return stamp.toLocaleDateString('de-DE', /^\d{4}-\d{2}-\d{2}$/.test(value) ? {timeZone: 'UTC'} : undefined);
+}
+
+export function sourceReadOnlyState(source) {
+  if (!source || typeof source !== 'object' || Array.isArray(source)) return 'unknown';
+  if (source.id !== USECASE_SOURCE_ID || source.file !== USECASE_SOURCE_FILE || source.read_only !== true ||
+    !formatDate(source.generated_at)) return 'unknown';
+  return 'read-only';
+}
+
+export function sourceErrorMessage(reason) {
+  return Object.prototype.hasOwnProperty.call(SOURCE_ERROR_MESSAGES, reason)
+    ? SOURCE_ERROR_MESSAGES[reason]
+    : 'Die Usecase-Quelle ist derzeit nicht verfügbar.';
 }
 
 export function sourceNotice(source) {
