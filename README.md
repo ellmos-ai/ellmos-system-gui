@@ -18,11 +18,11 @@ node --test tests/*.test.mjs
 npm run build
 ```
 
-The frontend contains 25 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance.
+The frontend contains 26 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance.
 
 ## Release
 
-Version 0.2.19 includes the System/Ocean and capability catalogue views, the prompt library, daemon chains, document register and the shipped page-read manifest. The Agenten-Werkstatt uses a robot icon and has no image background. These frontend capabilities still require compatible consumer adapters.
+Version 0.2.20 adds the Subscription-Agents onboarding board and a memory map that starts collapsed, with all eight memory components retained. It includes the System/Ocean and capability catalogue views, the prompt library, daemon chains, document register and the shipped page-read manifest. The Agenten-Werkstatt uses a robot icon and has no image background. These frontend capabilities still require compatible consumer adapters. The new onboarding board generates a preview and copies it in the user's browser; it does not launch an agent or claim a task. Boot sources, governance availability and native BACH/Ocean readiness require separate consumer verification.
 
 After the reviewed source has been committed, with a clean checkout including untracked files:
 
