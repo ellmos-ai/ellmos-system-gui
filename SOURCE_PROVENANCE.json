@@ -29,7 +29,7 @@
     "src/components/Header.astro": "c997c4aa86d16d0ab70edaaf3c6c3332d0e566cc629386d2872fd7ebd57a44e7",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "78295d99e1673edf101efae42498f518e6b2a73334998c5bdb3a5ff10be704e3",
-    "src/config/nav_config.json": "42e51e6fc0db9489bb00ed3548b6c6c98e03c144c727885edc8d6b22b8498a37",
+    "src/config/nav_config.json": "0dc51055b0da809445c73ec01cd29fe238b37000e7783ab84edd68ecfbbc078c",
     "src/layouts/BachLayout.astro": "8f45bbac50c150ea9d19f91794bb97b94ad103f5abc5cdef01e70a3c9cc43ac6",
     "src/lib/agent-avatar.mjs": "3057e2f7863031a5d157b7c0e0fb3659678a97fc6eacdeb8645775e263e26147",
     "src/lib/capability-board-client.mjs": "7a80423bc472ade80f05065c57ef9b732493b40cd2900f0705b2c3af8f72d831",
@@ -70,7 +70,7 @@
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/frontend-parity.test.mjs": "e29e304faaf52f2dcebf5119eadf9b23703f876543f3f92ba5b06c78bae811cb",
+    "tests/frontend-parity.test.mjs": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5",
     "tests/task-assignment.test.mjs": "5ee7ae0defcdc8ef36edc76c4da821f59ea078399c0c6d30c2a5d94115aef3e3",
     "src/lib/task-assignment.mjs": "99fdaf57c0eb093cd46eb3f1bdcaa58cea1fbfd89bef5142aab7224cbf4dfd7d",
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
@@ -107,12 +107,16 @@
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/memory-facts.test.mjs": "8be5410afab2074934db3a5a1d62e8b3eb9c9569d480ef033b62157c17484f38",
     "README.md": "a178ee52165bbfd1c1596c864343290738a097fb5510bd50a394a89e95401428",
-    "docs/CONSUMER_CONTRACT.md": "dd33fbaf8a3f92e0d9bba1ab8eeff84f979c55f739fadb65edd206a183bf3a11",
+    "docs/CONSUMER_CONTRACT.md": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
     "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
     "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
-    "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977"
+    "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
+    "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
+    "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
+    "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
+    "public/page-reads.v1.json": "d4dc1da82fd64783937d5b4a618d9c78a6937c28029ea1cc3a32ff3397789a08"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -141,7 +145,36 @@
     "tests/readable-themes.test.mjs",
     "tests/release-provenance.test.mjs",
     "tests/system-slots.test.mjs",
-    "tests/task-assignment.test.mjs"
+    "tests/task-assignment.test.mjs",
+    {
+      "date": "2026-10-12",
+      "change": "Task2030 follow-up: native integer blueprint IDs, backend-aligned target bounds, and optional unverified workspace request/preview echo",
+      "source_base_commit": "f5309649f0b8040364d2475c632e4ba444b7a5ae",
+      "backend_reference_commit": "652898530551688d7d9626c088f83b3b05a40dd4",
+      "backend_source_sha256": "c545925a2c3422e6210c8aa1e22ff8c25aadd4e31963ccbe9479be52a25b39ef",
+      "files": [
+        {
+          "path": "src/lib/subscription-agents-client.mjs",
+          "previous_sha256": "1d66168ef40b62df4fa0d55e1f31129f6fef7b6a625877aac0aaab8920ea88f6",
+          "sha256": "6a60d8da886661eda56d7130bf8e13ce7abca8cf2b1f0d45a4e72f4c5eaa3b10"
+        },
+        {
+          "path": "src/pages/agenten/subscription-agents.astro",
+          "previous_sha256": "68a9895315254dfd7b6db09e6e3d4a2e1ad9c3bad77bb5ca4e766b3b333e5d03",
+          "sha256": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4"
+        },
+        {
+          "path": "tests/subscription-agents-client.test.mjs",
+          "previous_sha256": "e1ee0db4aab46a886b6a9329b59d6dee02eba9886a08b4cb1a9e609a3d775bf7",
+          "sha256": "1692b9a613d844020fb3b3fa07559c9a54a26640f6642df7ed5eb6d0b92c8994"
+        },
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "467b75411d8e01e809f3083b8dc609aeb78a8f2c1db8b0757617eecb3a5b38b5",
+          "sha256": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d"
+        }
+      ]
+    }
   ],
   "source_imports": [
     {
@@ -954,6 +987,95 @@
           "path": "tests/model-sockets.test.mjs",
           "previous_sha256": null,
           "sha256": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-12",
+      "change": "Task2030: shared Subscription Agents prompt board; capability-gated preview, explicit manual copy and truthful local source tracking",
+      "source_base_commit": "f5309649f0b8040364d2475c632e4ba444b7a5ae",
+      "backend_reference_commit": "652898530551688d7d9626c088f83b3b05a40dd4",
+      "files": [
+        {
+          "path": "src/lib/subscription-agents-client.mjs",
+          "previous_sha256": null,
+          "sha256": "7a86bf08d4ce9564ca10455bddb7d9eb686809d1cdd494baf228e92fdd859799"
+        },
+        {
+          "path": "src/pages/agenten/subscription-agents.astro",
+          "previous_sha256": null,
+          "sha256": "b562d5d070bc7f3b69a1869b472201d646aeba92d38f20b60016faa58c479b24"
+        },
+        {
+          "path": "tests/subscription-agents-client.test.mjs",
+          "previous_sha256": null,
+          "sha256": "731d493adf6e5acccf21a33d80d1c7e030636ab87d3b0061bb51d3490d3a734a"
+        },
+        {
+          "path": "src/config/nav_config.json",
+          "previous_sha256": "42e51e6fc0db9489bb00ed3548b6c6c98e03c144c727885edc8d6b22b8498a37",
+          "sha256": "0dc51055b0da809445c73ec01cd29fe238b37000e7783ab84edd68ecfbbc078c"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "f29759b8e0fac9daa08a77ae50622623eeac2d9f8a5e9fb67eefb5c2cd02d44d",
+          "sha256": "d4dc1da82fd64783937d5b4a618d9c78a6937c28029ea1cc3a32ff3397789a08"
+        },
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "dd33fbaf8a3f92e0d9bba1ab8eeff84f979c55f739fadb65edd206a183bf3a11",
+          "sha256": "f077b96f02c3ff4f8cf0b42aa80fe17b82b64d9080a69af417de0ea0ee84fef5"
+        },
+        {
+          "path": "tests/frontend-parity.test.mjs",
+          "previous_sha256": "e29e304faaf52f2dcebf5119eadf9b23703f876543f3f92ba5b06c78bae811cb",
+          "sha256": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-12",
+      "change": "Task2030 follow-up: strict composer preview source validation, real missing-source handling, and backend-aligned client ID bound",
+      "source_base_commit": "f5309649f0b8040364d2475c632e4ba444b7a5ae",
+      "backend_reference_commit": "652898530551688d7d9626c088f83b3b05a40dd4",
+      "files": [
+        {
+          "path": "src/lib/subscription-agents-client.mjs",
+          "previous_sha256": "7a86bf08d4ce9564ca10455bddb7d9eb686809d1cdd494baf228e92fdd859799",
+          "sha256": "1d66168ef40b62df4fa0d55e1f31129f6fef7b6a625877aac0aaab8920ea88f6"
+        },
+        {
+          "path": "src/pages/agenten/subscription-agents.astro",
+          "previous_sha256": "b562d5d070bc7f3b69a1869b472201d646aeba92d38f20b60016faa58c479b24",
+          "sha256": "68a9895315254dfd7b6db09e6e3d4a2e1ad9c3bad77bb5ca4e766b3b333e5d03"
+        },
+        {
+          "path": "tests/subscription-agents-client.test.mjs",
+          "previous_sha256": "731d493adf6e5acccf21a33d80d1c7e030636ab87d3b0061bb51d3490d3a734a",
+          "sha256": "e1ee0db4aab46a886b6a9329b59d6dee02eba9886a08b4cb1a9e609a3d775bf7"
+        },
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "f077b96f02c3ff4f8cf0b42aa80fe17b82b64d9080a69af417de0ea0ee84fef5",
+          "sha256": "467b75411d8e01e809f3083b8dc609aeb78a8f2c1db8b0757617eecb3a5b38b5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-12",
+      "change": "Task2030 native composer alignment: integer request IDs bind to canonical string preview IDs, and unavailable policy sources use their exact native shape",
+      "source_base_commit": "f5309649f0b8040364d2475c632e4ba444b7a5ae",
+      "backend_reference_commit": "652898530551688d7d9626c088f83b3b05a40dd4",
+      "files": [
+        {
+          "path": "src/lib/subscription-agents-client.mjs",
+          "previous_sha256": "6a60d8da886661eda56d7130bf8e13ce7abca8cf2b1f0d45a4e72f4c5eaa3b10",
+          "sha256": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab"
+        },
+        {
+          "path": "tests/subscription-agents-client.test.mjs",
+          "previous_sha256": "1692b9a613d844020fb3b3fa07559c9a54a26640f6642df7ed5eb6d0b92c8994",
+          "sha256": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a"
         }
       ]
     }

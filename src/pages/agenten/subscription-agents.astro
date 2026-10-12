@@ -1,0 +1,105 @@
+---
+import BachLayout from '../../layouts/BachLayout.astro';
+---
+<BachLayout title="Subscription Agents" currentPath="/agenten/subscription-agents">
+  <main class="subscription-board" aria-labelledby="subscription-title">
+    <header class="subscription-header">
+      <div>
+        <p class="eyebrow">BACH · Open-Ocean</p>
+        <h1 id="subscription-title">Subscription Agents</h1>
+        <p class="lead">Stelle einen quellengebundenen Startprompt zusammen. Diese Seite startet keinen Agenten und übernimmt keine Aufgabe.</p>
+      </div>
+      <button id="subscription-refresh" class="btn btn-secondary" type="button">Quellen neu laden</button>
+    </header>
+
+    <section class="source-state" aria-label="Anbindung">
+      <p id="subscription-status" role="status" aria-live="polite">Quellen werden geprüft …</p>
+      <p><strong>BACH / verbundener Backendadapter:</strong> <span id="subscription-route-state">unbekannt</span></p>
+      <p><strong>Open-Ocean:</strong> unbekannt, solange kein eigener Adapter diese Route bestätigt.</p>
+    </section>
+
+    <form id="subscription-form" class="subscription-form">
+      <section class="card" aria-labelledby="target-heading">
+        <h2 id="target-heading">Zielclient</h2>
+        <p class="muted">Manuelle, unbestätigte Prompt-Metadaten. Sie wählen keinen installierten Client und beweisen keine Laufzeitfähigkeit.</p>
+        <div class="field-grid">
+          <label>Client-Kennung<input name="client_id" required maxlength="64" autocomplete="off" placeholder="z. B. codex" /></label>
+          <label>Host<input name="host" required maxlength="128" autocomplete="off" placeholder="z. B. Laptop" /></label>
+          <label>Anzeigename<input name="client_name" required maxlength="120" autocomplete="off" placeholder="z. B. Codex auf dem Laptop" /></label>
+          <label>Arbeitskontext (optional)<input name="workspace" maxlength="1024" autocomplete="off" placeholder="z. B. Repository oder Projektbereich" /></label>
+        </div>
+        <p class="muted">Der Arbeitskontext wird nur als Text übernommen. Zugriff oder Arbeitsverzeichnis werden nicht geprüft.</p>
+      </section>
+
+      <section class="card" aria-labelledby="source-heading">
+        <h2 id="source-heading">Blueprint und Skills</h2>
+        <label>Blueprint<select id="subscription-blueprint" name="blueprint_id" required><option value="">Blueprints werden geladen …</option></select></label>
+        <p class="muted">Nur ganzzahlige, aktuelle Blueprint-Revisionen sind auswählbar. Unpassende Revisionen bleiben gesperrt.</p>
+        <fieldset>
+          <legend>Aktuelle Skill-Quellen (höchstens 30 auswählen)</legend>
+          <div id="subscription-skills" class="skill-list"><p class="muted">Skill-Quellen werden geladen …</p></div>
+        </fieldset>
+      </section>
+
+      <section class="card" aria-labelledby="task-heading">
+        <h2 id="task-heading">Arbeitsauftrag und Task-Kontext</h2>
+        <p class="muted">Task-IDs sind nur Referenzen. Es gibt keine Queue-Suche, Zuweisung, Lease oder Übernahme.</p>
+        <label>Auftrag<textarea name="user_task" rows="5" maxlength="16000" placeholder="Was soll der spätere Client tun?"></textarea></label>
+        <label>Task-Referenzen<input name="task_refs" maxlength="240" inputmode="numeric" placeholder="z. B. 123, 456" /></label>
+        <label>Textliche Auswahlregel<textarea name="task_selection_rule" rows="3" maxlength="2000" placeholder="Optional; wird nur als Text in die Vorschau übernommen."></textarea></label>
+      </section>
+
+      <section class="card" aria-labelledby="governance-heading">
+        <h2 id="governance-heading">Governance-Quellen</h2>
+        <p class="muted">Policy- und Entscheidungsfragen dienen nur dem lesenden Quellenabgleich. Durchsetzung wird nicht bestätigt.</p>
+        <div class="field-grid">
+          <label>Geltungsbereich<input name="governance_scope" maxlength="256" value="BACH" /></label>
+          <label>Policy-Frage<input name="policy_query" maxlength="128" /></label>
+          <label>Entscheidungsfrage<input name="decision_query" maxlength="128" /></label>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button id="subscription-compose" class="btn btn-primary" type="submit" disabled>Preview zusammenstellen</button>
+      </div>
+    </form>
+
+    <section class="card preview" aria-labelledby="preview-heading">
+      <header class="preview-heading">
+        <div><h2 id="preview-heading">Vorschau</h2><p id="subscription-preview-state" class="muted">Noch keine bestätigte Vorschau.</p></div>
+        <button id="subscription-copy" class="btn btn-secondary" type="button" disabled>Prompt manuell kopieren</button>
+      </header>
+      <p id="subscription-preview-meta" class="muted"></p>
+      <div class="preview-columns">
+        <section><h3>Quellen</h3><ul id="subscription-source-list"></ul></section>
+        <section><h3>Fehlende Quellen</h3><ul id="subscription-missing-list"></ul></section>
+      </div>
+      <label for="subscription-prompt">Prompttext</label>
+      <textarea id="subscription-prompt" rows="18" readonly aria-label="Zusammengestellter Prompt"></textarea>
+      <p class="muted">„Für Review bereit“ beschreibt nur den Quellenstatus. Es ist kein Client-Readiness-, Launcher-, Governance- oder Laufzeitnachweis. Das Kopieren geschieht ausschließlich nach Klick im Browser.</p>
+    </section>
+  </main>
+</BachLayout>
+
+<script>import '../../lib/subscription-agents-client.mjs';</script>
+
+<style>
+  .subscription-board{display:grid;gap:1rem;max-width:1120px;margin:0 auto;padding:1rem}
+  .subscription-header,.preview-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .subscription-header h1{margin:.2rem 0;font-size:clamp(1.6rem,3vw,2.3rem)}
+  .eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;color:var(--text-muted);margin:0}
+  .lead,.muted{color:var(--text-muted);line-height:1.55;font-size:.88rem}
+  .source-state,.card{border:1px solid var(--border);background:var(--bg-panel);border-radius:12px;padding:1rem}
+  .source-state p{margin:.25rem 0}.subscription-form{display:grid;gap:1rem}.card h2{margin:0 0 .65rem}.card h3{font-size:1rem;margin:.3rem 0}
+  .field-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;margin:.8rem 0}
+  label{display:grid;gap:.35rem;color:var(--text-muted);font-size:.84rem}
+  input,select,textarea{width:100%;padding:.65rem;background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:6px;font:inherit}
+  textarea{resize:vertical;line-height:1.5}input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+  fieldset{border:1px solid var(--border);border-radius:8px;padding:.8rem;margin:.8rem 0 0}legend{padding:0 .35rem;color:var(--text-muted)}
+  .skill-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.4rem;max-height:320px;overflow:auto}
+  .subscription-skill{display:flex;grid-template-columns:auto 1fr;align-items:flex-start;gap:.55rem;padding:.5rem;border:1px solid var(--border);border-radius:6px;color:var(--text)}
+  .subscription-skill input{width:auto;margin-top:.2rem}.subscription-skill span{display:grid;gap:.2rem}.subscription-skill small{color:var(--text-muted);overflow-wrap:anywhere}
+  .actions{display:flex;justify-content:flex-end}.preview-heading{align-items:center}.preview-columns{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.preview-columns ul{padding-left:1.25rem;overflow-wrap:anywhere}
+  #subscription-status[data-error=true]{border-left:3px solid var(--error);padding-left:.5rem}
+  @media(max-width:640px){.subscription-board{padding:.55rem}.preview-columns{grid-template-columns:1fr}.source-state,.card{padding:.8rem}}
+</style>
