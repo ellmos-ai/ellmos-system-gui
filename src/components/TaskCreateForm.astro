@@ -48,6 +48,10 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
       <label class="task-create-wide">Beschreibung
         <textarea name="description" rows="5" placeholder="Kontext, Kriterien und Hinweise"></textarea>
       </label>
+      <label class="task-create-wide" data-result-max-chars-field hidden>Maximale Länge des Worker-Ergebnisses
+        <input name="result_max_chars" type="number" min="1" max="3000" step="1" inputmode="numeric" />
+        <small>Optional: 1 bis 3000 Zeichen. Ohne Wert gilt keine zusätzliche Begrenzung.</small>
+      </label>
       <details class="task-create-wide">
         <summary>Weitere Zuweisungsfelder</summary>
         <div class="task-create-grid">
@@ -88,6 +92,7 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
 
 <script>
   import {createAssignmentController, taskResponseError} from '../lib/task-assignment.mjs';
+  import {resultMaxCharsCreateChange, supportsTaskResultMaxChars} from '../lib/task-result-contract.mjs';
   (() => {
     const forms = document.querySelectorAll('[data-task-create-form]');
     for (const form of forms) {
@@ -96,10 +101,23 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
       const dialog = form.closest('dialog');
       const error = form.querySelector('[data-task-create-error]');
       const assignee = form.querySelector('[data-task-assignee]');
+      const resultMaxCharsField = form.querySelector('[data-result-max-chars-field]');
+      let resultMaxCharsCapabilities = null;
       const fallback = form.dataset.defaultAssignee || 'user';
       const fixedAssignee = form.dataset.fixedAssignee === 'true';
       const assignment = createAssignmentController(form, {fixedAssignee});
       const showError = message => { error.textContent = message; error.hidden = !message; };
+      async function loadResultMaxCharsCapability() {
+        resultMaxCharsCapabilities = null; resultMaxCharsField.hidden = true;
+        try {
+          const response = await fetch('/api/task-capabilities', {redirect:'error'});
+          if (!response.ok) return null;
+          const capabilities = await response.json();
+          if (supportsTaskResultMaxChars(capabilities)) resultMaxCharsCapabilities = capabilities;
+        } catch (_) { resultMaxCharsCapabilities = null; }
+        resultMaxCharsField.hidden = !resultMaxCharsCapabilities;
+        return resultMaxCharsCapabilities;
+      }
       let unresolvedRequestedSlot = null;
       form.querySelector('[data-task-target]').addEventListener('change', () => {
         unresolvedRequestedSlot = null; showError('');
@@ -109,7 +127,7 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
           button.addEventListener('click', async () => {
             unresolvedRequestedSlot = null;
             showError(''); dialog.showModal(); form.elements.title.focus();
-            await legacyAssignees;
+            await Promise.all([legacyAssignees, loadResultMaxCharsCapability()]);
             await assignment.reload();
           });
         }
@@ -140,7 +158,7 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
           const submit = form.querySelector('button[type="submit"]');
           submit.disabled = true;
           try {
-            await legacyAssignees;
+            await Promise.all([legacyAssignees, loadResultMaxCharsCapability()]);
             await assignment.reload();
             if (unresolvedRequestedSlot) {
               assignment.selectSlot(unresolvedRequestedSlot);
@@ -173,6 +191,14 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
           if (text(key)) payload[key] = text(key);
         }
         try {
+          const limitText = String(values.get('result_max_chars') || '').trim();
+          if (limitText) {
+            const capabilities = await loadResultMaxCharsCapability();
+            const change = resultMaxCharsCreateChange(capabilities, limitText);
+            if (!change.supported) throw new Error('Das Backend unterstützt diese Ergebnisbegrenzung nicht. Die Aufgabe wurde nicht angelegt.');
+            if (!change.valid) throw new Error('Die Ergebnisbegrenzung muss eine ganze Zahl von 1 bis 3000 sein.');
+            if (change.include) payload.result_max_chars = change.value;
+          }
           Object.assign(payload, assignment.payload());
           const response = await fetch('/api/tasks', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
           const result = await response.json().catch(() => ({}));

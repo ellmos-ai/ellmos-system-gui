@@ -71,7 +71,26 @@
    },
    {
     "method": "POST",
+    "path": "/api/tasks/{id}/result/correction",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/pages/tasks.astro#(module)"
+   },
+   {
+    "method": "GET",
+    "path": "/api/tasks/{id}/result/history",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/pages/tasks.astro#loadTaskResultHistory"
+   },
+   {
+    "method": "POST",
     "path": "/api/tasks",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/task-capabilities",
     "required": false
    },
    {
@@ -135,6 +154,11 @@
    {
     "method": "POST",
     "path": "/api/calendar/events",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/task-capabilities",
     "required": false
    },
    {
@@ -904,6 +928,11 @@
    {
     "method": "GET",
     "path": "/api/assignees",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/task-capabilities",
     "required": false
    },
    {
