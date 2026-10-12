@@ -232,3 +232,39 @@ Zusatzauftrags. Promptinhalte gehören nicht in die allgemeine Statusprojektion.
 current_activity zeigt auch Fehler und Wartegründe. Fehlende Laufzeitfelder
 werden als unbestätigt dargestellt; Ocean muss die Werte aus seinem eigenen
 Controller liefern.
+
+## Subscription Agents: Promptvorschau ohne Start
+
+Die optionale Seite `/agenten/subscription-agents` liest aktuelle Blueprints,
+Skillquellen und `GET /api/gui/capabilities`. Sie sendet die Vorschau nur, wenn
+der verbundene Adapter `POST /api/agent-studio/subscription-agents/compose`
+ausdrücklich als verfügbar deklariert. Eine fehlende oder unklare Deklaration
+bleibt unbekannt beziehungsweise nicht verfügbar; die Seite behauptet daraus
+keine Open-Ocean-Fähigkeit.
+
+Der Vorschauvertrag `bach.subscription-agent-onboarding.request.v1` bindet die
+positive ganzzahlige Blueprint-ID und Revision aus dem Backend sowie
+ausgewählte IDs aus der aktuellen Skillbibliothek. SemVer-Fallbacks bleiben
+gesperrt und werden nicht in Ganzzahlen umgedeutet. Client-Kennung und Host
+sind auf die Backendgrenzen von 64 beziehungsweise 128 Zeichen begrenzt.
+Angaben zu Client, Host und Anzeigename sind manuelle, unbestätigte
+Promptmetadaten. Der Konsument prüft die Quellbelege gegen die
+ausgewählte Blueprint-Fassung, ihre Rolle, die Blueprint- und manuell
+ausgewählten Skills sowie Task-Referenzen. Fehlende Einträge müssen dem
+Composer-Schema entsprechen; `ready_for_review` ist nur bei leerer
+`missing`-Liste gültig. Task-IDs und textliche Auswahlregeln sind nur
+Kontext: der Composer durchsucht keine Queue, claimt keine Aufgabe und startet
+keinen Worker. `ready_for_review` bezeichnet ausschließlich den Quellenstatus;
+es bestätigt weder Clientbereitschaft noch Launcher, Governance-Durchsetzung
+oder Laufzeit. Promptkopie erfolgt nach ausdrücklichem Klick im Browser; ein
+Backend-Clipboard- oder Startbeleg wird nicht erzeugt.
+
+Der optionale Arbeitskontext ist einzeiliger Text mit höchstens 1024 Zeichen.
+Steuerzeichen und mögliche Zugangsdaten oder Schlüsselangaben werden
+abgewiesen; leere Eingaben bleiben aus dem Request heraus. Das Backend spiegelt den Text in der
+Vorschau mit „Zugriff nicht geprüft“. Er verleiht weder Lesezugriff noch ein
+geprüftes Arbeitsverzeichnis.
+
+Ocean muss seine eigene Geräte-/Sessiongrenze, Capability-Deklaration und
+Composerroute bereitstellen. Ohne diese Anbindung bleibt die Seite für Ocean
+nicht verfügbar.

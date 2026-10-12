@@ -597,6 +597,28 @@
     "required": false
    }
   ],
+  "/agenten/subscription-agents": [
+   {
+    "method": "GET",
+    "path": "/api/gui/capabilities",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints",
+    "required": true
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/skills/library",
+    "required": true
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-studio/subscription-agents/compose",
+    "required": false
+   }
+  ],
   "/agenten/fabrika": [],
   "/agenten/marblerun": [
    {
