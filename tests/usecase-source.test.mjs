@@ -30,7 +30,7 @@ test('negative control: fehlendes oder ungültiges source ergibt keine Anzeige',
 });
 
 // Seite mit Fake-DOM ausfuehren; fetch can be controlled to reproduce stale responses.
-function mount(fetchImpl, scriptOverride = null) {
+function mount(fetchImpl, scriptOverride = null, confirmImpl = () => false) {
   const nodes = new Map();
   const make = () => new Proxy({children: [], events: {}, hidden: false, value: '', textContent: '', dataset: {}, classList: {add() {}},
     append(...children) { this.children.push(...children); }, replaceChildren(...children) { this.children = children; },
@@ -40,7 +40,7 @@ function mount(fetchImpl, scriptOverride = null) {
   });
   const document = {getElementById: id => nodes.get(id) ?? nodes.set(id, make()).get(id), createElement: make};
   const script = scriptOverride ?? page.match(/<script>([\s\S]*?)<\/script>/)[1].replace(/^\s*import .*$/m, '');
-  const context = {document, fetch: fetchImpl, sourceNotice, confirm: () => false, encodeURIComponent, Number, String, Array, Set, Object, Error, Promise, FormData: class {}};
+  const context = {document, fetch: fetchImpl, sourceNotice, confirm: confirmImpl, encodeURIComponent, Number, String, Array, Set, Object, Error, Promise, FormData: class {}};
   vm.runInNewContext(script, context);
   return nodes;
 }
@@ -66,6 +66,47 @@ function listRows(usecases, source) {
   return {success: true, usecases, stats: {total: usecases.length, pass: usecases.filter(item => item.test_result === 'pass').length,
     fail: usecases.filter(item => item.test_result === 'fail').length, pending: usecases.filter(item => !['pass','fail'].includes(item.test_result)).length},
     ...(source === undefined ? {} : {source})};
+}
+
+async function startPendingCheckThenSelectSecond() {
+  const second = {...row, id: 2, title: 'Zwei', workflow_name: 'w2'};
+  const pending = controlledFetch();
+  const nodes = mount(pending.fetch, null, () => true);
+  pending.calls[0].success(listRows([row, second]));
+  await flush();
+  const firstOpen = nodes.get('uc-list').children[0].events.click();
+  await flush();
+  pending.calls[1].success({success: true, usecase: row});
+  await firstOpen;
+
+  const check = nodes.get('uc-check').events.click();
+  await flush();
+  assert.equal(pending.calls[2].url, '/api/usecases/1/test');
+  const secondOpen = nodes.get('uc-list').children[1].events.click();
+  await flush();
+  pending.calls[3].success({success: true, usecase: second});
+  await secondOpen;
+  assert.equal(nodes.get('uc-title').textContent, 'Zwei');
+  assert.equal(nodes.get('uc-action-status').textContent, '');
+  assert.equal(nodes.get('uc-action-status').hidden, true);
+  return {pending, nodes, check};
+}
+
+async function startPendingCheckForFirst() {
+  const second = {...row, id: 2, title: 'Zwei', workflow_name: 'w2'};
+  const pending = controlledFetch();
+  const nodes = mount(pending.fetch, null, () => true);
+  pending.calls[0].success(listRows([row, second]));
+  await flush();
+  const firstOpen = nodes.get('uc-list').children[0].events.click();
+  await flush();
+  pending.calls[1].success({success: true, usecase: row});
+  await firstOpen;
+
+  const check = nodes.get('uc-check').events.click();
+  await flush();
+  assert.equal(pending.calls[2].url, '/api/usecases/1/test');
+  return {pending, nodes, check, second};
 }
 
 function stateOf(nodes) {
@@ -289,6 +330,70 @@ test('Beim Wechsel der Detailauswahl verschwinden alter Aktionsstatus und alte D
   pending.calls[2].success({success: true, usecase: second});
   await secondOpen;
   assert.equal(nodes.get('uc-title').textContent, 'Zwei');
+});
+
+test('late uc-check success cannot reload or mark a newly selected detail', async () => {
+  const {pending, nodes, check} = await startPendingCheckThenSelectSecond();
+  pending.calls[2].success({success: true, result: 'pass'});
+  await check;
+  assert.equal(pending.calls.length, 4, 'stale success must not issue a list/detail refresh');
+  assert.equal(nodes.get('uc-title').textContent, 'Zwei');
+  assert.equal(nodes.get('uc-id').textContent, 'Usecase #2');
+  assert.equal(nodes.get('uc-action-status').textContent, '');
+  assert.equal(nodes.get('uc-action-status').hidden, true);
+});
+
+test('late uc-check failure cannot overwrite the newly selected detail status', async () => {
+  const {pending, nodes, check} = await startPendingCheckThenSelectSecond();
+  pending.calls[2].failure('Veralteter Prüfungsfehler');
+  await check;
+  assert.equal(pending.calls.length, 4, 'stale failure must not issue another request');
+  assert.equal(nodes.get('uc-title').textContent, 'Zwei');
+  assert.equal(nodes.get('uc-action-status').textContent, '');
+  assert.equal(nodes.get('uc-action-status').hidden, true);
+  assert.equal(nodes.get('uc-list-error').textContent, '');
+});
+
+test('uc-check success refreshes the same list and detail before reporting status', async () => {
+  const {pending, nodes, check, second} = await startPendingCheckForFirst();
+  pending.calls[2].success({success: true, result: 'pass'});
+  await flush();
+  assert.equal(pending.calls[3].url, '/api/usecases');
+  pending.calls[3].success(listRows([{...row, last_tested: '2026-10-12T12:00:00Z'}, second]));
+  await flush();
+  assert.equal(pending.calls[4].url, '/api/usecases/1');
+  pending.calls[4].success({success: true, usecase: {...row, last_tested: '2026-10-12T12:00:00Z'}});
+  await check;
+
+  assert.deepEqual(pending.calls.map(call => call.url), [
+    '/api/usecases', '/api/usecases/1', '/api/usecases/1/test', '/api/usecases', '/api/usecases/1',
+  ]);
+  assert.equal(nodes.get('uc-title').textContent, 'Eins');
+  assert.equal(nodes.get('uc-id').textContent, 'Usecase #1');
+  assert.equal(nodes.get('uc-action-status').textContent,
+    'Definitionsprüfung gespeichert: Definition geprüft. Kein Workflow wurde ausgeführt.');
+  assert.equal(nodes.get('uc-action-status').hidden, false);
+  assert.equal(nodes.get('uc-check').disabled, false);
+});
+
+test('manual refresh during uc-check prevents its late success from changing status or reloading', async () => {
+  const {pending, nodes, check} = await startPendingCheckForFirst();
+  const refresh = nodes.get('uc-refresh').events.click();
+  await flush();
+  assert.equal(pending.calls[3].url, '/api/usecases');
+  pending.calls[3].success(listRows([row]));
+  await flush();
+  assert.equal(pending.calls[4].url, '/api/usecases/1');
+  pending.calls[4].success({success: true, usecase: row});
+  await refresh;
+
+  pending.calls[2].success({success: true, result: 'pass'});
+  await check;
+  assert.equal(pending.calls.length, 5, 'stale success must not start another refresh');
+  assert.equal(nodes.get('uc-title').textContent, 'Eins');
+  assert.equal(nodes.get('uc-action-status').textContent, '');
+  assert.equal(nodes.get('uc-action-status').hidden, true);
+  assert.equal(nodes.get('uc-check').disabled, false);
 });
 
 test('the adapted Usecase import and working-source hashes bind the exact page', () => {

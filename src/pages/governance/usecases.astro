@@ -150,6 +150,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
       let detailGeneration = 0;
       let listLoading = false;
       let pendingSelectionId = null;
+      let checkGeneration = 0;
       const message = (id, value) => { const node=byId(id); node.textContent=value || ''; node.hidden=!value; };
       const label = result => result === 'pass' ? 'Definition geprüft' : result === 'fail' ? 'Definition unvollständig' : 'Prüfung ausstehend';
       const display = value => value == null || value === '' ? '–' : String(value);
@@ -176,8 +177,14 @@ import BachLayout from "../../layouts/BachLayout.astro";
         message('uc-action-status','');
       }
 
-      async function load(selected = (selectedId ?? pendingSelectionId)) {
+      function invalidateCheck() {
+        checkGeneration++;
+        byId('uc-check').disabled=false;
+      }
+
+      async function load(selected = (selectedId ?? pendingSelectionId), preserveCheck = false) {
         const generation=++listGeneration;
+        if (!preserveCheck) invalidateCheck();
         const desired=validId(selected) ? Number(selected) : null;
         ++detailGeneration;
         selectedId=null;
@@ -192,7 +199,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
         byId('uc-list').replaceChildren();
         try {
           const body=await request(api);
-          if (generation!==listGeneration) return;
+          if (generation!==listGeneration) return null;
           if (!Array.isArray(body.usecases) || !body.stats) throw new Error('Ungültige Usecase-Antwort.');
           rows=body.usecases.filter(row => validId(row.id));
           notice=sourceNotice(body.source);
@@ -209,10 +216,14 @@ import BachLayout from "../../layouts/BachLayout.astro";
           renderList();
           if (desired!==null && listHas(desired)) {
             pendingSelectionId=null;
-            await open(desired,generation);
-          } else clearDetail();
+            const item=await open(desired,generation,preserveCheck);
+            if (generation!==listGeneration || selectedId!==desired || !item) return null;
+            return {listGeneration:generation,detailGeneration,selectedId:desired};
+          }
+          clearDetail();
+          return null;
         } catch (cause) {
-          if (generation!==listGeneration) return;
+          if (generation!==listGeneration) return null;
           listLoading=false;
           rows=[];
           notice=null;
@@ -251,6 +262,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
       }
 
       function clearDetail() {
+        invalidateCheck();
         ++detailGeneration;
         selectedId=null;
         pendingSelectionId=null;
@@ -258,9 +270,10 @@ import BachLayout from "../../layouts/BachLayout.astro";
         renderList();
       }
 
-      async function open(id, expectedListGeneration=listGeneration) {
+      async function open(id, expectedListGeneration=listGeneration, preserveCheck = false) {
         const requested=Number(id);
         if (!validId(requested) || listLoading || expectedListGeneration!==listGeneration || !listHas(requested)) return null;
+        if (!preserveCheck) invalidateCheck();
         const generation=++detailGeneration;
         selectedId=requested;
         pendingSelectionId=null;
@@ -328,15 +341,27 @@ import BachLayout from "../../layouts/BachLayout.astro";
       });
 
       byId('uc-check').addEventListener('click',async()=>{
-        if(!selectedId)return;
+        const id=selectedId;
+        if(!id)return;
         if(!confirm('Nur die Usecase-Definition prüfen? Workflow und Modell werden nicht ausgeführt; der Prüfstatus wird gespeichert.'))return;
+        const expectedListGeneration=listGeneration;
+        const expectedDetailGeneration=detailGeneration;
+        const requestGeneration=++checkGeneration;
+        const isCurrent=()=>requestGeneration===checkGeneration && selectedId===id &&
+          listGeneration===expectedListGeneration && detailGeneration===expectedDetailGeneration && !listLoading;
         const button=byId('uc-check');button.disabled=true;message('uc-action-status','Prüfe Definition…');
         try {
-          const body=await request(`${api}/${encodeURIComponent(selectedId)}/test`,{method:'POST'});
-          await load(selectedId);
+          const body=await request(`${api}/${encodeURIComponent(id)}/test`,{method:'POST'});
+          if(!isCurrent())return;
+          const refreshed=await load(id,true);
+          if(!refreshed || requestGeneration!==checkGeneration || refreshed.selectedId!==id || selectedId!==id ||
+            listGeneration!==refreshed.listGeneration || detailGeneration!==refreshed.detailGeneration || listLoading)return;
           message('uc-action-status',`Definitionsprüfung gespeichert: ${label(body.result)}. Kein Workflow wurde ausgeführt.`);
-        }catch(cause){message('uc-action-status',cause instanceof Error?cause.message:'Definitionsprüfung fehlgeschlagen.');}
-        finally{button.disabled=false;}
+        }catch(cause){
+          if(isCurrent())message('uc-action-status',cause instanceof Error?cause.message:'Definitionsprüfung fehlgeschlagen.');
+        }finally{
+          if(requestGeneration===checkGeneration)button.disabled=false;
+        }
       });
       byId('uc-check-all').addEventListener('click',async()=>{
         if(!rows.length)return;
