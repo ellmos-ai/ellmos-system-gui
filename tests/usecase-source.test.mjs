@@ -11,6 +11,9 @@ const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const page = readFileSync(resolve(root, 'src/pages/governance/usecases.astro'), 'utf8');
 const ocean = {id: 'ellmos-tests', file: 'usecases.json', read_only: true, generated_at: '2026-06-22', source_db: null, derived: ['test_result', 'stats']};
 const row = {id: 1, title: 'Eins', description: 'd', workflow_name: 'w', test_result: 'pass', test_score: 80, last_tested: null};
+const fullRow = {id: 1, title: 'Beispiel', description: 'Beschreibung BACH', workflow_name: 'workflow-bach', test_result: 'pass',
+  test_score: 80, last_tested: '2026-10-11T12:00:00Z', created_by: 'Testautor', updated_at: '2026-10-11T13:00:00Z',
+  test_input: 'Eingabe', expected_output: 'Ausgabe'};
 const list = source => ({success: true, usecases: [row], stats: {total: 1, pass: 1, fail: 0, pending: 0}, ...(source === undefined ? {} : {source})});
 
 test('Ocean source: Herkunft, Datum und Ableitungshinweis', () => {
@@ -26,8 +29,8 @@ test('negative control: fehlendes oder ungültiges source ergibt keine Anzeige',
     assert.equal(sourceNotice(bad), null, JSON.stringify(bad));
 });
 
-// Seite mit Fake-DOM ausfuehren; liefert den sichtbaren Zustand aller Knoten.
-async function render(body, scriptOverride = null, openDetail = false) {
+// Seite mit Fake-DOM ausfuehren; fetch can be controlled to reproduce stale responses.
+function mount(fetchImpl, scriptOverride = null) {
   const nodes = new Map();
   const make = () => new Proxy({children: [], events: {}, hidden: false, value: '', textContent: '', dataset: {}, classList: {add() {}},
     append(...children) { this.children.push(...children); }, replaceChildren(...children) { this.children = children; },
@@ -37,12 +40,44 @@ async function render(body, scriptOverride = null, openDetail = false) {
   });
   const document = {getElementById: id => nodes.get(id) ?? nodes.set(id, make()).get(id), createElement: make};
   const script = scriptOverride ?? page.match(/<script>([\s\S]*?)<\/script>/)[1].replace(/^\s*import .*$/m, '');
-  const fetch = async url => ({ok: true, status: 200, json: async () => (String(url).endsWith('/1') ? {success: true, usecase: row} : body)});
-  const context = {document, fetch, sourceNotice, confirm: () => false, encodeURIComponent, Number, String, Array, Set, Object, Error, Promise, FormData: class {}};
+  const context = {document, fetch: fetchImpl, sourceNotice, confirm: () => false, encodeURIComponent, Number, String, Array, Set, Object, Error, Promise, FormData: class {}};
   vm.runInNewContext(script, context);
-  await new Promise(r => setTimeout(r, 20));
-  if (openDetail) await nodes.get('uc-list').children[0].events.click();
+  return nodes;
+}
+
+async function flush() {
+  for (let i = 0; i < 12; i++) await Promise.resolve();
+}
+
+function controlledFetch() {
+  const calls = [];
+  const fetch = (url, options) => new Promise((resolve, reject) => calls.push({url: String(url), options,
+    success(body) { resolve({ok: true, status: 200, json: async () => body}); },
+    failure(detail = 'API nicht erreichbar') { resolve({ok: false, status: 503, json: async () => ({success: false, detail})}); },
+    reject}));
+  return {calls, fetch};
+}
+
+function response(body, status = 200) {
+  return {ok: status >= 200 && status < 300, status, json: async () => body};
+}
+
+function listRows(usecases, source) {
+  return {success: true, usecases, stats: {total: usecases.length, pass: usecases.filter(item => item.test_result === 'pass').length,
+    fail: usecases.filter(item => item.test_result === 'fail').length, pending: usecases.filter(item => !['pass','fail'].includes(item.test_result)).length},
+    ...(source === undefined ? {} : {source})};
+}
+
+function stateOf(nodes) {
   return Object.fromEntries([...nodes].map(([id, n]) => [id, [n.textContent, n.hidden]]));
+}
+
+async function render(body, scriptOverride = null, openDetail = false, detailBody = {success: true, usecase: row}) {
+  const fetch = async url => response(String(url).endsWith('/1') ? detailBody : body);
+  const nodes = mount(fetch, scriptOverride);
+  await flush();
+  if (openDetail) await nodes.get('uc-list').children[0].events.click();
+  return stateOf(nodes);
 }
 
 test('BACH ohne source: Anzeige unverändert, keine leere Zeile', async () => {
@@ -62,29 +97,25 @@ test('strict ISO source date: reject normalized dates and non-ISO strings', () =
     assert.ok(sourceNotice({...ocean, generated_at}), generated_at);
 });
 
-// Recover only the explicitly added source-notice operations. Its hash must match the
-// actual inline script read from the released daac428 source, without requiring git in CI.
-function releasedBachScript() {
-  const script = page.replaceAll('\r\n', '\n').match(/<script>([\s\S]*?)<\/script>/)[1]
-    .replace(/^    import .*\n/m, '')
-    .replace('      let notice = null;\n', '')
-    .replace('          notice = sourceNotice(body.source);\n', '')
-    .replace("          message('uc-source', notice ? notice.line + (notice.derivedNote ? ' · ' + notice.derivedNote : '') : '');\n", '')
-    .replace("          rows=[];notice=null;message('uc-source','');", '          rows=[];')
-    .replace('          const note = notice && notice.derivedNote;\n', '')
-    .replace("          byId('uc-result-note').textContent = note || '';byId('uc-result-note').hidden = !note;\n", '');
-  assert.equal(createHash('sha256').update(script).digest('hex'),
-    '30e5977965e46044c9252972d956abd080554a3432dd718be77b5ea8fed4db64');
-  return script;
-}
-
-test('BACH list and opened detail match the actual released daac428 script', async () => {
-  const strip = ({'uc-source': _source, 'uc-result-note': _note, ...rest}) => rest;
-  for (const detail of [false, true]) {
-    assert.deepEqual(strip(await render(list(), null, detail)), await render(list(), releasedBachScript(), detail));
-  }
-  const detail = await render(list(), null, true);
-  assert.deepEqual(detail['uc-result-note'], ['', true]);
+test('BACH ohne source bewahrt die vollständige Listen- und Detaildarstellung', async () => {
+  const state = await render(listRows([fullRow]), null, true, {success: true, usecase: fullRow});
+  assert.deepEqual(state['uc-source'], ['', true]);
+  assert.deepEqual(state['uc-detail-source'], ['', true]);
+  assert.deepEqual(state['uc-total'], ['1', false]);
+  assert.deepEqual(state['uc-pass'], ['1', false]);
+  assert.deepEqual(state['uc-fail'], ['0', false]);
+  assert.deepEqual(state['uc-pending'], ['0', false]);
+  assert.deepEqual(state['uc-count'], ['1 von 1 Definitionen', false]);
+  assert.deepEqual(state['uc-empty'], ['', true]);
+  assert.deepEqual(state['uc-detail-content'], ['', false]);
+  for (const [id, expected] of Object.entries({
+    'uc-id': 'Usecase #1', 'uc-title': 'Beispiel', 'uc-workflow': 'workflow-bach',
+    'uc-result': 'Definition geprüft', 'uc-score': '80 %', 'uc-tested': '2026-10-11T12:00:00Z',
+    'uc-author': 'Testautor', 'uc-updated': '2026-10-11T13:00:00Z', 'uc-description': 'Beschreibung BACH',
+    'uc-input': 'Eingabe', 'uc-expected': 'Ausgabe',
+  })) assert.deepEqual(state[id], [expected, false], id);
+  assert.deepEqual(state['uc-result-note'], ['', true]);
+  assert.deepEqual(state['uc-action-status'], ['', true]);
   assert.match(page, /#uc-result-note:not\(\[hidden\]\)\s*\{\s*display:block;/);
   assert.doesNotMatch(page, /#uc-result-note\s*\{\s*display:/);
 });
@@ -94,16 +125,189 @@ test('Ocean opened detail displays the derived-status notice', async () => {
   assert.deepEqual(detail['uc-result-note'], ['Prüfstatus aus Score abgeleitet', false]);
 });
 
+test('failed list refresh clears old detail and source instead of leaving stale content visible', async () => {
+  const pending = controlledFetch();
+  const nodes = mount(pending.fetch);
+  pending.calls[0].success(list(ocean));
+  await flush();
+  const openPromise = nodes.get('uc-list').children[0].events.click();
+  await flush();
+  pending.calls[1].success({success: true, usecase: row, source: ocean});
+  await openPromise;
+  assert.equal(nodes.get('uc-detail-content').hidden, false);
+  assert.equal(nodes.get('uc-result-note').hidden, false);
+
+  const refreshPromise = nodes.get('uc-refresh').events.click();
+  await flush();
+  assert.equal(nodes.get('uc-detail-content').hidden, true);
+  assert.equal(nodes.get('uc-result-note').hidden, true);
+  assert.equal(nodes.get('uc-source').textContent, '');
+  pending.calls[2].failure('Refresh fehlgeschlagen');
+  await refreshPromise;
+  assert.equal(nodes.get('uc-detail-content').hidden, true);
+  assert.equal(nodes.get('uc-result-note').textContent, '');
+  assert.equal(nodes.get('uc-source').textContent, '');
+  assert.equal(nodes.get('uc-list-error').textContent, 'Refresh fehlgeschlagen');
+});
+
+test('fresh list source is retained when its automatic detail refresh fails', async () => {
+  const nextSource = {...ocean, id: 'ellmos-tests-v2', generated_at: '2026-06-23'};
+  const pending = controlledFetch();
+  const nodes = mount(pending.fetch);
+  pending.calls[0].success(list(ocean));
+  await flush();
+  const openPromise = nodes.get('uc-list').children[0].events.click();
+  await flush();
+  pending.calls[1].success({success: true, usecase: row, source: ocean});
+  await openPromise;
+
+  const refreshPromise = nodes.get('uc-refresh').events.click();
+  await flush();
+  pending.calls[2].success(list(nextSource));
+  await flush();
+  assert.equal(nodes.get('uc-source').textContent, 'Herkunft: ellmos-tests-v2 · Datenstand: 23.6.2026 · Prüfstatus aus Score abgeleitet');
+  assert.equal(nodes.get('uc-detail-content').hidden, true);
+  assert.equal(nodes.get('uc-result-note').hidden, true);
+  pending.calls[3].failure('Detail nicht erreichbar');
+  await refreshPromise;
+  assert.equal(nodes.get('uc-detail-content').hidden, true);
+  assert.equal(nodes.get('uc-result-note').textContent, '');
+  assert.match(nodes.get('uc-source').textContent, /^Herkunft: ellmos-tests-v2/);
+});
+
+test('out-of-order detail responses cannot replace the latest selected usecase', async () => {
+  const second = {...row, id: 2, title: 'Zwei', workflow_name: 'w2'};
+  const pending = controlledFetch();
+  const nodes = mount(pending.fetch);
+  pending.calls[0].success(listRows([row, second]));
+  await flush();
+
+  const firstRequest = nodes.get('uc-list').children[0].events.click();
+  await flush();
+  const secondRequest = nodes.get('uc-list').children[1].events.click();
+  await flush();
+  pending.calls[2].success({success: true, usecase: second});
+  await secondRequest;
+  assert.equal(nodes.get('uc-title').textContent, 'Zwei');
+
+  pending.calls[1].success({success: true, usecase: {...row, title: 'Veraltet'}});
+  await firstRequest;
+  assert.equal(nodes.get('uc-title').textContent, 'Zwei');
+  assert.equal(nodes.get('uc-id').textContent, 'Usecase #2');
+});
+
+test('a later list refresh invalidates pending detail and old list responses', async () => {
+  const freshSource = {...ocean, id: 'fresh-list', generated_at: '2026-06-23'};
+  const staleSource = {...ocean, id: 'stale-list', generated_at: '2026-06-22'};
+  const pending = controlledFetch();
+  const nodes = mount(pending.fetch);
+  pending.calls[0].success(list(ocean));
+  await flush();
+  const staleDetail = nodes.get('uc-list').children[0].events.click();
+  await flush();
+
+  const staleList = nodes.get('uc-refresh').events.click();
+  await flush();
+  const freshList = nodes.get('uc-refresh').events.click();
+  await flush();
+  pending.calls[3].success(list(freshSource));
+  await flush();
+  assert.equal(nodes.get('uc-source').textContent, 'Herkunft: fresh-list · Datenstand: 23.6.2026 · Prüfstatus aus Score abgeleitet');
+  pending.calls[4].success({success: true, usecase: {...row, title: 'Aktuell'}});
+  await freshList;
+
+  pending.calls[2].success(list(staleSource));
+  await staleList;
+  pending.calls[1].success({success: true, usecase: {...row, title: 'Altes Detail'}, source: staleSource});
+  await staleDetail;
+  assert.equal(nodes.get('uc-title').textContent, 'Aktuell');
+  assert.match(nodes.get('uc-source').textContent, /^Herkunft: fresh-list/);
+});
+
+test('mismatched detail IDs do not expose detail fields or its source note', async () => {
+  const unexpectedSource = {...ocean, id: 'wrong-response', derived: ['stats']};
+  const pending = controlledFetch();
+  const nodes = mount(pending.fetch);
+  pending.calls[0].success(list(ocean));
+  await flush();
+  const openPromise = nodes.get('uc-list').children[0].events.click();
+  await flush();
+  pending.calls[1].success({success: true, usecase: {...row, id: 2, title: 'Falscher Datensatz'}, source: unexpectedSource});
+  await openPromise;
+  assert.equal(nodes.get('uc-detail-content').hidden, true);
+  assert.equal(nodes.get('uc-result-note').hidden, true);
+  assert.match(nodes.get('uc-source').textContent, /^Herkunft: ellmos-tests/);
+});
+
+test('Detailquelle bleibt getrennt von Listenquelle und steuert nur den passenden Hinweis', async () => {
+  const listSource = {...ocean, id: 'list-source', generated_at: '2026-06-22', derived: ['test_result']};
+  const detailSource = {...ocean, id: 'detail-source', generated_at: '2026-06-23', derived: ['test_result']};
+  for (const [detailBody, expectedDetail, expectedNote] of [
+    [{success: true, usecase: row, source: detailSource}, 'Detailherkunft: detail-source · Datenstand: 23.6.2026', 'Prüfstatus aus Score abgeleitet'],
+    [{success: true, usecase: row, source: listSource}, '', 'Prüfstatus aus Score abgeleitet'],
+    [{success: true, usecase: row}, '', 'Prüfstatus aus Score abgeleitet'],
+    [{success: true, usecase: row, source: null}, '', ''],
+  ]) {
+    const pending = controlledFetch();
+    const nodes = mount(pending.fetch);
+    pending.calls[0].success(list(listSource));
+    await flush();
+    const openPromise = nodes.get('uc-list').children[0].events.click();
+    await flush();
+    pending.calls[1].success(detailBody);
+    await openPromise;
+    assert.equal(nodes.get('uc-detail-source').textContent, expectedDetail);
+    assert.equal(nodes.get('uc-detail-source').hidden, !expectedDetail);
+    assert.equal(nodes.get('uc-result-note').textContent, expectedNote);
+    assert.equal(nodes.get('uc-result-note').hidden, !expectedNote);
+    assert.equal(nodes.get('uc-source').textContent, 'Herkunft: list-source · Datenstand: 22.6.2026 · Prüfstatus aus Score abgeleitet');
+  }
+});
+
+test('Beim Wechsel der Detailauswahl verschwinden alter Aktionsstatus und alte Detailherkunft sofort', async () => {
+  const second = {...row, id: 2, title: 'Zwei'};
+  const listSource = {...ocean, id: 'list-source'};
+  const detailSource = {...ocean, id: 'detail-source', generated_at: '2026-06-23'};
+  const pending = controlledFetch();
+  const nodes = mount(pending.fetch);
+  pending.calls[0].success(listRows([row, second], listSource));
+  await flush();
+  const firstOpen = nodes.get('uc-list').children[0].events.click();
+  await flush();
+  pending.calls[1].success({success: true, usecase: row, source: detailSource});
+  await firstOpen;
+  nodes.get('uc-action-status').textContent='Vorherige Aktionsmeldung';
+  nodes.get('uc-action-status').hidden=false;
+  const secondOpen = nodes.get('uc-list').children[1].events.click();
+  await flush();
+  assert.equal(nodes.get('uc-action-status').textContent, '');
+  assert.equal(nodes.get('uc-action-status').hidden, true);
+  assert.equal(nodes.get('uc-detail-source').textContent, '');
+  assert.equal(nodes.get('uc-detail-source').hidden, true);
+  assert.equal(nodes.get('uc-result-note').textContent, '');
+  assert.equal(nodes.get('uc-detail-content').hidden, true);
+  pending.calls[2].success({success: true, usecase: second});
+  await secondOpen;
+  assert.equal(nodes.get('uc-title').textContent, 'Zwei');
+});
+
 test('the adapted Usecase import and working-source hashes bind the exact page', () => {
   const path = 'src/pages/governance/usecases.astro';
+  const testPath = 'tests/usecase-source.test.mjs';
   const provenance = JSON.parse(readFileSync(resolve(root, 'SOURCE_PROVENANCE.json'), 'utf8'));
   const hash = createHash('sha256').update(readFileSync(resolve(root, path))).digest('hex');
+  const testHash = createHash('sha256').update(readFileSync(resolve(root, testPath))).digest('hex');
   const imports = provenance.source_imports.map(group => group.files?.[path]).filter(Boolean);
   assert.equal(imports.length, 1);
   assert.equal(provenance.files_sha256[path], hash);
   assert.equal(imports[0].imported_sha256, hash);
   assert.equal(imports[0].adapted, true);
   assert.equal(imports[0].source_sha256, '82cb21703924d21941b73bfb6dfc7cd73a493e69e2fe9c3be5fdaa7c66cdd15b');
+  const taskChange = provenance.followup_changes.find(change => change.scope === 'Task2137: stale-safe Usecase refresh and detail binding');
+  assert.ok(taskChange);
+  const taskFiles = Object.fromEntries(taskChange.files.map(file => [file.path, file]));
+  assert.equal(taskFiles[path].sha256, hash);
+  assert.equal(taskFiles[testPath].sha256, testHash);
 });
 
 test('Ocean mit source: Zeile sichtbar, übrige Anzeige identisch zu BACH', async () => {
