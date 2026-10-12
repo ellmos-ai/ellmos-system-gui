@@ -35,6 +35,8 @@ import BachLayout from "../../layouts/BachLayout.astro";
     <p>Die vorhandene Prüf-API kontrolliert Workflow-Datei und Testfelder und speichert einen Definitionsstatus. Der bisherige Ausführen-Endpunkt erzeugt nur Beispieltext. Ein sicherer Lauf benötigt einen gebundenen Workflow-Runner mit Rechten, Protokoll und echtem Ergebnis.</p>
   </div>
 
+  <p id="uc-source" class="uc-muted uc-source" hidden></p>
+
   <div class="uc-layout">
     <section class="card uc-list-panel" aria-label="Usecase-Liste">
       <div class="uc-toolbar">
@@ -59,7 +61,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
         </div>
         <dl class="uc-fields">
           <div><dt>Workflow</dt><dd id="uc-workflow"></dd></div>
-          <div><dt>Definitionsstatus</dt><dd id="uc-result"></dd></div>
+          <div><dt>Definitionsstatus</dt><dd><span id="uc-result"></span><small id="uc-result-note" class="uc-muted" hidden></small></dd></div>
           <div><dt>Prüfwert</dt><dd id="uc-score"></dd></div>
           <div><dt>Zuletzt geprüft</dt><dd id="uc-tested"></dd></div>
           <div><dt>Erstellt von</dt><dd id="uc-author"></dd></div>
@@ -121,6 +123,8 @@ import BachLayout from "../../layouts/BachLayout.astro";
     .uc-fields>div { min-width:0; border-top:1px solid var(--border); padding:.45rem 0; }
     .uc-fields dd { margin:.2rem 0 0; overflow-wrap:anywhere; }
     .uc-content { white-space:pre-wrap; overflow-wrap:anywhere; }
+    .uc-source { margin:0 0 1rem; font-size:.85rem; }
+    #uc-result-note:not([hidden]) { display:block; }
     .uc-error { color:var(--error-text); overflow-wrap:anywhere; }
     .uc-dialog { width:min(42rem,calc(100vw - 1.5rem)); max-height:calc(100vh - 1.5rem); overflow:auto; padding:1.3rem; background:var(--bg-panel); color:var(--text); border:1px solid var(--border); border-radius:var(--radius-md); }
     .uc-dialog::backdrop { background:rgba(0,0,0,.68); }
@@ -132,13 +136,15 @@ import BachLayout from "../../layouts/BachLayout.astro";
     @media (max-width:600px) { .uc-summary,.uc-fields,.uc-editor-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .uc-summary strong { font-size:1.3rem; } }
   </style>
 
-  <script is:inline>
+  <script>
+    import {sourceNotice} from '../../lib/usecase-source.mjs';
     (() => {
       const byId = id => document.getElementById(id);
       const api = '/api/usecases';
       let rows = [];
       let selectedId = null;
       let editorId = null;
+      let notice = null;
       const message = (id, value) => { const node=byId(id); node.textContent=value || ''; node.hidden=!value; };
       const label = result => result === 'pass' ? 'Definition geprüft' : result === 'fail' ? 'Definition unvollständig' : 'Prüfung ausstehend';
       const display = value => value == null || value === '' ? '–' : String(value);
@@ -158,6 +164,8 @@ import BachLayout from "../../layouts/BachLayout.astro";
           const body = await request(api);
           if (!Array.isArray(body.usecases) || !body.stats) throw new Error('Ungültige Usecase-Antwort.');
           rows = body.usecases.filter(row => validId(row.id));
+          notice = sourceNotice(body.source);
+          message('uc-source', notice ? notice.line + (notice.derivedNote ? ' · ' + notice.derivedNote : '') : '');
           const stats = body.stats;
           for (const [key, value] of [['total',stats.total],['pass',stats.pass],['fail',stats.fail],['pending',stats.pending]]) {
             byId('uc-' + key).textContent = Number.isSafeInteger(value) && value >= 0 ? String(value) : '–';
@@ -170,7 +178,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
           if (selected && rows.some(row => Number(row.id) === Number(selected))) await open(Number(selected));
           else if (selected) clearDetail();
         } catch (cause) {
-          rows=[];
+          rows=[];notice=null;message('uc-source','');
           for (const key of ['total','pass','fail','pending']) byId('uc-' + key).textContent='–';
           byId('uc-list').replaceChildren();
           byId('uc-count').textContent='Keine Daten geladen';
@@ -212,6 +220,8 @@ import BachLayout from "../../layouts/BachLayout.astro";
             description:display(item.description),input:display(item.test_input),expected:display(item.expected_output)})) {
             byId('uc-' + name).textContent=value;
           }
+          const note = notice && notice.derivedNote;
+          byId('uc-result-note').textContent = note || '';byId('uc-result-note').hidden = !note;
           renderList();
           return item;
         } catch (cause) {
