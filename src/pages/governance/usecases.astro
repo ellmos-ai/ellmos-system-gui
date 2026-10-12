@@ -59,6 +59,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
             <button type="button" class="btn" id="uc-delete">Löschen</button>
           </div>
         </div>
+        <p id="uc-detail-source" class="uc-muted uc-source" hidden></p>
         <dl class="uc-fields">
           <div><dt>Workflow</dt><dd id="uc-workflow"></dd></div>
           <div><dt>Definitionsstatus</dt><dd><span id="uc-result"></span><small id="uc-result-note" class="uc-muted" hidden></small></dd></div>
@@ -145,10 +146,16 @@ import BachLayout from "../../layouts/BachLayout.astro";
       let selectedId = null;
       let editorId = null;
       let notice = null;
+      let listGeneration = 0;
+      let detailGeneration = 0;
+      let listLoading = false;
+      let pendingSelectionId = null;
+      let checkGeneration = 0;
       const message = (id, value) => { const node=byId(id); node.textContent=value || ''; node.hidden=!value; };
       const label = result => result === 'pass' ? 'Definition geprüft' : result === 'fail' ? 'Definition unvollständig' : 'Prüfung ausstehend';
       const display = value => value == null || value === '' ? '–' : String(value);
       const validId = value => Number.isSafeInteger(Number(value)) && Number(value) > 0;
+      const listHas = id => rows.some(row => Number(row.id) === Number(id));
 
       async function request(url, options) {
         const response = await fetch(url, options);
@@ -157,74 +164,145 @@ import BachLayout from "../../layouts/BachLayout.astro";
         return body;
       }
 
-      async function load(selected = selectedId) {
-        message('uc-list-error', '');
-        byId('uc-count').textContent = 'Lade Definitionen…';
+      function renderSource(sourceNoticeValue) {
+        const value = sourceNoticeValue;
+        message('uc-source', value ? value.line + (value.derivedNote ? ' · ' + value.derivedNote : '') : '');
+      }
+
+      function hideDetail() {
+        byId('uc-empty').hidden=false;
+        byId('uc-detail-content').hidden=true;
+        message('uc-detail-source','');
+        message('uc-result-note','');
+        message('uc-action-status','');
+      }
+
+      function invalidateCheck() {
+        checkGeneration++;
+        byId('uc-check').disabled=false;
+      }
+
+      async function load(selected = (selectedId ?? pendingSelectionId), preserveCheck = false) {
+        const generation=++listGeneration;
+        if (!preserveCheck) invalidateCheck();
+        const desired=validId(selected) ? Number(selected) : null;
+        ++detailGeneration;
+        selectedId=null;
+        pendingSelectionId=desired;
+        listLoading=true;
+        rows=[];
+        notice=null;
+        hideDetail();
+        message('uc-list-error','');
+        renderSource(null);
+        byId('uc-count').textContent='Lade Definitionen…';
+        byId('uc-list').replaceChildren();
         try {
-          const body = await request(api);
+          const body=await request(api);
+          if (generation!==listGeneration) return null;
           if (!Array.isArray(body.usecases) || !body.stats) throw new Error('Ungültige Usecase-Antwort.');
-          rows = body.usecases.filter(row => validId(row.id));
-          notice = sourceNotice(body.source);
-          message('uc-source', notice ? notice.line + (notice.derivedNote ? ' · ' + notice.derivedNote : '') : '');
-          const stats = body.stats;
-          for (const [key, value] of [['total',stats.total],['pass',stats.pass],['fail',stats.fail],['pending',stats.pending]]) {
-            byId('uc-' + key).textContent = Number.isSafeInteger(value) && value >= 0 ? String(value) : '–';
+          rows=body.usecases.filter(row => validId(row.id));
+          notice=sourceNotice(body.source);
+          renderSource(notice);
+          const stats=body.stats;
+          for (const [key,value] of [['total',stats.total],['pass',stats.pass],['fail',stats.fail],['pending',stats.pending]]) {
+            byId('uc-'+key).textContent=Number.isSafeInteger(value) && value>=0 ? String(value) : '–';
           }
-          const options = byId('uc-workflow-options'); options.replaceChildren();
-          for (const name of new Set(rows.map(row => row.workflow_name).filter(name => typeof name === 'string' && name.trim()))) {
-            const option = document.createElement('option'); option.value=name; options.append(option);
+          const options=byId('uc-workflow-options'); options.replaceChildren();
+          for (const name of new Set(rows.map(row => row.workflow_name).filter(name => typeof name==='string' && name.trim()))) {
+            const option=document.createElement('option'); option.value=name; options.append(option);
           }
+          listLoading=false;
           renderList();
-          if (selected && rows.some(row => Number(row.id) === Number(selected))) await open(Number(selected));
-          else if (selected) clearDetail();
+          if (desired!==null && listHas(desired)) {
+            pendingSelectionId=null;
+            const item=await open(desired,generation,preserveCheck);
+            if (generation!==listGeneration || selectedId!==desired || !item) return null;
+            return {listGeneration:generation,detailGeneration,selectedId:desired};
+          }
+          clearDetail();
+          return null;
         } catch (cause) {
-          rows=[];notice=null;message('uc-source','');
-          for (const key of ['total','pass','fail','pending']) byId('uc-' + key).textContent='–';
+          if (generation!==listGeneration) return null;
+          listLoading=false;
+          rows=[];
+          notice=null;
+          selectedId=null;
+          pendingSelectionId=null;
+          hideDetail();
+          renderSource(null);
+          for (const key of ['total','pass','fail','pending']) byId('uc-'+key).textContent='–';
           byId('uc-list').replaceChildren();
           byId('uc-count').textContent='Keine Daten geladen';
-          message('uc-list-error', cause instanceof Error ? cause.message : 'Usecases konnten nicht geladen werden.');
+          message('uc-list-error',cause instanceof Error ? cause.message : 'Usecases konnten nicht geladen werden.');
         }
       }
 
       function renderList() {
-        const query = byId('uc-search').value.trim().toLocaleLowerCase('de');
-        const found = rows.filter(row => [row.title,row.description,row.workflow_name].some(value => String(value || '').toLocaleLowerCase('de').includes(query)));
-        const list=byId('uc-list'); list.replaceChildren();
-        byId('uc-count').textContent = `${found.length} von ${rows.length} Definitionen`;
-        if (!found.length) {
-          const p=document.createElement('p');p.className='uc-muted';p.textContent=rows.length ? 'Keine passende Definition.' : 'Noch keine Usecases gespeichert.';list.append(p);return;
+        if (listLoading) {
+          byId('uc-count').textContent='Lade Definitionen…';
+          byId('uc-list').replaceChildren();
+          return;
         }
+        const query=byId('uc-search').value.trim().toLocaleLowerCase('de');
+        const found=rows.filter(row => [row.title,row.description,row.workflow_name].some(value => String(value || '').toLocaleLowerCase('de').includes(query)));
+        const list=byId('uc-list'); list.replaceChildren();
+        byId('uc-count').textContent=`${found.length} von ${rows.length} Definitionen`;
+        if (!found.length) {
+          const p=document.createElement('p'); p.className='uc-muted'; p.textContent=rows.length ? 'Keine passende Definition.' : 'Noch keine Usecases gespeichert.'; list.append(p); return;
+        }
+        const renderedGeneration=listGeneration;
         for (const row of found) {
-          const button=document.createElement('button');button.type='button';button.dataset.id=String(row.id);
+          const button=document.createElement('button'); button.type='button'; button.dataset.id=String(row.id);
           button.setAttribute('aria-current',String(Number(row.id)===selectedId));
-          const title=document.createElement('strong');title.textContent=display(row.title);
-          const secondary=document.createElement('small');secondary.textContent=`${display(row.workflow_name)} · ${label(row.test_result)}`;
-          button.append(title,secondary);button.addEventListener('click',()=>open(Number(row.id)));list.append(button);
+          const title=document.createElement('strong'); title.textContent=display(row.title);
+          const secondary=document.createElement('small'); secondary.textContent=`${display(row.workflow_name)} · ${label(row.test_result)}`;
+          button.append(title,secondary); button.addEventListener('click',()=>open(Number(row.id),renderedGeneration)); list.append(button);
         }
       }
 
       function clearDetail() {
-        selectedId=null;byId('uc-empty').hidden=false;byId('uc-detail-content').hidden=true;renderList();
+        invalidateCheck();
+        ++detailGeneration;
+        selectedId=null;
+        pendingSelectionId=null;
+        hideDetail();
+        renderList();
       }
-      async function open(id) {
-        if (!validId(id)) return;
-        message('uc-action-status','');
+
+      async function open(id, expectedListGeneration=listGeneration, preserveCheck = false) {
+        const requested=Number(id);
+        if (!validId(requested) || listLoading || expectedListGeneration!==listGeneration || !listHas(requested)) return null;
+        if (!preserveCheck) invalidateCheck();
+        const generation=++detailGeneration;
+        selectedId=requested;
+        pendingSelectionId=null;
+        hideDetail();
+        message('uc-list-error','');
+        renderList();
         try {
-          const body=await request(`${api}/${encodeURIComponent(id)}`);
+          const body=await request(`${api}/${encodeURIComponent(requested)}`);
+          if (generation!==detailGeneration || expectedListGeneration!==listGeneration) return null;
           const item=body.usecase;
-          if (!item || Number(item.id)!==id) throw new Error('Usecase-Detail stimmt nicht mit der ID überein.');
-          selectedId=id;byId('uc-empty').hidden=true;byId('uc-detail-content').hidden=false;
-          for (const [name,value] of Object.entries({id:`Usecase #${id}`,title:display(item.title),workflow:display(item.workflow_name),
+          if (!item || Number(item.id)!==requested || !listHas(requested)) throw new Error('Usecase-Detail stimmt nicht mit der ID überein.');
+          byId('uc-empty').hidden=true; byId('uc-detail-content').hidden=false;
+          for (const [name,value] of Object.entries({id:`Usecase #${requested}`,title:display(item.title),workflow:display(item.workflow_name),
             result:label(item.test_result),score:item.test_score == null ? '–' : `${item.test_score} %`,
             tested:display(item.last_tested),author:display(item.created_by),updated:display(item.updated_at),
             description:display(item.description),input:display(item.test_input),expected:display(item.expected_output)})) {
-            byId('uc-' + name).textContent=value;
+            byId('uc-'+name).textContent=value;
           }
-          const note = notice && notice.derivedNote;
-          byId('uc-result-note').textContent = note || '';byId('uc-result-note').hidden = !note;
+          const hasDetailSource=Object.prototype.hasOwnProperty.call(body,'source');
+          const detailSource=hasDetailSource ? sourceNotice(body.source) : notice;
+          const distinctDetailSource=hasDetailSource && detailSource && (!notice || detailSource.line!==notice.line);
+          message('uc-detail-source',distinctDetailSource ? 'Detailherkunft: '+detailSource.line.slice('Herkunft: '.length) : '');
+          const note=detailSource && detailSource.derivedNote;
+          byId('uc-result-note').textContent=note || ''; byId('uc-result-note').hidden=!note;
           renderList();
           return item;
         } catch (cause) {
+          if (generation!==detailGeneration || expectedListGeneration!==listGeneration) return null;
+          hideDetail();
           message('uc-list-error',cause instanceof Error ? cause.message : 'Detail konnte nicht geladen werden.');
           return null;
         }
@@ -263,15 +341,27 @@ import BachLayout from "../../layouts/BachLayout.astro";
       });
 
       byId('uc-check').addEventListener('click',async()=>{
-        if(!selectedId)return;
+        const id=selectedId;
+        if(!id)return;
         if(!confirm('Nur die Usecase-Definition prüfen? Workflow und Modell werden nicht ausgeführt; der Prüfstatus wird gespeichert.'))return;
+        const expectedListGeneration=listGeneration;
+        const expectedDetailGeneration=detailGeneration;
+        const requestGeneration=++checkGeneration;
+        const isCurrent=()=>requestGeneration===checkGeneration && selectedId===id &&
+          listGeneration===expectedListGeneration && detailGeneration===expectedDetailGeneration && !listLoading;
         const button=byId('uc-check');button.disabled=true;message('uc-action-status','Prüfe Definition…');
         try {
-          const body=await request(`${api}/${encodeURIComponent(selectedId)}/test`,{method:'POST'});
-          await load(selectedId);
+          const body=await request(`${api}/${encodeURIComponent(id)}/test`,{method:'POST'});
+          if(!isCurrent())return;
+          const refreshed=await load(id,true);
+          if(!refreshed || requestGeneration!==checkGeneration || refreshed.selectedId!==id || selectedId!==id ||
+            listGeneration!==refreshed.listGeneration || detailGeneration!==refreshed.detailGeneration || listLoading)return;
           message('uc-action-status',`Definitionsprüfung gespeichert: ${label(body.result)}. Kein Workflow wurde ausgeführt.`);
-        }catch(cause){message('uc-action-status',cause instanceof Error?cause.message:'Definitionsprüfung fehlgeschlagen.');}
-        finally{button.disabled=false;}
+        }catch(cause){
+          if(isCurrent())message('uc-action-status',cause instanceof Error?cause.message:'Definitionsprüfung fehlgeschlagen.');
+        }finally{
+          if(requestGeneration===checkGeneration)button.disabled=false;
+        }
       });
       byId('uc-check-all').addEventListener('click',async()=>{
         if(!rows.length)return;
