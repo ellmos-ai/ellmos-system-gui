@@ -96,6 +96,20 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
           <p id="task-result-key-status" class="muted"></p>
         </details>
         <button type="button" class="btn btn-primary" id="task-result-accept" hidden disabled>Geprüftes Ergebnis abnehmen</button>
+        <form id="task-result-correction" class="task-result-correction" hidden>
+          <h4>Korrektur anfordern</h4>
+          <p>Die Korrektur bezieht sich auf das unten dokumentierte Originalergebnis.</p>
+          <label for="task-result-correction-note">Hinweis für den nächsten Versuch</label>
+          <textarea id="task-result-correction-note" rows="4" required></textarea>
+          <p id="task-result-correction-count" class="muted">0 von 1200 Zeichen</p>
+          <button type="submit" class="btn">Korrektur anfordern</button>
+        </form>
+        <section class="task-result-history" aria-labelledby="task-result-history-heading">
+          <h4 id="task-result-history-heading">Ergebnisverlauf</h4>
+          <p id="task-result-history-status" class="muted" aria-live="polite">Verlauf noch nicht geladen.</p>
+          <ol id="task-result-history-events"></ol>
+          <button type="button" class="btn" id="task-result-history-more" hidden>Ältere Einträge laden</button>
+        </section>
       </section>
     </div>
     <form id="task-edit-form" hidden>
@@ -109,6 +123,10 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         <label>Abhängig von Task-IDs<input name="depends_on" inputmode="numeric" pattern="\s*\d+(\s*,\s*\d+)*\s*" /></label>
         <label>Fällig am<input name="due_date" type="date" /></label>
         <label>Benötigtes Modell<input name="required_model" /></label>
+        <label class="task-edit-wide" data-task-result-max-chars-field hidden>Maximale Länge des Worker-Ergebnisses
+          <input name="result_max_chars" type="number" min="1" max="3000" step="1" inputmode="numeric" />
+          <small>Leer lassen, um ein vorhandenes Limit zu entfernen.</small>
+        </label>
         <label>Agent oder Blueprint-Instanz<select name="assignment_target" data-task-target><option value="">Manuell zuweisen · ohne Agenten-Slot</option></select></label>
         <div class="task-edit-wide"><p data-task-target-status aria-live="polite">Agentenauswahl noch nicht geladen.</p><button type="button" class="btn" data-task-target-reload>Agentenauswahl neu laden</button> <a href="/agenten/blueprints">Blueprints bearbeiten</a></div>
         <label class="task-edit-wide">Beschreibung<textarea name="description" rows="5"></textarea></label>
@@ -137,6 +155,13 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     .task-worker-result details {margin:.8rem 0;}
     .task-worker-result label {display:flex;flex-direction:column;gap:.35rem;}
     .task-worker-result input {color:var(--text);background:var(--bg-card);border:1px solid var(--border);padding:.6rem;margin-bottom:.6rem;max-width:100%;box-sizing:border-box;}
+    .task-result-correction {margin-top:1rem;padding-top:.7rem;border-top:1px solid var(--border);}
+    .task-result-correction textarea {display:block;width:100%;box-sizing:border-box;resize:vertical;color:var(--text);background:var(--bg-card);border:1px solid var(--border);padding:.6rem;font:inherit;}
+    .task-result-history {margin-top:1rem;padding-top:.7rem;border-top:1px solid var(--border);}
+    .task-result-history ol {padding-left:1.5rem;}
+    .task-result-history li {margin:.65rem 0;padding-left:.2rem;overflow-wrap:anywhere;}
+    .task-result-history li p {white-space:pre-wrap;}
+    .task-result-history details {margin:.4rem 0;}
     .task-edit-grid label { min-width:0; display:flex; flex-direction:column; gap:.35rem; }
     .task-edit-grid input,.task-edit-grid select,.task-edit-grid textarea { min-width:0; width:100%; box-sizing:border-box; padding:.6rem; background:var(--bg-dark); color:var(--text); border:1px solid var(--border); border-radius:var(--radius-sm); font:inherit; }
     .task-edit-wide { grid-column:1/-1; }
@@ -147,6 +172,11 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
   <script>
     import {createAssignmentController, taskResponseError, assignmentCatalogue} from '../lib/task-assignment.mjs';
     import {readTaskFilters, taskFilterQuery, writeTaskFilters, readTaskPage, taskCountLabel} from '../lib/task-filters.mjs';
+    import {correctionAttemptMatchesView, createCorrectionAttempt, generateCorrectionRequestId,
+      isCurrentCorrectionTarget, normalizeCorrectionNote, parseTaskResultMaxCharsInput,
+      resultMaxCharsEditChange,
+      resultOperatorCapabilities, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
+      transitionCorrectionAttempt, validateResultHistoryPage} from '../lib/task-result-contract.mjs';
     let allTasks = [];
     let currentFilters = readTaskFilters(location.search);
     let filteredTotal = null;
@@ -156,6 +186,14 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     let selectedTask = null;
     const pageSize = 100;
     const editAssignment = createAssignmentController(document.getElementById('task-edit-form'));
+    async function loadTaskResultMaxCharsCapabilities() {
+      try {
+        const response = await fetch('/api/task-capabilities', {redirect:'error'});
+        if (!response.ok) return null;
+        const capabilities = await response.json();
+        return supportsTaskResultMaxChars(capabilities) ? capabilities : null;
+      } catch (_) { return null; }
+    }
 
     async function loadTasks() {
       const generation = ++taskLoadGeneration;
@@ -334,6 +372,20 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     let taskDetailRevision = 0;
     let selectedResult = null;
     let taskResultReadback = null;
+    let taskResultCapabilities = {valid:false, accept_result:false, request_correction:false};
+    let taskResultMaxCharsCapabilities = null;
+    let taskResultHistoryEvents = [];
+    let taskResultHistoryCursor = null;
+    let taskResultHistoryHasMore = false;
+    let taskResultHistoryLoading = false;
+    let taskResultHistoryGeneration = 0;
+    let correctionRequiresRefresh = false;
+    let correctionPostInFlight = false;
+    let correctionPostRequestId = null;
+    let correctionGateTaskId = null;
+    let taskResultReadGeneration = 0;
+    let taskResultStatusMessage = '';
+    const taskResultHistoryPageSize = 20;
     const resultOperatorStorage = 'bach_task_result_operator';
     function operatorKey() {
       try { return sessionStorage.getItem(resultOperatorStorage) || ''; } catch (_) { return ''; }
@@ -342,19 +394,66 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       document.getElementById('task-result-key-status').textContent = operatorKey()
         ? 'Persönliche Freigabe für diesen Tab hinterlegt.' : 'Keine persönliche Freigabe hinterlegt.';
     }
+    function correctionGateActive(taskId) {
+      return correctionGateTaskId === taskId && correctionRequiresRefresh;
+    }
+    function isCurrentTaskResultRead(requestGeneration, id, revision, key) {
+      return requestGeneration === taskResultReadGeneration
+        && revision === taskDetailRevision
+        && selectedTask?.id === id
+        && operatorKey() === key;
+    }
+    function renderTaskResultCorrectionAvailability({resetNote = false} = {}) {
+      const correction = document.getElementById('task-result-correction');
+      const submit = correction.querySelector('button[type="submit"]');
+      const task = selectedTask;
+      const readback = taskResultReadback;
+      const status = document.getElementById('task-result-status');
+      const eligible = Boolean(task && readback && task.id === readback.task_id
+        && taskResultCapabilities.valid && taskResultCapabilities.request_correction === true
+        && isCurrentCorrectionTarget(readback, task.id));
+      if (!eligible) {
+        correction.hidden = true;
+        submit.disabled = true;
+        return false;
+      }
+      if (correctionPostInFlight || correctionGateActive(task.id)) {
+        correction.hidden = true;
+        submit.disabled = true;
+        status.textContent = correctionPostInFlight
+          ? 'Korrekturanfrage wird noch geprüft. Bitte nicht erneut senden.'
+          : 'Korrekturstatus unklar. Task vollständig neu öffnen; nicht erneut senden.';
+        return false;
+      }
+      if (resetNote) correction.querySelector('textarea').value = '';
+      correction.hidden = false;
+      submit.disabled = false;
+      status.textContent = taskResultStatusMessage;
+      updateCorrectionCount();
+      return true;
+    }
     async function loadTaskResult(id, revision) {
+      if (revision !== taskDetailRevision || selectedTask?.id !== id) return false;
+      const requestGeneration = ++taskResultReadGeneration;
+      const key = operatorKey();
       const status = document.getElementById('task-result-status');
       const text = document.getElementById('task-result-content');
       const meta = document.getElementById('task-result-meta');
       const accept = document.getElementById('task-result-accept');
+      const correction = document.getElementById('task-result-correction');
       selectedResult = null; taskResultReadback = null; accept.hidden = true; accept.disabled = true;
-      status.textContent = 'Ergebnis wird geprüft.'; text.hidden = meta.hidden = true;
+      taskResultCapabilities = {valid:false, accept_result:false, request_correction:false};
+      correction.hidden = true; correction.querySelector('button[type="submit"]').disabled = true;
+      taskResultStatusMessage = 'Ergebnis wird geprüft.';
+      status.textContent = taskResultStatusMessage; text.hidden = meta.hidden = true;
       resultKeyStatus();
       try {
-        const response = await fetch('/api/tasks/' + encodeURIComponent(id) + '/result');
-        if (!response.ok) throw new Error(`Ergebnisansicht nicht verfügbar (HTTP ${response.status}).`);
+        const response = await fetch('/api/tasks/' + encodeURIComponent(id) + '/result', {
+          headers:key ? {'X-BACH-Result-Operator':key} : {}
+        });
+        if (!response.ok) throw new Error('Ergebnisansicht nicht verfügbar (HTTP ' + response.status + ').');
         const data = await response.json();
-        if (revision !== taskDetailRevision) return;
+        if (!isCurrentTaskResultRead(requestGeneration, id, revision, key)) return false;
         if (data.schema !== 'bach.task-result-readback.v1' || data.task_id !== id
             || data.verified !== true || !Number.isSafeInteger(data.status_revision)
             || data.task_version !== selectedTask?.task_version) {
@@ -362,39 +461,231 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         }
         const result = data.result;
         taskResultReadback = data;
-        if (result == null) { status.textContent = 'Kein Worker-Ergebnis gespeichert.'; return; }
+        taskResultCapabilities = resultOperatorCapabilities(data);
+        if (result == null) {
+          taskResultStatusMessage = 'Kein Worker-Ergebnis gespeichert.';
+          status.textContent = taskResultStatusMessage;
+          return true;
+        }
         if (result.schema !== 'bach.worker-result.v1' || result.task_id !== id || typeof result.result !== 'string') {
           throw new Error('Der Ergebnisinhalt ist nicht bestätigt.');
         }
         text.textContent = result.result; text.hidden = false;
         const accepted = result.accepted === true && ['done','completed'].includes(data.status);
-        status.textContent = accepted ? 'Abgenommen · erledigt.'
+        taskResultStatusMessage = accepted ? 'Abgenommen · erledigt.'
           : result.reason === 'awaiting_review' ? 'Ergebnis abgegeben · wartet auf deine Prüfung.'
           : result.reason === 'legacy_result_without_acceptance' ? 'Früheres Ergebnis · keine getrennte Abnahme belegt.'
           : 'Ergebnis vorhanden · aktuelle Abnahme nicht bestätigt.';
-        meta.textContent = accepted ? `Abgenommen von ${result.accepted_by} · ${result.accepted_at}`
-          : result.submitted_at ? `Abgegeben von ${result.submitted_by} · ${result.submitted_at}` : '';
+        status.textContent = taskResultStatusMessage;
+        meta.textContent = accepted ? ('Abgenommen von ' + result.accepted_by + ' · ' + result.accepted_at)
+          : result.submitted_at ? ('Abgegeben von ' + result.submitted_by + ' · ' + result.submitted_at) : '';
         meta.hidden = !meta.textContent;
-        if (data.status === 'review' && result.reason === 'awaiting_review' && result.accepted === false
+        if (taskResultCapabilities.valid && taskResultCapabilities.accept_result
+            && data.status === 'review' && result.reason === 'awaiting_review' && result.accepted === false
             && Number.isSafeInteger(result.result_id) && result.result_id > 0
             && /^[a-f0-9]{64}$/.test(result.result_sha256) && result.task_version === data.task_version) {
           selectedResult = data; accept.hidden = false; accept.disabled = false;
         }
+        renderTaskResultCorrectionAvailability({resetNote:true});
+        return true;
       } catch (cause) {
-        if (revision !== taskDetailRevision) return;
-        status.textContent = cause instanceof Error ? cause.message : 'Ergebnisquelle nicht bestätigt.';
+        if (!isCurrentTaskResultRead(requestGeneration, id, revision, key)) return false;
+        taskResultStatusMessage = cause instanceof Error ? cause.message : 'Ergebnisquelle nicht bestätigt.';
+        status.textContent = taskResultStatusMessage;
+        renderTaskResultCorrectionAvailability();
+        return false;
       }
+    }
+    function resetTaskResultHistory() {
+      taskResultHistoryGeneration += 1;
+      taskResultHistoryEvents = []; taskResultHistoryCursor = null; taskResultHistoryHasMore = false;
+      taskResultHistoryLoading = false;
+      document.getElementById('task-result-history-events').replaceChildren();
+      document.getElementById('task-result-history-status').textContent = 'Verlauf wird geladen.';
+      const more = document.getElementById('task-result-history-more');
+      more.hidden = true; more.disabled = false;
+    }
+
+    function renderTaskResultHistoryEvent(event) {
+      const item = document.createElement('li');
+      const heading = document.createElement('strong');
+      const time = document.createElement('time');
+      time.dateTime = event.occurred_at;
+      time.textContent = new Date(event.occurred_at).toLocaleString();
+      if (event.type === 'result_submitted') {
+        heading.textContent = `Ergebnis #${event.result.result_id} abgegeben`;
+        item.append(heading, document.createTextNode(' · '), time);
+        const meta = document.createElement('p');
+        meta.className = 'muted';
+        meta.textContent = `SHA-256 ${event.result.result_sha256} · Generation ${event.result.generation} · Fence ${event.result.fence}`;
+        const details = document.createElement('details');
+        const summary = document.createElement('summary'); summary.textContent = 'Originalergebnis anzeigen';
+        const content = document.createElement('p'); content.className = 'task-description'; content.textContent = event.result.text;
+        details.append(summary, content); item.append(meta, details);
+      } else if (event.type === 'result_accepted') {
+        heading.textContent = `Ergebnis #${event.result.result_id} abgenommen`;
+        item.append(heading, document.createTextNode(' · '), time);
+        const meta = document.createElement('p'); meta.className = 'muted'; meta.textContent = `SHA-256 ${event.result.result_sha256}`;
+        item.append(meta);
+      } else {
+        heading.textContent = `Korrektur ${event.correction.correction_round} angefordert`;
+        item.append(heading, document.createTextNode(' · '), time);
+        const meta = document.createElement('p'); meta.className = 'muted';
+        meta.textContent = `Korrekturanforderung #${event.correction.correction_id} · Originalergebnis #${event.correction.source_result_id} · SHA-256 ${event.correction.source_result_sha256}`;
+        const note = document.createElement('p'); note.textContent = event.correction.note;
+        item.append(meta, note);
+      }
+      return item;
+    }
+
+    async function loadTaskResultHistory(id, revision, {append = false} = {}) {
+      if (taskResultHistoryLoading) return false;
+      const status = document.getElementById('task-result-history-status');
+      const list = document.getElementById('task-result-history-events');
+      const more = document.getElementById('task-result-history-more');
+      const beforeEventId = append ? taskResultHistoryCursor : null;
+      if (append && (!taskResultHistoryHasMore || !Number.isSafeInteger(beforeEventId) || beforeEventId <= 0)) return false;
+      if (!append) resetTaskResultHistory();
+      const requestGeneration = ++taskResultHistoryGeneration;
+      taskResultHistoryLoading = true; more.disabled = true;
+      const query = new URLSearchParams({limit:String(taskResultHistoryPageSize)});
+      if (beforeEventId !== null) query.set('before_event_id', String(beforeEventId));
+      try {
+        const response = await fetch('/api/tasks/' + encodeURIComponent(id) + '/result/history?' + query.toString());
+        if (!response.ok) throw new Error(`Ergebnisverlauf nicht verfügbar (HTTP ${response.status}).`);
+        const data = await response.json();
+        if (revision !== taskDetailRevision) return false;
+        const page = validateResultHistoryPage(data, id, {limit:taskResultHistoryPageSize, beforeEventId});
+        if (!page) throw new Error('Der Ergebnisverlauf entspricht nicht dem bestätigten Format.');
+        if (append && taskResultHistoryEvents.length
+            && page.events.length && taskResultHistoryEvents.at(-1).event_id <= page.events[0].event_id) {
+          throw new Error('Der Ergebnisverlauf ist nicht lückenlos sortiert.');
+        }
+        if (!append) list.replaceChildren();
+        for (const event of page.events) {
+          taskResultHistoryEvents.push(event);
+          list.append(renderTaskResultHistoryEvent(event));
+        }
+        taskResultHistoryCursor = page.next_before_event_id;
+        taskResultHistoryHasMore = page.has_more;
+        status.textContent = taskResultHistoryEvents.length
+          ? `${taskResultHistoryEvents.length} Verlaufseinträge geladen.` : 'Für diesen Task sind keine bestätigten Verlaufseinträge vorhanden.';
+        more.hidden = !page.has_more;
+        return true;
+      } catch (cause) {
+        if (revision !== taskDetailRevision) return false;
+        status.textContent = cause instanceof Error ? cause.message : 'Ergebnisverlauf nicht bestätigt.';
+        if (!append) list.replaceChildren();
+        more.hidden = true;
+        return false;
+      } finally {
+        if (requestGeneration === taskResultHistoryGeneration) taskResultHistoryLoading = false;
+        if (revision === taskDetailRevision) more.disabled = false;
+      }
+    }
+
+    function updateCorrectionCount() {
+      const note = document.getElementById('task-result-correction-note').value;
+      const count = Array.from(note).length;
+      document.getElementById('task-result-correction-count').textContent = `${count} von 1200 Zeichen`;
+      document.getElementById('task-result-correction-count').classList.toggle('text-error', count > 1200);
     }
 
     document.getElementById('task-result-save-key').addEventListener('click', () => {
       const input = document.getElementById('task-result-operator-key');
       if (!input.value.trim()) { detailError('Bitte deinen persönlichen Freigabeschlüssel eingeben.'); return; }
-      try { sessionStorage.setItem(resultOperatorStorage, input.value.trim()); input.value = ''; detailError(''); resultKeyStatus(); }
+      try {
+        sessionStorage.setItem(resultOperatorStorage, input.value.trim()); input.value = ''; detailError('');
+        resultKeyStatus(); if (selectedTask) loadTaskResult(selectedTask.id, taskDetailRevision);
+      }
       catch (_) { detailError('Dieser Browser kann die Freigabe nicht speichern.'); }
     });
     document.getElementById('task-result-forget-key').addEventListener('click', () => {
       try { sessionStorage.removeItem(resultOperatorStorage); } catch (_) {}
       document.getElementById('task-result-operator-key').value = ''; resultKeyStatus();
+      if (selectedTask) loadTaskResult(selectedTask.id, taskDetailRevision);
+    });
+    document.getElementById('task-result-correction-note').addEventListener('input', updateCorrectionCount);
+    document.getElementById('task-result-history-more').addEventListener('click', () => {
+      if (selectedTask) loadTaskResultHistory(selectedTask.id, taskDetailRevision, {append:true});
+    });
+    document.getElementById('task-result-correction').addEventListener('submit', async event => {
+      event.preventDefault();
+      const readback = taskResultReadback;
+      const task = selectedTask;
+      const revision = taskDetailRevision;
+      const key = operatorKey();
+      const form = event.currentTarget;
+      const submit = form.querySelector('button[type="submit"]');
+      if (correctionPostInFlight || correctionGateActive(task?.id) || !task || !readback || task.id !== readback.task_id
+          || !taskResultCapabilities.valid || taskResultCapabilities.request_correction !== true
+          || !isCurrentCorrectionTarget(readback, task.id)) return;
+      if (!key) { detailError('Für eine Korrektur zuerst deine persönliche Freigabe einrichten.'); return; }
+      const note = normalizeCorrectionNote(form.querySelector('textarea').value);
+      if (note === null) {
+        detailError('Der Korrekturhinweis muss 1 bis 1200 Zeichen enthalten.');
+        updateCorrectionCount(); return;
+      }
+      let attempt;
+      try { attempt = createCorrectionAttempt(readback, task.id, revision, note, generateCorrectionRequestId()); }
+      catch (cause) { detailError(cause instanceof Error ? cause.message : 'Korrektur nicht vorbereitet.'); return; }
+      if (!correctionAttemptMatchesView(attempt, taskResultReadback, selectedTask?.id, taskDetailRevision)) return;
+      const body = attempt.body;
+      submit.disabled = true; detailError(''); correctionRequiresRefresh = true;
+      correctionPostInFlight = true; correctionPostRequestId = attempt.request_id; correctionGateTaskId = task.id;
+      let response;
+      try {
+        response = await fetch('/api/tasks/' + encodeURIComponent(task.id) + '/result/correction', {
+          method:'POST', redirect:'error', headers:{'Content-Type':'application/json', 'X-BACH-Result-Operator':key},
+          body:JSON.stringify(body)
+        });
+        const responseBody = await response.json().catch(() => ({}));
+        if (revision !== taskDetailRevision) return;
+        if (!correctionAttemptMatchesView(attempt, taskResultReadback, selectedTask?.id, taskDetailRevision)) return;
+        const outcome = transitionCorrectionAttempt(attempt, response.status, responseBody);
+        if (outcome.state === 'rejected') {
+          correctionRequiresRefresh = false; submit.disabled = false;
+          throw new Error(taskResponseError(responseBody, response.status));
+        }
+        if (outcome.state !== 'acknowledged') {
+          form.hidden = true;
+          document.getElementById('task-result-status').textContent = 'Der Server meldete eine Korrektur, aber die Bestätigung ist unvollständig. Task neu öffnen; nicht erneut senden.';
+          throw new Error('Korrekturantwort nicht bestätigt. Task neu öffnen.');
+        }
+        const answer = outcome.answer;
+        const updatedTask = await openTask(task.id, {releaseCorrectionGate:false});
+        if (!updatedTask || taskDetailRevision !== revision + 1 || updatedTask.status !== 'pending'
+            || updatedTask.task_version !== answer.next_task_version
+            || !taskResultHistoryEvents.some(item => item.type === 'correction_requested'
+              && item.correction.correction_id === answer.correction_id
+              && item.correction.request_id === answer.request_id
+              && item.correction.source_result_id === answer.source_result_id
+              && item.correction.source_result_sha256 === answer.source_result_sha256)) {
+          if (taskDetailRevision === revision + 1) detailError('Korrektur gemeldet; Kontrollabruf der neuen Taskversion oder Historie fehlt. Nicht erneut senden.');
+          return;
+        }
+        if (correctionGateTaskId === task.id && correctionPostRequestId === attempt.request_id) {
+          correctionRequiresRefresh = false; correctionGateTaskId = null;
+        }
+        renderTaskResultCorrectionAvailability({resetNote:true});
+        form.querySelector('textarea').value = '';
+        updateCorrectionCount();
+        await loadTasks();
+      } catch (cause) {
+        if (!response && correctionRequiresRefresh && revision === taskDetailRevision) {
+          form.hidden = true;
+          document.getElementById('task-result-status').textContent = 'Der Korrekturaufruf ist unklar. Task neu öffnen; nicht erneut senden.';
+        }
+        if (revision === taskDetailRevision) detailError(cause instanceof Error ? cause.message : 'Korrekturaufruf nicht bestätigt.');
+      } finally {
+        if (correctionPostRequestId === attempt.request_id) {
+          correctionPostInFlight = false;
+          correctionPostRequestId = null;
+          if (!correctionRequiresRefresh && correctionGateTaskId === task.id) correctionGateTaskId = null;
+          renderTaskResultCorrectionAvailability();
+        }
+        if (revision === taskDetailRevision && !correctionRequiresRefresh && !correctionPostInFlight) submit.disabled = false;
+      }
     });
     document.getElementById('task-result-accept').addEventListener('click', async event => {
       const observed = selectedResult;
@@ -438,10 +729,16 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       }
     });
 
-    async function openTask(id) {
+    async function openTask(id, {releaseCorrectionGate = true} = {}) {
       if (!Number.isSafeInteger(id) || id <= 0) return;
+      const mayReleaseCorrectionGate = releaseCorrectionGate && correctionGateTaskId === id && !correctionPostInFlight;
       const revision = ++taskDetailRevision;
       selectedResult = null; taskResultReadback = null;
+      taskResultCapabilities = {valid:false, accept_result:false, request_correction:false};
+      taskResultStatusMessage = '';
+      resetTaskResultHistory();
+      const correctionForm = document.getElementById('task-result-correction');
+      correctionForm.hidden = true; correctionForm.querySelector('button[type="submit"]').disabled = true;
       document.getElementById('task-result-accept').hidden = true;
       const panel = document.getElementById('task-detail');
       panel.hidden = false;
@@ -461,7 +758,16 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         document.getElementById('task-detail-view').hidden = false;
         document.getElementById('task-edit-form').hidden = true;
         panel.scrollIntoView({ behavior:'smooth', block:'start' });
-        await loadTaskResult(id, revision);
+        const resultLoaded = await loadTaskResult(id, revision);
+        if (revision !== taskDetailRevision) return null;
+        const historyLoaded = await loadTaskResultHistory(id, revision);
+        if (revision !== taskDetailRevision) return null;
+        if (mayReleaseCorrectionGate && resultLoaded && historyLoaded && !correctionPostInFlight
+            && correctionGateTaskId === id) {
+          correctionRequiresRefresh = false; correctionGateTaskId = null;
+          document.getElementById('task-result-status').textContent = taskResultStatusMessage;
+          renderTaskResultCorrectionAvailability({resetNote:true});
+        }
         return task;
       } catch (cause) {
         if (revision !== taskDetailRevision) return null;
@@ -494,6 +800,16 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       if (!selectedTask) return;
       const form = document.getElementById('task-edit-form');
       const task = selectedTask;
+      const revision = taskDetailRevision;
+      const resultMaxCharsField = form.querySelector('[data-task-result-max-chars-field]');
+      resultMaxCharsField.hidden = true; form.elements.result_max_chars.value = '';
+      taskResultMaxCharsCapabilities = await loadTaskResultMaxCharsCapabilities();
+      if (revision !== taskDetailRevision || selectedTask !== task) return;
+      const resultMaxChars = taskResultMaxCharsReadback(task);
+      if (taskResultMaxCharsCapabilities && resultMaxChars.supported) {
+        resultMaxCharsField.hidden = false;
+        form.elements.result_max_chars.value = resultMaxChars.value === null ? '' : String(resultMaxChars.value);
+      }
       for (const key of ['title','description','depends_on','created_by','required_model']) form.elements[key].value = String(task[key] || '');
       form.elements.due_date.value = String(task.due_date || '');
       form.elements.project.value = String(task.category || '');
@@ -513,6 +829,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       statusSelect.value = status;
       await loadEditAssignees(form.elements.assigned_to, task.assigned_to);
       await editAssignment.reload(task);
+      if (revision !== taskDetailRevision || selectedTask !== task) return;
       document.getElementById('task-detail-view').hidden = true;
       form.hidden = false;
       form.elements.title.focus();
@@ -524,6 +841,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     });
     document.getElementById('task-detail-close').addEventListener('click', () => {
       ++taskDetailRevision; selectedResult = null;
+      resetTaskResultHistory();
       selectedTask = null; document.getElementById('task-detail').hidden = true;
     });
     document.getElementById('task-edit-form').addEventListener('submit', async event => {
@@ -533,6 +851,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       const submit = form.querySelector('button[type="submit"]');
       submit.disabled = true; detailError('');
       const id = Number(selectedTask.id);
+      const editRevision = taskDetailRevision;
       const values = new FormData(form);
       const payload = { changed_by:'gui' };
       for (const key of ['title','priority','status','project','due_date','depends_on','description']) {
@@ -545,6 +864,25 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         }
       }
       try {
+        const resultMaxCharsField = form.querySelector('[data-task-result-max-chars-field]');
+        if (!resultMaxCharsField.hidden) {
+          const input = String(values.get('result_max_chars') ?? '');
+          const before = taskResultMaxCharsReadback(selectedTask);
+          const parsed = parseTaskResultMaxCharsInput(input);
+          if (!before.supported) throw new Error('Das gespeicherte Ergebnislimit ist nicht bestätigt. Task erneut öffnen.');
+          if (!parsed.valid) throw new Error('Die Ergebnisbegrenzung muss leer oder eine ganze Zahl von 1 bis 3000 sein.');
+          const requested = parsed.present ? parsed.value : null;
+          if (requested !== before.value) {
+            const capabilities = await loadTaskResultMaxCharsCapabilities();
+            const change = resultMaxCharsEditChange(capabilities, selectedTask, input);
+            if (!change.supported) {
+              throw new Error('Das Backend unterstützt diese Ergebnisbegrenzung nicht. Die Änderung wurde nicht gespeichert.');
+            }
+            if (!change.valid) throw new Error('Die Ergebnisbegrenzung muss leer oder eine ganze Zahl von 1 bis 3000 sein.');
+            if (editRevision !== taskDetailRevision || Number(selectedTask?.id) !== id) return;
+            if (change.changed) payload.result_max_chars = change.value;
+          }
+        }
         Object.assign(payload, editAssignment.payload());
         if (Object.keys(payload).length === 1) { document.getElementById('task-edit-cancel').click(); return; }
         const response = await fetch('/api/tasks/' + encodeURIComponent(id), {
@@ -564,6 +902,8 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
             if (actual != null && String(actual).trim() !== '') {
               throw new Error('Fälligkeitsdatum sollte gelöscht werden, ist aber noch gesetzt.');
             }
+          } else if (key === 'result_max_chars' && actual !== value) {
+            throw new Error('Das gespeicherte Ergebnislimit weicht ab. Bitte Task prüfen.');
           } else if (String(actual ?? '').trim() !== String(value).trim()) {
             throw new Error('Änderung gemeldet, aber der Kontrollabruf weicht ab. Bitte Task prüfen.');
           }

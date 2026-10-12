@@ -28,7 +28,7 @@
     "src/components/CapabilityBoard.astro": "1cda4d163d9baf87aac8aa747f4b42c1ec6262044bf8d620ee93215288bea546",
     "src/components/Header.astro": "c997c4aa86d16d0ab70edaaf3c6c3332d0e566cc629386d2872fd7ebd57a44e7",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
-    "src/components/TaskCreateForm.astro": "78295d99e1673edf101efae42498f518e6b2a73334998c5bdb3a5ff10be704e3",
+    "src/components/TaskCreateForm.astro": "e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824",
     "src/config/nav_config.json": "0dc51055b0da809445c73ec01cd29fe238b37000e7783ab84edd68ecfbbc078c",
     "src/layouts/BachLayout.astro": "8f45bbac50c150ea9d19f91794bb97b94ad103f5abc5cdef01e70a3c9cc43ac6",
     "src/lib/agent-avatar.mjs": "3057e2f7863031a5d157b7c0e0fb3659678a97fc6eacdeb8645775e263e26147",
@@ -56,7 +56,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "3a7b0a00f1b2356247c8c0c794bdac3723b4bf9afefebd9e449fb852c7bf4ccf",
+    "src/pages/tasks.astro": "aa2871efe995b1b9ec6e653ac7d5028ad5ffe97ba4846b2279d92f4410b3f627",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
@@ -116,9 +116,11 @@
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "public/page-reads.v1.json": "d4dc1da82fd64783937d5b4a618d9c78a6937c28029ea1cc3a32ff3397789a08",
+    "public/page-reads.v1.json": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
-    "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183"
+    "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
+    "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
+    "tests/task-result-history.test.mjs": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -320,7 +322,7 @@
         "src/components/TaskCreateForm.astro": {
           "source_path": "system/gui/web/src/components/TaskCreateForm.astro",
           "source_sha256": "fcfbad55ec1a3a1b4324db717a4ef2e0d7149dba6724d1bfbe95a34b3daf1852",
-          "imported_sha256": "34eedcae269aabc9577a4ea4a302bd323c7647e159cee41d711d5ccb1b4ca877",
+          "imported_sha256": "e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824",
           "adapted": true
         },
         "src/config/nav_config.json": {
@@ -488,7 +490,7 @@
         "src/pages/tasks.astro": {
           "source_path": "system/gui/web/src/pages/tasks.astro",
           "source_sha256": "cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9",
-          "imported_sha256": "472d743eaa2b213bcbe0b7013e6f113d027a8531de71ec30098b0a82c8b2ab52",
+          "imported_sha256": "aa2871efe995b1b9ec6e653ac7d5028ad5ffe97ba4846b2279d92f4410b3f627",
           "adapted": true
         },
         "src/scripts/blueprint-studio.mjs": {
@@ -1152,6 +1154,42 @@
           "path": "tests/usecase-source.test.mjs",
           "previous_sha256": "621d4e34352001b8430ae37290e0275a619eb422c8c34c8e91916cfb42b4d15f",
           "sha256": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-12",
+      "scope": "Task2138: version-bound task result history, correction requests, and result-length limits",
+      "changes": [
+        "Add the strict task-result history v1 read path with exclusive cursor pagination, validated event/result bindings, and text-only rendering.",
+        "Add correction requests gated by the result-operator capability and bound to the current result, generation, fence, task version, status revision, and request UUID; ambiguous acknowledgements require a deliberate fresh task open.",
+        "Expose result_max_chars only when the explicit task-capabilities v1 endpoint advertises nullable limits from 1 through 3000; legacy backends receive no unsupported field."
+      ],
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "d4dc1da82fd64783937d5b4a618d9c78a6937c28029ea1cc3a32ff3397789a08",
+          "sha256": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5"
+        },
+        {
+          "path": "src/components/TaskCreateForm.astro",
+          "previous_sha256": "78295d99e1673edf101efae42498f518e6b2a73334998c5bdb3a5ff10be704e3",
+          "sha256": "e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "3a7b0a00f1b2356247c8c0c794bdac3723b4bf9afefebd9e449fb852c7bf4ccf",
+          "sha256": "aa2871efe995b1b9ec6e653ac7d5028ad5ffe97ba4846b2279d92f4410b3f627"
+        },
+        {
+          "path": "src/lib/task-result-contract.mjs",
+          "previous_sha256": null,
+          "sha256": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": null,
+          "sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb"
         }
       ]
     }
