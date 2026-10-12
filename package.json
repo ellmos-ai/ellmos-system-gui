@@ -14,5 +14,10 @@
   "dependencies": {
     "astro": "7.3.7",
     "mermaid": "11.17.2"
+  },
+  "overrides": {
+    "mermaid": {
+      "katex": "0.18.7"
+    }
   }
 }
