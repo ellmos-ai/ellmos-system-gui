@@ -3,6 +3,12 @@
 const text = value => typeof value === 'string' && value.trim() ? value.trim() : null;
 
 function formatDate(value) {
+  const iso = /^(\d{4}-\d{2}-\d{2})(?:T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-](\d{2}):(\d{2})))?$/.exec(value);
+  if (!iso) return null;
+  const calendar = new Date(`${iso[1]}T00:00:00Z`);
+  if (Number.isNaN(calendar.getTime()) || calendar.toISOString().slice(0, 10) !== iso[1]) return null;
+  if (iso[2] !== undefined && (+iso[2] > 23 || +iso[3] > 59 || +iso[4] > 59 ||
+    (iso[6] !== undefined && (+iso[6] > 23 || +iso[7] > 59)))) return null;
   const stamp = new Date(value);
   if (Number.isNaN(stamp.getTime())) return null;
   // Reines Datum ist UTC-Mitternacht und darf durch die lokale Zeitzone nicht um einen Tag springen.

@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
 import vm from 'node:vm';
+import {createHash} from 'node:crypto';
 import {sourceNotice} from '../src/lib/usecase-source.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
@@ -26,18 +27,21 @@ test('negative control: fehlendes oder ungültiges source ergibt keine Anzeige',
 });
 
 // Seite mit Fake-DOM ausfuehren; liefert den sichtbaren Zustand aller Knoten.
-async function render(body) {
+async function render(body, scriptOverride = null, openDetail = false) {
   const nodes = new Map();
-  const make = () => new Proxy({children: [], hidden: false, value: '', textContent: '', dataset: {}, classList: {add() {}}}, {
+  const make = () => new Proxy({children: [], events: {}, hidden: false, value: '', textContent: '', dataset: {}, classList: {add() {}},
+    append(...children) { this.children.push(...children); }, replaceChildren(...children) { this.children = children; },
+    addEventListener(name, handler) { this.events[name] = handler; }}, {
     get: (t, k) => k in t ? t[k] : (...a) => (k === 'querySelector' || k === 'createElement' ? make() : undefined),
     set: (t, k, v) => (t[k] = v, true),
   });
   const document = {getElementById: id => nodes.get(id) ?? nodes.set(id, make()).get(id), createElement: make};
-  const script = page.match(/<script>([\s\S]*?)<\/script>/)[1].replace(/^\s*import .*$/m, '');
+  const script = scriptOverride ?? page.match(/<script>([\s\S]*?)<\/script>/)[1].replace(/^\s*import .*$/m, '');
   const fetch = async url => ({ok: true, status: 200, json: async () => (String(url).endsWith('/1') ? {success: true, usecase: row} : body)});
   const context = {document, fetch, sourceNotice, confirm: () => false, encodeURIComponent, Number, String, Array, Set, Object, Error, Promise, FormData: class {}};
   vm.runInNewContext(script, context);
   await new Promise(r => setTimeout(r, 20));
+  if (openDetail) await nodes.get('uc-list').children[0].events.click();
   return Object.fromEntries([...nodes].map(([id, n]) => [id, [n.textContent, n.hidden]]));
 }
 
@@ -47,6 +51,59 @@ test('BACH ohne source: Anzeige unverändert, keine leere Zeile', async () => {
   assert.deepEqual(state['uc-total'], ['1', false]);
   const { 'uc-source': _a, ...withoutOcean } = state;
   assert.deepEqual(withoutOcean, (({ 'uc-source': _b, ...rest }) => rest)(await render(list(null))));
+});
+
+test('strict ISO source date: reject normalized dates and non-ISO strings', () => {
+  for (const generated_at of ['0', '12', 'June 22 2026', '2026-02-31', '2026-02-29',
+    '2026-13-01', '2026-06-22T24:00:00Z', '2026-06-22T12:60:00Z',
+    '2026-06-22T12:00:60Z', '2026-06-22T12:00:00+24:00', '2026-06-22T12:00:00'])
+    assert.equal(sourceNotice({...ocean, generated_at}), null, generated_at);
+  for (const generated_at of ['2024-02-29', '2026-06-22T12:00:00Z', '2026-06-22T12:00:00.123+02:00'])
+    assert.ok(sourceNotice({...ocean, generated_at}), generated_at);
+});
+
+// Recover only the explicitly added source-notice operations. Its hash must match the
+// actual inline script read from the released daac428 source, without requiring git in CI.
+function releasedBachScript() {
+  const script = page.replaceAll('\r\n', '\n').match(/<script>([\s\S]*?)<\/script>/)[1]
+    .replace(/^    import .*\n/m, '')
+    .replace('      let notice = null;\n', '')
+    .replace('          notice = sourceNotice(body.source);\n', '')
+    .replace("          message('uc-source', notice ? notice.line + (notice.derivedNote ? ' · ' + notice.derivedNote : '') : '');\n", '')
+    .replace("          rows=[];notice=null;message('uc-source','');", '          rows=[];')
+    .replace('          const note = notice && notice.derivedNote;\n', '')
+    .replace("          byId('uc-result-note').textContent = note || '';byId('uc-result-note').hidden = !note;\n", '');
+  assert.equal(createHash('sha256').update(script).digest('hex'),
+    '30e5977965e46044c9252972d956abd080554a3432dd718be77b5ea8fed4db64');
+  return script;
+}
+
+test('BACH list and opened detail match the actual released daac428 script', async () => {
+  const strip = ({'uc-source': _source, 'uc-result-note': _note, ...rest}) => rest;
+  for (const detail of [false, true]) {
+    assert.deepEqual(strip(await render(list(), null, detail)), await render(list(), releasedBachScript(), detail));
+  }
+  const detail = await render(list(), null, true);
+  assert.deepEqual(detail['uc-result-note'], ['', true]);
+  assert.match(page, /#uc-result-note:not\(\[hidden\]\)\s*\{\s*display:block;/);
+  assert.doesNotMatch(page, /#uc-result-note\s*\{\s*display:/);
+});
+
+test('Ocean opened detail displays the derived-status notice', async () => {
+  const detail = await render(list(ocean), null, true);
+  assert.deepEqual(detail['uc-result-note'], ['Prüfstatus aus Score abgeleitet', false]);
+});
+
+test('the adapted Usecase import and working-source hashes bind the exact page', () => {
+  const path = 'src/pages/governance/usecases.astro';
+  const provenance = JSON.parse(readFileSync(resolve(root, 'SOURCE_PROVENANCE.json'), 'utf8'));
+  const hash = createHash('sha256').update(readFileSync(resolve(root, path))).digest('hex');
+  const imports = provenance.source_imports.map(group => group.files?.[path]).filter(Boolean);
+  assert.equal(imports.length, 1);
+  assert.equal(provenance.files_sha256[path], hash);
+  assert.equal(imports[0].imported_sha256, hash);
+  assert.equal(imports[0].adapted, true);
+  assert.equal(imports[0].source_sha256, '82cb21703924d21941b73bfb6dfc7cd73a493e69e2fe9c3be5fdaa7c66cdd15b');
 });
 
 test('Ocean mit source: Zeile sichtbar, übrige Anzeige identisch zu BACH', async () => {
