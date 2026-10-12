@@ -78,10 +78,10 @@
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "697455d66fcb31e263bd7bdc9d35cf575c9a11f0d45abca993cd3f6b6ea0fd91",
-    "package-lock.json": "3512089be6fcdaf4439753d606919b2c7def18eef03d7451e020f68bd45b5200",
+    "package.json": "e823a61e50670370e6d9455a4983c3d345c70273a58bcead26c461f0c5b66b3a",
+    "package-lock.json": "012f638daf053e3b96434d670aadc921d4288e77d250ac205387a220ae236008",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "efd3aa22b701807f896aff1f011ce9d4bfb5850df7c8556340e1dcf40c66f4cc",
+    "ellmos-module.v2.json": "0ea8359e68bbdf3b670d5552e5dbb9696c3d33ff62955a96ae03a03d0b73d523",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
     "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
     "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
@@ -106,7 +106,7 @@
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/memory-facts.test.mjs": "8be5410afab2074934db3a5a1d62e8b3eb9c9569d480ef033b62157c17484f38",
-    "README.md": "59abef8885c28bfc23e53e65c9bfbe428fed5b03cdbcf9ddcd8ce7ccba52fccb",
+    "README.md": "5a776b862602b47088e97b9f07b3f9b4f7519b561493d9826df8d3d862313abf",
     "docs/CONSUMER_CONTRACT.md": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
     "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
@@ -1190,6 +1190,36 @@
           "path": "tests/task-result-history.test.mjs",
           "previous_sha256": null,
           "sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-13",
+      "scope": "Task2071: release0.2.22 metadata",
+      "source_base_commit": "c0420ef31288debda0f305463469f1a627b6ae9d",
+      "changes": [
+        "Advance package and module version together; preserve the merged Mermaid/KaTeX dependency fix without any frontend behavior edit."
+      ],
+      "files": [
+        {
+          "path": "package.json",
+          "previous_sha256": "697455d66fcb31e263bd7bdc9d35cf575c9a11f0d45abca993cd3f6b6ea0fd91",
+          "sha256": "e823a61e50670370e6d9455a4983c3d345c70273a58bcead26c461f0c5b66b3a"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "3512089be6fcdaf4439753d606919b2c7def18eef03d7451e020f68bd45b5200",
+          "sha256": "012f638daf053e3b96434d670aadc921d4288e77d250ac205387a220ae236008"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "efd3aa22b701807f896aff1f011ce9d4bfb5850df7c8556340e1dcf40c66f4cc",
+          "sha256": "0ea8359e68bbdf3b670d5552e5dbb9696c3d33ff62955a96ae03a03d0b73d523"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "59abef8885c28bfc23e53e65c9bfbe428fed5b03cdbcf9ddcd8ce7ccba52fccb",
+          "sha256": "5a776b862602b47088e97b9f07b3f9b4f7519b561493d9826df8d3d862313abf"
         }
       ]
     }
