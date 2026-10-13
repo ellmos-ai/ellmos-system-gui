@@ -779,6 +779,7 @@ const mermaidCode = `flowchart TD
         <button class="btn btn-sm btn-secondary" onclick="closeCandidateModal()">✕ Schließen</button>
       </div>
       <div style="padding:1.25rem;overflow-y:auto;flex:1;">
+        <p id="hermes-modal-confidence" style="margin:0 0 0.75rem;color:var(--text-muted);font-size:0.8rem;"></p>
         <pre id="hermes-modal-content" style="background:var(--bg-dark);color:var(--text);padding:1rem;border-radius:var(--radius-sm);font-family:monospace;font-size:0.8rem;white-space:pre-wrap;line-height:1.5;border:1px solid var(--border);margin:0;"></pre>
       </div>
     </div>
@@ -1108,6 +1109,24 @@ const mermaidCode = `flowchart TD
     return Number.isSafeInteger(id) && id >= 0 ? id : 0;
   }
 
+  function confidenceLabel(value, status, context = 'hermes') {
+    if (status === 'not_measured') return value === null ? 'Nicht erhoben' : 'Nicht verfügbar';
+    if (status === 'unavailable') return 'Nicht verfügbar';
+    if (value === null) return 'Nicht erhoben';
+    if (value === undefined) return 'Nicht verfügbar';
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1) {
+      if (context === 'memory_fact'
+          && (status === undefined || status === 'stored_unvalidated' || status === 'legacy_heuristic_unvalidated')) {
+        return 'Gespeicherter Wert ' + value.toFixed(2) + ' · nicht verifiziert';
+      }
+      if (context === 'hermes'
+          && (status === undefined || status === 'legacy_heuristic_unvalidated')) {
+        return 'Heuristischer Altwert ' + value.toFixed(2) + ' · nicht validiert';
+      }
+    }
+    return 'Nicht verifiziert';
+  }
+
   function toggleAddLessonForm() {
     const f = document.getElementById('form-add-lesson');
     if (f) f.style.display = f.style.display === 'none' ? 'block' : 'none';
@@ -1144,7 +1163,7 @@ const mermaidCode = `flowchart TD
                 <td style="padding:0.5rem;border-bottom:1px solid var(--border);"><span class="badge badge-accent">${escapeHtml(f.category || 'general')}</span></td>
                 <td style="padding:0.5rem;border-bottom:1px solid var(--border);"><strong>${escapeHtml(f.key)}</strong></td>
                 <td style="padding:0.5rem;border-bottom:1px solid var(--border);max-width:300px;word-break:break-all;">${escapeHtml(f.value)}</td>
-                <td style="padding:0.5rem;border-bottom:1px solid var(--border);">${Number(f.confidence ?? 1).toFixed(2)}</td>
+                <td style="padding:0.5rem;border-bottom:1px solid var(--border);">${escapeHtml(confidenceLabel(f.confidence, f.confidence_status, 'memory_fact'))}</td>
                 <td style="padding:0.5rem;border-bottom:1px solid var(--border);">
                   <button class="btn btn-sm btn-secondary" style="color:var(--danger);padding:0.2rem 0.5rem;" onclick="deleteFact(${safeId(f.id)})">Löschen</button>
                 </td>
@@ -1456,7 +1475,7 @@ const mermaidCode = `flowchart TD
                 <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;">${escapeHtml(c.description || c.role || '')}</div>
                 <div style="font-size:0.72rem;color:var(--text-muted);display:flex;gap:0.75rem;">
                   <span>Reduktion: <strong>${Math.round((c.noise_reduction_ratio || 0) * 100)}%</strong></span>
-                  <span>Konfidenz: <strong>${Number(c.confidence || 0.85).toFixed(2)}</strong></span>
+                  <span>Konfidenz: <strong>${escapeHtml(confidenceLabel(c.confidence, c.confidence_status))}</strong></span>
                   <span>Quelle: <strong>${escapeHtml(c.source_session || 'Ad-hoc')}</strong></span>
                 </div>
               </div>
@@ -1569,8 +1588,10 @@ const mermaidCode = `flowchart TD
       const modal = document.getElementById('hermes-candidate-modal');
       const title = document.getElementById('hermes-modal-title');
       const content = document.getElementById('hermes-modal-content');
+      const confidence = document.getElementById('hermes-modal-confidence');
       if (modal && title && content) {
         title.textContent = `SKILL.md: ${cand.name} (v${cand.version})`;
+        if (confidence) confidence.textContent = `Konfidenz: ${confidenceLabel(cand.confidence, cand.confidence_status)}`;
         content.textContent = cand.content || '';
         modal.style.display = 'flex';
       }

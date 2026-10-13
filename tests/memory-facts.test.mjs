@@ -8,6 +8,7 @@ const extract=(name,next)=>source.slice(source.indexOf(`  async function ${name}
 const submit=extract('factResponseError','  async function deleteFact(');
 const load=extract('loadFactsTable','  async function factResponseError(');
 const formControls=source.slice(source.indexOf('  let factSavePending = false;'),source.indexOf('  function escapeHtml('));
+const helpers=source.slice(source.indexOf('  function escapeHtml('),source.indexOf('  function toggleAddLessonForm('));
 const ack=(overrides={})=>({ok:true,json:async()=>({status:'created',id:1,key:'Schlüssel',category:'user',...overrides})});
 function setup(fetch){
   const elements={
@@ -19,7 +20,10 @@ function setup(fetch){
   const attrs={};
   elements['form-add-fact']={style:{display:'block'},querySelectorAll:()=>controls,
     setAttribute:(name,value)=>attrs[name]=value,removeAttribute:name=>delete attrs[name]};
-  const context={fetch,document:{getElementById:id=>elements[id]},loadCognitiveState:()=>{},loadFactsTable:()=>{}};
+  const context={fetch,document:{getElementById:id=>elements[id],createElement:()=>({
+    _text:'',set textContent(value){this._text=String(value??'');},
+    get innerHTML(){return this._text.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');},
+  })},loadCognitiveState:()=>{},loadFactsTable:()=>{}};
   vm.createContext(context);vm.runInContext(formControls+submit,context);
   return {elements,context,attrs,controls:[...controls,elements['btn-add-fact']],closed:()=>elements['form-add-fact'].style.display==='none'};
 }
@@ -98,4 +102,22 @@ test('Nicht verfügbarer Faktenspeicher wird nicht als leere Tabelle angezeigt',
   vm.runInContext(load,state.context);await state.context.loadFactsTable();
   assert.equal(state.elements['facts-table-container'].textContent,'Fakten konnten nicht geladen werden.');
   assert.doesNotMatch(state.elements['facts-table-container'].innerHTML,/Keine Fakten/);
+});
+
+
+test('Facts-Tabelle kennzeichnet gespeicherte Werte ohne Hermes-Herkunft zu erfinden',async()=>{
+  const state=setup(async()=>({ok:true,json:async()=>({facts:[
+    {id:1,category:'user',key:'zero',value:'0',confidence:0,confidence_status:'stored_unvalidated'},
+    {id:2,category:'user',key:'old-api',value:'0.70',confidence:0.7,confidence_status:'legacy_heuristic_unvalidated'},
+    {id:3,category:'user',key:'no-status',value:'0.42',confidence:0.42},
+    {id:4,category:'user',key:'unknown',value:'?',confidence:null,confidence_status:'not_measured'},
+  ]})}));
+  vm.runInContext(helpers+load,state.context);
+  await state.context.loadFactsTable();
+  const html=state.elements['facts-table-container'].innerHTML;
+  assert.match(html,/Gespeicherter Wert 0\.00 · nicht verifiziert/);
+  assert.match(html,/Gespeicherter Wert 0\.70 · nicht verifiziert/);
+  assert.match(html,/Gespeicherter Wert 0\.42 · nicht verifiziert/);
+  assert.match(html,/Nicht erhoben/);
+  assert.doesNotMatch(html,/Heuristischer Altwert|0\.85|1\.00/);
 });
