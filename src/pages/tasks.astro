@@ -2,6 +2,7 @@
 // tasks.astro - Das moderne BACH Aufgabenboard mit Filterung
 import BachLayout from "../layouts/BachLayout.astro";
 import TaskCreateForm from "../components/TaskCreateForm.astro";
+import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.astro";
 ---
 
 <BachLayout title="Aufgaben & Tasks" currentPath="/tasks">
@@ -82,6 +83,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         <div><dt>Abgeschlossen am</dt><dd id="task-view-completed_at"></dd></div>
       </dl>
       <h3>Beschreibung</h3><p id="task-view-description" class="task-description"></p>
+      <TaskWorkerPolicySettings />
       <section class="task-worker-result" aria-live="polite">
         <h3>Worker-Ergebnis</h3>
         <p id="task-result-status">Noch nicht geprüft.</p>
@@ -752,6 +754,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         selectedTask = task;
         document.getElementById('task-detail-id').textContent = `Task #${id}`;
         document.getElementById('task-detail-title').textContent = String(task.title || 'Unbenannt');
+        window.dispatchEvent(new CustomEvent('bach:task-selected', {detail:{id, task}}));
         for (const key of ['status','priority','category','assigned_to','created_by','modified_by','due_date','depends_on','required_model','assigned_slot','created_at','completed_at','description']) {
           document.getElementById('task-view-' + key).textContent = task[key] == null || task[key] === '' ? '–' : String(task[key]);
         }

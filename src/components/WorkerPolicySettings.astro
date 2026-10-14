@@ -1,0 +1,101 @@
+<section class="glass-card worker-policy-card" aria-labelledby="worker-policy-heading">
+  <div class="worker-policy-heading">
+    <div>
+      <h3 id="worker-policy-heading">🧭 Worker-Abschluss, Reviews & Aufgabenauswahl</h3>
+      <p class="card-desc">Die Regeln werden aus dem verbundenen Backend gelesen. Ohne bestätigte Policy bleiben Änderungen deaktiviert.</p>
+    </div>
+    <button class="btn btn-secondary" id="worker-policy-refresh" type="button">Aktualisieren</button>
+  </div>
+  <p id="worker-policy-status" class="worker-policy-status" role="status" aria-live="polite">Policy noch nicht geprüft.</p>
+  <form id="worker-policy-form" hidden>
+    <div class="worker-policy-grid">
+      <label>Standard-Abschlussmodus
+        <select name="default_mode">
+          <option value="simple_task">Einfacher Taskmodus</option>
+          <option value="balanced">Ausgewogen</option>
+          <option value="high_security">Hochsicherheit</option>
+        </select>
+        <small>Einfach: Selbstprüfung reicht für den Abschluss. Ausgewogen: unabhängige Review, währenddessen dürfen andere Tasks weiterlaufen. Hochsicherheit: nur ein unabhängiger Reviewer der Stufe Top darf blockierend abnehmen; Standard-Reviewer bleiben für die übrigen Modi verfügbar.</small>
+      </label>
+      <label>Review-Verfall
+        <select name="expiry_mode">
+          <option value="none">Kein automatischer Verfall</option>
+          <option value="duration">Nach einer Frist</option>
+        </select>
+        <div class="worker-policy-expiry-duration">
+          <input name="expiry_value" type="number" min="1" max="8760" step="1" inputmode="numeric" aria-label="Wert der Review-Frist" />
+          <select name="expiry_unit" aria-label="Einheit der Review-Frist">
+            <option value="hours">Stunden</option>
+            <option value="minutes">Minuten</option>
+            <option value="seconds">Sekunden</option>
+          </select>
+        </div>
+        <small>Gilt nur im ausgewogenen Modus. User-Reviews und Hochsicherheitsreviews verfallen nie.</small>
+      </label>
+      <label class="worker-policy-check"><input name="github_external_review" type="checkbox" /> GitHub-Aufgaben extern über PR-Checks und Reviews prüfen</label>
+      <label class="worker-policy-check"><input name="allow_review_task_pickup" type="checkbox" /> Reviews als Ersatzaufgabe übernehmen, wenn keine normale Aufgabe passt</label>
+      <label class="worker-policy-check"><input name="resume_bound_task_first" type="checkbox" /> Eine gültig gebundene, fortsetzbare Aufgabe zuerst weiterführen</label>
+      <label class="worker-policy-check"><input name="decompose_when_idle" type="checkbox" /> Task-Divider bei fehlender passender Aufgabe prüfen lassen</label>
+      <label>Reihenfolge normaler Aufgaben
+        <select name="normal_task_order">
+          <option value="priority_then_created">Priorität, dann Erstellzeit</option>
+          <option value="oldest_first">Älteste passende Aufgabe zuerst</option>
+        </select>
+      </label>
+    </div>
+
+    <fieldset class="worker-reviewers">
+      <legend>Akzeptierte Reviewer</legend>
+      <p class="card-desc">Reviewer werden anhand stabiler Anbieter- oder Agenten-IDs zugelassen. Lokale Modell-Slots gehören nicht in diese Liste.</p>
+      <div id="worker-policy-reviewers"></div>
+      <button class="btn btn-secondary" id="worker-policy-add-reviewer" type="button">+ Reviewer hinzufügen</button>
+    </fieldset>
+
+    <details class="worker-selection-help">
+      <summary>Auswahlregeln und Gründe</summary>
+      <ol>
+        <li>Nur gültige Task-Lease, Fence, freie Locks und erfüllte Abhängigkeiten erlauben eine Übernahme.</li>
+        <li>Eine fortsetzbare gebundene Aufgabe kann vor einer neuen Aufgabe gewählt werden.</li>
+        <li>Passende normale Aufgaben haben Vorrang vor Review-Aufgaben.</li>
+        <li>Review-Aufgaben kommen nur infrage, wenn die normale Auswahl keine passende Aufgabe findet und die Einstellung dies erlaubt.</li>
+        <li>Running zeigt Auswahlbelege nur aus einer frischen, bestätigten Backendantwort; ohne diesen Readback wird der Beleg ausdrücklich als nicht verfügbar angezeigt.</li>
+      </ol>
+      <ul>
+        <li>Ein verlangtes Nutzerreview blockiert den Abschluss in allen Modi und verfällt nie. Task-Regeln können es nur hinzufügen.</li>
+        <li>Wenn GitHub die externe Review übernimmt, ersetzt der Nachweis zu PR, exaktem Head und geltenden Checks das interne Review.</li>
+        <li>Ein Befund kann gespeichert werden, ohne jeden Task zu blockieren. Ein Korrekturbedarf führt in den Korrekturpfad.</li>
+      </ul>
+      <p class="card-desc">Task-Divider und Review-Auswahl umgehen keine Lease, Abhängigkeit, User-Review oder Sicherheitsregel.</p>
+    </details>
+
+    <p id="worker-policy-version" class="card-desc">Policy-Version noch nicht geprüft.</p>
+    <div class="worker-policy-actions">
+      <button class="btn btn-primary" id="worker-policy-save" type="submit" disabled>Änderungen speichern</button>
+      <button class="btn btn-secondary" id="worker-policy-reset" type="button" disabled>Auf Systemstandard zurücksetzen</button>
+    </div>
+  </form>
+</section>
+
+<style>
+  .worker-policy-heading {display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+  .worker-policy-status {padding:.65rem .8rem;border:1px solid var(--border);border-radius:var(--radius-sm);overflow-wrap:anywhere}
+  .worker-policy-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1rem;margin-top:1rem}
+  .worker-policy-grid label {display:flex;flex-direction:column;gap:.4rem;color:var(--text);min-width:0}
+  .worker-policy-grid select,.worker-policy-grid input[type=number],.worker-reviewer-row input,.worker-reviewer-row select {background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;font:inherit;max-width:100%;box-sizing:border-box}
+  .worker-policy-expiry-duration {display:grid;grid-template-columns:minmax(5rem,.6fr) minmax(0,1fr);gap:.4rem}
+  .worker-policy-grid small,.worker-reviewers .card-desc {color:var(--text-muted);font-size:.8rem;line-height:1.45}
+  .worker-policy-check {display:flex!important;flex-direction:row!important;align-items:flex-start;gap:.55rem!important;padding:.65rem;border:1px solid var(--border);border-radius:var(--radius-sm)}
+  .worker-policy-check input {margin-top:.2rem}
+  .worker-reviewers {margin-top:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem}
+  .worker-reviewer-row {display:grid;grid-template-columns:minmax(0,1fr) minmax(140px,.45fr) auto;gap:.5rem;align-items:center;margin:.5rem 0}
+  .worker-selection-help {margin-top:1rem}
+  .worker-selection-help summary {cursor:pointer;font-weight:600}
+  .worker-selection-help li {margin:.45rem 0}
+  .worker-policy-actions {display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+  @media(max-width:560px) {.worker-reviewer-row {grid-template-columns:1fr}.worker-reviewer-row button {justify-self:start}}
+</style>
+
+<script>
+  import { mountWorkerPolicySettings } from "../lib/worker-policy-settings.mjs";
+  mountWorkerPolicySettings();
+</script>
