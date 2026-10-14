@@ -2,6 +2,7 @@
 // src/pages/settings.astro - Einstellungen, Setup, Ocean Modulschaltplan & Installer
 import BachLayout from "../layouts/BachLayout.astro";
 import SystemClusterStatus from "../components/SystemClusterStatus.astro";
+import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
 ---
 
 <BachLayout title="Einstellungen & Setup" currentPath="/settings">
@@ -23,6 +24,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
       <button class="tab-btn" data-tab="installer">📦 Installer & Erweiterungen</button>
       <button class="tab-btn" data-tab="learning">🧠 NemoFold & Hermes (Lernen)</button>
       <button class="tab-btn" data-tab="appearance">🎨 Darstellung</button>
+      <button class="tab-btn" data-tab="worker-policy">🧭 Worker & Aufgaben</button>
       <button class="tab-btn" data-tab="core">⚙️ Core & Repo-Klärung</button>
     </div>
 
@@ -245,6 +247,11 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
           <p class="card-desc">Eine erfolgreiche Datenbankverbindung belegt keine Modulinstallation oder aktive Agenten.</p>
         </div>
       </div>
+    </div>
+
+    <div class="tab-pane" id="pane-worker-policy">
+      <p class="text-muted">Abschlussmodi, Reviewer, Task-Auswahl und Review-Verfall. Hochsicherheit kann Läufe anhalten; ausgewogener Modus erlaubt unabhängige Weiterarbeit. GitHub-Aufgaben können ihre externe PR-Prüfung nutzen. Änderungen bleiben deaktiviert, solange das verbundene Backend keine versionierte Policy bestätigt.</p>
+      <WorkerPolicySettings />
     </div>
 
     <!-- TAB 5: CORE & REPO-KLÄRUNG -->
