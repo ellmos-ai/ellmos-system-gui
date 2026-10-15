@@ -352,18 +352,28 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
     'src/components/TaskCreateForm.astro': 'fcfbad55ec1a3a1b4324db717a4ef2e0d7149dba6724d1bfbe95a34b3daf1852',
     'src/pages/tasks.astro': 'cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9'
   };
+  const followup = provenance.followup_changes.find(change =>
+    change.scope === 'Task2138: version-bound task result history, correction requests, and result-length limits');
+  assert.ok(followup);
   for (const [path, sourceSha] of Object.entries(importedHistory)) {
     assert.equal(originalBach.files[path].source_sha256, sourceSha);
-    assert.equal(originalBach.files[path].imported_sha256, hash(path));
+    assert.equal(originalBach.files[path].imported_sha256, followup.files.find(file => file.path === path).sha256);
     assert.equal(originalBach.files[path].adapted, true);
   }
   for (const path of ['public/page-reads.v1.json', 'src/lib/task-result-contract.mjs', 'tests/task-result-history.test.mjs']) {
     assert.equal(provenance.source_imports.some(group => group.files?.[path]), false, path);
   }
 
-  const followup = provenance.followup_changes.find(change =>
-    change.scope === 'Task2138: version-bound task result history, correction requests, and result-length limits');
-  assert.ok(followup);
   assert.deepEqual(followup.files.map(file => file.path).sort(), [...paths].sort());
-  for (const file of followup.files) assert.equal(file.sha256, hash(file.path), file.path);
+  const laterChanges = provenance.followup_changes.slice(provenance.followup_changes.indexOf(followup) + 1);
+  for (const file of followup.files) {
+    let recordedHash = file.sha256;
+    for (const change of laterChanges) {
+      const next = change.files?.find(candidate => candidate.path === file.path);
+      if (!next) continue;
+      assert.equal(next.previous_sha256, recordedHash, file.path + ': continuous provenance');
+      recordedHash = next.sha256;
+    }
+    assert.equal(recordedHash, hash(file.path), file.path);
+  }
 });

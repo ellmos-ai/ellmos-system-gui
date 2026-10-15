@@ -219,6 +219,7 @@ export function mountWorkerPolicySettings() {
   async function load({expectedPolicy = null, expectDefault = false} = {}) {
     if (busy) return;
     busy = true;
+    snapshot = null;
     setFormEnabled(false);
     refresh.disabled = true;
     showStatus('Worker-Policy wird gelesen …');
@@ -238,11 +239,13 @@ export function mountWorkerPolicySettings() {
       renderPolicy(value);
       setFormEnabled(true);
       showStatus('Backend-Policy gelesen · Änderungen werden erst nach bestätigtem Readback übernommen.', 'available');
+      return true;
     } catch (error) {
       snapshot = null;
       setFormEnabled(false);
       const message = error instanceof Error ? error.message : 'Policy-Quelle nicht verfügbar.';
       showStatus('Worker-Policy nicht verfügbar: ' + message, 'unavailable');
+      return false;
     } finally {
       refresh.disabled = false;
       busy = false;
@@ -272,6 +275,7 @@ export function mountWorkerPolicySettings() {
     busy = true;
     setFormEnabled(false);
     showStatus('Worker-Policy wird gespeichert …');
+    let saveError = null;
     try {
       const response = await fetch(endpoint, {
         method: 'PUT', credentials: 'same-origin', redirect: 'error',
@@ -286,11 +290,14 @@ export function mountWorkerPolicySettings() {
         throw new Error('Speicherbestätigung ist unvollständig.');
       showStatus('Gespeichert; unabhängiger Readback läuft …', 'available');
     } catch (error) {
-      showStatus(error instanceof Error ? error.message : 'Speichern nicht bestätigt.', 'error');
+      saveError = error instanceof Error ? error.message : 'Speichern nicht bestätigt.';
     } finally {
       busy = false;
     }
-    await load({expectedPolicy: policy});
+    const readbackOk = await load({expectedPolicy: saveError ? null : policy});
+    if (saveError) showStatus(saveError + (readbackOk
+      ? ' Der anschließende Readback zeigt den aktuellen Stand.'
+      : ' Auch der aktuelle Stand konnte nicht bestätigt werden.'), 'error');
   });
 
   reset.addEventListener('click', async () => {
@@ -298,6 +305,7 @@ export function mountWorkerPolicySettings() {
     busy = true;
     setFormEnabled(false);
     showStatus('Systemstandard wird angefordert …');
+    let resetError = null;
     try {
       const response = await fetch(endpoint, {
         method: 'PUT', credentials: 'same-origin', redirect: 'error',
@@ -311,11 +319,14 @@ export function mountWorkerPolicySettings() {
           || ack.updated !== true || ack.worker_started !== false)
         throw new Error('Bestätigung des Systemstandards ist unvollständig.');
     } catch (error) {
-      showStatus(error instanceof Error ? error.message : 'Systemstandard nicht bestätigt.', 'error');
+      resetError = error instanceof Error ? error.message : 'Systemstandard nicht bestätigt.';
     } finally {
       busy = false;
     }
-    await load({expectDefault: true});
+    const readbackOk = await load({expectDefault: !resetError});
+    if (resetError) showStatus(resetError + (readbackOk
+      ? ' Der anschließende Readback zeigt den aktuellen Stand.'
+      : ' Auch der aktuelle Stand konnte nicht bestätigt werden.'), 'error');
   });
 
   load();

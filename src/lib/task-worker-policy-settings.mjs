@@ -140,11 +140,13 @@ export function mountTaskWorkerPolicySettings() {
       setEnabled(true);
       form.elements.namedItem('user_review_required').disabled = value.effective.user_review_required === true;
       setStatus(`Task #${id}: Regeln gelesen · Schreibzugriff erst nach unabhängigem Readback bestätigt.`, 'available');
+      return true;
     } catch (error) {
       if (current !== generation) return;
       setEnabled(false);
       const message = error instanceof Error ? error.message : 'Policy-Quelle nicht verfügbar.';
       setStatus(`Task-Regeln für #${id} nicht verfügbar: ${message}`, 'unavailable');
+      return false;
     } finally {
       if (current === generation) {
         refresh.disabled = false;
@@ -193,8 +195,11 @@ export function mountTaskWorkerPolicySettings() {
       }
     }
     if (current === generation) {
-      await load(targetTaskId, {expectedOverride: saveError ? null : override});
-      if (saveError) setStatus(saveError + ' Der anschließende Readback zeigt den aktuellen Stand.', 'error');
+      const readbackGeneration = generation + 1;
+      const readbackOk = await load(targetTaskId, {expectedOverride: saveError ? null : override});
+      if (saveError && generation === readbackGeneration) setStatus(saveError + (readbackOk
+        ? ' Der anschließende Readback zeigt den aktuellen Stand.'
+        : ' Auch der aktuelle Stand konnte nicht bestätigt werden.'), 'error');
     }
   });
 
