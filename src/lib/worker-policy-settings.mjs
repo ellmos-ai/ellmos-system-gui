@@ -58,6 +58,28 @@ function sameSettings(actual, expected) {
   return comparableSettings(actual.policy, actual.selection) === comparableSettings(expected.policy, expected.selection);
 }
 
+function sameReviewers(actual, expected) {
+  const normalize = (reviewers) => JSON.stringify([...reviewers]
+    .map(({reviewer_id, tier}) => ({reviewer_id, tier}))
+    .sort((a, b) => a.reviewer_id.localeCompare(b.reviewer_id) || a.tier.localeCompare(b.tier)));
+  return normalize(actual) === normalize(expected);
+}
+
+function operatorTokenInput() {
+  return byId('worker-policy-operator-token');
+}
+
+function clearOperatorToken() {
+  const input = operatorTokenInput();
+  if (input) input.value = '';
+}
+
+function policyWriteHeaders(operatorToken = '') {
+  const headers = {'Content-Type': 'application/json'};
+  if (operatorToken) headers['X-BACH-Result-Operator'] = operatorToken;
+  return consumerApiHeaders(headers);
+}
+
 function reviewerRow(reviewer = {}) {
   const row = document.createElement('div');
   row.className = 'worker-reviewer-row';
@@ -96,6 +118,8 @@ function showStatus(message, state = 'neutral') {
 function setFormEnabled(enabled) {
   const form = byId('worker-policy-form');
   if (form) form.hidden = !enabled;
+  const operatorToken = operatorTokenInput();
+  if (operatorToken) operatorToken.disabled = !enabled;
   const save = byId('worker-policy-save');
   const reset = byId('worker-policy-reset');
   if (save) save.disabled = !enabled;
@@ -123,6 +147,7 @@ function setExpiryAvailability(form) {
 }
 
 function renderPolicy(snapshot) {
+  clearOperatorToken();
   const form = byId('worker-policy-form');
   const policy = snapshot.policy;
   form.elements.namedItem('default_mode').value = policy.default_mode;
@@ -219,6 +244,7 @@ export function mountWorkerPolicySettings() {
   async function load({expectedPolicy = null, expectDefault = false} = {}) {
     if (busy) return;
     busy = true;
+    clearOperatorToken();
     snapshot = null;
     setFormEnabled(false);
     refresh.disabled = true;
@@ -269,9 +295,18 @@ export function mountWorkerPolicySettings() {
     try {
       policy = collectPolicy(snapshot);
     } catch (error) {
+      clearOperatorToken();
       showStatus(error instanceof Error ? error.message : 'Eingaben ungültig.', 'error');
       return;
     }
+    const reviewerChange = !sameReviewers(snapshot.policy.reviewers, policy.policy.reviewers);
+    const operatorToken = operatorTokenInput()?.value.trim() || '';
+    if (reviewerChange && !operatorToken) {
+      clearOperatorToken();
+      showStatus('Für Änderungen an der Reviewer-Liste ist eine gesonderte Operatorberechtigung nötig. Gib ein bestehendes Operator-Token nur für diesen Speichervorgang ein; es wird nicht gespeichert.', 'error');
+      return;
+    }
+    if (!reviewerChange) clearOperatorToken();
     busy = true;
     setFormEnabled(false);
     showStatus('Worker-Policy wird gespeichert …');
@@ -279,11 +314,15 @@ export function mountWorkerPolicySettings() {
     try {
       const response = await fetch(endpoint, {
         method: 'PUT', credentials: 'same-origin', redirect: 'error',
-        headers: consumerApiHeaders({'Content-Type': 'application/json'}),
+        headers: policyWriteHeaders(reviewerChange ? operatorToken : ''),
         body: JSON.stringify({configuration_version: snapshot.configuration_version, ...policy}),
       });
       if (response.status === 409) throw new Error('Konfiguration wurde parallel geändert. Bitte neu laden.');
-      if (!response.ok) throw new Error('Speichern nicht bestätigt (HTTP ' + response.status + ').');
+      if (!response.ok) throw new Error(response.status === 403
+        ? (reviewerChange
+          ? 'Operatorberechtigung fehlt oder wurde abgelehnt (HTTP 403). Reviewer-Änderung nicht bestätigt.'
+          : 'Änderung abgelehnt (HTTP 403).')
+        : 'Speichern nicht bestätigt (HTTP ' + response.status + ').');
       const ack = await response.json();
       if (!record(ack) || ack.schema !== 'bach.worker-review-policy-settings.v1'
           || ack.updated !== true || ack.worker_started !== false)
@@ -292,6 +331,7 @@ export function mountWorkerPolicySettings() {
     } catch (error) {
       saveError = error instanceof Error ? error.message : 'Speichern nicht bestätigt.';
     } finally {
+      clearOperatorToken();
       busy = false;
     }
     const readbackOk = await load({expectedPolicy: saveError ? null : policy});
@@ -302,6 +342,14 @@ export function mountWorkerPolicySettings() {
 
   reset.addEventListener('click', async () => {
     if (!snapshot || busy) return;
+    const reviewerChange = snapshot.policy.reviewers.length > 0;
+    const operatorToken = operatorTokenInput()?.value.trim() || '';
+    if (reviewerChange && !operatorToken) {
+      clearOperatorToken();
+      showStatus('Das Zurücksetzen entfernt die Reviewer-Liste und benötigt eine gesonderte Operatorberechtigung. Gib ein bestehendes Operator-Token nur für diesen Vorgang ein; es wird nicht gespeichert.', 'error');
+      return;
+    }
+    if (!reviewerChange) clearOperatorToken();
     busy = true;
     setFormEnabled(false);
     showStatus('Systemstandard wird angefordert …');
@@ -309,11 +357,15 @@ export function mountWorkerPolicySettings() {
     try {
       const response = await fetch(endpoint, {
         method: 'PUT', credentials: 'same-origin', redirect: 'error',
-        headers: consumerApiHeaders({'Content-Type': 'application/json'}),
+        headers: policyWriteHeaders(reviewerChange ? operatorToken : ''),
         body: JSON.stringify({configuration_version: snapshot.configuration_version, reset_to_default: true}),
       });
       if (response.status === 409) throw new Error('Konfiguration wurde parallel geändert. Bitte neu laden.');
-      if (!response.ok) throw new Error('Zurücksetzen nicht bestätigt (HTTP ' + response.status + ').');
+      if (!response.ok) throw new Error(response.status === 403
+        ? (reviewerChange
+          ? 'Operatorberechtigung fehlt oder wurde abgelehnt (HTTP 403). Reviewer-Änderung nicht bestätigt.'
+          : 'Zurücksetzen abgelehnt (HTTP 403).')
+        : 'Zurücksetzen nicht bestätigt (HTTP ' + response.status + ').');
       const ack = await response.json();
       if (!record(ack) || ack.schema !== 'bach.worker-review-policy-settings.v1'
           || ack.updated !== true || ack.worker_started !== false)
@@ -321,6 +373,7 @@ export function mountWorkerPolicySettings() {
     } catch (error) {
       resetError = error instanceof Error ? error.message : 'Systemstandard nicht bestätigt.';
     } finally {
+      clearOperatorToken();
       busy = false;
     }
     const readbackOk = await load({expectDefault: !resetError});

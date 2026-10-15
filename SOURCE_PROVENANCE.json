@@ -122,11 +122,11 @@
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
     "tests/task-result-history.test.mjs": "c86b5e105c8543afa2b820fd5a083fe5ba392b44c1068e608c84bb0a7bb0ecdd",
     "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
-    "src/components/WorkerPolicySettings.astro": "8a36508bdfd685f4bd152f3f648ff9b4fddbfd4b027043968c3b8e0b6d266178",
+    "src/components/WorkerPolicySettings.astro": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3",
     "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
     "src/lib/task-worker-policy-settings.mjs": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78",
-    "src/lib/worker-policy-settings.mjs": "01b911187aa07223a3b4de4ef00965364b0e08365f73b05aadbbf15f853adf0d",
-    "tests/worker-policy-settings.test.mjs": "267a6f047d47eb14348b96d56b21c402a6fe18aec33e41a237ff721009913e06"
+    "src/lib/worker-policy-settings.mjs": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb",
+    "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -1289,7 +1289,7 @@
         {
           "path": "src/components/WorkerPolicySettings.astro",
           "previous_sha256": null,
-          "sha256": "8a36508bdfd685f4bd152f3f648ff9b4fddbfd4b027043968c3b8e0b6d266178"
+          "sha256": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3"
         },
         {
           "path": "src/lib/consumer-api-auth.mjs",
@@ -1304,7 +1304,7 @@
         {
           "path": "src/lib/worker-policy-settings.mjs",
           "previous_sha256": null,
-          "sha256": "01b911187aa07223a3b4de4ef00965364b0e08365f73b05aadbbf15f853adf0d"
+          "sha256": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb"
         },
         {
           "path": "src/pages/agenten/running.astro",
@@ -1324,7 +1324,7 @@
         {
           "path": "tests/worker-policy-settings.test.mjs",
           "previous_sha256": null,
-          "sha256": "267a6f047d47eb14348b96d56b21c402a6fe18aec33e41a237ff721009913e06"
+          "sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54"
         },
         {
           "path": "tests/task-result-history.test.mjs",
