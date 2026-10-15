@@ -5,10 +5,10 @@ import vm from 'node:vm';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const response = (value, status = 200) => ({ok: status < 400, status, json: async () => value});
-const globalSnapshot = () => ({
+const globalSnapshot = (reviewers = []) => ({
   schema: 'bach.worker-review-policy-settings.v1', availability: 'available',
   configuration_version: 'config-1', policy_source: 'system_default',
-  policy: {policy_version: 'policy-1', default_mode: 'balanced', reviewers: [],
+  policy: {policy_version: 'policy-1', default_mode: 'balanced', reviewers,
     review_expiry_seconds: null, github_external_review: false, allow_review_task_pickup: false},
   selection: {resume_bound_task_first: true, decompose_when_idle: true, normal_task_order: 'priority_then_created'},
 });
@@ -25,15 +25,23 @@ function harness(kind, responses) {
   const nodes = new Map();
   const listeners = new Map();
   const calls = [];
-  const element = () => ({value: '', checked: false, disabled: false, hidden: false,
-    textContent: '', dataset: {}, handlers: new Map(), children: [],
+  const element = (tagName = 'div') => ({tagName: tagName.toUpperCase(), value: '', checked: false, disabled: false, hidden: false,
+    textContent: '', dataset: {}, handlers: new Map(), children: [], attributes: {},
     addEventListener(event, callback) {this.handlers.set(event, callback);},
-    append(...items) {this.children.push(...items);},
-    replaceChildren(...items) {this.children = items;},
-    querySelectorAll() {return [];}, querySelector() {return null;},
-    setAttribute() {},
+    append(...items) {for (const item of items) item.parent = this; this.children.push(...items);},
+    replaceChildren(...items) {this.children = []; this.append(...items);},
+    remove() {if (this.parent) this.parent.children = this.parent.children.filter(item => item !== this);},
+    querySelectorAll(selector) {
+      const className = selector.startsWith('.') ? selector.slice(1) : null;
+      return className ? this.children.filter(item => item.className === className) : [];
+    },
+    querySelector(selector) {
+      const tagName = selector.toUpperCase();
+      return this.children.find(item => item.tagName === tagName) || null;
+    },
+    setAttribute(name, value) {this.attributes[name] = value;},
   });
-  const node = id => {if (!nodes.has(id)) nodes.set(id, element()); return nodes.get(id);};
+  const node = id => {if (!nodes.has(id)) {const value = element(); value.id = id; nodes.set(id, value);} return nodes.get(id);};
   const prefix = kind === 'global' ? 'worker-policy' : 'task-worker-policy';
   const form = node(prefix + '-form');
   const fields = ['default_mode', 'expiry_mode', 'expiry_value', 'expiry_unit',
@@ -48,7 +56,7 @@ function harness(kind, responses) {
   vm.runInNewContext(source + `\n${mount}();`, {
     document: {getElementById: node, createElement: element},
     window: {addEventListener: (event, callback) => listeners.set(event, callback)},
-    consumerApiHeaders: () => ({}), AbortController, Error,
+    consumerApiHeaders: (initial = {}) => new Headers(initial), Headers, AbortController, Error,
     fetch: async (url, options) => {
       calls.push({url, options});
       assert.ok(responses.length, 'unexpected network request');
@@ -59,6 +67,7 @@ function harness(kind, responses) {
     select: id => listeners.get('bach:task-selected')({detail: {id}}),
     submit: () => form.handlers.get('submit')({preventDefault() {}}),
     reset: () => node(prefix + '-reset').handlers.get('click')(),
+    addReviewer: () => node(prefix + '-add-reviewer').handlers.get('click')(),
     status: () => node(prefix + '-status'),
   };
 }
@@ -83,6 +92,86 @@ test('global save requires an independent matching readback', async () => {
   assert.equal(h.status().dataset.state, 'unavailable');
   assert.match(h.status().textContent, /entspricht.*nicht/);
   assert.equal(h.form.hidden, true);
+});
+
+test('changing reviewers without operator authority sends no write and explains the required permission', async () => {
+  const h = harness('global', [response(globalSnapshot())]);
+  await tick();
+  h.addReviewer();
+  const row = h.node('worker-policy-reviewers').children.find(item => item.className === 'worker-reviewer-row');
+  row.querySelector('input').value = 'provider/reviewer';
+  await h.submit();
+  assert.equal(h.calls.length, 1);
+  assert.equal(h.status().dataset.state, 'error');
+  assert.match(h.status().textContent, /gesonderte Operatorberechtigung/);
+  assert.match(h.status().textContent, /wird nicht gespeichert/);
+  assert.equal(h.form.hidden, false);
+});
+
+test('reviewer changes send the temporary operator header and clear the input after confirmed readback', async () => {
+  const next = globalSnapshot([{reviewer_id: 'provider/reviewer', tier: 'standard'}]);
+  const h = harness('global', [response(globalSnapshot()),
+    response({schema: 'bach.worker-review-policy-settings.v1', updated: true, worker_started: false}), response(next)]);
+  await tick();
+  h.addReviewer();
+  const row = h.node('worker-policy-reviewers').children.find(item => item.className === 'worker-reviewer-row');
+  row.querySelector('input').value = 'provider/reviewer';
+  h.node('worker-policy-operator-token').value = 'temporary-secret-value';
+  await h.submit();
+  assert.equal(h.calls[1].options.headers.get('X-BACH-Result-Operator'), 'temporary-secret-value');
+  assert.equal(h.calls[2].options.headers.get('X-BACH-Result-Operator'), null);
+  assert.equal(h.node('worker-policy-operator-token').value, '');
+  assert.equal(h.status().dataset.state, 'available');
+});
+
+test('ordinary policy edits never send an entered operator token and clear it', async () => {
+  const next = globalSnapshot(); next.policy.default_mode = 'simple_task';
+  const h = harness('global', [response(globalSnapshot()),
+    response({schema: 'bach.worker-review-policy-settings.v1', updated: true, worker_started: false}), response(next)]);
+  await tick();
+  h.node('field:default_mode').value = 'simple_task';
+  h.node('worker-policy-operator-token').value = 'must-not-be-sent';
+  await h.submit();
+  assert.equal(h.calls[1].options.headers.get('X-BACH-Result-Operator'), null);
+  assert.equal(h.node('worker-policy-operator-token').value, '');
+  assert.equal(h.status().dataset.state, 'available');
+});
+
+test('a reviewer 403 is explicit, does not expose the token, and reads back the current policy', async () => {
+  const h = harness('global', [response(globalSnapshot()), response({}, 403), response(globalSnapshot())]);
+  await tick();
+  h.addReviewer();
+  const row = h.node('worker-policy-reviewers').children.find(item => item.className === 'worker-reviewer-row');
+  row.querySelector('input').value = 'provider/reviewer';
+  h.node('worker-policy-operator-token').value = 'private-token-403';
+  await h.submit();
+  assert.equal(h.calls[1].options.headers.get('X-BACH-Result-Operator'), 'private-token-403');
+  assert.equal(h.node('worker-policy-operator-token').value, '');
+  assert.match(h.status().textContent, /Operatorberechtigung.*HTTP 403/);
+  assert.doesNotMatch(h.status().textContent, /private-token-403/);
+  assert.equal(h.status().dataset.state, 'error');
+  assert.equal(h.form.hidden, false);
+});
+
+test('resetting an existing reviewer list requires and uses the temporary operator token', async () => {
+  const current = globalSnapshot([{reviewer_id: 'provider/reviewer', tier: 'top'}]);
+  const h = harness('global', [response(current),
+    response({schema: 'bach.worker-review-policy-settings.v1', updated: true, worker_started: false}), response(globalSnapshot())]);
+  await tick();
+  h.node('worker-policy-operator-token').value = 'reset-only-token';
+  await h.reset();
+  assert.equal(h.calls[1].options.headers.get('X-BACH-Result-Operator'), 'reset-only-token');
+  assert.equal(h.node('worker-policy-operator-token').value, '');
+  assert.equal(h.status().dataset.state, 'available');
+});
+
+test('resetting reviewers without operator authority sends no write', async () => {
+  const current = globalSnapshot([{reviewer_id: 'provider/reviewer', tier: 'standard'}]);
+  const h = harness('global', [response(current)]);
+  await tick(); await h.reset();
+  assert.equal(h.calls.length, 1);
+  assert.match(h.status().textContent, /entfernt die Reviewer-Liste.*Operatorberechtigung/);
+  assert.equal(h.form.hidden, false);
 });
 
 test('task changes preserve null, false and mandatory user review in the request', async () => {

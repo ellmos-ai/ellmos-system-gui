@@ -51,6 +51,11 @@
       <button class="btn btn-secondary" id="worker-policy-add-reviewer" type="button">+ Reviewer hinzufügen</button>
     </fieldset>
 
+    <label class="worker-policy-operator">Temporäres Operator-Token für Änderungen an der Reviewer-Liste
+      <input id="worker-policy-operator-token" type="password" maxlength="256" autocomplete="off" autocapitalize="off" spellcheck="false" />
+      <small>Nur beim Speichern oder Zurücksetzen einer geänderten Reviewer-Liste wird dieses Token als Operatorberechtigung gesendet. Es wird nicht im Browser gespeichert und nach dem Vorgang gelöscht.</small>
+    </label>
+
     <details class="worker-selection-help">
       <summary>Auswahlregeln und Gründe</summary>
       <ol>
@@ -82,6 +87,9 @@
   .worker-policy-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1rem;margin-top:1rem}
   .worker-policy-grid label {display:flex;flex-direction:column;gap:.4rem;color:var(--text);min-width:0}
   .worker-policy-grid select,.worker-policy-grid input[type=number],.worker-reviewer-row input,.worker-reviewer-row select {background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;font:inherit;max-width:100%;box-sizing:border-box}
+  .worker-policy-operator {display:flex;flex-direction:column;gap:.4rem;margin-top:1rem;color:var(--text)}
+  .worker-policy-operator input {background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;font:inherit;max-width:100%;box-sizing:border-box}
+  .worker-policy-operator small {color:var(--text-muted);font-size:.8rem;line-height:1.45}
   .worker-policy-expiry-duration {display:grid;grid-template-columns:minmax(5rem,.6fr) minmax(0,1fr);gap:.4rem}
   .worker-policy-grid small,.worker-reviewers .card-desc {color:var(--text-muted);font-size:.8rem;line-height:1.45}
   .worker-policy-check {display:flex!important;flex-direction:row!important;align-items:flex-start;gap:.55rem!important;padding:.65rem;border:1px solid var(--border);border-radius:var(--radius-sm)}
