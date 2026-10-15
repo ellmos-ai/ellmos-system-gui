@@ -56,7 +56,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "b0f63ab6c0e970ecc3a476e63aa59181b9b8c68c93b05d437529f9ea5c204c42",
+    "src/pages/tasks.astro": "b75a32dae7f71249ca79a32bd7397b5de591668c091471fbb4e7dca6c5b82e5a",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
@@ -119,14 +119,15 @@
     "public/page-reads.v1.json": "619deceffa24d6b8ec4532e8b1050612f2cf9a0d64826381f801f4c5166828a0",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
-    "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
+    "src/lib/task-result-contract.mjs": "100a304fc5be7cef6b7991d30b7e5842e22a7978320e388ca7251f6746977a79",
     "tests/task-result-history.test.mjs": "c86b5e105c8543afa2b820fd5a083fe5ba392b44c1068e608c84bb0a7bb0ecdd",
     "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
     "src/components/WorkerPolicySettings.astro": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3",
     "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
     "src/lib/task-worker-policy-settings.mjs": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78",
     "src/lib/worker-policy-settings.mjs": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb",
-    "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54"
+    "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
+    "tests/task-result-completion.test.mjs": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -1330,6 +1331,33 @@
           "path": "tests/task-result-history.test.mjs",
           "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
           "sha256": "c86b5e105c8543afa2b820fd5a083fe5ba392b44c1068e608c84bb0a7bb0ecdd"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-15",
+      "scope": "Task2210: revision-bound personal confirmation and remaining completion gates",
+      "source_base_commit": "77d42f93c85eb66d1e74361535c13f6e18e4e288",
+      "changes": [
+        "Bind explicit personal confirmation to the full result revision and task contract.",
+        "Verify stored user and contract events through a fresh independent GET; keep outstanding review gates visible.",
+        "Do not equate successful personal confirmation or a read-only policy decision with task completion."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "b0f63ab6c0e970ecc3a476e63aa59181b9b8c68c93b05d437529f9ea5c204c42",
+          "sha256": "b75a32dae7f71249ca79a32bd7397b5de591668c091471fbb4e7dca6c5b82e5a"
+        },
+        {
+          "path": "src/lib/task-result-contract.mjs",
+          "previous_sha256": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
+          "sha256": "100a304fc5be7cef6b7991d30b7e5842e22a7978320e388ca7251f6746977a79"
+        },
+        {
+          "path": "tests/task-result-completion.test.mjs",
+          "previous_sha256": null,
+          "sha256": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1"
         }
       ]
     }

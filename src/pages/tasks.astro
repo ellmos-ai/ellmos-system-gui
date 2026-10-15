@@ -91,7 +91,7 @@ import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.ast
         <p id="task-result-meta" class="muted" hidden></p>
         <details>
           <summary>Persönliche Freigabe einrichten</summary>
-          <p>Eine Freigabe erlaubt dir, geprüfte Ergebnisse abzunehmen. Der Schlüssel gilt in diesem Browser bis zum Schließen des Tabs.</p>
+          <p>Mit deiner Bestätigung erklärst du den Auftrag fachlich für erfüllt. Weitere erforderliche Prüfungen bleiben verbindlich. Der Schlüssel gilt in diesem Browser bis zum Schließen des Tabs.</p>
           <label>Freigabeschlüssel<input id="task-result-operator-key" type="password" autocomplete="off" /></label>
           <button type="button" class="btn" id="task-result-save-key">Freigabe merken</button>
           <button type="button" class="btn" id="task-result-forget-key">Freigabe vergessen</button>
@@ -175,6 +175,7 @@ import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.ast
     import {createAssignmentController, taskResponseError, assignmentCatalogue} from '../lib/task-assignment.mjs';
     import {readTaskFilters, taskFilterQuery, writeTaskFilters, readTaskPage, taskCountLabel} from '../lib/task-filters.mjs';
     import {correctionAttemptMatchesView, createCorrectionAttempt, generateCorrectionRequestId,
+      buildResultAcceptanceRequest, canConfirmTaskResult, resultAcceptanceConfirmed, taskResultCompletionMessage,
       isCurrentCorrectionTarget, normalizeCorrectionNote, parseTaskResultMaxCharsInput,
       resultMaxCharsEditChange,
       resultOperatorCapabilities, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
@@ -474,7 +475,8 @@ import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.ast
         }
         text.textContent = result.result; text.hidden = false;
         const accepted = result.accepted === true && ['done','completed'].includes(data.status);
-        taskResultStatusMessage = accepted ? 'Abgenommen · erledigt.'
+        taskResultStatusMessage = result.completion_policy_version === 1 ? taskResultCompletionMessage(data)
+          : accepted ? 'Abgenommen · erledigt.'
           : result.reason === 'awaiting_review' ? 'Ergebnis abgegeben · wartet auf deine Prüfung.'
           : result.reason === 'legacy_result_without_acceptance' ? 'Früheres Ergebnis · keine getrennte Abnahme belegt.'
           : 'Ergebnis vorhanden · aktuelle Abnahme nicht bestätigt.';
@@ -485,7 +487,11 @@ import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.ast
         if (taskResultCapabilities.valid && taskResultCapabilities.accept_result
             && data.status === 'review' && result.reason === 'awaiting_review' && result.accepted === false
             && Number.isSafeInteger(result.result_id) && result.result_id > 0
-            && /^[a-f0-9]{64}$/.test(result.result_sha256) && result.task_version === data.task_version) {
+            && /^[a-f0-9]{64}$/.test(result.result_sha256) && result.task_version === data.task_version
+            && (result.completion_policy_version === undefined || result.completion_policy_version === 0
+              || (result.completion_policy_version === 1 && canConfirmTaskResult(data)))) {
+          accept.textContent = result.completion_policy_version === 1
+            ? 'Ergebnis fachlich bestätigen' : 'Geprüftes Ergebnis abnehmen';
           selectedResult = data; accept.hidden = false; accept.disabled = false;
         }
         renderTaskResultCorrectionAvailability({resetNote:true});
@@ -699,29 +705,26 @@ import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.ast
       button.disabled = true; detailError('');
       try {
         const result = observed.result;
+        const body = buildResultAcceptanceRequest(observed);
         const response = await fetch('/api/tasks/' + encodeURIComponent(observed.task_id) + '/result/accept', {
           method:'POST', redirect:'error', headers:{'Content-Type':'application/json', 'X-BACH-Result-Operator':key},
-          body:JSON.stringify({result_id:result.result_id, result_sha256:result.result_sha256,
-            task_version:observed.task_version, status_revision:observed.status_revision})
+          body:JSON.stringify(body)
         });
         const answer = await response.json().catch(() => ({}));
-        if (revision !== taskDetailRevision) return;
+        if (revision !== taskDetailRevision || selectedTask?.id !== observed.task_id || operatorKey() !== key) return;
         if (!response.ok) throw new Error(taskResponseError(answer, response.status));
-        if (answer.verified !== true || !['done','completed'].includes(answer.status)
-            || !Number.isSafeInteger(answer.status_revision) || answer.status_revision <= observed.status_revision
+        if (answer.schema !== 'bach.task-result-readback.v1' || answer.verified !== true
             || answer.task_id !== observed.task_id || answer.task_version !== observed.task_version
             || answer.result?.result_id !== result.result_id
-            || answer.result?.result_sha256 !== result.result_sha256 || answer.result?.accepted !== true) {
+            || answer.result?.result_sha256 !== result.result_sha256) {
           throw new Error('Die Abnahme wurde nicht bestätigt. Task erneut öffnen.');
         }
         const readbackRevision = revision + 1;
         await openTask(observed.task_id);
-        if (taskDetailRevision !== readbackRevision) return;
+        if (taskDetailRevision !== readbackRevision || operatorKey() !== key) return;
         revision = readbackRevision;
-        if (taskResultReadback?.result?.accepted !== true
-            || taskResultReadback.result.result_id !== result.result_id
-            || taskResultReadback.status_revision !== answer.status_revision) {
-          throw new Error('Aktuelle Abnahme beim Kontrollabruf nicht bestätigt. Task erneut öffnen.');
+        if (!resultAcceptanceConfirmed(observed, answer, taskResultReadback)) {
+          throw new Error('Deine Bestätigung ist beim Kontrollabruf nicht belegt. Task erneut öffnen.');
         }
         await loadTasks();
       } catch (cause) {
