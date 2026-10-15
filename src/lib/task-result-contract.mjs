@@ -98,6 +98,97 @@ export function isCurrentCorrectionTarget(readback, taskId) {
     && positiveInteger(result.fence) && result.task_version === readback.task_version;
 }
 
+export function canConfirmTaskResult(readback) {
+  if (!isCurrentCorrectionTarget(readback, readback?.task_id)) return false;
+  const result = readback.result;
+  const version = result.completion_policy_version;
+  if (version === undefined || version === 0) return true;
+  return version === 1 && isSha256(result.result_revision)
+    && !(result.user_review_revision === result.result_revision
+      && positiveInteger(result.user_review_event_id)
+      && result.contract_attestation_revision === result.result_revision
+      && positiveInteger(result.contract_attestation_event_id));
+}
+
+export function buildResultAcceptanceRequest(readback) {
+  if (!canConfirmTaskResult(readback)) {
+    throw new Error('Ergebnis oder Auftragsversion ist nicht aktuell. Task erneut öffnen.');
+  }
+  const result = readback.result;
+  const payload = {result_id:result.result_id, result_sha256:result.result_sha256,
+    task_version:readback.task_version, status_revision:readback.status_revision};
+  if (result.completion_policy_version === 1) {
+    payload.result_revision = result.result_revision;
+    payload.task_contract_met = true;
+  }
+  return payload;
+}
+
+export function resultAcceptanceConfirmed(observed, answer, fresh) {
+  if (!isCurrentCorrectionTarget(observed, observed?.task_id)) return false;
+  const before = observed.result;
+  const matches = value => isRecord(value) && value.schema === 'bach.task-result-readback.v1'
+    && value.verified === true && value.task_id === observed.task_id
+    && value.task_version === observed.task_version && positiveInteger(value.status_revision)
+    && value.status_revision >= observed.status_revision
+    && value.result?.result_id === before.result_id
+    && value.result?.result_sha256 === before.result_sha256
+    && value.result?.task_version === before.task_version;
+  if (!matches(answer) || !matches(fresh) || answer.status !== fresh.status
+      || answer.status_revision !== fresh.status_revision
+      || typeof answer.result.accepted !== 'boolean'
+      || answer.result.accepted !== fresh.result.accepted) return false;
+  const completed = ['done','completed'].includes(fresh.status) && fresh.result.accepted === true;
+  const waiting = fresh.status === 'review' && fresh.result.accepted === false;
+  if (!completed && !waiting) return false;
+  if (before.completion_policy_version === undefined || before.completion_policy_version === 0) {
+    return completed && fresh.status_revision > observed.status_revision;
+  }
+  if (before.completion_policy_version !== 1 || !isSha256(before.result_revision)) return false;
+  for (const value of [answer.result, fresh.result]) {
+    if (value.completion_policy_version !== 1 || value.result_revision !== before.result_revision
+        || value.user_review_revision !== before.result_revision
+        || value.contract_attestation_revision !== before.result_revision
+        || !positiveInteger(value.user_review_event_id)
+        || !positiveInteger(value.contract_attestation_event_id)) return false;
+  }
+  return answer.result.user_review_event_id === fresh.result.user_review_event_id
+    && answer.result.contract_attestation_event_id === fresh.result.contract_attestation_event_id;
+}
+
+export function taskResultCompletionMessage(readback) {
+  const result = readback?.result;
+  if (!isRecord(result)) return null;
+  if (result.accepted === true && ['done','completed'].includes(readback.status)) {
+    if (result.completion_decision?.availability === 'administrative_review_child') {
+      return 'Prüfaufgabe abgeschlossen.';
+    }
+    return 'Abgenommen · erledigt.';
+  }
+  if (result.completion_policy_version !== 1) return null;
+  const evaluation = readback.completion_evaluation;
+  const approval = isSha256(result.result_revision)
+    && result.user_review_revision === result.result_revision
+    && positiveInteger(result.user_review_event_id);
+  const prefix = approval ? 'Deine Freigabe ist gespeichert. ' : '';
+  if (!isRecord(evaluation) || evaluation.schema !== 'bach.worker-completion-evaluation.v1'
+      || evaluation.task_id !== readback.task_id || evaluation.result_id !== result.result_id
+      || evaluation.result_revision !== result.result_revision || evaluation.availability !== 'available') {
+    return prefix + 'Die übrigen Abschlussbedingungen sind noch nicht bestätigt.';
+  }
+  const messages = {
+    awaiting_user_review:'Wartet auf deine fachliche Bestätigung.',
+    awaiting_external_review:'Die erforderliche GitHub-Prüfung steht noch aus.',
+    awaiting_review:'Die unabhängige Modellprüfung steht noch aus.',
+    correction_required:'Eine Korrektur ist erforderlich.',
+    result_incomplete:'Die Auftragskriterien oder Ergebnisnachweise sind noch nicht vollständig bestätigt.',
+    integrity_blocked:'Die Ergebnisbelege sind nicht aktuell bestätigt. Task erneut öffnen.',
+    completed:'Die Abschlussbedingungen sind erfüllt; der Taskabschluss ist noch nicht bestätigt.',
+    completed_unreviewed:'Die Abschlussbedingungen sind erfüllt; der Taskabschluss ist noch nicht bestätigt.',
+  };
+  return prefix + (messages[evaluation.decision?.state] || 'Die übrigen Abschlussbedingungen sind noch nicht bestätigt.');
+}
+
 export function normalizeCorrectionNote(value) {
   if (typeof value !== 'string') return null;
   const note = value.trim();
