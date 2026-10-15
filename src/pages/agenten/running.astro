@@ -74,11 +74,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
   <!-- Aktuell arbeitende Agenten; Ready-Worker werden nicht als Running ausgegeben. -->
   <section class="card" aria-labelledby="running-agents-title" style="margin-bottom:1.5rem;">
     <div class="card-header"><h2 class="card-title" id="running-agents-title">⚡ Running · Aktive Läufe</h2></div>
-    <div class="running-lease-controls" aria-label="Anzeigeoptionen für Task-Leases">
-      <label><input id="running-show-lease-countdowns" type="checkbox" /> Lease-Countdowns anzeigen</label>
-      <label><input id="running-sort-by-lease" type="checkbox" /> Nach Lease-Ablauf ordnen</label>
-      <span id="running-lease-preference-status" class="text-muted">Anzeigeoptionen gelten nur in diesem Browser.</span>
-    </div>
+
     <p id="running-empty-state" class="text-muted" role="status" aria-live="polite">Aktive Läufe werden geprüft…</p>
     <div id="running-system-slots-list" class="active-runs-grid"></div>
     <div id="running-workers-list" class="active-runs-grid"></div>
@@ -562,30 +558,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       notice.textContent = sources.some(source => source.state === 'loading')
         ? 'Aktive Läufe werden geprüft…'
         : sources.every(source => source.state === 'available')
-          ? 'Derzeit wird keine Aufgabe aktiv bearbeitet.'
+          ? 'Kein Agentenlauf aktiv.'
           : 'Laufstatus derzeit nicht vollständig bestätigt.';
-    }
-
-    const runningLeasePrefsKey = 'bach.running.lease-display.v1';
-    function readRunningLeasePrefs() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(runningLeasePrefsKey) || '{}');
-        return {show: saved.show === true, sort: saved.sort === true};
-      } catch (_) { return {show:false, sort:false}; }
-    }
-    let runningLeasePrefs = readRunningLeasePrefs();
-
-    function readActiveLease(lease, now = Date.now()) {
-      if (!lease || typeof lease !== 'object' || Array.isArray(lease)
-          || lease.schema !== 'bach.task-lease.v1' || lease.state !== 'active'
-          || typeof lease.lease_id !== 'string' || !lease.lease_id.trim()
-          || !Number.isSafeInteger(lease.task_id) || lease.task_id <= 0
-          || !Number.isSafeInteger(lease.fence) || lease.fence <= 0) return null;
-      const observedAt = Date.parse(lease.observed_at || '');
-      const expiresAt = Date.parse(lease.expires_at || '');
-      if (!Number.isFinite(observedAt) || !Number.isFinite(expiresAt)
-          || observedAt > now + 30000 || now - observedAt > 120000 || expiresAt <= now) return null;
-      return {observedAt, expiresAt, taskId:lease.task_id};
     }
 
     const workerSelectionOutcomes = new Map([
@@ -655,87 +629,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       card.append(details);
     }
 
-    function orderedByLease(items) {
-      if (!runningLeasePrefs.sort) return items;
-      return items.map((item, index) => ({item, index, lease:readActiveLease(item.active_task_lease)}))
-        .sort((a, b) => (a.lease?.expiresAt ?? Number.POSITIVE_INFINITY) -
-          (b.lease?.expiresAt ?? Number.POSITIVE_INFINITY) || a.index - b.index)
-        .map(entry => entry.item);
-    }
-
-    function appendLeaseCountdown(card, worker) {
-      const indicator = coreElement('p', '', 'running-lease-countdown text-muted');
-      const lease = worker?.active_task_lease;
-      if (lease && typeof lease === 'object') {
-        indicator.dataset.leaseSchema = String(lease.schema || '');
-        indicator.dataset.leaseState = String(lease.state || '');
-        indicator.dataset.leaseId = String(lease.lease_id || '');
-        indicator.dataset.leaseTaskId = String(lease.task_id ?? '');
-        indicator.dataset.leaseFence = String(lease.fence ?? '');
-        indicator.dataset.leaseObservedAt = String(lease.observed_at || '');
-        indicator.dataset.leaseExpiresAt = String(lease.expires_at || '');
-      }
-      card.append(indicator);
-      updateLeaseCountdown(indicator);
-    }
-
-    function updateLeaseCountdown(indicator, now = Date.now()) {
-      indicator.hidden = !runningLeasePrefs.show;
-      if (indicator.hidden) return;
-      const lease = {
-        schema:indicator.dataset.leaseSchema,
-        state:indicator.dataset.leaseState,
-        lease_id:indicator.dataset.leaseId,
-        task_id:Number(indicator.dataset.leaseTaskId),
-        fence:Number(indicator.dataset.leaseFence),
-        observed_at:indicator.dataset.leaseObservedAt,
-        expires_at:indicator.dataset.leaseExpiresAt,
-      };
-      const current = readActiveLease(lease, now);
-      if (!current) {
-        indicator.textContent = 'Leaseablauf nicht aktuell bestätigt';
-        return;
-      }
-      const seconds = Math.max(0, Math.ceil((current.expiresAt - now) / 1000));
-      const remaining = seconds >= 3600
-        ? `${Math.floor(seconds / 3600)} h ${Math.floor((seconds % 3600) / 60)} min`
-        : seconds >= 60 ? `${Math.floor(seconds / 60)} min ${seconds % 60} s` : `${seconds} s`;
-      indicator.textContent = `Task #${current.taskId} · Lease endet ${new Date(current.expiresAt).toLocaleTimeString('de-DE')} · ${remaining}`;
-    }
-
-    function updateLeaseCountdowns() {
-      document.querySelectorAll('.running-lease-countdown').forEach(indicator => updateLeaseCountdown(indicator));
-    }
-
-    function saveRunningLeasePrefs() {
-      try { localStorage.setItem(runningLeasePrefsKey, JSON.stringify(runningLeasePrefs)); }
-      catch (_) { document.getElementById('running-lease-preference-status').textContent = 'Einstellung gilt bis zum Neuladen dieser Seite.'; }
-      updateLeaseCountdowns();
-    }
-
-    function initializeRunningLeaseControls() {
-      const show = document.getElementById('running-show-lease-countdowns');
-      const sort = document.getElementById('running-sort-by-lease');
-      if (!show || !sort) return;
-      show.checked = runningLeasePrefs.show;
-      sort.checked = runningLeasePrefs.sort;
-      show.addEventListener('change', () => {
-        runningLeasePrefs.show = show.checked;
-        saveRunningLeasePrefs();
-      });
-      sort.addEventListener('change', () => {
-        runningLeasePrefs.sort = sort.checked;
-        saveRunningLeasePrefs();
-        loadCoreSlots();
-        loadBackgroundWorkers();
-      });
-      window.setInterval(updateLeaseCountdowns, 5000);
-    }
-
     function renderRunningSystemSlots(agents) {
       const target = document.getElementById('running-system-slots-list');
       target.replaceChildren();
-      const active = orderedByLease(agents.filter(agent => agent.runtime_verified === true && agent.running === true && !['starting','stopping'].includes(agent.status)));
+      const active = agents.filter(agent => agent.runtime_verified === true && agent.running === true && !['starting','stopping'].includes(agent.status));
       const unknown = agents.filter(agent => agent.runtime_verified !== true || typeof agent.running !== 'boolean');
       const transitioning = agents.some(agent => ['starting','stopping'].includes(agent.status));
       updateRunningGroupState('slots', active.length, unknown.length || transitioning ? 'unconfirmed' : 'available');
@@ -750,7 +647,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         card.append(coreElement('h3',agent.name || agent.id),coreElement('span','Running','badge'));
         card.append(coreElement('p',agent.model || 'Modell nicht bestätigt'));
         card.append(coreElement('small','Tool: ' + (agent.current_tool || '—') + ' · Runde: ' + (agent.tool_round ?? 0) + (agent.task_id ? ' · Task #' + agent.task_id : '')));
-        appendLeaseCountdown(card, agent);
         appendWorkerSelectionEvidence(card, agent);
         const chat = coreElement('a','Chat öffnen','btn btn-sm');chat.href='/chat?slot_id='+encodeURIComponent(agent.id);
         const assign = coreElement('a','Aufgabe zuweisen','btn btn-sm');assign.href='/tasks?create=1&assign_slot='+encodeURIComponent(agent.id);
@@ -1153,7 +1049,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         renderCoreQueueDiagnostics();
         const workers = data.workers.filter(worker=>worker && typeof worker === 'object' && worker.system!==true);
 
-        const runningWorkers = orderedByLease(workers.filter(w => w.runtime_verified === true && w.running === true));
+        const runningWorkers = workers.filter(w => w.runtime_verified === true && w.running === true);
         const workerStatusUnknown = workers.some(w => w.runtime_verified !== true || typeof w.running !== 'boolean' || ['starting','stopping'].includes(w.status));
         updateRunningGroupState('workers', runningWorkers.length, workerStatusUnknown ? 'unconfirmed' : 'available');
         const waitingWorkers = workers.filter(w => workerReadiness(w).waiting);
@@ -1275,7 +1171,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         runningList.querySelectorAll('[data-worker-id]').forEach(card => {
           const worker = runningWorkers.find(item => item.id === card.dataset.workerId);
           if (!worker) return;
-          appendLeaseCountdown(card, worker);
           appendWorkerSelectionEvidence(card, worker);
           if (typeof worker.generation !== 'string') return;
           const actions = document.createElement('div');
@@ -1777,7 +1672,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
     window.addEventListener('bach:model-sockets-changed', () => { void loadCoreSlots(); });
     window.addEventListener('DOMContentLoaded', () => {
-      initializeRunningLeaseControls();
       document.getElementById('worker-blueprint-backend')?.addEventListener('change', () => loadWorkerBlueprintModels());
       document.getElementById('worker-blueprint-sub-mode')?.addEventListener('change', updateWorkerCreationModeFields);
       document.getElementById('worker-blueprint-run-mode')?.addEventListener('change', updateWorkerRunModeFields);
@@ -1807,10 +1701,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 </BachLayout>
 
 <style>
-  .running-lease-controls {display:flex;align-items:center;gap:.7rem 1rem;flex-wrap:wrap;padding:.6rem .75rem;margin:.5rem 0 1rem;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.82rem}
-  .running-lease-controls label {display:flex;align-items:center;gap:.4rem;color:var(--text)}
-  .running-lease-controls input {accent-color:var(--accent)}
-  .running-lease-countdown {font-size:.78rem;line-height:1.35;overflow-wrap:anywhere}
 </style>
 
 <script>

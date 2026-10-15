@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "dbf08cc27db7bab2c65103bcf0ad6864cce481181e22b2659b3fb49304c1d77e",
+    "src/pages/agenten/running.astro": "1ab970fe96788ddd92bd1ffec0d616810de91b29c02285b3a5681c81067ad987",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
@@ -56,7 +56,10 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "b75a32dae7f71249ca79a32bd7397b5de591668c091471fbb4e7dca6c5b82e5a",
+    "src/pages/tasks.astro": "ab01cd7d184d35ded1213a40a291dd817ac120f217841b600177ff068357f50a",
+    "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
+    "src/lib/task-lease-panel.mjs": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
+    "src/components/TaskLeasePanel.astro": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
@@ -116,7 +119,7 @@
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "public/page-reads.v1.json": "619deceffa24d6b8ec4532e8b1050612f2cf9a0d64826381f801f4c5166828a0",
+    "public/page-reads.v1.json": "821cd72b28cacf9749e4abad163bc3c2370a2bb4afc9473a404e912f4698b24c",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/task-result-contract.mjs": "100a304fc5be7cef6b7991d30b7e5842e22a7978320e388ca7251f6746977a79",
@@ -1358,6 +1361,48 @@
           "path": "tests/task-result-completion.test.mjs",
           "previous_sha256": null,
           "sha256": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-15",
+      "scope": "Task-Lease countdown and sorting moved to the Tasks board",
+      "source_base_commit": "f8890084c11fa18b51f84cdf8b0c7e103aaf96d3",
+      "changes": [
+        "Read in-progress Tasks and public Task-Lease observations with bounded pagination and concurrency.",
+        "Keep Agenten/Running for actual observed agent runs; no private lease capability enters the browser.",
+        "Preserve historical provenance records and show partial or unavailable observations explicitly."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "b75a32dae7f71249ca79a32bd7397b5de591668c091471fbb4e7dca6c5b82e5a",
+          "sha256": "ab01cd7d184d35ded1213a40a291dd817ac120f217841b600177ff068357f50a"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "dbf08cc27db7bab2c65103bcf0ad6864cce481181e22b2659b3fb49304c1d77e",
+          "sha256": "1ab970fe96788ddd92bd1ffec0d616810de91b29c02285b3a5681c81067ad987"
+        },
+        {
+          "path": "src/components/TaskLeasePanel.astro",
+          "previous_sha256": null,
+          "sha256": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7"
+        },
+        {
+          "path": "src/lib/task-lease-panel.mjs",
+          "previous_sha256": null,
+          "sha256": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f"
+        },
+        {
+          "path": "tests/task-lease-panel.test.mjs",
+          "previous_sha256": null,
+          "sha256": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "619deceffa24d6b8ec4532e8b1050612f2cf9a0d64826381f801f4c5166828a0",
+          "sha256": "821cd72b28cacf9749e4abad163bc3c2370a2bb4afc9473a404e912f4698b24c"
         }
       ]
     }

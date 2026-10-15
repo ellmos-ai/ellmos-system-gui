@@ -47,6 +47,13 @@
    },
    {
     "method": "GET",
+    "path": "/api/tasks/{id}/lease",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/task-lease-panel.mjs#loadTaskLeaseRows"
+   },
+   {
+    "method": "GET",
     "path": "/api/task-assignees",
     "required": true
    },
