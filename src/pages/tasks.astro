@@ -36,7 +36,20 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
         <option value="auto">🤖 Automatisiert / Agenten</option><option value="unassigned">Unzugewiesen</option>
       </select></label>
       <label for="tasks-status-filter">Status<select id="tasks-status-filter">
-        <option value="open" selected>⏳ Offen</option><option value="done">✅ Erledigt</option><option value="all">Alle Status</option>
+        <optgroup label="Sammelfilter">
+          <option value="open" selected>⏳ Offen · alle aktiven</option>
+          <option value="done">✅ Erledigt · alle</option>
+          <option value="all">Alle Status</option>
+        </optgroup>
+        <optgroup label="Einzelstatus">
+          <option value="pending">Ausstehend · pending</option>
+          <option value="in_progress">In Arbeit · in_progress</option>
+          <option value="review">Zur Prüfung · review</option>
+          <option value="blocked">Blockiert · blocked</option>
+          <option value="cancelled">Abgebrochen · cancelled</option>
+          <option value="archived">Archiviert · archived</option>
+          <option value="duplicate">Duplikat · duplicate</option>
+        </optgroup>
       </select></label>
       <label for="tasks-priority-filter">Priorität<select id="tasks-priority-filter">
         <option value="">Alle Prioritäten</option><option value="P1">P1 · Kritisch</option>
@@ -151,6 +164,10 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
     .task-table-scroll { overflow-x:auto; }
     .task-detail-head,.task-detail-actions { display:flex; justify-content:space-between; align-items:flex-start; gap:.7rem; flex-wrap:wrap; }
     .task-detail-head h2 { margin:.2rem 0 1rem; overflow-wrap:anywhere; }
+    :global(#tasks-table-container .task-row-actions) {display:flex;flex-direction:column;gap:.25rem;width:100%;max-width:7.5rem;margin-left:auto;}
+    :global(#tasks-table-container .task-row-actions .btn) {display:flex;align-items:center;justify-content:center;gap:.2rem;width:100%;box-sizing:border-box;padding:.28rem .2rem;font-size:.72rem;line-height:1.2;white-space:normal;text-align:center;}
+    :global(#tasks-table-container .task-row-actions .btn span:last-child) {min-width:0;overflow-wrap:normal;}
+    :global(#tasks-table-container .task-row-actions .task-action-state) {font-size:.75rem;line-height:1.2;text-align:center;}
     .task-detail-grid,.task-edit-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem 1.25rem; }
     .task-detail-grid>div { min-width:0; border-top:1px solid var(--border); padding:.45rem 0; }
     .task-detail-grid dt,.muted { color:var(--text-muted); font-size:.8rem; }
@@ -258,7 +275,7 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
               <th style="padding:0.75rem 0.5rem;width:140px;">Zuständig</th>
               <th style="padding:0.75rem 0.5rem;width:100px;">Prio</th>
               <th style="padding:0.75rem 0.5rem;width:100px;">Status</th>
-              <th style="padding:0.75rem 0.5rem;width:120px;text-align:right;">Aktion</th>
+              <th style="padding:0.75rem 0.5rem;width:120px;box-sizing:border-box;text-align:right;">Aktion</th>
             </tr>
           </thead>
           <tbody>
@@ -286,13 +303,13 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
                   <td style="padding:0.75rem 0.5rem;">
                     <span class="badge ${isDone ? 'badge-success' : 'badge-warning'}">${escapeHtml(t.status || 'open')}</span>
                   </td>
-                  <td style="padding:0.75rem 0.5rem;text-align:right;">
-                    <button class="btn" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="openTask(${Number(t.id)})">Öffnen</button>
-                    ${normalizedStatus(t.status) === 'review' ? `<button class="btn" onclick="openTask(${Number(t.id)})">Ergebnis prüfen</button>` : !isTerminal ? `
-                      <button class="btn" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="completeTask(${Number(t.id)})">
-                        ✓ Erledigt
-                      </button>
-                    ` : (isDone ? '<span style="color:var(--success-text);font-size:0.8rem;">✓ Erledigt</span>' : '<span style="color:var(--text-muted);font-size:0.8rem;">Beendet</span>')}
+                  <td style="padding:0.75rem 0.5rem;text-align:right;width:120px;box-sizing:border-box;">
+                    <div class="task-row-actions">
+                      <button type="button" class="btn" title="Aufgabe öffnen" aria-label="Aufgabe #${Number(t.id)} öffnen" onclick="openTask(${Number(t.id)})"><span aria-hidden="true">👁</span><span>Öffnen</span></button>
+                      ${normalizedStatus(t.status) === 'review' ? `<button type="button" class="btn" title="Ergebnis prüfen" aria-label="Ergebnis von Aufgabe #${Number(t.id)} prüfen" onclick="openTask(${Number(t.id)})"><span aria-hidden="true">🔎</span><span>Ergebnis prüfen</span></button>` : !isTerminal ? `
+                        <button type="button" class="btn" title="Aufgabe als erledigt markieren" aria-label="Aufgabe #${Number(t.id)} als erledigt markieren" onclick="completeTask(${Number(t.id)})"><span aria-hidden="true">✓</span><span>Erledigt</span></button>
+                      ` : (isDone ? '<span class="task-action-state" style="color:var(--success-text);">✓ Erledigt</span>' : '<span class="task-action-state" style="color:var(--text-muted);">Beendet</span>')}
+                    </div>
                   </td>
                 </tr>
               `;
