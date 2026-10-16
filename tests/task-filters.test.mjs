@@ -20,7 +20,7 @@ test('links, refresh and reset preserve independent selections and task deep lin
   assert.equal(url.searchParams.get('task'),'17');assert.equal(url.searchParams.has('offset'),false);
   assert.deepEqual(readTaskFilters(url.search),filters);
   assert.deepEqual(readTaskFilters('?status=completed&assignment_group=auto'),{assignment:'auto',status:'done',priority:'',q:'',agent:''});
-  for(const status of ['pending','in_progress','review','blocked','cancelled','duplicate']) {
+  for(const status of ['pending','in_progress','review','blocked','cancelled','archived','duplicate']) {
     const direct=readTaskFilters('?status='+status+'&assignment_group=auto');
     assert.equal(direct.status,status);
     const url=writeTaskFilters('http://localhost/tasks?task=17&offset=100',direct);
@@ -62,7 +62,7 @@ test('a backend that ignores q is reported instead of filtering one page client-
   assert.equal(readTaskPage({success:true,tasks:[],total:0,applied_filters:{status:'nonterminal'}},{...filters,q:''}).searchUnsupported,false);
 });
 test('individual status requires a matching backend filter receipt, including review',()=>{
-  for(const status of ['pending','in_progress','review','blocked','cancelled','duplicate']) {
+  for(const status of ['pending','in_progress','review','blocked','cancelled','archived','duplicate']) {
     const filters={assignment:'all',status,priority:'',q:'',agent:''};
     const good={success:true,tasks:[{id:1,status}],total:1,applied_filters:{status}};
     assert.equal(readTaskPage(good,filters).tasks[0].status,status);
@@ -74,6 +74,7 @@ test('taskboard exposes every supported status and keeps review action inside th
   const page=readFileSync(new URL('../src/pages/tasks.astro',import.meta.url),'utf8');
   const select=page.match(/<select id="tasks-status-filter">([\s\S]*?)<\/select>/)?.[1] || '';
   for(const status of TASK_STATUS_FILTERS) assert.match(select,new RegExp(`value="${status}"`));
+  assert.ok(select.includes('<option value="archived">Archiviert · archived</option>'));
   assert.match(page,/width:120px;box-sizing:border-box;">\s*<div class="task-row-actions">/);
   assert.match(page,/:global\(#tasks-table-container \.task-row-actions \.btn\)/);
   assert.match(page,/class="task-row-actions"[\s\S]*?title="Ergebnis prüfen"[\s\S]*?<span>Ergebnis prüfen<\/span>/);

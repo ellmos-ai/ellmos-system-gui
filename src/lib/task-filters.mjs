@@ -1,6 +1,6 @@
 const GROUPS = new Set(['all', 'user', 'auto', 'unassigned']);
 export const TASK_STATUS_FILTERS = Object.freeze([
-  'all', 'open', 'done', 'pending', 'in_progress', 'review', 'blocked', 'cancelled', 'duplicate',
+  'all', 'open', 'done', 'pending', 'in_progress', 'review', 'blocked', 'cancelled', 'archived', 'duplicate',
 ]);
 const STATES = new Set(TASK_STATUS_FILTERS);
 const apiStatus = status => status === 'open' ? 'nonterminal' : status;

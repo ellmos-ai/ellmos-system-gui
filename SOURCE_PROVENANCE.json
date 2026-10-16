@@ -56,7 +56,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "c1ca064b65e5c75738f47077964dc942980c1b71e40ef7896c0a64d08249883c",
+    "src/pages/tasks.astro": "843f93a9bad2efb0b36062fc506c2b669e9ce7730f0d62bd6146417447c83463",
     "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
     "src/lib/task-lease-panel.mjs": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
     "src/components/TaskLeasePanel.astro": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
@@ -131,8 +131,8 @@
     "src/lib/worker-policy-settings.mjs": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb",
     "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
     "tests/task-result-completion.test.mjs": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1",
-    "src/lib/task-filters.mjs": "128661563d7250e30e1d0468a29ef03d03bc5a82229d9c8394f9bc033e5f96c5",
-    "tests/task-filters.test.mjs": "d00ba41ad026716384a77ac16395a721d3a15bdf79ca8edf4f54a388780adea8"
+    "src/lib/task-filters.mjs": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1",
+    "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -1432,6 +1432,56 @@
           "path": "tests/task-filters.test.mjs",
           "previous_sha256": "9bbdb66ac95e0d9739a94cb64c97ec11700b89050e78609d19bbe57f8a34ca89",
           "sha256": "d00ba41ad026716384a77ac16395a721d3a15bdf79ca8edf4f54a388780adea8"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Taskboard: include the actual archived status as an individual filter",
+      "changes": [
+        "Expose archived as an individual status while retaining aggregate filters and existing aliases.",
+        "Preserve the exact archived status in the URL, API query, and backend applied_filters receipt."
+      ],
+      "actual_backend_status_snapshot": {
+        "source": "NATIVE-ACTUAL-TASK-STATUS-VALUES.json",
+        "sha256": "9ab8579a8a8811c65d7f4fbe33def7b4a628039857a511c6faeba9e61350a8c4",
+        "observed_at": "2026-10-16T00:55:56.574096+00:00",
+        "status_counts": {
+          "archived": 4,
+          "blocked": 22,
+          "cancelled": 67,
+          "completed": 26,
+          "done": 1756,
+          "in_progress": 14,
+          "pending": 152,
+          "review": 158
+        }
+      },
+      "live_api_read": {
+        "method": "GET",
+        "path": "/api/tasks?status=archived&limit=1",
+        "observed_at": "2026-10-16T01:04:01.077700+00:00",
+        "http_status": 200,
+        "success": true,
+        "applied_status": "archived",
+        "total": 4,
+        "rows_returned": 1
+      },
+      "files": [
+        {
+          "path": "src/lib/task-filters.mjs",
+          "previous_sha256": "128661563d7250e30e1d0468a29ef03d03bc5a82229d9c8394f9bc033e5f96c5",
+          "sha256": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "c1ca064b65e5c75738f47077964dc942980c1b71e40ef7896c0a64d08249883c",
+          "sha256": "843f93a9bad2efb0b36062fc506c2b669e9ce7730f0d62bd6146417447c83463"
+        },
+        {
+          "path": "tests/task-filters.test.mjs",
+          "previous_sha256": "d00ba41ad026716384a77ac16395a721d3a15bdf79ca8edf4f54a388780adea8",
+          "sha256": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001"
         }
       ]
     }
