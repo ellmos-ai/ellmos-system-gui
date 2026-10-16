@@ -80,11 +80,11 @@
     "tests/release-provenance.test.mjs": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
-    "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
-    "package-lock.json": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+    "scripts/package_release.py": "16ce9f1c7b7d400585bca7ffb3ac1da6a36e85eabae091a2973ca6b134bd6894",
+    "package.json": "68a798cffbcd11af2bd163d500fa51c665c82884031932b747b8a14ab2b2386a",
+    "package-lock.json": "48108d74a389cb5295c3d805cbe637d9ba28108df0a79e29b6a5f7b368e8db29",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "3881109b884457764bbbed3d42b4bf6e60a6a2aba845fabbefe311303d1d0c78",
+    "ellmos-module.v2.json": "4dbc04677d9a4aef00a47b5838c4e67db8d64eb713dfd1f3c2d4e8be470bd015",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
     "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
     "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
@@ -109,7 +109,7 @@
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
-    "README.md": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+    "README.md": "d7550460a6b4e0e5fe718f8cc8bc1773f18b0c457249e182cfa708702bfd9aac",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
     "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
@@ -1626,6 +1626,42 @@
           "path": "tests/agent-overview.test.mjs",
           "previous_sha256": "6a5af2ababbcfa6b17ef324786eafd7514088c655d95fea5d5845c68d5ae0145",
           "sha256": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Existing0.2.24 release bookkeeping and portable archive metadata",
+      "changes": [
+        "Align module manifest to the already declared package0.2.24, without assigning a new product version.",
+        "Refresh stale final-working fingerprints of the existing package, lockfile and release README; also record the corrected module manifest and portable packager. Original import/review records remain intact.",
+        "Use the same ZIP creator metadata on Windows and Unix; add a real archive-byte regression and ordinary hosted Node22/24 CI."
+      ],
+      "files": [
+        {
+          "path": "scripts/package_release.py",
+          "previous_recorded_sha256": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
+          "sha256": "16ce9f1c7b7d400585bca7ffb3ac1da6a36e85eabae091a2973ca6b134bd6894"
+        },
+        {
+          "path": "package.json",
+          "previous_recorded_sha256": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
+          "sha256": "68a798cffbcd11af2bd163d500fa51c665c82884031932b747b8a14ab2b2386a"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_recorded_sha256": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+          "sha256": "48108d74a389cb5295c3d805cbe637d9ba28108df0a79e29b6a5f7b368e8db29"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_recorded_sha256": "3881109b884457764bbbed3d42b4bf6e60a6a2aba845fabbefe311303d1d0c78",
+          "sha256": "4dbc04677d9a4aef00a47b5838c4e67db8d64eb713dfd1f3c2d4e8be470bd015"
+        },
+        {
+          "path": "README.md",
+          "previous_recorded_sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+          "sha256": "d7550460a6b4e0e5fe718f8cc8bc1773f18b0c457249e182cfa708702bfd9aac"
         }
       ]
     }
