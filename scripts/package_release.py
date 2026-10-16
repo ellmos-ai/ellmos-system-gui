@@ -58,6 +58,7 @@ def package_release(root: Path) -> Path:
     with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as output:
         for name, content in sorted(entries.items()):
             info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+            info.create_system = 3  # Stable Unix creator metadata on every build host.
             info.compress_type = zipfile.ZIP_DEFLATED
             info.external_attr = 0o644 << 16
             output.writestr(info, content, compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
