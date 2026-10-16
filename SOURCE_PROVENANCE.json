@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "1ab970fe96788ddd92bd1ffec0d616810de91b29c02285b3a5681c81067ad987",
+    "src/pages/agenten/running.astro": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
@@ -48,7 +48,7 @@
     "src/pages/governance/index.astro": "b734a00389abcf4ad580e5ffe0b0c513f64328dcc997684edb0b03a2ada7a477",
     "src/pages/governance/logs.astro": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
     "src/pages/governance/usecases.astro": "860a03ca99e466d9571ab93e350a24105ba3caff69a06f9a06c4a83ee14c3b19",
-    "src/pages/index.astro": "068fbeb644b24919654a846b7fdce7d983300ee74695af3c20c5410d7f1368b3",
+    "src/pages/index.astro": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d",
     "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
     "src/pages/memory.astro": "27de17373b2319a598efc7397bd2dfa96aeb1c543303581cdc93ce2edeb5b74a",
     "src/pages/settings.astro": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee",
@@ -68,7 +68,7 @@
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/fabrika.test.mjs": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
-    "tests/system-slots.test.mjs": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
+    "tests/system-slots.test.mjs": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
@@ -119,7 +119,7 @@
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "public/page-reads.v1.json": "821cd72b28cacf9749e4abad163bc3c2370a2bb4afc9473a404e912f4698b24c",
+    "public/page-reads.v1.json": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/task-result-contract.mjs": "100a304fc5be7cef6b7991d30b7e5842e22a7978320e388ca7251f6746977a79",
@@ -132,7 +132,9 @@
     "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
     "tests/task-result-completion.test.mjs": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1",
     "src/lib/task-filters.mjs": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1",
-    "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001"
+    "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
+    "src/lib/agent-overview.mjs": "bf4a7d55b4faaa3c726dc2f18ce85e616db6a445bae054cb61beffdabc3b6463",
+    "tests/agent-overview.test.mjs": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -1482,6 +1484,148 @@
           "path": "tests/task-filters.test.mjs",
           "previous_sha256": "d00ba41ad026716384a77ac16395a721d3a15bdf79ca8edf4f54a388780adea8",
           "sha256": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Shared Running and Dashboard agent overview",
+      "changes": [
+        "Running and Dashboard use one shared controller for access, function and actual-start facets, search, sorting, grouping, compact-list mode and saved preferences.",
+        "Dashboard Running counts require complete runtime evidence; unavailable or transitional source state remains unknown rather than zero.",
+        "The optional worker and core-agent status reads are declared on the Dashboard page."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "1ab970fe96788ddd92bd1ffec0d616810de91b29c02285b3a5681c81067ad987",
+          "sha256": "023d6b23883b584530a9e59150d550d370c16c7c1ef791c885869039e2932c79"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "068fbeb644b24919654a846b7fdce7d983300ee74695af3c20c5410d7f1368b3",
+          "sha256": "126ce712f9b983ab9a65d399a44fa623f564059b9153220245426174e25e3f9d"
+        },
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": null,
+          "sha256": "1f1e2920b8c0e5516d2362cfdbc8c889865199cf76caca2d179f7df3b2144836"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "821cd72b28cacf9749e4abad163bc3c2370a2bb4afc9473a404e912f4698b24c",
+          "sha256": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c"
+        },
+        {
+          "path": "tests/system-slots.test.mjs",
+          "previous_sha256": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
+          "sha256": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": null,
+          "sha256": "3f92f1d0c5e2fd123b3628358874b01ce4835c842a3aecb170516e9a9b2ed4a5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Shared runtime-card details and compact agent list",
+      "changes": [
+        "Use one shared read-only card-content renderer on Running and Dashboard, including portraits, identity, access/function, model, and available task/tool/round/budget/activity evidence.",
+        "Compact-list mode keeps status and actions while hiding portraits and secondary detail; narrow search controls use one column."
+      ],
+      "files": [
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": "1f1e2920b8c0e5516d2362cfdbc8c889865199cf76caca2d179f7df3b2144836",
+          "sha256": "df4e0e55f04cbdfa4f8076bdd25a9d1fb30421946aec40e43f7f4f808dd18b3e"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "023d6b23883b584530a9e59150d550d370c16c7c1ef791c885869039e2932c79",
+          "sha256": "3bd53b51d659bbdaa27ff1c84739d7d90e1056fe821fcad5944b8f88c9a8b369"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "126ce712f9b983ab9a65d399a44fa623f564059b9153220245426174e25e3f9d",
+          "sha256": "22e4f667ff7d32deeadedb53c37a78a0699939f3616d2959d04d9defc7f8cd0c"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "3f92f1d0c5e2fd123b3628358874b01ce4835c842a3aecb170516e9a9b2ed4a5",
+          "sha256": "a5fdfac78882cc70832c4bddf4e5125a3e15fa80b42eb9adfbb6e21727540be4"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Keep the shared card enhancement compatible with non-DOM status projections",
+      "changes": [
+        "Apply the shared DOM renderer only when the current card exposes the required DOM operations; preserve existing projections for non-DOM callers."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "3bd53b51d659bbdaa27ff1c84739d7d90e1056fe821fcad5944b8f88c9a8b369",
+          "sha256": "943a82e4684238d23966fa3ff0358be1377945b9ad39432ee5b1f1f5bdbebdbd"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Keep mixed Running source state visibly uncertain",
+      "changes": [
+        "Keep confirmed active-run cards visible while loading or uncertain sources retain a visible status notice.",
+        "Label worker activity as confirmed-only when any worker runtime status is unverified; do not imply a complete zero count.",
+        "Exercise mixed confirmed/unconfirmed states, empty confirmed state, and healthy confirmed state in the shared projection test."
+      ],
+      "files": [
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": "df4e0e55f04cbdfa4f8076bdd25a9d1fb30421946aec40e43f7f4f808dd18b3e",
+          "sha256": "916d5076d05f20d912b39520eb84366bc04365f5d6a541fa64df8e1e91d0c797"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "943a82e4684238d23966fa3ff0358be1377945b9ad39432ee5b1f1f5bdbebdbd",
+          "sha256": "f4afe3d5c50f4c32263c2ce19fe85f767fef5ecf9c7b3ba38fbe911aafd74367"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "a5fdfac78882cc70832c4bddf4e5125a3e15fa80b42eb9adfbb6e21727540be4",
+          "sha256": "6a5af2ababbcfa6b17ef324786eafd7514088c655d95fea5d5845c68d5ae0145"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Keep shared overview filters and live summaries accurate",
+      "changes": [
+        "Compact-list display rules now apply only to cards that are not hidden, so filtering remains effective on Running and Dashboard.",
+        "Shared filter refreshes immediately update each page caption; Dashboard preserves its confirmed-count uncertainty note.",
+        "Regression tests cover mixed confirmed/unconfirmed sources and visible-count caption refresh."
+      ],
+      "files": [
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": "916d5076d05f20d912b39520eb84366bc04365f5d6a541fa64df8e1e91d0c797",
+          "sha256": "bf4a7d55b4faaa3c726dc2f18ce85e616db6a445bae054cb61beffdabc3b6463"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "f4afe3d5c50f4c32263c2ce19fe85f767fef5ecf9c7b3ba38fbe911aafd74367",
+          "sha256": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "22e4f667ff7d32deeadedb53c37a78a0699939f3616d2959d04d9defc7f8cd0c",
+          "sha256": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "6a5af2ababbcfa6b17ef324786eafd7514088c655d95fea5d5845c68d5ae0145",
+          "sha256": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd"
         }
       ]
     }
