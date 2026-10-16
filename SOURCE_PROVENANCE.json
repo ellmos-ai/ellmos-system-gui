@@ -56,7 +56,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "ab01cd7d184d35ded1213a40a291dd817ac120f217841b600177ff068357f50a",
+    "src/pages/tasks.astro": "c1ca064b65e5c75738f47077964dc942980c1b71e40ef7896c0a64d08249883c",
     "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
     "src/lib/task-lease-panel.mjs": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
     "src/components/TaskLeasePanel.astro": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
@@ -130,7 +130,9 @@
     "src/lib/task-worker-policy-settings.mjs": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78",
     "src/lib/worker-policy-settings.mjs": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb",
     "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
-    "tests/task-result-completion.test.mjs": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1"
+    "tests/task-result-completion.test.mjs": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1",
+    "src/lib/task-filters.mjs": "128661563d7250e30e1d0468a29ef03d03bc5a82229d9c8394f9bc033e5f96c5",
+    "tests/task-filters.test.mjs": "d00ba41ad026716384a77ac16395a721d3a15bdf79ca8edf4f54a388780adea8"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -1403,6 +1405,33 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "619deceffa24d6b8ec4532e8b1050612f2cf9a0d64826381f801f4c5166828a0",
           "sha256": "821cd72b28cacf9749e4abad163bc3c2370a2bb4afc9473a404e912f4698b24c"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Taskboard: individual status filters and compact accessible actions",
+      "source_base_commit": "4f3afb56f2c932275b997606202d55a4f724743f",
+      "changes": [
+        "Preserve canonical pending, in_progress and review status selections in URL and API queries; retain open, done and all aggregates.",
+        "Require the Task API to confirm the selected status before displaying a page.",
+        "Keep result review and task actions legible inside the 120px column with bounded global styles and accessible names."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "ab01cd7d184d35ded1213a40a291dd817ac120f217841b600177ff068357f50a",
+          "sha256": "c1ca064b65e5c75738f47077964dc942980c1b71e40ef7896c0a64d08249883c"
+        },
+        {
+          "path": "src/lib/task-filters.mjs",
+          "previous_sha256": "2d1c53f87ad3884627d2deb9462e3e0744ba44159bbba5cd26364b504d904531",
+          "sha256": "128661563d7250e30e1d0468a29ef03d03bc5a82229d9c8394f9bc033e5f96c5"
+        },
+        {
+          "path": "tests/task-filters.test.mjs",
+          "previous_sha256": "9bbdb66ac95e0d9739a94cb64c97ec11700b89050e78609d19bbe57f8a34ca89",
+          "sha256": "d00ba41ad026716384a77ac16395a721d3a15bdf79ca8edf4f54a388780adea8"
         }
       ]
     }

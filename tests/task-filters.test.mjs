@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readTaskFilters,taskFilterQuery,writeTaskFilters,readTaskPage,taskCountLabel} from '../src/lib/task-filters.mjs';
+import {readFileSync} from 'node:fs';
+import {readTaskFilters,taskFilterQuery,writeTaskFilters,readTaskPage,taskCountLabel,TASK_STATUS_FILTERS} from '../src/lib/task-filters.mjs';
 test('personal and automated assignment combine independently with every status and priority',()=>{
-  for(const assignment of ['all','user','auto','unassigned']) for(const status of ['open','done','all']) {
+  for(const assignment of ['all','user','auto','unassigned']) for(const status of TASK_STATUS_FILTERS) {
     const filters={assignment,status,priority:'P2'};
     const first=taskFilterQuery(filters,0), next=taskFilterQuery(filters,100);
     assert.equal(first.get('assignment_group'),assignment);
@@ -19,16 +20,28 @@ test('links, refresh and reset preserve independent selections and task deep lin
   assert.equal(url.searchParams.get('task'),'17');assert.equal(url.searchParams.has('offset'),false);
   assert.deepEqual(readTaskFilters(url.search),filters);
   assert.deepEqual(readTaskFilters('?status=completed&assignment_group=auto'),{assignment:'auto',status:'done',priority:'',q:'',agent:''});
+  for(const status of ['pending','in_progress','review','blocked','cancelled','duplicate']) {
+    const direct=readTaskFilters('?status='+status+'&assignment_group=auto');
+    assert.equal(direct.status,status);
+    const url=writeTaskFilters('http://localhost/tasks?task=17&offset=100',direct);
+    assert.equal(url.searchParams.get('status'),status);
+    assert.equal(url.searchParams.get('task'),'17');
+    assert.equal(taskFilterQuery(readTaskFilters(url.search)).get('status'),status);
+  }
+  assert.equal(readTaskFilters('?status=nonterminal').status,'open');
+  assert.equal(readTaskFilters('?status=progress').status,'in_progress');
+  assert.equal(readTaskFilters('?status=canceled').status,'cancelled');
 });
 test('count describes the whole filtered result before pagination',()=>{
   const filters={assignment:'user',status:'open',priority:'',q:'',agent:''};
   const rows=Array.from({length:100},(_,id)=>({id}));
-  const page=readTaskPage({success:true,tasks:rows,total:120,has_more:true,applied_filters:{assignment_group:'user'}},filters);
+  const page=readTaskPage({success:true,tasks:rows,total:120,has_more:true,applied_filters:{assignment_group:'user',status:'nonterminal'}},filters);
   assert.equal(page.total,120);assert.equal(page.hasMore,true);
   assert.equal(taskCountLabel(100,page.total,0),'1–100 von 120 passenden Aufgaben');
   assert.equal(taskCountLabel(20,page.total,100),'101–120 von 120 passenden Aufgaben');
   assert.equal(taskCountLabel(0,0,0),'0 von 0 passenden Aufgaben');
   assert.throws(()=>readTaskPage({success:true,tasks:rows,total:100},filters),/kombinierte Zuordnung/);
+  assert.throws(()=>readTaskPage({success:true,tasks:rows,total:100,applied_filters:{assignment_group:'user',status:'all'}},filters),/Statusfilter/);
 });
 test('search and agent filters join the same query for every page and survive links',()=>{
   const filters={assignment:'user',status:'done',priority:'',q:' foo #12 ',agent:'claude'};
@@ -42,9 +55,27 @@ test('search and agent filters join the same query for every page and survive li
 });
 test('a backend that ignores q is reported instead of filtering one page client-side',()=>{
   const filters={assignment:'all',status:'open',priority:'',q:'abc',agent:''};
-  const old=readTaskPage({success:true,tasks:[{id:1}],total:1,applied_filters:{assignment_group:'all'}},filters);
+  const old=readTaskPage({success:true,tasks:[{id:1}],total:1,applied_filters:{assignment_group:'all',status:'nonterminal'}},filters);
   assert.equal(old.searchUnsupported,true);assert.deepEqual(old.tasks,[]);
-  const ok=readTaskPage({success:true,tasks:[{id:1}],total:1,applied_filters:{assignment_group:'all',q:'abc'}},filters);
+  const ok=readTaskPage({success:true,tasks:[{id:1}],total:1,applied_filters:{assignment_group:'all',status:'nonterminal',q:'abc'}},filters);
   assert.equal(ok.searchUnsupported,false);assert.equal(ok.tasks.length,1);
-  assert.equal(readTaskPage({success:true,tasks:[],total:0},{...filters,q:''}).searchUnsupported,false);
+  assert.equal(readTaskPage({success:true,tasks:[],total:0,applied_filters:{status:'nonterminal'}},{...filters,q:''}).searchUnsupported,false);
+});
+test('individual status requires a matching backend filter receipt, including review',()=>{
+  for(const status of ['pending','in_progress','review','blocked','cancelled','duplicate']) {
+    const filters={assignment:'all',status,priority:'',q:'',agent:''};
+    const good={success:true,tasks:[{id:1,status}],total:1,applied_filters:{status}};
+    assert.equal(readTaskPage(good,filters).tasks[0].status,status);
+    assert.throws(()=>readTaskPage({...good,applied_filters:{status:'nonterminal'}},filters),/Statusfilter/);
+    assert.throws(()=>taskFilterQuery({...filters,status:'unknown'}),/Ungültige/);
+  }
+});
+test('taskboard exposes every supported status and keeps review action inside the compact action column',()=>{
+  const page=readFileSync(new URL('../src/pages/tasks.astro',import.meta.url),'utf8');
+  const select=page.match(/<select id="tasks-status-filter">([\s\S]*?)<\/select>/)?.[1] || '';
+  for(const status of TASK_STATUS_FILTERS) assert.match(select,new RegExp(`value="${status}"`));
+  assert.match(page,/width:120px;box-sizing:border-box;">\s*<div class="task-row-actions">/);
+  assert.match(page,/:global\(#tasks-table-container \.task-row-actions \.btn\)/);
+  assert.match(page,/class="task-row-actions"[\s\S]*?title="Ergebnis prüfen"[\s\S]*?<span>Ergebnis prüfen<\/span>/);
+  assert.match(page,/aria-label="Ergebnis von Aufgabe #[^\n]* prüfen"/);
 });
