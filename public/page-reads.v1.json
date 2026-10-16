@@ -32,6 +32,16 @@
     "path": "/api/agent-studio/blueprints",
     "required": true
    },
+    {
+      "method": "GET",
+      "path": "/api/system/workers",
+      "required": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/system/core-agents",
+      "required": false
+    },
    {
     "method": "GET",
     "path": "/api/tasks",
