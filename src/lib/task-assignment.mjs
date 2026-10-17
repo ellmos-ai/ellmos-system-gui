@@ -63,10 +63,16 @@ export function assignmentPayload(catalogue, selected, current = {}) {
   return {...target.binding, assignment_configuration_version:catalogue.configuration_version};
 }
 
+// ponytail: matches BACH's GateReopenBlocked text (it names allow_reopen); use a structured code once the server sends one.
+export function isGateReopenBlocked(body, status) {
+  return status === 409 && typeof body?.detail === 'string' && body.detail.includes('allow_reopen');
+}
+
 export function taskResponseError(body, status) {
   const detail = body?.detail;
   const message = typeof detail === 'string' ? detail : typeof detail?.message === 'string' ? detail.message :
     typeof body?.error === 'string' ? body.error : `Aufgabe nicht gespeichert (HTTP ${status}).`;
+  if (isGateReopenBlocked(body, status)) return message + ' Wiederöffnen wurde nicht bestätigt.';
   return status === 409 ? message + ' Agentenauswahl neu laden und erneut auswählen.' : message;
 }
 

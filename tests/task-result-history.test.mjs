@@ -365,5 +365,11 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
     change.scope === 'Task2138: version-bound task result history, correction requests, and result-length limits');
   assert.ok(followup);
   assert.deepEqual(followup.files.map(file => file.path).sort(), [...paths].sort());
-  for (const file of followup.files) assert.equal(file.sha256, hash(file.path), file.path);
+  // Later follow-ups may change these files; the Task2138 record stays intact and chains into them.
+  const later = provenance.followup_changes.slice(provenance.followup_changes.indexOf(followup) + 1)
+    .flatMap(change => change.files ?? []);
+  for (const file of followup.files) {
+    const next = later.find(entry => entry.path === file.path);
+    assert.equal(file.sha256, next ? next.previous_sha256 : hash(file.path), file.path);
+  }
 });
