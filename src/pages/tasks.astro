@@ -170,7 +170,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
   </style>
 
   <script>
-    import {createAssignmentController, taskResponseError, assignmentCatalogue} from '../lib/task-assignment.mjs';
+    import {createAssignmentController, taskResponseError, assignmentCatalogue, isGateReopenBlocked} from '../lib/task-assignment.mjs';
     import {readTaskFilters, taskFilterQuery, writeTaskFilters, readTaskPage, taskCountLabel} from '../lib/task-filters.mjs';
     import {correctionAttemptMatchesView, createCorrectionAttempt, generateCorrectionRequestId,
       isCurrentCorrectionTarget, normalizeCorrectionNote, parseTaskResultMaxCharsInput,
@@ -885,18 +885,25 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         }
         Object.assign(payload, editAssignment.payload());
         if (Object.keys(payload).length === 1) { document.getElementById('task-edit-cancel').click(); return; }
-        const response = await fetch('/api/tasks/' + encodeURIComponent(id), {
-          method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
-        });
-        const result = await response.json().catch(() => ({}));
+        let response, result;
+        for (;;) {
+          response = await fetch('/api/tasks/' + encodeURIComponent(id), {
+            method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+          });
+          result = await response.json().catch(() => ({}));
+          // BACH #2229: a parked task reopens only as an explicit, confirmed operator action.
+          if (payload.allow_reopen || !isGateReopenBlocked(result, response.status)
+              || !confirm('Task #' + id + ' ist geparkt. Bewusst als Operator wieder öffnen?\n\n' + result.detail)) break;
+          payload.allow_reopen = true;
+        }
         if (!response.ok || result.status !== 'updated') {
-          if (response.status === 409) editAssignment.invalidate();
+          if (response.status === 409 && !isGateReopenBlocked(result, response.status)) editAssignment.invalidate();
           throw new Error(taskResponseError(result, response.status));
         }
         const stored = await openTask(id);
         if (!stored) throw new Error('Änderung gemeldet, der Kontrollabruf ist fehlgeschlagen.');
         for (const [key, value] of Object.entries(payload)) {
-          if (key === 'changed_by' || key === 'assignment_configuration_version') continue;
+          if (key === 'changed_by' || key === 'assignment_configuration_version' || key === 'allow_reopen') continue;
           const actual = key === 'project' ? stored.category : stored[key];
           if (key === 'due_date' && (value === null || value === '')) {
             if (actual != null && String(actual).trim() !== '') {
