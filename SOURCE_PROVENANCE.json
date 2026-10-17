@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+    "src/pages/agenten/running.astro": "dbf08cc27db7bab2c65103bcf0ad6864cce481181e22b2659b3fb49304c1d77e",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
@@ -51,12 +51,12 @@
     "src/pages/index.astro": "068fbeb644b24919654a846b7fdce7d983300ee74695af3c20c5410d7f1368b3",
     "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
     "src/pages/memory.astro": "27de17373b2319a598efc7397bd2dfa96aeb1c543303581cdc93ce2edeb5b74a",
-    "src/pages/settings.astro": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+    "src/pages/settings.astro": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "aa2871efe995b1b9ec6e653ac7d5028ad5ffe97ba4846b2279d92f4410b3f627",
+    "src/pages/tasks.astro": "b0f63ab6c0e970ecc3a476e63aa59181b9b8c68c93b05d437529f9ea5c204c42",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
@@ -107,7 +107,7 @@
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
     "README.md": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
-    "docs/CONSUMER_CONTRACT.md": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
+    "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
     "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
     "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
@@ -116,11 +116,17 @@
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "public/page-reads.v1.json": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
+    "public/page-reads.v1.json": "619deceffa24d6b8ec4532e8b1050612f2cf9a0d64826381f801f4c5166828a0",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
-    "tests/task-result-history.test.mjs": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb"
+    "tests/task-result-history.test.mjs": "c86b5e105c8543afa2b820fd5a083fe5ba392b44c1068e608c84bb0a7bb0ecdd",
+    "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
+    "src/components/WorkerPolicySettings.astro": "8a36508bdfd685f4bd152f3f648ff9b4fddbfd4b027043968c3b8e0b6d266178",
+    "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
+    "src/lib/task-worker-policy-settings.mjs": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78",
+    "src/lib/worker-policy-settings.mjs": "01b911187aa07223a3b4de4ef00965364b0e08365f73b05aadbbf15f853adf0d",
+    "tests/worker-policy-settings.test.mjs": "267a6f047d47eb14348b96d56b21c402a6fe18aec33e41a237ff721009913e06"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -1251,6 +1257,79 @@
           "path": "README.md",
           "previous_sha256": "5a776b862602b47088e97b9f07b3f9b4f7519b561493d9826df8d3d862313abf",
           "sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-15",
+      "scope": "Task2212: review/selection policy settings, task overrides and optional lease countdowns",
+      "source_base_commit": "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+      "changes": [
+        "Carry forward existing task2212 source implementation 3f28865 without changing runtime task authority.",
+        "Keep failed writes visible after readback and prevent delayed responses for an old task from replacing the new selection.",
+        "Backend worker-policy availability and user acceptance remain required; no runtime completion claim.",
+        "Preserve historical Task2138 hashes and validate the continuous subsequent provenance chain instead of rewriting history for a new feature."
+      ],
+      "files": [
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
+          "sha256": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
+          "sha256": "619deceffa24d6b8ec4532e8b1050612f2cf9a0d64826381f801f4c5166828a0"
+        },
+        {
+          "path": "src/components/TaskWorkerPolicySettings.astro",
+          "previous_sha256": null,
+          "sha256": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a"
+        },
+        {
+          "path": "src/components/WorkerPolicySettings.astro",
+          "previous_sha256": null,
+          "sha256": "8a36508bdfd685f4bd152f3f648ff9b4fddbfd4b027043968c3b8e0b6d266178"
+        },
+        {
+          "path": "src/lib/consumer-api-auth.mjs",
+          "previous_sha256": null,
+          "sha256": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a"
+        },
+        {
+          "path": "src/lib/task-worker-policy-settings.mjs",
+          "previous_sha256": null,
+          "sha256": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78"
+        },
+        {
+          "path": "src/lib/worker-policy-settings.mjs",
+          "previous_sha256": null,
+          "sha256": "01b911187aa07223a3b4de4ef00965364b0e08365f73b05aadbbf15f853adf0d"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "sha256": "dbf08cc27db7bab2c65103bcf0ad6864cce481181e22b2659b3fb49304c1d77e"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+          "sha256": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "aa2871efe995b1b9ec6e653ac7d5028ad5ffe97ba4846b2279d92f4410b3f627",
+          "sha256": "b0f63ab6c0e970ecc3a476e63aa59181b9b8c68c93b05d437529f9ea5c204c42"
+        },
+        {
+          "path": "tests/worker-policy-settings.test.mjs",
+          "previous_sha256": null,
+          "sha256": "267a6f047d47eb14348b96d56b21c402a6fe18aec33e41a237ff721009913e06"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
+          "sha256": "c86b5e105c8543afa2b820fd5a083fe5ba392b44c1068e608c84bb0a7bb0ecdd"
         }
       ]
     }
