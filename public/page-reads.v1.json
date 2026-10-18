@@ -635,7 +635,9 @@
    {
     "method": "GET",
     "path": "/api/capabilities/skills/library",
-    "required": true
+    "required": true,
+    "dynamic": true,
+    "found_in": "src/lib/subscription-agents-client.mjs#loadSkillLibrary"
    },
    {
     "method": "POST",
@@ -1241,7 +1243,9 @@
    {
     "method": "GET",
     "path": "/api/capabilities/skills/library",
-    "required": false
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/catalog-skill-reader.mjs#library"
    }
   ],
   "/daemon": [

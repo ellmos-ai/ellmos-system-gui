@@ -23,26 +23,51 @@ if (board) {
   };
   const badge = text => node('span', text, 'badge');
   const flag = value => value === true ? 'Aktivierung eingestellt' : value === false ? 'Deaktivierung eingestellt' : 'Aktivierung nicht erfasst';
-  let items = [], inventoryGeneration = 0, fetchedAt = new Date();
+  const PAGE_SIZE = 40;
+  let items = [], inventoryGeneration = 0, fetchedAt = new Date(), currentPage = 1;
+  let selectedLocale = '';
+  let activeLocale = '';
+  try { selectedLocale = window.sessionStorage.getItem('bach.skills.locale') || ''; } catch {}
+
+  function withLocale(url, locale) {
+    if (kind !== 'skills' || !locale) return url;
+    return url + (url.includes('?') ? '&' : '?') + 'locale=' + encodeURIComponent(locale);
+  }
+
+  function requestedLocale() { return activeLocale || selectedLocale || 'de'; }
 
   function renderItems() {
     const query = byId('board-search').value.trim().toLocaleLowerCase('de');
     const category = byId('board-category')?.value || '';
     const visible = items.filter(item => (!category || item.category === category)
       && [item.name, item.id, item.description, item.consumer].some(value => typeof value === 'string' && value.toLocaleLowerCase('de').includes(query)));
+    const pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+    currentPage = Math.min(Math.max(currentPage, 1), pageCount);
+    const pageItems = visible.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
     byId('board-items').replaceChildren();
     byId('board-count').textContent = visible.length + ' / ' + items.length + ' Einträge';
-    for (const item of visible) {
+    const pagination = byId('board-pagination');
+    pagination.hidden = pageCount <= 1;
+    byId('board-page').textContent = 'Seite ' + currentPage + ' / ' + pageCount;
+    byId('board-prev').disabled = currentPage <= 1;
+    byId('board-next').disabled = currentPage >= pageCount;
+    for (const item of pageItems) {
       const card = node('article', null, 'capability-card');
       card.dataset.id = item.id;
       const title=node('h3',item.name||item.id);title.prepend(createSymbol(document,item.symbol,symbolUrls,
         {skills:'wissen',plugins:'topics_ai',mcp:'scripts',software:'topics_software',ocean:'topics_ai'}[kind]));
-      card.append(title, node('p', item.description || 'Keine Beschreibung in der Quelle.'));
+      card.append(title, node('p', item.missing_locale
+        ? 'Keine Sprachfassung für ' + (item.requested_locale || requestedLocale()) + ' vorhanden.'
+        : item.description || 'Keine Beschreibung in der Quelle.'));
       const meta = node('div', null, 'card-meta');
       if (kind !== 'mcp') meta.append(badge(item.version || 'Ohne Versionsnummer'));
       if (kind === 'skills') {
         meta.append(badge(item.category || 'Allgemein'));
-        card.append(meta, node('p', item.id, 'card-caption'), button('Anleitung bearbeiten', () => openSkill(item.id), 'btn card-action'));
+        if (item.resolved_locale) meta.append(badge(item.resolved_locale + (item.fallback_used ? ' · Fallback' : '')));
+        else meta.append(badge('Sprachfassung fehlt'));
+        const edit = button('Anleitung bearbeiten', () => openSkill(item.id), 'btn card-action');
+        if (item.missing_locale) { edit.disabled = true; edit.title = 'Für diese Sprachfassung nicht verfügbar.'; }
+        card.append(meta, node('p', item.id, 'card-caption'), edit);
       } else {
         if (item.consumer) meta.append(badge(item.consumer));
         card.append(meta);
@@ -86,7 +111,8 @@ if (board) {
       if (!catalogMatches(kind, data)) throw new Error(kind === 'plugins'
         ? 'Die Antwort ist kein Plugin-Inventar (erwartet: Schema bach.capability-inventory.v1, Art plugins).'
         : 'Der Anwendungskatalog und die Ocean-Quellen sind noch nicht getrennt angebunden.');
-      const rows = kind === 'skills' ? data.skills : data.items;
+      if (kind === 'skills') activeLocale = typeof data.requested_locale === 'string' ? data.requested_locale : requestedLocale();
+      const rows = kind === 'skills' ? [...data.skills, ...(data.unresolved_skills || []).map(item => ({...item, missing_locale: true}))] : data.items;
       if (!Array.isArray(rows)) throw new Error('Die Quelle liefert keinen Eintragskatalog.');
       items = rows;
       fetchedAt = new Date();
@@ -95,6 +121,12 @@ if (board) {
         select.replaceChildren(new Option('Alle Kategorien', ''));
         for (const category of [...new Set(items.map(item => item.category).filter(Boolean))].sort()) select.add(new Option(category, category));
         if ([...select.options].some(option => option.value === previous)) select.value = previous;
+        const localeSelect = byId('board-locale'), localePrevious = selectedLocale;
+        localeSelect.replaceChildren(new Option('Systemsprache (' + activeLocale + ')', ''));
+        for (const locale of data.available_locales || []) localeSelect.add(new Option(locale, locale));
+        if (localePrevious && ![...localeSelect.options].some(option => option.value === localePrevious))
+          localeSelect.add(new Option(localePrevious, localePrevious));
+        localeSelect.value = localePrevious;
       }
       const notes = [];
       if (kind === 'plugins') notes.push(plugSummaryText(items) + '. Die Einstellungen stammen aus den Client-Dateien (Claude und Codex); der Laufzeitstatus der Clients ist nicht erfasst. Diese Ansicht schaltet nichts.');
@@ -104,6 +136,7 @@ if (board) {
       if (data.truncated) notes.push('Die Lesegrenze wurde erreicht; die Liste ist unvollständig.');
       if (data.errors?.length) notes.push(data.errors.length + ' Quelle(n) konnten nicht gelesen werden.');
       if (data.sources?.length && data.sources.every(source => !source.available)) notes.push('Keine konfigurierte Quelle ist erreichbar.');
+      if (kind === 'skills') notes.unshift('Sprachfassung: ' + activeLocale + (selectedLocale ? '' : ' (Systemsprache)') + '.');
       byId('board-status').textContent = notes.join(' ') || 'Aktuelle SKILL.md-Dateien geladen.';
       const sources = byId('board-sources');
       if (sources) {
@@ -148,7 +181,7 @@ if (board) {
     selectedHistory = '';
     select.replaceChildren(new Option('Aktuelle Fassung', ''));
     if (!currentSource || currentSource.source_version === '0') return;
-    const history = await requestJson('/api/capabilities/skills/' + encodeURIComponent(currentSource.id) + '/history');
+    const history = await requestJson(withLocale('/api/capabilities/skills/' + encodeURIComponent(currentSource.id) + '/history', requestedLocale()));
     if (!Array.isArray(history.versions)) throw new Error('Die Historie liefert keine Fassungen.');
     for (const entry of history.versions) select.add(new Option((entry.version || 'Ohne Versionsnummer') + ' · ' + entry.source_version.slice(0, 12), entry.source_version));
     if (history.truncated) byId('skill-editor-status').textContent = 'Die Historie ist wegen der Lesegrenze unvollständig.';
@@ -160,7 +193,7 @@ if (board) {
     byId('skill-content').value = ''; byId('skill-history').replaceChildren(new Option('Aktuelle Fassung', ''));
     byId('skill-editor-status').textContent = ''; describeSource(); busy(true); editor.showModal();
     try {
-      const source = await loadSkill(id);
+      const source = await loadSkill(id, requestedLocale());
       if (generation !== editorGeneration) return;
       currentSource = source; originalContent = source.content; byId('skill-content').value = source.content; describeSource();drawSkillSymbols();
       try { await loadHistory(); }
@@ -189,7 +222,7 @@ if (board) {
     if (byId('skill-content').value !== originalContent && !window.confirm('Aktuelle Fassung laden und ungespeicherte Änderungen verwerfen?')) return;
     busy(true);
     try {
-      currentSource = await loadSkill(currentSource.id); originalContent = currentSource.content;
+      currentSource = await loadSkill(currentSource.id, requestedLocale()); originalContent = currentSource.content;
       byId('skill-content').value = originalContent; describeSource();drawSkillSymbols(); await loadHistory();
       byId('skill-editor-status').textContent = 'Aktuelle Fassung geladen.';
     } catch (error) { byId('skill-editor-status').textContent = error.message; }
@@ -204,7 +237,7 @@ if (board) {
     }
     busy(true);
     try {
-      const source = revision ? await requestJson('/api/capabilities/skills/' + encodeURIComponent(currentSource.id) + '/history/' + encodeURIComponent(revision)) : currentSource;
+      const source = revision ? await requestJson(withLocale('/api/capabilities/skills/' + encodeURIComponent(currentSource.id) + '/history/' + encodeURIComponent(revision), requestedLocale())) : currentSource;
       if (typeof source.content !== 'string' || (revision && source.source_version !== revision)) throw new Error('Historische Quelle konnte nicht bestätigt werden.');
       byId('skill-content').value = source.content;
       drawSkillSymbols(source);
@@ -219,7 +252,7 @@ if (board) {
     if (!SKILL_ID.test(id)) { byId('skill-editor-status').textContent = 'Eine gültige Kennung ist erforderlich.'; return; }
     busy(true); byId('skill-editor-status').textContent = 'Quelle wird gespeichert und erneut gelesen …';
     try {
-      currentSource = await saveSkill({...currentSource,id}, byId('skill-content').value);
+      currentSource = await saveSkill({...currentSource,id}, byId('skill-content').value, requestedLocale());
       originalContent = currentSource.content; describeSource();drawSkillSymbols();
       byId('skill-editor-title').textContent = 'Skill bearbeiten';
       byId('skill-editor-status').textContent = 'Gespeicherte aktuelle Fassung bestätigt.';
@@ -265,8 +298,18 @@ if (board) {
       byId('recipe-status').textContent = data.cookbooks.length + ' Rezeptbücher. Die Anleitungen führen keine Werkzeuge aus.';
     } catch (error) { byId('recipe-status').textContent = 'Rezeptbibliothek nicht geladen: ' + error.message; }
   }
-  byId('board-search').addEventListener('input', renderItems);
-  byId('board-category')?.addEventListener('change', renderItems);
+  byId('board-search').addEventListener('input', () => { currentPage = 1; renderItems(); });
+  byId('board-category')?.addEventListener('change', () => { currentPage = 1; renderItems(); });
+  byId('board-locale')?.addEventListener('change', event => {
+    selectedLocale = event.target.value;
+    try {
+      if (selectedLocale) window.sessionStorage.setItem('bach.skills.locale', selectedLocale);
+      else window.sessionStorage.removeItem('bach.skills.locale');
+    } catch {}
+    currentPage = 1; refresh();
+  });
+  byId('board-prev').addEventListener('click', () => { currentPage--; renderItems(); });
+  byId('board-next').addEventListener('click', () => { currentPage++; renderItems(); });
   byId('board-refresh').addEventListener('click', refresh);
   refresh(); if (kind === 'mcp') loadRecipes();
 }

@@ -40,10 +40,16 @@ const tabs = [
   <div class="board-toolbar">
     <label class="board-search">Suchen<input type="search" id="board-search" placeholder="Name oder Beschreibung" autocomplete="off" /></label>
     {board==='skills' && <label>Kategorie<select id="board-category"><option value="">Alle Kategorien</option></select></label>}
+    {board==='skills' && <label>Sprache<select id="board-locale"><option value="">Systemsprache</option></select></label>}
     <span id="board-count" class="badge">Quelle wird geladen …</span>
   </div>
   <p id="board-status" role="status" aria-live="polite">Einträge werden geladen …</p>
   <div id="board-items" class="board-grid"></div>
+  <nav id="board-pagination" class="board-pagination" aria-label="Seiten" hidden>
+    <button type="button" class="btn" id="board-prev">Zurück</button>
+    <span id="board-page" role="status"></span>
+    <button type="button" class="btn" id="board-next">Weiter</button>
+  </nav>
   {board==='mcp' && <section class="recipe-section" aria-labelledby="recipes-title">
     <header><div><h2 id="recipes-title">Rezeptbibliothek</h2><p>Anleitungen für den Einsatz der MCP-Werkzeuge.</p></div></header>
     <div id="recipe-books" class="recipe-shelf"></div>
@@ -95,6 +101,7 @@ const tabs = [
   .board-tab {padding:.7rem 1.1rem;color:var(--text-muted);text-decoration:none;border-radius:var(--radius-sm);font-size:.85rem;font-weight:600}
   .board-tab.active {background:var(--bg-card);color:var(--accent-text);box-shadow:var(--shadow-sm)}
   .board-toolbar {justify-content:flex-start;margin:1.4rem 0}.board-search {flex:1;min-width:200px}
+  .board-pagination {display:flex;align-items:center;justify-content:center;gap:.8rem;margin:1.4rem 0;color:var(--text-muted);font-size:.82rem}
   label {display:flex;flex-direction:column;gap:.4rem;font-size:.8rem;color:var(--text-muted)}
   input,select,textarea {background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.65rem;font:inherit}
   .board-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:1rem}

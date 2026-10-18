@@ -8,16 +8,19 @@ export const MAX_SOURCE_BYTES = 200000; // same limit as skill_source_service.MA
 const LIBRARY_URL = '/api/capabilities/skills/library';
 const byteLength = text => new TextEncoder().encode(text).length;
 
-export function createSkillReader({fetcher = globalThis.fetch, clipboard = globalThis.navigator?.clipboard} = {}) {
+export function createSkillReader({fetcher = globalThis.fetch, clipboard = globalThis.navigator?.clipboard, locale = ''} = {}) {
   let rows = [];
   let resolution = null;
   let libraryPromise = null;
+  let requestedLocale = locale;
   const sources = new Map();   // library id -> Promise of a verified source (only successes stay cached)
 
   const library = () => {
     if (!libraryPromise) {
-      libraryPromise = requestJson(LIBRARY_URL, {}, fetcher).then(data => {
+      const url = requestedLocale ? LIBRARY_URL + '?locale=' + encodeURIComponent(requestedLocale) : LIBRARY_URL;
+      libraryPromise = requestJson(url, {}, fetcher).then(data => {
         if (!data || !Array.isArray(data.skills)) throw new Error('Die Skill-Bibliothek liefert keine lesbare Liste.');
+        if (!requestedLocale && typeof data.requested_locale === 'string') requestedLocale = data.requested_locale;
         return new Set(data.skills.map(skill => skill && skill.id).filter(id => typeof id === 'string'));
       }).catch(error => { libraryPromise = null; throw error; });
     }
@@ -38,7 +41,10 @@ export function createSkillReader({fetcher = globalThis.fetch, clipboard = globa
       catch (error) { resolution = null; return {state: 'error', message: error.message}; }
       if (!match.id) return {state: 'disabled', reason: match.reason};
       if (!sources.has(match.id)) {
-        sources.set(match.id, loadSkill(match.id, fetcher).then(source => {
+        const sourcePromise = requestedLocale
+          ? loadSkill(match.id, requestedLocale, fetcher)
+          : loadSkill(match.id, fetcher);
+        sources.set(match.id, sourcePromise.then(source => {
           if (byteLength(source.content) > MAX_SOURCE_BYTES) throw new Error('Der Volltext überschreitet ' + MAX_SOURCE_BYTES + ' Byte und wird nicht angezeigt.');
           return source;
         }).catch(error => { sources.delete(match.id); throw error; }));

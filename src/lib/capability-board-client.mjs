@@ -7,6 +7,13 @@ export const INVENTORIES = {
   software: '/api/capabilities/software',
   ocean: '/api/capabilities/ocean',
 };
+const defaultFetcher = globalThis.fetch;
+
+function withLocale(url, requestedLocale) {
+  if (typeof requestedLocale !== 'string' || !requestedLocale.trim()) return url;
+  const separator = url.includes('?') ? '&' : '?';
+  return url + separator + 'locale=' + encodeURIComponent(requestedLocale.trim());
+}
 
 export function confirmSkillReplacement(content, loadedContent, ask) {
   return content === loadedContent || ask('Ungespeicherte Änderungen durch die ausgewählte Fassung ersetzen?') === true;
@@ -42,26 +49,39 @@ export function describeSourceError(error) {
   return detail;
 }
 
-export async function loadSkill(id, fetcher = globalThis.fetch) {
+export async function loadSkill(id, requestedLocaleOrFetcher, maybeFetcher) {
   if (!SKILL_ID.test(id)) throw new Error('Ungültige Skill-Kennung.');
-  const source = await requestJson('/api/capabilities/skills/' + encodeURIComponent(id) + '/source', {}, fetcher);
-  if (source.id !== id || typeof source.content !== 'string' || !REVISION.test(source.source_version))
+  const requestedLocale = typeof requestedLocaleOrFetcher === 'string' ? requestedLocaleOrFetcher : '';
+  const fetcher = typeof requestedLocaleOrFetcher === 'string'
+    ? maybeFetcher || defaultFetcher : requestedLocaleOrFetcher || defaultFetcher;
+  const source = await requestJson(withLocale('/api/capabilities/skills/' + encodeURIComponent(id) + '/source', requestedLocale), {}, fetcher);
+  if (source.id !== id || (source.canonical_skill_id && source.canonical_skill_id !== id)
+      || typeof source.content !== 'string' || !REVISION.test(source.source_version)
+      || (source.resolved_locale !== undefined && typeof source.resolved_locale !== 'string'))
     throw new Error('Die aktuelle Skill-Fassung konnte nicht bestätigt werden.');
   return source;
 }
 
-export async function saveSkill(source, content, fetcher = globalThis.fetch) {
+export async function saveSkill(source, content, requestedLocaleOrFetcher, maybeFetcher) {
+  const requestedLocale = typeof requestedLocaleOrFetcher === 'string'
+    ? requestedLocaleOrFetcher : source?.requested_locale || '';
+  const fetcher = typeof requestedLocaleOrFetcher === 'string'
+    ? maybeFetcher || defaultFetcher : requestedLocaleOrFetcher || defaultFetcher;
   if (!source || !SKILL_ID.test(source.id)
       || !(source.source_version === '0' || REVISION.test(source.source_version))
       || typeof content !== 'string' || !content.trim())
     throw new Error('Skill-Kennung, Inhalt und geladene Quellenversion sind erforderlich.');
-  const saved = await requestJson('/api/capabilities/skills/' + encodeURIComponent(source.id) + '/source', {
+  const body = {content, source_version: source.source_version};
+  if (requestedLocale) body.requested_locale = requestedLocale;
+  const saved = await requestJson(withLocale('/api/capabilities/skills/' + encodeURIComponent(source.id) + '/source', requestedLocale), {
     method: 'PUT', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({content, source_version: source.source_version}),
+    body: JSON.stringify(body),
   }, fetcher);
   if (saved.id !== source.id || saved.content !== content || saved.receipt?.source_saved !== true)
     throw new Error('Der Speicherbeleg stimmt nicht mit der Änderung überein.');
-  const observed = await loadSkill(source.id, fetcher);
+  const observed = requestedLocale
+    ? await loadSkill(source.id, requestedLocale, fetcher)
+    : await loadSkill(source.id, fetcher);
   if (observed.source_version !== saved.source_version || observed.content !== content)
     throw new Error('Die Quelle wurde nach dem Speichern erneut geändert. Prüfe die aktuelle Fassung.');
   return observed;

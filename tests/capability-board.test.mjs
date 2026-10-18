@@ -37,6 +37,23 @@ test('source conflict does not retry or overwrite',async()=>{
   assert.equal(count,1);
 });
 
+test('locale selection is carried through source reads and CAS saves', async()=>{
+  const calls=[], content='# Deutsche Fassung';
+  const currentLocale={id:'example',canonical_skill_id:'example',content,source_version:revision,
+    requested_locale:'de-de',resolved_locale:'de',fallback_used:false};
+  const saved={...currentLocale,content,source_version:nextRevision,receipt:{source_saved:true}};
+  const fetcher=async(url,options={})=>{
+    calls.push({url,options});
+    return response(options.body || calls.length === 3 ? saved : currentLocale);
+  };
+  await loadSkill('example','de-DE',fetcher);
+  await saveSkill(currentLocale,content,'de-DE',fetcher);
+  assert.equal(calls[0].url,'/api/capabilities/skills/example/source?locale=de-DE');
+  assert.equal(calls[1].url,'/api/capabilities/skills/example/source?locale=de-DE');
+  assert.deepEqual(JSON.parse(calls[1].options.body),{content,source_version:revision,requested_locale:'de-DE'});
+  assert.equal(calls[2].url,'/api/capabilities/skills/example/source?locale=de-DE');
+});
+
 test('an unconfirmed save and a changed readback cannot claim success',async()=>{
   await assert.rejects(saveSkill(current,'changed',async()=>response({id:'example',content:'changed',source_version:nextRevision})),/Speicherbeleg/);
   let count=0;
