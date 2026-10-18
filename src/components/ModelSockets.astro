@@ -35,6 +35,11 @@
   .model-sockets :global(.model-socket-heading) {display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap}
   .model-sockets :global(h3) {font-size:1rem;overflow-wrap:anywhere;margin:0}
   .model-sockets :global(.model-note) {font-size:.8rem;color:var(--text-muted);margin:.5rem 0}
+  .model-sockets :global(.model-share-indicator) {display:inline-flex;align-items:center;gap:.35rem;flex-wrap:wrap}
+  .model-sockets :global(.model-light) {font-size:1.05rem;line-height:1;display:inline-block}
+  .model-sockets :global(.model-light.is-on) {color:#f59e0b;text-shadow:0 0 6px #fbbf24}
+  .model-sockets :global(.model-light.is-idle) {color:var(--text-muted)}
+  .model-sockets :global(.model-light.is-unknown) {color:var(--text-muted);opacity:.55}
   .model-sockets :global(.model-slot-list)>summary {cursor:pointer;font-weight:600}
   .model-sockets :global(.model-slot) {padding:.75rem 0;margin-top:.5rem;border-top:1px solid var(--border-hover)}
   .model-sockets :global(.model-slot small) {display:block;overflow-wrap:anywhere}

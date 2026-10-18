@@ -6,8 +6,12 @@ const MODEL = /^[A-Za-z0-9][A-Za-z0-9_./:-]{0,191}$/;
 const SOCKET = /^model-[a-f0-9]{24}$/;
 const BINDING = /^binding-[a-f0-9]{24}$/;
 const LOCAL = new Set(['ollama', 'lmstudio']);
+const RUNTIME_STATES = new Set(['source_unavailable', 'active_target_unavailable', 'measured_owner',
+  'idle', 'target_unavailable', 'external_target']);
 const integer = (n, low, high) => Number.isInteger(n) && n >= low && n <= high;
 const fail = () => { throw new Error('Die Modellzuordnung konnte nicht bestätigt werden.'); };
+const share = value => value === null || (typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1);
+const optionalRuntimeState = value => value === undefined || RUNTIME_STATES.has(value);
 const localTarget = item => item && LOCAL.has(item.backend) && typeof item.model === 'string' && MODEL.test(item.model) &&
   !item.model.toLowerCase().endsWith(':cloud') && typeof item.host_id === 'string' && ID.test(item.host_id);
 
@@ -15,6 +19,11 @@ export function socketSnapshot(value) {
   if (!value || value.schema !== 'bach.model-sockets.v1' || typeof value.configuration_version !== 'string' || !VERSION.test(value.configuration_version) ||
       typeof value.host_id !== 'string' || !ID.test(value.host_id) || typeof value.migration_required !== 'boolean' ||
       value.source !== (value.migration_required ? 'legacy_projection' : 'canonical_slots_config') ||
+      typeof value.runtime_verified !== 'boolean' ||
+      (value.runtime_source !== undefined && typeof value.runtime_source !== 'string') ||
+      (value.runtime_reason_code !== undefined && typeof value.runtime_reason_code !== 'string') ||
+      (value.runtime_observed_at !== undefined && (typeof value.runtime_observed_at !== 'string' ||
+        !Number.isFinite(Date.parse(value.runtime_observed_at)))) ||
       !Array.isArray(value.sockets) || !Array.isArray(value.unbound_agent_ids) ||
       !integer(value.host_inference_limit, 1, 1000)) fail();
   const targets = new Set(), bindings = new Set();
@@ -23,13 +32,17 @@ export function socketSnapshot(value) {
         socket.host_id !== value.host_id || typeof socket.enabled !== 'boolean' ||
         !integer(socket.max_active_slots, 1, 1000) || !['exclusive', 'shared'].includes(socket.residency_policy) ||
         !Array.isArray(socket.slots) || typeof socket.capacity_verified !== 'boolean' ||
-        !integer(socket.effective_max_active_slots, 1, 1000)) fail();
+        !integer(socket.effective_max_active_slots, 1, 1000) || !share(socket.resource_share) ||
+        !optionalRuntimeState(socket.resource_share_state)) fail();
     targets.add(socket.id);
     for (const slot of socket.slots) {
       if (!slot || !BINDING.test(slot.id) || bindings.has(slot.id) || typeof slot.agent_id !== 'string' || !ID.test(slot.agent_id) ||
           slot.socket_id !== socket.id || typeof slot.enabled !== 'boolean' ||
           typeof slot.orphaned !== 'boolean' || !['foreground', 'background'].includes(slot.priority) ||
-          !(slot.context_tokens === null || integer(slot.context_tokens, 1, 1048576))) fail();
+          !(slot.context_tokens === null || integer(slot.context_tokens, 1, 1048576)) ||
+          !(slot.running === null || typeof slot.running === 'boolean') || !share(slot.resource_share) ||
+          !(slot.relative_slot_share === undefined || share(slot.relative_slot_share)) ||
+          !optionalRuntimeState(slot.resource_share_state)) fail();
       bindings.add(slot.id);
     }
   }
