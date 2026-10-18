@@ -262,8 +262,9 @@ test('Running and Dashboard use the same persisted controller and projection', (
 });
 
 test('the controls are wired to existing lanes and Core profiles are in the shared Ready section', () => {
-  for (const id of ['agent-overview-access','agent-overview-function','agent-overview-start','agent-overview-sort','agent-overview-group','agent-overview-view']) {
+  for (const id of ['agent-overview-query','agent-overview-access','agent-overview-function','agent-overview-start','agent-overview-sort','agent-overview-group','agent-overview-view']) {
     assert.match(runningPage, new RegExp(`id="${id}"`));
+    assert.equal((runningPage.match(new RegExp(`id="${id}"`, 'g')) || []).length, 1);
   }
   assert.match(runningPage, /registerAgentOverviewCard\(readyGrid, card, worker, 'worker', 'ready'\)/);
   assert.match(runningPage, /registerAgentOverviewCard\(runningList, card, worker, 'worker', 'running'\)/);
@@ -275,6 +276,27 @@ test('the controls are wired to existing lanes and Core profiles are in the shar
   assert.match(dashboardPage, /fetch\('\/api\/system\/core-agents'\)/);
   assert.match(dashboardPage, /createAgentOverviewController\(document, \{onRefresh:updateDashboardOverviewSummary\}\)/);
   assert.match(dashboardPage, /count\.textContent = observed \? String\(active\.length\) : '–'/);
+});
+
+test('Running, history, ready agents, and resources follow the shared Living layout', () => {
+  const running = runningPage.indexOf('id="running-agents-title"');
+  const history = runningPage.indexOf('id="activity-timeline"');
+  const agents = runningPage.indexOf('id="agent-workspace-title"');
+  const resources = runningPage.indexOf('id="models-resources-title"');
+  assert.ok(running >= 0 && running < history && history < agents && agents < resources);
+
+  const modelSockets = runningPage.indexOf('<ModelSockets />');
+  const fackel = runningPage.indexOf('id="hardware-torch-title"');
+  const openRouter = runningPage.indexOf('id="openrouter-title"');
+  assert.ok(resources < modelSockets && modelSockets < fackel && fackel < openRouter);
+
+  for (const id of ['activity-timeline','ready-agents-title','ready-teams-title','core-agents-title','models-resources-title','hardware-torch-title','openrouter-title']) {
+    assert.equal((runningPage.match(new RegExp(`id="${id}"`, 'g')) || []).length, 1, `${id} remains unique`);
+  }
+  assert.match(runningPage, /id="ready-agents-grid"[^>]*data-agent-overview-lane="ready"/);
+  assert.match(runningPage, /id="running-workers-list"[^>]*data-agent-overview-lane="running"/);
+  assert.match(runningPage, /class="agent-creation-group agent-workspace"/);
+  assert.match(runningPage, /Tatsächliche Startart<select id="agent-overview-start"/);
 });
 
 function collectText(node) {
