@@ -35,6 +35,21 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
   const modelsForAddition = () => catalogue?.models.filter(m => m.chat_eligible &&
     !snapshot?.sockets.some(s => s.id === m.socket_id)) || [];
   const nameFor = slot => String(slot.name || slot.agent_id);
+  const shareText = value => typeof value === 'number' && Number.isFinite(value)
+    ? Math.round(value * 100) + ' %' : 'nicht geprüft';
+  const runningText = value => value === true ? 'Running · Ziel bestätigt' :
+    value === false ? 'Kein lokaler Lauf' : 'Lauf nicht klassifiziert';
+  const shareIndicator = (value, label) => {
+    const wrapper = node('span', undefined, 'model-share-indicator');
+    const light = node('span', '●', 'model-light ' +
+      (typeof value === 'number' ? value > 0 ? 'is-on' : 'is-idle' : 'is-unknown'));
+    if (typeof light.setAttribute === 'function') {
+      light.setAttribute('role', 'img');
+      light.setAttribute('aria-label', label + ': ' + shareText(value));
+    }
+    wrapper.append(light, node('span', label + ': ' + shareText(value)));
+    return wrapper;
+  };
 
   function render() {
     targets.replaceChildren();
@@ -43,7 +58,8 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
     if (!snapshot) return;
     status.textContent = snapshot.migration_required
       ? 'Zuordnungen noch nicht übernommen · bestehende Profile werden als Vorschau angezeigt. Modelländerungen sind erst nach der Einrichtung möglich.'
-      : 'Gespeicherte Modellzuordnungen · ' + snapshot.sockets.length + ' Steckplatz/Steckplätze. Das bestätigt keinen laufenden Agenten.';
+      : 'Gespeicherte Modellzuordnungen · ' + snapshot.sockets.length + ' Steckplatz/Steckplätze. ' +
+        (snapshot.runtime_verified === true ? 'Laufzeitbeleg ist verfügbar.' : 'Laufzeitbeleg ist nicht verfügbar.');
     if (!snapshot.sockets.length) targets.append(node('p', 'Noch kein lokales Modell zugeordnet. Wähle ein bestätigtes Chatmodell aus dem Katalog.'));
     for (const socket of snapshot.sockets) {
       const card = node('article', undefined, 'model-socket'); card.dataset.socketId = socket.id;
@@ -56,6 +72,9 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
         : 'Modellangebot und Fähigkeiten derzeit nicht bestätigt.', 'model-note'));
       card.append(node('p', 'Residenz und RAM-Anteil: nicht gemessen. Effektive Inferenzgrenze: ' +
         socket.effective_max_active_slots + ' · geplant: ' + socket.max_active_slots, 'model-note'));
+      const socketRuntime = node('p', undefined, 'model-note');
+      socketRuntime.append(shareIndicator(socket.resource_share, 'Fackelanteil'));
+      card.append(socketRuntime);
       const actions = node('div', undefined, 'model-actions');
       actions.append(button('Modell bearbeiten', () => openSocket(socket), !editable()),
         button('Agent zuordnen', () => openBinding(socket), !editable() || !agentChoices(snapshot).length));
@@ -69,7 +88,11 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
           node('p', slot.orphaned ? 'Agentenprofil fehlt · gespeicherte Zuordnung' :
             (slot.enabled ? 'Zuordnung freigegeben' : 'Zuordnung gesperrt') + ' · ' +
             (slot.priority === 'foreground' ? 'Vordergrund' : 'Hintergrund')),
-          node('p', 'Lauf und Ressourcenanteil: nicht geprüft.', 'model-note'));
+          node('p', 'Lauf und Ressourcenanteil: ' + shareText(slot.resource_share) + '.', 'model-note'));
+        const slotRuntime = node('p', undefined, 'model-note');
+        slotRuntime.append(shareIndicator(slot.resource_share, 'Fackelanteil'),
+          node('span', ' · ' + runningText(slot.running)));
+        row.append(slotRuntime);
         const slotActions = node('div', undefined, 'model-actions');
         slotActions.append(button('Slot bearbeiten', () => openBinding(socket, slot), !editable() || slot.orphaned),
           button('Zuordnung entfernen', () => removeBinding(slot), !editable()));

@@ -19,7 +19,9 @@ test('the shared branding contract and bundled same-origin authentication stay i
   assert.doesNotMatch(read('src/layouts/BachLayout.astro'),/src="\/static\/js\/device-fetch\.js"/);
 });
 test('Idle readiness and activity are never supplied by fixed success text',()=>{
-  assert.match(page,/<p id="compute-turn-status">Nicht geprüft<\/p>/);
+  assert.match(page,/running-system-external-list/);
+  assert.match(page,/resolved_execution_target/);
+  assert.doesNotMatch(page,/hardware-torch|\/api\/system\/cluster-cockpit|\/api\/system\/fackel/);
   assert.doesNotMatch(page,/Aktiv \(Bereit\)/);
   assert.match(page,/data\.schema !== 'bach\.workers\.status\.v1'/);
 });
