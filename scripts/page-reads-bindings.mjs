@@ -17,6 +17,7 @@ export const BINDINGS = {
   'src/scripts/blueprint-studio.mjs#loadData@1': [
     'GET /api/agenten/teams', 'GET /api/capabilities/skills', 'GET /api/agent-studio/tools',
     'GET /api/agent-studio/contractus-presets', 'GET /api/agent-studio/governance-presets',
+    'GET /api/taskmaster/roles', 'GET /api/taskmaster/policy',
   ],
   // url built from new URL('/api/tasks', origin) in life.astro
   'src/pages/life.astro#loadUserTasks@1': ['GET /api/tasks'],

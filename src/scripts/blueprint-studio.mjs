@@ -24,6 +24,14 @@ export function startLabel(slot) {
   const remoteModel = /:cloud(?:\s|$)/i.test([slot.model,slot.resolved_model].filter(Boolean).join(" "));
   return ["ollama","lmstudio"].includes(slot.backend) && !remoteModel ? "Lokal starten" : "Cloud/API starten";
 }
+export function taskmasterPolicyLabel(policy) {
+  const values=policy?.values;
+  if(!values) return "Betriebspolicy nicht bestätigt; Rollen bleiben reine Vertragsprojektion.";
+  return `Betriebsowner: ${values.owner_role_id} · Takt: ${values.interval_seconds}s · Cloudstart: ${values.cloud_start_mode} · Scheduler: ${policy.scheduler_state}`;
+}
+export function taskmasterRoleSummary(role) {
+  return [role?.stable_id||"", role?.origin||"", `Revision ${role?.revision||"–"}`, (role?.task_types||[]).join(", ")].filter(Boolean).join(" · ");
+}
 export function normalizeTools(names) {
   const aliases = {
     read_files:["read_file","list_directory"], search_content:["search_text"],
@@ -47,7 +55,7 @@ if (typeof document !== "undefined") initializeStudio();
 
 function initializeStudio() {
   const $ = id => document.getElementById(id);
-  const state = {blueprints:[], teams:[], skills:[], tools:[], contracts:[], governance:[], core:null,
+  const state = {blueprints:[], teams:[], skills:[], tools:[], contracts:[], governance:[], taskmasterRoles:[], taskmasterPolicy:null, core:null,
     prompts:null, library:"custom", edit:null, instance:null, instanceVersion:null, instanceConfig:null, promptVersion:null,
     team:null, avatar:"", symbol:"", modelRequest:0};
   const labels = {agent:"Agent",role:"Rolle",skill:"Skill-Vorlage",workflow:"Workflow-Vorlage",service:"Service-Vorlage",contractus:"Arbeitsvertrag"};
@@ -78,11 +86,18 @@ function initializeStudio() {
     const selectedSet = new Set(selected);
     target.innerHTML=items.map(item => '<label class="studio-option"><input type="checkbox" value="'+escapeHtml(item.id)+'" '+(selectedSet.has(item.id)?"checked":"")+' /><span>'+escapeHtml(item.name)+'<small>'+escapeHtml(item.description || "")+'</small></span></label>').join("");
   }
+  function renderTaskmasterRoles() {
+    const roles=state.taskmasterRoles||[];
+    const policy=state.taskmasterPolicy?.values;
+    $("taskmaster-policy").textContent=taskmasterPolicyLabel(state.taskmasterPolicy);
+    $("taskmaster-role-grid").innerHTML=roles.map(role=>'<article class="taskmaster-role-card"><h3>'+escapeHtml(role.title||role.stable_id)+'</h3><p>'+escapeHtml(role.description||"")+'</p><div class="taskmaster-role-meta">'+escapeHtml(taskmasterRoleSummary(role))+'</div></article>').join("")||'<p class="studio-empty">Native Taskmaster-Rollen derzeit nicht erreichbar.</p>';
+  }
   function render() {
     const custom=state.blueprints.filter(bp=>!bp.is_template), templates=state.blueprints.filter(bp=>bp.is_template);
     $("count-custom").textContent=custom.length; $("count-templates").textContent=templates.length; $("count-teams").textContent=state.teams.length;
     document.querySelectorAll("[data-library]").forEach(button=>button.setAttribute("aria-selected",String(button.dataset.library===state.library)));
     const showTeams=state.library==="teams"; $("studio-grid").hidden=showTeams; $("studio-teams").hidden=!showTeams;
+    renderTaskmasterRoles();
     if(showTeams) { renderTeams(); return; }
     const query=$("studio-search").value.toLocaleLowerCase("de"),kind=$("studio-kind").value;
     const items=(state.library==="templates"?templates:custom).filter(bp=>(!kind||bp.kind===kind)&&
@@ -118,7 +133,8 @@ function initializeStudio() {
     const requests=[["teams","/api/agenten/teams","teams"],["skills","/api/capabilities/skills","skills"],
       ["tools","/api/agent-studio/tools","tools"],["contracts","/api/agent-studio/contractus-presets","presets"],
       ["governance","/api/agent-studio/governance-presets","presets"],["core","/api/system/core-agents",null],
-      ["prompts","/api/system/core-prompts",null]];
+      ["prompts","/api/system/core-prompts",null],["taskmasterRoles","/api/taskmaster/roles","roles"],
+      ["taskmasterPolicy","/api/taskmaster/policy",null]];
     const results=await Promise.allSettled(requests.map(async([key,url,field])=>{const value=await api(url);state[key]=field?value[field]||[]:value;}));
     const unavailable=results.map((result,index)=>result.status==="rejected"?requests[index][0]:null).filter(Boolean);
     render(); notify("studio-status",unavailable.length?"Bibliothek geladen; nicht erreichbar: "+unavailable.join(", "):state.blueprints.length+" Blueprints · Änderungen werden mit ihrer aktuellen Version gespeichert.",!!unavailable.length);
