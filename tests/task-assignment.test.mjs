@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {KEEP_BINDING, assignmentCatalogue, assignmentOptions, assignmentPayload, createAssignmentController, taskResponseError} from '../src/lib/task-assignment.mjs';
+import {KEEP_BINDING, assignmentCatalogue, assignmentOptions, assignmentPayload, createAssignmentController, isGateReopenBlocked, taskResponseError} from '../src/lib/task-assignment.mjs';
 
 const slot = {id:'slot:synthetic-worker', type:'system-slot', name:'Lokaler Testworker', slot_id:'synthetic-worker',
   model:'synthetic-model', backend:'ollama', enabled:true, living:true, running:false, runtime_verified:false, assignable:true,
@@ -112,6 +112,18 @@ test('configured targets do not pretend runtime readiness and conflicts request 
   assert.match(assignmentOptions(catalogue()).at(-1).label,/Live-Status nicht bestätigt/);
   assert.doesNotMatch(assignmentOptions(catalogue()).at(-1).label,/Ready|Bereit/);
   assert.match(taskResponseError({detail:{message:'Version geändert'}},409),/Version geändert.*neu laden/);
+});
+
+test('a parked-task refusal asks for an explicit reopen, not a new agent choice', () => {
+  const parked = {detail:"Task #2225 ist terminal geparkt (status='blocked'); Reopen auf 'pending' ist blockiert. Fuer einen bewussten Operator-Reopen allow_reopen=True uebergeben."};
+  assert.equal(isGateReopenBlocked(parked,409),true);
+  assert.equal(isGateReopenBlocked(parked,400),false);
+  assert.equal(isGateReopenBlocked({detail:{message:'Version geändert'}},409),false);
+  assert.doesNotMatch(taskResponseError(parked,409),/Agentenauswahl/);
+  const source=readFileSync(new URL('../src/pages/tasks.astro',import.meta.url),'utf8');
+  // The reopen flag is only sent after confirm() and never compared in the readback.
+  assert.match(source,/payload\.allow_reopen \|\| !isGateReopenBlocked\(result, response\.status\)\s*\|\| !confirm\([\s\S]{0,200}?break;\s*payload\.allow_reopen = true;/);
+  assert.match(source,/key === 'allow_reopen'\) continue/);
 });
 
 function harness(fetchImpl, options={}) {

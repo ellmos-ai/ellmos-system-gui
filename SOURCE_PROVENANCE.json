@@ -56,7 +56,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "aa2871efe995b1b9ec6e653ac7d5028ad5ffe97ba4846b2279d92f4410b3f627",
+    "src/pages/tasks.astro": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
@@ -71,8 +71,8 @@
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
     "tests/frontend-parity.test.mjs": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5",
-    "tests/task-assignment.test.mjs": "5ee7ae0defcdc8ef36edc76c4da821f59ea078399c0c6d30c2a5d94115aef3e3",
-    "src/lib/task-assignment.mjs": "99fdaf57c0eb093cd46eb3f1bdcaa58cea1fbfd89bef5142aab7224cbf4dfd7d",
+    "tests/task-assignment.test.mjs": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
+    "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
     "tests/release-provenance.test.mjs": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
@@ -120,7 +120,7 @@
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
-    "tests/task-result-history.test.mjs": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb"
+    "tests/task-result-history.test.mjs": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -490,7 +490,7 @@
         "src/pages/tasks.astro": {
           "source_path": "system/gui/web/src/pages/tasks.astro",
           "source_sha256": "cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9",
-          "imported_sha256": "aa2871efe995b1b9ec6e653ac7d5028ad5ffe97ba4846b2279d92f4410b3f627",
+          "imported_sha256": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
           "adapted": true
         },
         "src/scripts/blueprint-studio.mjs": {
@@ -1251,6 +1251,38 @@
           "path": "README.md",
           "previous_sha256": "5a776b862602b47088e97b9f07b3f9b4f7519b561493d9826df8d3d862313abf",
           "sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-17",
+      "scope": "BACH #2229: explicit operator reopen of parked tasks in the task edit dialog",
+      "source_base_commit": "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+      "changes": [
+        "When the Task API refuses a status change because the task is terminally parked (GateReopenBlocked, 409), ask for explicit confirmation and resend the same edit once with allow_reopen=true.",
+        "A declined confirmation keeps the refusal and no longer asks to reload the agent selection; allow_reopen is request-only and excluded from the readback.",
+        "The Task2138 provenance test now checks its record as a hash chain into later follow-ups instead of pinning the five files forever."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "aa2871efe995b1b9ec6e653ac7d5028ad5ffe97ba4846b2279d92f4410b3f627",
+          "sha256": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee"
+        },
+        {
+          "path": "src/lib/task-assignment.mjs",
+          "previous_sha256": "99fdaf57c0eb093cd46eb3f1bdcaa58cea1fbfd89bef5142aab7224cbf4dfd7d",
+          "sha256": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc"
+        },
+        {
+          "path": "tests/task-assignment.test.mjs",
+          "previous_sha256": "5ee7ae0defcdc8ef36edc76c4da821f59ea078399c0c6d30c2a5d94115aef3e3",
+          "sha256": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
+          "sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
         }
       ]
     }
