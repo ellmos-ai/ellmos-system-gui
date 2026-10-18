@@ -114,9 +114,15 @@ export function parseSkillLibrary(payload) {
     ids.add(item.id);
     return {
       id: item.id,
+      canonicalSkillId: typeof item.canonical_skill_id === 'string' ? item.canonical_skill_id : item.id,
       name: item.name.trim(),
       category: item.category,
       version: item.version,
+      locale: typeof item.locale === 'string' ? item.locale : null,
+      requestedLocale: typeof item.requested_locale === 'string' ? item.requested_locale : null,
+      resolvedLocale: typeof item.resolved_locale === 'string' ? item.resolved_locale : null,
+      fallbackUsed: item.fallback_used === true,
+      contentSha256: typeof item.content_sha256 === 'string' ? item.content_sha256 : item.source_version,
       sourceVersion: item.source_version,
       sourceKind: item.source_kind,
     };
@@ -476,8 +482,9 @@ export async function loadBlueprints() {
   })));
 }
 
-export async function loadSkillLibrary() {
-  return parseSkillLibrary(await readResponse(await fetch('/api/capabilities/skills/library', {
+export async function loadSkillLibrary(requestedLocale = '') {
+  const url = requestedLocale ? SKILLS_URL + '?locale=' + encodeURIComponent(requestedLocale) : SKILLS_URL;
+  return parseSkillLibrary(await readResponse(await fetch(url, {
     method: 'GET', credentials: 'same-origin', redirect: 'error', cache: 'no-store', signal: requestSignal(),
   })));
 }

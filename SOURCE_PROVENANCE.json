@@ -25,15 +25,15 @@
     "src/assets/ticket-symbols/topics_uni.svg": "45b565524ec66eff4b5f87a12729afc958d5ff2027af337f8472ecde0fe1bd19",
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
-    "src/components/CapabilityBoard.astro": "1cda4d163d9baf87aac8aa747f4b42c1ec6262044bf8d620ee93215288bea546",
+    "src/components/CapabilityBoard.astro": "f54b11ebc770a40aeaa8ca15dffd51543fe98b6b70824e4f723825a56ebc5c62",
     "src/components/Header.astro": "c997c4aa86d16d0ab70edaaf3c6c3332d0e566cc629386d2872fd7ebd57a44e7",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824",
     "src/config/nav_config.json": "0dc51055b0da809445c73ec01cd29fe238b37000e7783ab84edd68ecfbbc078c",
     "src/layouts/BachLayout.astro": "8f45bbac50c150ea9d19f91794bb97b94ad103f5abc5cdef01e70a3c9cc43ac6",
     "src/lib/agent-avatar.mjs": "3057e2f7863031a5d157b7c0e0fb3659678a97fc6eacdeb8645775e263e26147",
-    "src/lib/capability-board-client.mjs": "7a80423bc472ade80f05065c57ef9b732493b40cd2900f0705b2c3af8f72d831",
-    "src/lib/capability-board-ui.mjs": "cdf37bb84c2009c0be06fbe9ba2a9ff1156d50b9e6e2b2f74fcd1ea8c2d28f25",
+    "src/lib/capability-board-client.mjs": "21be0133e5b81df7f8a7a594effb2204674f104d5bc66ba9a1d75f0b4d48f792",
+    "src/lib/capability-board-ui.mjs": "5684775c4e24634479ec3a2c8d40ba1b1d17bf7eccdb24bc68683d03e0f2be3f",
     "src/lib/task-summary.js": "e28cfddcc7ee559b74be8c9883b946b85571941dda13d5cba97aec3dfcc63d07",
     "src/lib/ticket-symbol-assets.mjs": "207537da4144c4f1627d0086417ad384069085adb1aa8090d6f41f770e6d0b84",
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
@@ -63,7 +63,7 @@
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "cbb6f8ad9eb5516bd8f21e001bb35cdc80b3b2e247485709679c5248d7fe6341",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
-    "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
+    "tests/capability-board.test.mjs": "470cf064f3080288bd22e14407a3f697c55116e66209283faaf0e0016d10cb09",
     "tests/fabrika.test.mjs": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
     "tests/system-slots.test.mjs": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
@@ -113,14 +113,16 @@
     "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
-    "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
+    "src/lib/subscription-agents-client.mjs": "09729140d64fc1a552313b41f7c6f0c284ea2c6b12a17c6360d76828450765ae",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "public/page-reads.v1.json": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
+    "public/page-reads.v1.json": "45f4497fab1f8e9c3472602fd37037921350b427d6c88a2e6fa20ebb18dd8178",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
-    "tests/task-result-history.test.mjs": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb"
+    "tests/task-result-history.test.mjs": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
+    "src/lib/catalog-skill-reader.mjs": "ac7a5735bebd5c9f4bd832ee1b50ce4cf989a907257bb75306276c3942ef7ff9",
+    "scripts/page-reads-bindings.mjs": "88d5e8f93f4aebe6b616f013544f88d7375b02d79ef88847ae0198d38f94a94a"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -1169,7 +1171,7 @@
         {
           "path": "public/page-reads.v1.json",
           "previous_sha256": "d4dc1da82fd64783937d5b4a618d9c78a6937c28029ea1cc3a32ff3397789a08",
-          "sha256": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5"
+          "sha256": "45f4497fab1f8e9c3472602fd37037921350b427d6c88a2e6fa20ebb18dd8178"
         },
         {
           "path": "src/components/TaskCreateForm.astro",
@@ -1252,6 +1254,25 @@
           "previous_sha256": "5a776b862602b47088e97b9f07b3f9b4f7519b561493d9826df8d3d862313abf",
           "sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300"
         }
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "scope": "Task1964: locale-aware skill sources, editing and version metadata",
+      "changes": [
+        "Resolve one canonical skill identity through the requested locale, base locale and English fallback chain.",
+        "Expose locale, version, content hash, source path and fallback metadata across the capability board and skill readers.",
+        "Bind dynamic locale-aware reads in the page-read manifest and keep provenance hashes current."
+      ],
+      "files": [
+        "src/components/CapabilityBoard.astro",
+        "src/lib/capability-board-client.mjs",
+        "src/lib/capability-board-ui.mjs",
+        "src/lib/catalog-skill-reader.mjs",
+        "src/lib/subscription-agents-client.mjs",
+        "tests/capability-board.test.mjs",
+        "scripts/page-reads-bindings.mjs",
+        "public/page-reads.v1.json"
       ]
     }
   ],

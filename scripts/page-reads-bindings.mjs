@@ -8,6 +8,12 @@ export const BINDINGS = {
     'GET /api/capabilities/skills/library', 'GET /api/capabilities/plugins/inventory', 'GET /api/capabilities/mcp/connections',
     'GET /api/capabilities/software', 'GET /api/capabilities/ocean',
   ],
+  'src/lib/capability-board-client.mjs#loadSkill@1': ['GET /api/capabilities/skills/{id}/source'],
+  'src/lib/capability-board-client.mjs#saveSkill@1': ['PUT /api/capabilities/skills/{id}/source'],
+  'src/lib/capability-board-ui.mjs#loadHistory@1': ['GET /api/capabilities/skills/{id}/history'],
+  'src/lib/capability-board-ui.mjs#(module)@1': ['GET /api/capabilities/skills/{id}/history/{revision}'],
+  'src/lib/catalog-skill-reader.mjs#library@1': ['GET /api/capabilities/skills/library'],
+  'src/lib/subscription-agents-client.mjs#loadSkillLibrary@1': ['GET /api/capabilities/skills/library'],
   // reader.url(filters) in governance-readers.mjs: one URL per tab
   'src/pages/governance/index.astro#load@1': [
     'GET /api/governance/locks', 'GET /api/governance/policy-registry', 'GET /api/governance/decisions',
