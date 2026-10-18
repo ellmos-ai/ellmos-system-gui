@@ -18,6 +18,24 @@ test('Running inline scripts parse', () => {
   }
 });
 
+test('Running layout keeps active runs before history and collapsed ready/system views', () => {
+  const running = page.indexOf('id="running-agents-title"');
+  const timeline = page.indexOf('id="activity-timeline"');
+  const ready = page.indexOf('aria-labelledby="ready-agents-title"');
+  const teams = page.indexOf('id="ready-teams-title"');
+  const system = page.indexOf('id="core-agents-title"');
+  assert.ok(running >= 0 && running < timeline && timeline < ready && ready < teams && teams < system);
+  assert.match(page, /id="running-system-slots-list"/);
+  assert.match(page, /id="running-workers-list"/);
+  assert.match(page, /Agenten erstellen/);
+  assert.match(page, /Teams erstellen/);
+  assert.match(page, /Staffel erstellen/);
+  assert.match(page, /coreElement\('details',undefined,'staffel-card'\)/);
+  assert.match(page, /id="core-agents-title">Systemslots/);
+  assert.doesNotMatch(page, /<details[^>]+aria-labelledby="ready-agents-title"[^>]+open/);
+  assert.doesNotMatch(page, /<details[^>]+class="card collapsible-section"[^>]+aria-labelledby="core-agents-title"[^>]+open/);
+});
+
 test('core configuration conflicts reject before a success response', async () => {
   const request = vm.runInNewContext('(' + snippet('async function coreRequest(', 'async function loadCoreSlots(') + ')', {
     coreRefreshEpoch: 0,

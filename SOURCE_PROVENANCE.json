@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+    "src/pages/agenten/running.astro": "de832de8bd41445dab0b255f6201026b9de1bf724e31017127bc574b35d7cdd5",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
@@ -65,7 +65,7 @@
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/fabrika.test.mjs": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
-    "tests/system-slots.test.mjs": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
+    "tests/system-slots.test.mjs": "d88e84d1063163370fe23d3757abc6b553162702e765bc87749c05f97bde0250",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
@@ -589,6 +589,26 @@
           "source_path": "system/gui/web/tests/marblerun-studio.test.mjs",
           "source_sha256": "e111fce97fe5eb8415eb174dddbdd662b98f8e1b4a4b7266d72b253835748d3b",
           "imported_sha256": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
+          "adapted": true
+        }
+      }
+    },
+    {
+      "source_repository": "ellmos-ai/bach",
+      "source_commit": "89a44639d7dd2e7917e1d7af506db4c5fa8d4935",
+      "source_root": "system/gui/web",
+      "purpose": "Task 1950: Running/Living order and collapsed standard views",
+      "files": {
+        "src/pages/agenten/running.astro": {
+          "source_path": "system/gui/web/src/pages/agenten/running.astro",
+          "source_sha256": "0d6c357385a208691f25f6611e0f83ceffe5b98ee588323b5f121e8b9ed5b18c",
+          "imported_sha256": "de832de8bd41445dab0b255f6201026b9de1bf724e31017127bc574b35d7cdd5",
+          "adapted": true
+        },
+        "tests/system-slots.test.mjs": {
+          "source_path": "system/gui/web/tests/system-slots.test.mjs",
+          "source_sha256": "0ae0c0ddf4c08b994bc5af24387c6150ac653a7b2cd47b1fc23c616a0e35db15",
+          "imported_sha256": "d88e84d1063163370fe23d3757abc6b553162702e765bc87749c05f97bde0250",
           "adapted": true
         }
       }
@@ -1251,6 +1271,28 @@
           "path": "README.md",
           "previous_sha256": "5a776b862602b47088e97b9f07b3f9b4f7519b561493d9826df8d3d862313abf",
           "sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "scope": "Task1950: Running/Living layout and truthful active-run visibility",
+      "source_base_commit": "89a44639d7dd2e7917e1d7af506db4c5fa8d4935",
+      "changes": [
+        "Place verified active runs before history and keep Ready, Systemslots and OpenRouter views collapsed by default.",
+        "Keep active status evidence-bound; unavailable sources remain visibly unconfirmed.",
+        "Provide direct creation actions for agents, teams and staffeln while preserving explicit starts."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "sha256": "de832de8bd41445dab0b255f6201026b9de1bf724e31017127bc574b35d7cdd5"
+        },
+        {
+          "path": "tests/system-slots.test.mjs",
+          "previous_sha256": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
+          "sha256": "d88e84d1063163370fe23d3757abc6b553162702e765bc87749c05f97bde0250"
         }
       ]
     }
