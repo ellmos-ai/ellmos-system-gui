@@ -6,7 +6,7 @@
   "license": "MIT",
   "files_sha256": {
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
-    "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
+    "public/device-fetch.js": "8ef7456d3a84539ec331966783130f14cb5e0a878b6c6743d97da1c187c97c0d",
     "src/assets/agent-portraits.png": "a733ce82439cad152bc2e7f055f88f377f000d51c61e34939a5309b27093f5d8",
     "src/assets/ticket-symbols/README.md": "88cced00eb2652e91337b6a561c629696cf301e6c2f2533f13a8063703a131ae",
     "src/assets/ticket-symbols/githubbot.svg": "b26066f87ef31061813b75694b7054bac108f2154f69055319103389c5470bde",
@@ -42,16 +42,16 @@
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
     "src/pages/agenten/running.astro": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
-    "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
+    "src/pages/artefakte.astro": "e639fe0edd3fa4d8cf8f4bdac3d991418e27fe1858b0e713387ec6db1f711885",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
     "src/pages/governance/index.astro": "b734a00389abcf4ad580e5ffe0b0c513f64328dcc997684edb0b03a2ada7a477",
-    "src/pages/governance/logs.astro": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
+    "src/pages/governance/logs.astro": "fc550bdd6684c3c18786120a7abdbfd2a4d6fc677bcf0c9579c67d38e06fba0d",
     "src/pages/governance/usecases.astro": "860a03ca99e466d9571ab93e350a24105ba3caff69a06f9a06c4a83ee14c3b19",
     "src/pages/index.astro": "068fbeb644b24919654a846b7fdce7d983300ee74695af3c20c5410d7f1368b3",
-    "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
+    "src/pages/life.astro": "f160f629e7ce99a907169e2578a6c20104f9a24b263d055b12f6374960d10988",
     "src/pages/memory.astro": "27de17373b2319a598efc7397bd2dfa96aeb1c543303581cdc93ce2edeb5b74a",
-    "src/pages/settings.astro": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+    "src/pages/settings.astro": "6b25bb308808f3511b2324c98a186883f935679a560abf4b9472f61dcdf999bf",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
@@ -69,7 +69,7 @@
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
-    "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
+    "tests/device-fetch.test.mjs": "3ea45696feb096102c91419c3b32170744db27d813e8f95e7ee8d2e83521e81f",
     "tests/frontend-parity.test.mjs": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5",
     "tests/task-assignment.test.mjs": "5ee7ae0defcdc8ef36edc76c4da821f59ea078399c0c6d30c2a5d94115aef3e3",
     "src/lib/task-assignment.mjs": "99fdaf57c0eb093cd46eb3f1bdcaa58cea1fbfd89bef5142aab7224cbf4dfd7d",
@@ -190,7 +190,7 @@
         "public/device-fetch.js": {
           "source_path": "system/gui/static/js/device-fetch.js",
           "source_sha256": "e5de851843b8b04095eba6c3ddc87f2cc9ec911ec4afbfc4b70c9db850b2898c",
-          "imported_sha256": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
+          "imported_sha256": "8ef7456d3a84539ec331966783130f14cb5e0a878b6c6743d97da1c187c97c0d",
           "adapted": true
         },
         "src/assets/agent-portraits.png": {
@@ -406,7 +406,7 @@
         "src/pages/artefakte.astro": {
           "source_path": "system/gui/web/src/pages/artefakte.astro",
           "source_sha256": "a9e033147168845c95ab93767afbd222a4272ee63cb15166c135931865fc27de",
-          "imported_sha256": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
+          "imported_sha256": "e639fe0edd3fa4d8cf8f4bdac3d991418e27fe1858b0e713387ec6db1f711885",
           "adapted": true
         },
         "src/pages/domains.astro": {
@@ -430,7 +430,7 @@
         "src/pages/governance/logs.astro": {
           "source_path": "system/gui/web/src/pages/governance/logs.astro",
           "source_sha256": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
-          "imported_sha256": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
+          "imported_sha256": "fc550bdd6684c3c18786120a7abdbfd2a4d6fc677bcf0c9579c67d38e06fba0d",
           "adapted": false
         },
         "src/pages/governance/usecases.astro": {
@@ -448,7 +448,7 @@
         "src/pages/life.astro": {
           "source_path": "system/gui/web/src/pages/life.astro",
           "source_sha256": "05180c2d12c7c86a4305d18cb41b2281e0cbf37b80daf0ad26b512100e893671",
-          "imported_sha256": "05180c2d12c7c86a4305d18cb41b2281e0cbf37b80daf0ad26b512100e893671",
+          "imported_sha256": "f160f629e7ce99a907169e2578a6c20104f9a24b263d055b12f6374960d10988",
           "adapted": false
         },
         "src/pages/memory.astro": {
@@ -460,7 +460,7 @@
         "src/pages/settings.astro": {
           "source_path": "system/gui/web/src/pages/settings.astro",
           "source_sha256": "3929b2172e78e6addf010b071750be5c53ab509d5f1748e86d4b85b5a795b867",
-          "imported_sha256": "19db6adf8cb5ec0ed0f83410e80e19b11b721c3f6cef504a767285fd54e4ef0d",
+          "imported_sha256": "6b25bb308808f3511b2324c98a186883f935679a560abf4b9472f61dcdf999bf",
           "adapted": true
         },
         "src/pages/skills.astro": {
@@ -1251,6 +1251,47 @@
           "path": "README.md",
           "previous_sha256": "5a776b862602b47088e97b9f07b3f9b4f7519b561493d9826df8d3d862313abf",
           "sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "scope": "Task1958: HttpOnly browser device session transport",
+      "changes": [
+        "Remove browser device-token reads from localStorage and rely on the consumer-managed HttpOnly cookie.",
+        "Keep explicit Authorization headers untouched for native or separately scoped clients.",
+        "Preserve the shared same-origin authentication failure notice without exposing credentials."
+      ],
+      "files": [
+        {
+          "path": "public/device-fetch.js",
+          "previous_sha256": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
+          "sha256": "8ef7456d3a84539ec331966783130f14cb5e0a878b6c6743d97da1c187c97c0d"
+        },
+        {
+          "path": "src/pages/artefakte.astro",
+          "previous_sha256": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
+          "sha256": "e639fe0edd3fa4d8cf8f4bdac3d991418e27fe1858b0e713387ec6db1f711885"
+        },
+        {
+          "path": "src/pages/governance/logs.astro",
+          "previous_sha256": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
+          "sha256": "fc550bdd6684c3c18786120a7abdbfd2a4d6fc677bcf0c9579c67d38e06fba0d"
+        },
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
+          "sha256": "f160f629e7ce99a907169e2578a6c20104f9a24b263d055b12f6374960d10988"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+          "sha256": "6b25bb308808f3511b2324c98a186883f935679a560abf4b9472f61dcdf999bf"
+        },
+        {
+          "path": "tests/device-fetch.test.mjs",
+          "previous_sha256": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
+          "sha256": "3ea45696feb096102c91419c3b32170744db27d813e8f95e7ee8d2e83521e81f"
         }
       ]
     }
