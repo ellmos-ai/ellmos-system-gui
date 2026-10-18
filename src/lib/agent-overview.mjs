@@ -28,7 +28,7 @@ export function normalizeAgentOverviewPreferences(value = {}) {
   const input = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
   const access = ACCESS_VALUES.has(input.access) ? input.access : DEFAULT_PREFERENCES.access;
   const functionId = cleanText(input.function);
-  const start = input.start === 'unknown' ? 'unknown' : 'all';
+  const start = ['manual', 'unknown'].includes(input.start) ? input.start : 'all';
   const sort = SORT_VALUES.has(input.sort) ? input.sort : DEFAULT_PREFERENCES.sort;
   const group = GROUP_VALUES.has(input.group) ? input.group : DEFAULT_PREFERENCES.group;
   const view = VIEW_VALUES.has(input.view) ? input.view : DEFAULT_PREFERENCES.view;
@@ -81,8 +81,16 @@ export function classifyAgentFunction(agent = {}, source = 'worker') {
   return {id: 'unknown', label: 'Funktion unbekannt'};
 }
 
-export function classifyActualStartType(_agent = {}) {
-  // Current worker/core status contracts expose configured modes, not the actual start cause.
+export function classifyActualStartType(agent = {}) {
+  const definition = agent.definition_ref;
+  const configuration = agent.configuration_ref;
+  if (agent.actual_start_cause === 'manual'
+      && typeof agent.run_id === 'string' && /^[0-9a-f]{32}$/.test(agent.run_id)
+      && definition && Number.isSafeInteger(definition.blueprint_id)
+      && Number.isSafeInteger(definition.version)
+      && typeof definition.sha256 === 'string' && /^[0-9a-f]{64}$/.test(definition.sha256)
+      && configuration && typeof configuration.sha256 === 'string'
+      && /^[0-9a-f]{64}$/.test(configuration.sha256)) return 'manual';
   return 'unknown';
 }
 
@@ -164,12 +172,19 @@ export function createAgentOverviewContent(document, agent = {}, {
   const model = cleanText(agent.resolved_model || agent.model) || 'unbekannt';
   const details = document.createElement('div');
   details.className = 'agent-overview-runtime-meta';
+  const startType = classifyActualStartType(agent);
   const fields = [
     ['ID', cleanText(agent.id) || 'unbekannt'],
     ['Zugang / Funktion', `${accessLabel} · ${functionFacet.label}`],
     ['Modell', model],
-    ['Tatsächliche Startart', 'unbekannt'],
+    ['Tatsächliche Startart', startType === 'manual' ? 'Manuell bestätigt' : 'Unbekannt'],
   ];
+  if (startType === 'manual') {
+    fields.push(['Lauf-ID', agent.run_id]);
+    fields.push(['Laufstatus', cleanText(agent.execution?.state) || 'unbekannt']);
+    fields.push(['Vorlagenfassung', `#${agent.definition_ref.version} · ${agent.definition_ref.sha256}`]);
+    fields.push(['Konfiguration', agent.configuration_ref.sha256]);
+  }
   if (Number.isSafeInteger(agent.task_id) && agent.task_id > 0)
     fields.push(['Task', `#${agent.task_id}`]);
   if (agent.runtime_verified === true && cleanText(agent.current_tool))
@@ -233,7 +248,7 @@ export function projectAgentOverview(records, preferences = {}) {
       function: functionFacet.id,
       functionLabel: functionFacet.label,
       start,
-      startLabel: 'Unbekannt',
+      startLabel: start === 'manual' ? 'Manuell bestätigt' : 'Unbekannt',
       status: cleanText(agent.status).toLowerCase() || 'unknown',
       name: cleanText(agent.name || agent.id) || 'Unbenannt',
       search: [agent.name, agent.id, agent.backend, agent.model, agent.resolved_model, functionFacet.label]
@@ -294,7 +309,7 @@ export function applyAgentOverviewToContainer(container, state, registeredCards 
     function: card.dataset.agentOverviewFunction,
     functionLabel: card.dataset.agentOverviewFunctionLabel,
     start: card.dataset.agentOverviewStart,
-    startLabel: 'Unbekannt',
+    startLabel: card.dataset.agentOverviewStart === 'manual' ? 'Manuell bestätigt' : 'Unbekannt',
     status: card.dataset.agentOverviewStatus,
     name: card.dataset.agentOverviewName,
     search: card.dataset.agentOverviewSearch,

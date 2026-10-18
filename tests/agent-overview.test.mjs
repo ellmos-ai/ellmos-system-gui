@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
 import {
   applyAgentOverviewToContainer,
   classifyActualStartType,
@@ -21,6 +22,7 @@ import {
 
 const runningPage = readFileSync(new URL('../src/pages/agenten/running.astro', import.meta.url), 'utf8');
 const dashboardPage = readFileSync(new URL('../src/pages/index.astro', import.meta.url), 'utf8');
+const pickerScript = readFileSync(new URL('../src/scripts/agent-template-picker.mjs', import.meta.url), 'utf8');
 
 test('access, function, and actual start are separate evidence facets', () => {
   assert.equal(classifyAgentAccess({backend:'ollama', model:'qwen'}), 'local');
@@ -32,6 +34,12 @@ test('access, function, and actual start are separate evidence facets', () => {
   assert.deepEqual(classifyAgentFunction({backend:'ollama', role_id:'reviewer'}, 'core'), {id:'reviewer', label:'reviewer'});
   assert.deepEqual(classifyAgentFunction({backend:'openrouter', role_id:'reviewer'}, 'core'), {id:'reviewer', label:'reviewer'});
   assert.equal(classifyActualStartType({run_mode:'always_on', trigger:'cron', mode:'safe'}), 'unknown');
+  const pinnedManual = {actual_start_cause:'manual',run_id:'a'.repeat(32),
+    definition_ref:{blueprint_id:7,version:2,sha256:'b'.repeat(64)},
+    configuration_ref:{sha256:'c'.repeat(64)}};
+  assert.equal(classifyActualStartType(pinnedManual), 'manual');
+  assert.equal(classifyActualStartType({...pinnedManual,configuration_ref:null}), 'unknown');
+  assert.equal(normalizeAgentOverviewPreferences({start:'manual'}).start, 'manual');
 });
 
 test('only a verified running projection enters the active lane', () => {
@@ -278,6 +286,110 @@ test('the controls are wired to existing lanes and Core profiles are in the shar
   assert.match(dashboardPage, /count\.textContent = observed \? String\(active\.length\) : '–'/);
 });
 
+function pickerHarness({failStart = false} = {}) {
+  class Element {
+    constructor(id) {
+      this.id=id; this.listeners={}; this.children=[]; this.disabled=false; this.hidden=false;
+      this.value=''; this.textContent=''; this.open=false;
+    }
+    addEventListener(type,callback){this.listeners[type]=callback;}
+    replaceChildren(...children){
+      this.children=children;
+      if (this.id === 'template-agent-blueprint' && children.length && !children.some(item=>item.value===this.value))
+        this.value=String(children[0].value);
+    }
+    showModal(){this.open=true;}
+    close(){this.open=false;}
+    reportValidity(){return true;}
+    querySelectorAll(){return [];}
+  }
+  const ids=['template-agent-status','template-agent-picker','template-agent-save','template-agent-start',
+    'template-agent-blueprint','template-agent-backend','template-agent-model','template-agent-mode',
+    'template-agent-summary','template-agent-prompt','template-agent-models','template-agent-form',
+    'template-agent-refresh'];
+  const elements=Object.fromEntries(ids.map(id=>[id,new Element(id)]));
+  const sha='a'.repeat(64), beforeConfig='d'.repeat(64), config='c'.repeat(64);
+  const blueprints=[1,2].map(id=>({id,name:'bp-'+id,title:'Blueprint '+id,kind:'agent',version:1,
+    definition_ref:{blueprint_id:id,version:1,sha256:sha},persona_prompt:'Do the work.',persona_role:'helper',
+    description:'test',skills:[],governance:{tool_whitelist:['read_file']},modus:'casualis',
+    contractus:{execution:{backend:'ollama',model:'test-local',mode:'safe'}}}));
+  let catalogReads=0, coreReads=0, materializeCalls=0, startCalls=0;
+  const fetcher=async(url,options={})=>{
+    if(url==='/api/agent-studio/blueprints'){catalogReads++;return {ok:true,json:async()=>({templates:blueprints,blueprints:[]})};}
+    if(url==='/api/system/core-agents'){
+      coreReads++;
+      return {ok:true,json:async()=>({configuration_version:materializeCalls?config:beforeConfig,supported_backend_ids:['ollama'],
+        agents:materializeCalls?[{id:'system-blueprint-1',blueprint_id:1,blueprint_version:1,backend:'ollama',
+          model:'test-local',runtime_verified:!failStart,running:false,execution:{terminal:true},
+          definition_ref:blueprints[0].definition_ref}]:[]})};
+    }
+    if(url.startsWith('/api/system/workers/models?'))return {ok:true,json:async()=>({models:['test-local']})};
+    if(url.endsWith('/materialize')){
+      materializeCalls++;
+      const body=JSON.parse(options.body);
+      return {ok:true,json:async()=>({success:true,worker_started:false,id:1,slot_id:'system-blueprint-1',
+        configuration_version:config,definition_ref:blueprints[0].definition_ref,execution:body.execution})};
+    }
+    if(url.endsWith('/start')){
+      startCalls++;
+      const request=JSON.parse(options.body);
+      if(request.configuration_version!==config)
+        return {ok:false,json:async()=>({detail:'Start used stale configuration pin'})};
+      return failStart?{ok:false,json:async()=>({detail:'Start outcome unknown'})}:
+        {ok:true,json:async()=>({success:true,start_cause:'manual',run_id:'b'.repeat(32),
+          configuration_version:config,definition_ref:blueprints[0].definition_ref,
+          execution:{schema:'bach.worker-execution.v1',worker_id:'system-blueprint-1',
+            start_request_id:'d'.repeat(32),generation:'b'.repeat(32),worker_thread_started:true,
+            configuration_ref:{sha256:config}}})};
+    }
+    throw new Error('unexpected request '+url);
+  };
+  const context={document:{getElementById:id=>elements[id]},window:{loadCoreSlots(){},loadBackgroundWorkers(){}},
+    fetch:fetcher,Option:class Option{constructor(text,value){this.text=text;this.value=value;}},
+    crypto:{randomUUID:()=>'dddddddd-dddd-dddd-dddd-dddddddddddd'}};
+  vm.runInNewContext(pickerScript.replace('export async function openTemplatePicker()','async function openTemplatePicker()'),context);
+  return {elements,context,counts:()=>({catalogReads,coreReads,materializeCalls,startCalls})};
+}
+
+async function materializeFirstTemplate(harness) {
+  await harness.context.window.BachTemplatePicker.open();
+  const form=harness.elements['template-agent-form'];
+  await form.listeners.submit({preventDefault(){},target:form});
+  assert.equal(harness.elements['template-agent-start'].hidden,false);
+}
+
+test('template selection invalidates an old pending start', async () => {
+  const harness=pickerHarness();
+  await materializeFirstTemplate(harness);
+  const select=harness.elements['template-agent-blueprint'];
+  select.value='2';
+  select.listeners.change();
+  await Promise.resolve();
+  assert.equal(harness.elements['template-agent-start'].hidden,true);
+  await harness.elements['template-agent-start'].listeners.click();
+  assert.equal(harness.counts().startCalls,0);
+});
+
+test('materialized start uses the verified post-materialization configuration pin', async () => {
+  const harness=pickerHarness();
+  await materializeFirstTemplate(harness);
+  await harness.elements['template-agent-start'].listeners.click();
+  assert.equal(harness.counts().startCalls,1);
+  assert.match(harness.elements['template-agent-status'].textContent,/Manuell gestartet/);
+});
+
+test('ambiguous start clears the pending action and reloads fresh status', async () => {
+  const harness=pickerHarness({failStart:true});
+  await materializeFirstTemplate(harness);
+  await harness.elements['template-agent-start'].listeners.click();
+  const counts=harness.counts();
+  assert.equal(counts.startCalls,1);
+  assert.equal(counts.catalogReads,2);
+  assert.ok(counts.coreReads >= 3);
+  assert.equal(harness.elements['template-agent-start'].hidden,true);
+  assert.match(harness.elements['template-agent-status'].textContent,/Status wird neu geladen/);
+});
+
 test('Running, history, ready agents, and resources follow the shared Living layout', () => {
   const running = runningPage.indexOf('id="running-agents-title"');
   const history = runningPage.indexOf('id="activity-timeline"');
@@ -297,6 +409,9 @@ test('Running, history, ready agents, and resources follow the shared Living lay
   assert.match(runningPage, /id="running-workers-list"[^>]*data-agent-overview-lane="running"/);
   assert.match(runningPage, /class="agent-creation-group agent-workspace"/);
   assert.match(runningPage, /Tatsächliche Startart<select id="agent-overview-start"/);
+  assert.match(runningPage, /template-agent-start/);
+  assert.match(runningPage, /\/api\/agent-studio\/blueprints\/\$\{agent\.blueprint_id\}\/start/);
+  assert.match(dashboardPage, /value="manual">Manuell bestätigt/);
 });
 
 function collectText(node) {
@@ -316,11 +431,20 @@ test('Dashboard and Running share the same complete read-only card content', () 
   }, {source:'worker', statusLabel:'Running · bestätigt', avatarNode:avatar, symbolNode:symbol});
   const text = collectText(content);
   for (const expected of ['Reviewer','Running · bestätigt','ID: worker-7','Zugang / Funktion: Lokal · reviewer',
-    'Modell: qwen3.5:4b','Tatsächliche Startart: unbekannt','Task: #2217',
+    'Modell: qwen3.5:4b','Tatsächliche Startart: Unbekannt','Task: #2217',
     'Aktuelles Werkzeug: read_file','Runde: 3','Rundenbudget: 8','Aktivität: Prüft die Abgabe'])
     assert.ok(text.includes(expected), `shared card is missing ${expected}`);
   assert.match(avatar.className, /agent-overview-runtime-avatar/);
   assert.match(symbol.className, /agent-overview-runtime-symbol/);
+
+  const pinned = createAgentOverviewContent(document, {id:'system-blueprint-7',name:'Research',
+    backend:'openrouter',model:'research-model',actual_start_cause:'manual',run_id:'a'.repeat(32),
+    execution:{state:'running'},definition_ref:{blueprint_id:7,version:2,sha256:'b'.repeat(64)},
+    configuration_ref:{sha256:'c'.repeat(64)}});
+  const pinnedText = collectText(pinned);
+  for (const expected of ['Tatsächliche Startart: Manuell bestätigt',`Lauf-ID: ${'a'.repeat(32)}`,
+    'Laufstatus: running',`Vorlagenfassung: #2 · ${'b'.repeat(64)}`,`Konfiguration: ${'c'.repeat(64)}`])
+    assert.ok(pinnedText.includes(expected), `pinned run projection is missing ${expected}`);
 
   const noRuntimeDetails = createAgentOverviewContent(document, {id:'worker-8',name:'Unknown'});
   const unknownText = collectText(noRuntimeDetails);

@@ -40,7 +40,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <label class="agent-overview-search">Suchen<input id="agent-overview-query" data-agent-overview-control="query" type="search" maxlength="120" placeholder="Name, Anbieter oder Modell" /></label>
       <label>Zugang<select id="agent-overview-access" data-agent-overview-control="access"><option value="all">Alle Zugänge</option><option value="local">Lokal</option><option value="cloud">Cloud / API</option><option value="prompt">Prompt / CLI</option><option value="unknown">Unbekannt</option></select></label>
       <label>Funktion<select id="agent-overview-function" data-agent-overview-control="function"><option value="all">Alle Funktionen</option></select></label>
-      <label>Tatsächliche Startart<select id="agent-overview-start" data-agent-overview-control="start"><option value="all">Alle Startarten</option><option value="unknown">Unbekannt</option></select></label>
+      <label>Tatsächliche Startart<select id="agent-overview-start" data-agent-overview-control="start"><option value="all">Alle Startarten</option><option value="manual">Manuell bestätigt</option><option value="unknown">Unbekannt</option></select></label>
       <label>Sortierung<select id="agent-overview-sort" data-agent-overview-control="sort"><option value="name">Name</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option><option value="status">Status</option></select></label>
       <label>Gruppierung<select id="agent-overview-group" data-agent-overview-control="group"><option value="none">Aus</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option></select></label>
       <label>Darstellung<select id="agent-overview-view" data-agent-overview-control="view"><option value="cards">Karten</option><option value="list">Kompakte Liste</option></select></label>
@@ -785,6 +785,37 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     let coreEditorAgent = null;
     let coreEditorVersion = null;
 
+    async function startBlueprintCoreAgent(agent) {
+      const feedback = document.getElementById('core-agent-feedback');
+      if (!Number.isSafeInteger(agent?.blueprint_id) || !Number.isSafeInteger(agent?.blueprint_version)
+          || !/^[a-f0-9]{64}$/.test(coreConfigVersion || '') || !agent.definition_ref?.sha256) return;
+      const requestId = window.crypto?.randomUUID?.().replaceAll('-', '');
+      if (!/^[a-f0-9]{32}$/.test(requestId || '')) {
+        feedback.textContent = 'Sichere Start-Request-ID nicht verfügbar.';
+        return;
+      }
+      feedback.textContent = 'Blueprint-Start wird ausdrücklich angefordert…';
+      try {
+        const response = await fetch(`/api/agent-studio/blueprints/${agent.blueprint_id}/start`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({expected_version:agent.blueprint_version,
+            configuration_version:coreConfigVersion,start_request_id:requestId})
+        });
+        const result = await response.json();
+        const receipt = result.execution;
+        if (!response.ok || result.start_cause !== 'manual'
+            || result.definition_ref?.sha256 !== agent.definition_ref.sha256
+            || result.configuration_version !== coreConfigVersion
+            || !/^[a-f0-9]{32}$/.test(result.run_id || '')
+            || receipt?.schema !== 'bach.worker-execution.v1'
+            || receipt.worker_id !== agent.id || receipt.start_request_id !== requestId
+            || receipt.generation !== result.run_id || receipt.worker_thread_started !== true)
+          throw new Error(result.detail || 'Blueprint-Start nicht korreliert bestätigt.');
+        feedback.textContent = `Manuell gestartet · Lauf ${result.run_id} · Vorlage #${agent.blueprint_version} · Konfiguration ${coreConfigVersion}.`;
+        await Promise.all([loadCoreSlots(), loadBackgroundWorkers()]);
+      } catch (error) { feedback.textContent = error.message; }
+    }
+
     function renderCoreAgents(data) {
       coreRefreshEpoch += 1;
       coreConfigVersion = data.configuration_version;
@@ -803,14 +834,19 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         card.dataset.coreAgentId = agent.id;
         const header = coreElement('div', undefined, 'core-slot-header');
         const enabled = agent.enabled === true;
-        const toggle = coreElement('button', enabled ? '● AN' : '○ AUS', 'btn btn-sm core-slot-toggle');
-        toggle.type = 'button';
-        toggle.setAttribute('role', 'switch');
-        toggle.setAttribute('aria-checked', String(enabled));
-        toggle.setAttribute('aria-label', agent.name + ' ein- oder ausschalten');
-        toggle.dataset.enabled = String(enabled);
-        toggle.addEventListener('click', () => toggleCoreSlot(agent.id, !enabled));
-        header.append(toggle);
+        const isBlueprint = Number.isSafeInteger(agent.blueprint_id);
+        if (isBlueprint) {
+          header.append(coreElement('span', `Blueprint #${agent.blueprint_version || '?'}`, 'badge'));
+        } else {
+          const toggle = coreElement('button', enabled ? '● AN' : '○ AUS', 'btn btn-sm core-slot-toggle');
+          toggle.type = 'button';
+          toggle.setAttribute('role', 'switch');
+          toggle.setAttribute('aria-checked', String(enabled));
+          toggle.setAttribute('aria-label', agent.name + ' ein- oder ausschalten');
+          toggle.dataset.enabled = String(enabled);
+          toggle.addEventListener('click', () => toggleCoreSlot(agent.id, !enabled));
+          header.append(toggle);
+        }
         const badge = coreElement('span', coreAgentLabel(agent), 'badge');
         header.append(badge);
         card.append(header);
@@ -839,6 +875,17 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         const assign = coreElement('a','Aufgabe zuweisen','btn btn-sm');
         assign.href = '/tasks?create=1&assign_slot=' + encodeURIComponent(agent.id);
         actions.append(assign);
+        if (isBlueprint) {
+          const start = coreElement('button', '▶ Start', 'btn btn-sm btn-primary');
+          start.type = 'button';
+          start.disabled = agent.runtime_verified !== true || agent.running === true
+            || !agent.definition_ref?.sha256 || !enabled;
+          start.title = start.disabled && !enabled
+            ? 'Vorlage erneut übernehmen, um diesen deaktivierten Agenten neu zu konfigurieren.'
+            : 'Diesen gepinnten Blueprint ausdrücklich manuell starten.';
+          start.addEventListener('click', () => startBlueprintCoreAgent(agent));
+          actions.append(start);
+        }
         card.append(actions);
         if (activeCoreIds.has(String(agent.id))) {
           card.dataset.runningSlot = agent.id;
@@ -1828,7 +1875,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <label>Modell<input id="template-agent-model" list="template-agent-models" required autocomplete="off" /></label><datalist id="template-agent-models"></datalist>
       <label>Arbeitsmodus<select id="template-agent-mode"><option value="safe">Safe</option><option value="full">Full</option></select></label>
       <p id="template-agent-status" role="status" aria-live="polite"></p>
-      <footer><button id="template-agent-refresh" type="button" class="btn">Auswahl neu laden</button><button id="template-agent-save" type="submit" class="btn btn-primary" disabled>Als Agent übernehmen</button></footer>
+      <footer><button id="template-agent-refresh" type="button" class="btn">Auswahl neu laden</button><button id="template-agent-save" type="submit" class="btn btn-primary" disabled>Als Agent übernehmen</button><button id="template-agent-start" type="button" class="btn btn-primary" hidden>Jetzt ausdrücklich starten</button></footer>
     </form>
   </dialog>
 </BachLayout>
