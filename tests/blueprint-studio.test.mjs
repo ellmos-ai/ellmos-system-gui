@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {escapeHtml,blueprintState,executionSettings,normalizeTools,correlatedStart,instanceSettings,startLabel} from "../src/scripts/blueprint-studio.mjs";
+import {escapeHtml,blueprintState,executionSettings,normalizeTools,correlatedStart,instanceSettings,startLabel,taskmasterPolicyLabel,taskmasterRoleSummary} from "../src/scripts/blueprint-studio.mjs";
 
 test("catalogue escapes saved names and prompts",()=>{
   assert.equal(escapeHtml('<img src=x onerror="alert(1)">'),"&lt;img src=x onerror=&quot;alert(1)&quot;&gt;");
@@ -43,6 +43,11 @@ test("cloud and API paths never advertise a local start",()=>{
   assert.equal(startLabel({backend:"ollama",model:"model:cloud",resolved_model:"resolved"}),"Cloud/API starten");
   assert.equal(startLabel({backend:"ollama",model:"model:local",resolved_model:"model:cloud"}),"Cloud/API starten");
   assert.equal(startLabel({backend:"ollama",model:"test-local"}),"Lokal starten");
+});
+test("native Taskmaster policy and role summaries stay explicit",()=>{
+  assert.match(taskmasterPolicyLabel({values:{owner_role_id:"taskmaster.operator",interval_seconds:300,cloud_start_mode:"user_only"},scheduler_state:"disabled_by_default"}),/taskmaster\.operator/);
+  assert.match(taskmasterPolicyLabel(null),/nicht bestätigt/);
+  assert.equal(taskmasterRoleSummary({stable_id:"taskmaster.coding",origin:"bach-native-taskmaster",revision:"1.0.0",task_types:["code","architecture"]}),"taskmaster.coding · bach-native-taskmaster · Revision 1.0.0 · code, architecture");
 });
 test("a made-up run_generation field cannot confirm the controller contract",()=>{
   const execution={schema:"bach.worker-execution.v1",worker_id:"system-blueprint-7",start_request_id:"a".repeat(32),service_instance:"b".repeat(32),run_generation:"c".repeat(32),terminal:false,worker_thread_started:true};
