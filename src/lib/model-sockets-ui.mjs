@@ -58,7 +58,7 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
       light.setAttribute('role', 'img');
       light.setAttribute('aria-label', `${label}: ${share.percent}% geplant, nicht gemessen`);
       detail.textContent = `${label}: ${share.percent}% geplant · Messung fehlt`;
-    } else if (share?.state === 'unavailable') {
+    } else if (share?.schema === 'bach.resource-share.v1' && share.scope === scope && share.state === 'unavailable') {
       light.dataset.state = 'unknown';
       light.setAttribute('role', 'img');
       light.setAttribute('aria-label', `${label}: Messquelle nicht verfügbar`);
@@ -85,7 +85,7 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
     for (const socket of snapshot.sockets) {
       const card = node('article', undefined, 'model-socket'); card.dataset.socketId = socket.id;
       const title = node('div', undefined, 'model-socket-heading');
-      title.append(node('h3', socket.model), torchIndicator(socket.resource_share, 'socket', 'Modellanteil'),
+      title.append(node('h3', socket.model), torchIndicator(socket.resource_share, 'model_memory', 'Modellspeicher'),
         node('span', socket.enabled ? 'Freigegeben' : 'Gesperrt', 'badge'));
       card.append(title, node('p', (socket.backend === 'ollama' ? 'Ollama' : 'LM Studio') + ' · ' + socket.host_id));
       const metadata = catalogue?.models.find(m => m.socket_id === socket.id);
@@ -107,7 +107,10 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
           node('p', slot.orphaned ? 'Agentenprofil fehlt · gespeicherte Zuordnung' :
             (slot.enabled ? 'Zuordnung freigegeben' : 'Zuordnung gesperrt') + ' · ' +
             (slot.priority === 'foreground' ? 'Vordergrund' : 'Hintergrund')),
-          torchIndicator(slot.resource_share, 'slot_total', 'Fackelanteil'),
+          torchIndicator(slot.resource_share, 'context', 'Kontextanteil'),
+          node('p', slot.context_tokens == null
+            ? 'Kein Kontextbudget geplant · tatsächliche Nutzung unbekannt.'
+            : `${Number(slot.context_tokens).toLocaleString('de-DE')} Tokens geplant · tatsächliche Nutzung unbekannt.`, 'model-note'),
           node('p', 'Freie, inaktive und unzugeordnete Anteile werden nicht verteilt.', 'model-note'));
         const slotActions = node('div', undefined, 'model-actions');
         slotActions.append(button('Slot bearbeiten', () => openBinding(socket, slot), !editable() || slot.orphaned),

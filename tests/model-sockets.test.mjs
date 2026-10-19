@@ -109,10 +109,11 @@ test('external targets, arbitrary URLs and unsupported operations cannot dispatc
 });
 
 class Element {
-  constructor(tag='div') {this.tag=tag;this.children=[];this.handlers={};this.dataset={};this.value='';this.open=false;this.disabled=false;}
+  constructor(tag='div') {this.tag=tag;this.children=[];this.handlers={};this.dataset={};this.style={};this.attributes={};this.value='';this.textContent='';this.open=false;this.disabled=false;}
   append(...children) {this.children.push(...children);}
   replaceChildren(...children) {this.children=children;}
   addEventListener(type,handler) {this.handlers[type]=handler;}
+  setAttribute(name,value) {this.attributes[name]=String(value);}
   querySelector(selector) {const name=selector.match(/^\[name="([^"]+)"\]$/)?.[1];return flatten(this).find(n=>n.name===name);}
   showModal() {this.open=true;}
   close() {this.open=false;this.handlers.close?.({});}
@@ -143,11 +144,17 @@ test('missing adapters and legacy migration leave configuration actions unavaila
 
 test('renderer uses text, collapses agent slots and never invents RAM or Running',async()=>{
   const c=config();c.sockets[0].slots[0].name='<img src=x onerror=attack()>';
+  c.sockets[0].resource_share={schema:'bach.resource-share.v1',scope:'model_memory',state:'unavailable'};
+  c.sockets[0].slots[0].context_tokens=8192;
+  c.sockets[0].slots[0].resource_share={schema:'bach.resource-share.v1',scope:'context',state:'unavailable'};
   const h=harness(async url=>response(url.endsWith('/catalog')?catalog():c));await h.app.refresh();
   const all=flatten(h.elements.targets);
   assert.ok(all.some(n=>n.textContent==='<img src=x onerror=attack()>'));
   assert.ok(all.filter(n=>n.tag==='details').every(n=>!n.open));
   assert.ok(all.some(n=>n.textContent?.includes('nicht gemessen')));
+  assert.ok(all.some(n=>n.textContent==='Modellspeicher: Messquelle nicht verfügbar'));
+  assert.ok(all.some(n=>n.textContent==='Kontextanteil: Messquelle nicht verfügbar'));
+  assert.ok(all.some(n=>n.textContent==='8.192 Tokens geplant · tatsächliche Nutzung unbekannt.'));
   assert.ok(!all.some(n=>n.textContent==='Running'||n.textContent?.includes('0 GiB')));
   assert.match(h.elements['catalogue-status'].textContent,/LM Studio: Fähigkeiten nicht geprüft/);
 });

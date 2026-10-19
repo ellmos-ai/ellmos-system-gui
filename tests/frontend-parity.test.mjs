@@ -6,8 +6,18 @@ import vm from 'node:vm';
 const root=new URL('../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root),'utf8');
 const page=read('src/pages/agenten/running.astro');
-const start=page.indexOf('function workerReadiness('),end=page.indexOf('async function loadBackgroundWorkers(',start);
-const readiness=vm.runInNewContext('('+page.slice(start,end).trim()+')');
+function functionSource(source, signature) {
+  const start=source.indexOf(signature);
+  if(start<0) throw new Error(`Missing function ${signature}`);
+  const open=source.indexOf('{',start);
+  let depth=0;
+  for(let i=open;i<source.length;i++) {
+    if(source[i]==='{') depth++;
+    else if(source[i]==='}'&&--depth===0) return source.slice(start,i+1);
+  }
+  throw new Error(`Unclosed function ${signature}`);
+}
+const readiness=vm.runInNewContext('('+functionSource(page,'function workerReadiness(')+')');
 function paths(directory){return readdirSync(directory,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?paths(new URL(entry.name+'/',directory)):[new URL(entry.name,directory)]);}
 test('all twenty-six productive pages, including Subscription Agents, are present',()=>{
   assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,26);
@@ -18,8 +28,11 @@ test('the shared branding contract and bundled same-origin authentication stay i
   assert.match(read('src/layouts/BachLayout.astro'),/src="\/device-fetch\.js"/);
   assert.doesNotMatch(read('src/layouts/BachLayout.astro'),/src="\/static\/js\/device-fetch\.js"/);
 });
-test('Idle readiness and activity are never supplied by fixed success text',()=>{
-  assert.match(page,/<p id="compute-turn-status">Nicht geprüft<\/p>/);
+test('the former global Compute tile is removed and active run areas are explicit',()=>{
+  assert.doesNotMatch(page,/id="compute-turn-status"/);
+  assert.match(page,/id="system-runs-title"/);
+  assert.match(page,/id="running-agents-title"/);
+  assert.match(page,/id="unclassified-runs-title"/);
   assert.doesNotMatch(page,/Aktiv \(Bereit\)/);
   assert.match(page,/data\.schema !== 'bach\.workers\.status\.v1'/);
 });
@@ -42,8 +55,7 @@ test('every recorded imported file matches its final working source hash',()=>{
 });
 
 test('verified core errors and unknown states never become ready',()=>{
-  const start=page.indexOf('function coreAgentLabel('),end=page.indexOf('const runningGroupStates',start);
-  const label=vm.runInNewContext('('+page.slice(start,end).trim()+')');
+  const label=vm.runInNewContext('('+functionSource(page,'function coreAgentLabel(')+')');
   const base={runtime_verified:true,enabled:true,backend:'ollama',model:'synthetic-local'};
   assert.equal(label({...base,status:'error'}),'Fehler · Status prüfen');
   assert.equal(label({...base,status:'expired'}),'Abgelaufen');
@@ -51,6 +63,22 @@ test('verified core errors and unknown states never become ready',()=>{
   assert.equal(label({...base,status:'idle',model:''}),'Modell oder Anbieter fehlt');
   assert.equal(label({...base,status:'idle'}),'Ready · Living');
   assert.equal(label({...base,status:'running',running:true,runtime_verified:false}),'Status unbekannt');
+});
+
+test('local, external and unknown active targets require correlated runtime evidence',()=>{
+  const locality=vm.runInNewContext('('+functionSource(page,'function executionLocality(')+')');
+  const evidence={schema:'bach.resolved-execution.v1',state:'active',session_hash:'a'.repeat(64),
+    observed_at:new Date().toISOString()};
+  const base={runtime_verified:true,running:true,status:'running',resolved_execution_target:'ollama:qwen3.8:27b-mlx',
+    resolved_execution_host:'mac-studio',resolved_execution_locality:'local',resolved_execution_evidence:evidence};
+  assert.equal(locality(base),'local');
+  assert.equal(locality({...base,resolved_execution_locality:'external'}),'external');
+  assert.equal(locality({...base,runtime_verified:false}),'unknown');
+  assert.equal(locality({...base,resolved_execution_evidence:{...evidence,session_hash:'invalid'}}),'unknown');
+  const worker={...base,execution:{state:'running',generation:'g-1',active_task_id:42},
+    resolved_execution_evidence:{...evidence,generation:'g-1',task_id:42}};
+  assert.equal(locality(worker,true),'local');
+  assert.equal(locality({...worker,resolved_execution_evidence:{...worker.resolved_execution_evidence,task_id:41}},true),'unknown');
 });
 
 test('the Agenten-Werkstatt icon is consistent across navigation, heading, and shortcut',()=>{
