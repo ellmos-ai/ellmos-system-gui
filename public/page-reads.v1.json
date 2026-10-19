@@ -704,11 +704,6 @@
    },
    {
     "method": "GET",
-    "path": "/api/system/cluster-cockpit",
-    "required": false
-   },
-   {
-    "method": "GET",
     "path": "/api/system/openrouter/status",
     "required": false
    },
@@ -791,11 +786,6 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/pages/agenten/running.astro#deleteWorker"
-   },
-   {
-    "method": "POST",
-    "path": "/api/system/fackel",
-    "required": false
    },
    {
     "method": "POST",

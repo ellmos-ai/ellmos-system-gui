@@ -38,6 +38,11 @@
   .model-sockets :global(.model-slot-list)>summary {cursor:pointer;font-weight:600}
   .model-sockets :global(.model-slot) {padding:.75rem 0;margin-top:.5rem;border-top:1px solid var(--border-hover)}
   .model-sockets :global(.model-slot small) {display:block;overflow-wrap:anywhere}
+  .model-sockets :global(.model-torch-indicator) {display:inline-flex;align-items:center;gap:.4rem;min-width:0;font-size:.78rem;color:var(--text-muted)}
+  .model-sockets :global(.model-torch-light) {display:inline-block;width:.75rem;height:.75rem;flex:none;border:1px solid var(--border-hover);border-radius:50%;background:transparent}
+  .model-sockets :global(.model-torch-light[data-state="measured"]) {background:#f97316}
+  .model-sockets :global(.model-torch-light[data-state="planned"]) {border-style:dashed;border-color:#d97706}
+  :global([data-theme="light"]) .model-sockets :global(.model-torch-light[data-state="unknown"]) {border-color:#64748b}
   .model-dialog {width:min(620px,94vw);max-height:88vh;overflow:auto;margin:auto;padding:1.2rem;color:var(--text);background:var(--bg-card);border:1px solid var(--border-hover);border-radius:var(--radius-sm)}
   .model-dialog::backdrop {background:rgba(0,0,0,.7)}
   .model-sockets :global(.model-fields label) {display:flex;flex-direction:column;gap:.35rem;margin:.8rem 0}

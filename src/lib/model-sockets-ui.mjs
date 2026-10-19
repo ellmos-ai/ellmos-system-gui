@@ -36,6 +36,43 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
     !snapshot?.sockets.some(s => s.id === m.socket_id)) || [];
   const nameFor = slot => String(slot.name || slot.agent_id);
 
+  function torchIndicator(share, scope, label) {
+    const row = node('span', undefined, 'model-torch-indicator');
+    const light = node('span', undefined, 'model-torch-light');
+    const detail = node('span');
+    const validPercent = share && typeof share.percent === 'number' &&
+      Number.isFinite(share.percent) && share.percent >= 0 && share.percent <= 100;
+    const observed = Date.parse(share?.observed_at || '');
+    const fresh = Number.isFinite(observed) && Math.abs(Date.now() - observed) <= 300000;
+    const measured = share?.schema === 'bach.resource-share.v1' && share.state === 'measured' &&
+      share.scope === scope && validPercent && typeof share.source === 'string' && share.source.trim() && fresh;
+    if (measured) {
+      light.dataset.state = 'measured';
+      light.style.opacity = String(share.percent / 100);
+      light.style.boxShadow = `0 0 ${12 * share.percent / 100}px #f97316`;
+      light.setAttribute('role', 'img');
+      light.setAttribute('aria-label', `${label}: ${share.percent}% gemessen`);
+      detail.textContent = `${label}: ${share.percent}% gemessen`;
+    } else if (share?.state === 'planned' && share.scope === scope && validPercent) {
+      light.dataset.state = 'planned';
+      light.setAttribute('role', 'img');
+      light.setAttribute('aria-label', `${label}: ${share.percent}% geplant, nicht gemessen`);
+      detail.textContent = `${label}: ${share.percent}% geplant · Messung fehlt`;
+    } else if (share?.schema === 'bach.resource-share.v1' && share.scope === scope && share.state === 'unavailable') {
+      light.dataset.state = 'unknown';
+      light.setAttribute('role', 'img');
+      light.setAttribute('aria-label', `${label}: Messquelle nicht verfügbar`);
+      detail.textContent = `${label}: Messquelle nicht verfügbar`;
+    } else {
+      light.dataset.state = 'unknown';
+      light.setAttribute('role', 'img');
+      light.setAttribute('aria-label', `${label} unbekannt`);
+      detail.textContent = `${label}: unbekannt`;
+    }
+    row.append(light, detail);
+    return row;
+  }
+
   function render() {
     targets.replaceChildren();
     submit.disabled = writing || !!draft && !editable();
@@ -48,7 +85,8 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
     for (const socket of snapshot.sockets) {
       const card = node('article', undefined, 'model-socket'); card.dataset.socketId = socket.id;
       const title = node('div', undefined, 'model-socket-heading');
-      title.append(node('h3', socket.model), node('span', socket.enabled ? 'Freigegeben' : 'Gesperrt', 'badge'));
+      title.append(node('h3', socket.model), torchIndicator(socket.resource_share, 'model_memory', 'Modellspeicher'),
+        node('span', socket.enabled ? 'Freigegeben' : 'Gesperrt', 'badge'));
       card.append(title, node('p', (socket.backend === 'ollama' ? 'Ollama' : 'LM Studio') + ' · ' + socket.host_id));
       const metadata = catalogue?.models.find(m => m.socket_id === socket.id);
       card.append(node('p', metadata ? (metadata.chat_eligible ? 'Chatfähig' : 'Nur Embedding / kein Chat') +
@@ -69,7 +107,11 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
           node('p', slot.orphaned ? 'Agentenprofil fehlt · gespeicherte Zuordnung' :
             (slot.enabled ? 'Zuordnung freigegeben' : 'Zuordnung gesperrt') + ' · ' +
             (slot.priority === 'foreground' ? 'Vordergrund' : 'Hintergrund')),
-          node('p', 'Lauf und Ressourcenanteil: nicht geprüft.', 'model-note'));
+          torchIndicator(slot.resource_share, 'context', 'Kontextanteil'),
+          node('p', slot.context_tokens == null
+            ? 'Kein Kontextbudget geplant · tatsächliche Nutzung unbekannt.'
+            : `${Number(slot.context_tokens).toLocaleString('de-DE')} Tokens geplant · tatsächliche Nutzung unbekannt.`, 'model-note'),
+          node('p', 'Freie, inaktive und unzugeordnete Anteile werden nicht verteilt.', 'model-note'));
         const slotActions = node('div', undefined, 'model-actions');
         slotActions.append(button('Slot bearbeiten', () => openBinding(socket, slot), !editable() || slot.orphaned),
           button('Zuordnung entfernen', () => removeBinding(slot), !editable()));

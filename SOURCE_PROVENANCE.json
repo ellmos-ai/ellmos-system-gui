@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+    "src/pages/agenten/running.astro": "a6a42aea76d19e437315fe510b8b9b976c253d6065b50a2650841196b41de3aa",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
@@ -70,7 +70,7 @@
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/frontend-parity.test.mjs": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5",
+    "tests/frontend-parity.test.mjs": "4ae2f3f57656279e236ba47c2e420972f24bc9e68ecd8f15421f26180ffbbb6c",
     "tests/task-assignment.test.mjs": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
     "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
@@ -108,15 +108,15 @@
     "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
     "README.md": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
     "docs/CONSUMER_CONTRACT.md": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
-    "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
+    "src/components/ModelSockets.astro": "2b2fe51a09b6fc632b47f317287b86aaf2416d94fb4bb51aca56a20f583cf60d",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
-    "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
-    "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
+    "src/lib/model-sockets-ui.mjs": "f10c90c7a4e2f246c52021d1baefe8ea649de89a3a74a033dd26954c20b2a0dd",
+    "tests/model-sockets.test.mjs": "f1cebe17977e32fc2ddcea1e6e688210066ffd6fc46d65b6a0fcd24577de5717",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "public/page-reads.v1.json": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
+    "public/page-reads.v1.json": "42d5cd517a6f08045de2de3b3563f9e1547b8e67239e964dbdba3fd21c186e42",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
@@ -1283,6 +1283,47 @@
           "path": "tests/task-result-history.test.mjs",
           "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
           "sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-19",
+      "scope": "Task2028 running-state and model-resource evidence review",
+      "changes": [
+        "Correlate active run classifications with current session evidence or worker task generation and task ID.",
+        "Keep unavailable model-memory and context measurements separate, and label configured context budgets as planned with actual usage unknown.",
+        "Remove obsolete running-page API manifest reads and reconcile provenance hashes for the reviewed page and focused regression tests."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "sha256": "a6a42aea76d19e437315fe510b8b9b976c253d6065b50a2650841196b41de3aa"
+        },
+        {
+          "path": "src/components/ModelSockets.astro",
+          "previous_sha256": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
+          "sha256": "2b2fe51a09b6fc632b47f317287b86aaf2416d94fb4bb51aca56a20f583cf60d"
+        },
+        {
+          "path": "src/lib/model-sockets-ui.mjs",
+          "previous_sha256": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
+          "sha256": "f10c90c7a4e2f246c52021d1baefe8ea649de89a3a74a033dd26954c20b2a0dd"
+        },
+        {
+          "path": "tests/frontend-parity.test.mjs",
+          "previous_sha256": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5",
+          "sha256": "4ae2f3f57656279e236ba47c2e420972f24bc9e68ecd8f15421f26180ffbbb6c"
+        },
+        {
+          "path": "tests/model-sockets.test.mjs",
+          "previous_sha256": "88f3734999e7b17aece02f497e5ab15233b6c158e8429cf10a8ace17fbb3d22a",
+          "sha256": "f1cebe17977e32fc2ddcea1e6e688210066ffd6fc46d65b6a0fcd24577de5717"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
+          "sha256": "42d5cd517a6f08045de2de3b3563f9e1547b8e67239e964dbdba3fd21c186e42"
         }
       ]
     }
