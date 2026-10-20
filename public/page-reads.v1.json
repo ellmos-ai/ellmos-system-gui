@@ -560,6 +560,20 @@
    },
    {
     "method": "GET",
+    "path": "/api/taskmaster/roles",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#loadData"
+   },
+   {
+    "method": "GET",
+    "path": "/api/taskmaster/policy",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#loadData"
+   },
+   {
+    "method": "GET",
     "path": "/api/system/workers/models",
     "required": false
    },
