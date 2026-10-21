@@ -22,6 +22,8 @@ The frontend contains 26 HTML pages. Its tests exercise frontend rendering, sour
 
 ## Release
 
+Version 0.2.27 integrates the reviewed separation of agent configuration from observed runtime models and resources, removes the old model-slot illustration, and brings connection/device settings to the front. Existing backend and device-auth contracts remain in place; missing observations stay unknown. The responsive navigation, task thread and thumbnail correction from 0.2.26 remain included. Source publication, release packaging, consumer pins, actual installation and visible functional acceptance are recorded separately.
+
 Version 0.2.26 integrates the responsive Claude-inspired navigation, compact task view and reviewed agent-thumbnail correction on the deployed 0.2.25 baseline. The mobile drawer contains keyboard focus and restores background interaction on close; branding remains consumer supplied. Source reviews, inherited-code tests, release packaging, consumer pins, Mac installation and visible product acceptance are recorded separately.
 
 Version 0.2.25 integrates the deployed 0.2.24 agent overview, policy settings and revision-bound result confirmation with the current main branch operator-reopen controls. Result views now distinguish current native, externally attested and unavailable provenance without granting acceptance rights. Source checks, a published release, consumer pins and live acceptance remain separate.
