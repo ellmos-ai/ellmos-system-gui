@@ -354,6 +354,9 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
     'src/components/TaskCreateForm.astro': 'fcfbad55ec1a3a1b4324db717a4ef2e0d7149dba6724d1bfbe95a34b3daf1852',
     'src/pages/tasks.astro': 'cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9'
   };
+  const followup = provenance.followup_changes.find(change =>
+    change.scope === 'Task2138: version-bound task result history, correction requests, and result-length limits');
+  assert.ok(followup);
   for (const [path, sourceSha] of Object.entries(importedHistory)) {
     assert.equal(originalBach.files[path].source_sha256, sourceSha);
     assert.equal(originalBach.files[path].imported_sha256, hash(path));
@@ -363,15 +366,29 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
     assert.equal(provenance.source_imports.some(group => group.files?.[path]), false, path);
   }
 
-  const followup = provenance.followup_changes.find(change =>
-    change.scope === 'Task2138: version-bound task result history, correction requests, and result-length limits');
-  assert.ok(followup);
   assert.deepEqual(followup.files.map(file => file.path).sort(), [...paths].sort());
-  // Later follow-ups may change these files; the Task2138 record stays intact and chains into them.
-  const later = provenance.followup_changes.slice(provenance.followup_changes.indexOf(followup) + 1)
-    .flatMap(change => change.files ?? []);
+  const laterChanges = provenance.followup_changes.slice(provenance.followup_changes.indexOf(followup) + 1);
+  const merge = provenance.followup_changes.at(-1);
+  assert.equal(merge.scope, 'BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance');
+  const branchBases = new Set(merge.branch_bases);
+  assert.ok(branchBases.has('99cde50dfaa0f0306b6c5b70aebc4161db0fc71c'));
+  assert.ok(branchBases.has('a5de187db1005b083e2ed4330f61aafc0553ba04'));
   for (const file of followup.files) {
-    const next = later.find(entry => entry.path === file.path);
-    assert.equal(file.sha256, next ? next.previous_sha256 : hash(file.path), file.path);
+    const observed = new Set([file.sha256]);
+    let recordedHash = file.sha256;
+    for (const change of laterChanges) {
+      const next = change.files?.find(candidate => candidate.path === file.path);
+      if (!next) continue;
+      assert.ok(observed.has(next.previous_sha256), file.path + ': known provenance predecessor');
+      if (next.previous_sha256 !== recordedHash) {
+        assert.ok(branchBases.has(change.source_base_commit), file.path + ': declared source branch');
+      }
+      if (next.other_parent_sha256 !== undefined && next.other_parent_sha256 !== null) {
+        assert.ok(observed.has(next.other_parent_sha256), file.path + ': known merged predecessor');
+      }
+      recordedHash = next.sha256;
+      observed.add(recordedHash);
+    }
+    assert.equal(recordedHash, hash(file.path), file.path);
   }
 });
