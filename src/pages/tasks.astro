@@ -6,11 +6,11 @@ import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.ast
 import TaskLeasePanel from "../components/TaskLeasePanel.astro";
 ---
 
-<BachLayout title="Aufgaben & Tasks" currentPath="/tasks">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+<BachLayout title="Aufgaben" currentPath="/tasks">
+  <div class="task-page-head">
     <div>
-      <h1 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;">
-        📋 Aufgaben & Taskboard
+      <h1>
+        Aufgaben
       </h1>
       <p style="color:var(--text-muted);font-size:0.875rem;">
         Aufgaben aus der verbundenen Task-Datenbank · persönliche und zugewiesene Aufgaben
@@ -26,10 +26,13 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
     </div>
   </div>
 
-  <TaskLeasePanel />
+  <details class="task-overview-technical">
+    <summary>Übernahmen und Laufdetails</summary>
+    <TaskLeasePanel />
+  </details>
 
   <!-- Filter Bar -->
-  <div class="card" style="padding:0.75rem 1.25rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+  <div class="card task-filter-bar">
     <div class="task-filter-controls" aria-label="Aufgaben kombinieren">
       <label for="tasks-assignment-filter">Zuordnung<select id="tasks-assignment-filter">
         <option value="all">Alle Aufgaben</option><option value="user">👤 Persönlich (User)</option>
@@ -83,25 +86,16 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
       </div>
     </div>
     <p id="task-detail-error" role="alert" hidden></p>
-    <div id="task-detail-view">
-      <dl class="task-detail-grid">
-        <div><dt>Status</dt><dd id="task-view-status"></dd></div>
-        <div><dt>Priorität</dt><dd id="task-view-priority"></dd></div>
-        <div><dt>Kategorie</dt><dd id="task-view-category"></dd></div>
-        <div><dt>Zugewiesen an</dt><dd id="task-view-assigned_to"></dd></div>
-        <div><dt>Erstellt von</dt><dd id="task-view-created_by"></dd></div>
-        <div><dt>Zuletzt geändert von</dt><dd id="task-view-modified_by"></dd></div>
-        <div><dt>Fällig am</dt><dd id="task-view-due_date"></dd></div>
-        <div><dt>Abhängig von</dt><dd id="task-view-depends_on"></dd></div>
-        <div><dt>Benötigtes Modell</dt><dd id="task-view-required_model"></dd></div>
-        <div><dt>Agenten-Slot</dt><dd id="task-view-assigned_slot"></dd></div>
-        <div><dt>Erstellt am</dt><dd id="task-view-created_at"></dd></div>
-        <div><dt>Abgeschlossen am</dt><dd id="task-view-completed_at"></dd></div>
-      </dl>
-      <h3>Beschreibung</h3><p id="task-view-description" class="task-description"></p>
-      <TaskWorkerPolicySettings />
+    <div id="task-detail-view" class="task-detail-columns">
+      <div class="task-thread-main">
+
+      <article class="task-order" aria-labelledby="task-order-heading">
+        <h3 id="task-order-heading">Auftrag</h3>
+        <p id="task-view-description" class="task-description"></p>
+      </article>
       <section class="task-worker-result" aria-live="polite">
-        <h3>Worker-Ergebnis</h3>
+        <h3>Ergebnis und Verlauf</h3>
+        <p class="task-evidence-hint">Ergebnisabgabe und fachliche Abnahme werden getrennt angezeigt.</p>
         <p id="task-result-status">Noch nicht geprüft.</p>
         <p id="task-result-content" class="task-description" hidden></p>
         <p id="task-result-meta" class="muted" hidden></p>
@@ -130,6 +124,35 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
           <button type="button" class="btn" id="task-result-history-more" hidden>Ältere Einträge laden</button>
         </section>
       </section>
+      </div>
+      <aside class="task-context" aria-labelledby="task-context-heading">
+        <section class="task-context-card">
+          <h3 id="task-context-heading">Auf einen Blick</h3>
+          <dl class="task-detail-grid">
+            <div><dt>Status</dt><dd id="task-view-status"></dd></div>
+            <div><dt>Priorität</dt><dd id="task-view-priority"></dd></div>
+            <div><dt>Zugewiesen an</dt><dd id="task-view-assigned_to"></dd></div>
+            <div><dt>Fällig am</dt><dd id="task-view-due_date"></dd></div>
+            <div><dt>Abhängig von</dt><dd id="task-view-depends_on"></dd></div>
+          </dl>
+        </section>
+        <details class="task-context-card task-technical-details">
+          <summary>Technische Angaben</summary>
+          <dl class="task-detail-grid">
+            <div><dt>Kategorie</dt><dd id="task-view-category"></dd></div>
+            <div><dt>Erstellt von</dt><dd id="task-view-created_by"></dd></div>
+            <div><dt>Zuletzt geändert von</dt><dd id="task-view-modified_by"></dd></div>
+            <div><dt>Modellanforderung der Aufgabe</dt><dd id="task-view-required_model"></dd></div>
+            <div><dt>Bisherige Slotbindung</dt><dd id="task-view-assigned_slot"></dd></div>
+            <div><dt>Erstellt am</dt><dd id="task-view-created_at"></dd></div>
+            <div><dt>Abgeschlossen am</dt><dd id="task-view-completed_at"></dd></div>
+          </dl>
+        </details>
+        <details class="task-context-card task-technical-details">
+          <summary>Auswahl und Prüfregeln</summary>
+          <TaskWorkerPolicySettings />
+        </details>
+      </aside>
     </div>
     <form id="task-edit-form" hidden>
       <div class="task-edit-grid">
@@ -190,6 +213,37 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
     .task-edit-wide { grid-column:1/-1; }
     #task-detail-error { color:var(--error-text); overflow-wrap:anywhere; }
     @media (max-width:620px) { .task-detail-grid,.task-edit-grid { grid-template-columns:minmax(0,1fr); } .task-edit-wide { grid-column:auto; } }
+
+    .task-page-head {display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+    .task-page-head h1 {font-size:1.6rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.25rem;}
+    .task-filter-bar {display:flex;justify-content:space-between;align-items:end;gap:1rem;flex-wrap:wrap;padding:.8rem 1rem;margin-bottom:1rem;}
+    .task-overview-technical {margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:.75rem;}
+    .task-overview-technical>summary,.task-technical-details>summary {cursor:pointer;color:var(--text-muted);font-size:.85rem;font-weight:500;}
+    .task-overview-technical[open]>summary {margin-bottom:.75rem;}
+    .task-detail {padding:1.25rem;scroll-margin-top:5rem;}
+    .task-detail-head {border-bottom:1px solid var(--border);padding-bottom:.75rem;margin-bottom:1.25rem;}
+    .task-detail-head h2 {font-size:1.3rem;font-weight:600;line-height:1.4;margin-bottom:0;}
+    .task-detail-columns {display:grid;grid-template-columns:minmax(0,1fr) minmax(14rem,18rem);gap:1.5rem;align-items:start;}
+    .task-thread-main,.task-context {min-width:0;}
+    .task-thread-main {display:flex;flex-direction:column;gap:1.25rem;}
+    .task-order {padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-panel);}
+    .task-order h3,.task-context h3,.task-worker-result>h3 {font-size:.95rem;font-weight:600;margin:0 0 .7rem;}
+    .task-description {font-size:.9rem;line-height:1.65;overflow-wrap:anywhere;}
+    .task-worker-result {border-top:0;margin:0;padding:0;}
+    .task-evidence-hint {font-size:.82rem;color:var(--text-muted);margin-bottom:.75rem;}
+    .task-context {display:flex;flex-direction:column;gap:.85rem;}
+    .task-context-card {padding:.9rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-panel);min-width:0;overflow-wrap:anywhere;}
+    .task-context .task-detail-grid {grid-template-columns:minmax(0,1fr);gap:.15rem;margin:0;}
+    .task-context .task-detail-grid>div {display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:.6rem;padding:.45rem 0;}
+    .task-context .task-detail-grid dd {margin:0;}
+    .task-context .task-detail-grid dt {line-height:1.5;}
+    .task-technical-details[open]>summary {margin-bottom:.6rem;}
+    :global(#tasks-table-container th),:global(#tasks-table-container td) {padding:.6rem .65rem !important;vertical-align:top;}
+    :global(#tasks-table-container table) {min-width:42rem;font-size:.82rem !important;}
+    :global(#tasks-table-container tbody tr:hover) {background:var(--bg-panel);}
+    .task-detail :global(button:focus-visible),.task-detail :global(input:focus-visible),.task-detail :global(select:focus-visible),.task-detail :global(textarea:focus-visible),.task-detail summary:focus-visible,.task-overview-technical>summary:focus-visible {outline:2px solid var(--accent-blue-text);outline-offset:3px;}
+    @media(max-width:900px) {.task-detail-columns {grid-template-columns:minmax(0,1fr);} .task-context {border-top:1px solid var(--border);padding-top:1rem;}}
+    @media(max-width:620px) {.task-detail {padding:.85rem;} .task-filter-bar {padding:.75rem;} .task-context .task-detail-grid>div {grid-template-columns:minmax(0,1fr);gap:.1rem;}}
   </style>
 
   <script>

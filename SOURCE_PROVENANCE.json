@@ -100,7 +100,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "96fb342acac1da54412292ce30de7643710b90514de9eff8d4ad4024d8f10f6c",
+    "src/pages/tasks.astro": "ed62c7834a6437c8afed43050f95e4cbd7b00945656e92dc2e985e70e4084416",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
@@ -131,7 +131,7 @@
     "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
     "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
     "tests/task-result-completion.test.mjs": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1",
-    "tests/task-result-history.test.mjs": "ecab2b658e5c7ece4512ae443c6fd1ed4f6ec1b56fc2f504c2129ab8a4b4a2bd",
+    "tests/task-result-history.test.mjs": "f6207020933b85f58d31ce189b2c4f9f413223a81fad475d6df3ceb2eb49e340",
     "tests/task-result-source.test.mjs": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
@@ -507,7 +507,7 @@
         "src/pages/tasks.astro": {
           "source_path": "system/gui/web/src/pages/tasks.astro",
           "source_sha256": "cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9",
-          "imported_sha256": "96fb342acac1da54412292ce30de7643710b90514de9eff8d4ad4024d8f10f6c",
+          "imported_sha256": "ed62c7834a6437c8afed43050f95e4cbd7b00945656e92dc2e985e70e4084416",
           "adapted": true
         },
         "src/scripts/blueprint-studio.mjs": {
@@ -1905,6 +1905,27 @@
           "previous_sha256": null,
           "other_parent_sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
           "sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54"
+        }
+      ]
+    },
+    {
+      "scope": "Task2361: compact task board and contextual assignment/result thread",
+      "source_base_commit": "44490a04135833b4a142776c07649a61f331137d",
+      "adaptations": [
+        "Reorder existing task markup into assignment, result/history and contextual metadata; preserve the client script and native component contracts.",
+        "Keep technical metadata collapsed and task table compact; preserve prior source hashes and record this follow-up.",
+        "Locate the historical integration record by scope so later verified changes can extend its hash chain."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "96fb342acac1da54412292ce30de7643710b90514de9eff8d4ad4024d8f10f6c",
+          "sha256": "ed62c7834a6437c8afed43050f95e4cbd7b00945656e92dc2e985e70e4084416"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "ecab2b658e5c7ece4512ae443c6fd1ed4f6ec1b56fc2f504c2129ab8a4b4a2bd",
+          "sha256": "f6207020933b85f58d31ce189b2c4f9f413223a81fad475d6df3ceb2eb49e340"
         }
       ]
     }

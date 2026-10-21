@@ -368,7 +368,8 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
 
   assert.deepEqual(followup.files.map(file => file.path).sort(), [...paths].sort());
   const laterChanges = provenance.followup_changes.slice(provenance.followup_changes.indexOf(followup) + 1);
-  const merge = provenance.followup_changes.at(-1);
+  const merge = provenance.followup_changes.findLast(change =>
+    change.scope === 'BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance');
   assert.equal(merge.scope, 'BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance');
   const branchBases = new Set(merge.branch_bases);
   assert.ok(branchBases.has('99cde50dfaa0f0306b6c5b70aebc4161db0fc71c'));
