@@ -11,7 +11,7 @@
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
     "ellmos-module.v2.json": "1f6e064b40c6415c1b3632b5727a5212ef56d83608219d952f4e8b06293dcd9f",
-    "package-lock.json": "a87155ab56cf689e3db88c9ed8dacbaa6c82f4aaa6528a91734bd459d41d19d0",
+    "package-lock.json": "25ceff83680555844b091d774ea2604cf4fba9ce38e053fc350061eaa8195da9",
     "package.json": "6c34cc38daaed782429ce8ac759baf76c29822a5d3ab18ee87f7d1b379d41230",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c",
@@ -3172,6 +3172,23 @@
           "path": "tests/memory-facts.test.mjs",
           "previous_sha256": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
           "sha256": "a7c9724c7e28631f9a661fcde596f81fe5dd93375838259a6cf55244c24f3897"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2359: complete existing optional WASM lock dependencies",
+      "source_base_commit": "cbdc867c4fb7bbb33efba5462e4877b90fa68cf0",
+      "changes": [
+        "Add the missing @emnapi/core and @emnapi/runtime 1.11.3 records already required by the locked optional Astro/WASM dependency graph.",
+        "Use exact published npm registry tarball integrity metadata; do not change any existing dependency version or manifest dependency.",
+        "Native Linux/macOS/Windows npm ci had rejected these missing records; local npm11 had silently skipped the platform-specific dependency gap."
+      ],
+      "files": [
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "a87155ab56cf689e3db88c9ed8dacbaa6c82f4aaa6528a91734bd459d41d19d0",
+          "sha256": "25ceff83680555844b091d774ea2604cf4fba9ce38e053fc350061eaa8195da9"
         }
       ]
     }
