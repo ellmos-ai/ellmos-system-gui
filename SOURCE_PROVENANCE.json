@@ -270,7 +270,7 @@
     "src/pages/governance/usecases.astro": "860a03ca99e466d9571ab93e350a24105ba3caff69a06f9a06c4a83ee14c3b19",
     "src/pages/index.astro": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d",
     "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
-    "src/pages/memory.astro": "27de17373b2319a598efc7397bd2dfa96aeb1c543303581cdc93ce2edeb5b74a",
+    "src/pages/memory.astro": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c",
     "src/pages/settings.astro": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
@@ -297,7 +297,7 @@
     "tests/fabrika.test.mjs": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
     "tests/frontend-parity.test.mjs": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
-    "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
+    "tests/memory-facts.test.mjs": "a7c9724c7e28631f9a661fcde596f81fe5dd93375838259a6cf55244c24f3897",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
     "tests/release-provenance.test.mjs": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
@@ -3151,6 +3151,27 @@
           "path": "README.md",
           "previous_sha256": "f915a0e6fc029a872a35ec5526acd7aa50d5a55050f51ef9499f5924bb56af7d",
           "sha256": "4ee4b984bfe281e4dde0a9a452d55dc2a47d5ca9700ad7910630045e75af05bc"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2359: remove inherited unverified Hermes active badge",
+      "source_base_commit": "1cea06db56c384e8986144bbab4f2675124a59ba",
+      "changes": [
+        "Display neutral unverified runtime status until a real Hermes status contract exists.",
+        "Add a focused regression; preserve all historical imports and followups."
+      ],
+      "files": [
+        {
+          "path": "src/pages/memory.astro",
+          "previous_sha256": "27de17373b2319a598efc7397bd2dfa96aeb1c543303581cdc93ce2edeb5b74a",
+          "sha256": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c"
+        },
+        {
+          "path": "tests/memory-facts.test.mjs",
+          "previous_sha256": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
+          "sha256": "a7c9724c7e28631f9a661fcde596f81fe5dd93375838259a6cf55244c24f3897"
         }
       ]
     }
