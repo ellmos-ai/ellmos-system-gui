@@ -10,12 +10,12 @@
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
-    "ellmos-module.v2.json": "1f6e064b40c6415c1b3632b5727a5212ef56d83608219d952f4e8b06293dcd9f",
-    "package-lock.json": "25ceff83680555844b091d774ea2604cf4fba9ce38e053fc350061eaa8195da9",
-    "package.json": "6c34cc38daaed782429ce8ac759baf76c29822a5d3ab18ee87f7d1b379d41230",
+    "ellmos-module.v2.json": "52a52a1997d8fa98c51d879aea2ddae97286bee6b722752df3e4718d8b0f15e4",
+    "package-lock.json": "25e0f089ba9b7159a6fd158395db114340746f70e5c240c3fe3e1e73a3248029",
+    "package.json": "410d78c64ba2780f5c784081162851bbabcd231ee05abbeff52e6ffdbf89d53e",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "c95a3f875ea15dccbcc92e96c3d09f35651f8acecfe1685f5c2933d37f895908",
-    "README.md": "4ee4b984bfe281e4dde0a9a452d55dc2a47d5ca9700ad7910630045e75af05bc",
+    "README.md": "a9bd65a21e89246f7cc9715633d291d9c28bfee262b94fe0aa18b9a9710d018d",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
@@ -3345,6 +3345,38 @@
           "path": "tests/settings-connections.test.mjs",
           "previous_sha256": null,
           "sha256": "5ad0a09c43b7a215a5f4924d00bd84becadee8e862483337927a2f36c1f35d6a"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2363: shared GUI0.2.27 release metadata",
+      "source_base_commit": "a106a4d530b2105e15c92d390bbc1fcb5393148a",
+      "changes": [
+        "Bump only package, lock and module versions to0.2.27.",
+        "Describe the already reviewed R3/R4 UI source integration; no new behavior or dependency pin change.",
+        "Preserve original source imports and all historical followups; release, consumer activation and product acceptance remain separate."
+      ],
+      "files": [
+        {
+          "path": "package.json",
+          "previous_sha256": "6c34cc38daaed782429ce8ac759baf76c29822a5d3ab18ee87f7d1b379d41230",
+          "sha256": "410d78c64ba2780f5c784081162851bbabcd231ee05abbeff52e6ffdbf89d53e"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "25ceff83680555844b091d774ea2604cf4fba9ce38e053fc350061eaa8195da9",
+          "sha256": "25e0f089ba9b7159a6fd158395db114340746f70e5c240c3fe3e1e73a3248029"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "1f6e064b40c6415c1b3632b5727a5212ef56d83608219d952f4e8b06293dcd9f",
+          "sha256": "52a52a1997d8fa98c51d879aea2ddae97286bee6b722752df3e4718d8b0f15e4"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "4ee4b984bfe281e4dde0a9a452d55dc2a47d5ca9700ad7910630045e75af05bc",
+          "sha256": "a9bd65a21e89246f7cc9715633d291d9c28bfee262b94fe0aa18b9a9710d018d"
         }
       ]
     }
