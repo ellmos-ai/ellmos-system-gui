@@ -24,6 +24,47 @@ const isTimestamp = value => {
   return Number.isFinite(Date.parse(value));
 };
 
+export function resultSourceSummary(readback) {
+  const unknown = {kind:'unknown', available:false, label:'Herkunft aktuell nicht prüfbar.',
+    detail:'Für diese Ansicht liegt kein gültiger Herkunftsbeleg vor.'};
+  if (!isRecord(readback) || readback.schema !== 'bach.task-result-readback.v1'
+      || readback.verified !== true || !positiveInteger(readback.task_id)
+      || !isSha256(readback.task_version)) return unknown;
+  const result = readback.result;
+  if (!isRecord(result) || result.schema !== 'bach.worker-result.v1'
+      || result.task_id !== readback.task_id || !positiveInteger(result.result_id)
+      || !isSha256(result.task_version) || !isSha256(result.result_sha256)) return unknown;
+  const current = result.task_version === readback.task_version;
+  if (result.source_kind === 'external_attested') {
+    const provenance = result.external_provenance;
+    const scope = result.scope;
+    const available = current && isRecord(provenance) && provenance.schema === 'bach.worker-external-attestation.v1'
+      && provenance.source_kind === 'external_attested' && provenance.availability === 'available'
+      && isRecord(scope) && scope.schema === 'bach.worker-external-scope-evidence.v1'
+      && scope.source_kind === 'external_attested' && scope.availability === 'available'
+      && isSha256(result.result_revision) && scope.result_revision === result.result_revision
+      && provenance.result_revision === result.result_revision;
+    return {kind:'external_attested', available,
+      label:available ? 'Externe Herkunft bestätigt.' : 'Externe Herkunft · Beleg aktuell nicht verfügbar.',
+      detail:available ? 'Ein berechtigter Operator hat die Herkunftsartefakte geprüft. Die Ergebnisabnahme ist separat ausgewiesen.'
+        : 'Der externe Beleg ist aktuell nicht verwendbar. Daraus folgt keine Ergebnisabnahme.'};
+  }
+  if (result.source_kind === 'native') {
+    const execution = result.execution;
+    const available = current && isRecord(execution) && execution.availability === 'available'
+      && typeof execution.execution_id === 'string' && execution.execution_id.length > 0
+      && isSha256(execution.execution_revision);
+    return {kind:'native', available,
+      label:available ? 'BACH-Modelllauf dokumentiert.' : 'BACH-Modelllauf · Beleg aktuell nicht verfügbar.',
+      detail:'Ausführungsbeleg und Ergebnisabnahme werden getrennt ausgewiesen.'};
+  }
+  if (result.source_kind === 'unattested') {
+    return {kind:'unattested', available:false, label:'Ausführung noch nicht belegt.',
+      detail:'Für dieses Ergebnis liegt noch kein gültiger Ausführungs- oder Herkunftsbeleg vor.'};
+  }
+  return unknown;
+}
+
 export function resultOperatorCapabilities(readback) {
   if (!isRecord(readback) || readback.schema !== 'bach.task-result-readback.v1' || readback.verified !== true) {
     return {valid:false, accept_result:false, request_correction:false};

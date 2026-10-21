@@ -56,7 +56,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
+    "src/pages/tasks.astro": "70fb5ccd8d19e5ecd88b04ac68949d0addf50bd3e3a0475a9e017d0567ec2664",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
@@ -119,8 +119,9 @@
     "public/page-reads.v1.json": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
-    "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
-    "tests/task-result-history.test.mjs": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
+    "src/lib/task-result-contract.mjs": "2324f910d7db067accbcabf04365986ff73fab4fd5819c63fad1a947587fc1cb",
+    "tests/task-result-history.test.mjs": "3ac45341b1cc22145d886880409d70b2cb823ba4cf4adf97bf4b1f6d42608acf",
+    "tests/task-result-source.test.mjs": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -490,7 +491,7 @@
         "src/pages/tasks.astro": {
           "source_path": "system/gui/web/src/pages/tasks.astro",
           "source_sha256": "cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9",
-          "imported_sha256": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
+          "imported_sha256": "70fb5ccd8d19e5ecd88b04ac68949d0addf50bd3e3a0475a9e017d0567ec2664",
           "adapted": true
         },
         "src/scripts/blueprint-studio.mjs": {
@@ -1283,6 +1284,39 @@
           "path": "tests/task-result-history.test.mjs",
           "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
           "sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2339: result provenance display without acceptance authority",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "changes": [
+        "Display trusted native, externally attested and unattested result source projections separately from acceptance.",
+        "Revoked or stale external receipts remain external and never fall back to a native source label.",
+        "Use fixed German labels through textContent and clear stale provenance on result reload.",
+        "Keep prior backend source pins and follow-up records unchanged; extend DOM regression fixture for the new text node."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
+          "sha256": "70fb5ccd8d19e5ecd88b04ac68949d0addf50bd3e3a0475a9e017d0567ec2664"
+        },
+        {
+          "path": "src/lib/task-result-contract.mjs",
+          "previous_sha256": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
+          "sha256": "2324f910d7db067accbcabf04365986ff73fab4fd5819c63fad1a947587fc1cb"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3",
+          "sha256": "3ac45341b1cc22145d886880409d70b2cb823ba4cf4adf97bf4b1f6d42608acf"
+        },
+        {
+          "path": "tests/task-result-source.test.mjs",
+          "previous_sha256": null,
+          "sha256": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43"
         }
       ]
     }

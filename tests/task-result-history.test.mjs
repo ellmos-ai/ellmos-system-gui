@@ -6,7 +6,7 @@ import vm from 'node:vm';
 import {
   buildCorrectionRequest, correctionAttemptMatchesView, createCorrectionAttempt,
   isCurrentCorrectionTarget, normalizeCorrectionNote, parseTaskResultMaxCharsInput, resultMaxCharsCreateChange,
-  resultMaxCharsEditChange, resultOperatorCapabilities, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
+  resultMaxCharsEditChange, resultOperatorCapabilities, resultSourceSummary, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
   transitionCorrectionAttempt, validateCorrectionAcknowledgement, validateResultHistoryPage
 } from '../src/lib/task-result-contract.mjs';
 
@@ -211,6 +211,7 @@ function resultLoaderHarness(initialKey='operator-key', gate={}) {
     'task-result-status':{textContent:'',hidden:false},
     'task-result-content':{textContent:'',hidden:true},
     'task-result-meta':{textContent:'',hidden:true},
+    'task-result-source':{textContent:'',hidden:true},
     'task-result-accept':{hidden:true,disabled:true},
     'task-result-correction':correctionForm,
     'task-result-key-status':{textContent:''}
@@ -234,6 +235,7 @@ function resultLoaderHarness(initialKey='operator-key', gate={}) {
     operatorKey:() => activeKey,
     resultKeyStatus:() => {},
     resultOperatorCapabilities,
+    resultSourceSummary,
     isCurrentCorrectionTarget,
     updateCorrectionCount:() => {}
   };

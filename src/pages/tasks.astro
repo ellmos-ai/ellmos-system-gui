@@ -87,6 +87,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         <p id="task-result-status">Noch nicht geprüft.</p>
         <p id="task-result-content" class="task-description" hidden></p>
         <p id="task-result-meta" class="muted" hidden></p>
+        <p id="task-result-source" class="muted" hidden></p>
         <details>
           <summary>Persönliche Freigabe einrichten</summary>
           <p>Eine Freigabe erlaubt dir, geprüfte Ergebnisse abzunehmen. Der Schlüssel gilt in diesem Browser bis zum Schließen des Tabs.</p>
@@ -175,7 +176,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     import {correctionAttemptMatchesView, createCorrectionAttempt, generateCorrectionRequestId,
       isCurrentCorrectionTarget, normalizeCorrectionNote, parseTaskResultMaxCharsInput,
       resultMaxCharsEditChange,
-      resultOperatorCapabilities, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
+      resultOperatorCapabilities, resultSourceSummary, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
       transitionCorrectionAttempt, validateResultHistoryPage} from '../lib/task-result-contract.mjs';
     let allTasks = [];
     let currentFilters = readTaskFilters(location.search);
@@ -439,13 +440,15 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       const status = document.getElementById('task-result-status');
       const text = document.getElementById('task-result-content');
       const meta = document.getElementById('task-result-meta');
+      const source = document.getElementById('task-result-source');
       const accept = document.getElementById('task-result-accept');
       const correction = document.getElementById('task-result-correction');
       selectedResult = null; taskResultReadback = null; accept.hidden = true; accept.disabled = true;
       taskResultCapabilities = {valid:false, accept_result:false, request_correction:false};
       correction.hidden = true; correction.querySelector('button[type="submit"]').disabled = true;
       taskResultStatusMessage = 'Ergebnis wird geprüft.';
-      status.textContent = taskResultStatusMessage; text.hidden = meta.hidden = true;
+      status.textContent = taskResultStatusMessage; text.hidden = meta.hidden = source.hidden = true;
+      source.textContent = '';
       resultKeyStatus();
       try {
         const response = await fetch('/api/tasks/' + encodeURIComponent(id) + '/result', {
@@ -471,9 +474,12 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
           throw new Error('Der Ergebnisinhalt ist nicht bestätigt.');
         }
         text.textContent = result.result; text.hidden = false;
+        const provenance = resultSourceSummary(data);
+        source.textContent = provenance.label + ' ' + provenance.detail;
+        source.hidden = false;
         const accepted = result.accepted === true && ['done','completed'].includes(data.status);
         taskResultStatusMessage = accepted ? 'Abgenommen · erledigt.'
-          : result.reason === 'awaiting_review' ? 'Ergebnis abgegeben · wartet auf deine Prüfung.'
+          : result.reason === 'awaiting_review' ? 'Ergebnis abgegeben · Abnahme steht aus.'
           : result.reason === 'legacy_result_without_acceptance' ? 'Früheres Ergebnis · keine getrennte Abnahme belegt.'
           : 'Ergebnis vorhanden · aktuelle Abnahme nicht bestätigt.';
         status.textContent = taskResultStatusMessage;
