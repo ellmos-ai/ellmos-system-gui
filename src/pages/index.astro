@@ -1,6 +1,8 @@
 ---
 // index.astro - Das moderne, modulare BACH Dashboard
 import BachLayout from "../layouts/BachLayout.astro";
+import portraitAtlas from '../assets/agent-portraits.png';
+import {TICKET_SYMBOL_URLS} from '../lib/ticket-symbol-assets.mjs';
 ---
 
 <BachLayout title="Dashboard" currentPath="/">
@@ -50,7 +52,7 @@ import BachLayout from "../layouts/BachLayout.astro";
       <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:1rem;text-align:center;">
         <div>
           <span style="display:block;font-size:2rem;font-weight:800;color:var(--success-text);" id="stat-agents-active">–</span>
-          <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Laufstatus unbekannt</span>
+          <span id="stat-agents-active-label" style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Laufstatus unbekannt</span>
         </div>
         <div>
           <span style="display:block;font-size:2rem;font-weight:800;color:var(--accent-blue-text);" id="stat-agents-total">–</span>
@@ -81,6 +83,28 @@ import BachLayout from "../layouts/BachLayout.astro";
       </div>
     </div>
   </div>
+
+  <section class="card dashboard-agent-overview" aria-labelledby="dashboard-agent-overview-title" data-portrait-atlas={portraitAtlas.src} data-ticket-symbols={JSON.stringify(TICKET_SYMBOL_URLS)}>
+    <div class="card-header">
+      <div>
+        <h2 id="dashboard-agent-overview-title" class="card-title">⚡ Aktuelle Running-Läufe</h2>
+        <p id="dashboard-agent-overview-summary" role="status" aria-live="polite" style="margin:.35rem 0 0;color:var(--text-muted);font-size:.8rem;">Laufstatus unbekannt · Daten werden geprüft.</p>
+      </div>
+      <a href="/agenten/running" class="btn" style="padding:0.25rem 0.6rem;font-size:0.75rem;">Living & Running →</a>
+    </div>
+    <div class="agent-overview-controls" aria-label="Running-Läufe filtern und sortieren">
+      <label class="agent-overview-search">Suchen<input id="dashboard-agent-overview-query" data-agent-overview-control="query" type="search" maxlength="120" placeholder="Name, Anbieter oder Modell" /></label>
+      <label>Zugang<select id="dashboard-agent-overview-access" data-agent-overview-control="access"><option value="all">Alle Zugänge</option><option value="local">Lokal</option><option value="cloud">Cloud / API</option><option value="prompt">Prompt / CLI</option><option value="unknown">Unbekannt</option></select></label>
+      <label>Funktion<select id="dashboard-agent-overview-function" data-agent-overview-control="function"><option value="all">Alle Funktionen</option></select></label>
+      <label>Tatsächliche Startart<select id="dashboard-agent-overview-start" data-agent-overview-control="start"><option value="all">Alle Startarten</option><option value="unknown">Unbekannt</option></select></label>
+      <label>Sortierung<select id="dashboard-agent-overview-sort" data-agent-overview-control="sort"><option value="name">Name</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option><option value="status">Status</option></select></label>
+      <label>Gruppierung<select id="dashboard-agent-overview-group" data-agent-overview-control="group"><option value="none">Aus</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option></select></label>
+      <label>Darstellung<select id="dashboard-agent-overview-view" data-agent-overview-control="view"><option value="cards">Karten</option><option value="list">Kompakte Liste</option></select></label>
+    </div>
+    <div id="dashboard-running-agents" class="agent-overview-container dashboard-running-agents" data-agent-overview-lane="running" aria-live="polite">
+      <p class="dashboard-agent-overview-note">Laufstatus unbekannt · Daten werden geprüft.</p>
+    </div>
+  </section>
 
   <!-- Quick Action Navigation Hub -->
   <div class="card" style="margin-bottom:1.5rem;">
@@ -170,11 +194,139 @@ import BachLayout from "../layouts/BachLayout.astro";
   </div>
 </BachLayout>
 
+<style is:global>
+  .dashboard-agent-overview {margin-bottom:1.5rem}
+  .dashboard-agent-overview .agent-overview-controls {display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.65rem;margin:.75rem 0 1rem}
+  .dashboard-agent-overview .agent-overview-controls label {display:flex;flex-direction:column;gap:.25rem;color:var(--text-muted);font-size:.75rem}
+  .dashboard-agent-overview .agent-overview-controls input,.dashboard-agent-overview .agent-overview-controls select {min-width:0;width:100%;padding:.45rem .55rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text);font:inherit}
+  .dashboard-agent-overview .agent-overview-controls .agent-overview-search {grid-column:span 2}
+  .dashboard-running-agents {display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem}
+  .dashboard-agent-overview-card {display:flex;flex-direction:column;gap:.4rem;min-width:0}
+  .dashboard-agent-overview-card h3 {margin:0;font-size:1rem;overflow-wrap:anywhere}
+  .dashboard-agent-overview-card p {margin:0;color:var(--text-muted);font-size:.8rem;overflow-wrap:anywhere}
+  .dashboard-agent-overview-note {grid-column:1/-1;color:var(--text-muted);font-size:.85rem}
+  .dashboard-running-agents.agent-overview-list {display:flex!important;flex-direction:column;gap:.4rem}
+  .dashboard-running-agents.agent-overview-list [data-agent-overview-card]:not([hidden]) {display:flex!important;flex-direction:row!important;align-items:center;justify-content:space-between;flex-wrap:wrap;width:100%;padding:.4rem .65rem!important;gap:.45rem .7rem!important}
+  .agent-overview-runtime-content {display:flex;flex-direction:column;gap:.45rem;min-width:0;flex:1}
+  .agent-overview-runtime-identity {display:flex;align-items:center;gap:.65rem;min-width:0;flex-wrap:wrap}
+  .agent-overview-runtime-avatar {width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none}
+  span.agent-overview-runtime-avatar {display:inline-block;width:44px;height:44px;background-size:cover;background-position:center;flex:none}
+  .agent-overview-runtime-symbol {width:22px;height:22px;object-fit:contain;flex:none}
+  .agent-overview-runtime-title {margin:0!important;font-size:1rem!important;overflow-wrap:anywhere}
+  .agent-overview-runtime-status {white-space:nowrap}
+  .agent-overview-runtime-meta {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:.25rem .75rem;min-width:0}
+  .agent-overview-runtime-meta-item {margin:0;color:var(--text-muted);font-size:.78rem;overflow-wrap:anywhere}
+  .dashboard-running-agents.agent-overview-list .agent-overview-runtime-content {display:flex;flex-direction:row;align-items:center;flex:1 1 12rem}
+  .dashboard-running-agents.agent-overview-list .agent-overview-runtime-avatar,
+  .dashboard-running-agents.agent-overview-list .agent-overview-runtime-symbol,
+  .dashboard-running-agents.agent-overview-list .agent-overview-runtime-meta {display:none!important}
+  .dashboard-running-agents.agent-overview-list .agent-overview-runtime-identity {flex:1;flex-wrap:nowrap;gap:.5rem}
+  .dashboard-running-agents.agent-overview-list .agent-overview-runtime-title {min-width:5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.88rem!important}
+  .dashboard-running-agents.agent-overview-list .agent-overview-runtime-status {font-size:.68rem;padding:.15rem .35rem}
+  .dashboard-running-agents.agent-overview-list .agent-overview-actions {display:flex;align-items:center;gap:.3rem;margin:0!important;padding:0!important;border:0!important}
+  .dashboard-running-agents.agent-overview-list .agent-overview-actions .btn {padding:.25rem .4rem;font-size:.7rem}
+  .agent-overview-group-heading {grid-column:1/-1;margin:.6rem 0 0;padding:.4rem 0;border-bottom:1px solid var(--border);color:var(--text-muted);font-size:.86rem}
+  [data-agent-overview-card][hidden] {display:none!important}
+  @media(max-width:680px){.dashboard-agent-overview .agent-overview-controls .agent-overview-search{grid-column:span 1}}
+</style>
+
 <script>
   import { loadTaskSummary, taskPresentation, escapeHtml } from "../lib/task-summary.js";
+  import "../lib/agent-avatar-browser.mjs";
+  import "../lib/ticket-symbol.mjs";
+  import * as AgentOverview from "../lib/agent-overview.mjs";
+
+  let dashboardOverviewSummaryState = {available:false, uncertain:false};
+  function updateDashboardOverviewSummary(projection) {
+    const summary = document.getElementById('dashboard-agent-overview-summary');
+    if (!summary || !dashboardOverviewSummaryState.available) return;
+    const uncertainty = dashboardOverviewSummaryState.uncertain ? ' · weitere Laufzustände unbekannt' : '';
+    summary.textContent = `${projection.visible} von ${projection.total} bestätigten aktiven Läufen sichtbar${uncertainty} · tatsächliche Startart unbekannt.`;
+  }
+
+  const dashboardOverviewController = AgentOverview.createAgentOverviewController(document, {onRefresh:updateDashboardOverviewSummary});
+  dashboardOverviewController.bind();
+
+  function dashboardAgentCard(agent, source) {
+    const card = document.createElement('article');
+    card.className = 'card dashboard-agent-overview-card';
+    const overview = document.querySelector('.dashboard-agent-overview');
+    const avatar = window.BachAvatars?.createAvatar(document, agent.avatar, agent, overview?.dataset.portraitAtlas, 'agent-overview-runtime-avatar');
+    const symbolUrls = JSON.parse(overview?.dataset.ticketSymbols || '{}');
+    const symbol = source === 'core' ? window.BachSymbols?.createSymbol(document, agent.symbol, symbolUrls) : null;
+    card.append(AgentOverview.createAgentOverviewContent(document, agent, {
+      source, statusLabel:'Running · bestätigt', avatarNode:avatar, symbolNode:symbol,
+    }));
+    const actions = document.createElement('div');
+    actions.className = 'agent-overview-actions';
+    const open = document.createElement('a');
+    open.href = '/agenten/running';
+    open.className = 'btn btn-sm';
+    open.textContent = 'Aktionen in Living & Running';
+    actions.append(open);
+    card.append(actions);
+    return card;
+  }
+
+  async function loadDashboardRunningOverview() {
+    const count = document.getElementById('stat-agents-active');
+    const countLabel = document.getElementById('stat-agents-active-label');
+    const summary = document.getElementById('dashboard-agent-overview-summary');
+    const container = document.getElementById('dashboard-running-agents');
+    if (!container) return;
+    dashboardOverviewSummaryState = {available:false, uncertain:false};
+    if (summary) summary.textContent = 'Laufstatus wird aktualisiert...';
+    dashboardOverviewController.beginContainer(container);
+    container.replaceChildren();
+    try {
+      const [workersResponse, coreResponse] = await Promise.all([
+        fetch('/api/system/workers'),
+        fetch('/api/system/core-agents'),
+      ]);
+      if (!workersResponse.ok || !coreResponse.ok) throw new Error('Laufdaten nicht verfügbar');
+      const [workersData, coreData] = await Promise.all([workersResponse.json(), coreResponse.json()]);
+      if (workersData?.schema !== 'bach.workers.status.v1' || workersData.availability !== 'available' || !Array.isArray(workersData.workers)
+          || coreData?.schema !== 'bach.core-system-agents.v1' || !Array.isArray(coreData.agents)) throw new Error('Laufdaten entsprechen nicht dem bekannten Vertrag');
+
+      const activity = AgentOverview.summarizeAgentActivity(workersData, coreData);
+      if (!activity.available) throw new Error('Laufdaten entsprechen nicht dem bekannten Vertrag');
+      const uncertain = !activity.complete;
+      dashboardOverviewSummaryState = {available:true, uncertain};
+      const active = activity.active;
+      const observed = activity.complete;
+      if (count) {
+        count.textContent = observed ? String(active.length) : '–';
+        count.title = observed ? 'Anzahl vollständig bestätigter aktiver Laufzeiten' : 'Laufstatus ist nicht vollständig bestätigt';
+      }
+      if (countLabel) countLabel.textContent = observed ? 'bestätigt aktiv' : 'Laufstatus unbekannt';
+      for (const {agent, source} of active) {
+        const card = dashboardAgentCard(agent, source);
+        dashboardOverviewController.register(container, card, agent, {source, lane:'running'});
+      }
+      if (active.length === 0) {
+        const note = document.createElement('p');
+        note.className = 'dashboard-agent-overview-note';
+        note.textContent = observed ? 'Keine bestätigten aktiven Läufe.' : 'Es liegen keine bestätigten aktiven Karten vor; weitere Laufzustände sind unbekannt.';
+        container.append(note);
+      }
+      dashboardOverviewController.refresh();
+    } catch (error) {
+      dashboardOverviewSummaryState = {available:false, uncertain:true};
+      if (count) {count.textContent = '–'; count.title = 'Laufstatus nicht verfügbar';}
+      if (countLabel) countLabel.textContent = 'Laufstatus unbekannt';
+      const note = document.createElement('p');
+      note.className = 'dashboard-agent-overview-note';
+      note.textContent = 'Laufstatus unbekannt · aktuelle Laufdaten konnten nicht bestätigt werden.';
+      container.replaceChildren(note);
+      dashboardOverviewController.refresh();
+      if (summary) summary.textContent = note.textContent;
+      console.warn('Running-Übersicht nicht verfügbar:', error);
+    }
+  }
 
   // Live Dashboard Data Fetcher
   async function loadDashboardData() {
+    loadDashboardRunningOverview();
     try {
       // 1. Fetch Tasks
       const { tasks: openTasks, total } = await loadTaskSummary();
@@ -236,6 +388,7 @@ import BachLayout from "../layouts/BachLayout.astro";
     } catch (e) {
       console.warn("Agent Studio API Fehler:", e);
     }
+
   }
 
   if (document.readyState === "loading") {

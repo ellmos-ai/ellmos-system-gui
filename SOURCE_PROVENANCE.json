@@ -5,16 +5,212 @@
   "reviewed_source_commit": "8884fcd2277f5db89e1a267a81042b33358278b8",
   "license": "MIT",
   "files_sha256": {
+    ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
+    ".github/workflows/tests.yml": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
+    "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
+    "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
+    "ellmos-module.v2.json": "dd5053466f5e1be517f23fa8e48ed9ef8ac22d7ee47160c581ef6c6666d54d6d",
+    "package-lock.json": "7538dbd7a9c98f3cab141ba3ce78cb94c6e17bd9b66a1a9e6d588c9b9c09e9c5",
+    "package.json": "68db4c53cb0e7a29155cd7cc19acce8d455a5f779cc5a966e7f0b019c755977e",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
+    "public/page-reads.v1.json": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c",
+    "README.md": "f915a0e6fc029a872a35ec5526acd7aa50d5a55050f51ef9499f5924bb56af7d",
+    "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
+    "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
+    "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
+    "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
+    "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
+    "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik-data.png": "37d97cd458b18adb58e2f277c2f09c4954908a3ad7f57820edf162aa4aa28366",
+    "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik-large.webp": "5dfa5ddaafb16949f58f8c2cdf1e88e4050817f34e7a35e43375c2bcbf37578b",
+    "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik.webp": "791fbd92f3c5be2096d0454f38cdd87272a5ded5e10371e49bd977cf3f344d35",
+    "src/assets/agent-avatar-thumbnails-v1/comic-02-bueroassistenz-data.png": "c705d1e678f1f14de7bf022156a98227aa41ac8aab6a0734c2f2923698592502",
+    "src/assets/agent-avatar-thumbnails-v1/comic-02-bueroassistenz-large.webp": "3c2f3340392dd4e033184471d756784864f8943d738ead9e545d7c4577670b47",
+    "src/assets/agent-avatar-thumbnails-v1/comic-02-bueroassistenz.webp": "ed49f1f63510e6a952f01ffcf4996ff5b151ae244eee62072011c71b368d6550",
+    "src/assets/agent-avatar-thumbnails-v1/comic-03-finanzassistenz-data.png": "3e24e0eb36b92e1e5a5ae983b53cbd25b2a6c23662d086ec397a336483b9f802",
+    "src/assets/agent-avatar-thumbnails-v1/comic-03-finanzassistenz-large.webp": "739412316283009b46405b243e25ec50d9c0f977186840c25f49ddfa2ddd3b7d",
+    "src/assets/agent-avatar-thumbnails-v1/comic-03-finanzassistenz.webp": "62f931d120a329de89e3850ff32d9afd6147baf791c153dff6335c8ef9d7eb09",
+    "src/assets/agent-avatar-thumbnails-v1/comic-04-gesundheitsassistenz-data.png": "8c70b23c0bb39df448557cc5d6010cdecb08a1dc0362766ab1a9c9a249a9853c",
+    "src/assets/agent-avatar-thumbnails-v1/comic-04-gesundheitsassistenz-large.webp": "053f93801e55a252e6c873e148f92e0f42bdcd22c97490e6bc2337e20b70b592",
+    "src/assets/agent-avatar-thumbnails-v1/comic-04-gesundheitsassistenz.webp": "da47111c05b2a939acd70fb5c0dc61481eaa6b5621938b5794a559dbbc2dea89",
+    "src/assets/agent-avatar-thumbnails-v1/comic-05-persoenliche-assistenz-data.png": "ba525634d7ae3a9ac451da841ddf7d57f07f6c5cc0e0a097f4a4306a1e0014fc",
+    "src/assets/agent-avatar-thumbnails-v1/comic-05-persoenliche-assistenz-large.webp": "e94b35b06a5850f0f0f8b25d8a61fa87ec0662378aa9d02c3e395354a44fcd2b",
+    "src/assets/agent-avatar-thumbnails-v1/comic-05-persoenliche-assistenz.webp": "6b8c5de5a6eb661f4d7fc50cfa6751b40079de2d71891c1caf1fa6aee88b931b",
+    "src/assets/agent-avatar-thumbnails-v1/comic-06-medienproduktion-data.png": "883432052477d5a27b57e76d23ec6c21eed786632f5c47b077419b70f5703592",
+    "src/assets/agent-avatar-thumbnails-v1/comic-06-medienproduktion-large.webp": "8247d22423daeaba4c5e3a99363b463c0e6b46b205bc967d52f863f9ba274d77",
+    "src/assets/agent-avatar-thumbnails-v1/comic-06-medienproduktion.webp": "2cc9603597e36c5277403fd010194ede056f7eb31c86d82b2bf99978e739039c",
+    "src/assets/agent-avatar-thumbnails-v1/comic-07-forschung-data.png": "76ce2ab82d40f791e648068f675868a57688f46fc7fe4e1e4b84eb19dcbf56d7",
+    "src/assets/agent-avatar-thumbnails-v1/comic-07-forschung-large.webp": "3a20b696b91e348d218bc6a195ca416a35b6635133ee7cf81ab3b4b12387e9da",
+    "src/assets/agent-avatar-thumbnails-v1/comic-07-forschung.webp": "c938112a175ba24dbab8dbb9699d10dd568784b059700c9c0bc4fa3527346e4d",
+    "src/assets/agent-avatar-thumbnails-v1/comic-08-reflexion-data.png": "88eb23e1149c8e7683a1c3d2ce4d3fdccd9e92a75c0d23a063991f8c904bf99a",
+    "src/assets/agent-avatar-thumbnails-v1/comic-08-reflexion-large.webp": "15b329cdcc7ff25bdbd3154c612f2d31e94acff7a52cf36192276fe70886cf4a",
+    "src/assets/agent-avatar-thumbnails-v1/comic-08-reflexion.webp": "38c3f8d2aa3b22b9eb89022afd63c764224ada7b116836d41fd5701136752d14",
+    "src/assets/agent-avatar-thumbnails-v1/comic-09-versicherungen-data.png": "dd768115ecfd887e74a4b097423614c7d8b19c13694e9753335a7ccb5833bdd4",
+    "src/assets/agent-avatar-thumbnails-v1/comic-09-versicherungen-large.webp": "5137bda7af2b808101403364c00f01237cd81964dabc220e087433af668b0c9c",
+    "src/assets/agent-avatar-thumbnails-v1/comic-09-versicherungen.webp": "691bcf84897fbf418bcf40ee05e4923946cc4d69aaed34ff3dda96ef4625f7a0",
+    "src/assets/agent-avatar-thumbnails-v1/comic-10-bewerbungen-data.png": "c6125b0de20b5f755a13008a18cb6b7194c3fab7e89f03cedcea45a3a27d9a33",
+    "src/assets/agent-avatar-thumbnails-v1/comic-10-bewerbungen-large.webp": "41ca05a9ea28f5997d6c29033bcef32228b95dcee49e1e71f17034374b5fd8d0",
+    "src/assets/agent-avatar-thumbnails-v1/comic-10-bewerbungen.webp": "3d25e342a1d51674f539739171cddb88c6d1e2f7c6531d18cfc611adb0462f11",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-01-tuerkis-wolkenriese-data.png": "84ea2c4985217c24e29c28bc0fa1d529cbd09156f25082e499172785843c3ecf",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-01-tuerkis-wolkenriese-large.webp": "b625e62b96f62383619cf4c0bbcb1b2cc23785f0a168d10fa36aef0b0d1f1b3c",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-01-tuerkis-wolkenriese.webp": "4704eacef3723e574f1ee51709a8644e5f628cb6b515762e7a686a9e75f57d13",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-02-korall-gestaltwandler-data.png": "5a12b1903cbf596c708df252e391c0ef7641ffef806c3d82c27fc37dc18ad03c",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-02-korall-gestaltwandler-large.webp": "477b55af1b89f4bab507966a09a7e2f2b25aa9e1c16089754bb37cdb1d5b4bc1",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-02-korall-gestaltwandler.webp": "b6334685c322e62281f983f4c9b307147afff0098b6edd7f444672819dc25e7b",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-03-lila-traumsammler-data.png": "fd52fbaef0b6766a09706fa1022f00cc3d7de35fe1bf872b6556f1c361cf9862",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-03-lila-traumsammler-large.webp": "88358ec1d80f4191c60486e103f3f8b2c8e2b5337c1fdf214f71b6d366b24ee0",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-03-lila-traumsammler.webp": "90b074614ee472cd6445326a22fa19961af11a2b35100da117325531f52a609e",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-04-orange-feuerfreund-data.png": "8fd7e0d44951d8f8128196c57b8ea86a865ee60a6337e8bbf38eda2bb24b23a5",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-04-orange-feuerfreund-large.webp": "f027f36a29c9a1359a217a272af4fe62729a99b6d538036305f1951e68eda1b1",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-04-orange-feuerfreund.webp": "e07ab48016b70fc07b98eeb8d29a1709eb23f2f982b3591bb9308b11c1148a6b",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-05-mint-pflanzenhueter-data.png": "4292cc7259128052dc19cc5acd071e12258138a436e78ad57db6900eff6e859c",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-05-mint-pflanzenhueter-large.webp": "f32a4ede89a6e259eaaade711e7d174d189fd736e71a8aa17cb19d237e47e705",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-05-mint-pflanzenhueter.webp": "2fd3249a090cda39fb83980f150b44f3c73cbfe529fb838903005966874dbbfe",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-06-blau-eiszauber-data.png": "e140e7a887fc142a3451114343f5f1f63782d10812aa06d63759266fca183c73",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-06-blau-eiszauber-large.webp": "89b0b4ccf616975a2de2c6891e37bc780e120761411b3fa92b0a31262f5cf393",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-06-blau-eiszauber.webp": "0a8639287006a7b214f1adf12a3aa450c0681813a5b4c0f82b621af304b82921",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-07-gelb-lichtfunke-data.png": "9a16c5ab0927fe9a95da051d93406db64b74d900cec5799d25cc402eb731e1b1",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-07-gelb-lichtfunke-large.webp": "38a172180e3197b2b5e38a3f5d21b8ddc355980e61df2e5b12a08f427b89e351",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-07-gelb-lichtfunke.webp": "aea07ef7444adf6abfdefb8c612518306f87a9de231e38f3910f79278aabd0cb",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-08-indigo-teleporter-data.png": "92dc7366f5ca9ea66f9ba1f108ae98e9087e3b0bcc77d01725f97eca8549a825",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-08-indigo-teleporter-large.webp": "6ceeb8b755bddda903db2680e4a6c3f80b724b4c61fe9307d39e6d16dc5fb991",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-08-indigo-teleporter.webp": "ca083a69052a5e4c8a71d7964ce48355d3d368552b3a12045de8ff305faa56d6",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-09-pfirsich-klangkuenstler-data.png": "f9abd36a414e0d482b455fd7f6874bd53584a2a425a0870aa032b0bdf150acbd",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-09-pfirsich-klangkuenstler-large.webp": "ffaa0d058960398d1a3601d7fba3b1fd92648e5cad2965792677f550c00f0e74",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-09-pfirsich-klangkuenstler.webp": "3ae46f903883496b371a25aa29110f75b995f98aa56af3e0741a607a9306926e",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-10-rosa-sternenschweber-data.png": "a54ae59a448b89b44610bf2c3cadd568f9db1fd3bc510654bd218f9aa862ddb0",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-10-rosa-sternenschweber-large.webp": "a8939b3d8cf3fe4f7aa9a4aed29f963c31bdd93068f221247c0a60f4c8811a0d",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-10-rosa-sternenschweber.webp": "109b6084584c998ded3eac93ab93553f204e72f03115877a2552e4276301a4ea",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-11-slime-smaragd-data.png": "ea411c71cdcdade0d4950964caddace59704d05db551c966d0be80de05f307d2",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-11-slime-smaragd-large.webp": "050ce4081798f82a17d5d41f33a2c24d3487cbf8348c715f862589d916700546",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-11-slime-smaragd.webp": "c3773d374133d4cffa3e5c015e9aca05bf04b2ac65396f5153072f4084d88560",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-12-slime-himmelblau-data.png": "31dc67ae6b61b2cffcf7e9be673172731857a9b54c8b1bad67ab1dc3613f804a",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-12-slime-himmelblau-large.webp": "8cf8875c9ad5446cc1144c203f31d3a36807a39efdf54f74e216f99986b721b9",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-12-slime-himmelblau.webp": "17076526709f2b30fa3ad6a0baeedec20180adcb8e62b92820cff6e605fa798c",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-13-slime-rosa-data.png": "16106853f07cf8778b4a4ce47f7a38a2524b58a856b85fd78f68fd3d5c1bf9b4",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-13-slime-rosa-large.webp": "57b43c72c141fea113484b55cd0f465025ae2319c76be671aec26ff4caa2c4e5",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-13-slime-rosa.webp": "7f5b5ffac8e70ba38203f001a9627bfef17d9a4db88c4677738a69c29a11297d",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-14-slime-goldgelb-data.png": "4c90984e759ac16e35e9d592ffb91afa0e553cb0c7a7650d546f23a88c324173",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-14-slime-goldgelb-large.webp": "da9451579ba3513e6f7ce7298bf04be861855a8de435b09dddd869ada220b2f3",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-14-slime-goldgelb.webp": "f7a2c30f4b9b76463b72067d1c5aeb2a27e51947110fed9c2b53a65ed352b4af",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-15-slime-violett-data.png": "f9ba1cb24e45c3e9af0a997187cb24fb6f20deb6eee335f3a82b11dadb0263f2",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-15-slime-violett-large.webp": "13ad3369aff06d1c83ce0ab0f8a79a4885600a83467ff12b2449c8175145c1cd",
+    "src/assets/agent-avatar-thumbnails-v1/fantasy-15-slime-violett.webp": "32043332cc7ef0a85aaa7313fe3256521965046c140ad0f07177b18bd81462ef",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-always-on-large.webp": "635e14600d622b61f646d0e8126c47873d307700b6d6eb3ac6cc97c197342f9f",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-always-on.webp": "7c532e1a8456abcb9b1fff8d0e2e67d758ccaf37c63b315bbe7bdec8effa497f",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-buddha-chat-large.webp": "93e2966671e3cd5528d74798a297a748ca6fa0ed8834387491103263e1e53cc4",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-buddha-chat.webp": "a30bde03a9327116762e50825c8f45a9509c1c648c0ce07410d958777a821189",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-claude-friendly-large.webp": "87aa8c5397339632174d32d91f995ee0186c10277ee6e54d199d4c88d94e08f6",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-claude-friendly.webp": "d28634f3045647947eee601cc95523775bbfb7348c1df71c5900ea0afc789d0a",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-claude-neon-large.webp": "55bc7fbe0d0291c0972ecd7340a4778d24d8f9471fc8d72ba37ad30dde04f4e5",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-claude-neon.webp": "1e1f3c376389281ab91c53f610e9e3862bc57567151a9cb09557743d9c4c4cde",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-claude-opus-large.webp": "ea77fd47fab9cbaffc3d6f35eda147bd37a8219f68acd773cf8ca2188760745f",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-claude-opus.webp": "d428f2afb0e2311cd1138d2bfb69c4254225715e267f320b488f74556ebc33cd",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-connector-a-large.webp": "8411206ebde08d11db091070de853a1fe3eee758ac18b56c4eef76561050e175",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-connector-a.webp": "c1ac517574f14edf779eb863d1d22ddac4b803171658daae469f4f08065b788e",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-connector-b-large.webp": "695d8ac3b70949d836a02ce422aebe05e59bd9cab0ce015de3463e7d73aaec71",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-connector-b.webp": "f612b59d066ff7387c4befefd3a6789550496a349b029ddd8bc43956dbe621fe",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-copilot-large.webp": "15af6eac7be065154e7bca246319978e38fe312aafc6d82681fb848f28840e4c",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-copilot.webp": "6fc0c4fdbd847aee4a3b541add87b48c96d96cfdc6a7df0ba4df4e6f45b4d5fa",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-gemini-large.webp": "66849b145455255576c2b6ff0d6bd18b710152004b7f9960ba02580aabc5e602",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-gemini-umbruch-large.webp": "623e867917ff129bacf77f54bc9c2ddb3978fabdd8fa39eba3a3f7ed6c1ee5b2",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-gemini-umbruch.webp": "1beb7678d2586b2657e93510654ce34c26d7f78fc4f09e025db3e87fbcee1afe",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-gemini.webp": "0853c7137869d6b4bba60ce12dd7e14145b48fb25415c8296c9644c451a45aa1",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-law-checker-large.webp": "a8361530f31bf8a452cab325b89da6a31f93375ae0b900561e77f759eb0e68db",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-law-checker.webp": "bebe5be0a8a056a3ca0eceba0121be04bf3e5019f597d9bfd99ca1425a5d040b",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-maintainer-large.webp": "94b2003d54a266c7bd78abaed8010b07285aa79ad21e21061021b90ac81a585b",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-maintainer.webp": "152136baa47346f672ca861dcf1c254711189333875d66e45e0cc85b31ad6d7f",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-maintenance-large.webp": "cb9603c867b5434356cdb7bbe1d579b934a837de5ce7acadba6722ae15e80022",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-maintenance.webp": "f0858d8b20f2d86ba7504ffb03bf5596d0a5e9a3a3aaf571f18d6fbba676df1d",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-operator-large.webp": "17afaf80c47d23e6726c6456075a436c1a08ff17bb5bb0264690c73954c02825",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-operator.webp": "781e1cfb779c2d70da8a156f6aa09ab2672bd67d932e869317768fbc8b0634ab",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-researcher-large.webp": "ef56211292f1f2c94b25d94bd2eed6d9728b692a034b8faf1dde797afaed90ca",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-researcher.webp": "b91d51235ddf09019c762d0740732bea95d4b8f998619e63bdac0cdd9a092710",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-01-ati-developer-data.png": "a7dcb19fcb6a829ebe0d71bf533e357f45b16a0450e7149e0313823561650fb7",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-01-ati-developer-large.webp": "9b8ab298d232176dca77d0b60e8e02ccd8df7b9cac525a0dab84924563f94302",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-01-ati-developer.webp": "b25c73cd088824f89dff1ad224fec1aa214bee319cc8cea2cdb85f0449a27f79",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-02-buero-office-assistant-data.png": "bdaa83c027763e0626017769f9c009b830ec4155422d52341e2051be9d1e8a88",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-02-buero-office-assistant-large.webp": "5297647310c912406b3cf6030a95a292662c142a5b81ced3459201b6b2e39440",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-02-buero-office-assistant.webp": "56d095c2d26505a0f1a99e9c138d49de958ac6fe5cfca9f6a4d3e54f5401fe76",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-03-finanz-finance-assistant-data.png": "4b2169a60a039cf0bc7d6679fd0a5df7ff9a29ee84c163c8707ae4c2604df4d4",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-03-finanz-finance-assistant-large.webp": "7ab20cfc322fd22aeac103ee42dd65c5e3e0fefb0b7e309de95a06af842c29d1",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-03-finanz-finance-assistant.webp": "bcbd56cba41c7bf22a2d9d21a19d8fc193911af993ac458aec416428ba0ddafb",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-04-gesundheit-health-assistant-data.png": "92fffbc138ee3f261bc0d4eeba26a132c3a91432733ea62e2d0ca28d273524c1",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-04-gesundheit-health-assistant-large.webp": "516734f2882599645aaaa6321c6dc49ee6ebd97095ff5e0347d2634730e2c105",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-04-gesundheit-health-assistant.webp": "6ea81de60a14cc062296a235aa775a860772762bd6b04cfd79ca878e74ac8fbe",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-05-persoenlich-personal-assistant-data.png": "33ad060f00942eecde15c4aea69f265928178165be82e1c85bf8f4cf76ff0a1a",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-05-persoenlich-personal-assistant-large.webp": "b89c78ffe5d272d0967fc315fd501ec18dd2b823f83568825976693ed127644f",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-05-persoenlich-personal-assistant.webp": "f5a46f0a7675bf1b8047dd74e4f6d169a47134eb88bd40e30095034b9d2cf764",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-06-produktion-media-producer-data.png": "154ce53b1e5252dc98bc119a78f8a5d1e9fe0c55acb0313ef3332cd43913137b",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-06-produktion-media-producer-large.webp": "e229622c626c4a3c9393faac0502ba96f2723a549962d055f4a90739d1af9f8c",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-06-produktion-media-producer.webp": "b2c2578a112c0b048145045b65eccc6c32ee5a3ffa3fcbc77998c8a15aedcafb",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-07-versicherung-protection-agent-data.png": "f4eec4a1f2727c31b7c2b45fca4f7e10f6e761de283e0983a1f6cf5ebe3b4b32",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-07-versicherung-protection-agent-large.webp": "066f7f32676aa598287d639275b26ac9c5e186c560a1854d3b69e7f869a2a1d8",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-07-versicherung-protection-agent.webp": "8ad6b97184dccaa42f4b5bf8b24b0a81748cf21bd87c8f8555f3d6bf146d1796",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-08-research-science-analyst-data.png": "7548b4dd8570947e10dfda8f289095ae3bde61dce9f30f0ba0ea1fcd6ef11670",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-08-research-science-analyst-large.webp": "298b107df50fc89e5538e62a0038554904154b8bbac806b7effef51d47f1db2d",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-08-research-science-analyst.webp": "89d45b3fad0cdab5f679c7f4f6b0a590651c82f805269cc0c56c6c50e6f5cbe1",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-09-test-qa-inspector-data.png": "6edc39b14f6a0b952abdbf2c2a631fa42982cb260a289e5af2f1005652c0c18a",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-09-test-qa-inspector-large.webp": "cc2baa7e75df5188e5fd67de8b1604df1b0493763b9cc56ca0d62ddf5aad6b08",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-09-test-qa-inspector.webp": "e91b0682d1d0cd0ad49c63fdf334fabb3cd9b3059b89bce6466d72b87e473a43",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-10-ocean-system-navigator-data.png": "7d7ebd6b1cf4b95546a28dd26c59cbb20a40da8c8df7e85ef4fb001859b99cb1",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-10-ocean-system-navigator-large.webp": "066240773f10f6b53fe628dc952c597c665fe1bec8865560befca113f9ebb730",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-role-10-ocean-system-navigator.webp": "26286db876779b8fa822118d88c95e611dc798a9790e1cedcc0129a3b52a4c6f",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-system-auditor-large.webp": "3ba571b3a4b48e6044ee9b6e6ab78038694a8abaf5a9371cd1678f939c838b0e",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-system-auditor.webp": "eacaedaab5ca110d46cd8b02f157c3133ecfd7e1210f0e0e73c2ed0efb48354c",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-task-solver-large.webp": "35c9e5ef86fef28cc6da4c73c210ba90895fcd1dbbe49b2680fb15ba23eb0529",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-task-solver.webp": "53b6674db1728be1cc29abea0906f5c8c10b81675095133270aab1e82c4fe34d",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-task-writer-large.webp": "36a0b150fdc006b865e500d75023ace50f0185908da0023a7764753f0013b86a",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-task-writer.webp": "4728d99ab6e928152c22b26a445bf1d1bb07dc1c1cc27f39f50056c99442f87e",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-ticket-master-large.webp": "6d5d834f20828ef29ec9a85fdd891eed06f035c57e1da3d247fd650b177da0ef",
+    "src/assets/agent-avatar-thumbnails-v1/gemini-ticket-master.webp": "34c1989ad39fcb5fa2295b2efcb855c4e632ab57e49d11842c3e03dd75c7f3e2",
+    "src/assets/agent-avatar-thumbnails-v1/provenance.json": "e54d28ea4f4587a01a9931e7876d6f44a9a5096b5d6dd233e94f3d5c2772942e",
+    "src/assets/agent-avatar-thumbnails-v1/robot-01-raupen-tueftler-data.png": "4a943af297e1f9fa7a3eb509aed0f76b3d644dc17177648802887e1f640d3b13",
+    "src/assets/agent-avatar-thumbnails-v1/robot-01-raupen-tueftler-large.webp": "d03eee4c83db043abea9e81ceadb4838bc5ffdbb7909969c6774dae2c71f94d7",
+    "src/assets/agent-avatar-thumbnails-v1/robot-01-raupen-tueftler.webp": "9e3f3090ef3b6e16507c1e11d02f769253f323f9a85552f46b242c06a9c2856d",
+    "src/assets/agent-avatar-thumbnails-v1/robot-02-schwebende-perle-data.png": "5d1c58fc158b348771b384bca73aa379be86ea7d84b396d43bf8798f1de0b670",
+    "src/assets/agent-avatar-thumbnails-v1/robot-02-schwebende-perle-large.webp": "b928f92dfcaa614bad21959ebebdb2a2b44b0c60885961312331897b8b056061",
+    "src/assets/agent-avatar-thumbnails-v1/robot-02-schwebende-perle.webp": "a467d701dee619e60bc3d66c1a07ce0e488cb514b236cb8cc6a9b91c79f72ff2",
+    "src/assets/agent-avatar-thumbnails-v1/robot-03-kupfer-spinne-data.png": "13af04ab7b42b6b60cc9440cd5fc3cce0484b13b230f8aca4478752d08bb9533",
+    "src/assets/agent-avatar-thumbnails-v1/robot-03-kupfer-spinne-large.webp": "5756886ac65d5538aead83f8a6e6632a65d063112243544a4a9c0f907b3353ab",
+    "src/assets/agent-avatar-thumbnails-v1/robot-03-kupfer-spinne.webp": "feb82bfb23adaa3f9c7b3f0bca4ac5a20f941f9dfb53c8e351b6652fd3e10fc0",
+    "src/assets/agent-avatar-thumbnails-v1/robot-04-mint-gaertner-data.png": "9be5694194658d836bef59fe2913fe702e5a2e81304dc888b5aa389ff539b4fe",
+    "src/assets/agent-avatar-thumbnails-v1/robot-04-mint-gaertner-large.webp": "1d675377f56dd6779bea81284b553f3c25db9d395fea8d13ddfdce539e8de555",
+    "src/assets/agent-avatar-thumbnails-v1/robot-04-mint-gaertner.webp": "06e00cf76c9caae8de5de64bc6ce69c87293fa9c7f289f0f2d527fbe0c550dee",
+    "src/assets/agent-avatar-thumbnails-v1/robot-05-roter-kugelbot-data.png": "4a5d8a828b91a72487357640db3b5e9c4ad35fee593056130ae65cb08b4b58a7",
+    "src/assets/agent-avatar-thumbnails-v1/robot-05-roter-kugelbot-large.webp": "5e12a0eb8944b61b659ab7d43ee14daac4ce44e0c28ee8b09f4e5194a9b639f7",
+    "src/assets/agent-avatar-thumbnails-v1/robot-05-roter-kugelbot.webp": "cd227f5da1ed01fcba3bc8f6ebc1daf231ac9d58653ef8bac5b4051b911920ae",
+    "src/assets/agent-avatar-thumbnails-v1/robot-06-lila-astronom-data.png": "35414c7282eda2c1a7b8b6053ca5f8cfd103808a4f8f014e157371d1f89a442c",
+    "src/assets/agent-avatar-thumbnails-v1/robot-06-lila-astronom-large.webp": "9cc8b51356e229404a96b9488edef0fbf74d581bdeebc6a75fbb334f625a40be",
+    "src/assets/agent-avatar-thumbnails-v1/robot-06-lila-astronom.webp": "e2176dda4c8d473289a707d15599d44f2b91429cb145bac4369d9571b014b138",
+    "src/assets/agent-avatar-thumbnails-v1/robot-07-teekessel-archivar-data.png": "d369805b7b3ec569d88b3bbb7c2abcc944b5cd3adfed758f6d001b13e85846c3",
+    "src/assets/agent-avatar-thumbnails-v1/robot-07-teekessel-archivar-large.webp": "8e7c6cdce3aa5ce0b8d2ad0d43a6584e111360c689cb1c5b847ac37c42219a85",
+    "src/assets/agent-avatar-thumbnails-v1/robot-07-teekessel-archivar.webp": "46183b596b1f575ea03ab0e913a9228034427788458ca195fc91aa92a28a0684",
+    "src/assets/agent-avatar-thumbnails-v1/robot-08-blauer-krabbenbot-data.png": "5d574da5e88b0423983f7b5524c335f63fe59f2f1efe496305ee90e259ee1dbd",
+    "src/assets/agent-avatar-thumbnails-v1/robot-08-blauer-krabbenbot-large.webp": "fa4695c8e3e4c1129eec9c5a253d74da55f5bc09846b9e97553a56200dcbbefe",
+    "src/assets/agent-avatar-thumbnails-v1/robot-08-blauer-krabbenbot.webp": "adc4780c31bf2fb934d0c1da6e338d4c49b483f4318a3b22d1729b348ac3cd67",
+    "src/assets/agent-avatar-thumbnails-v1/robot-09-rosa-stoffbot-data.png": "907e61135f8d83f714b5c74154efcf9c30584e86007fd1c3f85cd85320d23d75",
+    "src/assets/agent-avatar-thumbnails-v1/robot-09-rosa-stoffbot-large.webp": "e1ec67a7e5f686bb0895b791ef39d24928dab3b656db64bec087a41bd0d8142c",
+    "src/assets/agent-avatar-thumbnails-v1/robot-09-rosa-stoffbot.webp": "5a63b5636ffdc94132664285900b4f2b395727485eb4af5900655897e4165107",
+    "src/assets/agent-avatar-thumbnails-v1/robot-10-gruener-froschbot-data.png": "32b42468f461919ded6931f9d1e4fbb431506cd92aea39f5ac5ffbd233a9fc5c",
+    "src/assets/agent-avatar-thumbnails-v1/robot-10-gruener-froschbot-large.webp": "dd8297c38ba12cac74b5fcd31aa6ece4cbd7b3f50b763a8065d0e0318e92a765",
+    "src/assets/agent-avatar-thumbnails-v1/robot-10-gruener-froschbot.webp": "db2534f646c4df68d3fd165af5b5a6e820e92c561e22292fcfbc1262b67e0faa",
     "src/assets/agent-portraits.png": "a733ce82439cad152bc2e7f055f88f377f000d51c61e34939a5309b27093f5d8",
-    "src/assets/ticket-symbols/README.md": "88cced00eb2652e91337b6a561c629696cf301e6c2f2533f13a8063703a131ae",
+    "src/assets/agent-workshop/provenance.json": "ce9d3c13bceb267452aa813371ae9eb8126f54d283521730b3a917bd4f68d764",
+    "src/assets/agent-workshop/workshop.jpg": "b3b102785c06ef1cef4e74cacff6445b94bddcdc5d9083c45748c4f21ebc5674",
+    "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
+    "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
+    "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
+    "src/assets/gemini-agent-portraits/copilot.jpg": "c673a9651e44f11a7be116562eb082411d7127d397550fd062d42c61a93c8a4c",
+    "src/assets/gemini-agent-portraits/gemini-umbruch.jpg": "514a9f32a3956175bbb1f1fc90158401a00e042020e690d56f35b4f902070751",
+    "src/assets/gemini-agent-portraits/gemini.jpg": "f18b2731f1a1cf528d03bc3ebc64aceacce04d5d7cf34e3abfa098c5f0713dd3",
+    "src/assets/gemini-agent-portraits/provenance.json": "93d46380216bf7c651b0268581d33124123772532a9936c3245ac375d2b06360",
     "src/assets/ticket-symbols/githubbot.svg": "b26066f87ef31061813b75694b7054bac108f2154f69055319103389c5470bde",
     "src/assets/ticket-symbols/office.svg": "0238736ed21a910fe80122ba980e83b29190b79adae52ab754dbda277848ce89",
+    "src/assets/ticket-symbols/README.md": "88cced00eb2652e91337b6a561c629696cf301e6c2f2533f13a8063703a131ae",
     "src/assets/ticket-symbols/scripts.svg": "9d036e885b92847c2f9657e9a547a35f06b649fdd3e92d51f2e78886eb81e4a7",
     "src/assets/ticket-symbols/server.svg": "fd3f41d4a1e4cf23155ef98c2d490bcff2504c41acade389e01192ace87248bd",
     "src/assets/ticket-symbols/sync.svg": "f0413e3c8b8055a5f4d0dfd3a3d33a6aa0e8ea594a8e1c498a085e7465b9ace8",
-    "src/assets/ticket-symbols/topics.svg": "bfce095b28736f6d8062ff49a031154951a3d94c8953adf7e249ba69b777db97",
     "src/assets/ticket-symbols/topics_ai.svg": "9b1fd6dd1f34b64d23c93a3f8f7650c263100064abd9c549d9a66fbd991e425a",
     "src/assets/ticket-symbols/topics_gesim.svg": "4ccdebb85135c3b2d246320ecc6000753cf6faa4fc0605a479725ff233131d50",
     "src/assets/ticket-symbols/topics_hardware.svg": "82f3306e7f8f2a23af95be4838c5afda7ea71b9838ca219821e923367ab388b8",
@@ -23,104 +219,103 @@
     "src/assets/ticket-symbols/topics_software.svg": "a984e05ebfa0e285473aa795587ff6d42e0a87f29cb8078ef356b7d29b570499",
     "src/assets/ticket-symbols/topics_umbruch.svg": "682e10660b4f896e7b2b52e2d487844248754871060210669cd66cb64011b70e",
     "src/assets/ticket-symbols/topics_uni.svg": "45b565524ec66eff4b5f87a12729afc958d5ff2027af337f8472ecde0fe1bd19",
+    "src/assets/ticket-symbols/topics.svg": "bfce095b28736f6d8062ff49a031154951a3d94c8953adf7e249ba69b777db97",
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "1cda4d163d9baf87aac8aa747f4b42c1ec6262044bf8d620ee93215288bea546",
-    "src/components/Header.astro": "c997c4aa86d16d0ab70edaaf3c6c3332d0e566cc629386d2872fd7ebd57a44e7",
+    "src/components/Header.astro": "3c322df64b43025f2fa561ba450b4e9f92aa6371263ea0b68399adb297abd87f",
+    "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824",
+    "src/components/TaskLeasePanel.astro": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
+    "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
+    "src/components/WorkerPolicySettings.astro": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3",
     "src/config/nav_config.json": "0dc51055b0da809445c73ec01cd29fe238b37000e7783ab84edd68ecfbbc078c",
-    "src/layouts/BachLayout.astro": "8f45bbac50c150ea9d19f91794bb97b94ad103f5abc5cdef01e70a3c9cc43ac6",
-    "src/lib/agent-avatar.mjs": "3057e2f7863031a5d157b7c0e0fb3659678a97fc6eacdeb8645775e263e26147",
+    "src/layouts/BachLayout.astro": "98233dd65eae4491973c55bd73d8174509efcf70c5d57856b94ce4a1c7e0844e",
+    "src/lib/agent-avatar-browser.mjs": "02b51e85852532af3549dbecd1b4c1b1bf7bf48eda7340f23523c7597ec44abf",
+    "src/lib/agent-avatar-catalog.mjs": "6da91323ab28c22ddbe8555a3f59497c61c1d406bcd692fcd5bfb26643a82fc0",
+    "src/lib/agent-avatar.mjs": "963908968e71a4a05f01836dedbe153d1cd62c78f513ce25c4d7dc0f0e72a383",
+    "src/lib/agent-history.mjs": "9262398aac30160b5433bb3cbc572559e0e1fac4a33a68442bffe552f0c975aa",
+    "src/lib/agent-overview.mjs": "bf4a7d55b4faaa3c726dc2f18ce85e616db6a445bae054cb61beffdabc3b6463",
     "src/lib/capability-board-client.mjs": "7a80423bc472ade80f05065c57ef9b732493b40cd2900f0705b2c3af8f72d831",
     "src/lib/capability-board-ui.mjs": "cdf37bb84c2009c0be06fbe9ba2a9ff1156d50b9e6e2b2f74fcd1ea8c2d28f25",
+    "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
+    "src/lib/domain-pins.mjs": "0bc813215764e5e6fb77044bbd68756351b60ddb38035c188548b95d1a527bd3",
+    "src/lib/domain-routes.mjs": "ba4dd103080f7090c27121009a33efbc4e6af03a7afc75ca77bef4766aa10d08",
+    "src/lib/gemini-avatar-assets.mjs": "72f30b9af1c0374ab30aef6cdb5f5a662af8d4f9448ff86596e0b6fd607e115a",
+    "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
+    "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
+    "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
+    "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
+    "src/lib/task-filters.mjs": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1",
+    "src/lib/task-lease-panel.mjs": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
+    "src/lib/task-result-contract.mjs": "288ae1eca81861709ee878436c94e58faa23027e95b13ba7f0baad8f62a71410",
     "src/lib/task-summary.js": "e28cfddcc7ee559b74be8c9883b946b85571941dda13d5cba97aec3dfcc63d07",
+    "src/lib/task-worker-policy-settings.mjs": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78",
     "src/lib/ticket-symbol-assets.mjs": "207537da4144c4f1627d0086417ad384069085adb1aa8090d6f41f770e6d0b84",
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
+    "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
+    "src/lib/worker-policy-settings.mjs": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb",
     "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+    "src/pages/agenten/running.astro": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
+    "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
     "src/pages/governance/index.astro": "b734a00389abcf4ad580e5ffe0b0c513f64328dcc997684edb0b03a2ada7a477",
     "src/pages/governance/logs.astro": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
     "src/pages/governance/usecases.astro": "860a03ca99e466d9571ab93e350a24105ba3caff69a06f9a06c4a83ee14c3b19",
-    "src/pages/index.astro": "068fbeb644b24919654a846b7fdce7d983300ee74695af3c20c5410d7f1368b3",
+    "src/pages/index.astro": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d",
     "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
     "src/pages/memory.astro": "27de17373b2319a598efc7397bd2dfa96aeb1c543303581cdc93ce2edeb5b74a",
-    "src/pages/settings.astro": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+    "src/pages/settings.astro": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
+    "src/pages/tasks.astro": "ed62c7834a6437c8afed43050f95e4cbd7b00945656e92dc2e985e70e4084416",
+    "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
+    "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
+    "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
-    "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
-    "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
+    "src/scripts/domain-studio.mjs": "2b40b55a952eba22b1494a0405379bf3b6e7724e97845306ecdde115bea00283",
+    "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
+    "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
+    "src/styles/main.css": "dcfbbdffa0a7c12f94181453fff6b49c9aac8bc6d19e4fc5e0f2b2fff3ae63a9",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
-    "tests/agent-avatar.test.mjs": "cbb6f8ad9eb5516bd8f21e001bb35cdc80b3b2e247485709679c5248d7fe6341",
+    "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
+    "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
+    "tests/agent-overview.test.mjs": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
+    "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
+    "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
+    "tests/domain-routes.test.mjs": "bdcc11061fbb9a12f670fe6917c890d722d46b9ba6b8f1f87adbe58b1579d353",
     "tests/fabrika.test.mjs": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
-    "tests/system-slots.test.mjs": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
+    "tests/frontend-parity.test.mjs": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5",
+    "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
+    "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
+    "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
+    "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
+    "tests/release-provenance.test.mjs": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
+    "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
+    "tests/system-slots.test.mjs": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b",
+    "tests/task-assignment.test.mjs": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
+    "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
+    "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
+    "tests/task-result-completion.test.mjs": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1",
+    "tests/task-result-history.test.mjs": "f6207020933b85f58d31ce189b2c4f9f413223a81fad475d6df3ceb2eb49e340",
+    "tests/task-result-source.test.mjs": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
-    "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
-    "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/frontend-parity.test.mjs": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5",
-    "tests/task-assignment.test.mjs": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
-    "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
-    ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
-    "tests/release-provenance.test.mjs": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
-    "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
-    "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
-    "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
-    "package-lock.json": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
-    "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "3881109b884457764bbbed3d42b4bf6e60a6a2aba845fabbefe311303d1d0c78",
-    "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
-    "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
-    "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
-    "src/assets/gemini-agent-portraits/copilot.jpg": "c673a9651e44f11a7be116562eb082411d7127d397550fd062d42c61a93c8a4c",
-    "src/assets/gemini-agent-portraits/gemini.jpg": "f18b2731f1a1cf528d03bc3ebc64aceacce04d5d7cf34e3abfa098c5f0713dd3",
-    "src/assets/gemini-agent-portraits/gemini-umbruch.jpg": "514a9f32a3956175bbb1f1fc90158401a00e042020e690d56f35b4f902070751",
-    "src/assets/gemini-agent-portraits/provenance.json": "93d46380216bf7c651b0268581d33124123772532a9936c3245ac375d2b06360",
-    "src/lib/gemini-avatar-assets.mjs": "72f30b9af1c0374ab30aef6cdb5f5a662af8d4f9448ff86596e0b6fd607e115a",
-    "src/lib/agent-avatar-browser.mjs": "13bbd8fd864fcd5fafc4580322d2c19f50c94f36645d723fc812803acc17f68d",
-    "src/lib/domain-routes.mjs": "ba4dd103080f7090c27121009a33efbc4e6af03a7afc75ca77bef4766aa10d08",
-    "tests/domain-routes.test.mjs": "bdcc11061fbb9a12f670fe6917c890d722d46b9ba6b8f1f87adbe58b1579d353",
-    "src/assets/agent-workshop/workshop.jpg": "b3b102785c06ef1cef4e74cacff6445b94bddcdc5d9083c45748c4f21ebc5674",
-    "src/assets/agent-workshop/provenance.json": "ce9d3c13bceb267452aa813371ae9eb8126f54d283521730b3a917bd4f68d764",
-    "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
-    "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
-    "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
-    "src/lib/domain-pins.mjs": "0bc813215764e5e6fb77044bbd68756351b60ddb38035c188548b95d1a527bd3",
-    "src/scripts/domain-studio.mjs": "2b40b55a952eba22b1494a0405379bf3b6e7724e97845306ecdde115bea00283",
-    "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
-    "src/lib/agent-history.mjs": "9262398aac30160b5433bb3cbc572559e0e1fac4a33a68442bffe552f0c975aa",
-    "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
-    "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
-    "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
-    "README.md": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
-    "docs/CONSUMER_CONTRACT.md": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
-    "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
-    "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
-    "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
-    "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
-    "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
-    "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
-    "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
-    "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "public/page-reads.v1.json": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
-    "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
-    "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
-    "tests/task-result-history.test.mjs": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
+    "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
+    "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
+    "tests/gui-shell-navigation.test.mjs": "ba8687c675c7fad2c06c635ce6156b70c2cb2d0892652e76df30b78751b1d8ad",
+    "docs/GUI-SHELL-NAVIGATION.md": "631e940ff40d37608a523d3b52e29bd2406e6514c95ea961e3efb6d9c6037c5b"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -490,7 +685,7 @@
         "src/pages/tasks.astro": {
           "source_path": "system/gui/web/src/pages/tasks.astro",
           "source_sha256": "cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9",
-          "imported_sha256": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
+          "imported_sha256": "ed62c7834a6437c8afed43050f95e4cbd7b00945656e92dc2e985e70e4084416",
           "adapted": true
         },
         "src/scripts/blueprint-studio.mjs": {
@@ -1255,6 +1450,367 @@
       ]
     },
     {
+      "date": "2026-10-15",
+      "scope": "Task2212: review/selection policy settings, task overrides and optional lease countdowns",
+      "source_base_commit": "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+      "changes": [
+        "Carry forward existing task2212 source implementation 3f28865 without changing runtime task authority.",
+        "Keep failed writes visible after readback and prevent delayed responses for an old task from replacing the new selection.",
+        "Backend worker-policy availability and user acceptance remain required; no runtime completion claim.",
+        "Preserve historical Task2138 hashes and validate the continuous subsequent provenance chain instead of rewriting history for a new feature."
+      ],
+      "files": [
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
+          "sha256": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
+          "sha256": "619deceffa24d6b8ec4532e8b1050612f2cf9a0d64826381f801f4c5166828a0"
+        },
+        {
+          "path": "src/components/TaskWorkerPolicySettings.astro",
+          "previous_sha256": null,
+          "sha256": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a"
+        },
+        {
+          "path": "src/components/WorkerPolicySettings.astro",
+          "previous_sha256": null,
+          "sha256": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3"
+        },
+        {
+          "path": "src/lib/consumer-api-auth.mjs",
+          "previous_sha256": null,
+          "sha256": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a"
+        },
+        {
+          "path": "src/lib/task-worker-policy-settings.mjs",
+          "previous_sha256": null,
+          "sha256": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78"
+        },
+        {
+          "path": "src/lib/worker-policy-settings.mjs",
+          "previous_sha256": null,
+          "sha256": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "sha256": "dbf08cc27db7bab2c65103bcf0ad6864cce481181e22b2659b3fb49304c1d77e"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+          "sha256": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "aa2871efe995b1b9ec6e653ac7d5028ad5ffe97ba4846b2279d92f4410b3f627",
+          "sha256": "b0f63ab6c0e970ecc3a476e63aa59181b9b8c68c93b05d437529f9ea5c204c42"
+        },
+        {
+          "path": "tests/worker-policy-settings.test.mjs",
+          "previous_sha256": null,
+          "sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
+          "sha256": "c86b5e105c8543afa2b820fd5a083fe5ba392b44c1068e608c84bb0a7bb0ecdd"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-15",
+      "scope": "Task2210: revision-bound personal confirmation and remaining completion gates",
+      "source_base_commit": "77d42f93c85eb66d1e74361535c13f6e18e4e288",
+      "changes": [
+        "Bind explicit personal confirmation to the full result revision and task contract.",
+        "Verify stored user and contract events through a fresh independent GET; keep outstanding review gates visible.",
+        "Do not equate successful personal confirmation or a read-only policy decision with task completion."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "b0f63ab6c0e970ecc3a476e63aa59181b9b8c68c93b05d437529f9ea5c204c42",
+          "sha256": "b75a32dae7f71249ca79a32bd7397b5de591668c091471fbb4e7dca6c5b82e5a"
+        },
+        {
+          "path": "src/lib/task-result-contract.mjs",
+          "previous_sha256": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
+          "sha256": "100a304fc5be7cef6b7991d30b7e5842e22a7978320e388ca7251f6746977a79"
+        },
+        {
+          "path": "tests/task-result-completion.test.mjs",
+          "previous_sha256": null,
+          "sha256": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-15",
+      "scope": "Task-Lease countdown and sorting moved to the Tasks board",
+      "source_base_commit": "f8890084c11fa18b51f84cdf8b0c7e103aaf96d3",
+      "changes": [
+        "Read in-progress Tasks and public Task-Lease observations with bounded pagination and concurrency.",
+        "Keep Agenten/Running for actual observed agent runs; no private lease capability enters the browser.",
+        "Preserve historical provenance records and show partial or unavailable observations explicitly."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "b75a32dae7f71249ca79a32bd7397b5de591668c091471fbb4e7dca6c5b82e5a",
+          "sha256": "ab01cd7d184d35ded1213a40a291dd817ac120f217841b600177ff068357f50a"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "dbf08cc27db7bab2c65103bcf0ad6864cce481181e22b2659b3fb49304c1d77e",
+          "sha256": "1ab970fe96788ddd92bd1ffec0d616810de91b29c02285b3a5681c81067ad987"
+        },
+        {
+          "path": "src/components/TaskLeasePanel.astro",
+          "previous_sha256": null,
+          "sha256": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7"
+        },
+        {
+          "path": "src/lib/task-lease-panel.mjs",
+          "previous_sha256": null,
+          "sha256": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f"
+        },
+        {
+          "path": "tests/task-lease-panel.test.mjs",
+          "previous_sha256": null,
+          "sha256": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "619deceffa24d6b8ec4532e8b1050612f2cf9a0d64826381f801f4c5166828a0",
+          "sha256": "821cd72b28cacf9749e4abad163bc3c2370a2bb4afc9473a404e912f4698b24c"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Taskboard: individual status filters and compact accessible actions",
+      "source_base_commit": "4f3afb56f2c932275b997606202d55a4f724743f",
+      "changes": [
+        "Preserve canonical pending, in_progress and review status selections in URL and API queries; retain open, done and all aggregates.",
+        "Require the Task API to confirm the selected status before displaying a page.",
+        "Keep result review and task actions legible inside the 120px column with bounded global styles and accessible names."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "ab01cd7d184d35ded1213a40a291dd817ac120f217841b600177ff068357f50a",
+          "sha256": "c1ca064b65e5c75738f47077964dc942980c1b71e40ef7896c0a64d08249883c"
+        },
+        {
+          "path": "src/lib/task-filters.mjs",
+          "previous_sha256": "2d1c53f87ad3884627d2deb9462e3e0744ba44159bbba5cd26364b504d904531",
+          "sha256": "128661563d7250e30e1d0468a29ef03d03bc5a82229d9c8394f9bc033e5f96c5"
+        },
+        {
+          "path": "tests/task-filters.test.mjs",
+          "previous_sha256": "9bbdb66ac95e0d9739a94cb64c97ec11700b89050e78609d19bbe57f8a34ca89",
+          "sha256": "d00ba41ad026716384a77ac16395a721d3a15bdf79ca8edf4f54a388780adea8"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Taskboard: include the actual archived status as an individual filter",
+      "changes": [
+        "Expose archived as an individual status while retaining aggregate filters and existing aliases.",
+        "Preserve the exact archived status in the URL, API query, and backend applied_filters receipt."
+      ],
+      "actual_backend_status_snapshot": {
+        "source": "NATIVE-ACTUAL-TASK-STATUS-VALUES.json",
+        "sha256": "9ab8579a8a8811c65d7f4fbe33def7b4a628039857a511c6faeba9e61350a8c4",
+        "observed_at": "2026-10-16T00:55:56.574096+00:00",
+        "status_counts": {
+          "archived": 4,
+          "blocked": 22,
+          "cancelled": 67,
+          "completed": 26,
+          "done": 1756,
+          "in_progress": 14,
+          "pending": 152,
+          "review": 158
+        }
+      },
+      "live_api_read": {
+        "method": "GET",
+        "path": "/api/tasks?status=archived&limit=1",
+        "observed_at": "2026-10-16T01:04:01.077700+00:00",
+        "http_status": 200,
+        "success": true,
+        "applied_status": "archived",
+        "total": 4,
+        "rows_returned": 1
+      },
+      "files": [
+        {
+          "path": "src/lib/task-filters.mjs",
+          "previous_sha256": "128661563d7250e30e1d0468a29ef03d03bc5a82229d9c8394f9bc033e5f96c5",
+          "sha256": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "c1ca064b65e5c75738f47077964dc942980c1b71e40ef7896c0a64d08249883c",
+          "sha256": "843f93a9bad2efb0b36062fc506c2b669e9ce7730f0d62bd6146417447c83463"
+        },
+        {
+          "path": "tests/task-filters.test.mjs",
+          "previous_sha256": "d00ba41ad026716384a77ac16395a721d3a15bdf79ca8edf4f54a388780adea8",
+          "sha256": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Shared Running and Dashboard agent overview",
+      "changes": [
+        "Running and Dashboard use one shared controller for access, function and actual-start facets, search, sorting, grouping, compact-list mode and saved preferences.",
+        "Dashboard Running counts require complete runtime evidence; unavailable or transitional source state remains unknown rather than zero.",
+        "The optional worker and core-agent status reads are declared on the Dashboard page."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "1ab970fe96788ddd92bd1ffec0d616810de91b29c02285b3a5681c81067ad987",
+          "sha256": "023d6b23883b584530a9e59150d550d370c16c7c1ef791c885869039e2932c79"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "068fbeb644b24919654a846b7fdce7d983300ee74695af3c20c5410d7f1368b3",
+          "sha256": "126ce712f9b983ab9a65d399a44fa623f564059b9153220245426174e25e3f9d"
+        },
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": null,
+          "sha256": "1f1e2920b8c0e5516d2362cfdbc8c889865199cf76caca2d179f7df3b2144836"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "821cd72b28cacf9749e4abad163bc3c2370a2bb4afc9473a404e912f4698b24c",
+          "sha256": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c"
+        },
+        {
+          "path": "tests/system-slots.test.mjs",
+          "previous_sha256": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
+          "sha256": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": null,
+          "sha256": "3f92f1d0c5e2fd123b3628358874b01ce4835c842a3aecb170516e9a9b2ed4a5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Shared runtime-card details and compact agent list",
+      "changes": [
+        "Use one shared read-only card-content renderer on Running and Dashboard, including portraits, identity, access/function, model, and available task/tool/round/budget/activity evidence.",
+        "Compact-list mode keeps status and actions while hiding portraits and secondary detail; narrow search controls use one column."
+      ],
+      "files": [
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": "1f1e2920b8c0e5516d2362cfdbc8c889865199cf76caca2d179f7df3b2144836",
+          "sha256": "df4e0e55f04cbdfa4f8076bdd25a9d1fb30421946aec40e43f7f4f808dd18b3e"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "023d6b23883b584530a9e59150d550d370c16c7c1ef791c885869039e2932c79",
+          "sha256": "3bd53b51d659bbdaa27ff1c84739d7d90e1056fe821fcad5944b8f88c9a8b369"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "126ce712f9b983ab9a65d399a44fa623f564059b9153220245426174e25e3f9d",
+          "sha256": "22e4f667ff7d32deeadedb53c37a78a0699939f3616d2959d04d9defc7f8cd0c"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "3f92f1d0c5e2fd123b3628358874b01ce4835c842a3aecb170516e9a9b2ed4a5",
+          "sha256": "a5fdfac78882cc70832c4bddf4e5125a3e15fa80b42eb9adfbb6e21727540be4"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Keep the shared card enhancement compatible with non-DOM status projections",
+      "changes": [
+        "Apply the shared DOM renderer only when the current card exposes the required DOM operations; preserve existing projections for non-DOM callers."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "3bd53b51d659bbdaa27ff1c84739d7d90e1056fe821fcad5944b8f88c9a8b369",
+          "sha256": "943a82e4684238d23966fa3ff0358be1377945b9ad39432ee5b1f1f5bdbebdbd"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Keep mixed Running source state visibly uncertain",
+      "changes": [
+        "Keep confirmed active-run cards visible while loading or uncertain sources retain a visible status notice.",
+        "Label worker activity as confirmed-only when any worker runtime status is unverified; do not imply a complete zero count.",
+        "Exercise mixed confirmed/unconfirmed states, empty confirmed state, and healthy confirmed state in the shared projection test."
+      ],
+      "files": [
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": "df4e0e55f04cbdfa4f8076bdd25a9d1fb30421946aec40e43f7f4f808dd18b3e",
+          "sha256": "916d5076d05f20d912b39520eb84366bc04365f5d6a541fa64df8e1e91d0c797"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "943a82e4684238d23966fa3ff0358be1377945b9ad39432ee5b1f1f5bdbebdbd",
+          "sha256": "f4afe3d5c50f4c32263c2ce19fe85f767fef5ecf9c7b3ba38fbe911aafd74367"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "a5fdfac78882cc70832c4bddf4e5125a3e15fa80b42eb9adfbb6e21727540be4",
+          "sha256": "6a5af2ababbcfa6b17ef324786eafd7514088c655d95fea5d5845c68d5ae0145"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Keep shared overview filters and live summaries accurate",
+      "changes": [
+        "Compact-list display rules now apply only to cards that are not hidden, so filtering remains effective on Running and Dashboard.",
+        "Shared filter refreshes immediately update each page caption; Dashboard preserves its confirmed-count uncertainty note.",
+        "Regression tests cover mixed confirmed/unconfirmed sources and visible-count caption refresh."
+      ],
+      "files": [
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": "916d5076d05f20d912b39520eb84366bc04365f5d6a541fa64df8e1e91d0c797",
+          "sha256": "bf4a7d55b4faaa3c726dc2f18ce85e616db6a445bae054cb61beffdabc3b6463"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "f4afe3d5c50f4c32263c2ce19fe85f767fef5ecf9c7b3ba38fbe911aafd74367",
+          "sha256": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "22e4f667ff7d32deeadedb53c37a78a0699939f3616d2959d04d9defc7f8cd0c",
+          "sha256": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "6a5af2ababbcfa6b17ef324786eafd7514088c655d95fea5d5845c68d5ae0145",
+          "sha256": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd"
+        }
+      ]
+    },
+    {
       "date": "2026-10-17",
       "scope": "BACH #2229: explicit operator reopen of parked tasks in the task edit dialog",
       "source_base_commit": "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
@@ -1283,6 +1839,1286 @@
           "path": "tests/task-result-history.test.mjs",
           "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
           "sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2339: result provenance display without acceptance authority",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "changes": [
+        "Display trusted native, externally attested and unattested result source projections separately from acceptance.",
+        "Revoked or stale external receipts remain external and never fall back to a native source label.",
+        "Use fixed German labels through textContent and clear stale provenance on result reload.",
+        "Keep prior backend source pins and follow-up records unchanged; extend DOM regression fixture for the new text node."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
+          "sha256": "70fb5ccd8d19e5ecd88b04ac68949d0addf50bd3e3a0475a9e017d0567ec2664"
+        },
+        {
+          "path": "src/lib/task-result-contract.mjs",
+          "previous_sha256": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
+          "sha256": "2324f910d7db067accbcabf04365986ff73fab4fd5819c63fad1a947587fc1cb"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3",
+          "sha256": "3ac45341b1cc22145d886880409d70b2cb823ba4cf4adf97bf4b1f6d42608acf"
+        },
+        {
+          "path": "tests/task-result-source.test.mjs",
+          "previous_sha256": null,
+          "sha256": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance",
+      "source_base_commit": "57c43df5f6b83d07caff4f5285c20873146e3bf2",
+      "merged_source_commit": "ff13cccde77a997ab4d0a0173db43ff88ee3c2be",
+      "common_base_commit": "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+      "branch_bases": [
+        "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+        "a5de187db1005b083e2ed4330f61aafc0553ba04",
+        "57c43df5f6b83d07caff4f5285c20873146e3bf2"
+      ],
+      "changes": [
+        "Preserve deployed policy, lease, completion and overview controls alongside main branch explicit operator reopen.",
+        "Keep both immutable historical follow-up branches and bind their current merged source hashes.",
+        "Release metadata0.2.25 and source-origin display do not claim consumer deployment or live model acceptance."
+      ],
+      "files": [
+        {
+          "path": ".github/workflows/tests.yml",
+          "previous_sha256": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
+          "other_parent_sha256": null,
+          "sha256": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+          "other_parent_sha256": "d7550460a6b4e0e5fe718f8cc8bc1773f18b0c457249e182cfa708702bfd9aac",
+          "sha256": "f915a0e6fc029a872a35ec5526acd7aa50d5a55050f51ef9499f5924bb56af7d"
+        },
+        {
+          "path": "RELEASE_GATE.md",
+          "previous_sha256": "b9801c975b90b3b2c03243576376f9dc168343c0cb10f5d3a8f188635e36287b",
+          "other_parent_sha256": "bae7e9bac289c90d1ece2e8854cfbfb542f716a71e532f6b3490fd43d167c1e1",
+          "sha256": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b"
+        },
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
+          "other_parent_sha256": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
+          "sha256": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "3881109b884457764bbbed3d42b4bf6e60a6a2aba845fabbefe311303d1d0c78",
+          "other_parent_sha256": "3881109b884457764bbbed3d42b4bf6e60a6a2aba845fabbefe311303d1d0c78",
+          "sha256": "dd5053466f5e1be517f23fa8e48ed9ef8ac22d7ee47160c581ef6c6666d54d6d"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+          "other_parent_sha256": "48108d74a389cb5295c3d805cbe637d9ba28108df0a79e29b6a5f7b368e8db29",
+          "sha256": "43284a8c5fd75554fe117e84beb6c240e5a732bbfe6a573b9f17173228b7c9c6"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
+          "other_parent_sha256": "68a798cffbcd11af2bd163d500fa51c665c82884031932b747b8a14ab2b2386a",
+          "sha256": "40598d20498cb106153cb27f522c630ea37fbf65e31146368a9013451b45889a"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
+          "other_parent_sha256": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c",
+          "sha256": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c"
+        },
+        {
+          "path": "src/components/TaskLeasePanel.astro",
+          "previous_sha256": null,
+          "other_parent_sha256": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
+          "sha256": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7"
+        },
+        {
+          "path": "src/components/TaskWorkerPolicySettings.astro",
+          "previous_sha256": null,
+          "other_parent_sha256": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
+          "sha256": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a"
+        },
+        {
+          "path": "src/components/WorkerPolicySettings.astro",
+          "previous_sha256": null,
+          "other_parent_sha256": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3",
+          "sha256": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3"
+        },
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "bf4a7d55b4faaa3c726dc2f18ce85e616db6a445bae054cb61beffdabc3b6463",
+          "sha256": "bf4a7d55b4faaa3c726dc2f18ce85e616db6a445bae054cb61beffdabc3b6463"
+        },
+        {
+          "path": "src/lib/consumer-api-auth.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
+          "sha256": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a"
+        },
+        {
+          "path": "src/lib/task-assignment.mjs",
+          "previous_sha256": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
+          "other_parent_sha256": "99fdaf57c0eb093cd46eb3f1bdcaa58cea1fbfd89bef5142aab7224cbf4dfd7d",
+          "sha256": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc"
+        },
+        {
+          "path": "src/lib/task-filters.mjs",
+          "previous_sha256": "2d1c53f87ad3884627d2deb9462e3e0744ba44159bbba5cd26364b504d904531",
+          "other_parent_sha256": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1",
+          "sha256": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1"
+        },
+        {
+          "path": "src/lib/task-lease-panel.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
+          "sha256": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f"
+        },
+        {
+          "path": "src/lib/task-result-contract.mjs",
+          "previous_sha256": "2324f910d7db067accbcabf04365986ff73fab4fd5819c63fad1a947587fc1cb",
+          "other_parent_sha256": "100a304fc5be7cef6b7991d30b7e5842e22a7978320e388ca7251f6746977a79",
+          "sha256": "288ae1eca81861709ee878436c94e58faa23027e95b13ba7f0baad8f62a71410"
+        },
+        {
+          "path": "src/lib/task-worker-policy-settings.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78",
+          "sha256": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78"
+        },
+        {
+          "path": "src/lib/worker-policy-settings.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb",
+          "sha256": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "other_parent_sha256": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8",
+          "sha256": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "068fbeb644b24919654a846b7fdce7d983300ee74695af3c20c5410d7f1368b3",
+          "other_parent_sha256": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d",
+          "sha256": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+          "other_parent_sha256": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee",
+          "sha256": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "70fb5ccd8d19e5ecd88b04ac68949d0addf50bd3e3a0475a9e017d0567ec2664",
+          "other_parent_sha256": "843f93a9bad2efb0b36062fc506c2b669e9ce7730f0d62bd6146417447c83463",
+          "sha256": "96fb342acac1da54412292ce30de7643710b90514de9eff8d4ad4024d8f10f6c"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd",
+          "sha256": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd"
+        },
+        {
+          "path": "tests/system-slots.test.mjs",
+          "previous_sha256": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
+          "other_parent_sha256": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b",
+          "sha256": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b"
+        },
+        {
+          "path": "tests/task-assignment.test.mjs",
+          "previous_sha256": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
+          "other_parent_sha256": "5ee7ae0defcdc8ef36edc76c4da821f59ea078399c0c6d30c2a5d94115aef3e3",
+          "sha256": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef"
+        },
+        {
+          "path": "tests/task-filters.test.mjs",
+          "previous_sha256": "9bbdb66ac95e0d9739a94cb64c97ec11700b89050e78609d19bbe57f8a34ca89",
+          "other_parent_sha256": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
+          "sha256": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001"
+        },
+        {
+          "path": "tests/task-lease-panel.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
+          "sha256": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21"
+        },
+        {
+          "path": "tests/task-result-completion.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1",
+          "sha256": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "3ac45341b1cc22145d886880409d70b2cb823ba4cf4adf97bf4b1f6d42608acf",
+          "other_parent_sha256": "c86b5e105c8543afa2b820fd5a083fe5ba392b44c1068e608c84bb0a7bb0ecdd",
+          "sha256": "ecab2b658e5c7ece4512ae443c6fd1ed4f6ec1b56fc2f504c2129ab8a4b4a2bd"
+        },
+        {
+          "path": "tests/task-result-source.test.mjs",
+          "previous_sha256": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43",
+          "other_parent_sha256": null,
+          "sha256": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43"
+        },
+        {
+          "path": "tests/worker-policy-settings.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
+          "sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54"
+        }
+      ]
+    },
+    {
+      "scope": "Task2361: compact task board and contextual assignment/result thread",
+      "source_base_commit": "44490a04135833b4a142776c07649a61f331137d",
+      "adaptations": [
+        "Reorder existing task markup into assignment, result/history and contextual metadata; preserve the client script and native component contracts.",
+        "Keep technical metadata collapsed and task table compact; preserve prior source hashes and record this follow-up.",
+        "Locate the historical integration record by scope so later verified changes can extend its hash chain."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "96fb342acac1da54412292ce30de7643710b90514de9eff8d4ad4024d8f10f6c",
+          "sha256": "ed62c7834a6437c8afed43050f95e4cbd7b00945656e92dc2e985e70e4084416"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "ecab2b658e5c7ece4512ae443c6fd1ed4f6ec1b56fc2f504c2129ab8a4b4a2bd",
+          "sha256": "f6207020933b85f58d31ce189b2c4f9f413223a81fad475d6df3ceb2eb49e340"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2338: Agenten-Thumbnails nach Plan2054 implementieren und messen",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "changes": [
+        "Generate hash-bound, metadata-stripped 96px WebP thumbnails and bounded 512px WebP variants for the 64 non-Atlas presets.",
+        "Load thumbnails only when avatars enter the viewport, paginate the picker, and dynamically import one sanitized portable PNG only after selection while preserving existing data-URI storage and legacy image recognition.",
+        "Keep the 70 stable preset IDs and source-derived avatar assets; load the large Atlas fallback only after an asset image or catalog failure, and record generated asset hashes and regression coverage."
+      ],
+      "files": [
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+          "sha256": "2a9d47318d1a3fac4ff4b09d468ec3e9e4f502f9d9057314ccf7d8234a09d3d6"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
+          "sha256": "e240f9f03be20983597993dcb937c06066c6e4cb3d7ea1ad0eb8908c93a80fb3"
+        },
+        {
+          "path": "scripts/generate-agent-avatar-thumbnails.mjs",
+          "previous_sha256": null,
+          "sha256": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik-data.png",
+          "previous_sha256": null,
+          "sha256": "37d97cd458b18adb58e2f277c2f09c4954908a3ad7f57820edf162aa4aa28366"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik-large.webp",
+          "previous_sha256": null,
+          "sha256": "5dfa5ddaafb16949f58f8c2cdf1e88e4050817f34e7a35e43375c2bcbf37578b"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik.webp",
+          "previous_sha256": null,
+          "sha256": "791fbd92f3c5be2096d0454f38cdd87272a5ded5e10371e49bd977cf3f344d35"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-02-bueroassistenz-data.png",
+          "previous_sha256": null,
+          "sha256": "c705d1e678f1f14de7bf022156a98227aa41ac8aab6a0734c2f2923698592502"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-02-bueroassistenz-large.webp",
+          "previous_sha256": null,
+          "sha256": "3c2f3340392dd4e033184471d756784864f8943d738ead9e545d7c4577670b47"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-02-bueroassistenz.webp",
+          "previous_sha256": null,
+          "sha256": "ed49f1f63510e6a952f01ffcf4996ff5b151ae244eee62072011c71b368d6550"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-03-finanzassistenz-data.png",
+          "previous_sha256": null,
+          "sha256": "3e24e0eb36b92e1e5a5ae983b53cbd25b2a6c23662d086ec397a336483b9f802"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-03-finanzassistenz-large.webp",
+          "previous_sha256": null,
+          "sha256": "739412316283009b46405b243e25ec50d9c0f977186840c25f49ddfa2ddd3b7d"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-03-finanzassistenz.webp",
+          "previous_sha256": null,
+          "sha256": "62f931d120a329de89e3850ff32d9afd6147baf791c153dff6335c8ef9d7eb09"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-04-gesundheitsassistenz-data.png",
+          "previous_sha256": null,
+          "sha256": "8c70b23c0bb39df448557cc5d6010cdecb08a1dc0362766ab1a9c9a249a9853c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-04-gesundheitsassistenz-large.webp",
+          "previous_sha256": null,
+          "sha256": "053f93801e55a252e6c873e148f92e0f42bdcd22c97490e6bc2337e20b70b592"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-04-gesundheitsassistenz.webp",
+          "previous_sha256": null,
+          "sha256": "da47111c05b2a939acd70fb5c0dc61481eaa6b5621938b5794a559dbbc2dea89"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-05-persoenliche-assistenz-data.png",
+          "previous_sha256": null,
+          "sha256": "ba525634d7ae3a9ac451da841ddf7d57f07f6c5cc0e0a097f4a4306a1e0014fc"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-05-persoenliche-assistenz-large.webp",
+          "previous_sha256": null,
+          "sha256": "e94b35b06a5850f0f0f8b25d8a61fa87ec0662378aa9d02c3e395354a44fcd2b"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-05-persoenliche-assistenz.webp",
+          "previous_sha256": null,
+          "sha256": "6b8c5de5a6eb661f4d7fc50cfa6751b40079de2d71891c1caf1fa6aee88b931b"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-06-medienproduktion-data.png",
+          "previous_sha256": null,
+          "sha256": "883432052477d5a27b57e76d23ec6c21eed786632f5c47b077419b70f5703592"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-06-medienproduktion-large.webp",
+          "previous_sha256": null,
+          "sha256": "8247d22423daeaba4c5e3a99363b463c0e6b46b205bc967d52f863f9ba274d77"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-06-medienproduktion.webp",
+          "previous_sha256": null,
+          "sha256": "2cc9603597e36c5277403fd010194ede056f7eb31c86d82b2bf99978e739039c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-07-forschung-data.png",
+          "previous_sha256": null,
+          "sha256": "76ce2ab82d40f791e648068f675868a57688f46fc7fe4e1e4b84eb19dcbf56d7"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-07-forschung-large.webp",
+          "previous_sha256": null,
+          "sha256": "3a20b696b91e348d218bc6a195ca416a35b6635133ee7cf81ab3b4b12387e9da"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-07-forschung.webp",
+          "previous_sha256": null,
+          "sha256": "c938112a175ba24dbab8dbb9699d10dd568784b059700c9c0bc4fa3527346e4d"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-08-reflexion-data.png",
+          "previous_sha256": null,
+          "sha256": "88eb23e1149c8e7683a1c3d2ce4d3fdccd9e92a75c0d23a063991f8c904bf99a"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-08-reflexion-large.webp",
+          "previous_sha256": null,
+          "sha256": "15b329cdcc7ff25bdbd3154c612f2d31e94acff7a52cf36192276fe70886cf4a"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-08-reflexion.webp",
+          "previous_sha256": null,
+          "sha256": "38c3f8d2aa3b22b9eb89022afd63c764224ada7b116836d41fd5701136752d14"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-09-versicherungen-data.png",
+          "previous_sha256": null,
+          "sha256": "dd768115ecfd887e74a4b097423614c7d8b19c13694e9753335a7ccb5833bdd4"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-09-versicherungen-large.webp",
+          "previous_sha256": null,
+          "sha256": "5137bda7af2b808101403364c00f01237cd81964dabc220e087433af668b0c9c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-09-versicherungen.webp",
+          "previous_sha256": null,
+          "sha256": "691bcf84897fbf418bcf40ee05e4923946cc4d69aaed34ff3dda96ef4625f7a0"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-10-bewerbungen-data.png",
+          "previous_sha256": null,
+          "sha256": "c6125b0de20b5f755a13008a18cb6b7194c3fab7e89f03cedcea45a3a27d9a33"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-10-bewerbungen-large.webp",
+          "previous_sha256": null,
+          "sha256": "41ca05a9ea28f5997d6c29033bcef32228b95dcee49e1e71f17034374b5fd8d0"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/comic-10-bewerbungen.webp",
+          "previous_sha256": null,
+          "sha256": "3d25e342a1d51674f539739171cddb88c6d1e2f7c6531d18cfc611adb0462f11"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-01-tuerkis-wolkenriese-data.png",
+          "previous_sha256": null,
+          "sha256": "84ea2c4985217c24e29c28bc0fa1d529cbd09156f25082e499172785843c3ecf"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-01-tuerkis-wolkenriese-large.webp",
+          "previous_sha256": null,
+          "sha256": "b625e62b96f62383619cf4c0bbcb1b2cc23785f0a168d10fa36aef0b0d1f1b3c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-01-tuerkis-wolkenriese.webp",
+          "previous_sha256": null,
+          "sha256": "4704eacef3723e574f1ee51709a8644e5f628cb6b515762e7a686a9e75f57d13"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-02-korall-gestaltwandler-data.png",
+          "previous_sha256": null,
+          "sha256": "5a12b1903cbf596c708df252e391c0ef7641ffef806c3d82c27fc37dc18ad03c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-02-korall-gestaltwandler-large.webp",
+          "previous_sha256": null,
+          "sha256": "477b55af1b89f4bab507966a09a7e2f2b25aa9e1c16089754bb37cdb1d5b4bc1"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-02-korall-gestaltwandler.webp",
+          "previous_sha256": null,
+          "sha256": "b6334685c322e62281f983f4c9b307147afff0098b6edd7f444672819dc25e7b"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-03-lila-traumsammler-data.png",
+          "previous_sha256": null,
+          "sha256": "fd52fbaef0b6766a09706fa1022f00cc3d7de35fe1bf872b6556f1c361cf9862"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-03-lila-traumsammler-large.webp",
+          "previous_sha256": null,
+          "sha256": "88358ec1d80f4191c60486e103f3f8b2c8e2b5337c1fdf214f71b6d366b24ee0"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-03-lila-traumsammler.webp",
+          "previous_sha256": null,
+          "sha256": "90b074614ee472cd6445326a22fa19961af11a2b35100da117325531f52a609e"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-04-orange-feuerfreund-data.png",
+          "previous_sha256": null,
+          "sha256": "8fd7e0d44951d8f8128196c57b8ea86a865ee60a6337e8bbf38eda2bb24b23a5"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-04-orange-feuerfreund-large.webp",
+          "previous_sha256": null,
+          "sha256": "f027f36a29c9a1359a217a272af4fe62729a99b6d538036305f1951e68eda1b1"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-04-orange-feuerfreund.webp",
+          "previous_sha256": null,
+          "sha256": "e07ab48016b70fc07b98eeb8d29a1709eb23f2f982b3591bb9308b11c1148a6b"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-05-mint-pflanzenhueter-data.png",
+          "previous_sha256": null,
+          "sha256": "4292cc7259128052dc19cc5acd071e12258138a436e78ad57db6900eff6e859c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-05-mint-pflanzenhueter-large.webp",
+          "previous_sha256": null,
+          "sha256": "f32a4ede89a6e259eaaade711e7d174d189fd736e71a8aa17cb19d237e47e705"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-05-mint-pflanzenhueter.webp",
+          "previous_sha256": null,
+          "sha256": "2fd3249a090cda39fb83980f150b44f3c73cbfe529fb838903005966874dbbfe"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-06-blau-eiszauber-data.png",
+          "previous_sha256": null,
+          "sha256": "e140e7a887fc142a3451114343f5f1f63782d10812aa06d63759266fca183c73"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-06-blau-eiszauber-large.webp",
+          "previous_sha256": null,
+          "sha256": "89b0b4ccf616975a2de2c6891e37bc780e120761411b3fa92b0a31262f5cf393"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-06-blau-eiszauber.webp",
+          "previous_sha256": null,
+          "sha256": "0a8639287006a7b214f1adf12a3aa450c0681813a5b4c0f82b621af304b82921"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-07-gelb-lichtfunke-data.png",
+          "previous_sha256": null,
+          "sha256": "9a16c5ab0927fe9a95da051d93406db64b74d900cec5799d25cc402eb731e1b1"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-07-gelb-lichtfunke-large.webp",
+          "previous_sha256": null,
+          "sha256": "38a172180e3197b2b5e38a3f5d21b8ddc355980e61df2e5b12a08f427b89e351"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-07-gelb-lichtfunke.webp",
+          "previous_sha256": null,
+          "sha256": "aea07ef7444adf6abfdefb8c612518306f87a9de231e38f3910f79278aabd0cb"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-08-indigo-teleporter-data.png",
+          "previous_sha256": null,
+          "sha256": "92dc7366f5ca9ea66f9ba1f108ae98e9087e3b0bcc77d01725f97eca8549a825"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-08-indigo-teleporter-large.webp",
+          "previous_sha256": null,
+          "sha256": "6ceeb8b755bddda903db2680e4a6c3f80b724b4c61fe9307d39e6d16dc5fb991"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-08-indigo-teleporter.webp",
+          "previous_sha256": null,
+          "sha256": "ca083a69052a5e4c8a71d7964ce48355d3d368552b3a12045de8ff305faa56d6"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-09-pfirsich-klangkuenstler-data.png",
+          "previous_sha256": null,
+          "sha256": "f9abd36a414e0d482b455fd7f6874bd53584a2a425a0870aa032b0bdf150acbd"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-09-pfirsich-klangkuenstler-large.webp",
+          "previous_sha256": null,
+          "sha256": "ffaa0d058960398d1a3601d7fba3b1fd92648e5cad2965792677f550c00f0e74"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-09-pfirsich-klangkuenstler.webp",
+          "previous_sha256": null,
+          "sha256": "3ae46f903883496b371a25aa29110f75b995f98aa56af3e0741a607a9306926e"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-10-rosa-sternenschweber-data.png",
+          "previous_sha256": null,
+          "sha256": "a54ae59a448b89b44610bf2c3cadd568f9db1fd3bc510654bd218f9aa862ddb0"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-10-rosa-sternenschweber-large.webp",
+          "previous_sha256": null,
+          "sha256": "a8939b3d8cf3fe4f7aa9a4aed29f963c31bdd93068f221247c0a60f4c8811a0d"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-10-rosa-sternenschweber.webp",
+          "previous_sha256": null,
+          "sha256": "109b6084584c998ded3eac93ab93553f204e72f03115877a2552e4276301a4ea"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-11-slime-smaragd-data.png",
+          "previous_sha256": null,
+          "sha256": "ea411c71cdcdade0d4950964caddace59704d05db551c966d0be80de05f307d2"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-11-slime-smaragd-large.webp",
+          "previous_sha256": null,
+          "sha256": "050ce4081798f82a17d5d41f33a2c24d3487cbf8348c715f862589d916700546"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-11-slime-smaragd.webp",
+          "previous_sha256": null,
+          "sha256": "c3773d374133d4cffa3e5c015e9aca05bf04b2ac65396f5153072f4084d88560"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-12-slime-himmelblau-data.png",
+          "previous_sha256": null,
+          "sha256": "31dc67ae6b61b2cffcf7e9be673172731857a9b54c8b1bad67ab1dc3613f804a"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-12-slime-himmelblau-large.webp",
+          "previous_sha256": null,
+          "sha256": "8cf8875c9ad5446cc1144c203f31d3a36807a39efdf54f74e216f99986b721b9"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-12-slime-himmelblau.webp",
+          "previous_sha256": null,
+          "sha256": "17076526709f2b30fa3ad6a0baeedec20180adcb8e62b92820cff6e605fa798c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-13-slime-rosa-data.png",
+          "previous_sha256": null,
+          "sha256": "16106853f07cf8778b4a4ce47f7a38a2524b58a856b85fd78f68fd3d5c1bf9b4"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-13-slime-rosa-large.webp",
+          "previous_sha256": null,
+          "sha256": "57b43c72c141fea113484b55cd0f465025ae2319c76be671aec26ff4caa2c4e5"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-13-slime-rosa.webp",
+          "previous_sha256": null,
+          "sha256": "7f5b5ffac8e70ba38203f001a9627bfef17d9a4db88c4677738a69c29a11297d"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-14-slime-goldgelb-data.png",
+          "previous_sha256": null,
+          "sha256": "4c90984e759ac16e35e9d592ffb91afa0e553cb0c7a7650d546f23a88c324173"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-14-slime-goldgelb-large.webp",
+          "previous_sha256": null,
+          "sha256": "da9451579ba3513e6f7ce7298bf04be861855a8de435b09dddd869ada220b2f3"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-14-slime-goldgelb.webp",
+          "previous_sha256": null,
+          "sha256": "f7a2c30f4b9b76463b72067d1c5aeb2a27e51947110fed9c2b53a65ed352b4af"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-15-slime-violett-data.png",
+          "previous_sha256": null,
+          "sha256": "f9ba1cb24e45c3e9af0a997187cb24fb6f20deb6eee335f3a82b11dadb0263f2"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-15-slime-violett-large.webp",
+          "previous_sha256": null,
+          "sha256": "13ad3369aff06d1c83ce0ab0f8a79a4885600a83467ff12b2449c8175145c1cd"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/fantasy-15-slime-violett.webp",
+          "previous_sha256": null,
+          "sha256": "32043332cc7ef0a85aaa7313fe3256521965046c140ad0f07177b18bd81462ef"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-always-on-large.webp",
+          "previous_sha256": null,
+          "sha256": "635e14600d622b61f646d0e8126c47873d307700b6d6eb3ac6cc97c197342f9f"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-always-on.webp",
+          "previous_sha256": null,
+          "sha256": "7c532e1a8456abcb9b1fff8d0e2e67d758ccaf37c63b315bbe7bdec8effa497f"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-buddha-chat-large.webp",
+          "previous_sha256": null,
+          "sha256": "93e2966671e3cd5528d74798a297a748ca6fa0ed8834387491103263e1e53cc4"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-buddha-chat.webp",
+          "previous_sha256": null,
+          "sha256": "a30bde03a9327116762e50825c8f45a9509c1c648c0ce07410d958777a821189"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-claude-friendly-large.webp",
+          "previous_sha256": null,
+          "sha256": "87aa8c5397339632174d32d91f995ee0186c10277ee6e54d199d4c88d94e08f6"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-claude-friendly.webp",
+          "previous_sha256": null,
+          "sha256": "d28634f3045647947eee601cc95523775bbfb7348c1df71c5900ea0afc789d0a"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-claude-neon-large.webp",
+          "previous_sha256": null,
+          "sha256": "55bc7fbe0d0291c0972ecd7340a4778d24d8f9471fc8d72ba37ad30dde04f4e5"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-claude-neon.webp",
+          "previous_sha256": null,
+          "sha256": "1e1f3c376389281ab91c53f610e9e3862bc57567151a9cb09557743d9c4c4cde"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-claude-opus-large.webp",
+          "previous_sha256": null,
+          "sha256": "ea77fd47fab9cbaffc3d6f35eda147bd37a8219f68acd773cf8ca2188760745f"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-claude-opus.webp",
+          "previous_sha256": null,
+          "sha256": "d428f2afb0e2311cd1138d2bfb69c4254225715e267f320b488f74556ebc33cd"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-connector-a-large.webp",
+          "previous_sha256": null,
+          "sha256": "8411206ebde08d11db091070de853a1fe3eee758ac18b56c4eef76561050e175"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-connector-a.webp",
+          "previous_sha256": null,
+          "sha256": "c1ac517574f14edf779eb863d1d22ddac4b803171658daae469f4f08065b788e"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-connector-b-large.webp",
+          "previous_sha256": null,
+          "sha256": "695d8ac3b70949d836a02ce422aebe05e59bd9cab0ce015de3463e7d73aaec71"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-connector-b.webp",
+          "previous_sha256": null,
+          "sha256": "f612b59d066ff7387c4befefd3a6789550496a349b029ddd8bc43956dbe621fe"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-copilot-large.webp",
+          "previous_sha256": null,
+          "sha256": "15af6eac7be065154e7bca246319978e38fe312aafc6d82681fb848f28840e4c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-copilot.webp",
+          "previous_sha256": null,
+          "sha256": "6fc0c4fdbd847aee4a3b541add87b48c96d96cfdc6a7df0ba4df4e6f45b4d5fa"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-gemini-large.webp",
+          "previous_sha256": null,
+          "sha256": "66849b145455255576c2b6ff0d6bd18b710152004b7f9960ba02580aabc5e602"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-gemini-umbruch-large.webp",
+          "previous_sha256": null,
+          "sha256": "623e867917ff129bacf77f54bc9c2ddb3978fabdd8fa39eba3a3f7ed6c1ee5b2"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-gemini-umbruch.webp",
+          "previous_sha256": null,
+          "sha256": "1beb7678d2586b2657e93510654ce34c26d7f78fc4f09e025db3e87fbcee1afe"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-gemini.webp",
+          "previous_sha256": null,
+          "sha256": "0853c7137869d6b4bba60ce12dd7e14145b48fb25415c8296c9644c451a45aa1"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-law-checker-large.webp",
+          "previous_sha256": null,
+          "sha256": "a8361530f31bf8a452cab325b89da6a31f93375ae0b900561e77f759eb0e68db"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-law-checker.webp",
+          "previous_sha256": null,
+          "sha256": "bebe5be0a8a056a3ca0eceba0121be04bf3e5019f597d9bfd99ca1425a5d040b"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-maintainer-large.webp",
+          "previous_sha256": null,
+          "sha256": "94b2003d54a266c7bd78abaed8010b07285aa79ad21e21061021b90ac81a585b"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-maintainer.webp",
+          "previous_sha256": null,
+          "sha256": "152136baa47346f672ca861dcf1c254711189333875d66e45e0cc85b31ad6d7f"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-maintenance-large.webp",
+          "previous_sha256": null,
+          "sha256": "cb9603c867b5434356cdb7bbe1d579b934a837de5ce7acadba6722ae15e80022"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-maintenance.webp",
+          "previous_sha256": null,
+          "sha256": "f0858d8b20f2d86ba7504ffb03bf5596d0a5e9a3a3aaf571f18d6fbba676df1d"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-operator-large.webp",
+          "previous_sha256": null,
+          "sha256": "17afaf80c47d23e6726c6456075a436c1a08ff17bb5bb0264690c73954c02825"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-operator.webp",
+          "previous_sha256": null,
+          "sha256": "781e1cfb779c2d70da8a156f6aa09ab2672bd67d932e869317768fbc8b0634ab"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-researcher-large.webp",
+          "previous_sha256": null,
+          "sha256": "ef56211292f1f2c94b25d94bd2eed6d9728b692a034b8faf1dde797afaed90ca"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-researcher.webp",
+          "previous_sha256": null,
+          "sha256": "b91d51235ddf09019c762d0740732bea95d4b8f998619e63bdac0cdd9a092710"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-01-ati-developer-data.png",
+          "previous_sha256": null,
+          "sha256": "a7dcb19fcb6a829ebe0d71bf533e357f45b16a0450e7149e0313823561650fb7"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-01-ati-developer-large.webp",
+          "previous_sha256": null,
+          "sha256": "9b8ab298d232176dca77d0b60e8e02ccd8df7b9cac525a0dab84924563f94302"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-01-ati-developer.webp",
+          "previous_sha256": null,
+          "sha256": "b25c73cd088824f89dff1ad224fec1aa214bee319cc8cea2cdb85f0449a27f79"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-02-buero-office-assistant-data.png",
+          "previous_sha256": null,
+          "sha256": "bdaa83c027763e0626017769f9c009b830ec4155422d52341e2051be9d1e8a88"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-02-buero-office-assistant-large.webp",
+          "previous_sha256": null,
+          "sha256": "5297647310c912406b3cf6030a95a292662c142a5b81ced3459201b6b2e39440"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-02-buero-office-assistant.webp",
+          "previous_sha256": null,
+          "sha256": "56d095c2d26505a0f1a99e9c138d49de958ac6fe5cfca9f6a4d3e54f5401fe76"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-03-finanz-finance-assistant-data.png",
+          "previous_sha256": null,
+          "sha256": "4b2169a60a039cf0bc7d6679fd0a5df7ff9a29ee84c163c8707ae4c2604df4d4"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-03-finanz-finance-assistant-large.webp",
+          "previous_sha256": null,
+          "sha256": "7ab20cfc322fd22aeac103ee42dd65c5e3e0fefb0b7e309de95a06af842c29d1"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-03-finanz-finance-assistant.webp",
+          "previous_sha256": null,
+          "sha256": "bcbd56cba41c7bf22a2d9d21a19d8fc193911af993ac458aec416428ba0ddafb"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-04-gesundheit-health-assistant-data.png",
+          "previous_sha256": null,
+          "sha256": "92fffbc138ee3f261bc0d4eeba26a132c3a91432733ea62e2d0ca28d273524c1"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-04-gesundheit-health-assistant-large.webp",
+          "previous_sha256": null,
+          "sha256": "516734f2882599645aaaa6321c6dc49ee6ebd97095ff5e0347d2634730e2c105"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-04-gesundheit-health-assistant.webp",
+          "previous_sha256": null,
+          "sha256": "6ea81de60a14cc062296a235aa775a860772762bd6b04cfd79ca878e74ac8fbe"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-05-persoenlich-personal-assistant-data.png",
+          "previous_sha256": null,
+          "sha256": "33ad060f00942eecde15c4aea69f265928178165be82e1c85bf8f4cf76ff0a1a"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-05-persoenlich-personal-assistant-large.webp",
+          "previous_sha256": null,
+          "sha256": "b89c78ffe5d272d0967fc315fd501ec18dd2b823f83568825976693ed127644f"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-05-persoenlich-personal-assistant.webp",
+          "previous_sha256": null,
+          "sha256": "f5a46f0a7675bf1b8047dd74e4f6d169a47134eb88bd40e30095034b9d2cf764"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-06-produktion-media-producer-data.png",
+          "previous_sha256": null,
+          "sha256": "154ce53b1e5252dc98bc119a78f8a5d1e9fe0c55acb0313ef3332cd43913137b"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-06-produktion-media-producer-large.webp",
+          "previous_sha256": null,
+          "sha256": "e229622c626c4a3c9393faac0502ba96f2723a549962d055f4a90739d1af9f8c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-06-produktion-media-producer.webp",
+          "previous_sha256": null,
+          "sha256": "b2c2578a112c0b048145045b65eccc6c32ee5a3ffa3fcbc77998c8a15aedcafb"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-07-versicherung-protection-agent-data.png",
+          "previous_sha256": null,
+          "sha256": "f4eec4a1f2727c31b7c2b45fca4f7e10f6e761de283e0983a1f6cf5ebe3b4b32"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-07-versicherung-protection-agent-large.webp",
+          "previous_sha256": null,
+          "sha256": "066f7f32676aa598287d639275b26ac9c5e186c560a1854d3b69e7f869a2a1d8"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-07-versicherung-protection-agent.webp",
+          "previous_sha256": null,
+          "sha256": "8ad6b97184dccaa42f4b5bf8b24b0a81748cf21bd87c8f8555f3d6bf146d1796"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-08-research-science-analyst-data.png",
+          "previous_sha256": null,
+          "sha256": "7548b4dd8570947e10dfda8f289095ae3bde61dce9f30f0ba0ea1fcd6ef11670"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-08-research-science-analyst-large.webp",
+          "previous_sha256": null,
+          "sha256": "298b107df50fc89e5538e62a0038554904154b8bbac806b7effef51d47f1db2d"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-08-research-science-analyst.webp",
+          "previous_sha256": null,
+          "sha256": "89d45b3fad0cdab5f679c7f4f6b0a590651c82f805269cc0c56c6c50e6f5cbe1"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-09-test-qa-inspector-data.png",
+          "previous_sha256": null,
+          "sha256": "6edc39b14f6a0b952abdbf2c2a631fa42982cb260a289e5af2f1005652c0c18a"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-09-test-qa-inspector-large.webp",
+          "previous_sha256": null,
+          "sha256": "cc2baa7e75df5188e5fd67de8b1604df1b0493763b9cc56ca0d62ddf5aad6b08"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-09-test-qa-inspector.webp",
+          "previous_sha256": null,
+          "sha256": "e91b0682d1d0cd0ad49c63fdf334fabb3cd9b3059b89bce6466d72b87e473a43"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-10-ocean-system-navigator-data.png",
+          "previous_sha256": null,
+          "sha256": "7d7ebd6b1cf4b95546a28dd26c59cbb20a40da8c8df7e85ef4fb001859b99cb1"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-10-ocean-system-navigator-large.webp",
+          "previous_sha256": null,
+          "sha256": "066240773f10f6b53fe628dc952c597c665fe1bec8865560befca113f9ebb730"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-role-10-ocean-system-navigator.webp",
+          "previous_sha256": null,
+          "sha256": "26286db876779b8fa822118d88c95e611dc798a9790e1cedcc0129a3b52a4c6f"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-system-auditor-large.webp",
+          "previous_sha256": null,
+          "sha256": "3ba571b3a4b48e6044ee9b6e6ab78038694a8abaf5a9371cd1678f939c838b0e"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-system-auditor.webp",
+          "previous_sha256": null,
+          "sha256": "eacaedaab5ca110d46cd8b02f157c3133ecfd7e1210f0e0e73c2ed0efb48354c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-task-solver-large.webp",
+          "previous_sha256": null,
+          "sha256": "35c9e5ef86fef28cc6da4c73c210ba90895fcd1dbbe49b2680fb15ba23eb0529"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-task-solver.webp",
+          "previous_sha256": null,
+          "sha256": "53b6674db1728be1cc29abea0906f5c8c10b81675095133270aab1e82c4fe34d"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-task-writer-large.webp",
+          "previous_sha256": null,
+          "sha256": "36a0b150fdc006b865e500d75023ace50f0185908da0023a7764753f0013b86a"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-task-writer.webp",
+          "previous_sha256": null,
+          "sha256": "4728d99ab6e928152c22b26a445bf1d1bb07dc1c1cc27f39f50056c99442f87e"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-ticket-master-large.webp",
+          "previous_sha256": null,
+          "sha256": "6d5d834f20828ef29ec9a85fdd891eed06f035c57e1da3d247fd650b177da0ef"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/gemini-ticket-master.webp",
+          "previous_sha256": null,
+          "sha256": "34c1989ad39fcb5fa2295b2efcb855c4e632ab57e49d11842c3e03dd75c7f3e2"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/provenance.json",
+          "previous_sha256": null,
+          "sha256": "e54d28ea4f4587a01a9931e7876d6f44a9a5096b5d6dd233e94f3d5c2772942e"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-01-raupen-tueftler-data.png",
+          "previous_sha256": null,
+          "sha256": "4a943af297e1f9fa7a3eb509aed0f76b3d644dc17177648802887e1f640d3b13"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-01-raupen-tueftler-large.webp",
+          "previous_sha256": null,
+          "sha256": "d03eee4c83db043abea9e81ceadb4838bc5ffdbb7909969c6774dae2c71f94d7"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-01-raupen-tueftler.webp",
+          "previous_sha256": null,
+          "sha256": "9e3f3090ef3b6e16507c1e11d02f769253f323f9a85552f46b242c06a9c2856d"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-02-schwebende-perle-data.png",
+          "previous_sha256": null,
+          "sha256": "5d1c58fc158b348771b384bca73aa379be86ea7d84b396d43bf8798f1de0b670"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-02-schwebende-perle-large.webp",
+          "previous_sha256": null,
+          "sha256": "b928f92dfcaa614bad21959ebebdb2a2b44b0c60885961312331897b8b056061"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-02-schwebende-perle.webp",
+          "previous_sha256": null,
+          "sha256": "a467d701dee619e60bc3d66c1a07ce0e488cb514b236cb8cc6a9b91c79f72ff2"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-03-kupfer-spinne-data.png",
+          "previous_sha256": null,
+          "sha256": "13af04ab7b42b6b60cc9440cd5fc3cce0484b13b230f8aca4478752d08bb9533"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-03-kupfer-spinne-large.webp",
+          "previous_sha256": null,
+          "sha256": "5756886ac65d5538aead83f8a6e6632a65d063112243544a4a9c0f907b3353ab"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-03-kupfer-spinne.webp",
+          "previous_sha256": null,
+          "sha256": "feb82bfb23adaa3f9c7b3f0bca4ac5a20f941f9dfb53c8e351b6652fd3e10fc0"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-04-mint-gaertner-data.png",
+          "previous_sha256": null,
+          "sha256": "9be5694194658d836bef59fe2913fe702e5a2e81304dc888b5aa389ff539b4fe"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-04-mint-gaertner-large.webp",
+          "previous_sha256": null,
+          "sha256": "1d675377f56dd6779bea81284b553f3c25db9d395fea8d13ddfdce539e8de555"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-04-mint-gaertner.webp",
+          "previous_sha256": null,
+          "sha256": "06e00cf76c9caae8de5de64bc6ce69c87293fa9c7f289f0f2d527fbe0c550dee"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-05-roter-kugelbot-data.png",
+          "previous_sha256": null,
+          "sha256": "4a5d8a828b91a72487357640db3b5e9c4ad35fee593056130ae65cb08b4b58a7"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-05-roter-kugelbot-large.webp",
+          "previous_sha256": null,
+          "sha256": "5e12a0eb8944b61b659ab7d43ee14daac4ce44e0c28ee8b09f4e5194a9b639f7"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-05-roter-kugelbot.webp",
+          "previous_sha256": null,
+          "sha256": "cd227f5da1ed01fcba3bc8f6ebc1daf231ac9d58653ef8bac5b4051b911920ae"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-06-lila-astronom-data.png",
+          "previous_sha256": null,
+          "sha256": "35414c7282eda2c1a7b8b6053ca5f8cfd103808a4f8f014e157371d1f89a442c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-06-lila-astronom-large.webp",
+          "previous_sha256": null,
+          "sha256": "9cc8b51356e229404a96b9488edef0fbf74d581bdeebc6a75fbb334f625a40be"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-06-lila-astronom.webp",
+          "previous_sha256": null,
+          "sha256": "e2176dda4c8d473289a707d15599d44f2b91429cb145bac4369d9571b014b138"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-07-teekessel-archivar-data.png",
+          "previous_sha256": null,
+          "sha256": "d369805b7b3ec569d88b3bbb7c2abcc944b5cd3adfed758f6d001b13e85846c3"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-07-teekessel-archivar-large.webp",
+          "previous_sha256": null,
+          "sha256": "8e7c6cdce3aa5ce0b8d2ad0d43a6584e111360c689cb1c5b847ac37c42219a85"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-07-teekessel-archivar.webp",
+          "previous_sha256": null,
+          "sha256": "46183b596b1f575ea03ab0e913a9228034427788458ca195fc91aa92a28a0684"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-08-blauer-krabbenbot-data.png",
+          "previous_sha256": null,
+          "sha256": "5d574da5e88b0423983f7b5524c335f63fe59f2f1efe496305ee90e259ee1dbd"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-08-blauer-krabbenbot-large.webp",
+          "previous_sha256": null,
+          "sha256": "fa4695c8e3e4c1129eec9c5a253d74da55f5bc09846b9e97553a56200dcbbefe"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-08-blauer-krabbenbot.webp",
+          "previous_sha256": null,
+          "sha256": "adc4780c31bf2fb934d0c1da6e338d4c49b483f4318a3b22d1729b348ac3cd67"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-09-rosa-stoffbot-data.png",
+          "previous_sha256": null,
+          "sha256": "907e61135f8d83f714b5c74154efcf9c30584e86007fd1c3f85cd85320d23d75"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-09-rosa-stoffbot-large.webp",
+          "previous_sha256": null,
+          "sha256": "e1ec67a7e5f686bb0895b791ef39d24928dab3b656db64bec087a41bd0d8142c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-09-rosa-stoffbot.webp",
+          "previous_sha256": null,
+          "sha256": "5a63b5636ffdc94132664285900b4f2b395727485eb4af5900655897e4165107"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-10-gruener-froschbot-data.png",
+          "previous_sha256": null,
+          "sha256": "32b42468f461919ded6931f9d1e4fbb431506cd92aea39f5ac5ffbd233a9fc5c"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-10-gruener-froschbot-large.webp",
+          "previous_sha256": null,
+          "sha256": "dd8297c38ba12cac74b5fcd31aa6ece4cbd7b3f50b763a8065d0e0318e92a765"
+        },
+        {
+          "path": "src/assets/agent-avatar-thumbnails-v1/robot-10-gruener-froschbot.webp",
+          "previous_sha256": null,
+          "sha256": "db2534f646c4df68d3fd165af5b5a6e820e92c561e22292fcfbc1262b67e0faa"
+        },
+        {
+          "path": "src/lib/agent-avatar-browser.mjs",
+          "previous_sha256": "13bbd8fd864fcd5fafc4580322d2c19f50c94f36645d723fc812803acc17f68d",
+          "sha256": "02b51e85852532af3549dbecd1b4c1b1bf7bf48eda7340f23523c7597ec44abf"
+        },
+        {
+          "path": "src/lib/agent-avatar-catalog.mjs",
+          "previous_sha256": null,
+          "sha256": "6da91323ab28c22ddbe8555a3f59497c61c1d406bcd692fcd5bfb26643a82fc0"
+        },
+        {
+          "path": "src/lib/agent-avatar.mjs",
+          "previous_sha256": "3057e2f7863031a5d157b7c0e0fb3659678a97fc6eacdeb8645775e263e26147",
+          "sha256": "9e2492e3177439e4fa641ba86743180c844728e69035d5dabaf38411f361f0ec"
+        },
+        {
+          "path": "src/styles/agent-avatars.css",
+          "previous_sha256": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
+          "sha256": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3"
+        },
+        {
+          "path": "tests/agent-avatar.test.mjs",
+          "previous_sha256": "cbb6f8ad9eb5516bd8f21e001bb35cdc80b3b2e247485709679c5248d7fe6341",
+          "sha256": "0dcb53076f24a9b666d1e280fe5412211debdb7f985140d678b4c2d377210da5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2360: linke Shell-Navigation, exakte aktive Route und mobile Navigation",
+      "source_base_commit": "05595adea907b97d5d0248cf15b4a5e36982e6d6",
+      "integrated_commits": [
+        "7c911722e6a42774ea5819587a3d3a8af60041ca",
+        "77e512e7639696360cc8c16666fe649e21f3df5f"
+      ],
+      "changes": [
+        "Keep all configured navigation routes available in a grouped left sidebar and match active state by normalized exact path plus canonical query.",
+        "Add an accessible mobile drawer, keyboard dismissal and focus restoration; preserve theme preference, brand, backend-origin and device-fetch contracts.",
+        "Record shell architecture and update only current file hashes; historical source-import records remain unchanged."
+      ],
+      "files": [
+        {
+          "path": "src/components/Header.astro",
+          "previous_sha256": "c997c4aa86d16d0ab70edaaf3c6c3332d0e566cc629386d2872fd7ebd57a44e7",
+          "sha256": "7d5c417f92b2b21cb8caea906dd85cbdb3767cc21bfdecd77b2071d837b16e56"
+        },
+        {
+          "path": "src/layouts/BachLayout.astro",
+          "previous_sha256": "8f45bbac50c150ea9d19f91794bb97b94ad103f5abc5cdef01e70a3c9cc43ac6",
+          "sha256": "98233dd65eae4491973c55bd73d8174509efcf70c5d57856b94ce4a1c7e0844e"
+        },
+        {
+          "path": "src/styles/main.css",
+          "previous_sha256": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
+          "sha256": "6257fe202c6c31413ee8b97e38083a498cdfa2457140296b7905f78cea63e9c1"
+        },
+        {
+          "path": "tests/gui-shell-navigation.test.mjs",
+          "previous_sha256": null,
+          "sha256": "0162102503f9404fc412dfe5c771b936528675d0f4eef0cb4fec61302e31ff0c"
+        },
+        {
+          "path": "docs/GUI-SHELL-NAVIGATION.md",
+          "previous_sha256": null,
+          "sha256": "3cfc76d24530f2f925470df934944f57380e53f407c00e1d80ee9995abe33f79"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2360 R2 correction: mobile focus containment and dynamic brand name",
+      "source_base_commit": "05595adea907b97d5d0248cf15b4a5e36982e6d6",
+      "integrated_commits": [
+        "7c911722e6a42774ea5819587a3d3a8af60041ca",
+        "77e512e7639696360cc8c16666fe649e21f3df5f"
+      ],
+      "correction_of_scope": "BACH #2360: linke Shell-Navigation, exakte aktive Route und mobile Navigation",
+      "changes": [
+        "Preserve the original R1 history row and append the exact R1-to-R2 SHA-256 transition for the files changed during reviewed R2 corrections.",
+        "R2 contains modal background focus containment and uses the runtime brand label as the accessible logo name; source_imports remain unchanged."
+      ],
+      "files": [
+        {
+          "path": "src/components/Header.astro",
+          "previous_sha256": "7d5c417f92b2b21cb8caea906dd85cbdb3767cc21bfdecd77b2071d837b16e56",
+          "sha256": "3c322df64b43025f2fa561ba450b4e9f92aa6371263ea0b68399adb297abd87f"
+        },
+        {
+          "path": "src/styles/main.css",
+          "previous_sha256": "6257fe202c6c31413ee8b97e38083a498cdfa2457140296b7905f78cea63e9c1",
+          "sha256": "dcfbbdffa0a7c12f94181453fff6b49c9aac8bc6d19e4fc5e0f2b2fff3ae63a9"
+        },
+        {
+          "path": "tests/gui-shell-navigation.test.mjs",
+          "previous_sha256": "0162102503f9404fc412dfe5c771b936528675d0f4eef0cb4fec61302e31ff0c",
+          "sha256": "ba8687c675c7fad2c06c635ce6156b70c2cb2d0892652e76df30b78751b1d8ad"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2360 R2.2 documentation LF normalization",
+      "source_base_commit": "05595adea907b97d5d0248cf15b4a5e36982e6d6",
+      "integrated_commits": [
+        "7c911722e6a42774ea5819587a3d3a8af60041ca",
+        "77e512e7639696360cc8c16666fe649e21f3df5f"
+      ],
+      "correction_of_scope": "BACH #2360 R2 correction: mobile focus containment and dynamic brand name",
+      "changes": [
+        "Normalize the shell-navigation document to repository-required LF line endings without changing its text.",
+        "Update the current document hash and append this old-to-new byte transition; preserve earlier history and source_imports."
+      ],
+      "files": [
+        {
+          "path": "docs/GUI-SHELL-NAVIGATION.md",
+          "previous_sha256": "3cfc76d24530f2f925470df934944f57380e53f407c00e1d80ee9995abe33f79",
+          "sha256": "631e940ff40d37608a523d3b52e29bd2406e6514c95ea961e3efb6d9c6037c5b"
         }
       ]
     }

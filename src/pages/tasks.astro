@@ -2,13 +2,15 @@
 // tasks.astro - Das moderne BACH Aufgabenboard mit Filterung
 import BachLayout from "../layouts/BachLayout.astro";
 import TaskCreateForm from "../components/TaskCreateForm.astro";
+import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.astro";
+import TaskLeasePanel from "../components/TaskLeasePanel.astro";
 ---
 
-<BachLayout title="Aufgaben & Tasks" currentPath="/tasks">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+<BachLayout title="Aufgaben" currentPath="/tasks">
+  <div class="task-page-head">
     <div>
-      <h1 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;">
-        📋 Aufgaben & Taskboard
+      <h1>
+        Aufgaben
       </h1>
       <p style="color:var(--text-muted);font-size:0.875rem;">
         Aufgaben aus der verbundenen Task-Datenbank · persönliche und zugewiesene Aufgaben
@@ -24,15 +26,33 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     </div>
   </div>
 
+  <details class="task-overview-technical">
+    <summary>Übernahmen und Laufdetails</summary>
+    <TaskLeasePanel />
+  </details>
+
   <!-- Filter Bar -->
-  <div class="card" style="padding:0.75rem 1.25rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+  <div class="card task-filter-bar">
     <div class="task-filter-controls" aria-label="Aufgaben kombinieren">
       <label for="tasks-assignment-filter">Zuordnung<select id="tasks-assignment-filter">
         <option value="all">Alle Aufgaben</option><option value="user">👤 Persönlich (User)</option>
         <option value="auto">🤖 Automatisiert / Agenten</option><option value="unassigned">Unzugewiesen</option>
       </select></label>
       <label for="tasks-status-filter">Status<select id="tasks-status-filter">
-        <option value="open" selected>⏳ Offen</option><option value="done">✅ Erledigt</option><option value="all">Alle Status</option>
+        <optgroup label="Sammelfilter">
+          <option value="open" selected>⏳ Offen · alle aktiven</option>
+          <option value="done">✅ Erledigt · alle</option>
+          <option value="all">Alle Status</option>
+        </optgroup>
+        <optgroup label="Einzelstatus">
+          <option value="pending">Ausstehend · pending</option>
+          <option value="in_progress">In Arbeit · in_progress</option>
+          <option value="review">Zur Prüfung · review</option>
+          <option value="blocked">Blockiert · blocked</option>
+          <option value="cancelled">Abgebrochen · cancelled</option>
+          <option value="archived">Archiviert · archived</option>
+          <option value="duplicate">Duplikat · duplicate</option>
+        </optgroup>
       </select></label>
       <label for="tasks-priority-filter">Priorität<select id="tasks-priority-filter">
         <option value="">Alle Prioritäten</option><option value="P1">P1 · Kritisch</option>
@@ -66,30 +86,23 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       </div>
     </div>
     <p id="task-detail-error" role="alert" hidden></p>
-    <div id="task-detail-view">
-      <dl class="task-detail-grid">
-        <div><dt>Status</dt><dd id="task-view-status"></dd></div>
-        <div><dt>Priorität</dt><dd id="task-view-priority"></dd></div>
-        <div><dt>Kategorie</dt><dd id="task-view-category"></dd></div>
-        <div><dt>Zugewiesen an</dt><dd id="task-view-assigned_to"></dd></div>
-        <div><dt>Erstellt von</dt><dd id="task-view-created_by"></dd></div>
-        <div><dt>Zuletzt geändert von</dt><dd id="task-view-modified_by"></dd></div>
-        <div><dt>Fällig am</dt><dd id="task-view-due_date"></dd></div>
-        <div><dt>Abhängig von</dt><dd id="task-view-depends_on"></dd></div>
-        <div><dt>Benötigtes Modell</dt><dd id="task-view-required_model"></dd></div>
-        <div><dt>Agenten-Slot</dt><dd id="task-view-assigned_slot"></dd></div>
-        <div><dt>Erstellt am</dt><dd id="task-view-created_at"></dd></div>
-        <div><dt>Abgeschlossen am</dt><dd id="task-view-completed_at"></dd></div>
-      </dl>
-      <h3>Beschreibung</h3><p id="task-view-description" class="task-description"></p>
+    <div id="task-detail-view" class="task-detail-columns">
+      <div class="task-thread-main">
+
+      <article class="task-order" aria-labelledby="task-order-heading">
+        <h3 id="task-order-heading">Auftrag</h3>
+        <p id="task-view-description" class="task-description"></p>
+      </article>
       <section class="task-worker-result" aria-live="polite">
-        <h3>Worker-Ergebnis</h3>
+        <h3>Ergebnis und Verlauf</h3>
+        <p class="task-evidence-hint">Ergebnisabgabe und fachliche Abnahme werden getrennt angezeigt.</p>
         <p id="task-result-status">Noch nicht geprüft.</p>
         <p id="task-result-content" class="task-description" hidden></p>
         <p id="task-result-meta" class="muted" hidden></p>
+        <p id="task-result-source" class="muted" hidden></p>
         <details>
           <summary>Persönliche Freigabe einrichten</summary>
-          <p>Eine Freigabe erlaubt dir, geprüfte Ergebnisse abzunehmen. Der Schlüssel gilt in diesem Browser bis zum Schließen des Tabs.</p>
+          <p>Mit deiner Bestätigung erklärst du den Auftrag fachlich für erfüllt. Weitere erforderliche Prüfungen bleiben verbindlich. Der Schlüssel gilt in diesem Browser bis zum Schließen des Tabs.</p>
           <label>Freigabeschlüssel<input id="task-result-operator-key" type="password" autocomplete="off" /></label>
           <button type="button" class="btn" id="task-result-save-key">Freigabe merken</button>
           <button type="button" class="btn" id="task-result-forget-key">Freigabe vergessen</button>
@@ -111,6 +124,35 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
           <button type="button" class="btn" id="task-result-history-more" hidden>Ältere Einträge laden</button>
         </section>
       </section>
+      </div>
+      <aside class="task-context" aria-labelledby="task-context-heading">
+        <section class="task-context-card">
+          <h3 id="task-context-heading">Auf einen Blick</h3>
+          <dl class="task-detail-grid">
+            <div><dt>Status</dt><dd id="task-view-status"></dd></div>
+            <div><dt>Priorität</dt><dd id="task-view-priority"></dd></div>
+            <div><dt>Zugewiesen an</dt><dd id="task-view-assigned_to"></dd></div>
+            <div><dt>Fällig am</dt><dd id="task-view-due_date"></dd></div>
+            <div><dt>Abhängig von</dt><dd id="task-view-depends_on"></dd></div>
+          </dl>
+        </section>
+        <details class="task-context-card task-technical-details">
+          <summary>Technische Angaben</summary>
+          <dl class="task-detail-grid">
+            <div><dt>Kategorie</dt><dd id="task-view-category"></dd></div>
+            <div><dt>Erstellt von</dt><dd id="task-view-created_by"></dd></div>
+            <div><dt>Zuletzt geändert von</dt><dd id="task-view-modified_by"></dd></div>
+            <div><dt>Modellanforderung der Aufgabe</dt><dd id="task-view-required_model"></dd></div>
+            <div><dt>Bisherige Slotbindung</dt><dd id="task-view-assigned_slot"></dd></div>
+            <div><dt>Erstellt am</dt><dd id="task-view-created_at"></dd></div>
+            <div><dt>Abgeschlossen am</dt><dd id="task-view-completed_at"></dd></div>
+          </dl>
+        </details>
+        <details class="task-context-card task-technical-details">
+          <summary>Auswahl und Prüfregeln</summary>
+          <TaskWorkerPolicySettings />
+        </details>
+      </aside>
     </div>
     <form id="task-edit-form" hidden>
       <div class="task-edit-grid">
@@ -146,6 +188,10 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     .task-table-scroll { overflow-x:auto; }
     .task-detail-head,.task-detail-actions { display:flex; justify-content:space-between; align-items:flex-start; gap:.7rem; flex-wrap:wrap; }
     .task-detail-head h2 { margin:.2rem 0 1rem; overflow-wrap:anywhere; }
+    :global(#tasks-table-container .task-row-actions) {display:flex;flex-direction:column;gap:.25rem;width:100%;max-width:7.5rem;margin-left:auto;}
+    :global(#tasks-table-container .task-row-actions .btn) {display:flex;align-items:center;justify-content:center;gap:.2rem;width:100%;box-sizing:border-box;padding:.28rem .2rem;font-size:.72rem;line-height:1.2;white-space:normal;text-align:center;}
+    :global(#tasks-table-container .task-row-actions .btn span:last-child) {min-width:0;overflow-wrap:normal;}
+    :global(#tasks-table-container .task-row-actions .task-action-state) {font-size:.75rem;line-height:1.2;text-align:center;}
     .task-detail-grid,.task-edit-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem 1.25rem; }
     .task-detail-grid>div { min-width:0; border-top:1px solid var(--border); padding:.45rem 0; }
     .task-detail-grid dt,.muted { color:var(--text-muted); font-size:.8rem; }
@@ -167,15 +213,47 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     .task-edit-wide { grid-column:1/-1; }
     #task-detail-error { color:var(--error-text); overflow-wrap:anywhere; }
     @media (max-width:620px) { .task-detail-grid,.task-edit-grid { grid-template-columns:minmax(0,1fr); } .task-edit-wide { grid-column:auto; } }
+
+    .task-page-head {display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem;}
+    .task-page-head h1 {font-size:1.6rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.25rem;}
+    .task-filter-bar {display:flex;justify-content:space-between;align-items:end;gap:1rem;flex-wrap:wrap;padding:.8rem 1rem;margin-bottom:1rem;}
+    .task-overview-technical {margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:.75rem;}
+    .task-overview-technical>summary,.task-technical-details>summary {cursor:pointer;color:var(--text-muted);font-size:.85rem;font-weight:500;}
+    .task-overview-technical[open]>summary {margin-bottom:.75rem;}
+    .task-detail {padding:1.25rem;scroll-margin-top:5rem;}
+    .task-detail-head {border-bottom:1px solid var(--border);padding-bottom:.75rem;margin-bottom:1.25rem;}
+    .task-detail-head h2 {font-size:1.3rem;font-weight:600;line-height:1.4;margin-bottom:0;}
+    .task-detail-columns {display:grid;grid-template-columns:minmax(0,1fr) minmax(14rem,18rem);gap:1.5rem;align-items:start;}
+    .task-thread-main,.task-context {min-width:0;}
+    .task-thread-main {display:flex;flex-direction:column;gap:1.25rem;}
+    .task-order {padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-panel);}
+    .task-order h3,.task-context h3,.task-worker-result>h3 {font-size:.95rem;font-weight:600;margin:0 0 .7rem;}
+    .task-description {font-size:.9rem;line-height:1.65;overflow-wrap:anywhere;}
+    .task-worker-result {border-top:0;margin:0;padding:0;}
+    .task-evidence-hint {font-size:.82rem;color:var(--text-muted);margin-bottom:.75rem;}
+    .task-context {display:flex;flex-direction:column;gap:.85rem;}
+    .task-context-card {padding:.9rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-panel);min-width:0;overflow-wrap:anywhere;}
+    .task-context .task-detail-grid {grid-template-columns:minmax(0,1fr);gap:.15rem;margin:0;}
+    .task-context .task-detail-grid>div {display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:.6rem;padding:.45rem 0;}
+    .task-context .task-detail-grid dd {margin:0;}
+    .task-context .task-detail-grid dt {line-height:1.5;}
+    .task-technical-details[open]>summary {margin-bottom:.6rem;}
+    :global(#tasks-table-container th),:global(#tasks-table-container td) {padding:.6rem .65rem !important;vertical-align:top;}
+    :global(#tasks-table-container table) {min-width:42rem;font-size:.82rem !important;}
+    :global(#tasks-table-container tbody tr:hover) {background:var(--bg-panel);}
+    .task-detail :global(button:focus-visible),.task-detail :global(input:focus-visible),.task-detail :global(select:focus-visible),.task-detail :global(textarea:focus-visible),.task-detail summary:focus-visible,.task-overview-technical>summary:focus-visible {outline:2px solid var(--accent-blue-text);outline-offset:3px;}
+    @media(max-width:900px) {.task-detail-columns {grid-template-columns:minmax(0,1fr);} .task-context {border-top:1px solid var(--border);padding-top:1rem;}}
+    @media(max-width:620px) {.task-detail {padding:.85rem;} .task-filter-bar {padding:.75rem;} .task-context .task-detail-grid>div {grid-template-columns:minmax(0,1fr);gap:.1rem;}}
   </style>
 
   <script>
     import {createAssignmentController, taskResponseError, assignmentCatalogue, isGateReopenBlocked} from '../lib/task-assignment.mjs';
     import {readTaskFilters, taskFilterQuery, writeTaskFilters, readTaskPage, taskCountLabel} from '../lib/task-filters.mjs';
     import {correctionAttemptMatchesView, createCorrectionAttempt, generateCorrectionRequestId,
+      buildResultAcceptanceRequest, canConfirmTaskResult, resultAcceptanceConfirmed, taskResultCompletionMessage,
       isCurrentCorrectionTarget, normalizeCorrectionNote, parseTaskResultMaxCharsInput,
       resultMaxCharsEditChange,
-      resultOperatorCapabilities, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
+      resultOperatorCapabilities, resultSourceSummary, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
       transitionCorrectionAttempt, validateResultHistoryPage} from '../lib/task-result-contract.mjs';
     let allTasks = [];
     let currentFilters = readTaskFilters(location.search);
@@ -252,7 +330,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
               <th style="padding:0.75rem 0.5rem;width:140px;">Zuständig</th>
               <th style="padding:0.75rem 0.5rem;width:100px;">Prio</th>
               <th style="padding:0.75rem 0.5rem;width:100px;">Status</th>
-              <th style="padding:0.75rem 0.5rem;width:120px;text-align:right;">Aktion</th>
+              <th style="padding:0.75rem 0.5rem;width:120px;box-sizing:border-box;text-align:right;">Aktion</th>
             </tr>
           </thead>
           <tbody>
@@ -280,13 +358,13 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
                   <td style="padding:0.75rem 0.5rem;">
                     <span class="badge ${isDone ? 'badge-success' : 'badge-warning'}">${escapeHtml(t.status || 'open')}</span>
                   </td>
-                  <td style="padding:0.75rem 0.5rem;text-align:right;">
-                    <button class="btn" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="openTask(${Number(t.id)})">Öffnen</button>
-                    ${normalizedStatus(t.status) === 'review' ? `<button class="btn" onclick="openTask(${Number(t.id)})">Ergebnis prüfen</button>` : !isTerminal ? `
-                      <button class="btn" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="completeTask(${Number(t.id)})">
-                        ✓ Erledigt
-                      </button>
-                    ` : (isDone ? '<span style="color:var(--success-text);font-size:0.8rem;">✓ Erledigt</span>' : '<span style="color:var(--text-muted);font-size:0.8rem;">Beendet</span>')}
+                  <td style="padding:0.75rem 0.5rem;text-align:right;width:120px;box-sizing:border-box;">
+                    <div class="task-row-actions">
+                      <button type="button" class="btn" title="Aufgabe öffnen" aria-label="Aufgabe #${Number(t.id)} öffnen" onclick="openTask(${Number(t.id)})"><span aria-hidden="true">👁</span><span>Öffnen</span></button>
+                      ${normalizedStatus(t.status) === 'review' ? `<button type="button" class="btn" title="Ergebnis prüfen" aria-label="Ergebnis von Aufgabe #${Number(t.id)} prüfen" onclick="openTask(${Number(t.id)})"><span aria-hidden="true">🔎</span><span>Ergebnis prüfen</span></button>` : !isTerminal ? `
+                        <button type="button" class="btn" title="Aufgabe als erledigt markieren" aria-label="Aufgabe #${Number(t.id)} als erledigt markieren" onclick="completeTask(${Number(t.id)})"><span aria-hidden="true">✓</span><span>Erledigt</span></button>
+                      ` : (isDone ? '<span class="task-action-state" style="color:var(--success-text);">✓ Erledigt</span>' : '<span class="task-action-state" style="color:var(--text-muted);">Beendet</span>')}
+                    </div>
                   </td>
                 </tr>
               `;
@@ -439,13 +517,15 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       const status = document.getElementById('task-result-status');
       const text = document.getElementById('task-result-content');
       const meta = document.getElementById('task-result-meta');
+      const source = document.getElementById('task-result-source');
       const accept = document.getElementById('task-result-accept');
       const correction = document.getElementById('task-result-correction');
       selectedResult = null; taskResultReadback = null; accept.hidden = true; accept.disabled = true;
       taskResultCapabilities = {valid:false, accept_result:false, request_correction:false};
       correction.hidden = true; correction.querySelector('button[type="submit"]').disabled = true;
       taskResultStatusMessage = 'Ergebnis wird geprüft.';
-      status.textContent = taskResultStatusMessage; text.hidden = meta.hidden = true;
+      status.textContent = taskResultStatusMessage; text.hidden = meta.hidden = source.hidden = true;
+      source.textContent = '';
       resultKeyStatus();
       try {
         const response = await fetch('/api/tasks/' + encodeURIComponent(id) + '/result', {
@@ -471,9 +551,13 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
           throw new Error('Der Ergebnisinhalt ist nicht bestätigt.');
         }
         text.textContent = result.result; text.hidden = false;
+        const provenance = resultSourceSummary(data);
+        source.textContent = provenance.label + ' ' + provenance.detail;
+        source.hidden = false;
         const accepted = result.accepted === true && ['done','completed'].includes(data.status);
-        taskResultStatusMessage = accepted ? 'Abgenommen · erledigt.'
-          : result.reason === 'awaiting_review' ? 'Ergebnis abgegeben · wartet auf deine Prüfung.'
+        taskResultStatusMessage = result.completion_policy_version === 1 ? taskResultCompletionMessage(data)
+          : accepted ? 'Abgenommen · erledigt.'
+          : result.reason === 'awaiting_review' ? 'Ergebnis abgegeben · Abnahme steht aus.'
           : result.reason === 'legacy_result_without_acceptance' ? 'Früheres Ergebnis · keine getrennte Abnahme belegt.'
           : 'Ergebnis vorhanden · aktuelle Abnahme nicht bestätigt.';
         status.textContent = taskResultStatusMessage;
@@ -483,7 +567,11 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         if (taskResultCapabilities.valid && taskResultCapabilities.accept_result
             && data.status === 'review' && result.reason === 'awaiting_review' && result.accepted === false
             && Number.isSafeInteger(result.result_id) && result.result_id > 0
-            && /^[a-f0-9]{64}$/.test(result.result_sha256) && result.task_version === data.task_version) {
+            && /^[a-f0-9]{64}$/.test(result.result_sha256) && result.task_version === data.task_version
+            && (result.completion_policy_version === undefined || result.completion_policy_version === 0
+              || (result.completion_policy_version === 1 && canConfirmTaskResult(data)))) {
+          accept.textContent = result.completion_policy_version === 1
+            ? 'Ergebnis fachlich bestätigen' : 'Geprüftes Ergebnis abnehmen';
           selectedResult = data; accept.hidden = false; accept.disabled = false;
         }
         renderTaskResultCorrectionAvailability({resetNote:true});
@@ -697,29 +785,26 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       button.disabled = true; detailError('');
       try {
         const result = observed.result;
+        const body = buildResultAcceptanceRequest(observed);
         const response = await fetch('/api/tasks/' + encodeURIComponent(observed.task_id) + '/result/accept', {
           method:'POST', redirect:'error', headers:{'Content-Type':'application/json', 'X-BACH-Result-Operator':key},
-          body:JSON.stringify({result_id:result.result_id, result_sha256:result.result_sha256,
-            task_version:observed.task_version, status_revision:observed.status_revision})
+          body:JSON.stringify(body)
         });
         const answer = await response.json().catch(() => ({}));
-        if (revision !== taskDetailRevision) return;
+        if (revision !== taskDetailRevision || selectedTask?.id !== observed.task_id || operatorKey() !== key) return;
         if (!response.ok) throw new Error(taskResponseError(answer, response.status));
-        if (answer.verified !== true || !['done','completed'].includes(answer.status)
-            || !Number.isSafeInteger(answer.status_revision) || answer.status_revision <= observed.status_revision
+        if (answer.schema !== 'bach.task-result-readback.v1' || answer.verified !== true
             || answer.task_id !== observed.task_id || answer.task_version !== observed.task_version
             || answer.result?.result_id !== result.result_id
-            || answer.result?.result_sha256 !== result.result_sha256 || answer.result?.accepted !== true) {
+            || answer.result?.result_sha256 !== result.result_sha256) {
           throw new Error('Die Abnahme wurde nicht bestätigt. Task erneut öffnen.');
         }
         const readbackRevision = revision + 1;
         await openTask(observed.task_id);
-        if (taskDetailRevision !== readbackRevision) return;
+        if (taskDetailRevision !== readbackRevision || operatorKey() !== key) return;
         revision = readbackRevision;
-        if (taskResultReadback?.result?.accepted !== true
-            || taskResultReadback.result.result_id !== result.result_id
-            || taskResultReadback.status_revision !== answer.status_revision) {
-          throw new Error('Aktuelle Abnahme beim Kontrollabruf nicht bestätigt. Task erneut öffnen.');
+        if (!resultAcceptanceConfirmed(observed, answer, taskResultReadback)) {
+          throw new Error('Deine Bestätigung ist beim Kontrollabruf nicht belegt. Task erneut öffnen.');
         }
         await loadTasks();
       } catch (cause) {
@@ -752,6 +837,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         selectedTask = task;
         document.getElementById('task-detail-id').textContent = `Task #${id}`;
         document.getElementById('task-detail-title').textContent = String(task.title || 'Unbenannt');
+        window.dispatchEvent(new CustomEvent('bach:task-selected', {detail:{id, task}}));
         for (const key of ['status','priority','category','assigned_to','created_by','modified_by','due_date','depends_on','required_model','assigned_slot','created_at','completed_at','description']) {
           document.getElementById('task-view-' + key).textContent = task[key] == null || task[key] === '' ? '–' : String(task[key]);
         }

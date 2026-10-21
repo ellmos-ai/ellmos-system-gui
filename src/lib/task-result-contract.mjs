@@ -24,6 +24,47 @@ const isTimestamp = value => {
   return Number.isFinite(Date.parse(value));
 };
 
+export function resultSourceSummary(readback) {
+  const unknown = {kind:'unknown', available:false, label:'Herkunft aktuell nicht prüfbar.',
+    detail:'Für diese Ansicht liegt kein gültiger Herkunftsbeleg vor.'};
+  if (!isRecord(readback) || readback.schema !== 'bach.task-result-readback.v1'
+      || readback.verified !== true || !positiveInteger(readback.task_id)
+      || !isSha256(readback.task_version)) return unknown;
+  const result = readback.result;
+  if (!isRecord(result) || result.schema !== 'bach.worker-result.v1'
+      || result.task_id !== readback.task_id || !positiveInteger(result.result_id)
+      || !isSha256(result.task_version) || !isSha256(result.result_sha256)) return unknown;
+  const current = result.task_version === readback.task_version;
+  if (result.source_kind === 'external_attested') {
+    const provenance = result.external_provenance;
+    const scope = result.scope;
+    const available = current && isRecord(provenance) && provenance.schema === 'bach.worker-external-attestation.v1'
+      && provenance.source_kind === 'external_attested' && provenance.availability === 'available'
+      && isRecord(scope) && scope.schema === 'bach.worker-external-scope-evidence.v1'
+      && scope.source_kind === 'external_attested' && scope.availability === 'available'
+      && isSha256(result.result_revision) && scope.result_revision === result.result_revision
+      && provenance.result_revision === result.result_revision;
+    return {kind:'external_attested', available,
+      label:available ? 'Externe Herkunft bestätigt.' : 'Externe Herkunft · Beleg aktuell nicht verfügbar.',
+      detail:available ? 'Ein berechtigter Operator hat die Herkunftsartefakte geprüft. Die Ergebnisabnahme ist separat ausgewiesen.'
+        : 'Der externe Beleg ist aktuell nicht verwendbar. Daraus folgt keine Ergebnisabnahme.'};
+  }
+  if (result.source_kind === 'native') {
+    const execution = result.execution;
+    const available = current && isRecord(execution) && execution.availability === 'available'
+      && typeof execution.execution_id === 'string' && execution.execution_id.length > 0
+      && isSha256(execution.execution_revision);
+    return {kind:'native', available,
+      label:available ? 'BACH-Modelllauf dokumentiert.' : 'BACH-Modelllauf · Beleg aktuell nicht verfügbar.',
+      detail:'Ausführungsbeleg und Ergebnisabnahme werden getrennt ausgewiesen.'};
+  }
+  if (result.source_kind === 'unattested') {
+    return {kind:'unattested', available:false, label:'Ausführung noch nicht belegt.',
+      detail:'Für dieses Ergebnis liegt noch kein gültiger Ausführungs- oder Herkunftsbeleg vor.'};
+  }
+  return unknown;
+}
+
 export function resultOperatorCapabilities(readback) {
   if (!isRecord(readback) || readback.schema !== 'bach.task-result-readback.v1' || readback.verified !== true) {
     return {valid:false, accept_result:false, request_correction:false};
@@ -96,6 +137,97 @@ export function isCurrentCorrectionTarget(readback, taskId) {
     && positiveInteger(result.result_id) && isSha256(result.result_sha256)
     && typeof result.generation === 'string' && result.generation.length > 0
     && positiveInteger(result.fence) && result.task_version === readback.task_version;
+}
+
+export function canConfirmTaskResult(readback) {
+  if (!isCurrentCorrectionTarget(readback, readback?.task_id)) return false;
+  const result = readback.result;
+  const version = result.completion_policy_version;
+  if (version === undefined || version === 0) return true;
+  return version === 1 && isSha256(result.result_revision)
+    && !(result.user_review_revision === result.result_revision
+      && positiveInteger(result.user_review_event_id)
+      && result.contract_attestation_revision === result.result_revision
+      && positiveInteger(result.contract_attestation_event_id));
+}
+
+export function buildResultAcceptanceRequest(readback) {
+  if (!canConfirmTaskResult(readback)) {
+    throw new Error('Ergebnis oder Auftragsversion ist nicht aktuell. Task erneut öffnen.');
+  }
+  const result = readback.result;
+  const payload = {result_id:result.result_id, result_sha256:result.result_sha256,
+    task_version:readback.task_version, status_revision:readback.status_revision};
+  if (result.completion_policy_version === 1) {
+    payload.result_revision = result.result_revision;
+    payload.task_contract_met = true;
+  }
+  return payload;
+}
+
+export function resultAcceptanceConfirmed(observed, answer, fresh) {
+  if (!isCurrentCorrectionTarget(observed, observed?.task_id)) return false;
+  const before = observed.result;
+  const matches = value => isRecord(value) && value.schema === 'bach.task-result-readback.v1'
+    && value.verified === true && value.task_id === observed.task_id
+    && value.task_version === observed.task_version && positiveInteger(value.status_revision)
+    && value.status_revision >= observed.status_revision
+    && value.result?.result_id === before.result_id
+    && value.result?.result_sha256 === before.result_sha256
+    && value.result?.task_version === before.task_version;
+  if (!matches(answer) || !matches(fresh) || answer.status !== fresh.status
+      || answer.status_revision !== fresh.status_revision
+      || typeof answer.result.accepted !== 'boolean'
+      || answer.result.accepted !== fresh.result.accepted) return false;
+  const completed = ['done','completed'].includes(fresh.status) && fresh.result.accepted === true;
+  const waiting = fresh.status === 'review' && fresh.result.accepted === false;
+  if (!completed && !waiting) return false;
+  if (before.completion_policy_version === undefined || before.completion_policy_version === 0) {
+    return completed && fresh.status_revision > observed.status_revision;
+  }
+  if (before.completion_policy_version !== 1 || !isSha256(before.result_revision)) return false;
+  for (const value of [answer.result, fresh.result]) {
+    if (value.completion_policy_version !== 1 || value.result_revision !== before.result_revision
+        || value.user_review_revision !== before.result_revision
+        || value.contract_attestation_revision !== before.result_revision
+        || !positiveInteger(value.user_review_event_id)
+        || !positiveInteger(value.contract_attestation_event_id)) return false;
+  }
+  return answer.result.user_review_event_id === fresh.result.user_review_event_id
+    && answer.result.contract_attestation_event_id === fresh.result.contract_attestation_event_id;
+}
+
+export function taskResultCompletionMessage(readback) {
+  const result = readback?.result;
+  if (!isRecord(result)) return null;
+  if (result.accepted === true && ['done','completed'].includes(readback.status)) {
+    if (result.completion_decision?.availability === 'administrative_review_child') {
+      return 'Prüfaufgabe abgeschlossen.';
+    }
+    return 'Abgenommen · erledigt.';
+  }
+  if (result.completion_policy_version !== 1) return null;
+  const evaluation = readback.completion_evaluation;
+  const approval = isSha256(result.result_revision)
+    && result.user_review_revision === result.result_revision
+    && positiveInteger(result.user_review_event_id);
+  const prefix = approval ? 'Deine Freigabe ist gespeichert. ' : '';
+  if (!isRecord(evaluation) || evaluation.schema !== 'bach.worker-completion-evaluation.v1'
+      || evaluation.task_id !== readback.task_id || evaluation.result_id !== result.result_id
+      || evaluation.result_revision !== result.result_revision || evaluation.availability !== 'available') {
+    return prefix + 'Die übrigen Abschlussbedingungen sind noch nicht bestätigt.';
+  }
+  const messages = {
+    awaiting_user_review:'Wartet auf deine fachliche Bestätigung.',
+    awaiting_external_review:'Die erforderliche GitHub-Prüfung steht noch aus.',
+    awaiting_review:'Die unabhängige Modellprüfung steht noch aus.',
+    correction_required:'Eine Korrektur ist erforderlich.',
+    result_incomplete:'Die Auftragskriterien oder Ergebnisnachweise sind noch nicht vollständig bestätigt.',
+    integrity_blocked:'Die Ergebnisbelege sind nicht aktuell bestätigt. Task erneut öffnen.',
+    completed:'Die Abschlussbedingungen sind erfüllt; der Taskabschluss ist noch nicht bestätigt.',
+    completed_unreviewed:'Die Abschlussbedingungen sind erfüllt; der Taskabschluss ist noch nicht bestätigt.',
+  };
+  return prefix + (messages[evaluation.decision?.state] || 'Die übrigen Abschlussbedingungen sind noch nicht bestätigt.');
 }
 
 export function normalizeCorrectionNote(value) {
