@@ -271,7 +271,7 @@
     "src/pages/index.astro": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d",
     "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
     "src/pages/memory.astro": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c",
-    "src/pages/settings.astro": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee",
+    "src/pages/settings.astro": "754497308e7048fe2f4b10578dda928fe9d4eba551e0996cae97c13b6fb92e7e",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
@@ -316,7 +316,9 @@
     "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
     "tests/gui-shell-navigation.test.mjs": "ba8687c675c7fad2c06c635ce6156b70c2cb2d0892652e76df30b78751b1d8ad",
     "docs/GUI-SHELL-NAVIGATION.md": "631e940ff40d37608a523d3b52e29bd2406e6514c95ea961e3efb6d9c6037c5b",
-    "scripts/page-reads-bindings.mjs": "3092e2389245b8b41242db7d2e9360523465da1a9c4106911c92d7529a65887e"
+    "scripts/page-reads-bindings.mjs": "3092e2389245b8b41242db7d2e9360523465da1a9c4106911c92d7529a65887e",
+    "src/lib/settings-connections.mjs": "1ef6196556c70917058cc243b6f5609468743feb49de219f42d3aec2be960955",
+    "tests/settings-connections.test.mjs": "5ad0a09c43b7a215a5f4924d00bd84becadee8e862483337927a2f36c1f35d6a"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -3315,6 +3317,34 @@
           "path": "tests/agent-overview.test.mjs",
           "previous_sha256": "252ca5f3f7570a4ab41a93f6d473606d1365e877af221f2fabc8db5ae622818a",
           "sha256": "7bcf1f1fd3211e81c3ccc55acc50d2949cd8e7b24cc85f0dc2d61da00cdb9330"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2362: R4 settings connections and device distinction",
+      "source_base_commit": "b9613a69206b8756a49bf4bc6f7f3580e2fc1284",
+      "changes": [
+        "Place connections/device, appearance and worker policy before architecture settings while preserving all sections.",
+        "Require exact existing backend-origin schema, mode and four Boolean observations; distinguish browser UI origin from observed backend instance and unverified OS permissions.",
+        "Add accessible tab roles, roving keyboard activation, URL selection and browser Back support using existing APIs.",
+        "Preserve all original imports and historical followups; this source candidate is not a release or deployment acceptance."
+      ],
+      "files": [
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee",
+          "sha256": "754497308e7048fe2f4b10578dda928fe9d4eba551e0996cae97c13b6fb92e7e"
+        },
+        {
+          "path": "src/lib/settings-connections.mjs",
+          "previous_sha256": null,
+          "sha256": "1ef6196556c70917058cc243b6f5609468743feb49de219f42d3aec2be960955"
+        },
+        {
+          "path": "tests/settings-connections.test.mjs",
+          "previous_sha256": null,
+          "sha256": "5ad0a09c43b7a215a5f4924d00bd84becadee8e862483337927a2f36c1f35d6a"
         }
       ]
     }
