@@ -269,7 +269,7 @@ test('the controls are wired to existing lanes and Core profiles are in the shar
   assert.match(runningPage, /registerAgentOverviewCard\(runningList, card, worker, 'worker', 'running'\)/);
   assert.match(runningPage, /registerAgentOverviewCard\(runningTarget, card, agent, 'core', 'running'\)/);
   assert.match(runningPage, /registerAgentOverviewCard\(target, card, agent, 'core', 'ready'\)/);
-  assert.ok(runningPage.indexOf('id="core-agent-cards"') < runningPage.indexOf('<ModelSockets />'));
+  assert.ok(runningPage.indexOf('id="core-agent-cards"') < runningPage.indexOf('id="models-resources"'));
   for (const key of ['query','access','function','start','sort','group','view']) assert.match(dashboardPage, new RegExp(`data-agent-overview-control="${key}"`));
   assert.match(dashboardPage, /fetch\('\/api\/system\/workers'\)/);
   assert.match(dashboardPage, /fetch\('\/api\/system\/core-agents'\)/);
@@ -316,4 +316,58 @@ test('compact list hides filtered cards, portraits, and secondary details, and s
   assert.match(dashboardPage, /dashboard-running-agents\.agent-overview-list \.agent-overview-runtime-avatar,[\s\S]*dashboard-running-agents\.agent-overview-list \.agent-overview-runtime-meta \{display:none!important\}/);
   assert.match(runningPage, /@media\(max-width:680px\)\s*\{\.agent-overview-controls \.agent-overview-search \{grid-column:span 1\}\}/);
   assert.match(dashboardPage, /@media\(max-width:680px\)\{\.dashboard-agent-overview \.agent-overview-controls \.agent-overview-search\{grid-column:span 1\}\}/);
+});
+
+test('Running and history lead, model bindings stay on agents, and shared resources require measurements', () => {
+  const runningPosition = runningPage.indexOf('id="running-agents-title"');
+  const historyPosition = runningPage.indexOf('id="activity-timeline"');
+  const readyPosition = runningPage.indexOf('id="ready-agents-title"');
+  const resourcesPosition = runningPage.indexOf('id="models-resources"');
+  assert.ok(runningPosition >= 0 && runningPosition < historyPosition);
+  assert.ok(historyPosition < readyPosition && readyPosition < resourcesPosition);
+  assert.doesNotMatch(runningPage, /import ModelSockets|<ModelSockets\s*\/>/);
+  assert.doesNotMatch(runningPage, /BachModelSockets|bach:model-sockets-changed|Systemslot\(s\)|Systemslot-Laufstatus nicht verfügbar/);
+  assert.match(runningPage, /Modellbindung: ' \+ \(agent\.model \|\| 'Modell fehlt'\)/);
+  assert.match(runningPage, /Die Modellbindung steht direkt beim Agentenprofil/);
+  const resourceView = runningPage.match(/<details class="card hardware-torch" id="models-resources"[\s\S]*?<\/details>/)?.[0];
+  assert.ok(resourceView, 'measured resources must have a distinct Models & Resources section');
+  assert.match(resourceView, /Modelle & Ressourcen/);
+  assert.match(resourceView, /fackel-loaded-models/);
+  assert.match(resourceView, /Modellresidenz und RAM-Anteil je Agent oder Modell bleiben ohne eigenen Beleg unbekannt/);
+  assert.doesNotMatch(resourceView, /Steckplatz|Agentenslot|ModelSockets|model-socket-editor/);
+  assert.match(runningPage, /cap\.state === 'measured' && reportedModelCount !== null/);
+  assert.match(runningPage, /Number\.isFinite\(cap\.capacity_gib\) && cap\.capacity_gib > 0/);
+  assert.match(runningPage, /Ollama meldet geladene Modelle:/);
+  assert.ok(runningPage.includes("cap.state === 'measured' ? 'Messung unvollständig'"));
+  assert.doesNotMatch(runningPage, /Number\(cap\.loaded_model_count\) \|\| 0/);
+});
+
+test('Ready worker profiles do not show persisted model resolution as current', () => {
+  const readyStart = runningPage.indexOf('readyGrid.innerHTML = profileWorkers.map(w => {');
+  const runningStart = runningPage.indexOf('// 2. Render Running Workers', readyStart);
+  assert.ok(readyStart >= 0 && runningStart > readyStart);
+  const readyLane = runningPage.slice(readyStart, runningStart);
+  assert.match(readyLane, /Modellbindung:.*w\.model/);
+  assert.doesNotMatch(readyLane, /resolved_model|Aufgel\u00f6st/);
+  const runningLane = runningPage.slice(runningStart);
+  assert.match(runningLane, /runningWorkers\.map\(w => \{/);
+  assert.match(runningLane, /w\.resolved_model && w\.resolved_model !== w\.model/);
+});
+
+test('Core Ready cards suppress stale resolved models until the agent is confirmed running', () => {
+  const guard = /if \(agent\.runtime_verified === true && agent\.running === true && agent\.resolved_model && agent\.resolved_model !== agent\.model\)/;
+  assert.match(runningPage, guard);
+  assert.match(runningPage, /if \(activeCoreIds\.has\(String\(agent\.id\)\)\)/);
+
+  const reportsResolvedModel = agent => agent.runtime_verified === true
+    && agent.running === true
+    && agent.resolved_model
+    && agent.resolved_model !== agent.model;
+  const staleReadyCore = {
+    runtime_verified: true, running: false, model: 'Model-A', resolved_model: 'Model-B',
+  };
+  const confirmedRunningCore = { ...staleReadyCore, running: true };
+
+  assert.equal(Boolean(reportsResolvedModel(staleReadyCore)), false);
+  assert.equal(Boolean(reportsResolvedModel(confirmedRunningCore)), true);
 });

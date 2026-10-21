@@ -14,7 +14,7 @@
     "package-lock.json": "25ceff83680555844b091d774ea2604cf4fba9ce38e053fc350061eaa8195da9",
     "package.json": "6c34cc38daaed782429ce8ac759baf76c29822a5d3ab18ee87f7d1b379d41230",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c",
+    "public/page-reads.v1.json": "c95a3f875ea15dccbcc92e96c3d09f35651f8acecfe1685f5c2933d37f895908",
     "README.md": "4ee4b984bfe281e4dde0a9a452d55dc2a47d5ca9700ad7910630045e75af05bc",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -259,7 +259,7 @@
     "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8",
+    "src/pages/agenten/running.astro": "d9b286c96e08686c534d7473f097cf299c17510339387877212ffa158ae5a52e",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
@@ -288,7 +288,7 @@
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
-    "tests/agent-overview.test.mjs": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd",
+    "tests/agent-overview.test.mjs": "7bcf1f1fd3211e81c3ccc55acc50d2949cd8e7b24cc85f0dc2d61da00cdb9330",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
@@ -315,7 +315,8 @@
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
     "tests/gui-shell-navigation.test.mjs": "ba8687c675c7fad2c06c635ce6156b70c2cb2d0892652e76df30b78751b1d8ad",
-    "docs/GUI-SHELL-NAVIGATION.md": "631e940ff40d37608a523d3b52e29bd2406e6514c95ea961e3efb6d9c6037c5b"
+    "docs/GUI-SHELL-NAVIGATION.md": "631e940ff40d37608a523d3b52e29bd2406e6514c95ea961e3efb6d9c6037c5b",
+    "scripts/page-reads-bindings.mjs": "3092e2389245b8b41242db7d2e9360523465da1a9c4106911c92d7529a65887e"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -3156,6 +3157,29 @@
     },
     {
       "date": "2026-10-21",
+      "scope": "BACH #2028 R3 agent/model availability and resource evidence view (Parent #2359)",
+      "source_base_commit": "1cea06db56c384e8986144bbab4f2675124a59ba",
+      "plan_key": "gui-claude-r3-agent-model/20261021",
+      "changes": [
+        "Separate the agent instance, configured model binding, and evidenced runtime/resource state; unavailable per-agent model residency and RAM share remain unknown.",
+        "Show host capacity only when required numeric measurement fields are present; missing compute-job observations remain unverified, and saved profile state does not imply a loaded model.",
+        "Add regressions for the identity and measured-resource distinctions; no backend, runtime, provider, task-control, or model-selection behavior changed."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8",
+          "sha256": "55f51d941b96e99c955369d675350d98fdb9f2d8852a64e4b3877e685ce27f82"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd",
+          "sha256": "0635e9e094d2b5cebd62de2dfe1009b3b5028224982bd4d621fdeb59bb2012de"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
       "scope": "BACH #2359: remove inherited unverified Hermes active badge",
       "source_base_commit": "1cea06db56c384e8986144bbab4f2675124a59ba",
       "changes": [
@@ -3189,6 +3213,108 @@
           "path": "package-lock.json",
           "previous_sha256": "a87155ab56cf689e3db88c9ed8dacbaa6c82f4aaa6528a91734bd459d41d19d0",
           "sha256": "25ceff83680555844b091d774ea2604cf4fba9ce38e053fc350061eaa8195da9"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2028 R3: remove the visual model-slot concept and place measured model resources after Running and the agent views",
+      "source_base_commit": "edb99e6ceea79d61dc6689cc5d712fd9e10b31a1",
+      "plan_key": "gui-claude-r3-agent-model/20261021",
+      "changes": [
+        "Remove the ModelSockets slot/agent-slot presentation from Running and identify configured model bindings directly on agent profiles.",
+        "Place the existing Fackel holder, priority, turn, and measured local model resources in a distinct Models & Resources section after Running, history, and the agent areas.",
+        "Display Ollama-reported loaded model names and aggregate used/capacity measurements only with valid source fields; keep missing values unknown and do not infer per-agent or per-model residency."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "55f51d941b96e99c955369d675350d98fdb9f2d8852a64e4b3877e685ce27f82",
+          "sha256": "6768357c310378913480460bf423040f13756f19754fa5afa3b7fbf9b67d188d"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "0635e9e094d2b5cebd62de2dfe1009b3b5028224982bd4d621fdeb59bb2012de",
+          "sha256": "5354b476911b1c3d8b7919e71654ea663f2d955eaedb146753e74b6d260684e9"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2028 R3 follow-up: remove stale ModelSockets page-read declarations after the Running UI panel removal",
+      "source_base_commit": "edb99e6ceea79d61dc6689cc5d712fd9e10b31a1",
+      "plan_key": "gui-claude-r3-agent-model/20261021",
+      "changes": [
+        "Remove only the five unreachable ModelSockets routes from the Running page-read manifest and their dynamic-helper binding; preserve the helper tests and all backend API behavior.",
+        "Remove the now-unused ModelSockets refresh/event hooks from Running and replace remaining visible Systemslot status text with Systemagent wording.",
+        "Keep measured local model resources and configured agent model bindings evidence-separated; this follow-up does not infer per-agent/model residency or introduce a slot requirement."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "6768357c310378913480460bf423040f13756f19754fa5afa3b7fbf9b67d188d",
+          "sha256": "97c1f94be1a04972ed4580791f1b81de4888f2b6712015788b096b140c77530d"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "5354b476911b1c3d8b7919e71654ea663f2d955eaedb146753e74b6d260684e9",
+          "sha256": "28d127fe9d65b338b2b46c7f9ed3d391b5065abce1f54527d5255c27d8e08baf"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c",
+          "sha256": "c95a3f875ea15dccbcc92e96c3d09f35651f8acecfe1685f5c2933d37f895908"
+        },
+        {
+          "path": "scripts/page-reads-bindings.mjs",
+          "previous_sha256": "997a7268e59f251d832ae7cb5063517f80d4294762100852d21efc31f90c9b65",
+          "sha256": "3092e2389245b8b41242db7d2e9360523465da1a9c4106911c92d7529a65887e"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2028 R3 P2 follow-up: keep persisted worker model resolution out of Ready/profile cards",
+      "source_base_commit": "edb99e6ceea79d61dc6689cc5d712fd9e10b31a1",
+      "plan_key": "gui-claude-r3-agent-model/20261021",
+      "changes": [
+        "Remove resolved_model from the Ready/profile card, because this persisted value can describe a previous completed inference and has no freshness timestamp.",
+        "Keep the resolved model display in the confirmed Running lane and retain the configured model binding on Ready profiles.",
+        "Add a lane-bound regression assertion that Ready/profile rendering does not read resolved_model while the confirmed Running renderer retains it."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "97c1f94be1a04972ed4580791f1b81de4888f2b6712015788b096b140c77530d",
+          "sha256": "f30a080e396e111a0f1c871d325d7cbc28d266230124a96bc83ce1c242ac1349"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "28d127fe9d65b338b2b46c7f9ed3d391b5065abce1f54527d5255c27d8e08baf",
+          "sha256": "252ca5f3f7570a4ab41a93f6d473606d1365e877af221f2fabc8db5ae622818a"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2028 R3 P2 follow-up: suppress stale resolved_model on inactive Core/System Ready cards",
+      "source_base_commit": "edb99e6ceea79d61dc6689cc5d712fd9e10b31a1",
+      "plan_key": "gui-claude-r3-agent-model/20261021",
+      "changes": [
+        "Require a Core/System agent to be both runtime-verified and currently running before showing its resolved_model in the Ready/profile card.",
+        "Keep the confirmed Running Core resolved-model display while suppressing persisted prior resolution for the inactive runtime_verified=true, running=false case.",
+        "Add a regression fixture for stale Ready resolution and a positive confirmed-running case."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "f30a080e396e111a0f1c871d325d7cbc28d266230124a96bc83ce1c242ac1349",
+          "sha256": "d9b286c96e08686c534d7473f097cf299c17510339387877212ffa158ae5a52e"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "252ca5f3f7570a4ab41a93f6d473606d1365e877af221f2fabc8db5ae622818a",
+          "sha256": "7bcf1f1fd3211e81c3ccc55acc50d2949cd8e7b24cc85f0dc2d61da00cdb9330"
         }
       ]
     }
