@@ -1,7 +1,6 @@
 ---
-// running.astro - Living & Running: Einsatzbereite Agenten, Teams, Running Slots & Konnektivität
+// running.astro - Living & Running: Agenten, Laufzeit, Modelle & Ressourcen
 import BachLayout from "../../layouts/BachLayout.astro";
-import ModelSockets from '../../components/ModelSockets.astro';
 import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
@@ -15,7 +14,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         ⚡ Living & Running
       </h1>
       <p style="color:var(--text-muted);font-size:0.875rem;">
-        Einsatzbereite Agenten, Teams & Ketten • Systemslots & Running Agents • Hardware-Vorrang & Konnektivität
+        Einsatzbereite Agenten, Teams & Ketten • Running und Verlauf • Modelle & Ressourcen
       </p>
     </div>
 
@@ -31,46 +30,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       </button>
     </div>
   </div>
-
-  <!-- 2. HARDWARE-FACKEL & COMPUTE-VORRANG & KONNEKTIVITÄT -->
-  <details class="card hardware-torch" aria-labelledby="hardware-torch-title" open>
-    <summary class="torch-summary">
-      <span id="hardware-torch-title">🔥 Fackel & Compute</span>
-      <span class="badge" id="torch-observed-at">Nicht geprüft</span>
-    </summary>
-    <div class="torch-grid">
-      <div class="torch-panel torch-owner" role="status" aria-live="polite">
-        <svg id="hardware-flame" class="torch-svg" viewBox="0 0 64 80" role="img" aria-labelledby="torch-svg-title">
-          <title id="torch-svg-title">Hardware-Fackel ohne bestätigten Besitz</title>
-          <path class="torch-flame-outer" d="M31 4c7 14 5 22 2 28 10-3 13-12 14-16 17 18 17 42 4 55-11 11-32 11-43-1C-2 59 2 41 15 28c1 9 3 14 8 17-2-16 1-29 8-41Z"/>
-          <path class="torch-flame-inner" d="M33 39c2 7 6 10 9 15 5 11-1 22-11 22-10 0-16-11-11-21 2-5 8-10 13-16Z"/>
-        </svg>
-        <div>
-          <strong>Hardware-Besitz</strong>
-          <p id="fackel-holder">Nicht geprüft</p>
-          <small id="fackel-owner-reason">Ein aktueller Halternachweis fehlt.</small>
-        </div>
-      </div>
-      <div class="torch-panel">
-        <strong>Compute-Vorrang</strong>
-        <p id="fackel-priority">Nicht geprüft</p>
-        <button id="btn-toggle-fackel" class="btn btn-sm" type="button" onclick="toggleFackel()" disabled>Vorrang ändern</button>
-        <small>Einstellung ändert die Bevorzugung zwischen Compute und Ollama.</small>
-      </div>
-      <div class="torch-panel">
-        <strong>Lokaler Compute-Turn</strong>
-        <p id="compute-turn-status">Nicht geprüft</p>
-        <small><span id="compute-turn-reason">Aktueller Turn und wartende Vordergrundanfragen.</span></small>
-      </div>
-      <div class="torch-panel">
-        <strong>Ollama-Kapazität</strong>
-        <p id="fackel-capacity">Nicht geprüft</p>
-        <small id="fackel-compute">Geladene Einheiten & Hostverbindung.</small>
-        <small class="torch-evidence-note">Die Hostmessung ist aggregiert; Modellresidenz und RAM-Anteil pro Agent sind nicht bestätigt.</small>
-      </div>
-    </div>
-    <p id="fackel-feedback" class="torch-feedback" role="status" aria-live="polite"></p>
-  </details>
 
   <!-- Aktuell arbeitende Agenten; Ready-Worker werden nicht als Running ausgegeben. -->
   <section class="card" aria-labelledby="running-agents-title" style="margin-bottom:1.5rem;">
@@ -102,7 +61,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         <thead>
           <tr>
             <th style="width:100px;">Zeit</th>
-            <th style="width:160px;">Akteur / Slot</th>
+            <th style="width:160px;">Akteur</th>
             <th>Aktivität (Tool, Task, Runde)</th>
             <th style="width:140px;">Modell</th>
             <th style="width:90px;">Status</th>
@@ -126,7 +85,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     </div>
     <section class="core-agent-ready" aria-labelledby="core-agent-ready-title">
       <h3 id="core-agent-ready-title">System- und Core-Agenten</h3>
-      <p class="section-description">Systemprofile nutzen dieselben Zugangs-, Funktions-, Startart- und Darstellungsfilter. Laufende Profile erscheinen nur im Running-Bereich.</p>
+      <p class="section-description">Systemprofile nutzen dieselben Zugangs-, Funktions-, Startart- und Darstellungsfilter. Die Modellbindung steht direkt beim Agentenprofil; sie bestätigt keine Modellresidenz oder laufende Nutzung. Laufende Profile erscheinen im Running-Bereich.</p>
       <div id="core-agent-feedback" role="status" aria-live="polite"></div>
       <div id="core-agent-cards" class="core-grid agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;">
         <p class="loading-state">System-Agenten werden geprüft…</p>
@@ -194,17 +153,45 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
   </div>
 
-  <!-- 5. ANSICHT: RUNNING AGENTS & SYSTEMSLOTS -->
-  <details class="card collapsible-section" aria-labelledby="core-agents-title" style="margin-bottom:1.5rem;">
-<summary class="card-header"><span><span class="card-title" id="core-agents-title">Agenteninstanzen & Modellbindungen</span><span class="section-description">Gespeicherte Zuordnungen; Laufzeit und Ressourcen werden separat und nur mit Messbeleg angezeigt.</span></span></summary>
-
-    <div class="agent-model-evidence" role="note" aria-label="Unterschied zwischen Agenteninstanz, Modellbindung und Laufzeitdaten">
-      <p><strong>Agenteninstanz:</strong> Eine Blueprint-Vorlage ist noch keine Instanz; Profile und bestätigte Läufe stehen in getrennten Bereichen.</p>
-      <p><strong>Modellbindung:</strong> Die Steckplätze unten zeigen gespeicherte Zuordnungen. Anzeigen oder Bearbeiten startet keinen Agenten.</p>
-      <p><strong>Laufzeit & Ressourcen:</strong> Die Fackel oben zeigt nur bestätigte Hostmessungen; Modellresidenz und RAM-Anteil pro Agent bleiben ohne Beleg unbekannt.</p>
+  <!-- Gemessene lokale Modell- und Ressourcenansicht nach den Agentenbereichen. -->
+  <details class="card hardware-torch" id="models-resources" aria-labelledby="models-resources-title" open>
+    <summary class="torch-summary">
+      <span id="models-resources-title">🧠 Modelle & Ressourcen</span>
+      <span class="badge" id="torch-observed-at">Nicht geprüft</span>
+    </summary>
+    <div class="torch-grid">
+      <div class="torch-panel torch-owner" role="status" aria-live="polite">
+        <svg id="hardware-flame" class="torch-svg" viewBox="0 0 64 80" role="img" aria-labelledby="torch-svg-title">
+          <title id="torch-svg-title">Hardware-Fackel ohne bestätigten Besitz</title>
+          <path class="torch-flame-outer" d="M31 4c7 14 5 22 2 28 10-3 13-12 14-16 17 18 17 42 4 55-11 11-32 11-43-1C-2 59 2 41 15 28c1 9 3 14 8 17-2-16 1-29 8-41Z"/>
+          <path class="torch-flame-inner" d="M33 39c2 7 6 10 9 15 5 11-1 22-11 22-10 0-16-11-11-21 2-5 8-10 13-16Z"/>
+        </svg>
+        <div>
+          <strong>Aktueller Fackelhalter</strong>
+          <p id="fackel-holder">Nicht geprüft</p>
+          <small id="fackel-owner-reason">Ein aktueller Halternachweis fehlt.</small>
+        </div>
+      </div>
+      <div class="torch-panel">
+        <strong>Compute-Vorrang</strong>
+        <p id="fackel-priority">Nicht geprüft</p>
+        <button id="btn-toggle-fackel" class="btn btn-sm" type="button" onclick="toggleFackel()" disabled>Vorrang ändern</button>
+        <small>Einstellung ändert die Bevorzugung zwischen Compute und Ollama.</small>
+      </div>
+      <div class="torch-panel">
+        <strong>Lokaler Compute-Turn</strong>
+        <p id="compute-turn-status">Nicht geprüft</p>
+        <small><span id="compute-turn-reason">Aktueller Turn und wartende Vordergrundanfragen.</span></small>
+      </div>
+      <div class="torch-panel">
+        <strong>Gemessene lokale Modellressourcen</strong>
+        <p id="fackel-capacity">Nicht geprüft</p>
+        <small id="fackel-loaded-models">Modellnamen nicht bestätigt.</small>
+        <small id="fackel-compute">Geladene Einheiten & Hostverbindung.</small>
+        <small class="torch-evidence-note">Die Belegung ist eine gemeinsame Hostmessung. Modellresidenz und RAM-Anteil je Agent oder Modell bleiben ohne eigenen Beleg unbekannt.</small>
+      </div>
     </div>
-    <ModelSockets />
-
+    <p id="fackel-feedback" class="torch-feedback" role="status" aria-live="polite"></p>
   </details>
 
   <!-- 7. OPENROUTER FREE TIER KATALOG -->
@@ -467,7 +454,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     let workerEditRequest = 0;
     let _allBlueprintsList = [];
 
-    // ── HARDWARE COCKPIT ──
+    // ── MODEL RESOURCES & HARDWARE EVIDENCE ──
     function setTorchUnknown(message) {
       currentPriority = null;
       const flame = document.getElementById('hardware-flame');
@@ -478,6 +465,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       document.getElementById('fackel-priority').textContent = 'Nicht geprüft';
       document.getElementById('fackel-compute').textContent = 'Nicht geprüft';
       document.getElementById('fackel-capacity').textContent = 'Nicht geprüft';
+      document.getElementById('fackel-loaded-models').textContent = 'Modellnamen nicht bestätigt.';
       document.getElementById('compute-turn-status').textContent = 'Nicht geprüft';
       document.getElementById('compute-turn-reason').textContent = 'Kein aktueller Turn-Nachweis.';
       document.getElementById('btn-toggle-fackel').disabled = true;
@@ -531,13 +519,24 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           ? (Number.isInteger(turn.foreground_waiters) && turn.foreground_waiters >= 0 ? turn.foreground_waiters + ' Vordergrundanfrage(n) warten.' : 'Wartende Anfragen nicht bestätigt.')
           : 'Control-Adapter meldet keinen bestätigten Turn.';
         const cap = f.capacity;
-        const capacityMeasured = cap.state === 'measured' && Number.isSafeInteger(cap.loaded_model_count) && cap.loaded_model_count >= 0
+        const reportedModelCount = Number.isSafeInteger(cap.loaded_model_count) && cap.loaded_model_count >= 0
+          ? cap.loaded_model_count : null;
+        const reportedModels = Array.isArray(cap.loaded_models) && cap.loaded_models.every(model =>
+          typeof model === 'string' && model.trim().length > 0) ? cap.loaded_models : null;
+        const modelNamesComplete = reportedModels !== null && reportedModelCount === reportedModels.length;
+        const capacityMeasured = cap.state === 'measured' && reportedModelCount !== null
           && Number.isFinite(cap.occupied_units) && cap.occupied_units >= 0
-          && Number.isFinite(cap.used_gib) && cap.used_gib >= 0;
+          && Number.isFinite(cap.used_gib) && cap.used_gib >= 0
+          && Number.isFinite(cap.capacity_gib) && cap.capacity_gib > 0;
+        const formatResourceNumber = value => new Intl.NumberFormat('de-DE', {maximumFractionDigits:2}).format(value);
         document.getElementById('fackel-capacity').textContent = capacityMeasured ?
-          `${cap.loaded_model_count} geladene Modelle · ${cap.occupied_units} Einheiten · ${cap.used_gib} GiB` :
-          cap.state === 'partial' ? 'Ollama antwortet; Speicher nicht messbar' :
+          `${reportedModelCount} geladene Modelle · ${formatResourceNumber(cap.used_gib)} / ${formatResourceNumber(cap.capacity_gib)} GiB gemeinsame Modellkapazität · ${formatResourceNumber(cap.occupied_units)} Fackelanteile belegt` :
+          cap.state === 'partial' ? 'Ollama antwortet; Fackelspeicher nicht messbar' :
           cap.state === 'measured' ? 'Messung unvollständig' : 'Nicht geprüft';
+        document.getElementById('fackel-loaded-models').textContent = modelNamesComplete ?
+          (reportedModelCount === 0 ? 'Ollama meldet keine geladenen Modelle.' : `Ollama meldet geladene Modelle: ${reportedModels.join(', ')}`) :
+          reportedModelCount !== null ? `${reportedModelCount} Modelle gemeldet; Modellnamen nicht vollständig bestätigt.` :
+          cap.state === 'partial' ? 'Ollama antwortet; Modellnamen sind nicht bestätigt.' : 'Modellnamen nicht bestätigt.';
         const observed = Date.parse(data.observed_at || '');
         document.getElementById('torch-observed-at').textContent = Number.isFinite(observed) ?
           'Geprüft ' + new Date(observed).toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}) : 'Nicht geprüft';
@@ -741,8 +740,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       const unknown = agents.filter(agent => agent.runtime_verified !== true || typeof agent.running !== 'boolean');
       const transitioning = agents.some(agent => ['starting','stopping'].includes(agent.status));
       updateRunningGroupState('slots', active.length, unknown.length || transitioning ? 'unconfirmed' : 'available');
-      if (unknown.length) target.append(coreElement('p','Laufstatus unvollständig · ' + unknown.length + ' Systemslot(s) sind nicht bestätigt.','text-muted'));
-      if (transitioning) target.append(coreElement('p','Systemslot startet oder beendet seinen Lauf.','text-muted'));
+      if (unknown.length) target.append(coreElement('p','Laufstatus unvollständig · ' + unknown.length + ' Systemagent(en) sind nicht bestätigt.','text-muted'));
+      if (transitioning) target.append(coreElement('p','Ein Systemagent startet oder beendet seinen Lauf.','text-muted'));
     }
 
     function coreField(card, field, labelText, value, type = 'text', options = [], backend = '') {
@@ -823,8 +822,9 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         card.append(identity);
         card.append(coreElement('small', agent.id, 'core-slot-id'));
         card.append(coreElement('small', coreAgentAccessLabel(agent) + ' · ' + (agent.backend || 'Anbieter unbekannt')));
-        card.append(coreElement('div', agent.model || 'Modell fehlt', 'core-slot-model'));
-        if (agent.resolved_model && agent.resolved_model !== agent.model) card.append(coreElement('small', 'Ausgeführt: ' + agent.resolved_model));
+        card.append(coreElement('div', 'Modellbindung: ' + (agent.model || 'Modell fehlt'), 'core-slot-model'));
+        if (agent.runtime_verified === true && agent.running === true && agent.resolved_model && agent.resolved_model !== agent.model)
+          card.append(coreElement('small', 'Gemeldetes Laufzeitmodell: ' + agent.resolved_model));
         card.append(coreElement('small', agent.runtime_verified === true
           ? 'Tool: ' + (agent.current_tool || '—') + ' · Runde: ' + (agent.tool_round ?? 0) +
             (agent.task_id ? ' · Task #' + agent.task_id : '')
@@ -884,7 +884,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         updateRunningGroupState('slots', 0, 'unavailable');
         beginAgentOverviewContainer('running-system-slots-list');
         beginAgentOverviewContainer('core-agent-cards');
-        document.getElementById('running-system-slots-list').replaceChildren(coreElement('p','Systemslot-Laufstatus nicht verfügbar.'));
+        document.getElementById('running-system-slots-list').replaceChildren(coreElement('p','Laufstatus der Systemagenten nicht verfügbar.'));
         document.getElementById('core-agent-cards').replaceChildren(
           coreElement('p', 'System-Agenten nicht verfügbar: ' + error.message));
         applyAgentOverviewControls();
@@ -1171,6 +1171,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
             : `${runningWorkers.length} aktiv (Running)`);
         summary.textContent = `${workers.length} Worker registriert · ${readyWorkers.length} einsatzbereit (Living) · ${activityLabel} · ${waitingWorkers.length} warten auf Aufgaben · ${profileWorkers.length - readyWorkers.length} andere Zustände · Geprüft ${new Date().toLocaleTimeString('de-DE')}`;
 
+        // Ready/profile cards show configured bindings only; resolved_model may describe a prior run.
         // 1. Render Einsatzbereite Agenten
         if (profileWorkers.length === 0) {
           readyGrid.innerHTML = `
@@ -1194,8 +1195,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                   </div>
                   <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem;">${escapeHtml(w.name || w.id)}</h3>
                   <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;">
-                    Modell: <code style="color:var(--accent);">${escapeHtml(w.model || 'Modell fehlt')}</code>
-                    ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--text-muted);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code style="color:var(--accent);">${escapeHtml(w.resolved_model)}</code></span>` : ''}
+                    Modellbindung: <code style="color:var(--accent);">${escapeHtml(w.model || 'Modell fehlt')}</code>
                   </p>
                   <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">
                     ${escapeHtml(w.has_task_prompt === true ? 'Eigener Zusatzauftrag gespeichert' : w.has_task_prompt === false ? 'Kein eigener Zusatzauftrag gespeichert' : 'Zusatzauftrag hier nicht bestätigt')}
@@ -1795,14 +1795,12 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         loadTeamsBeseelen(),
         loadStaffelnBeseelen(),
         loadCoreSlots(),
-        window.BachModelSockets?.refresh(),
         loadOpenRouterCatalog(),
         refreshActivity()
       ]);
       if (interactive) console.log("Living & Running Daten aktualisiert");
     }
 
-    window.addEventListener('bach:model-sockets-changed', () => { void loadCoreSlots(); });
     window.addEventListener('DOMContentLoaded', () => {
       initializeAgentOverviewControls();
       document.getElementById('worker-blueprint-backend')?.addEventListener('change', () => loadWorkerBlueprintModels());

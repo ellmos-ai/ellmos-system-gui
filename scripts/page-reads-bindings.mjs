@@ -20,10 +20,6 @@ export const BINDINGS = {
   ],
   // url built from new URL('/api/tasks', origin) in life.astro
   'src/pages/life.astro#loadUserTasks@1': ['GET /api/tasks'],
-  // path and method are variables set per operation kind (socket PUT, bind PUT, unbind DELETE) in model-sockets.mjs
-  'src/lib/model-sockets.mjs#saveSocketChange@1': [
-    'PUT /api/system/model-sockets', 'PUT /api/system/model-sockets/bindings/{id}/{id2}', 'DELETE /api/system/model-sockets/bindings/{id}',
-  ],
   // idPath(id) = BASE + '/' + id in daemon-chains.mjs: one operation per client method
   'src/lib/daemon-chains.mjs#createChainClient@1': ['PUT /api/daemon/chains/{id}'],
   'src/lib/daemon-chains.mjs#createChainClient@2': ['PUT /api/daemon/chains/{id}/toggle'],

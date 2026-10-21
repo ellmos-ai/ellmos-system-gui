@@ -775,11 +775,6 @@
    },
    {
     "method": "GET",
-    "path": "/api/system/model-sockets",
-    "required": false
-   },
-   {
-    "method": "GET",
     "path": "/api/agenten/teams",
     "required": false
    },
@@ -891,32 +886,6 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/pages/agenten/running.astro#toggleCoreSlot"
-   },
-   {
-    "method": "GET",
-    "path": "/api/system/model-sockets/catalog",
-    "required": false
-   },
-   {
-    "method": "PUT",
-    "path": "/api/system/model-sockets",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/model-sockets.mjs#saveSocketChange"
-   },
-   {
-    "method": "PUT",
-    "path": "/api/system/model-sockets/bindings/{id}/{id2}",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/model-sockets.mjs#saveSocketChange"
-   },
-   {
-    "method": "DELETE",
-    "path": "/api/system/model-sockets/bindings/{id}",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/model-sockets.mjs#saveSocketChange"
    }
   ],
   "/agenten/sessions": [
