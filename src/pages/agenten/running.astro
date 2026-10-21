@@ -66,6 +66,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         <strong>Ollama-Kapazität</strong>
         <p id="fackel-capacity">Nicht geprüft</p>
         <small id="fackel-compute">Geladene Einheiten & Hostverbindung.</small>
+        <small class="torch-evidence-note">Die Hostmessung ist aggregiert; Modellresidenz und RAM-Anteil pro Agent sind nicht bestätigt.</small>
       </div>
     </div>
     <p id="fackel-feedback" class="torch-feedback" role="status" aria-live="polite"></p>
@@ -195,8 +196,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
   <!-- 5. ANSICHT: RUNNING AGENTS & SYSTEMSLOTS -->
   <details class="card collapsible-section" aria-labelledby="core-agents-title" style="margin-bottom:1.5rem;">
-<summary class="card-header"><span><span class="card-title" id="core-agents-title">Modellsteckplätze & Agentenslots</span><span class="section-description">Lokale Modelle und ihre zugeordneten Agenten.</span></span></summary>
+<summary class="card-header"><span><span class="card-title" id="core-agents-title">Agenteninstanzen & Modellbindungen</span><span class="section-description">Gespeicherte Zuordnungen; Laufzeit und Ressourcen werden separat und nur mit Messbeleg angezeigt.</span></span></summary>
 
+    <div class="agent-model-evidence" role="note" aria-label="Unterschied zwischen Agenteninstanz, Modellbindung und Laufzeitdaten">
+      <p><strong>Agenteninstanz:</strong> Eine Blueprint-Vorlage ist noch keine Instanz; Profile und bestätigte Läufe stehen in getrennten Bereichen.</p>
+      <p><strong>Modellbindung:</strong> Die Steckplätze unten zeigen gespeicherte Zuordnungen. Anzeigen oder Bearbeiten startet keinen Agenten.</p>
+      <p><strong>Laufzeit & Ressourcen:</strong> Die Fackel oben zeigt nur bestätigte Hostmessungen; Modellresidenz und RAM-Anteil pro Agent bleiben ohne Beleg unbekannt.</p>
+    </div>
     <ModelSockets />
 
   </details>
@@ -387,6 +393,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     .torch-panel small { font-size: .72rem; }
     .torch-feedback:empty { display: none; }
     .torch-intro, .core-explanation { color: var(--text-muted); font-size: .85rem; margin: .4rem 0 1rem; }
+    .torch-evidence-note { margin-top: .35rem; }
+    .agent-model-evidence { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: .65rem; margin: .85rem 0 1rem; }
+    .agent-model-evidence p { margin: 0; padding: .75rem; border: 1px solid var(--border); border-left: 3px solid var(--accent-blue); border-radius: var(--radius-sm); background: var(--bg-dark); color: var(--text-muted); font-size: .8rem; line-height: 1.45; }
+    .agent-model-evidence strong { color: var(--text); }
     .core-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr)); gap: .85rem; }
     .core-agent-card { min-width: 0; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-dark); }
     .torch-panel p { margin: .2rem 0; overflow-wrap: anywhere; }
@@ -507,7 +517,9 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           currentPriority === 'ollama' ? 'Compute-Vorrang setzen' : 'Vorrang nicht verfügbar';
         const lock = f.compute_lock;
         document.getElementById('fackel-compute').textContent = lock.state === 'reported_unverified' ?
-          `Lockdatei meldet ${Number(lock.reported_jobs) || 0} Job(s); Identität nicht geprüft` :
+          (Number.isSafeInteger(lock.reported_jobs) && lock.reported_jobs >= 0
+            ? `Lockdatei meldet ${lock.reported_jobs} Job(s); Identität nicht geprüft`
+            : 'Lockdatei meldet Jobs; Anzahl und Identität nicht geprüft') :
           lock.state === 'none_reported' ? 'Frische Lockdatei meldet keine Jobs' :
           lock.state === 'stale' ? 'Status veraltet' : 'Nicht geprüft';
         const turn = f.compute_turn;
@@ -519,9 +531,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           ? (Number.isInteger(turn.foreground_waiters) && turn.foreground_waiters >= 0 ? turn.foreground_waiters + ' Vordergrundanfrage(n) warten.' : 'Wartende Anfragen nicht bestätigt.')
           : 'Control-Adapter meldet keinen bestätigten Turn.';
         const cap = f.capacity;
-        document.getElementById('fackel-capacity').textContent = cap.state === 'measured' ?
-          `${Number(cap.loaded_model_count) || 0} geladene Modelle · ${Number(cap.occupied_units) || 0} Einheiten · ${Number(cap.used_gib) || 0} GiB` :
-          cap.state === 'partial' ? 'Ollama antwortet; Speicher nicht messbar' : 'Nicht geprüft';
+        const capacityMeasured = cap.state === 'measured' && Number.isSafeInteger(cap.loaded_model_count) && cap.loaded_model_count >= 0
+          && Number.isFinite(cap.occupied_units) && cap.occupied_units >= 0
+          && Number.isFinite(cap.used_gib) && cap.used_gib >= 0;
+        document.getElementById('fackel-capacity').textContent = capacityMeasured ?
+          `${cap.loaded_model_count} geladene Modelle · ${cap.occupied_units} Einheiten · ${cap.used_gib} GiB` :
+          cap.state === 'partial' ? 'Ollama antwortet; Speicher nicht messbar' :
+          cap.state === 'measured' ? 'Messung unvollständig' : 'Nicht geprüft';
         const observed = Date.parse(data.observed_at || '');
         document.getElementById('torch-observed-at').textContent = Number.isFinite(observed) ?
           'Geprüft ' + new Date(observed).toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}) : 'Nicht geprüft';
@@ -598,6 +614,12 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       return agentOverviewController?.register(container, card, agent, {source, lane});
     }
 
+    function labelReportedModelName(content) {
+      for (const item of content.querySelectorAll(".agent-overview-runtime-meta-item")) {
+        if (item.textContent.startsWith("Modell: ")) item.textContent = item.textContent.replace(/^Modell:/, "Gemeldeter Modellname:");
+      }
+    }
+
     function renderAgentOverviewCardContent(card, agent, source, statusLabel) {
       const overview = window.BachAgentOverview;
       if (!card || typeof card.querySelector !== 'function' || typeof card.replaceChildren !== 'function'
@@ -611,6 +633,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         if (toggle && actions) actions.prepend(toggle);
       }
       const content = overview.createAgentOverviewContent(document, agent, {source, statusLabel, avatarNode, symbolNode});
+      labelReportedModelName(content);
       card.replaceChildren(content, ...preserved);
     }
 

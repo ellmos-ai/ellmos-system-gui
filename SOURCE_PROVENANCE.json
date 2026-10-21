@@ -259,7 +259,7 @@
     "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8",
+    "src/pages/agenten/running.astro": "55f51d941b96e99c955369d675350d98fdb9f2d8852a64e4b3877e685ce27f82",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
@@ -288,7 +288,7 @@
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
-    "tests/agent-overview.test.mjs": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd",
+    "tests/agent-overview.test.mjs": "0635e9e094d2b5cebd62de2dfe1009b3b5028224982bd4d621fdeb59bb2012de",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
@@ -3151,6 +3151,29 @@
           "path": "README.md",
           "previous_sha256": "f915a0e6fc029a872a35ec5526acd7aa50d5a55050f51ef9499f5924bb56af7d",
           "sha256": "4ee4b984bfe281e4dde0a9a452d55dc2a47d5ca9700ad7910630045e75af05bc"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2028 R3 agent/model availability and resource evidence view (Parent #2359)",
+      "source_base_commit": "1cea06db56c384e8986144bbab4f2675124a59ba",
+      "plan_key": "gui-claude-r3-agent-model/20261021",
+      "changes": [
+        "Separate the agent instance, configured model binding, and evidenced runtime/resource state; unavailable per-agent model residency and RAM share remain unknown.",
+        "Show host capacity only when required numeric measurement fields are present; missing compute-job observations remain unverified, and saved profile state does not imply a loaded model.",
+        "Add regressions for the identity and measured-resource distinctions; no backend, runtime, provider, task-control, or model-selection behavior changed."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8",
+          "sha256": "55f51d941b96e99c955369d675350d98fdb9f2d8852a64e4b3877e685ce27f82"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd",
+          "sha256": "0635e9e094d2b5cebd62de2dfe1009b3b5028224982bd4d621fdeb59bb2012de"
         }
       ]
     }

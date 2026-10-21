@@ -21,6 +21,7 @@ import {
 
 const runningPage = readFileSync(new URL('../src/pages/agenten/running.astro', import.meta.url), 'utf8');
 const dashboardPage = readFileSync(new URL('../src/pages/index.astro', import.meta.url), 'utf8');
+const modelSocketsUi = readFileSync(new URL('../src/lib/model-sockets-ui.mjs', import.meta.url), 'utf8');
 
 test('access, function, and actual start are separate evidence facets', () => {
   assert.equal(classifyAgentAccess({backend:'ollama', model:'qwen'}), 'local');
@@ -316,4 +317,17 @@ test('compact list hides filtered cards, portraits, and secondary details, and s
   assert.match(dashboardPage, /dashboard-running-agents\.agent-overview-list \.agent-overview-runtime-avatar,[\s\S]*dashboard-running-agents\.agent-overview-list \.agent-overview-runtime-meta \{display:none!important\}/);
   assert.match(runningPage, /@media\(max-width:680px\)\s*\{\.agent-overview-controls \.agent-overview-search \{grid-column:span 1\}\}/);
   assert.match(dashboardPage, /@media\(max-width:680px\)\{\.dashboard-agent-overview \.agent-overview-controls \.agent-overview-search\{grid-column:span 1\}\}/);
+});
+
+test('agent instances, saved model bindings, and measured runtime resources are distinct', () => {
+  assert.match(runningPage, /Agenteninstanzen & Modellbindungen/);
+  assert.match(runningPage, /Agenteninstanz:<\/strong>[\s\S]*Blueprint-Vorlage ist noch keine Instanz/);
+  assert.match(runningPage, /Modellbindung:<\/strong>[\s\S]*gespeicherte Zuordnungen/);
+  assert.match(runningPage, /Laufzeit & Ressourcen/);
+  assert.match(runningPage, /Modellresidenz und RAM-Anteil pro Agent bleiben ohne Beleg unbekannt/);
+  assert.match(runningPage, /Gemeldeter Modellname/);
+  assert.match(runningPage, /cap\.state === 'measured' && Number\.isSafeInteger\(cap\.loaded_model_count\)/);
+  assert.ok(runningPage.includes("cap.state === 'measured' ? 'Messung unvollständig'"));
+  assert.doesNotMatch(runningPage, /Number\(cap\.loaded_model_count\) \|\| 0/);
+  assert.match(modelSocketsUi, /Lauf und Ressourcenanteil: nicht geprüft\./);
 });
