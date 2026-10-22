@@ -49,13 +49,149 @@ function initializeStudio() {
   const $ = id => document.getElementById(id);
   const state = {blueprints:[], teams:[], skills:[], tools:[], contracts:[], governance:[], core:null,
     prompts:null, library:"custom", edit:null, instance:null, instanceVersion:null, instanceConfig:null, promptVersion:null,
-    team:null, avatar:"", symbol:"", modelRequest:0};
+    team:null, avatar:"", symbol:"", modelRequest:0, templateProviderProbe:null, templateProviderBusy:false};
   const labels = {agent:"Agent",role:"Rolle",skill:"Skill-Vorlage",workflow:"Workflow-Vorlage",service:"Service-Vorlage",contractus:"Arbeitsvertrag"};
   const icons = {agent:"🤖",role:"🎭",skill:"🧩",workflow:"⛓",service:"⚙",contractus:"📜"};
   const notify = (id,text,error=false) => { $(id).textContent=text; $(id).dataset.error=String(error); };
   const close = id => $(id).close();
   const byId = id => state.blueprints.find(bp => Number(bp.id) === Number(id));
   const currentLocal = () => state.core?.agents?.find(slot => slot.id === "buddha_chat") || {};
+  const isSha256 = value => typeof value === "string" && /^[a-f0-9]{64}$/i.test(value);
+  function migrationOffer(entry) {
+    return entry?.action === "migration_required" && entry.available === true && typeof entry.id === "string" && entry.id.length > 0 &&
+      typeof entry.template_id === "string" && entry.template_id.length > 0 &&
+      typeof entry.version === "string" && entry.version.length > 0 &&
+      typeof entry.current_version === "string" && entry.current_version.length > 0 && entry.current_version !== entry.version &&
+      Number.isInteger(Number(entry.blueprint_id)) && Number(entry.blueprint_id) > 0 && isSha256(entry.sha256);
+  }
+  function renderTemplateProviders() {
+    const target = $("template-provider-results");
+    if (!target) return;
+    const actionLabels = {registered:"Vorlage registriert",name_conflict:"Namenskonflikt",marked_unavailable:"Als nicht verfügbar markiert",
+      confirmed:"Vorlage bestätigt",migration_required:"Neue Version angeboten"};
+    const probe = state.templateProviderProbe;
+    const probeMarkup = probe ? '<h3>Antwort des ausdrücklich angeforderten Abgleichs</h3>' +
+      (probe.providers.length ? probe.providers.map((entry,index) => {
+        const available = entry.available === true ? "Angebot verfügbar" : entry.available === false ? "Quelle nicht verfügbar" : "Status unbekannt";
+        const sha = isSha256(entry.sha256) ? escapeHtml(entry.sha256) : "SHA-256 nicht bestätigt";
+        const action = Object.hasOwn(actionLabels,entry.action) ? actionLabels[entry.action] : (entry.action ? escapeHtml(entry.action) : "Keine Aktion bestätigt");
+        const canMigrate = migrationOffer(entry);
+        const migrationNote = entry.action === "migration_required" && !canMigrate ?
+          '<p class="studio-note">Das Backend meldet eine neue Version, aber die konkrete aktive Vorlage oder Prüfsumme ist nicht vollständig bestätigt. Eine Übernahme ist deshalb nicht verfügbar.</p>' : "";
+        const migrate = canMigrate ? '<button type="button" class="btn" data-template-provider-migrate="'+index+'" '+(state.templateProviderBusy?"disabled":"")+'>Version '+escapeHtml(entry.version)+' übernehmen…</button>' : "";
+        return '<article class="studio-provider-card"><div><strong>'+escapeHtml(entry.id||"Unbekannter Provider")+'</strong><span class="studio-state">'+available+'</span></div>'+
+          '<p>Vorlage: '+escapeHtml(entry.template_id||"nicht bestätigt")+' · Version: '+escapeHtml(entry.version||"nicht bestätigt")+'</p>'+
+          '<p>SHA-256: <code>'+sha+'</code></p>'+
+          (entry.reason?'<p>Grund: '+escapeHtml(entry.reason)+'</p>':"")+'<p>Aktion: '+action+'</p>'+migrationNote+migrate+'</article>';
+      }).join("") : '<p class="studio-note">Der Abgleich lieferte keine Provider-Einträge.</p>') +
+      (probe.unconfigured.length ? '<p class="studio-note">Nicht konfiguriert: '+probe.unconfigured.map(escapeHtml).join(", ")+'</p>' : "") :
+      '<p class="studio-note">In dieser Sitzung wurde kein Providerabgleich angefordert. Nicht gespeicherte Quellen bleiben unbekannt.</p>';
+    const saved = state.blueprints.filter(bp => typeof bp.provider === "string" && bp.provider.trim());
+    const savedMarkup = saved.length ? '<h3>Gespeicherte Providerstände · kein Live-Nachweis</h3>' + saved.map(bp => {
+      const statusLabels = {available:"Gespeichert: verfügbar",unavailable:"Gespeichert: nicht verfügbar",
+        migration_required:"Gespeichert: Migration erforderlich",superseded:"Gespeichert: ersetzt"};
+      const status = statusLabels[bp.template_status] || "Gespeicherter Status unbekannt";
+      const sha = isSha256(bp.template_sha256) ? escapeHtml(bp.template_sha256) : "SHA-256 nicht bestätigt";
+      return '<article class="studio-provider-card"><div><strong>'+escapeHtml(bp.provider)+'</strong><span class="studio-state">'+status+'</span></div>'+
+        '<p>Vorlage: '+escapeHtml(bp.provider_template_id||"nicht bestätigt")+' · Version: '+escapeHtml(bp.provider_version||"nicht bestätigt")+'</p>'+
+        '<p>SHA-256: <code>'+sha+'</code></p>'+(bp.template_status_reason?'<p>Grund: '+escapeHtml(bp.template_status_reason)+'</p>':"")+'</article>';
+    }).join("") : '<p class="studio-note">Keine providergebundenen Schablonen gespeichert. Der Quellenstatus ist unbekannt, bis ein ausdrücklicher Abgleich angefordert wird.</p>';
+    target.innerHTML = probeMarkup + savedMarkup;
+  }
+  async function refreshBlueprintCatalog() {
+    const data = await api("/api/agent-studio/blueprints");
+    state.blueprints = [...(data.templates||[]),...(data.blueprints||[])];
+    render();
+    renderTemplateProviders();
+    return state.blueprints;
+  }
+  async function syncTemplateProviders() {
+    if (state.templateProviderBusy) return;
+    state.templateProviderBusy = true;
+    state.templateProviderProbe = null;
+    $("template-provider-sync").disabled = true;
+    renderTemplateProviders();
+    notify("template-provider-status","Konfigurierte Provider werden jetzt auf ausdrücklichen Wunsch abgefragt. Es wird keine Migration ausgeführt.");
+    try {
+      const response = await fetch("/api/agent-studio/template-providers/sync", {method:"POST",headers:{"Accept":"application/json"}});
+      let data; try { data = await response.json(); } catch { data = null; }
+      if (!response.ok) {
+        const unavailable = [404,405,501].includes(response.status);
+        notify("template-provider-status",unavailable ? "Providerabgleich ist in dieser Instanz nicht verfügbar (HTTP "+response.status+")." :
+          "Providerabgleich nicht bestätigt (HTTP "+response.status+"). Gespeicherte Werte werden neu geladen.",true);
+        await refreshBlueprintCatalog().catch(()=>{});
+        return;
+      }
+      if (data?.schema !== "bach.template-providers.sync.v1" || !Array.isArray(data.providers) || !Array.isArray(data.unconfigured)) {
+        notify("template-provider-status","Providerabgleich nicht verfügbar: Die Antwort entspricht nicht dem bestätigten BACH-Vertrag.",true);
+        await refreshBlueprintCatalog().catch(()=>{});
+        return;
+      }
+      if (!data.providers.every(entry => entry && typeof entry === "object" && !Array.isArray(entry))) {
+        notify("template-provider-status","Providerabgleich nicht verfügbar: Die Antwort enthält ungültige Provider-Einträge.",true);
+        await refreshBlueprintCatalog().catch(()=>{});
+        return;
+      }
+      state.templateProviderProbe = data;
+      renderTemplateProviders();
+      notify("template-provider-status",data.providers.length+" Providerantworten erhalten. Neue Vorlagen können registriert worden sein; eine Migration wurde nicht angefordert.");
+      try { await refreshBlueprintCatalog(); }
+      catch { notify("template-provider-status","Providerantwort liegt vor, aber die gespeicherte Blueprint-Liste konnte nicht neu geladen werden.",true); }
+    } catch {
+      notify("template-provider-status","Providerabgleich nicht verfügbar: Es wurde keine gültige Antwort erhalten. Gespeicherte Angaben bleiben getrennt sichtbar.",true);
+      await refreshBlueprintCatalog().catch(()=>{});
+    } finally {
+      state.templateProviderBusy = false;
+      $("template-provider-sync").disabled = false;
+      renderTemplateProviders();
+    }
+  }
+  async function migrateTemplateProvider(index) {
+    const entry = state.templateProviderProbe?.providers?.[index];
+    if (state.templateProviderBusy || !migrationOffer(entry)) return;
+    const offer = {provider:entry.id,template_id:entry.template_id,to_version:entry.version,expected_sha256:entry.sha256};
+    const description = "Version "+entry.current_version+" durch "+entry.version+" ersetzen? Die bisherige Version bleibt als ersetzt erhalten.\n\nSHA-256: "+entry.sha256;
+    if (!window.confirm(description)) return;
+    state.templateProviderBusy = true;
+    state.templateProviderProbe = null;
+    $("template-provider-sync").disabled = true;
+    renderTemplateProviders();
+    notify("template-provider-status","Die ausdrücklich ausgewählte Version wird mit der angebotenen SHA-256-Prüfsumme übernommen.");
+    try {
+      const response = await fetch("/api/agent-studio/template-providers/migrate", {method:"POST",
+        headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(offer)});
+      let data; try { data = await response.json(); } catch { data = null; }
+      if (!response.ok) {
+        const unavailable = [404,405,501].includes(response.status);
+        notify("template-provider-status",unavailable ? "Migration ist in dieser Instanz nicht verfügbar (HTTP "+response.status+")." :
+          "Migration nicht bestätigt (HTTP "+response.status+"). Bitte das Angebot erneut ausdrücklich prüfen.",true);
+        await refreshBlueprintCatalog().catch(()=>{});
+        return;
+      }
+      if (data?.migrated !== true || data.provider !== offer.provider || data.template_id !== offer.template_id ||
+          data.to_version !== offer.to_version || !Number.isInteger(Number(data.blueprint_id)) || Number(data.blueprint_id) < 1) {
+        notify("template-provider-status","Die Migration wurde nicht mit passenden Angebotsdaten bestätigt.",true);
+        await refreshBlueprintCatalog().catch(()=>{});
+        return;
+      }
+      const blueprints = await refreshBlueprintCatalog();
+      const saved = blueprints.find(bp => Number(bp.id) === Number(data.blueprint_id));
+      if (!saved || saved.provider !== offer.provider || saved.provider_template_id !== offer.template_id ||
+          saved.provider_version !== offer.to_version || saved.template_status !== "available" ||
+          String(saved.template_sha256||"").toLowerCase() !== offer.expected_sha256.toLowerCase()) {
+        notify("template-provider-status","Das Backend hat die Migration bestätigt, aber Blueprint-Version und SHA-256 sind im GET-Readback nicht vollständig belegt.",true);
+        return;
+      }
+      notify("template-provider-status","Version "+offer.to_version+" und SHA-256 wurden im gespeicherten Blueprint-Readback bestätigt.");
+    } catch {
+      notify("template-provider-status","Migration nicht bestätigt. Bitte den gespeicherten Stand prüfen und den Providerabgleich bei Bedarf erneut ausdrücklich starten.",true);
+      await refreshBlueprintCatalog().catch(()=>{});
+    } finally {
+      state.templateProviderBusy = false;
+      $("template-provider-sync").disabled = false;
+      renderTemplateProviders();
+    }
+  }
   const atlasUrl = $("studio-portrait-source").dataset.portraitAtlas;
   const symbolUrls=JSON.parse($("studio-portrait-source").dataset.ticketSymbols);
   async function api(path, options={}) {
@@ -112,6 +248,7 @@ function initializeStudio() {
     }
   }
   async function loadData() {
+    state.templateProviderProbe = null;
     notify("studio-status","Bibliothek wird geladen…");
     const data=await api("/api/agent-studio/blueprints");
     state.blueprints=[...(data.templates||[]),...(data.blueprints||[])];
@@ -121,7 +258,8 @@ function initializeStudio() {
       ["prompts","/api/system/core-prompts",null]];
     const results=await Promise.allSettled(requests.map(async([key,url,field])=>{const value=await api(url);state[key]=field?value[field]||[]:value;}));
     const unavailable=results.map((result,index)=>result.status==="rejected"?requests[index][0]:null).filter(Boolean);
-    render(); notify("studio-status",unavailable.length?"Bibliothek geladen; nicht erreichbar: "+unavailable.join(", "):state.blueprints.length+" Blueprints · Änderungen werden mit ihrer aktuellen Version gespeichert.",!!unavailable.length);
+    render(); renderTemplateProviders();
+    notify("studio-status",unavailable.length?"Bibliothek geladen; nicht erreichbar: "+unavailable.join(", "):state.blueprints.length+" Blueprints · Änderungen werden mit ihrer aktuellen Version gespeichert.",!!unavailable.length);
   }
   function renderRoles(value) {
     const roles=Object.keys(state.prompts?.prompts||{}).filter(key=>key.startsWith("role_")).map(key=>({value:key.slice(5),label:key.slice(5).replaceAll("_"," ")}));
@@ -237,6 +375,11 @@ function initializeStudio() {
     }
   }
   const handle = (id,event,fn,status="studio-status") => $(id).addEventListener(event,async e=>{try{await fn(e);}catch(error){notify(status,error.message,true);}});
+  handle("template-provider-sync","click",syncTemplateProviders,"template-provider-status");
+  handle("template-provider-results","click",async event=>{
+    const button=event.target.closest("[data-template-provider-migrate]");if(!button)return;
+    await migrateTemplateProvider(Number(button.dataset.templateProviderMigrate));
+  },"template-provider-status");
   $("bp-pause-basis").addEventListener("change",syncPauseFields);
   document.querySelectorAll("[data-close]").forEach(button=>button.addEventListener("click",()=>close(button.dataset.close)));
   document.querySelectorAll("[data-library]").forEach(button=>button.addEventListener("click",()=>{state.library=button.dataset.library;render();}));
@@ -301,6 +444,7 @@ function initializeStudio() {
     if(!payload.leader_agent)throw new Error("Bitte mindestens ein Mitglied auswählen.");
     await post("/api/agenten/teams"+(state.team?"/"+state.team.id:""),payload);close("team-editor");await loadData();
   },"team-status");
+  renderTemplateProviders();
   loadData().then(()=>{
     const params=new URLSearchParams(location.search),id=params.get("edit")||params.get("copy");
     const bp=id?byId(id):state.blueprints.find(item=>item.name===params.get("blueprint"));

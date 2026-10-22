@@ -665,6 +665,16 @@
     "method": "POST",
     "path": "/api/agenten/teams",
     "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-studio/template-providers/sync",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-studio/template-providers/migrate",
+    "required": false
    }
   ],
   "/agenten/subscription-agents": [

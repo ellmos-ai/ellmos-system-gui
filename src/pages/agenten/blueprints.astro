@@ -17,6 +17,12 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     </div>
   </header>
   <p id="studio-status" class="studio-message" role="status" aria-live="polite">Blueprints werden geladen…</p>
+  <section class="studio-provider-panel" aria-labelledby="template-provider-heading">
+    <div class="studio-section-heading"><h2 id="template-provider-heading">Versionierte Vorlagenquellen</h2><button type="button" class="btn" id="template-provider-sync">Status prüfen & Vorlagen abgleichen</button></div>
+    <p class="studio-note">Gespeicherte Providerangaben sind kein Live-Status. Der ausdrückliche Abgleich fragt konfigurierte Quellen ab und kann neue Vorlagen registrieren; eine Versionsübernahme braucht danach eine eigene Bestätigung.</p>
+    <p id="template-provider-status" class="studio-message" role="status" aria-live="polite">Providerstatus noch nicht abgefragt. Gespeicherte Vorlagenstände werden unten angezeigt.</p>
+    <div id="template-provider-results" class="studio-provider-results"></div>
+  </section>
   <div class="studio-toolbar">
     <label class="studio-search">Suchen<input id="studio-search" type="search" placeholder="Name, Rolle oder Beschreibung" /></label>
     <label>Typ<select id="studio-kind"><option value="">Alle Typen</option><option value="agent">Agenten</option><option value="role">Rollen</option><option value="skill">Skill-Vorlagen</option><option value="workflow">Workflow-Vorlagen</option><option value="service">Service-Vorlagen</option><option value="contractus">Arbeitsverträge</option></select></label>
@@ -167,5 +173,15 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
   .studio-fields{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.studio-group{border-top:1px solid var(--border);padding-top:.5rem}.studio-group>summary{font-weight:600;font-size:.9rem;padding:.6rem 0;cursor:pointer}.studio-group>summary span{color:var(--text-muted);font-size:.72rem;margin-right:.5rem}.studio-group-body{display:flex;flex-direction:column;gap:.9rem;padding:.4rem 0 .6rem}
   .studio-check{flex-direction:row;align-items:center;gap:.5rem}.studio-check input{width:auto}.studio-options{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;max-height:240px;overflow:auto}.studio-avatar-row{justify-content:flex-start}.studio-avatar-row img{width:64px;height:64px;object-fit:cover;border-radius:10px}.studio-prompt-preview{padding:1rem;background:var(--bg-dark);border:1px solid var(--border);white-space:pre-wrap;overflow-wrap:anywhere;font-size:.78rem;line-height:1.6;max-height:320px;overflow:auto}details>summary{cursor:pointer}
   :global(.studio-card){display:flex;flex-direction:column;gap:.8rem;border:1px solid var(--border);background:var(--bg-panel);padding:1.1rem;border-radius:10px;min-height:240px}:global(.studio-card-top){display:flex;align-items:center;justify-content:space-between;gap:.5rem}:global(.studio-card-avatar){width:44px;height:44px;object-fit:cover;border-radius:8px}:global(.studio-card-icon){font-size:1.7rem}:global(.studio-card h3){font-size:1.03rem}:global(.studio-card p){font-size:.8rem;color:var(--text-muted);line-height:1.5}:global(.studio-card-details){display:flex;flex-wrap:wrap;gap:.35rem;font-size:.73rem;color:var(--text-muted)}:global(.studio-card-actions){display:flex;flex-wrap:wrap;gap:.45rem;margin-top:auto}:global(.studio-card-actions .btn){font-size:.76rem;padding:.45rem .7rem}:global(.studio-empty){grid-column:1/-1;padding:2rem;border:1px dashed var(--border);border-radius:8px;color:var(--text-muted)}:global(.studio-state){padding:.25rem .45rem;border:1px solid var(--border);border-radius:4px;font-size:.72rem}:global(.studio-state[data-running=true]){border-color:var(--success);color:var(--success)}:global(.studio-option){display:flex;flex-direction:row;align-items:flex-start;gap:.45rem;color:var(--text);padding:.4rem}:global(.studio-option input){width:auto;margin-top:.15rem}:global(.studio-option small){display:block;font-size:.7rem;color:var(--text-muted)}
+  .studio-provider-panel{margin:.75rem 0 1.25rem;padding:1rem;border:1px solid var(--border);border-radius:10px;background:var(--bg-panel)}
+  .studio-provider-panel .studio-section-heading{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin:0 0 .5rem}
+  .studio-provider-panel h2,.studio-provider-panel h3{font-size:.95rem;margin:0}
+  .studio-provider-results{display:flex;flex-direction:column;gap:.55rem}
+  :global(.studio-provider-card){padding:.7rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:8px;overflow-wrap:anywhere}
+  :global(.studio-provider-card>div){display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap}
+  :global(.studio-provider-card p){margin:.4rem 0;color:var(--text-muted);font-size:.75rem;line-height:1.45}
+  :global(.studio-provider-card code){font-size:.7rem}
+  :global(.studio-provider-panel h3){margin:.65rem 0 .25rem}
+  :global(.studio-provider-results .studio-note){color:var(--text-muted);font-size:.78rem;line-height:1.6}
   @media(max-width:640px){.studio-fields,.studio-options{grid-template-columns:1fr}.studio-actions{justify-content:flex-start}.studio-toolbar{align-items:stretch}.studio-tabs button{padding:.75rem .6rem;font-size:.83rem}.studio-dialog-header,.studio-dialog-footer,.studio-dialog-body{padding:1rem}}
 </style>
