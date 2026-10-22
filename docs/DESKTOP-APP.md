@@ -40,9 +40,11 @@ bleiben getrennt. Der Anschlussbeleg `ellmos-system-gui.desktop-attach.v1`
 behauptet weder `instance_verified` noch einen Backendstart. Die Herkunftsanzeige
 der gemeinsamen GUI bleibt für den nativen Datenquellennachweis maßgeblich.
 
-Die Windowsbinary verwendet auch im Debugbau das GUI-Subsystem. Die Anwendung
-startet keine Git-, Konsolen- oder anderen Kindprozesse. Der CI-Bau prüft das
-GUI-Subsystem zusätzlich direkt im erzeugten PE-Header.
+Die Windowsbinary verwendet auch im Debugbau das GUI-Subsystem. Der Rust-Kern
+startet keine Git-, Konsolen-, Backend- oder Workerprozesse. Die Webview verwendet
+die Rendererprozesse ihrer Plattformruntime; diese sind von den persistenten
+Backendjobs getrennt. Der CI-Bau prüft das GUI-Subsystem zusätzlich direkt im
+erzeugten PE-Header.
 
 ## Bauen
 

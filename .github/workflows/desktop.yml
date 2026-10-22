@@ -6,12 +6,14 @@ on:
       - 'src-tauri/**'
       - 'desktop/**'
       - '.github/workflows/desktop.yml'
+      - 'docs/DESKTOP-APP.md'
   push:
     branches: [main]
     paths:
       - 'src-tauri/**'
       - 'desktop/**'
       - '.github/workflows/desktop.yml'
+      - 'docs/DESKTOP-APP.md'
 
 permissions:
   contents: read
