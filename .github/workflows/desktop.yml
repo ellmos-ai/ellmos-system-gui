@@ -1,0 +1,128 @@
+name: Desktop compile
+
+on:
+  pull_request:
+    paths:
+      - 'src-tauri/**'
+      - 'desktop/**'
+      - '.github/workflows/desktop.yml'
+      - 'docs/DESKTOP-APP.md'
+  push:
+    branches: [main]
+    paths:
+      - 'src-tauri/**'
+      - 'desktop/**'
+      - '.github/workflows/desktop.yml'
+      - 'docs/DESKTOP-APP.md'
+
+permissions:
+  contents: read
+
+env:
+  DESKTOP_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+
+concurrency:
+  group: desktop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.DESKTOP_SOURCE_COMMIT }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Resolve one dependency graph for all platforms
+        working-directory: src-tauri
+        shell: bash
+        run: |
+          if test -f Cargo.lock; then
+            cargo metadata --locked --no-deps --format-version 1 > /dev/null
+          else
+            cargo generate-lockfile
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-dependency-lock
+          path: src-tauri/Cargo.lock
+  compile:
+    needs: resolve
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.DESKTOP_SOURCE_COMMIT }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/download-artifact@v4
+        with:
+          name: desktop-dependency-lock
+          path: src-tauri
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-desktop-${{ hashFiles('src-tauri/Cargo.lock') }}
+      - name: Linux webview dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev librsvg2-dev libayatana-appindicator3-dev patchelf
+      - name: Compile desktop consumer
+        working-directory: src-tauri
+        run: cargo build --release --locked
+      - name: Verify Windows GUI subsystem
+        if: runner.os == 'Windows'
+        shell: python
+        run: |
+          import pathlib, struct
+          binary = pathlib.Path('src-tauri/target/release/ellmos-system-gui-desktop.exe').read_bytes()
+          pe = struct.unpack_from('<I', binary, 0x3c)[0]
+          assert binary[pe:pe+4] == b'PE\0\0'
+          subsystem = struct.unpack_from('<H', binary, pe + 24 + 68)[0]
+          assert subsystem == 2, f'Expected GUI subsystem, got {subsystem}'
+          print('Windows binary uses GUI subsystem; no console subsystem.')
+      - name: Package compiled desktop consumer and source receipt
+        shell: python
+        run: |
+          import hashlib, json, os, pathlib, re, shutil
+          commit = os.environ['DESKTOP_SOURCE_COMMIT']
+          assert re.fullmatch(r'[0-9a-f]{40}', commit), 'Expected an exact source commit'
+          binary_name = 'ellmos-system-gui-desktop' + ('.exe' if os.name == 'nt' else '')
+          source = pathlib.Path('src-tauri/target/release') / binary_name
+          assert source.is_file() and source.stat().st_size > 0, 'Compiled desktop binary is missing'
+          package = pathlib.Path('desktop-package')
+          package.mkdir()
+          binary = package / binary_name
+          shutil.copyfile(source, binary)
+          receipt = {
+              'schema': 'ellmos-system-gui.desktop-artifact.v1',
+              'source': {'repository': os.environ['GITHUB_REPOSITORY'], 'commit': commit},
+              'build': {
+                  'run_id': int(os.environ['GITHUB_RUN_ID']),
+                  'run_attempt': int(os.environ['GITHUB_RUN_ATTEMPT']),
+                  'os': os.environ['RUNNER_OS'], 'arch': os.environ['RUNNER_ARCH'],
+                  'profile': 'release',
+                  'cargo_lock_sha256': hashlib.sha256(pathlib.Path('src-tauri/Cargo.lock').read_bytes()).hexdigest(),
+              },
+              'files': {binary_name: {
+                  'sha256': hashlib.sha256(binary.read_bytes()).hexdigest(),
+                  'bytes': binary.stat().st_size,
+              }},
+              'acceptance': {'binary_started': False, 'device_verified': False, 'installer': False},
+          }
+          (package / 'desktop-artifact.json').write_text(json.dumps(receipt, indent=2) + '\n', encoding='utf-8')
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-consumer-${{ runner.os }}-${{ env.DESKTOP_SOURCE_COMMIT }}
+          path: desktop-package/
+          if-no-files-found: error
+          retention-days: 14
