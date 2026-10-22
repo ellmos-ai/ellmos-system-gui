@@ -11,7 +11,7 @@
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
-    "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
+    "docs/CONSUMER_CONTRACT.md": "69a77e45be79abac10a2f6aef973c3df310f31602596354c6393423e5a347d21",
     "ellmos-module.v2.json": "dd5053466f5e1be517f23fa8e48ed9ef8ac22d7ee47160c581ef6c6666d54d6d",
     "package-lock.json": "43284a8c5fd75554fe117e84beb6c240e5a732bbfe6a573b9f17173228b7c9c6",
     "package.json": "40598d20498cb106153cb27f522c630ea37fbf65e31146368a9013451b45889a",
@@ -131,7 +131,7 @@
     "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
     "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
     "tests/task-result-completion.test.mjs": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1",
-    "tests/task-result-history.test.mjs": "ecab2b658e5c7ece4512ae443c6fd1ed4f6ec1b56fc2f504c2129ab8a4b4a2bd",
+    "tests/task-result-history.test.mjs": "bda86e7450b9f0048570cd308c13d4c270b5dea9c784668e65b3cf07698cd855",
     "tests/task-result-source.test.mjs": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
@@ -1905,6 +1905,23 @@
           "previous_sha256": null,
           "other_parent_sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
           "sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54"
+        }
+      ]
+    },
+    {
+      "scope": "Task2071: align public Task-Lease consumer documentation with the shipped Tasks panel",
+      "source_base_commit": "44490a04135833b4a142776c07649a61f331137d",
+      "notes": "Document the public task/lease readbacks without bearer capabilities. Preserve the integration record by locating its explicit scope rather than assuming it remains the last follow-up. No application behavior or source import changed.",
+      "files": [
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
+          "sha256": "69a77e45be79abac10a2f6aef973c3df310f31602596354c6393423e5a347d21"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "ecab2b658e5c7ece4512ae443c6fd1ed4f6ec1b56fc2f504c2129ab8a4b4a2bd",
+          "sha256": "bda86e7450b9f0048570cd308c13d4c270b5dea9c784668e65b3cf07698cd855"
         }
       ]
     }
