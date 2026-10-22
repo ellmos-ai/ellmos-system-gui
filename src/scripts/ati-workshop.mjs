@@ -487,7 +487,8 @@ Nach Abschluss: bach task done <ID>`;
       project: String(values.get("category") || "ATI").trim() || "ATI",
       description: one("[data-ati-transfer-preview]").textContent,
       created_by: "ati",
-      assigned_to: "user"
+      assigned_to: "user",
+      source: "ati-workshop:task:" + id
     };
     if (!payload.title) return;
     const finishMutation = beginMutation();
@@ -517,7 +518,7 @@ Nach Abschluss: bach task done <ID>`;
       const reference = newId === undefined ? "" : " (BACH-ID " + newId + ")";
       setMessage("ATI-Aufgabe wurde übertragen" + reference + ".");
     } catch (error) {
-      setMessage("Übertragung nicht verfügbar: " + error.message, true, one("[data-ati-transfer-message]"));
+      setMessage("Übertragung nicht bestätigt: " + error.message + " Ein erneuter Versuch verwendet denselben Herkunftsschlüssel und greift eine bereits angelegte BACH-Aufgabe wieder auf.", true, one("[data-ati-transfer-message]"));
     } finally {
       finishMutation();
     }
