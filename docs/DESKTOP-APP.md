@@ -50,7 +50,7 @@ Voraussetzungen: Rusttoolchain und die plattformspezifischen
 [Tauri-Voraussetzungen](https://v2.tauri.app/start/prerequisites/).
 
 ```text
-cargo build --manifest-path src-tauri/Cargo.toml --release
+cargo build --manifest-path src-tauri/Cargo.toml --release --locked
 ```
 
 Dies baut ausschließlich die Desktopbinary, startet sie aber nicht. Ein bereits
@@ -58,8 +58,8 @@ geöffnetes Terminal kann den Build ausführen; automatisierte Windowslauncher
 müssen wie die übrigen Projektwerkzeuge konsolenfrei starten und ihre eigenen
 Buildprozesse beaufsichtigen. Es wird keine Toolchain automatisch installiert.
 Die CI baut auf Windows, macOS und Linux und stellt zunächst nur den aufgelösten
-Dependencylock als Prüfartefakt bereit. Ein bestätigter Lock wird vor einem
-veröffentlichten Desktopbuild in den Quellstand aufgenommen; Installer,
+Dependencylock als Prüfartefakt bereit. `src-tauri/Cargo.lock` übernimmt den
+gemeinsam aufgelösten Dependencygraphen in den Quellstand; Installer,
 Codesignierung und Store-Veröffentlichung sind noch nicht eingerichtet.
 
 ## Offene vollständige Abnahme
