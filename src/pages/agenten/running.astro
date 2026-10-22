@@ -317,6 +317,11 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     :global(.worker-queue-details p), :global(.worker-queue-details li) {margin:.3rem 0}
     :global(.worker-queue-details ul) {padding-left:1.25rem}
     :global(.worker-queue-details small) {display:block;color:var(--text-muted)}
+    :global(.worker-selection-policy) {font-size:.8rem;line-height:1.45;margin:.5rem 0;color:var(--text);overflow-wrap:anywhere}
+    :global(details.worker-selection-policy summary) {cursor:pointer;font-weight:600}
+    :global(.worker-selection-policy p), :global(.worker-selection-policy li) {margin:.3rem 0}
+    :global(.worker-selection-policy ul), :global(.worker-selection-policy ol) {padding-left:1.25rem}
+    :global(.worker-selection-policy small) {display:block;color:var(--text-muted);margin-top:.4rem}
     .collapsible-section>summary{cursor:pointer}.section-description{display:block;margin-top:.25rem;font-size:.8rem;color:var(--text-muted)}.collapsible-section>summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px}.active-runs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1rem;margin:.6rem 0}.staffel-card{padding:.85rem;border:1px solid var(--border);border-radius:8px;background:var(--bg-card)}.staffel-card>summary{cursor:pointer;font-weight:600}.staffel-card p,.staffel-card ol{font-size:.82rem;margin:.6rem 0}.staffel-card ol{padding-left:1.2rem}.creation-actions{display:flex;gap:.5rem;flex-wrap:wrap}.hardware-torch .card-header{margin-bottom:.6rem}.hardware-torch .card-title{font-size:1rem}.hardware-torch .torch-intro{font-size:.76rem}.hardware-torch .torch-panel strong{font-size:.82rem}.hardware-torch .torch-panel p{font-size:.8rem;margin:.3rem 0}.hardware-torch .torch-panel small{font-size:.72rem}
 
     #core-agent-cards :global(.core-agent-card) {display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
@@ -398,7 +403,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     #template-agent-picker pre { max-height:15rem; overflow:auto; font-size:.8rem; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -937,7 +942,21 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     let workerQueueSnapshots = new Map();
     let workerQueueAvailable = false;
 
+    function renderWorkerSelectionPolicies() {
+      if (!window.BachWorkerSelectionPolicy) return;
+      for (const card of document.querySelectorAll('.core-agent-card[data-appearance-worker], .core-agent-card[data-worker-id]')) {
+        const workerId = card.dataset.appearanceWorker || card.dataset.workerId;
+        if (workerId) window.BachWorkerSelectionPolicy.appendSelectionPolicy(document, card, workerId);
+      }
+    }
+
+    function rememberWorkerSelectionPolicyStates() {
+      const remember = window.BachWorkerSelectionPolicy?.rememberOpenStates;
+      if (typeof remember === 'function') remember(document);
+    }
+
     function renderCoreQueueDiagnostics() {
+      renderWorkerSelectionPolicies();
       if (!window.BachWorkerQueue) return;
       for (const card of document.querySelectorAll('[data-core-agent-id]')) {
         const worker = workerQueueSnapshots.get(card.dataset.coreAgentId);
@@ -978,6 +997,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         workerQueueAvailable = true;
         workerQueueSnapshots = new Map(data.workers.filter(worker=>worker && typeof worker.id==='string').map(worker=>[worker.id,worker]));
         renderCoreQueueDiagnostics();
+        rememberWorkerSelectionPolicyStates();
         const workers = data.workers.filter(worker=>worker && typeof worker === 'object' && worker.system!==true);
 
         const runningWorkers = workers.filter(w => w.runtime_verified === true && w.running === true);
@@ -1120,6 +1140,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           }
           card.append(actions);
         });
+        renderWorkerSelectionPolicies();
       } catch (error) {
         if (epoch !== workerRefreshEpoch) return;
         summary.textContent = 'Workerstatus konnte nicht geladen werden.';
@@ -1128,6 +1149,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         renderCoreQueueDiagnostics();
         if (window.BachWorkerQueue) for (const card of document.querySelectorAll('[data-appearance-worker]'))
           window.BachWorkerQueue.appendQueueDetails(document,card,null,{available:false});
+        renderWorkerSelectionPolicies();
+        rememberWorkerSelectionPolicyStates();
         runningList.replaceChildren(coreElement('p','Worker-Laufstatus nicht verfügbar.','text-muted'));
         updateRunningGroupState('workers', 0, 'unavailable');
       }
