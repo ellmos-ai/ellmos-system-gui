@@ -1,6 +1,7 @@
 ---
 // running.astro - Living & Running: Agenten, Laufzeit, Modelle & Ressourcen
 import BachLayout from "../../layouts/BachLayout.astro";
+import WorkerLeaseCountdown from '../../components/WorkerLeaseCountdown.astro';
 import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
@@ -34,6 +35,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
   <!-- Aktuell arbeitende Agenten; Ready-Worker werden nicht als Running ausgegeben. -->
   <section class="card" aria-labelledby="running-agents-title" style="margin-bottom:1.5rem;">
     <div class="card-header"><h2 class="card-title" id="running-agents-title">⚡ Running · Aktive Läufe</h2></div>
+    <WorkerLeaseCountdown />
 
     <div class="agent-overview-controls" role="group" aria-label="Gemeinsame Gliederung für einsatzbereite und laufende Agenten">
       <label class="agent-overview-search">Suchen<input id="agent-overview-query" data-agent-overview-control="query" type="search" maxlength="120" placeholder="Name, Anbieter oder Modell" /></label>
@@ -428,7 +430,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     #template-agent-picker pre { max-height:15rem; overflow:auto; font-size:.8rem; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';window.BachAgentOverview=AgentOverview;</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {mountWorkerLeaseCountdown} from '../../lib/worker-lease-countdown.mjs';window.BachAgentOverview=AgentOverview;window.BachWorkerLeaseCountdown=mountWorkerLeaseCountdown(document);</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -1319,6 +1321,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           renderAgentOverviewCardContent(card, worker, 'worker', statusLabel);
         }
         applyAgentOverviewControls();
+        window.BachWorkerLeaseCountdown?.update(runningWorkers);
       } catch (error) {
         if (epoch !== workerRefreshEpoch) return;
         summary.textContent = 'Workerstatus konnte nicht geladen werden.';
@@ -1331,6 +1334,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           window.BachWorkerQueue.appendQueueDetails(document,card,null,{available:false});
         readyGrid.replaceChildren(coreElement('p','Workerprofile nicht verfügbar.','text-muted'));
         runningList.replaceChildren(coreElement('p','Worker-Laufstatus nicht verfügbar.','text-muted'));
+        window.BachWorkerLeaseCountdown?.clear();
         updateRunningGroupState('workers', 0, 'unavailable');
         applyAgentOverviewControls();
       }
