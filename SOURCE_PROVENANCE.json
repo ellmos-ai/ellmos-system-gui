@@ -14,7 +14,7 @@
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "161e2efa9691f941e8f0b9f337aa8fca170c9760d7b88acb95f8fd1dc7e47581",
+    "public/page-reads.v1.json": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923",
     "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -3542,6 +3542,23 @@
           "previous_sha256": "d2d25e881ed07a55cf477ca56be3062f2a268ed6c49c40356af38f0dee3d4fbc",
           "sha256": "317c12e37193420ad3f9d03786b530d3641db60ba9baeb267d3e07d6b95d6246",
           "previously_unmapped": true
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "scope": "BACH #2069: preserve canonical manifest indentation after CI39736693473",
+      "source_base_commit": "e902a738a4414340ade8b392f648c892159f67ca",
+      "changes": [
+        "Restore the original da06 manifest JSON indentation (one space per level, two for page keys). The existing production duplicate-page scanner deliberately recognizes this canonical format.",
+        "The parsed manifest value is identical to V3, including both newly declared optional GET calls. Production scanner, existing duplicate-injection assertions and test-case count remain unchanged.",
+        "No new tests or manual test execution. Preserve all49 prior followups and original imports."
+      ],
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "161e2efa9691f941e8f0b9f337aa8fca170c9760d7b88acb95f8fd1dc7e47581",
+          "sha256": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923"
         }
       ]
     }
