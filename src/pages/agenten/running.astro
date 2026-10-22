@@ -82,6 +82,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 <summary class="card-header"><span><span class="card-title" id="ready-agents-title">✨ Einsatzbereite fertige Agenten (Living / Ready)</span><span class="section-description">Konfigurierte Agentenprofile in Ruhestellung · Bearbeiten, Zuweisen und ausdrücklich starten.</span></span></summary>
     <button class="btn btn-sm" type="button" onclick="loadBackgroundWorkers()">Neu prüfen</button>
     <p id="worker-status-summary" role="status" aria-live="polite" style="font-size:0.8rem;color:var(--text-muted);margin:0.5rem 0 1rem 0;">Workerstatus wird geprüft…</p>
+    <p id="worker-profile-delete-status" role="status" aria-live="polite" class="text-muted"></p>
     <div id="ready-agents-grid" class="agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:1rem;">
       <p class="loading-state" style="grid-column:1/-1;text-align:center;padding:2rem;">Prüfe einsatzbereite Agenten…</p>
     </div>
@@ -1119,6 +1120,18 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     // ── BACKGROUND WORKERS (EINSATZBEREIT vs. RUNNING) ──
     let workerQueueSnapshots = new Map();
     let workerQueueAvailable = false;
+    const pendingWorkerDeletes = new Set();
+
+    function updateWorkerDeleteButtons() {
+      for (const button of document.querySelectorAll('[data-worker-delete]')) {
+        const id = button.dataset.workerDelete;
+        const state = window.BachWorkerProfileDelete?.deletionState(workerQueueSnapshots.get(id), pendingWorkerDeletes.has(id));
+        button.disabled = !state?.allowed;
+        button.title = state?.reason || 'Profilverwaltung wird geladen.';
+        const reason = document.getElementById('worker-delete-reason-' + id);
+        if (reason) reason.textContent = state?.allowed ? '' : button.title;
+      }
+    }
 
     function renderWorkerSelectionPolicies() {
       if (!window.BachWorkerSelectionPolicy) return;
@@ -1160,23 +1173,25 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         waiting, label:waiting ? 'Living · Wartet auf Aufgaben' : !configured && canEdit ? 'Modell oder Anbieter fehlt' : status === 'running' ? 'Laufstatus nicht bestätigt' : labels[status] || 'Status unbekannt'};
     }
 
-    async function loadBackgroundWorkers() {
+    async function loadBackgroundWorkers(commandReadback = false) {
       const epoch = ++workerRefreshEpoch;
       const summary = document.getElementById('worker-status-summary');
       const readyGrid = document.getElementById('ready-agents-grid');
       const runningList = document.getElementById('running-workers-list');
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
       try {
-        const response = await fetch('/api/system/workers');
+        const response = await fetch('/api/system/workers', {cache:'no-store', redirect:'error', signal:controller.signal});
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
-        if (epoch !== workerRefreshEpoch) return;
-        if (data.schema !== 'bach.workers.status.v1' || data.availability !== 'available' || !Array.isArray(data.workers))
-          throw new Error('Workerquelle ist nicht bestätigt');
+        const profiles = window.BachWorkerProfileDelete?.readWorkerProfiles(data);
+        if (!profiles) throw new Error('Profilverwaltung ist nicht verfügbar.');
+        if (epoch !== workerRefreshEpoch) return commandReadback ? data : null;
         rememberWorkerSelectionPolicyStates();
         agentOverviewController?.beginContainer(readyGrid);
         agentOverviewController?.beginContainer(runningList);
         workerQueueAvailable = true;
-        workerQueueSnapshots = new Map(data.workers.filter(worker=>worker && typeof worker.id==='string').map(worker=>[worker.id,worker]));
+        workerQueueSnapshots = new Map(profiles.map(worker=>[worker.id,worker]));
         renderCoreQueueDiagnostics();
         const workers = data.workers.filter(worker=>worker && typeof worker === 'object' && worker.system!==true);
 
@@ -1228,8 +1243,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                 </div>
 
                 <div class="agent-overview-actions" style="border-top:1px solid var(--border);padding-top:0.75rem;margin-top:0.75rem;display:flex;justify-content:space-between;align-items:center;gap:0.4rem;flex-wrap:wrap;">
-                  <button class="btn btn-sm" style="font-size:0.75rem;color:var(--error);" onclick="deleteWorker('${escapeHtml(w.id)}')">
-                    🗑️
+                  <button class="btn btn-sm" type="button" style="font-size:0.75rem;color:var(--error);" data-worker-delete="${escapeHtml(w.id)}" aria-describedby="worker-delete-reason-${escapeHtml(w.id)}" disabled>
+                    🗑️ Profil löschen
                   </button>
                   <div style="display:flex;gap:0.35rem;">
                     <button class="btn btn-sm" style="font-size:0.75rem;" ${state.canEdit ? '' : 'disabled'} onclick="editWorkerConfiguration('${escapeHtml(w.id)}')">
@@ -1251,6 +1266,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                       </button>
                     `}
                   </div>
+                  <small id="worker-delete-reason-${escapeHtml(w.id)}" class="text-muted" style="flex-basis:100%;">Profilstatus wird geprüft.</small>
                 </div>
               </div>
             `;
@@ -1343,8 +1359,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         renderWorkerSelectionPolicies();
         applyAgentOverviewControls();
         window.BachWorkerLeaseCountdown?.update(runningWorkers);
+        updateWorkerDeleteButtons();
+        return data;
       } catch (error) {
-        if (epoch !== workerRefreshEpoch) return;
+        if (epoch !== workerRefreshEpoch) {
+          if (commandReadback) throw new Error('Der aktuelle Profilbestand konnte nicht bestätigt werden.');
+          return null;
+        }
         summary.textContent = 'Workerstatus konnte nicht geladen werden.';
         rememberWorkerSelectionPolicyStates();
         agentOverviewController?.beginContainer(readyGrid);
@@ -1359,6 +1380,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         window.BachWorkerLeaseCountdown?.clear();
         updateRunningGroupState('workers', 0, 'unavailable');
         applyAgentOverviewControls();
+        if (commandReadback) throw new Error('Der aktuelle Profilbestand konnte nicht bestätigt werden. Bitte neu prüfen.');
+        return null;
+      } finally {
+        clearTimeout(timeout);
       }
     }
 
@@ -1396,23 +1421,61 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     }
 
     async function deleteWorker(workerId) {
-      if (!confirm('Diesen Worker wirklich löschen?')) return;
-      workerRefreshEpoch += 1;
+      if (pendingWorkerDeletes.has(workerId)) return;
+      const feedback = document.getElementById('worker-profile-delete-status');
+      const api = window.BachWorkerProfileDelete;
+      let label = workerId;
+      const announce = text => {feedback.textContent = `${label}: ${text}`;};
+      if (!api) {feedback.textContent = 'Profilverwaltung ist nicht verfügbar.'; return;}
+      pendingWorkerDeletes.add(workerId);
+      updateWorkerDeleteButtons();
+      let controller, timeout;
       try {
+        announce('Aktueller Profil- und Laufstatus wird geprüft…');
+        const before = api.readWorkerProfiles(await loadBackgroundWorkers(true));
+        const worker = before.find(item => item.id === workerId);
+        if (!worker) {announce('Das Profil ist im aktuellen Bestand nicht mehr vorhanden.'); return;}
+        label = worker.name || worker.id;
+        const state = api.deletionState(worker);
+        if (!state.allowed) throw new Error(state.reason);
+        if (!confirm(`Das inaktive Agentenprofil „${worker.name || worker.id}“ wirklich löschen?`)) {
+          announce('Löschung abgebrochen.');
+          return;
+        }
+        announce('Löschung wird angefordert…');
+        controller = new AbortController();
+        timeout = setTimeout(() => controller.abort(), 15000);
         const res = await fetch(`/api/system/workers/${encodeURIComponent(workerId)}/delete`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({})
+          body: JSON.stringify({}), redirect:'error', signal:controller.signal
         });
-        if (res.ok) {
-          loadBackgroundWorkers();
-        } else {
-          alert('Fehler beim Löschen des Workers.');
-        }
+        let result;
+        try {result = await res.json();}
+        catch (_error) {throw new Error('Die Löschantwort ist nicht lesbar. Bestand neu prüfen; nicht blind wiederholen.');}
+        if (!res.ok) throw new Error(api.deletionError(res.status, result));
+        api.requireDeleteAck(result, workerId);
+        clearTimeout(timeout);
+        announce('Löschantwort bestätigt; Profilbestand wird neu geprüft…');
+        const after = api.readWorkerProfiles(await loadBackgroundWorkers(true));
+        if (after.some(item => item.id === workerId)) throw new Error('Das Profil steht weiterhin im aktuellen Bestand. Löschung nicht bestätigt; bitte neu prüfen.');
+        announce('Agentenprofil gelöscht und aktueller Bestand bestätigt.');
       } catch (e) {
-        alert('Netzwerkfehler: ' + e.message);
+        announce(e.name === 'AbortError'
+          ? 'Die Anfrage wurde nicht rechtzeitig bestätigt. Bestand neu prüfen; nicht blind wiederholen.'
+          : 'Löschung nicht bestätigt: ' + e.message);
+      } finally {
+        clearTimeout(timeout);
+        pendingWorkerDeletes.delete(workerId);
+        updateWorkerDeleteButtons();
       }
     }
+
+    document.addEventListener('click', event => {
+      const button = event.target?.closest?.('[data-worker-delete]');
+      if (button && !button.disabled && document.getElementById('ready-agents-grid')?.contains(button))
+        deleteWorker(button.dataset.workerDelete);
+    });
 
     // ── TEAMS & STAFFELN BESEELEN ──
     async function loadTeamsBeseelen() {
@@ -1862,4 +1925,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
 <script>
   import "../../scripts/agent-template-picker.mjs";
+  import * as workerProfileDeletion from '../../lib/worker-profile-delete.mjs';
+  window.BachWorkerProfileDelete = workerProfileDeletion;
 </script>
