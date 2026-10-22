@@ -1,12 +1,20 @@
 const GROUPS = new Set(['all', 'user', 'auto', 'unassigned']);
-const STATES = new Set(['all', 'open', 'done']);
+export const TASK_STATUS_FILTERS = Object.freeze([
+  'all', 'open', 'done', 'pending', 'in_progress', 'review', 'blocked', 'cancelled', 'archived', 'duplicate',
+]);
+const STATES = new Set(TASK_STATUS_FILTERS);
+const apiStatus = status => status === 'open' ? 'nonterminal' : status;
 export function readTaskFilters(search = '') {
   const params = new URLSearchParams(search);
   const requested = params.get('assignment_group');
   const assignment = GROUPS.has(requested) ? requested : params.get('assigned_to')?.toLowerCase() === 'user' ? 'user' : 'all';
   const raw = params.get('status');
-  const status = ['nonterminal','pending','in_progress'].includes(raw) ? 'open'
-    : ['completed','closed'].includes(raw) ? 'done' : STATES.has(raw) ? raw : 'open';
+  const status = raw === 'nonterminal' ? 'open'
+    : ['completed', 'closed'].includes(raw) ? 'done'
+    : raw === 'progress' ? 'in_progress'
+    : raw === 'todo' ? 'pending'
+    : raw === 'canceled' ? 'cancelled'
+    : STATES.has(raw) ? raw : 'open';
   const priority = ['P1','P2','P3','P4'].includes(params.get('priority')) ? params.get('priority') : '';
   const q = (params.get('q') || '').trim().slice(0, 200);
   const agent = (params.get('assigned_to') || '').trim();
@@ -19,7 +27,7 @@ export function taskFilterQuery(filters, offset = 0, limit = 100) {
     throw new Error('Ungültige Aufgabenfilter.');
   const q = (filters.q || '').trim(), agent = (filters.agent || '').trim();
   if (q.length > 200 || agent.length > 100) throw new Error('Ungültige Aufgabenfilter.');
-  const query = new URLSearchParams({status:filters.status === 'open' ? 'nonterminal' : filters.status,
+  const query = new URLSearchParams({status:apiStatus(filters.status),
     assignment_group:filters.assignment, limit:String(limit), offset:String(offset)});
   if (filters.priority) query.set('priority', filters.priority);
   if (q) query.set('q', q);
@@ -45,6 +53,8 @@ export function readTaskPage(data, filters) {
     throw new Error('Ungültige Task-Antwort.');
   if (filters.assignment !== 'all' && data.applied_filters?.assignment_group !== filters.assignment)
     throw new Error('Die verbundene Task-API unterstützt die kombinierte Zuordnung noch nicht.');
+  if (data.applied_filters?.status !== apiStatus(filters.status))
+    throw new Error('Die verbundene Task-API hat den gewählten Statusfilter nicht bestätigt.');
   const searchApplied = !filters.q || typeof data.applied_filters?.q === 'string';
   const total = Number.isSafeInteger(data.total) && data.total >= data.tasks.length ? data.total : null;
   // Ohne applied_filters.q hat das Backend die Suche ignoriert: Seite nicht anzeigen, nicht clientseitig filtern.

@@ -34,6 +34,16 @@
    },
    {
     "method": "GET",
+    "path": "/api/system/workers",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/core-agents",
+    "required": false
+   },
+   {
+    "method": "GET",
     "path": "/api/tasks",
     "required": true,
     "query": "status=pending,in_progress&limit=5"
@@ -44,6 +54,13 @@
     "method": "GET",
     "path": "/api/tasks",
     "required": true
+   },
+   {
+    "method": "GET",
+    "path": "/api/tasks/{id}/lease",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/task-lease-panel.mjs#loadTaskLeaseRows"
    },
    {
     "method": "GET",
@@ -99,6 +116,20 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/pages/tasks.astro#openTask"
+   },
+   {
+    "method": "GET",
+    "path": "/api/tasks/{id}/worker-policy",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/task-worker-policy-settings.mjs#readTaskWorkerPolicy"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/tasks/{id}/worker-policy",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/task-worker-policy-settings.mjs#writeTaskWorkerPolicy"
    },
    {
     "method": "PUT",
@@ -448,6 +479,16 @@
    },
    {
     "method": "GET",
+    "path": "/api/system/worker-policy",
+    "required": false
+   },
+   {
+    "method": "PUT",
+    "path": "/api/system/worker-policy",
+    "required": false
+   },
+   {
+    "method": "GET",
     "path": "/api/system/cluster-cockpit",
     "required": false
    },
@@ -504,6 +545,11 @@
    {
     "method": "POST",
     "path": "/api/system/external-artifacts/import",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/worker-model-principals",
     "required": false
    }
   ],
@@ -734,11 +780,6 @@
    },
    {
     "method": "GET",
-    "path": "/api/system/model-sockets",
-    "required": false
-   },
-   {
-    "method": "GET",
     "path": "/api/agenten/teams",
     "required": false
    },
@@ -853,29 +894,10 @@
    },
    {
     "method": "GET",
-    "path": "/api/system/model-sockets/catalog",
-    "required": false
-   },
-   {
-    "method": "PUT",
-    "path": "/api/system/model-sockets",
+    "path": "/api/system/workers/{id}/configuration",
     "required": false,
     "dynamic": true,
-    "found_in": "src/lib/model-sockets.mjs#saveSocketChange"
-   },
-   {
-    "method": "PUT",
-    "path": "/api/system/model-sockets/bindings/{id}/{id2}",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/model-sockets.mjs#saveSocketChange"
-   },
-   {
-    "method": "DELETE",
-    "path": "/api/system/model-sockets/bindings/{id}",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/model-sockets.mjs#saveSocketChange"
+    "found_in": "src/lib/worker-selection-policy.mjs#loadPolicy"
    }
   ],
   "/agenten/sessions": [

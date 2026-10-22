@@ -44,6 +44,36 @@ Der Wächter (`scripts/page-reads-check.mjs`, Test `tests/page-reads.test.mjs`) 
 - Jeder Eintrag braucht mindestens eine passende Aufrufstelle auf seiner Seite; ein toter Eintrag ist rot. Gleiche Lesezugriffe aus verschiedenen Funktionen stehen als getrennte Einträge (verschiedenes `found_in`).
 Grenzen: Aufrufe in Astro-Template-Ausdrücken (`{...}` außerhalb von `<script>`), `EventSource`, `XMLHttpRequest`, Navigation auf `/api/`-Links und Pfadangaben, die nur zur Laufzeit entstehen und nirgends als Literal vorkommen, sieht der Test nicht; für letztere gilt zusätzlich die Literalprüfung (jedes `/api/`-Literal muss im Manifest stehen).
 
+## Dynamische Agentenprofile löschen
+
+Der gemeinsame Löschconsumer verwendet den bestehenden Geräte-/Sessionvertrag.
+Vor einer Benutzerbestätigung liest er GET /api/system/workers neu. Die Antwort
+muss bach.workers.status.v1, availability=available, eindeutige gültige IDs und
+einen höchstens zwei Minuten alten observed_at-Zeitbeleg enthalten. runtime_verified,
+worker_active und running werden getrennt geprüft: Auch ein wartender Agent mit
+worker_active=true muss vor dem Löschen geordnet gestoppt werden. Systemprofile,
+explizit nicht löschbare Profile und unbestätigte oder auslaufende Ausführungen
+bleiben gesperrt. Ein abgelaufenes Profil ist nicht dasselbe wie eine freie Tasklease.
+
+Die GUI sendet nach ausdrücklicher Bestätigung genau einen POST an
+/api/system/workers/{worker_id}/delete. Eine erfolgreiche Antwort muss ok=true,
+action=delete und dieselbe id enthalten. Ein anschließendes unabhängiges GET muss
+den vollständigen gültigen Profilbestand ohne diese ID liefern. Erst dann meldet
+die GUI die Löschung als bestätigt. Fehler, Timeout, ungültige Antwort oder weiterhin
+vorhandenes Profil ergeben keinen Erfolg und keine automatische Wiederholung.
+Gleichzeitige Löschklicks desselben Profils bleiben während der Anfrage gesperrt;
+Rückmeldungen stehen getrennt vom periodisch aktualisierten Workerstatus.
+
+Der native Controller bleibt für atomare Start-/Löschkonkurrenz, Tasklease, Fence,
+physische Ausführungsidentität, sichere Beendigung und Belegarchivierung zuständig.
+Die GUI-Vorprüfung erteilt keine Löschberechtigung und ersetzt keine dieser Prüfungen.
+BACH nutzt seine vorhandene gefencete Controller-Löschung. Ocean benötigt denselben
+Consumervertrag mit eigener Autorität; ein nicht angebundener Adapter bleibt nicht
+verfügbar. Es gibt keine zusätzliche Profilablage, keinen automatischen Stopp und
+keinen Worker- oder Modellstart. Nicht mehr beweisbare historische Ausführungen
+müssen nativ geklärt werden; eine Fehlermeldung ist keine Freigabe zum Umgehen der
+Schutzprüfung. Diese Quelllieferung belegt keine produktive Löschung oder Geräteabnahme.
+
 ## Aufgabenauswahl der Worker
 
 Die optionale Projektion `workers[].queue_status` verwendet `bach.worker-queue.v1`.
@@ -62,6 +92,20 @@ seine eigene kanonische Auswahl entsprechend projizieren, bevor die Ansicht Date
 Die beiden Task-Formulare verwenden `GET /api/task-assignees` mit Schema `bach.task-assignees.v1`, Quelle `native_control_and_blueprints`, `configuration_version` und `targets`. Ein auswählbares Ziel liefert die kanonische `binding` aus `assigned_slot`, `assigned_to` und `required_model`. Das Frontend sendet diese Felder zusammen mit `assignment_configuration_version`; das Backend prüft die neue Bindung und die Konfigurationsversion. Auch ein bewusstes Entfernen eines Slots benötigt die aktuelle Version. Der Versionswert ist ein Anfrageparameter und kein gespeichertes Task-Feld.
 
 Unbekannte vorhandene Slots werden als nicht verfügbar angezeigt und beim Bearbeiten beibehalten. Ein Blueprint ohne Instanz ist nicht auswählbar. Die Auswahl startet keinen Worker. Die bestehende manuelle Zuweisung über `/api/assignees` bleibt möglich; bei fehlendem Katalog gibt es keine neue Slot-Bindung. Nach einem Versionskonflikt muss der Benutzer den Katalog neu laden und erneut auswählen.
+
+## Worker-Regeln und Task-Leases
+
+Die Worker-Einstellungen erwarten optional `GET` und `PUT /api/system/worker-policy` mit Schema `bach.worker-review-policy-settings.v1`, `configuration_version`, `policy_source` (`system_default|user_override`), `policy` und einem getrennten `selection`-Objekt. `policy` bildet den versionierten Task-Master-Vertrag `worker-review-policy.v1alpha1` ab: `policy_version`, `default_mode`, `reviewers` (je `reviewer_id` plus `standard|top`), `review_expiry_seconds` (positive Ganzzahl oder `null`), `github_external_review` und `allow_review_task_pickup`. `selection` enthält die BACH/Ocean-Auswahlregeln `resume_bound_task_first`, `decompose_when_idle` und `normal_task_order`; diese Auswahlregeln sind kein Feld der Task-Master-Abschluss-/Review-Policy. Ein Schreibaufruf trägt die gelesene Konfigurationsversion sowie `policy` und `selection`; der Adapter antwortet mit `updated=true` und `worker_started=false`. Die GUI liest die Einstellung danach erneut und vergleicht beide Objekte fachlich mit der gesendeten Konfiguration; ein erfolgreicher HTTP-Status allein genügt nicht. Zurücksetzen sendet `{configuration_version, reset_to_default: true}` an denselben `PUT`-Endpunkt und muss durch `policy_source=system_default` im Readback bestätigt werden.
+
+Die Task-Detailansicht erwartet optional `GET` und `PUT /api/tasks/{id}/worker-policy` mit Schema `bach.task-worker-policy-override.v1`. Der Readback muss `task_id`, `task_version`, `configuration_version`, den Task-Override und eine effektive Entscheidung mit `policy_version`, `policy_source` (`system_default` oder `task_override`), `effective_mode`, `state`, `reason` und den wirksamen Review-Optionen enthalten. Das entspricht dem Task-Master-Worker-Policy-Vertrag; BACH/Ocean-Adapter müssen dessen Readback bereitstellen. Das `PUT` sendet beide gelesenen Versionen als Compare-and-Swap-Schutz und startet keinen Worker. Der Override verwendet die Task-Master-Felder `mode` (Modus oder `null` für Vererbung), `require_user_review` (boolesch, nur additiv wirksam), `github_external_review` und `allow_review_task_pickup` (je boolesch oder `null` für Vererbung). Die effektive Projektion liefert `user_review_required` und `allow_review_task_pickup` als boolesche Werte. Eine bestehende Nutzerreview-Pflicht kann durch einen Task-Override nicht entfernt werden. Die GUI vergleicht den Readback mit dem gesendeten Override; bei Konflikt, abweichendem Readback oder fehlendem Adapter muss neu gelesen werden. Geschützte Worker-Policy-Aufrufe senden den vorhandenen Gerätezugriffstoken nur im `Authorization: Bearer`-Header, niemals in einer URL.
+
+Das Tasks-Board zeigt aktive Aufgaben einschließlich manueller Übernahmen. Die optionale Liste verwendet `GET /api/tasks?status=in_progress,progress&limit=100&offset=...` und erwartet `success=true`, `tasks`, ein boolesches `has_more` sowie `applied_filters.status="in_progress,progress"`. Für jede Aufgabe wird `GET /api/tasks/{id}/lease` gelesen. Eine begrenzte oder fehlgeschlagene Abfrage wird als Teilstand gekennzeichnet.
+
+Die öffentliche Lease-Antwort bindet `task_id`, `status`, `task_version` und `fence` an dieselbe Aufgabe, deren Version und `claim_fence`. Sie enthält `server_now` und ein boolesches `leased`. `leased=false` bestätigt, dass keine aktive Lease vorliegt. Eine aktive Lease erfordert zusätzlich `legacy=false`, eine positive Fence und `expires_at` nach `server_now`, höchstens sieben Tage später. Zeitstempel müssen ISO-8601 mit Zeitzone enthalten. Private Bearer-Lease-IDs und das Eigentümermerkmal `own` gehören nicht in diese Antwort; die GUI verwirft Antworten mit `lease_id` oder `own`.
+
+Der Countdown wird aus dem Abstand zwischen `server_now` und `expires_at` beim Empfang berechnet. Nach Ablauf oder mehr als zwei Minuten ohne neuen Readback wird er als nicht mehr aktuell bestätigt angezeigt. Die lokale Countdown-Anzeige ist standardmäßig eingeschaltet, die Ablauf-Sortierung ausgeschaltet. Diese Anzeigepräferenzen lösen keine Task-, Lease- oder Worker-Aktion aus. Die Running-Ansicht zeigt Agentenläufe; sie liest für diese Task-Lease-Anzeige kein `active_task_lease` aus Worker- oder Core-Agentenantworten.
+
+Die Antworten von GET /api/system/workers und GET /api/system/core-agents können zusätzlich selection_diagnostics nach Schema bach.task-selection-diagnostics.v1 liefern: observed_at (ISO-8601), outcome (resumed|normal_task|review_task|decomposed|idle), task_id (positive ID oder null), reason, excluded_count und exclusions (höchstens 20 Einträge mit task_id, reason_code und reason). Die GUI zeigt den Beleg nur, wenn der Zeitstempel höchstens zwei Minuten alt, das Schema vollständig und die Task-IDs gültig sind. Gründe werden als Text, niemals als HTML gerendert. Fehlender oder veralteter Readback wird als nicht bestätigt angezeigt; die GUI erfindet keine Ausschlussgründe. Der Backendvertrag für Auswahl, Skip, Review-Fallback und Zerlegung ist in #2211 zu vervollständigen; diese Anzeige ändert keine Auswahl- oder Leaseentscheidung.
 
 ## Release und Konsum
 

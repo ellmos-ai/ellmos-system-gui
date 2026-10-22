@@ -1,5 +1,4 @@
-import {setAvatarPresetUrls,setAvatarPresetImages} from './agent-avatar.mjs';
-import {PORTABLE_AVATAR_IMAGES} from './new-agent-avatar-assets.mjs';
-import {GEMINI_AVATAR_URLS} from './gemini-avatar-assets.mjs';
-setAvatarPresetUrls(GEMINI_AVATAR_URLS);
-setAvatarPresetImages(PORTABLE_AVATAR_IMAGES);
+// The avatar module imports its small, versioned URL catalog only after an
+// avatar enters the viewport or a picker page is shown. Image bytes stay out
+// of the initial route bundle.
+import './agent-avatar.mjs';

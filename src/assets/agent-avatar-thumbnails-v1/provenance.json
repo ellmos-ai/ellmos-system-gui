@@ -1,0 +1,1628 @@
+{
+  "schema": "ellmos.agent-avatar-thumbnails.v1",
+  "catalogVersion": "v1",
+  "generatedWith": "sharp 0.35.5",
+  "sourceManifests": [
+    "agent-portraits-20261010/provenance.json",
+    "gemini-agent-portraits/provenance.json"
+  ],
+  "thumbnail": {
+    "format": "webp",
+    "width": 96,
+    "height": 96,
+    "quality": 78
+  },
+  "large": {
+    "format": "webp",
+    "maxWidth": 512,
+    "maxHeight": 512,
+    "quality": 84
+  },
+  "portableData": {
+    "format": "png",
+    "maxBytes": 180000,
+    "metadata": "stripped"
+  },
+  "entries": [
+    {
+      "id": "preset:comic-01-ati-technik",
+      "name": "ATI · Comic",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/comic-01-ati-technik.png",
+      "sourceSha256": "880af49168e8e39f7683b6f039729df37f90a340bbaa8364fae26824f9cee746",
+      "legacyDataSha256": "880af49168e8e39f7683b6f039729df37f90a340bbaa8364fae26824f9cee746",
+      "thumbnail": "comic-01-ati-technik.webp",
+      "thumbnailSha256": "791fbd92f3c5be2096d0454f38cdd87272a5ded5e10371e49bd977cf3f344d35",
+      "thumbnailBytes": 2348,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "comic-01-ati-technik-large.webp",
+      "largeSha256": "5dfa5ddaafb16949f58f8c2cdf1e88e4050817f34e7a35e43375c2bcbf37578b",
+      "largeBytes": 10686,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "comic-01-ati-technik-data.png",
+      "dataSha256": "37d97cd458b18adb58e2f277c2f09c4954908a3ad7f57820edf162aa4aa28366",
+      "dataBytes": 59517
+    },
+    {
+      "id": "preset:comic-02-bueroassistenz",
+      "name": "Büro · Comic",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/comic-02-bueroassistenz.png",
+      "sourceSha256": "fef2f39f8659fb0941ce723792d3bd0155622d0e4a050c8663f8101ff6b81e10",
+      "legacyDataSha256": "fef2f39f8659fb0941ce723792d3bd0155622d0e4a050c8663f8101ff6b81e10",
+      "thumbnail": "comic-02-bueroassistenz.webp",
+      "thumbnailSha256": "ed49f1f63510e6a952f01ffcf4996ff5b151ae244eee62072011c71b368d6550",
+      "thumbnailBytes": 2216,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "comic-02-bueroassistenz-large.webp",
+      "largeSha256": "3c2f3340392dd4e033184471d756784864f8943d738ead9e545d7c4577670b47",
+      "largeBytes": 10092,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "comic-02-bueroassistenz-data.png",
+      "dataSha256": "c705d1e678f1f14de7bf022156a98227aa41ac8aab6a0734c2f2923698592502",
+      "dataBytes": 57069
+    },
+    {
+      "id": "preset:comic-03-finanzassistenz",
+      "name": "Finanzen · Comic",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/comic-03-finanzassistenz.png",
+      "sourceSha256": "f089700f2161b75b88ce4aea79f4431d2f45a00f70578f713d95da71394303c4",
+      "legacyDataSha256": "f089700f2161b75b88ce4aea79f4431d2f45a00f70578f713d95da71394303c4",
+      "thumbnail": "comic-03-finanzassistenz.webp",
+      "thumbnailSha256": "62f931d120a329de89e3850ff32d9afd6147baf791c153dff6335c8ef9d7eb09",
+      "thumbnailBytes": 2176,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "comic-03-finanzassistenz-large.webp",
+      "largeSha256": "739412316283009b46405b243e25ec50d9c0f977186840c25f49ddfa2ddd3b7d",
+      "largeBytes": 8874,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "comic-03-finanzassistenz-data.png",
+      "dataSha256": "3e24e0eb36b92e1e5a5ae983b53cbd25b2a6c23662d086ec397a336483b9f802",
+      "dataBytes": 54194
+    },
+    {
+      "id": "preset:comic-04-gesundheitsassistenz",
+      "name": "Gesundheit · Comic",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/comic-04-gesundheitsassistenz.png",
+      "sourceSha256": "244240f86812291eb0f071d0bfaef135e775deecf4cab07ce27edae643221982",
+      "legacyDataSha256": "244240f86812291eb0f071d0bfaef135e775deecf4cab07ce27edae643221982",
+      "thumbnail": "comic-04-gesundheitsassistenz.webp",
+      "thumbnailSha256": "da47111c05b2a939acd70fb5c0dc61481eaa6b5621938b5794a559dbbc2dea89",
+      "thumbnailBytes": 2028,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "comic-04-gesundheitsassistenz-large.webp",
+      "largeSha256": "053f93801e55a252e6c873e148f92e0f42bdcd22c97490e6bc2337e20b70b592",
+      "largeBytes": 8514,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "comic-04-gesundheitsassistenz-data.png",
+      "dataSha256": "8c70b23c0bb39df448557cc5d6010cdecb08a1dc0362766ab1a9c9a249a9853c",
+      "dataBytes": 54728
+    },
+    {
+      "id": "preset:comic-05-persoenliche-assistenz",
+      "name": "Persönliche Assistenz · Comic",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/comic-05-persoenliche-assistenz.png",
+      "sourceSha256": "0f1f2e7229a983bd3500f490aeac349765dc9472b6d56f8b216143934d51165b",
+      "legacyDataSha256": "0f1f2e7229a983bd3500f490aeac349765dc9472b6d56f8b216143934d51165b",
+      "thumbnail": "comic-05-persoenliche-assistenz.webp",
+      "thumbnailSha256": "6b8c5de5a6eb661f4d7fc50cfa6751b40079de2d71891c1caf1fa6aee88b931b",
+      "thumbnailBytes": 2558,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "comic-05-persoenliche-assistenz-large.webp",
+      "largeSha256": "e94b35b06a5850f0f0f8b25d8a61fa87ec0662378aa9d02c3e395354a44fcd2b",
+      "largeBytes": 10982,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "comic-05-persoenliche-assistenz-data.png",
+      "dataSha256": "ba525634d7ae3a9ac451da841ddf7d57f07f6c5cc0e0a097f4a4306a1e0014fc",
+      "dataBytes": 58501
+    },
+    {
+      "id": "preset:comic-06-medienproduktion",
+      "name": "Medienproduktion · Comic",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/comic-06-medienproduktion.png",
+      "sourceSha256": "6f0b0e1c17efebb545f56716efff32806b18b7116b0c36e7bef99947d5e8b803",
+      "legacyDataSha256": "6f0b0e1c17efebb545f56716efff32806b18b7116b0c36e7bef99947d5e8b803",
+      "thumbnail": "comic-06-medienproduktion.webp",
+      "thumbnailSha256": "2cc9603597e36c5277403fd010194ede056f7eb31c86d82b2bf99978e739039c",
+      "thumbnailBytes": 2748,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "comic-06-medienproduktion-large.webp",
+      "largeSha256": "8247d22423daeaba4c5e3a99363b463c0e6b46b205bc967d52f863f9ba274d77",
+      "largeBytes": 12410,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "comic-06-medienproduktion-data.png",
+      "dataSha256": "883432052477d5a27b57e76d23ec6c21eed786632f5c47b077419b70f5703592",
+      "dataBytes": 63685
+    },
+    {
+      "id": "preset:comic-07-forschung",
+      "name": "Forschung · Comic",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/comic-07-forschung.png",
+      "sourceSha256": "5f2ddcf8fdb5b259cbac5b4ff362620af6e0cdf8a72826224288437d934581c2",
+      "legacyDataSha256": "5f2ddcf8fdb5b259cbac5b4ff362620af6e0cdf8a72826224288437d934581c2",
+      "thumbnail": "comic-07-forschung.webp",
+      "thumbnailSha256": "c938112a175ba24dbab8dbb9699d10dd568784b059700c9c0bc4fa3527346e4d",
+      "thumbnailBytes": 2290,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "comic-07-forschung-large.webp",
+      "largeSha256": "3a20b696b91e348d218bc6a195ca416a35b6635133ee7cf81ab3b4b12387e9da",
+      "largeBytes": 10172,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "comic-07-forschung-data.png",
+      "dataSha256": "76ce2ab82d40f791e648068f675868a57688f46fc7fe4e1e4b84eb19dcbf56d7",
+      "dataBytes": 55341
+    },
+    {
+      "id": "preset:comic-08-reflexion",
+      "name": "Reflexion · Comic",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/comic-08-reflexion.png",
+      "sourceSha256": "d6b6a6e1c299a83b933a47619f56097f86439f2a3921dae2ffce8e36bd9e7cb0",
+      "legacyDataSha256": "d6b6a6e1c299a83b933a47619f56097f86439f2a3921dae2ffce8e36bd9e7cb0",
+      "thumbnail": "comic-08-reflexion.webp",
+      "thumbnailSha256": "38c3f8d2aa3b22b9eb89022afd63c764224ada7b116836d41fd5701136752d14",
+      "thumbnailBytes": 2458,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "comic-08-reflexion-large.webp",
+      "largeSha256": "15b329cdcc7ff25bdbd3154c612f2d31e94acff7a52cf36192276fe70886cf4a",
+      "largeBytes": 10790,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "comic-08-reflexion-data.png",
+      "dataSha256": "88eb23e1149c8e7683a1c3d2ce4d3fdccd9e92a75c0d23a063991f8c904bf99a",
+      "dataBytes": 55328
+    },
+    {
+      "id": "preset:comic-09-versicherungen",
+      "name": "Versicherungen · Comic",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/comic-09-versicherungen.png",
+      "sourceSha256": "e348ca193f8df3a9f76dfda1a79425d7b91bb1d8afae95baf0c99f6d6451415f",
+      "legacyDataSha256": "e348ca193f8df3a9f76dfda1a79425d7b91bb1d8afae95baf0c99f6d6451415f",
+      "thumbnail": "comic-09-versicherungen.webp",
+      "thumbnailSha256": "691bcf84897fbf418bcf40ee05e4923946cc4d69aaed34ff3dda96ef4625f7a0",
+      "thumbnailBytes": 2446,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "comic-09-versicherungen-large.webp",
+      "largeSha256": "5137bda7af2b808101403364c00f01237cd81964dabc220e087433af668b0c9c",
+      "largeBytes": 10550,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "comic-09-versicherungen-data.png",
+      "dataSha256": "dd768115ecfd887e74a4b097423614c7d8b19c13694e9753335a7ccb5833bdd4",
+      "dataBytes": 54160
+    },
+    {
+      "id": "preset:comic-10-bewerbungen",
+      "name": "Bewerbungen · Comic",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/comic-10-bewerbungen.png",
+      "sourceSha256": "323b4f4cd6d0d3456cb2921aa62c10ce53bfa637c898f2c8f0441f852f1a4d3b",
+      "legacyDataSha256": "323b4f4cd6d0d3456cb2921aa62c10ce53bfa637c898f2c8f0441f852f1a4d3b",
+      "thumbnail": "comic-10-bewerbungen.webp",
+      "thumbnailSha256": "3d25e342a1d51674f539739171cddb88c6d1e2f7c6531d18cfc611adb0462f11",
+      "thumbnailBytes": 2364,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "comic-10-bewerbungen-large.webp",
+      "largeSha256": "41ca05a9ea28f5997d6c29033bcef32228b95dcee49e1e71f17034374b5fd8d0",
+      "largeBytes": 9620,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "comic-10-bewerbungen-data.png",
+      "dataSha256": "c6125b0de20b5f755a13008a18cb6b7194c3fab7e89f03cedcea45a3a27d9a33",
+      "dataBytes": 55891
+    },
+    {
+      "id": "preset:fantasy-01-tuerkis-wolkenriese",
+      "name": "Monster · Türkiser Wolkenriese",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-01-tuerkis-wolkenriese.png",
+      "sourceSha256": "b88f1d8ebe2d7d1494acce0a21704c984d4180accb2aaad28c2036d82ad82e50",
+      "legacyDataSha256": "b88f1d8ebe2d7d1494acce0a21704c984d4180accb2aaad28c2036d82ad82e50",
+      "thumbnail": "fantasy-01-tuerkis-wolkenriese.webp",
+      "thumbnailSha256": "4704eacef3723e574f1ee51709a8644e5f628cb6b515762e7a686a9e75f57d13",
+      "thumbnailBytes": 1066,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-01-tuerkis-wolkenriese-large.webp",
+      "largeSha256": "b625e62b96f62383619cf4c0bbcb1b2cc23785f0a168d10fa36aef0b0d1f1b3c",
+      "largeBytes": 4254,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-01-tuerkis-wolkenriese-data.png",
+      "dataSha256": "84ea2c4985217c24e29c28bc0fa1d529cbd09156f25082e499172785843c3ecf",
+      "dataBytes": 61235
+    },
+    {
+      "id": "preset:fantasy-02-korall-gestaltwandler",
+      "name": "Monster · Korall-Gestaltwandler",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-02-korall-gestaltwandler.png",
+      "sourceSha256": "08349423b16ed293c9f07efa1c844ca826c7a53e7441f1413892ff194b173270",
+      "legacyDataSha256": "08349423b16ed293c9f07efa1c844ca826c7a53e7441f1413892ff194b173270",
+      "thumbnail": "fantasy-02-korall-gestaltwandler.webp",
+      "thumbnailSha256": "b6334685c322e62281f983f4c9b307147afff0098b6edd7f444672819dc25e7b",
+      "thumbnailBytes": 1122,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-02-korall-gestaltwandler-large.webp",
+      "largeSha256": "477b55af1b89f4bab507966a09a7e2f2b25aa9e1c16089754bb37cdb1d5b4bc1",
+      "largeBytes": 4114,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-02-korall-gestaltwandler-data.png",
+      "dataSha256": "5a12b1903cbf596c708df252e391c0ef7641ffef806c3d82c27fc37dc18ad03c",
+      "dataBytes": 64154
+    },
+    {
+      "id": "preset:fantasy-03-lila-traumsammler",
+      "name": "Monster · Lila Traumsammler",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-03-lila-traumsammler.png",
+      "sourceSha256": "5f361b52204818cd8fedf9c2688e053a89842bfb3128d8508ece658ac1df9d03",
+      "legacyDataSha256": "5f361b52204818cd8fedf9c2688e053a89842bfb3128d8508ece658ac1df9d03",
+      "thumbnail": "fantasy-03-lila-traumsammler.webp",
+      "thumbnailSha256": "90b074614ee472cd6445326a22fa19961af11a2b35100da117325531f52a609e",
+      "thumbnailBytes": 1460,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-03-lila-traumsammler-large.webp",
+      "largeSha256": "88358ec1d80f4191c60486e103f3f8b2c8e2b5337c1fdf214f71b6d366b24ee0",
+      "largeBytes": 7622,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-03-lila-traumsammler-data.png",
+      "dataSha256": "fd52fbaef0b6766a09706fa1022f00cc3d7de35fe1bf872b6556f1c361cf9862",
+      "dataBytes": 85863
+    },
+    {
+      "id": "preset:fantasy-04-orange-feuerfreund",
+      "name": "Monster · Oranger Feuerfreund",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-04-orange-feuerfreund.png",
+      "sourceSha256": "ac51bc78d77fc86f00dee5fd1f446d9a0a41c117e4a1f5b4a8b54ca6789e11f3",
+      "legacyDataSha256": "ac51bc78d77fc86f00dee5fd1f446d9a0a41c117e4a1f5b4a8b54ca6789e11f3",
+      "thumbnail": "fantasy-04-orange-feuerfreund.webp",
+      "thumbnailSha256": "e07ab48016b70fc07b98eeb8d29a1709eb23f2f982b3591bb9308b11c1148a6b",
+      "thumbnailBytes": 1640,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-04-orange-feuerfreund-large.webp",
+      "largeSha256": "f027f36a29c9a1359a217a272af4fe62729a99b6d538036305f1951e68eda1b1",
+      "largeBytes": 6678,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-04-orange-feuerfreund-data.png",
+      "dataSha256": "8fd7e0d44951d8f8128196c57b8ea86a865ee60a6337e8bbf38eda2bb24b23a5",
+      "dataBytes": 74662
+    },
+    {
+      "id": "preset:fantasy-05-mint-pflanzenhueter",
+      "name": "Monster · Mint-Pflanzenhüter",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-05-mint-pflanzenhueter.png",
+      "sourceSha256": "b0d1e18f94beb3f18b21f78a3795fbc709a8604db82fa884a31d175b1fddd7a4",
+      "legacyDataSha256": "b0d1e18f94beb3f18b21f78a3795fbc709a8604db82fa884a31d175b1fddd7a4",
+      "thumbnail": "fantasy-05-mint-pflanzenhueter.webp",
+      "thumbnailSha256": "2fd3249a090cda39fb83980f150b44f3c73cbfe529fb838903005966874dbbfe",
+      "thumbnailBytes": 1608,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-05-mint-pflanzenhueter-large.webp",
+      "largeSha256": "f32a4ede89a6e259eaaade711e7d174d189fd736e71a8aa17cb19d237e47e705",
+      "largeBytes": 7038,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-05-mint-pflanzenhueter-data.png",
+      "dataSha256": "4292cc7259128052dc19cc5acd071e12258138a436e78ad57db6900eff6e859c",
+      "dataBytes": 81161
+    },
+    {
+      "id": "preset:fantasy-06-blau-eiszauber",
+      "name": "Monster · Blauer Eiszauber",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-06-blau-eiszauber.png",
+      "sourceSha256": "d25dd31cec1a858cc6eb53f73ed80ff43ce26933336d54eed1f9ffa67d39c209",
+      "legacyDataSha256": "d25dd31cec1a858cc6eb53f73ed80ff43ce26933336d54eed1f9ffa67d39c209",
+      "thumbnail": "fantasy-06-blau-eiszauber.webp",
+      "thumbnailSha256": "0a8639287006a7b214f1adf12a3aa450c0681813a5b4c0f82b621af304b82921",
+      "thumbnailBytes": 1116,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-06-blau-eiszauber-large.webp",
+      "largeSha256": "89b0b4ccf616975a2de2c6891e37bc780e120761411b3fa92b0a31262f5cf393",
+      "largeBytes": 5064,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-06-blau-eiszauber-data.png",
+      "dataSha256": "e140e7a887fc142a3451114343f5f1f63782d10812aa06d63759266fca183c73",
+      "dataBytes": 72938
+    },
+    {
+      "id": "preset:fantasy-07-gelb-lichtfunke",
+      "name": "Monster · Gelber Lichtfunke",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-07-gelb-lichtfunke.png",
+      "sourceSha256": "f08b54d35c99ed5939973da0d8ac09afeff5baee34b1acddec5836fabffd9e01",
+      "legacyDataSha256": "f08b54d35c99ed5939973da0d8ac09afeff5baee34b1acddec5836fabffd9e01",
+      "thumbnail": "fantasy-07-gelb-lichtfunke.webp",
+      "thumbnailSha256": "aea07ef7444adf6abfdefb8c612518306f87a9de231e38f3910f79278aabd0cb",
+      "thumbnailBytes": 1272,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-07-gelb-lichtfunke-large.webp",
+      "largeSha256": "38a172180e3197b2b5e38a3f5d21b8ddc355980e61df2e5b12a08f427b89e351",
+      "largeBytes": 4916,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-07-gelb-lichtfunke-data.png",
+      "dataSha256": "9a16c5ab0927fe9a95da051d93406db64b74d900cec5799d25cc402eb731e1b1",
+      "dataBytes": 69689
+    },
+    {
+      "id": "preset:fantasy-08-indigo-teleporter",
+      "name": "Monster · Indigo-Teleporter",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-08-indigo-teleporter.png",
+      "sourceSha256": "588fb83caed50dd12468c590de4fdf308d248bc01934df7c5478e2a97869e706",
+      "legacyDataSha256": "588fb83caed50dd12468c590de4fdf308d248bc01934df7c5478e2a97869e706",
+      "thumbnail": "fantasy-08-indigo-teleporter.webp",
+      "thumbnailSha256": "ca083a69052a5e4c8a71d7964ce48355d3d368552b3a12045de8ff305faa56d6",
+      "thumbnailBytes": 1464,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-08-indigo-teleporter-large.webp",
+      "largeSha256": "6ceeb8b755bddda903db2680e4a6c3f80b724b4c61fe9307d39e6d16dc5fb991",
+      "largeBytes": 6032,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-08-indigo-teleporter-data.png",
+      "dataSha256": "92dc7366f5ca9ea66f9ba1f108ae98e9087e3b0bcc77d01725f97eca8549a825",
+      "dataBytes": 79734
+    },
+    {
+      "id": "preset:fantasy-09-pfirsich-klangkuenstler",
+      "name": "Monster · Pfirsich-Klangkünstler",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-09-pfirsich-klangkuenstler.png",
+      "sourceSha256": "021994474d9001cb6f3b74332904193918c065bbe96c3c6f368f242c085839e2",
+      "legacyDataSha256": "021994474d9001cb6f3b74332904193918c065bbe96c3c6f368f242c085839e2",
+      "thumbnail": "fantasy-09-pfirsich-klangkuenstler.webp",
+      "thumbnailSha256": "3ae46f903883496b371a25aa29110f75b995f98aa56af3e0741a607a9306926e",
+      "thumbnailBytes": 1396,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-09-pfirsich-klangkuenstler-large.webp",
+      "largeSha256": "ffaa0d058960398d1a3601d7fba3b1fd92648e5cad2965792677f550c00f0e74",
+      "largeBytes": 5318,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-09-pfirsich-klangkuenstler-data.png",
+      "dataSha256": "f9abd36a414e0d482b455fd7f6874bd53584a2a425a0870aa032b0bdf150acbd",
+      "dataBytes": 72718
+    },
+    {
+      "id": "preset:fantasy-10-rosa-sternenschweber",
+      "name": "Monster · Rosa Sternenschweber",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-10-rosa-sternenschweber.png",
+      "sourceSha256": "82735a5c284ef186d864107ffc083c44786cbad549da6276199407bbe500d686",
+      "legacyDataSha256": "82735a5c284ef186d864107ffc083c44786cbad549da6276199407bbe500d686",
+      "thumbnail": "fantasy-10-rosa-sternenschweber.webp",
+      "thumbnailSha256": "109b6084584c998ded3eac93ab93553f204e72f03115877a2552e4276301a4ea",
+      "thumbnailBytes": 1620,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-10-rosa-sternenschweber-large.webp",
+      "largeSha256": "a8939b3d8cf3fe4f7aa9a4aed29f963c31bdd93068f221247c0a60f4c8811a0d",
+      "largeBytes": 7174,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-10-rosa-sternenschweber-data.png",
+      "dataSha256": "a54ae59a448b89b44610bf2c3cadd568f9db1fd3bc510654bd218f9aa862ddb0",
+      "dataBytes": 79462
+    },
+    {
+      "id": "preset:fantasy-11-slime-smaragd",
+      "name": "Slime · Smaragd",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-11-slime-smaragd.png",
+      "sourceSha256": "069efe6b4bada88c1dec500f7f23ae91fe927eeed2e204e2e4304497b580263d",
+      "legacyDataSha256": "069efe6b4bada88c1dec500f7f23ae91fe927eeed2e204e2e4304497b580263d",
+      "thumbnail": "fantasy-11-slime-smaragd.webp",
+      "thumbnailSha256": "c3773d374133d4cffa3e5c015e9aca05bf04b2ac65396f5153072f4084d88560",
+      "thumbnailBytes": 1560,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-11-slime-smaragd-large.webp",
+      "largeSha256": "050ce4081798f82a17d5d41f33a2c24d3487cbf8348c715f862589d916700546",
+      "largeBytes": 7544,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-11-slime-smaragd-data.png",
+      "dataSha256": "ea411c71cdcdade0d4950964caddace59704d05db551c966d0be80de05f307d2",
+      "dataBytes": 77539
+    },
+    {
+      "id": "preset:fantasy-12-slime-himmelblau",
+      "name": "Slime · Himmelblau",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-12-slime-himmelblau.png",
+      "sourceSha256": "697dc46f50dbf2f1a876b7709330db99934d2dc37f49d0e96aab13de6c4da78f",
+      "legacyDataSha256": "697dc46f50dbf2f1a876b7709330db99934d2dc37f49d0e96aab13de6c4da78f",
+      "thumbnail": "fantasy-12-slime-himmelblau.webp",
+      "thumbnailSha256": "17076526709f2b30fa3ad6a0baeedec20180adcb8e62b92820cff6e605fa798c",
+      "thumbnailBytes": 1290,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-12-slime-himmelblau-large.webp",
+      "largeSha256": "8cf8875c9ad5446cc1144c203f31d3a36807a39efdf54f74e216f99986b721b9",
+      "largeBytes": 5796,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-12-slime-himmelblau-data.png",
+      "dataSha256": "31dc67ae6b61b2cffcf7e9be673172731857a9b54c8b1bad67ab1dc3613f804a",
+      "dataBytes": 68048
+    },
+    {
+      "id": "preset:fantasy-13-slime-rosa",
+      "name": "Slime · Rosa",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-13-slime-rosa.png",
+      "sourceSha256": "1f3fb4d9ddd32e0f5eb46672322e1bf896b5cedad6fea33e016577f1f484c70f",
+      "legacyDataSha256": "1f3fb4d9ddd32e0f5eb46672322e1bf896b5cedad6fea33e016577f1f484c70f",
+      "thumbnail": "fantasy-13-slime-rosa.webp",
+      "thumbnailSha256": "7f5b5ffac8e70ba38203f001a9627bfef17d9a4db88c4677738a69c29a11297d",
+      "thumbnailBytes": 1146,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-13-slime-rosa-large.webp",
+      "largeSha256": "57b43c72c141fea113484b55cd0f465025ae2319c76be671aec26ff4caa2c4e5",
+      "largeBytes": 5974,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-13-slime-rosa-data.png",
+      "dataSha256": "16106853f07cf8778b4a4ce47f7a38a2524b58a856b85fd78f68fd3d5c1bf9b4",
+      "dataBytes": 69616
+    },
+    {
+      "id": "preset:fantasy-14-slime-goldgelb",
+      "name": "Slime · Goldgelb",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-14-slime-goldgelb.png",
+      "sourceSha256": "a630b4a5b28efbc300cf76440b7785e7cb312cb951ede015a2fce40bdd625886",
+      "legacyDataSha256": "a630b4a5b28efbc300cf76440b7785e7cb312cb951ede015a2fce40bdd625886",
+      "thumbnail": "fantasy-14-slime-goldgelb.webp",
+      "thumbnailSha256": "f7a2c30f4b9b76463b72067d1c5aeb2a27e51947110fed9c2b53a65ed352b4af",
+      "thumbnailBytes": 1400,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-14-slime-goldgelb-large.webp",
+      "largeSha256": "da9451579ba3513e6f7ce7298bf04be861855a8de435b09dddd869ada220b2f3",
+      "largeBytes": 6590,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-14-slime-goldgelb-data.png",
+      "dataSha256": "4c90984e759ac16e35e9d592ffb91afa0e553cb0c7a7650d546f23a88c324173",
+      "dataBytes": 74314
+    },
+    {
+      "id": "preset:fantasy-15-slime-violett",
+      "name": "Slime · Violett",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/fantasy-15-slime-violett.png",
+      "sourceSha256": "f9a3dc979a9ff4e4a89b1fbdadc44b14ad468339219510e5d7da3ed91320bb70",
+      "legacyDataSha256": "f9a3dc979a9ff4e4a89b1fbdadc44b14ad468339219510e5d7da3ed91320bb70",
+      "thumbnail": "fantasy-15-slime-violett.webp",
+      "thumbnailSha256": "32043332cc7ef0a85aaa7313fe3256521965046c140ad0f07177b18bd81462ef",
+      "thumbnailBytes": 1722,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "fantasy-15-slime-violett-large.webp",
+      "largeSha256": "13ad3369aff06d1c83ce0ab0f8a79a4885600a83467ff12b2449c8175145c1cd",
+      "largeBytes": 7902,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "fantasy-15-slime-violett-data.png",
+      "dataSha256": "f9ba1cb24e45c3e9af0a997187cb24fb6f20deb6eee335f3a82b11dadb0263f2",
+      "dataBytes": 78141
+    },
+    {
+      "id": "preset:gemini-always-on",
+      "name": "Always-On · Hintergrund",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-always-on.jpg",
+      "sourceSha256": "9a42e8b7d1d0c4caf6ed89f8a61eef4e5837e316968ab0f5dfd6cf6d127f20e6",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-always-on.webp",
+      "thumbnailSha256": "7c532e1a8456abcb9b1fff8d0e2e67d758ccaf37c63b315bbe7bdec8effa497f",
+      "thumbnailBytes": 1274,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-always-on-large.webp",
+      "largeSha256": "635e14600d622b61f646d0e8126c47873d307700b6d6eb3ac6cc97c197342f9f",
+      "largeBytes": 17982,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-always-on-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-buddha-chat",
+      "name": "Buddha · Gespräch",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-buddha-chat.jpg",
+      "sourceSha256": "c7ff0b44cd539bde87d03d3cb27cfdf5e7f433faf682470a5ac6081f017abbec",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-buddha-chat.webp",
+      "thumbnailSha256": "a30bde03a9327116762e50825c8f45a9509c1c648c0ce07410d958777a821189",
+      "thumbnailBytes": 1516,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-buddha-chat-large.webp",
+      "largeSha256": "93e2966671e3cd5528d74798a297a748ca6fa0ed8834387491103263e1e53cc4",
+      "largeBytes": 24548,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-buddha-chat-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-claude-friendly",
+      "name": "Claude · Begleiter",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/claude-friendly.jpg",
+      "sourceSha256": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-claude-friendly.webp",
+      "thumbnailSha256": "d28634f3045647947eee601cc95523775bbfb7348c1df71c5900ea0afc789d0a",
+      "thumbnailBytes": 1802,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-claude-friendly-large.webp",
+      "largeSha256": "87aa8c5397339632174d32d91f995ee0186c10277ee6e54d199d4c88d94e08f6",
+      "largeBytes": 23426,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-claude-friendly-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-claude-neon",
+      "name": "Claude · Neon",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/claude-neon.jpg",
+      "sourceSha256": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-claude-neon.webp",
+      "thumbnailSha256": "1e1f3c376389281ab91c53f610e9e3862bc57567151a9cb09557743d9c4c4cde",
+      "thumbnailBytes": 2702,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-claude-neon-large.webp",
+      "largeSha256": "55bc7fbe0d0291c0972ecd7340a4778d24d8f9471fc8d72ba37ad30dde04f4e5",
+      "largeBytes": 38126,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-claude-neon-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-claude-opus",
+      "name": "Claude · Opus",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/claude-opus.jpg",
+      "sourceSha256": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-claude-opus.webp",
+      "thumbnailSha256": "d428f2afb0e2311cd1138d2bfb69c4254225715e267f320b488f74556ebc33cd",
+      "thumbnailBytes": 1994,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-claude-opus-large.webp",
+      "largeSha256": "ea77fd47fab9cbaffc3d6f35eda147bd37a8219f68acd773cf8ca2188760745f",
+      "largeBytes": 30610,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-claude-opus-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-connector-a",
+      "name": "Connector · Türkis",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-connector-a.jpg",
+      "sourceSha256": "9a05c001e9b43c054586f4f1b9504cb006418e0a6f523f742bdae80cab9697ec",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-connector-a.webp",
+      "thumbnailSha256": "c1ac517574f14edf779eb863d1d22ddac4b803171658daae469f4f08065b788e",
+      "thumbnailBytes": 1692,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-connector-a-large.webp",
+      "largeSha256": "8411206ebde08d11db091070de853a1fe3eee758ac18b56c4eef76561050e175",
+      "largeBytes": 26498,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-connector-a-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-connector-b",
+      "name": "Connector · Blau",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-connector-b.jpg",
+      "sourceSha256": "108defc2fc17c156ed452667f2b59f3f6eedd6ff6de5cae34c660734e592a555",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-connector-b.webp",
+      "thumbnailSha256": "f612b59d066ff7387c4befefd3a6789550496a349b029ddd8bc43956dbe621fe",
+      "thumbnailBytes": 1798,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-connector-b-large.webp",
+      "largeSha256": "695d8ac3b70949d836a02ce422aebe05e59bd9cab0ce015de3463e7d73aaec71",
+      "largeBytes": 29394,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-connector-b-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-copilot",
+      "name": "Copilot",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/copilot.jpg",
+      "sourceSha256": "c673a9651e44f11a7be116562eb082411d7127d397550fd062d42c61a93c8a4c",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-copilot.webp",
+      "thumbnailSha256": "6fc0c4fdbd847aee4a3b541add87b48c96d96cfdc6a7df0ba4df4e6f45b4d5fa",
+      "thumbnailBytes": 1194,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-copilot-large.webp",
+      "largeSha256": "15af6eac7be065154e7bca246319978e38fe312aafc6d82681fb848f28840e4c",
+      "largeBytes": 14950,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-copilot-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-gemini",
+      "name": "Gemini · Sternenlicht",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/gemini.jpg",
+      "sourceSha256": "f18b2731f1a1cf528d03bc3ebc64aceacce04d5d7cf34e3abfa098c5f0713dd3",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-gemini.webp",
+      "thumbnailSha256": "0853c7137869d6b4bba60ce12dd7e14145b48fb25415c8296c9644c451a45aa1",
+      "thumbnailBytes": 3572,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-gemini-large.webp",
+      "largeSha256": "66849b145455255576c2b6ff0d6bd18b710152004b7f9960ba02580aabc5e602",
+      "largeBytes": 56618,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-gemini-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-gemini-umbruch",
+      "name": "Gemini · Um:bruch",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/gemini-umbruch.jpg",
+      "sourceSha256": "514a9f32a3956175bbb1f1fc90158401a00e042020e690d56f35b4f902070751",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-gemini-umbruch.webp",
+      "thumbnailSha256": "1beb7678d2586b2657e93510654ce34c26d7f78fc4f09e025db3e87fbcee1afe",
+      "thumbnailBytes": 1752,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-gemini-umbruch-large.webp",
+      "largeSha256": "623e867917ff129bacf77f54bc9c2ddb3978fabdd8fa39eba3a3f7ed6c1ee5b2",
+      "largeBytes": 31488,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-gemini-umbruch-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-law-checker",
+      "name": "Rechtsprüfung",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-law-checker.jpg",
+      "sourceSha256": "209e6068edecc1cb401543a2c467d5039184bfd114f3da142027d01687d1e1f9",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-law-checker.webp",
+      "thumbnailSha256": "bebe5be0a8a056a3ca0eceba0121be04bf3e5019f597d9bfd99ca1425a5d040b",
+      "thumbnailBytes": 1566,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-law-checker-large.webp",
+      "largeSha256": "a8361530f31bf8a452cab325b89da6a31f93375ae0b900561e77f759eb0e68db",
+      "largeBytes": 29148,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-law-checker-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-maintainer",
+      "name": "Maintainer",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-maintainer.jpg",
+      "sourceSha256": "73cf0f8a4e17ebcfca078e92e2a684c459e9804b0abb49dd4399aaf469cd83c2",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-maintainer.webp",
+      "thumbnailSha256": "152136baa47346f672ca861dcf1c254711189333875d66e45e0cc85b31ad6d7f",
+      "thumbnailBytes": 1524,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-maintainer-large.webp",
+      "largeSha256": "94b2003d54a266c7bd78abaed8010b07285aa79ad21e21061021b90ac81a585b",
+      "largeBytes": 26624,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-maintainer-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-maintenance",
+      "name": "Wartung",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-maintenance.jpg",
+      "sourceSha256": "63fa4873e34161b757463709ef48ed3c5501f9907efd3172885266632997c0ca",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-maintenance.webp",
+      "thumbnailSha256": "f0858d8b20f2d86ba7504ffb03bf5596d0a5e9a3a3aaf571f18d6fbba676df1d",
+      "thumbnailBytes": 1270,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-maintenance-large.webp",
+      "largeSha256": "cb9603c867b5434356cdb7bbe1d579b934a837de5ce7acadba6722ae15e80022",
+      "largeBytes": 17360,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-maintenance-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-operator",
+      "name": "Operator",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-operator.jpg",
+      "sourceSha256": "bd061422e8a720ada2776743c435be9b0c30f41259a4b6cf56401bc74f2521d4",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-operator.webp",
+      "thumbnailSha256": "781e1cfb779c2d70da8a156f6aa09ab2672bd67d932e869317768fbc8b0634ab",
+      "thumbnailBytes": 1396,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-operator-large.webp",
+      "largeSha256": "17afaf80c47d23e6726c6456075a436c1a08ff17bb5bb0264690c73954c02825",
+      "largeBytes": 15042,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-operator-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-researcher",
+      "name": "Recherche · Gemini",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-researcher.jpg",
+      "sourceSha256": "0639d57602ae6eb377bc5bd408e9aa30a35efaa5118d0597412fa816a5dccf94",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-researcher.webp",
+      "thumbnailSha256": "b91d51235ddf09019c762d0740732bea95d4b8f998619e63bdac0cdd9a092710",
+      "thumbnailBytes": 1536,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-researcher-large.webp",
+      "largeSha256": "ef56211292f1f2c94b25d94bd2eed6d9728b692a034b8faf1dde797afaed90ca",
+      "largeBytes": 22270,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-researcher-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-role-01-ati-developer",
+      "name": "ATI · Gemini",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/gemini-role-01-ati-developer.png",
+      "sourceSha256": "3ba30c7cfb7740669c5446563459e190e76328eed7abdb59948c8b5e78745fa6",
+      "legacyDataSha256": "3ba30c7cfb7740669c5446563459e190e76328eed7abdb59948c8b5e78745fa6",
+      "thumbnail": "gemini-role-01-ati-developer.webp",
+      "thumbnailSha256": "b25c73cd088824f89dff1ad224fec1aa214bee319cc8cea2cdb85f0449a27f79",
+      "thumbnailBytes": 2152,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-role-01-ati-developer-large.webp",
+      "largeSha256": "9b8ab298d232176dca77d0b60e8e02ccd8df7b9cac525a0dab84924563f94302",
+      "largeBytes": 11276,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "gemini-role-01-ati-developer-data.png",
+      "dataSha256": "a7dcb19fcb6a829ebe0d71bf533e357f45b16a0450e7149e0313823561650fb7",
+      "dataBytes": 52942
+    },
+    {
+      "id": "preset:gemini-role-02-buero-office-assistant",
+      "name": "Büro · Gemini",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/gemini-role-02-buero-office-assistant.png",
+      "sourceSha256": "a2b067ea6a44cc4db65281cc54247596f2da857ee32036b46b688ca7d220f2d7",
+      "legacyDataSha256": "a2b067ea6a44cc4db65281cc54247596f2da857ee32036b46b688ca7d220f2d7",
+      "thumbnail": "gemini-role-02-buero-office-assistant.webp",
+      "thumbnailSha256": "56d095c2d26505a0f1a99e9c138d49de958ac6fe5cfca9f6a4d3e54f5401fe76",
+      "thumbnailBytes": 2040,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-role-02-buero-office-assistant-large.webp",
+      "largeSha256": "5297647310c912406b3cf6030a95a292662c142a5b81ced3459201b6b2e39440",
+      "largeBytes": 11560,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "gemini-role-02-buero-office-assistant-data.png",
+      "dataSha256": "bdaa83c027763e0626017769f9c009b830ec4155422d52341e2051be9d1e8a88",
+      "dataBytes": 67417
+    },
+    {
+      "id": "preset:gemini-role-03-finanz-finance-assistant",
+      "name": "Finanzen · Gemini",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/gemini-role-03-finanz-finance-assistant.png",
+      "sourceSha256": "7b111adc15a6f77f7d309dddeee3994e7a7c8c757fefd5febf7a8012aa70132b",
+      "legacyDataSha256": "7b111adc15a6f77f7d309dddeee3994e7a7c8c757fefd5febf7a8012aa70132b",
+      "thumbnail": "gemini-role-03-finanz-finance-assistant.webp",
+      "thumbnailSha256": "bcbd56cba41c7bf22a2d9d21a19d8fc193911af993ac458aec416428ba0ddafb",
+      "thumbnailBytes": 1662,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-role-03-finanz-finance-assistant-large.webp",
+      "largeSha256": "7ab20cfc322fd22aeac103ee42dd65c5e3e0fefb0b7e309de95a06af842c29d1",
+      "largeBytes": 9670,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "gemini-role-03-finanz-finance-assistant-data.png",
+      "dataSha256": "4b2169a60a039cf0bc7d6679fd0a5df7ff9a29ee84c163c8707ae4c2604df4d4",
+      "dataBytes": 105748
+    },
+    {
+      "id": "preset:gemini-role-04-gesundheit-health-assistant",
+      "name": "Gesundheit · Gemini",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/gemini-role-04-gesundheit-health-assistant.png",
+      "sourceSha256": "4dffa4df07aee8c13a128067f8e58599cf015632ea7ef8a96f02288462430d47",
+      "legacyDataSha256": "4dffa4df07aee8c13a128067f8e58599cf015632ea7ef8a96f02288462430d47",
+      "thumbnail": "gemini-role-04-gesundheit-health-assistant.webp",
+      "thumbnailSha256": "6ea81de60a14cc062296a235aa775a860772762bd6b04cfd79ca878e74ac8fbe",
+      "thumbnailBytes": 1850,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-role-04-gesundheit-health-assistant-large.webp",
+      "largeSha256": "516734f2882599645aaaa6321c6dc49ee6ebd97095ff5e0347d2634730e2c105",
+      "largeBytes": 10642,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "gemini-role-04-gesundheit-health-assistant-data.png",
+      "dataSha256": "92fffbc138ee3f261bc0d4eeba26a132c3a91432733ea62e2d0ca28d273524c1",
+      "dataBytes": 62387
+    },
+    {
+      "id": "preset:gemini-role-05-persoenlich-personal-assistant",
+      "name": "Persönliche Assistenz · Gemini",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/gemini-role-05-persoenlich-personal-assistant.png",
+      "sourceSha256": "6263f8cdd43ce0e23114e18b96ac98377457cb3ae5e4bbdb8e71d5ce1e827f21",
+      "legacyDataSha256": "6263f8cdd43ce0e23114e18b96ac98377457cb3ae5e4bbdb8e71d5ce1e827f21",
+      "thumbnail": "gemini-role-05-persoenlich-personal-assistant.webp",
+      "thumbnailSha256": "f5a46f0a7675bf1b8047dd74e4f6d169a47134eb88bd40e30095034b9d2cf764",
+      "thumbnailBytes": 2328,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-role-05-persoenlich-personal-assistant-large.webp",
+      "largeSha256": "b89c78ffe5d272d0967fc315fd501ec18dd2b823f83568825976693ed127644f",
+      "largeBytes": 12610,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "gemini-role-05-persoenlich-personal-assistant-data.png",
+      "dataSha256": "33ad060f00942eecde15c4aea69f265928178165be82e1c85bf8f4cf76ff0a1a",
+      "dataBytes": 69102
+    },
+    {
+      "id": "preset:gemini-role-06-produktion-media-producer",
+      "name": "Medienproduktion · Gemini",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/gemini-role-06-produktion-media-producer.png",
+      "sourceSha256": "db6127d69b76013d3a5a9c8d6efe1b9b73ad6c62d7e2154b199369a423baae09",
+      "legacyDataSha256": "db6127d69b76013d3a5a9c8d6efe1b9b73ad6c62d7e2154b199369a423baae09",
+      "thumbnail": "gemini-role-06-produktion-media-producer.webp",
+      "thumbnailSha256": "b2c2578a112c0b048145045b65eccc6c32ee5a3ffa3fcbc77998c8a15aedcafb",
+      "thumbnailBytes": 2142,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-role-06-produktion-media-producer-large.webp",
+      "largeSha256": "e229622c626c4a3c9393faac0502ba96f2723a549962d055f4a90739d1af9f8c",
+      "largeBytes": 11826,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "gemini-role-06-produktion-media-producer-data.png",
+      "dataSha256": "154ce53b1e5252dc98bc119a78f8a5d1e9fe0c55acb0313ef3332cd43913137b",
+      "dataBytes": 66951
+    },
+    {
+      "id": "preset:gemini-role-07-versicherung-protection-agent",
+      "name": "Versicherungen · Gemini",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/gemini-role-07-versicherung-protection-agent.png",
+      "sourceSha256": "86e010db54f94fd8c2e4e49656d6d02d49c1c673a14acea5f161c3ca176b8138",
+      "legacyDataSha256": "86e010db54f94fd8c2e4e49656d6d02d49c1c673a14acea5f161c3ca176b8138",
+      "thumbnail": "gemini-role-07-versicherung-protection-agent.webp",
+      "thumbnailSha256": "8ad6b97184dccaa42f4b5bf8b24b0a81748cf21bd87c8f8555f3d6bf146d1796",
+      "thumbnailBytes": 2146,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-role-07-versicherung-protection-agent-large.webp",
+      "largeSha256": "066f7f32676aa598287d639275b26ac9c5e186c560a1854d3b69e7f869a2a1d8",
+      "largeBytes": 12542,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "gemini-role-07-versicherung-protection-agent-data.png",
+      "dataSha256": "f4eec4a1f2727c31b7c2b45fca4f7e10f6e761de283e0983a1f6cf5ebe3b4b32",
+      "dataBytes": 70293
+    },
+    {
+      "id": "preset:gemini-role-08-research-science-analyst",
+      "name": "Forschung · Gemini",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/gemini-role-08-research-science-analyst.png",
+      "sourceSha256": "7d4e6ebd72f99e26ad23c6e4b6c83a5408d7dccece69c76643132b53c43c0302",
+      "legacyDataSha256": "7d4e6ebd72f99e26ad23c6e4b6c83a5408d7dccece69c76643132b53c43c0302",
+      "thumbnail": "gemini-role-08-research-science-analyst.webp",
+      "thumbnailSha256": "89d45b3fad0cdab5f679c7f4f6b0a590651c82f805269cc0c56c6c50e6f5cbe1",
+      "thumbnailBytes": 2406,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-role-08-research-science-analyst-large.webp",
+      "largeSha256": "298b107df50fc89e5538e62a0038554904154b8bbac806b7effef51d47f1db2d",
+      "largeBytes": 14920,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "gemini-role-08-research-science-analyst-data.png",
+      "dataSha256": "7548b4dd8570947e10dfda8f289095ae3bde61dce9f30f0ba0ea1fcd6ef11670",
+      "dataBytes": 86147
+    },
+    {
+      "id": "preset:gemini-role-09-test-qa-inspector",
+      "name": "Test & QA · Gemini",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/gemini-role-09-test-qa-inspector.png",
+      "sourceSha256": "3415f0b9e0f1989d15179f7738f5014c0229b8ffc1d9ab1c2da4aee386eaa138",
+      "legacyDataSha256": "3415f0b9e0f1989d15179f7738f5014c0229b8ffc1d9ab1c2da4aee386eaa138",
+      "thumbnail": "gemini-role-09-test-qa-inspector.webp",
+      "thumbnailSha256": "e91b0682d1d0cd0ad49c63fdf334fabb3cd9b3059b89bce6466d72b87e473a43",
+      "thumbnailBytes": 2518,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-role-09-test-qa-inspector-large.webp",
+      "largeSha256": "cc2baa7e75df5188e5fd67de8b1604df1b0493763b9cc56ca0d62ddf5aad6b08",
+      "largeBytes": 16652,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "gemini-role-09-test-qa-inspector-data.png",
+      "dataSha256": "6edc39b14f6a0b952abdbf2c2a631fa42982cb260a289e5af2f1005652c0c18a",
+      "dataBytes": 94887
+    },
+    {
+      "id": "preset:gemini-role-10-ocean-system-navigator",
+      "name": "Ocean · Systemnavigation · Gemini",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/gemini-role-10-ocean-system-navigator.png",
+      "sourceSha256": "9e95614f5c322f278c6461a38d2e7528e74b076ad87c3862c29ae5c49ece2559",
+      "legacyDataSha256": "9e95614f5c322f278c6461a38d2e7528e74b076ad87c3862c29ae5c49ece2559",
+      "thumbnail": "gemini-role-10-ocean-system-navigator.webp",
+      "thumbnailSha256": "26286db876779b8fa822118d88c95e611dc798a9790e1cedcc0129a3b52a4c6f",
+      "thumbnailBytes": 2734,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-role-10-ocean-system-navigator-large.webp",
+      "largeSha256": "066240773f10f6b53fe628dc952c597c665fe1bec8865560befca113f9ebb730",
+      "largeBytes": 16692,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "gemini-role-10-ocean-system-navigator-data.png",
+      "dataSha256": "7d7ebd6b1cf4b95546a28dd26c59cbb20a40da8c8df7e85ef4fb001859b99cb1",
+      "dataBytes": 91334
+    },
+    {
+      "id": "preset:gemini-system-auditor",
+      "name": "System-Auditor",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-system-auditor.jpg",
+      "sourceSha256": "b16c38fcbd51b3172d90ca82ba118c51e7ce99a29fcf08e238ee9d22bd72b61a",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-system-auditor.webp",
+      "thumbnailSha256": "eacaedaab5ca110d46cd8b02f157c3133ecfd7e1210f0e0e73c2ed0efb48354c",
+      "thumbnailBytes": 1190,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-system-auditor-large.webp",
+      "largeSha256": "3ba571b3a4b48e6044ee9b6e6ab78038694a8abaf5a9371cd1678f939c838b0e",
+      "largeBytes": 11050,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-system-auditor-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-task-solver",
+      "name": "Task-Solver",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-task-solver.jpg",
+      "sourceSha256": "137e2db007b06d4b3e2a35b9fde0f6a5d7989fd7a4871163636c5d97f6ca1bb5",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-task-solver.webp",
+      "thumbnailSha256": "53b6674db1728be1cc29abea0906f5c8c10b81675095133270aab1e82c4fe34d",
+      "thumbnailBytes": 1722,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-task-solver-large.webp",
+      "largeSha256": "35c9e5ef86fef28cc6da4c73c210ba90895fcd1dbbe49b2680fb15ba23eb0529",
+      "largeBytes": 24750,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-task-solver-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-task-writer",
+      "name": "Task-Writer",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-task-writer.jpg",
+      "sourceSha256": "38efd8499f7296fbececce8db9f4ad91d00019da661bdb4a3f59bbeca568bd89",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-task-writer.webp",
+      "thumbnailSha256": "4728d99ab6e928152c22b26a445bf1d1bb07dc1c1cc27f39f50056c99442f87e",
+      "thumbnailBytes": 1530,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-task-writer-large.webp",
+      "largeSha256": "36a0b150fdc006b865e500d75023ace50f0185908da0023a7764753f0013b86a",
+      "largeBytes": 23812,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-task-writer-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:gemini-ticket-master",
+      "name": "Ticket-Master",
+      "kind": "preset-id",
+      "source": "gemini-agent-portraits/role-ticket-master.jpg",
+      "sourceSha256": "1d771ffbdcfb4741d5ed5fed8b42cd594bbf24e92f4f7d7baecdcbaae04f457c",
+      "legacyDataSha256": null,
+      "thumbnail": "gemini-ticket-master.webp",
+      "thumbnailSha256": "34c1989ad39fcb5fa2295b2efcb855c4e632ab57e49d11842c3e03dd75c7f3e2",
+      "thumbnailBytes": 1274,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "gemini-ticket-master-large.webp",
+      "largeSha256": "6d5d834f20828ef29ec9a85fdd891eed06f035c57e1da3d247fd650b177da0ef",
+      "largeBytes": 12720,
+      "largeDimensions": [
+        512,
+        512
+      ],
+      "data": "gemini-ticket-master-data.png",
+      "dataSha256": null,
+      "dataBytes": null
+    },
+    {
+      "id": "preset:robot-01-raupen-tueftler",
+      "name": "Roboter · Raupen-Tüftler",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/robot-01-raupen-tueftler.png",
+      "sourceSha256": "977c27c057a5f79c78eb9363056cc711552f189f6b45c802a81660235f0ca100",
+      "legacyDataSha256": "977c27c057a5f79c78eb9363056cc711552f189f6b45c802a81660235f0ca100",
+      "thumbnail": "robot-01-raupen-tueftler.webp",
+      "thumbnailSha256": "9e3f3090ef3b6e16507c1e11d02f769253f323f9a85552f46b242c06a9c2856d",
+      "thumbnailBytes": 1926,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "robot-01-raupen-tueftler-large.webp",
+      "largeSha256": "d03eee4c83db043abea9e81ceadb4838bc5ffdbb7909969c6774dae2c71f94d7",
+      "largeBytes": 9560,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "robot-01-raupen-tueftler-data.png",
+      "dataSha256": "4a943af297e1f9fa7a3eb509aed0f76b3d644dc17177648802887e1f640d3b13",
+      "dataBytes": 87033
+    },
+    {
+      "id": "preset:robot-02-schwebende-perle",
+      "name": "Roboter · Schwebende Perle",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/robot-02-schwebende-perle.png",
+      "sourceSha256": "4147a8452eeab3ec7a3d5ba696c408781efd362f6d4e8755c801056d3269b5d4",
+      "legacyDataSha256": "4147a8452eeab3ec7a3d5ba696c408781efd362f6d4e8755c801056d3269b5d4",
+      "thumbnail": "robot-02-schwebende-perle.webp",
+      "thumbnailSha256": "a467d701dee619e60bc3d66c1a07ce0e488cb514b236cb8cc6a9b91c79f72ff2",
+      "thumbnailBytes": 1604,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "robot-02-schwebende-perle-large.webp",
+      "largeSha256": "b928f92dfcaa614bad21959ebebdb2a2b44b0c60885961312331897b8b056061",
+      "largeBytes": 7270,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "robot-02-schwebende-perle-data.png",
+      "dataSha256": "5d1c58fc158b348771b384bca73aa379be86ea7d84b396d43bf8798f1de0b670",
+      "dataBytes": 81711
+    },
+    {
+      "id": "preset:robot-03-kupfer-spinne",
+      "name": "Roboter · Kupfer-Spinne",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/robot-03-kupfer-spinne.png",
+      "sourceSha256": "3758d76ecfeab298ba268565c4633d0dcd1c9c2e24b633e0edaba265821797dd",
+      "legacyDataSha256": "3758d76ecfeab298ba268565c4633d0dcd1c9c2e24b633e0edaba265821797dd",
+      "thumbnail": "robot-03-kupfer-spinne.webp",
+      "thumbnailSha256": "feb82bfb23adaa3f9c7b3f0bca4ac5a20f941f9dfb53c8e351b6652fd3e10fc0",
+      "thumbnailBytes": 2412,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "robot-03-kupfer-spinne-large.webp",
+      "largeSha256": "5756886ac65d5538aead83f8a6e6632a65d063112243544a4a9c0f907b3353ab",
+      "largeBytes": 13030,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "robot-03-kupfer-spinne-data.png",
+      "dataSha256": "13af04ab7b42b6b60cc9440cd5fc3cce0484b13b230f8aca4478752d08bb9533",
+      "dataBytes": 103786
+    },
+    {
+      "id": "preset:robot-04-mint-gaertner",
+      "name": "Roboter · Mint-Gärtner",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/robot-04-mint-gaertner.png",
+      "sourceSha256": "b1684fff6c8f6577bdc522c31836de7bbac809a8d42d1ec2eadfcb3a33cbc232",
+      "legacyDataSha256": "b1684fff6c8f6577bdc522c31836de7bbac809a8d42d1ec2eadfcb3a33cbc232",
+      "thumbnail": "robot-04-mint-gaertner.webp",
+      "thumbnailSha256": "06e00cf76c9caae8de5de64bc6ce69c87293fa9c7f289f0f2d527fbe0c550dee",
+      "thumbnailBytes": 1962,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "robot-04-mint-gaertner-large.webp",
+      "largeSha256": "1d675377f56dd6779bea81284b553f3c25db9d395fea8d13ddfdce539e8de555",
+      "largeBytes": 10102,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "robot-04-mint-gaertner-data.png",
+      "dataSha256": "9be5694194658d836bef59fe2913fe702e5a2e81304dc888b5aa389ff539b4fe",
+      "dataBytes": 92910
+    },
+    {
+      "id": "preset:robot-05-roter-kugelbot",
+      "name": "Roboter · Roter Kugelbot",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/robot-05-roter-kugelbot.png",
+      "sourceSha256": "1126bea1d1115c921713c6ffdea7497f755b3895fd5abe308e25810df4b6c152",
+      "legacyDataSha256": "1126bea1d1115c921713c6ffdea7497f755b3895fd5abe308e25810df4b6c152",
+      "thumbnail": "robot-05-roter-kugelbot.webp",
+      "thumbnailSha256": "cd227f5da1ed01fcba3bc8f6ebc1daf231ac9d58653ef8bac5b4051b911920ae",
+      "thumbnailBytes": 1972,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "robot-05-roter-kugelbot-large.webp",
+      "largeSha256": "5e12a0eb8944b61b659ab7d43ee14daac4ce44e0c28ee8b09f4e5194a9b639f7",
+      "largeBytes": 9886,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "robot-05-roter-kugelbot-data.png",
+      "dataSha256": "4a5d8a828b91a72487357640db3b5e9c4ad35fee593056130ae65cb08b4b58a7",
+      "dataBytes": 92812
+    },
+    {
+      "id": "preset:robot-06-lila-astronom",
+      "name": "Roboter · Lila Astronom",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/robot-06-lila-astronom.png",
+      "sourceSha256": "949e29964884a8b4c86ca03a01f2852edaa05663ba9b48d18422d6afca688aed",
+      "legacyDataSha256": "949e29964884a8b4c86ca03a01f2852edaa05663ba9b48d18422d6afca688aed",
+      "thumbnail": "robot-06-lila-astronom.webp",
+      "thumbnailSha256": "e2176dda4c8d473289a707d15599d44f2b91429cb145bac4369d9571b014b138",
+      "thumbnailBytes": 1760,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "robot-06-lila-astronom-large.webp",
+      "largeSha256": "9cc8b51356e229404a96b9488edef0fbf74d581bdeebc6a75fbb334f625a40be",
+      "largeBytes": 9160,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "robot-06-lila-astronom-data.png",
+      "dataSha256": "35414c7282eda2c1a7b8b6053ca5f8cfd103808a4f8f014e157371d1f89a442c",
+      "dataBytes": 86822
+    },
+    {
+      "id": "preset:robot-07-teekessel-archivar",
+      "name": "Roboter · Teekessel-Archivar",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/robot-07-teekessel-archivar.png",
+      "sourceSha256": "8327b6063b1e7b1ca890108ced6ba96f48335b459942b824ff33c93c6dbc6761",
+      "legacyDataSha256": "8327b6063b1e7b1ca890108ced6ba96f48335b459942b824ff33c93c6dbc6761",
+      "thumbnail": "robot-07-teekessel-archivar.webp",
+      "thumbnailSha256": "46183b596b1f575ea03ab0e913a9228034427788458ca195fc91aa92a28a0684",
+      "thumbnailBytes": 2356,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "robot-07-teekessel-archivar-large.webp",
+      "largeSha256": "8e7c6cdce3aa5ce0b8d2ad0d43a6584e111360c689cb1c5b847ac37c42219a85",
+      "largeBytes": 13110,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "robot-07-teekessel-archivar-data.png",
+      "dataSha256": "d369805b7b3ec569d88b3bbb7c2abcc944b5cd3adfed758f6d001b13e85846c3",
+      "dataBytes": 103970
+    },
+    {
+      "id": "preset:robot-08-blauer-krabbenbot",
+      "name": "Roboter · Blauer Krabbenbot",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/robot-08-blauer-krabbenbot.png",
+      "sourceSha256": "67fdaf033715587938fbdb3e03dff973bd873019288698a22b707f2a47bb4455",
+      "legacyDataSha256": "67fdaf033715587938fbdb3e03dff973bd873019288698a22b707f2a47bb4455",
+      "thumbnail": "robot-08-blauer-krabbenbot.webp",
+      "thumbnailSha256": "adc4780c31bf2fb934d0c1da6e338d4c49b483f4318a3b22d1729b348ac3cd67",
+      "thumbnailBytes": 2240,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "robot-08-blauer-krabbenbot-large.webp",
+      "largeSha256": "fa4695c8e3e4c1129eec9c5a253d74da55f5bc09846b9e97553a56200dcbbefe",
+      "largeBytes": 12150,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "robot-08-blauer-krabbenbot-data.png",
+      "dataSha256": "5d574da5e88b0423983f7b5524c335f63fe59f2f1efe496305ee90e259ee1dbd",
+      "dataBytes": 97057
+    },
+    {
+      "id": "preset:robot-09-rosa-stoffbot",
+      "name": "Roboter · Rosa Stoffbot",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/robot-09-rosa-stoffbot.png",
+      "sourceSha256": "81f57145b075476339848110b36ff9b352e97c60c4c66ad1cf70f504e40916f2",
+      "legacyDataSha256": "81f57145b075476339848110b36ff9b352e97c60c4c66ad1cf70f504e40916f2",
+      "thumbnail": "robot-09-rosa-stoffbot.webp",
+      "thumbnailSha256": "5a63b5636ffdc94132664285900b4f2b395727485eb4af5900655897e4165107",
+      "thumbnailBytes": 2076,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "robot-09-rosa-stoffbot-large.webp",
+      "largeSha256": "e1ec67a7e5f686bb0895b791ef39d24928dab3b656db64bec087a41bd0d8142c",
+      "largeBytes": 11290,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "robot-09-rosa-stoffbot-data.png",
+      "dataSha256": "907e61135f8d83f714b5c74154efcf9c30584e86007fd1c3f85cd85320d23d75",
+      "dataBytes": 101188
+    },
+    {
+      "id": "preset:robot-10-gruener-froschbot",
+      "name": "Roboter · Grüner Froschbot",
+      "kind": "portable",
+      "source": "agent-portraits-20261010/robot-10-gruener-froschbot.png",
+      "sourceSha256": "f24739dfa18d6e2f96c86adbe9c81374fcdde760b6dc7a66884efb3ea1886f99",
+      "legacyDataSha256": "f24739dfa18d6e2f96c86adbe9c81374fcdde760b6dc7a66884efb3ea1886f99",
+      "thumbnail": "robot-10-gruener-froschbot.webp",
+      "thumbnailSha256": "db2534f646c4df68d3fd165af5b5a6e820e92c561e22292fcfbc1262b67e0faa",
+      "thumbnailBytes": 2162,
+      "thumbnailDimensions": [
+        96,
+        96
+      ],
+      "large": "robot-10-gruener-froschbot-large.webp",
+      "largeSha256": "dd8297c38ba12cac74b5fcd31aa6ece4cbd7b3f50b763a8065d0e0318e92a765",
+      "largeBytes": 11476,
+      "largeDimensions": [
+        256,
+        256
+      ],
+      "data": "robot-10-gruener-froschbot-data.png",
+      "dataSha256": "32b42468f461919ded6931f9d1e4fbb431506cd92aea39f5ac5ffbd233a9fc5c",
+      "dataBytes": 95818
+    }
+  ]
+}
