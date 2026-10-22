@@ -59,10 +59,21 @@ Dies baut ausschließlich die Desktopbinary, startet sie aber nicht. Ein bereits
 geöffnetes Terminal kann den Build ausführen; automatisierte Windowslauncher
 müssen wie die übrigen Projektwerkzeuge konsolenfrei starten und ihre eigenen
 Buildprozesse beaufsichtigen. Es wird keine Toolchain automatisch installiert.
-Die CI baut auf Windows, macOS und Linux und stellt zunächst nur den aufgelösten
-Dependencylock als Prüfartefakt bereit. `src-tauri/Cargo.lock` übernimmt den
-gemeinsam aufgelösten Dependencygraphen in den Quellstand; Installer,
-Codesignierung und Store-Veröffentlichung sind noch nicht eingerichtet.
+Die CI baut auf Windows, macOS und Linux den exakten PR-Head beziehungsweise den
+auslösenden Main-Commit. Sie stellt den aufgelösten Dependencylock und je Plattform
+ein Artefakt `desktop-consumer-<OS>-<Commit>` mit der kompilierten Binary bereit.
+`desktop-artifact.json` hält Quellcommit, Repository, CI-Lauf, Plattform, Architektur,
+Dependencylock-Hash sowie Dateigröße und SHA-256 der Binary fest. Die Windows-CI
+prüft weiterhin direkt den PE-Header auf GUI-Subsystem2.
+
+Der heruntergeladene Beleg und die Binary müssen zum selben vollständig
+erfolgreichen CI-Lauf und exakten Quellcommit gehören; der Dateihash muss passen.
+Ein Hash aus demselben Paket ist ein Integritätsbeleg, keine unabhängige Signatur.
+Die Programme wurden beim Erstellen des Artefakts nicht gestartet. Unter macOS
+und Linux ist nach dem Entpacken gegebenenfalls das Ausführungsrecht zu setzen.
+Diese CI-Artefakte bleiben 14Tage verfügbar. `src-tauri/Cargo.lock` bindet den
+gemeinsamen Dependencygraphen im Quellstand. Die Artefakte sind keine Installer;
+Codesignierung, Installation, Update und Store-Veröffentlichung sind noch offen.
 
 ## Offene vollständige Abnahme
 
