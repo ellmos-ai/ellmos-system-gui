@@ -83,6 +83,7 @@ test('Buddha card consumes the verified native worker snapshot, not saved config
   const start=page.indexOf('function renderCoreQueueDiagnostics('),end=page.indexOf('function workerReadiness(',start);
   const card=new Element('article');card.dataset.coreAgentId='buddha_always_on';
   const context={document:{...document,querySelectorAll:()=>[card]},workerQueueAvailable:true,
+    renderWorkerSelectionPolicies:()=>{},
     workerQueueSnapshots:new Map([['buddha_always_on',{runtime_verified:true,system:true,queue_status:excluded}]]),
     window:{BachWorkerQueue:{appendQueueDetails}}};
   const render=vm.runInNewContext('('+page.slice(start,end).trim()+')',context);render();
@@ -98,6 +99,7 @@ test('missing or reclassified non-Buddha system workers cannot retain an old rec
   const start=page.indexOf('function renderCoreQueueDiagnostics('),end=page.indexOf('function workerReadiness(',start);
   const card=new Element('article');card.dataset.coreAgentId='another-system-worker';
   const context={document:{...document,querySelectorAll:()=>[card]},workerQueueAvailable:true,
+    renderWorkerSelectionPolicies:()=>{},
     workerQueueSnapshots:new Map([['another-system-worker',{runtime_verified:true,system:true,queue_status:denied}]]),
     window:{BachWorkerQueue:{appendQueueDetails}}};
   const render=vm.runInNewContext('('+page.slice(start,end).trim()+')',context);render();

@@ -14,7 +14,7 @@
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "c95a3f875ea15dccbcc92e96c3d09f35651f8acecfe1685f5c2933d37f895908",
+    "public/page-reads.v1.json": "161e2efa9691f941e8f0b9f337aa8fca170c9760d7b88acb95f8fd1dc7e47581",
     "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -307,13 +307,13 @@
     "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
     "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
     "tests/task-result-completion.test.mjs": "4fc173ff298fa78a11713f917a2da15b885ac33ca3f6e31235913e74dfcd5ee8",
-    "tests/task-result-history.test.mjs": "f6207020933b85f58d31ce189b2c4f9f413223a81fad475d6df3ceb2eb49e340",
+    "tests/task-result-history.test.mjs": "d47a12008d401a8471a8d8fd9dda2d62a24979dda9ed43a5a0ea95689e856ce0",
     "tests/task-result-source.test.mjs": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
-    "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
+    "tests/worker-policy-settings.test.mjs": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
     "tests/gui-shell-navigation.test.mjs": "ba8687c675c7fad2c06c635ce6156b70c2cb2d0892652e76df30b78751b1d8ad",
     "docs/GUI-SHELL-NAVIGATION.md": "631e940ff40d37608a523d3b52e29bd2406e6514c95ea961e3efb6d9c6037c5b",
     "scripts/page-reads-bindings.mjs": "3092e2389245b8b41242db7d2e9360523465da1a9c4106911c92d7529a65887e",
@@ -322,7 +322,8 @@
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
     "src/components/WorkerLeaseCountdown.astro": "c60b7c2e33e83d833ffdd85066c1aed3d18144108af9ffb0ef09c8960f33c52d",
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
-    "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198"
+    "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
+    "tests/worker-queue.test.mjs": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -3487,6 +3488,41 @@
           "path": "tests/task-result-completion.test.mjs",
           "previous_sha256": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1",
           "sha256": "4fc173ff298fa78a11713f917a2da15b885ac33ca3f6e31235913e74dfcd5ee8"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "scope": "BACH #2069: GUI0.2.28 actual CI39733130848 manifest and existing fixture repair",
+      "source_base_commit": "b54061edda18f361c0dec31db05a9854bdf8e665",
+      "changes": [
+        "Declare two actual optional API GET callsites, preserving all existing entries.",
+        "Adapt exactly three existing fixtures to new identity GET, actual result-gate DOM/browser globals/library helpers and isolated render helper scope. Test-case count and all existing security/error/readback assertions retained. No new/manual tests.",
+        "Historical import assertions now pin the unchanged historical imported_sha256; existing current hashes and later-change chain remain verified. Original source_imports remain unchanged.",
+        "Record previously unmapped existing worker-queue fixture with its exact Git-parent bytes as predecessor; this is not a new file or altered historical mapping.",
+        "Production review/auth/admission/rendering logic unchanged; normal automatic PR CI must pass independently."
+      ],
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "c95a3f875ea15dccbcc92e96c3d09f35651f8acecfe1685f5c2933d37f895908",
+          "sha256": "161e2efa9691f941e8f0b9f337aa8fca170c9760d7b88acb95f8fd1dc7e47581"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "f6207020933b85f58d31ce189b2c4f9f413223a81fad475d6df3ceb2eb49e340",
+          "sha256": "d47a12008d401a8471a8d8fd9dda2d62a24979dda9ed43a5a0ea95689e856ce0"
+        },
+        {
+          "path": "tests/worker-policy-settings.test.mjs",
+          "previous_sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
+          "sha256": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5"
+        },
+        {
+          "path": "tests/worker-queue.test.mjs",
+          "previous_sha256": "a367d9bfc32f2e21198b7f5d37892f29a7edb23d4a6cbbd844f7e9bfa7367576",
+          "sha256": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
+          "previously_unmapped": true
         }
       ]
     }

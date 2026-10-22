@@ -59,6 +59,12 @@ function harness(kind, responses) {
     consumerApiHeaders: (initial = {}) => new Headers(initial), Headers, AbortController, Error,
     fetch: async (url, options) => {
       calls.push({url, options});
+      if (kind === 'global' && url === '/api/system/worker-model-principals') {
+        assert.equal(options?.method || 'GET', 'GET');
+        assert.equal(options.headers.get('X-BACH-Result-Operator'), null);
+        return response({schema: 'bach.worker-model-principals.v1', availability: 'available',
+          configuration_version: 'a'.repeat(64), bindings: []});
+      }
       assert.ok(responses.length, 'unexpected network request');
       return await responses.shift();
     },
@@ -101,7 +107,8 @@ test('changing reviewers without operator authority sends no write and explains 
   const row = h.node('worker-policy-reviewers').children.find(item => item.className === 'worker-reviewer-row');
   row.querySelector('input').value = 'provider/reviewer';
   await h.submit();
-  assert.equal(h.calls.length, 1);
+  assert.equal(h.calls.length, 2);
+  assert.ok(h.calls.every(call => (call.options.method || 'GET') === 'GET'));
   assert.equal(h.status().dataset.state, 'error');
   assert.match(h.status().textContent, /gesonderte Operatorberechtigung/);
   assert.match(h.status().textContent, /wird nicht gespeichert/);
@@ -118,8 +125,8 @@ test('reviewer changes send the temporary operator header and clear the input af
   row.querySelector('input').value = 'provider/reviewer';
   h.node('worker-policy-operator-token').value = 'temporary-secret-value';
   await h.submit();
-  assert.equal(h.calls[1].options.headers.get('X-BACH-Result-Operator'), 'temporary-secret-value');
-  assert.equal(h.calls[2].options.headers.get('X-BACH-Result-Operator'), null);
+  assert.equal(h.calls[2].options.headers.get('X-BACH-Result-Operator'), 'temporary-secret-value');
+  assert.equal(h.calls[3].options.headers.get('X-BACH-Result-Operator'), null);
   assert.equal(h.node('worker-policy-operator-token').value, '');
   assert.equal(h.status().dataset.state, 'available');
 });
@@ -132,7 +139,7 @@ test('ordinary policy edits never send an entered operator token and clear it', 
   h.node('field:default_mode').value = 'simple_task';
   h.node('worker-policy-operator-token').value = 'must-not-be-sent';
   await h.submit();
-  assert.equal(h.calls[1].options.headers.get('X-BACH-Result-Operator'), null);
+  assert.equal(h.calls[2].options.headers.get('X-BACH-Result-Operator'), null);
   assert.equal(h.node('worker-policy-operator-token').value, '');
   assert.equal(h.status().dataset.state, 'available');
 });
@@ -145,7 +152,7 @@ test('a reviewer 403 is explicit, does not expose the token, and reads back the 
   row.querySelector('input').value = 'provider/reviewer';
   h.node('worker-policy-operator-token').value = 'private-token-403';
   await h.submit();
-  assert.equal(h.calls[1].options.headers.get('X-BACH-Result-Operator'), 'private-token-403');
+  assert.equal(h.calls[2].options.headers.get('X-BACH-Result-Operator'), 'private-token-403');
   assert.equal(h.node('worker-policy-operator-token').value, '');
   assert.match(h.status().textContent, /Operatorberechtigung.*HTTP 403/);
   assert.doesNotMatch(h.status().textContent, /private-token-403/);
@@ -160,7 +167,7 @@ test('resetting an existing reviewer list requires and uses the temporary operat
   await tick();
   h.node('worker-policy-operator-token').value = 'reset-only-token';
   await h.reset();
-  assert.equal(h.calls[1].options.headers.get('X-BACH-Result-Operator'), 'reset-only-token');
+  assert.equal(h.calls[2].options.headers.get('X-BACH-Result-Operator'), 'reset-only-token');
   assert.equal(h.node('worker-policy-operator-token').value, '');
   assert.equal(h.status().dataset.state, 'available');
 });
@@ -169,7 +176,8 @@ test('resetting reviewers without operator authority sends no write', async () =
   const current = globalSnapshot([{reviewer_id: 'provider/reviewer', tier: 'standard'}]);
   const h = harness('global', [response(current)]);
   await tick(); await h.reset();
-  assert.equal(h.calls.length, 1);
+  assert.equal(h.calls.length, 2);
+  assert.ok(h.calls.every(call => (call.options.method || 'GET') === 'GET'));
   assert.match(h.status().textContent, /entfernt die Reviewer-Liste.*Operatorberechtigung/);
   assert.equal(h.form.hidden, false);
 });

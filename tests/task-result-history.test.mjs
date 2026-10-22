@@ -7,7 +7,8 @@ import {
   buildCorrectionRequest, correctionAttemptMatchesView, createCorrectionAttempt,
   isCurrentCorrectionTarget, normalizeCorrectionNote, parseTaskResultMaxCharsInput, resultMaxCharsCreateChange,
   resultMaxCharsEditChange, resultOperatorCapabilities, resultSourceSummary, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
-  transitionCorrectionAttempt, validateCorrectionAcknowledgement, validateResultHistoryPage
+  transitionCorrectionAttempt, validateCorrectionAcknowledgement, validateResultHistoryPage,
+  taskResultGateSummary, taskResultAccepted, taskResultCompletionMessage, canConfirmTaskResult
 } from '../src/lib/task-result-contract.mjs';
 
 const taskId = 23;
@@ -207,7 +208,13 @@ function resultLoaderHarness(initialKey='operator-key', gate={}) {
       throw new Error('unexpected selector: ' + selector);
     }
   };
+  const element = tag => ({tagName:tag.toUpperCase(), textContent:'', hidden:false, dataset:{}, children:[],
+    append(...children) {this.children.push(...children);},
+    replaceChildren(...children) {this.children=[...children];}});
+  const events = [];
   const nodes = {
+    'task-result-gates':element('section'),
+    'task-result-gate-list':element('ul'),
     'task-result-status':{textContent:'',hidden:false},
     'task-result-content':{textContent:'',hidden:true},
     'task-result-meta':{textContent:'',hidden:true},
@@ -217,10 +224,13 @@ function resultLoaderHarness(initialKey='operator-key', gate={}) {
     'task-result-key-status':{textContent:''}
   };
   const context = {
-    document:{getElementById(id) {
+    document:{createElement:element, getElementById(id) {
       if (!nodes[id]) throw new Error('unexpected node: ' + id);
       return nodes[id];
     }},
+    window:{dispatchEvent(event) {events.push(event);return true;}},
+    CustomEvent:class {constructor(type, init={}) {this.type=type;this.detail=init.detail;}},
+    taskResultGateSummary, taskResultAccepted, taskResultCompletionMessage, canConfirmTaskResult,
     fetch:(url, init) => new Promise(resolve => requests.push({url,init,resolve})),
     selectedTask:{id:taskId,task_version:version},
     taskDetailRevision:8,
@@ -350,6 +360,10 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
     group.source_repository === 'ellmos-ai/bach'
       && group.source_commit === '8884fcd2277f5db89e1a267a81042b33358278b8');
   assert.ok(originalBach);
+  const importedSnapshots = {
+    'src/components/TaskCreateForm.astro': 'e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824',
+    'src/pages/tasks.astro': 'ed62c7834a6437c8afed43050f95e4cbd7b00945656e92dc2e985e70e4084416'
+  };
   const importedHistory = {
     'src/components/TaskCreateForm.astro': 'fcfbad55ec1a3a1b4324db717a4ef2e0d7149dba6724d1bfbe95a34b3daf1852',
     'src/pages/tasks.astro': 'cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9'
@@ -359,7 +373,7 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
   assert.ok(followup);
   for (const [path, sourceSha] of Object.entries(importedHistory)) {
     assert.equal(originalBach.files[path].source_sha256, sourceSha);
-    assert.equal(originalBach.files[path].imported_sha256, hash(path));
+    assert.equal(originalBach.files[path].imported_sha256, importedSnapshots[path]);
     assert.equal(originalBach.files[path].adapted, true);
   }
   for (const path of ['public/page-reads.v1.json', 'src/lib/task-result-contract.mjs', 'tests/task-result-history.test.mjs']) {
