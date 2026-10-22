@@ -14,7 +14,7 @@
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923",
+    "public/page-reads.v1.json": "8fde4637ecb06fcc6bb25fff37a70773c49d3c300b20345b6988c4a6928dd057",
     "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -256,7 +256,7 @@
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
-    "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+    "src/pages/agenten/blueprints.astro": "bfe90224a7eae76e5349a212904acba0005c88a1eb6ad0f032d1557fe73f5a58",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
     "src/pages/agenten/running.astro": "351b81e2c7cedae78a7497155c5c8a86c9e3c659935d557ae82e1a56ef354b98",
@@ -324,7 +324,9 @@
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
     "tests/worker-queue.test.mjs": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
-    "tests/page-reads.test.mjs": "317c12e37193420ad3f9d03786b530d3641db60ba9baeb267d3e07d6b95d6246"
+    "tests/page-reads.test.mjs": "317c12e37193420ad3f9d03786b530d3641db60ba9baeb267d3e07d6b95d6246",
+    "src/components/AtiWorkshopPanel.astro": "43690681d8ff2e85cdc5e38198205db8b690d0201e3540277d54c3011bf9e34b",
+    "src/scripts/ati-workshop.mjs": "eb7cddb536de99275303d0190c2e427a28510216a39a2bf8b8e9b22a72282226"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -3559,6 +3561,55 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "161e2efa9691f941e8f0b9f337aa8fca170c9760d7b88acb95f8fd1dc7e47581",
           "sha256": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "scope": "BACH #2328: shared ATI workshop consumer and current source provenance",
+      "source_base_commit": "1d6c0f985834f10ae9e5e051205a33b83efaaa54",
+      "changes": [
+        "Record the ATI workshop page-read declarations and the exact current shared-source hashes for this task.",
+        "Add the new ATI panel and script as shared-GUI files with no BACH source-import claim; retain the original source_imports and all historical Task2138/2069 records unchanged.",
+        "Append verified byte transitions from the current manifest and Blueprint hashes, preserving the continuous Task2138 provenance chain.",
+        "Use the existing --error-text theme token for ATI error messages."
+      ],
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923",
+          "sha256": "8fde4637ecb06fcc6bb25fff37a70773c49d3c300b20345b6988c4a6928dd057"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+          "sha256": "bfe90224a7eae76e5349a212904acba0005c88a1eb6ad0f032d1557fe73f5a58"
+        },
+        {
+          "path": "src/components/AtiWorkshopPanel.astro",
+          "previous_sha256": null,
+          "sha256": "43690681d8ff2e85cdc5e38198205db8b690d0201e3540277d54c3011bf9e34b"
+        },
+        {
+          "path": "src/scripts/ati-workshop.mjs",
+          "previous_sha256": null,
+          "sha256": "e4732c5f92edfd5aa242b5259f9235e31d4d5c98619edcddf2c94fe106f80fe0"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "scope": "BACH #2328: stable ATI transfer idempotency and refreshed source provenance",
+      "source_base_commit": "1d6c0f985834f10ae9e5e051205a33b83efaaa54",
+      "changes": [
+        "Add a stable ATI-origin source key to BACH task creation so an uncertain transfer response can be retried against the existing task.",
+        "Refresh the current shared-source map from the exact post-change script bytes while retaining all earlier imports and historical provenance records."
+      ],
+      "files": [
+        {
+          "path": "src/scripts/ati-workshop.mjs",
+          "previous_sha256": "e4732c5f92edfd5aa242b5259f9235e31d4d5c98619edcddf2c94fe106f80fe0",
+          "sha256": "eb7cddb536de99275303d0190c2e427a28510216a39a2bf8b8e9b22a72282226"
         }
       ]
     }

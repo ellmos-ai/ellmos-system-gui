@@ -1,0 +1,168 @@
+<section class="ati-workshop" data-ati-workshop aria-labelledby="ati-workshop-title">
+  <div class="ati-launch">
+    <div>
+      <p class="ati-eyebrow">Bestandssystem</p>
+      <h2 id="ati-workshop-title">ATI-Werkstatt</h2>
+      <p class="ati-note">ATI-Aufgaben, Scanner, Sitzungen und Onboarding aus dem vorhandenen Backend. Die Daten werden erst geladen, wenn du die Werkstatt öffnest.</p>
+    </div>
+    <button class="ati-button ati-button-primary" type="button" data-ati-open aria-expanded="false">ATI-Werkstatt öffnen</button>
+  </div>
+
+  <div class="ati-panel" data-ati-panel hidden>
+    <div class="ati-toolbar">
+      <div class="ati-tabs" role="tablist" aria-label="ATI-Werkstatt">
+        <button type="button" role="tab" id="ati-tab-overview" aria-controls="ati-view-overview" aria-selected="true" data-ati-tab="overview">Übersicht</button>
+        <button type="button" role="tab" id="ati-tab-scanner" aria-controls="ati-view-scanner" aria-selected="false" data-ati-tab="scanner">Scanner</button>
+        <button type="button" role="tab" id="ati-tab-sessions" aria-controls="ati-view-sessions" aria-selected="false" data-ati-tab="sessions">Sitzungen</button>
+        <button type="button" role="tab" id="ati-tab-onboarding" aria-controls="ati-view-onboarding" aria-selected="false" data-ati-tab="onboarding">Onboarding</button>
+      </div>
+      <button class="ati-button" type="button" data-ati-refresh>Ansicht aktualisieren</button>
+    </div>
+    <p class="ati-message" role="status" aria-live="polite" data-ati-message>Die ATI-Daten wurden noch nicht angefragt.</p>
+
+    <section class="ati-view" id="ati-view-overview" role="tabpanel" aria-labelledby="ati-tab-overview" data-ati-view="overview">
+      <div class="ati-stats" aria-label="ATI-Statistik">
+        <article><span>Gescannte Tools</span><strong data-ati-stat="tools_scanned">–</strong></article>
+        <article><span>Offene Aufgaben</span><strong data-ati-stat="open_tasks">–</strong></article>
+        <article><span>Sitzungen heute</span><strong data-ati-stat="sessions_today">–</strong></article>
+        <article><span>Heute erledigt</span><strong data-ati-stat="completed_today">–</strong></article>
+      </div>
+
+      <form class="ati-form" data-ati-create>
+        <h3>ATI-Aufgabe anlegen</h3>
+        <p class="ati-note">Speichert eine Aufgabe im bestehenden ATI-Bestand.</p>
+        <label>Aufgabe<textarea name="task_text" rows="3" required maxlength="20000"></textarea></label>
+        <div class="ati-fields">
+          <label>Werkzeug<input name="tool_name" maxlength="120" placeholder="Manuell" /></label>
+          <label>Aufwand<select name="aufwand"><option value="niedrig">Niedrig</option><option value="mittel" selected>Mittel</option><option value="hoch">Hoch</option></select></label>
+          <label>Priorität (0–100)<input name="priority_score" type="number" min="0" max="100" value="50" required /></label>
+        </div>
+        <button class="ati-button ati-button-primary" type="submit">ATI-Aufgabe speichern</button>
+      </form>
+
+      <div class="ati-columns">
+        <section>
+          <div class="ati-section-title"><h3>Offene und laufende ATI-Aufgaben</h3><span class="ati-count" data-ati-task-count>–</span></div>
+          <div class="ati-list" data-ati-task-list><p class="ati-empty">Noch nicht geladen.</p></div>
+        </section>
+        <section>
+          <div class="ati-section-title"><h3>Registrierte Tools</h3><span class="ati-count" data-ati-tool-count>–</span></div>
+          <div class="ati-list" data-ati-overview-tools><p class="ati-empty">Noch nicht geladen.</p></div>
+        </section>
+      </div>
+      <section class="ati-subsection">
+        <div class="ati-section-title"><h3>Letzte Sitzungen</h3></div>
+        <div class="ati-list" data-ati-overview-sessions><p class="ati-empty">Noch nicht geladen.</p></div>
+      </section>
+    </section>
+
+    <section class="ati-view" id="ati-view-scanner" role="tabpanel" aria-labelledby="ati-tab-scanner" data-ati-view="scanner" hidden>
+      <div class="ati-section-title"><div><h3>Scanner</h3><p class="ati-note" data-ati-scanner-status>Scannerstatus noch nicht geladen.</p></div><button class="ati-button" type="button" data-ati-run-scan>Scan starten</button></div>
+      <div class="ati-columns">
+        <section><div class="ati-section-title"><h4>Tools</h4><span class="ati-count" data-ati-scanner-tool-count>–</span></div><div class="ati-list" data-ati-scanner-tools><p class="ati-empty">Noch nicht geladen.</p></div></section>
+        <section><div class="ati-section-title"><h4>Gescannte ATI-Aufgaben</h4><span class="ati-count" data-ati-scanned-count>–</span></div><div class="ati-list" data-ati-scanned-tasks><p class="ati-empty">Noch nicht geladen.</p></div></section>
+      </div>
+      <p class="ati-note">Ein Scan wird nur über „Scan starten“ an den angebundenen Backendadapter gesendet. Die Antwort bestätigt keinen abgeschlossenen Scan; lade den Status anschließend bei Bedarf erneut.</p>
+    </section>
+
+    <section class="ati-view" id="ati-view-sessions" role="tabpanel" aria-labelledby="ati-tab-sessions" data-ati-view="sessions" hidden>
+      <div class="ati-columns">
+        <form class="ati-form" data-ati-session-form>
+          <h3>ATI-Sitzung anfragen</h3>
+          <p class="ati-note">Der vorhandene Backendaufruf kann Claude Desktop anstoßen oder einen Prompt kopieren.</p>
+          <label>Arbeitszeit in Minuten<input name="work_time" type="number" min="1" value="15" required /></label>
+          <button class="ati-button ati-button-primary" type="submit">Sitzung anfragen</button>
+        </form>
+        <form class="ati-form" data-ati-cli-form>
+          <h3>Claude-Code-Sitzung anfragen</h3>
+          <p class="ati-note">Öffnet über den vorhandenen Adapter ein Terminal. Eine sichtbare Fensterannahme wird hier nicht geprüft.</p>
+          <label>Arbeitszeit in Minuten<input name="work_time" type="number" min="1" value="15" required /></label>
+          <label>Direktauftrag (optional)<textarea name="task_prompt" rows="3" maxlength="12000"></textarea></label>
+          <button class="ati-button ati-button-primary" type="submit">Terminalstart anfragen</button>
+        </form>
+      </div>
+      <section class="ati-subsection"><div class="ati-section-title"><h3>Letzte Sitzungen</h3></div><div class="ati-list" data-ati-sessions><p class="ati-empty">Noch nicht geladen.</p></div></section>
+    </section>
+
+    <section class="ati-view" id="ati-view-onboarding" role="tabpanel" aria-labelledby="ati-tab-onboarding" data-ati-view="onboarding" hidden>
+      <div class="ati-section-title"><div><h3>Offene Onboarding-Aufgaben</h3><p class="ati-note">Die Ansicht filtert die vom ATI-Endpunkt gelieferten offenen Aufgaben anhand ihrer vorhandenen Werkzeug- und Beschreibungstexte.</p></div></div>
+      <div class="ati-list" data-ati-onboarding-list><p class="ati-empty">Noch nicht geladen.</p></div>
+    </section>
+  </div>
+
+  <dialog class="ati-dialog" data-ati-edit-dialog aria-labelledby="ati-edit-title">
+    <form data-ati-edit-form>
+      <header><div><p class="ati-eyebrow">ATI-Aufgabe</p><h3 id="ati-edit-title">Aufgabe bearbeiten</h3></div><button class="ati-button" type="button" data-ati-close="edit">Schließen</button></header>
+      <div class="ati-dialog-body">
+        <input type="hidden" name="id" />
+        <label>Aufgabe<textarea name="task_text" rows="5" required maxlength="20000"></textarea></label>
+        <div class="ati-fields">
+          <label>Werkzeug<input name="tool_name" maxlength="120" /></label>
+          <label>Aufwand<select name="aufwand"><option value="niedrig">Niedrig</option><option value="mittel">Mittel</option><option value="hoch">Hoch</option></select></label>
+          <label>Priorität (0–100)<input name="priority_score" type="number" min="0" max="100" required /></label>
+          <label>Status<select name="status"><option value="offen">Offen</option><option value="in_arbeit">In Arbeit</option><option value="erledigt">Erledigt</option></select></label>
+        </div>
+        <p class="ati-message" role="status" aria-live="polite" data-ati-edit-message></p>
+      </div>
+      <footer><button class="ati-button" type="button" data-ati-close="edit">Abbrechen</button><button class="ati-button ati-button-primary" type="submit">Änderungen speichern</button></footer>
+    </form>
+  </dialog>
+
+  <dialog class="ati-dialog" data-ati-transfer-dialog aria-labelledby="ati-transfer-title">
+    <form data-ati-transfer-form>
+      <header><div><p class="ati-eyebrow">Explizite Aktion</p><h3 id="ati-transfer-title">ATI-Aufgabe übertragen</h3></div><button class="ati-button" type="button" data-ati-close="transfer">Schließen</button></header>
+      <div class="ati-dialog-body">
+        <input type="hidden" name="id" />
+        <div class="ati-fields">
+          <label>Titel<input name="title" maxlength="100" required /></label>
+          <label>Kategorie<input name="category" value="ATI" maxlength="80" required /></label>
+          <label>Priorität<select name="priority"><option value="P1">P1</option><option value="P2">P2</option><option value="P3">P3</option></select></label>
+        </div>
+        <label>Übergabevorschau<pre class="ati-preview" data-ati-transfer-preview></pre></label>
+        <p class="ati-note">Beim Übertragen wird eine Aufgabe an den bestehenden BACH-Endpunkt erstellt und danach die ATI-Aufgabe als „transferiert“ markiert. Wenn nur der erste Schritt gelingt, zeigt die Werkstatt den Teilstatus an.</p>
+        <p class="ati-message" role="status" aria-live="polite" data-ati-transfer-message></p>
+      </div>
+      <footer><button class="ati-button" type="button" data-ati-close="transfer">Abbrechen</button><button class="ati-button ati-button-primary" type="submit">Zu BACH übertragen</button></footer>
+    </form>
+  </dialog>
+</section>
+
+<script>import "../scripts/ati-workshop.mjs";</script>
+
+<style>
+  .ati-workshop{margin:1.25rem 0;padding:1rem;border:1px solid var(--border);border-radius:14px;background:var(--bg-panel)}
+  .ati-launch,.ati-toolbar,.ati-tabs,.ati-section-title,.ati-dialog header,.ati-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap}
+  .ati-launch h2{margin:0;font-size:1.3rem}.ati-eyebrow{margin:0 0 .25rem;color:var(--text-muted);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase}
+  .ati-note{margin:.3rem 0;color:var(--text-muted);font-size:.8rem;line-height:1.55}.ati-launch>div{flex:1;min-width:220px}
+  .ati-button{padding:.55rem .8rem;border:1px solid var(--border);border-radius:7px;background:var(--bg-dark);color:var(--text);font:inherit;cursor:pointer}
+  .ati-button:hover{border-color:var(--accent)}.ati-button:focus-visible,.ati-tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .ati-button-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .ati-panel{margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem}.ati-toolbar{align-items:flex-start}
+  .ati-tabs{justify-content:flex-start;border-bottom:1px solid var(--border)}
+  .ati-tabs button{padding:.6rem .8rem;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--text-muted);font:inherit;cursor:pointer}
+  .ati-tabs button[aria-selected="true"]{border-bottom-color:var(--accent);color:var(--text)}
+  .ati-message{min-height:1.4rem;padding:.6rem .75rem;border-radius:7px;background:var(--bg-dark);color:var(--text-muted);font-size:.82rem}
+  .ati-message[data-error="true"]{color:var(--error-text)}.ati-view{display:flex;flex-direction:column;gap:1rem}
+  .ati-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem}
+  .ati-stats article,.ati-form,.ati-task,.ati-tool,.ati-session{padding:.85rem;border:1px solid var(--border);border-radius:9px;background:var(--bg-dark)}
+  .ati-stats article{display:flex;flex-direction:column;gap:.35rem}.ati-stats span,.ati-count,.ati-meta{color:var(--text-muted);font-size:.75rem}.ati-stats strong{font-size:1.15rem}
+  .ati-form{display:flex;flex-direction:column;gap:.7rem}.ati-form h3,.ati-section-title h3,.ati-section-title h4{margin:0}
+  .ati-form label,.ati-dialog label{display:flex;flex-direction:column;gap:.35rem;color:var(--text-muted);font-size:.78rem}
+  .ati-form input,.ati-form select,.ati-form textarea,.ati-dialog input,.ati-dialog select,.ati-dialog textarea{width:100%;padding:.6rem;border:1px solid var(--border);border-radius:6px;background:var(--bg-panel);color:var(--text);font:inherit}
+  .ati-form input:focus,.ati-form select:focus,.ati-form textarea:focus,.ati-dialog input:focus,.ati-dialog select:focus,.ati-dialog textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .ati-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem}
+  .ati-columns{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:1rem}
+  .ati-subsection{display:flex;flex-direction:column;gap:.55rem}.ati-section-title{align-items:flex-start}
+  .ati-list{display:grid;gap:.6rem}.ati-task,.ati-tool,.ati-session{min-width:0}.ati-task h4{margin:0 0 .3rem;overflow-wrap:anywhere}
+  .ati-task p,.ati-tool p,.ati-session p{margin:.25rem 0;overflow-wrap:anywhere;line-height:1.45}
+  .ati-task-actions{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem}
+  .ati-empty{margin:0;padding:.8rem;border:1px dashed var(--border);border-radius:8px;color:var(--text-muted);font-size:.82rem}
+  .ati-dialog{width:min(760px,94vw);max-height:90vh;margin:auto;padding:0;border:1px solid var(--border);border-radius:12px;background:var(--bg-panel);color:var(--text);box-shadow:0 20px 70px #0008}
+  .ati-dialog::backdrop{background:#020617b8;backdrop-filter:blur(3px)}.ati-dialog form{display:flex;flex-direction:column;max-height:90vh}
+  .ati-dialog header,.ati-dialog footer{padding:.9rem 1.1rem;border-bottom:1px solid var(--border)}
+  .ati-dialog header h3{margin:0}.ati-dialog footer{justify-content:flex-end;border:0;border-top:1px solid var(--border)}
+  .ati-dialog-body{display:flex;flex-direction:column;gap:.8rem;padding:1rem 1.1rem;overflow:auto}
+  .ati-preview{margin:0;max-height:250px;overflow:auto;padding:.75rem;border:1px solid var(--border);border-radius:7px;background:var(--bg-dark);color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:.78rem}
+  [hidden]{display:none!important}
+  @media(max-width:700px){.ati-workshop{padding:.7rem}.ati-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ati-toolbar{align-items:stretch}.ati-tabs{overflow-x:auto;max-width:100%}.ati-tabs button{white-space:nowrap}.ati-launch>.ati-button{width:100%}}
+</style>

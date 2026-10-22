@@ -4,6 +4,7 @@ import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
 import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
+import AtiWorkshopPanel from '../../components/AtiWorkshopPanel.astro';
 ---
 <BachLayout title="Agenten-Werkstatt" currentPath="/agenten/blueprints">
   <div class="workshop-scene">
@@ -15,6 +16,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <a class="btn" href="/agenten/running">Living & Running</a>
       <a class="btn" href="/agenten/marblerun">Ketten</a>
     </div>
+  <AtiWorkshopPanel />
   </header>
   <p id="studio-status" class="studio-message" role="status" aria-live="polite">Blueprints werden geladen…</p>
   <div class="studio-toolbar">
