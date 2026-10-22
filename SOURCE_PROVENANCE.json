@@ -106,7 +106,7 @@
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
-    "README.md": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+    "README.md": "f7c0a01c6635d2b8161956572e1f2a1a5f6267a6f5718329f4e2206da32cf66c",
     "docs/CONSUMER_CONTRACT.md": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
     "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
@@ -1283,6 +1283,18 @@
           "path": "tests/task-result-history.test.mjs",
           "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
           "sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "scope": "Task2337: Tauri desktop consumer in the existing shared GUI module",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+          "sha256": "f7c0a01c6635d2b8161956572e1f2a1a5f6267a6f5718329f4e2206da32cf66c"
         }
       ]
     }

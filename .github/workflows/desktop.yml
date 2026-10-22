@@ -1,0 +1,83 @@
+name: Desktop compile
+
+on:
+  pull_request:
+    paths:
+      - 'src-tauri/**'
+      - 'desktop/**'
+      - '.github/workflows/desktop.yml'
+      - 'docs/DESKTOP-APP.md'
+  push:
+    branches: [main]
+    paths:
+      - 'src-tauri/**'
+      - 'desktop/**'
+      - '.github/workflows/desktop.yml'
+      - 'docs/DESKTOP-APP.md'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Resolve one dependency graph for all platforms
+        working-directory: src-tauri
+        shell: bash
+        run: |
+          if test -f Cargo.lock; then
+            cargo metadata --locked --no-deps --format-version 1 > /dev/null
+          else
+            cargo generate-lockfile
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-dependency-lock
+          path: src-tauri/Cargo.lock
+  compile:
+    needs: resolve
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/download-artifact@v4
+        with:
+          name: desktop-dependency-lock
+          path: src-tauri
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-desktop-${{ hashFiles('src-tauri/Cargo.lock') }}
+      - name: Linux webview dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev librsvg2-dev libayatana-appindicator3-dev patchelf
+      - name: Compile desktop consumer
+        working-directory: src-tauri
+        run: cargo build --release --locked
+      - name: Verify Windows GUI subsystem
+        if: runner.os == 'Windows'
+        shell: python
+        run: |
+          import pathlib, struct
+          binary = pathlib.Path('src-tauri/target/release/ellmos-system-gui-desktop.exe').read_bytes()
+          pe = struct.unpack_from('<I', binary, 0x3c)[0]
+          assert binary[pe:pe+4] == b'PE\0\0'
+          subsystem = struct.unpack_from('<H', binary, pe + 24 + 68)[0]
+          assert subsystem == 2, f'Expected GUI subsystem, got {subsystem}'
+          print('Windows binary uses GUI subsystem; no console subsystem.')
