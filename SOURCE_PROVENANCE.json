@@ -14,7 +14,7 @@
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923",
+    "public/page-reads.v1.json": "39c6668dd405b214fde5593c45c176581da3c7e9654c2ad57d335b2e0d7399c2",
     "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -256,7 +256,7 @@
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
-    "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+    "src/pages/agenten/blueprints.astro": "2dc16d66db6b6435d9bcc2bc1d2ab3b6f07550f6cad4c61f48efe7255d6020ab",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
     "src/pages/agenten/running.astro": "351b81e2c7cedae78a7497155c5c8a86c9e3c659935d557ae82e1a56ef354b98",
@@ -280,7 +280,7 @@
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+    "src/scripts/blueprint-studio.mjs": "4179253de894bf5582063ff6ce660a37c9654e3ea7f387c288cc15d79201a632",
     "src/scripts/domain-studio.mjs": "2b40b55a952eba22b1494a0405379bf3b6e7724e97845306ecdde115bea00283",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
@@ -3559,6 +3559,33 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "161e2efa9691f941e8f0b9f337aa8fca170c9760d7b88acb95f8fd1dc7e47581",
           "sha256": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "scope": "BACH #2060: GitHubBot template-provider actions in the shared Blueprint Studio",
+      "source_base_commit": "c2dc58b3add2f0d5c8764427322bd93e94963c4e",
+      "changes": [
+        "Register the two optional POST actions actually called after explicit user clicks; do not declare automatic page-load reads.",
+        "Refresh current source hashes and append exact prior-to-current hash records for both consumer files and the page-read manifest.",
+        "Keep the historical BACH source imports and imported hashes unchanged; no test or validator files changed and no tests were run manually."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+          "sha256": "2dc16d66db6b6435d9bcc2bc1d2ab3b6f07550f6cad4c61f48efe7255d6020ab"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+          "sha256": "4179253de894bf5582063ff6ce660a37c9654e3ea7f387c288cc15d79201a632"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923",
+          "sha256": "39c6668dd405b214fde5593c45c176581da3c7e9654c2ad57d335b2e0d7399c2"
         }
       ]
     }
