@@ -259,7 +259,7 @@
     "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "ea19cf3d05d4e4fe28c810ac722fd11fab36f6c6b300f361f81846699f363a92",
+    "src/pages/agenten/running.astro": "a8ac7736d6d826a9a32850e77d9ed95a5ecfed575664cb0ca7365e28b96c5a9c",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
@@ -3588,6 +3588,21 @@
           "path": "docs/CONSUMER_CONTRACT.md",
           "previous_sha256": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
           "sha256": "6d015e494968a95f5e2374449fcc6a1f181f7a8fcc441fabe3d3f894c1790762"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "BACH #2332: retain explicit worker-source boundary after automatic CI",
+      "source_base_commit": "84effcd8d89e8b22ee7386ba955a2fd4326e6a37",
+      "changes": [
+        "Keep the explicit schema/availability/array check at the page API boundary as well as the shared full inventory validation; preserve the existing frontend contract test without changes."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "ea19cf3d05d4e4fe28c810ac722fd11fab36f6c6b300f361f81846699f363a92",
+          "sha256": "a8ac7736d6d826a9a32850e77d9ed95a5ecfed575664cb0ca7365e28b96c5a9c"
         }
       ]
     }

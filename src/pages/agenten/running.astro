@@ -1184,6 +1184,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         const response = await fetch('/api/system/workers', {cache:'no-store', redirect:'error', signal:controller.signal});
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
+        if (data.schema !== 'bach.workers.status.v1' || data.availability !== 'available' || !Array.isArray(data.workers))
+          throw new Error('Workerquelle ist nicht bestätigt');
         const profiles = window.BachWorkerProfileDelete?.readWorkerProfiles(data);
         if (!profiles) throw new Error('Profilverwaltung ist nicht verfügbar.');
         if (epoch !== workerRefreshEpoch) return commandReadback ? data : null;
