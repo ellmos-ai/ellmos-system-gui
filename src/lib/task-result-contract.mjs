@@ -197,24 +197,61 @@ export function resultAcceptanceConfirmed(observed, answer, fresh) {
     && answer.result.contract_attestation_event_id === fresh.result.contract_attestation_event_id;
 }
 
+function currentCompletionEvaluation(readback, result = readback?.result) {
+  const evaluation = readback?.completion_evaluation;
+  if (!isRecord(readback) || !isRecord(result) || result.completion_policy_version !== 1
+      || !isRecord(evaluation) || evaluation.schema !== 'bach.worker-completion-evaluation.v1'
+      || evaluation.availability !== 'available' || evaluation.task_id !== readback.task_id
+      || evaluation.result_id !== result.result_id || !isSha256(result.result_revision)
+      || evaluation.result_revision !== result.result_revision
+      || evaluation.result_sha256 !== result.result_sha256 || evaluation.task_version !== readback.task_version
+      || evaluation.status !== readback.status || evaluation.status_revision !== readback.status_revision
+      || !isRecord(evaluation.decision)
+      || typeof evaluation.decision.state !== 'string') return null;
+  return evaluation;
+}
+
+function currentTaskResult(readback, result = readback?.result) {
+  return isRecord(readback) && readback.schema === 'bach.task-result-readback.v1'
+    && readback.verified === true && positiveInteger(readback.task_id)
+    && isSha256(readback.task_version) && positiveInteger(readback.status_revision)
+    && isRecord(result) && result.schema === 'bach.worker-result.v1'
+    && result.task_id === readback.task_id && positiveInteger(result.result_id)
+    && result.task_version === readback.task_version && isSha256(result.result_sha256);
+}
+
+export function taskResultAccepted(readback) {
+  const result = readback?.result;
+  if (!currentTaskResult(readback, result) || result.accepted !== true || result.reason !== 'accepted'
+      || !['done', 'completed'].includes(readback?.status)
+      || result.completion_decision?.availability === 'administrative_review_child') return false;
+  if (result.completion_policy_version === undefined || result.completion_policy_version === 0) return true;
+  if (result.completion_policy_version !== 1) return false;
+  const decision = result.completion_decision;
+  return isRecord(decision) && decision.availability === 'available'
+    && isSha256(result.result_revision) && decision.result_revision === result.result_revision
+    && positiveInteger(decision.event_id) && isSha256(decision.decision_sha256);
+}
+
 export function taskResultCompletionMessage(readback) {
   const result = readback?.result;
   if (!isRecord(result)) return null;
-  if (result.accepted === true && ['done','completed'].includes(readback.status)) {
-    if (result.completion_decision?.availability === 'administrative_review_child') {
-      return 'Prüfaufgabe abgeschlossen.';
-    }
-    return 'Abgenommen · erledigt.';
+  if (!currentTaskResult(readback, result)) return 'Das Ergebnis gehört nicht zur aktuellen Auftragsversion.';
+  if (result.completion_decision?.availability === 'administrative_review_child'
+      && result.accepted === true && result.reason === 'accepted'
+      && ['done','completed'].includes(readback.status)) {
+    return 'Prüfaufgabe abgeschlossen.';
   }
+  if (taskResultAccepted(readback)) return 'Abgenommen · erledigt.';
+  if (result.accepted === true && ['done','completed'].includes(readback.status)
+      && result.completion_policy_version === 1) return 'Die Abnahme ist im aktuellen Readback nicht bestätigt.';
   if (result.completion_policy_version !== 1) return null;
-  const evaluation = readback.completion_evaluation;
   const approval = isSha256(result.result_revision)
     && result.user_review_revision === result.result_revision
     && positiveInteger(result.user_review_event_id);
   const prefix = approval ? 'Deine Freigabe ist gespeichert. ' : '';
-  if (!isRecord(evaluation) || evaluation.schema !== 'bach.worker-completion-evaluation.v1'
-      || evaluation.task_id !== readback.task_id || evaluation.result_id !== result.result_id
-      || evaluation.result_revision !== result.result_revision || evaluation.availability !== 'available') {
+  const evaluation = currentCompletionEvaluation(readback, result);
+  if (!evaluation) {
     return prefix + 'Die übrigen Abschlussbedingungen sind noch nicht bestätigt.';
   }
   const messages = {
@@ -227,7 +264,251 @@ export function taskResultCompletionMessage(readback) {
     completed:'Die Abschlussbedingungen sind erfüllt; der Taskabschluss ist noch nicht bestätigt.',
     completed_unreviewed:'Die Abschlussbedingungen sind erfüllt; der Taskabschluss ist noch nicht bestätigt.',
   };
-  return prefix + (messages[evaluation.decision?.state] || 'Die übrigen Abschlussbedingungen sind noch nicht bestätigt.');
+  const state = evaluation.decision.state;
+  const message = Object.prototype.hasOwnProperty.call(messages, state) ? messages[state]
+    : 'Die übrigen Abschlussbedingungen sind noch nicht bestätigt.';
+  return prefix + message;
+}
+
+export function taskResultGateSummary(readback) {
+  if (!isRecord(readback) || readback.schema !== 'bach.task-result-readback.v1'
+      || readback.verified !== true || !positiveInteger(readback.task_id)
+      || !isSha256(readback.task_version) || !positiveInteger(readback.status_revision)) return [];
+  const result = readback.result;
+  if (result === null) return [];
+  if (!isRecord(result) || result.schema !== 'bach.worker-result.v1'
+      || result.task_id !== readback.task_id || !positiveInteger(result.result_id)
+      || !isSha256(result.task_version) || !isSha256(result.result_sha256)) return [];
+
+  const gate = (id, label, state, detail) => ({id, label, state, detail});
+  const currentResult = result.task_version === readback.task_version;
+  const evaluation = currentResult ? currentCompletionEvaluation(readback, result) : null;
+  const decision = evaluation?.decision || null;
+  const reviewExpired = Boolean(evaluation && decision.effective_mode === 'balanced'
+    && decision.state === 'completed_unreviewed'
+    && decision.reason === 'balanced_review_expired_without_adverse_finding'
+    && decision.completion_allowed === true);
+  const review = result.model_review;
+  const reviewCurrent = currentResult && isSha256(result.result_revision) && isRecord(review)
+    && review.schema === 'bach.worker-result-review-evidence.v1'
+    && review.availability === 'recorded' && review.task_id === readback.task_id
+    && review.result_id === result.result_id && review.result_revision === result.result_revision;
+  const gates = [];
+
+  if (!currentResult) {
+    gates.push(gate('submission', 'Ergebnisabgabe', 'stale',
+      'Das gespeicherte Ergebnis gehört zu einer anderen Auftragsversion.'));
+  } else if (isRecord(result.submission)
+      && result.submission.schema === 'bach.worker-submission-readback.v1'
+      && result.submission.availability === 'available'
+      && isSha256(result.submission.receipt_sha256)
+      && positiveInteger(result.submission.submitted_status_event_id)
+      && result.submitted_status_event_id === result.submission.submitted_status_event_id
+      && positiveInteger(result.submission_event_id)
+      && typeof result.submission_revision === 'string'
+      && /^sha256:[a-f0-9]{64}$/.test(result.submission_revision)) {
+    gates.push(gate('submission', 'Ergebnisabgabe', 'confirmed',
+      'Der native Abgabebeleg ist für diese Ergebnis-ID und Taskversion bestätigt.'));
+  } else {
+    gates.push(gate('submission', 'Ergebnisabgabe', 'reported',
+      'Ein Ergebnis ist vorhanden; der vollständige aktuelle Abgabebeleg ist nicht bestätigt.'));
+  }
+
+  if (!evaluation) {
+    gates.push(gate('policy', 'Wirksamer Abschlussmodus', 'unavailable',
+      'Eine aktuelle, an Ergebnis und Auftragsversion gebundene Policy-Auswertung liegt nicht vor.'));
+    gates.push(gate('task-contract', 'Auftragskriterien', 'unavailable',
+      'Eine aktuelle Auswertung der Auftragskriterien liegt nicht vor.'));
+    gates.push(gate('self-review', 'Selbstprüfung', 'unavailable',
+      'Eine aktuelle native Selbstprüfungs-Auswertung liegt nicht vor.'));
+    if (reviewCurrent && review.independent === true && review.policy_eligible === true
+        && ['approved', 'findings', 'rejected'].includes(review.status)) {
+      gates.push(gate('independent-review', 'Unabhängige Prüfung',
+        review.status === 'approved' ? 'reported' : 'blocked',
+        review.status === 'approved'
+          ? 'Ein unabhängiger, policy-eligible Prüfbeleg für dieses Ergebnis ist vermerkt; die aktuelle Abschluss-Policy fehlt.'
+          : review.status === 'findings' ? 'Der vermerkte unabhängige Prüfbeleg enthält einen Befund; die aktuelle Abschluss-Policy fehlt.'
+            : 'Der vermerkte unabhängige Prüfbeleg weist das Ergebnis zurück; die aktuelle Abschluss-Policy fehlt.'));
+    } else {
+      gates.push(gate('independent-review', 'Unabhängige Prüfung', 'unavailable',
+        reviewCurrent
+          ? 'Ein Prüfbeleg ist vermerkt, aber nicht als unabhängige und policy-eligible Prüfung bestätigt.'
+          : 'Eine aktuelle native Prüfungs-Auswertung liegt nicht vor.'));
+    }
+    const savedUserReview = isSha256(result.result_revision)
+      && result.user_review_revision === result.result_revision
+      && positiveInteger(result.user_review_event_id);
+    gates.push(savedUserReview
+      ? gate('user-approval', 'Persönliche Freigabe', 'reported',
+        'Ein Freigabeereignis für diese Ergebnisrevision ist vermerkt; ob es die aktuelle Policy-Anforderung erfüllt, ist nicht bestätigt.')
+      : gate('user-approval', 'Persönliche Freigabe', 'unavailable',
+        'Ob eine persönliche Freigabe erforderlich ist, ist aktuell nicht bestätigt.'));
+    gates.push(gate('external-approval', 'Externe GitHub-Prüfung', 'unavailable',
+      'Ob eine externe Prüfung erforderlich ist, ist aktuell nicht bestätigt.'));
+  } else {
+    const modeLabels = {
+      simple_task: 'Einfacher Modus',
+      balanced: 'Ausgewogener Modus',
+      high_security: 'Hochsicherheitsmodus',
+    };
+    const modeLabel = Object.prototype.hasOwnProperty.call(modeLabels, decision.effective_mode)
+      ? modeLabels[decision.effective_mode] : null;
+    const sourceLabel = decision.policy_source === 'task_override' ? 'Task-Override'
+      : decision.policy_source === 'system_default' ? 'Systemstandard' : null;
+    gates.push(modeLabel && sourceLabel
+      ? gate('policy', 'Wirksamer Abschlussmodus', 'confirmed',
+        modeLabel + ' · Quelle: ' + sourceLabel + '.')
+      : gate('policy', 'Wirksamer Abschlussmodus', 'unavailable',
+        'Die wirksame Policy oder ihre Herkunft ist in der aktuellen Auswertung nicht bestätigt.'));
+
+    const finding = evaluation.contract_finding;
+    const findingSources = {
+      predeclared_criteria: 'Vorab festgelegte Auftragskriterien',
+      operator_attestation: 'Operator-Bestätigung',
+      independent_model_review: 'Unabhängige Prüfung',
+      worker_self_check: 'Selbstprüfung des Workers',
+      worker_completion_asserted: 'Fertigmeldung des Workers',
+      unconfirmed: 'Noch nicht bestätigt',
+    };
+    if (isRecord(finding) && typeof finding.met === 'boolean'
+        && typeof finding.source === 'string'
+        && Object.prototype.hasOwnProperty.call(findingSources, finding.source)) {
+      const assertionOnly = ['worker_self_check', 'worker_completion_asserted'].includes(finding.source);
+      const detail = finding.met
+        ? findingSources[finding.source] + (assertionOnly
+          ? ' · vom Worker gemeldet, nicht unabhängig nachgewiesen.'
+          : ' · laut aktueller Policy-Auswertung erfüllt.')
+        : findingSources[finding.source] + ' · Erfüllung aktuell nicht bestätigt.';
+      gates.push(gate('task-contract', 'Auftragskriterien', finding.met
+        ? assertionOnly ? 'reported' : 'confirmed' : 'pending', detail));
+    } else {
+      gates.push(gate('task-contract', 'Auftragskriterien', 'unavailable',
+        'Die aktuelle Auswertung enthält keinen bestätigten Status der Auftragskriterien.'));
+    }
+
+    const selfCheck = evaluation.worker_self_check;
+    const completionAssertion = evaluation.worker_completion_assertion;
+    if (isRecord(selfCheck) && selfCheck.availability === 'available' && selfCheck.met === true) {
+      gates.push(gate('self-review', 'Selbstprüfung', 'reported',
+        'Der Worker hat einen strukturierten Selbstcheck abgegeben; das ist kein unabhängiger Nachweis.'));
+    } else if (isRecord(completionAssertion) && completionAssertion.availability === 'available'
+        && completionAssertion.met === true) {
+      gates.push(gate('self-review', 'Selbstprüfung', 'reported',
+        'Eine Fertigmeldung des Workers liegt vor; ein strukturierter Selbstcheck ist nicht belegt.'));
+    } else {
+      gates.push(gate('self-review', 'Selbstprüfung', 'unavailable',
+        'Eine gültige Selbstprüfung ist im aktuellen Ergebnis nicht bestätigt.'));
+    }
+
+    if (reviewExpired) {
+      gates.push(gate('independent-review', 'Unabhängige Prüfung', 'unavailable',
+        'Kein unabhängiger Prüfbeleg liegt vor; die aktuelle Policy-Auswertung weist den Fristablauf separat aus.'));
+      gates.push(gate('review-expiry', 'Reviewfrist', 'expired',
+        'Ablauf laut aktueller Balanced-Policy. Dadurch entfallen keine Nutzer- oder externen Freigaben und das Ergebnis gilt nicht als abgenommen.'));
+    } else if (reviewCurrent && (review.independent !== true || review.policy_eligible !== true)) {
+      gates.push(gate('independent-review', 'Unabhängige Prüfung', 'unavailable',
+        'Ein Prüfbeleg ist vorhanden, aber für diesen Abschluss nicht als unabhängige und policy-eligible Prüfung bestätigt.'));
+    } else if (reviewCurrent && review.independent === true && review.policy_eligible === true
+        && ['approved', 'findings', 'rejected'].includes(review.status)) {
+      const policyStillAwaitingReview = review.status === 'approved'
+        && ['awaiting_review', 'completed_unreviewed'].includes(decision.state);
+      const reviewState = review.status === 'approved'
+        ? policyStillAwaitingReview ? 'reported' : 'confirmed' : 'blocked';
+      const reviewDetail = review.status === 'approved'
+        ? policyStillAwaitingReview
+          ? 'Ein unabhängiger, policy-eligible Prüfbeleg ist vermerkt; die aktuelle Policy-Auswertung bestätigt den Review-Gate noch nicht.'
+          : 'Die unabhängige Prüfung ist aktuell und policy-eligible belegt.'
+        : review.status === 'findings' ? 'Die unabhängige Prüfung meldet einen Befund.'
+          : 'Die unabhängige Prüfung hat das Ergebnis zurückgewiesen.';
+      gates.push(gate('independent-review', 'Unabhängige Prüfung', reviewState, reviewDetail));
+    } else if (decision.state === 'awaiting_review') {
+      gates.push(gate('independent-review', 'Unabhängige Prüfung', 'pending',
+        'Die aktuelle Policy-Auswertung meldet die unabhängige Modellprüfung als ausstehend.'));
+    } else {
+      gates.push(gate('independent-review', 'Unabhängige Prüfung', 'unavailable',
+        'Ein aktueller unabhängiger, policy-eligible Prüfbeleg ist nicht bestätigt.'));
+    }
+
+    if (typeof evaluation.user_review_required === 'boolean'
+        && typeof evaluation.user_approved === 'boolean') {
+      if (!evaluation.user_review_required) {
+        gates.push(gate('user-approval', 'Persönliche Freigabe', 'not_required',
+          'Die aktuelle Policy-Auswertung verlangt keine persönliche Freigabe.'));
+      } else if (!evaluation.user_approved) {
+        gates.push(gate('user-approval', 'Persönliche Freigabe', 'pending',
+          'Die aktuelle Policy-Auswertung verlangt eine persönliche Freigabe, die noch nicht belegt ist.'));
+      } else if (decision.state === 'awaiting_user_review') {
+        gates.push(gate('user-approval', 'Persönliche Freigabe', 'reported',
+          'Ein Freigabebeleg ist vermerkt, aber die aktuelle Policy-Auswertung meldet die persönliche Freigabe weiterhin als ausstehend.'));
+      } else {
+        gates.push(gate('user-approval', 'Persönliche Freigabe', 'confirmed',
+          'Die erforderliche persönliche Freigabe ist für diese Ergebnisrevision belegt.'));
+      }
+    } else {
+      gates.push(gate('user-approval', 'Persönliche Freigabe', 'unavailable',
+        'Der Status der persönlichen Freigabe ist in der aktuellen Auswertung nicht bestätigt.'));
+    }
+
+    const github = evaluation.github;
+    const githubCurrent = isRecord(github) && github.availability === 'available'
+      && github.task_id === readback.task_id && github.result_revision === result.result_revision;
+    if (typeof evaluation.github_pr_review_required !== 'boolean') {
+      gates.push(gate('external-approval', 'Externe GitHub-Prüfung', 'unavailable',
+        'Der aktuelle Bedarf an einer externen Prüfung ist nicht bestätigt.'));
+    } else if (!evaluation.github_pr_review_required) {
+      gates.push(gate('external-approval', 'Externe GitHub-Prüfung', 'not_required',
+        'Die aktuelle Policy-Auswertung verlangt keine externe GitHub-Prüfung.'));
+    } else if (githubCurrent && github.status === 'verified'
+        && decision.state === 'awaiting_external_review') {
+      gates.push(gate('external-approval', 'Externe GitHub-Prüfung', 'reported',
+        'Ein externer Prüfbeleg ist vermerkt, aber die aktuelle Policy-Auswertung meldet diese Prüfung weiterhin als ausstehend.'));
+    } else if (githubCurrent && github.status === 'verified') {
+      gates.push(gate('external-approval', 'Externe GitHub-Prüfung', 'confirmed',
+        'Die externe Prüfung ist für diese Ergebnisrevision aktuell bestätigt.'));
+    } else if (githubCurrent && github.status === 'rejected') {
+      gates.push(gate('external-approval', 'Externe GitHub-Prüfung', 'blocked',
+        'Die externe Prüfung meldet eine Zurückweisung.'));
+    } else if (decision.state === 'awaiting_external_review') {
+      gates.push(gate('external-approval', 'Externe GitHub-Prüfung', 'pending',
+        'Die aktuelle Policy-Auswertung meldet die erforderliche externe Prüfung als ausstehend.'));
+    } else {
+      gates.push(gate('external-approval', 'Externe GitHub-Prüfung', 'unavailable',
+        'Die erforderliche externe Prüfung ist aktuell nicht bestätigt.'));
+    }
+  }
+
+  const completionDecision = result.completion_decision;
+  const administrativeReviewChild = isRecord(completionDecision)
+    && completionDecision.availability === 'administrative_review_child';
+  const accepted = currentResult && taskResultAccepted(readback);
+  if (administrativeReviewChild) {
+    gates.push(gate('acceptance', 'Tatsächliche Abnahme', 'reported',
+      'Die Prüfaufgabe ist abgeschlossen; daraus folgt keine Abnahme des geprüften Zielergebnisses.'));
+  } else if (accepted) {
+    gates.push(gate('acceptance', 'Tatsächliche Abnahme', 'confirmed',
+      'Native Ergebnisabnahme und Taskstatus sind gemeinsam bestätigt.'));
+  } else if (evaluation && decision.completion_allowed === true) {
+    gates.push(gate('acceptance', 'Tatsächliche Abnahme', 'pending',
+      'Die Policy-Bedingungen sind erfüllt; die tatsächliche Ergebnisabnahme ist noch nicht bestätigt.'));
+  } else if (readback.status === 'review' || result.reason === 'awaiting_review') {
+    gates.push(gate('acceptance', 'Tatsächliche Abnahme', 'pending',
+      'Das Ergebnis ist abgegeben; eine tatsächliche Abnahme liegt noch nicht vor.'));
+  } else {
+    gates.push(gate('acceptance', 'Tatsächliche Abnahme', 'unavailable',
+      'Eine tatsächliche Abnahme ist im aktuellen Readback nicht bestätigt.'));
+  }
+
+  if (evaluation && typeof decision.worker_may_claim_next === 'boolean') {
+    gates.push(decision.worker_may_claim_next
+      ? gate('next-task', 'Nächste Worker-Aufgabe', 'confirmed',
+        'Die aktuelle Policy hält diesen Worker wegen der offenen Ergebnisabnahme nicht zurück.')
+      : gate('next-task', 'Nächste Worker-Aufgabe', 'blocked',
+        'Die aktuelle Policy bestätigt keine nächste Übernahme.'));
+  } else {
+    gates.push(gate('next-task', 'Nächste Worker-Aufgabe', 'unavailable',
+      'Eine aktuelle Policy-Aussage zur nächsten Übernahme liegt nicht vor.'));
+  }
+  return gates;
 }
 
 export function normalizeCorrectionNote(value) {

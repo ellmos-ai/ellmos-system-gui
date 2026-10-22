@@ -32,16 +32,16 @@
     "path": "/api/agent-studio/blueprints",
     "required": true
    },
-    {
-      "method": "GET",
-      "path": "/api/system/workers",
-      "required": false
-    },
-    {
-      "method": "GET",
-      "path": "/api/system/core-agents",
-      "required": false
-    },
+   {
+    "method": "GET",
+    "path": "/api/system/workers",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/core-agents",
+    "required": false
+   },
    {
     "method": "GET",
     "path": "/api/tasks",
@@ -546,6 +546,11 @@
     "method": "POST",
     "path": "/api/system/external-artifacts/import",
     "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/worker-model-principals",
+    "required": false
    }
   ],
   "/agenten/blueprints": [
@@ -886,6 +891,13 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/pages/agenten/running.astro#toggleCoreSlot"
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/workers/{id}/configuration",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/worker-selection-policy.mjs#loadPolicy"
    }
   ],
   "/agenten/sessions": [
