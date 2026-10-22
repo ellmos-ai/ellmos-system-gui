@@ -665,6 +665,82 @@
     "method": "POST",
     "path": "/api/agenten/teams",
     "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/ati/stats",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/ati/tasks",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/ati/tasks/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/ati-workshop.mjs#loadTaskDetail"
+   },
+   {
+    "method": "GET",
+    "path": "/api/ati/sessions",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/scanner/tools",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/scanner/status",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/scanned-tasks",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/ati/tasks",
+    "required": false
+   },
+   {
+    "method": "PUT",
+    "path": "/api/ati/tasks/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/ati-workshop.mjs#updateTask"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/ati/tasks/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/ati-workshop.mjs#deleteTask"
+   },
+   {
+    "method": "POST",
+    "path": "/api/tasks",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/scanner/run",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/ati/session/start",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/ati/session/start-cli",
+    "required": false
    }
   ],
   "/agenten/subscription-agents": [
