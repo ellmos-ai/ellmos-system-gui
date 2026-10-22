@@ -8,6 +8,15 @@ The productive frontend at public BACH commit `8884fcd2277f5db89e1a267a81042b333
 
 This repository owns the shared frontend after the import. Consumer transition copies must be replaced by a verified pinned release; they do not become separate frontend authorities. An HTML installation alone does not provide Ocean's missing backend adapters.
 
+## Desktop app
+
+The Tauri 2 desktop consumer lives in this same shared GUI module under
+`src-tauri/`. Its bundled connection screen opens the selected consumer's actual
+GUI origin, including that consumer's existing login. It does not bundle an
+older Astro build or own backend jobs. See [desktop setup and acceptance](docs/DESKTOP-APP.md).
+This is an implementation candidate; native compilation, installation and
+Windows/macOS/Linux device acceptance are tracked separately from a web release.
+
 ## Development and verification
 
 Build prerequisites: Node `>=22.12.0` and npm `>=9.6.5`; the release packager and release tests also require Python 3.9 or newer. Astro is pinned to `7.3.7`; the lock includes `http-cache-semantics 4.3.0` and `sharp 0.35.5`. The previous Astro 5 lock reported security advisories. Text files use LF consistently so provenance hashes remain stable across Windows and Unix checkouts.
