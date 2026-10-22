@@ -4,6 +4,7 @@ import BachLayout from "../layouts/BachLayout.astro";
 import TaskCreateForm from "../components/TaskCreateForm.astro";
 import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.astro";
 import TaskLeasePanel from "../components/TaskLeasePanel.astro";
+import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
 ---
 
 <BachLayout title="Aufgaben" currentPath="/tasks">
@@ -96,6 +97,7 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
       <section class="task-worker-result" aria-live="polite">
         <h3>Ergebnis und Verlauf</h3>
         <p class="task-evidence-hint">Ergebnisabgabe und fachliche Abnahme werden getrennt angezeigt.</p>
+        <GitHubReviewEvidence />
         <p id="task-result-status">Noch nicht geprüft.</p>
         <p id="task-result-content" class="task-description" hidden></p>
         <p id="task-result-meta" class="muted" hidden></p>
@@ -521,6 +523,7 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
       const accept = document.getElementById('task-result-accept');
       const correction = document.getElementById('task-result-correction');
       selectedResult = null; taskResultReadback = null; accept.hidden = true; accept.disabled = true;
+      window.dispatchEvent(new CustomEvent('bach:task-result-readback', {detail:{readback:null}}));
       taskResultCapabilities = {valid:false, accept_result:false, request_correction:false};
       correction.hidden = true; correction.querySelector('button[type="submit"]').disabled = true;
       taskResultStatusMessage = 'Ergebnis wird geprüft.';
@@ -541,6 +544,7 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
         }
         const result = data.result;
         taskResultReadback = data;
+        window.dispatchEvent(new CustomEvent('bach:task-result-readback', {detail:{readback:data}}));
         taskResultCapabilities = resultOperatorCapabilities(data);
         if (result == null) {
           taskResultStatusMessage = 'Kein Worker-Ergebnis gespeichert.';
@@ -814,10 +818,15 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
       }
     });
 
+    function resetGitHubReviewContext(id) {
+      window.dispatchEvent(new CustomEvent('bach:task-review-context', {detail:{id, task:null, readback:null}}));
+    }
+
     async function openTask(id, {releaseCorrectionGate = true} = {}) {
       if (!Number.isSafeInteger(id) || id <= 0) return;
       const mayReleaseCorrectionGate = releaseCorrectionGate && correctionGateTaskId === id && !correctionPostInFlight;
       const revision = ++taskDetailRevision;
+      resetGitHubReviewContext(id);
       selectedResult = null; taskResultReadback = null;
       taskResultCapabilities = {valid:false, accept_result:false, request_correction:false};
       taskResultStatusMessage = '';
@@ -858,6 +867,7 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
       } catch (cause) {
         if (revision !== taskDetailRevision) return null;
         selectedTask = null;
+        resetGitHubReviewContext(id);
         detailError(cause instanceof Error ? cause.message : 'Task konnte nicht geladen werden.');
         return null;
       }
