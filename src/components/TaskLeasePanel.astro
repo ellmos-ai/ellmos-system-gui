@@ -1,0 +1,101 @@
+<section class="card task-lease-panel" aria-labelledby="task-lease-title">
+  <div class="task-lease-head">
+    <div><h2 id="task-lease-title">Aktive Aufgaben</h2>
+      <p class="muted">Aufgaben, die gerade bearbeitet werden – auch manuell übernommene.</p></div>
+    <button class="btn" id="task-lease-refresh" type="button">Aktualisieren</button>
+  </div>
+  <div class="task-lease-controls">
+    <label><input id="task-lease-show" type="checkbox" checked /> Lease-Countdowns anzeigen</label>
+    <label><input id="task-lease-sort" type="checkbox" /> Nach Lease-Ablauf ordnen</label>
+  </div>
+  <p id="task-lease-status" class="muted" role="status">Laufende Tasks werden geprüft …</p>
+  <ul id="task-lease-list" class="task-lease-list"></ul>
+</section>
+
+<script>
+  import {loadTaskLeaseRows, leaseCountdown, sortTaskLeaseRows} from '../lib/task-lease-panel.mjs';
+  const key = 'bach.tasks.lease-display.v1';
+  const oldKey = 'bach.running.lease-display.v1';
+  const panel = document.getElementById('task-lease-list');
+  const status = document.getElementById('task-lease-status');
+  const show = document.getElementById('task-lease-show');
+  const sort = document.getElementById('task-lease-sort');
+  let current = {rows:[], partial:true};
+  let request = 0;
+
+  function preferences() {
+    try {
+      const raw = localStorage.getItem(key) ?? localStorage.getItem(oldKey);
+      const saved = raw ? JSON.parse(raw) : {};
+      return {show:saved.show !== false, sort:saved.sort === true};
+    } catch (_) { return {show:true, sort:false}; }
+  }
+  const initial = preferences();
+  show.checked = initial.show;
+  sort.checked = initial.sort;
+  function savePreferences() {
+    try { localStorage.setItem(key, JSON.stringify({show:show.checked, sort:sort.checked})); }
+    catch (_) { status.textContent = 'Anzeigeoptionen gelten nur bis zum Neuladen.'; }
+    render();
+  }
+
+  function render() {
+    panel.replaceChildren();
+    const rows = sortTaskLeaseRows(current.rows, sort.checked);
+    for (const {task, lease} of rows) {
+      const item = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = '/tasks?task=' + encodeURIComponent(task.id);
+      link.textContent = `#${task.id} · ${String(task.title || task.name || 'Unbenannt')}`;
+      const detail = document.createElement('span');
+      detail.className = 'muted';
+      const remaining = show.checked ? leaseCountdown(lease) : null;
+      detail.textContent = lease.state === 'unleased' ? 'Keine aktive Task-Lease bestätigt'
+        : lease.state !== 'active' ? 'Lease-Status nicht verfügbar'
+        : !show.checked ? 'Ablaufzeit bestätigt'
+        : remaining === null ? 'Lease-Ablauf nicht mehr aktuell bestätigt'
+        : `Lease endet ${new Date(lease.expiresAt).toLocaleTimeString('de-DE')} · ${remaining}`;
+      item.append(link, detail);
+      panel.append(item);
+    }
+    if (!rows.length && !current.partial) status.textContent = 'Keine laufende Task-Lease oder manuelle Übernahme vorhanden.';
+  }
+
+  async function refresh() {
+    const generation = ++request;
+    status.textContent = 'Laufende Tasks werden geprüft …';
+    try {
+      const next = await loadTaskLeaseRows();
+      if (generation !== request) return;
+      current = next;
+      status.textContent = next.partial
+        ? `${next.rows.length} laufende Tasks geladen · Quelle oder einzelne Leases nicht vollständig bestätigt.`
+        : `${next.rows.length} laufende Tasks vollständig geprüft · Stand ${new Date().toLocaleTimeString('de-DE')}.`;
+      render();
+    } catch (_) {
+      if (generation !== request) return;
+      current = {rows:[], partial:true};
+      panel.replaceChildren();
+      status.textContent = 'Task-Leases derzeit nicht verfügbar.';
+    }
+  }
+
+  show.addEventListener('change', savePreferences);
+  sort.addEventListener('change', savePreferences);
+  document.getElementById('task-lease-refresh').addEventListener('click', refresh);
+  refresh();
+  window.setInterval(() => { if (!document.hidden) render(); }, 5000);
+  window.setInterval(() => { if (!document.hidden) refresh(); }, 60000);
+</script>
+
+<style>
+  .task-lease-panel {padding:1rem 1.25rem;margin-bottom:1.5rem}
+  .task-lease-head,.task-lease-controls {display:flex;align-items:center;justify-content:space-between;gap:.6rem 1rem;flex-wrap:wrap}
+  .task-lease-head h2 {font-size:1.05rem;margin:0}
+  .task-lease-head p {margin:.25rem 0 .7rem}
+  .task-lease-controls {justify-content:flex-start;font-size:.84rem;margin:.3rem 0 .65rem}
+  .task-lease-controls label {display:flex;align-items:center;gap:.3rem}
+  .task-lease-list {list-style:none;padding:0;margin:0;display:grid;gap:.4rem;max-height:17rem;overflow:auto}
+  .task-lease-list li {display:flex;justify-content:space-between;gap:.5rem 1rem;flex-wrap:wrap;border-top:1px solid var(--border);padding:.45rem 0}
+  .task-lease-list a {color:var(--text);font-weight:600;overflow-wrap:anywhere}
+</style>

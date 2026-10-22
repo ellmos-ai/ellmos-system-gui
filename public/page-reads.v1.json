@@ -32,6 +32,16 @@
     "path": "/api/agent-studio/blueprints",
     "required": true
    },
+    {
+      "method": "GET",
+      "path": "/api/system/workers",
+      "required": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/system/core-agents",
+      "required": false
+    },
    {
     "method": "GET",
     "path": "/api/tasks",
@@ -44,6 +54,13 @@
     "method": "GET",
     "path": "/api/tasks",
     "required": true
+   },
+   {
+    "method": "GET",
+    "path": "/api/tasks/{id}/lease",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/task-lease-panel.mjs#loadTaskLeaseRows"
    },
    {
     "method": "GET",
@@ -99,6 +116,20 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/pages/tasks.astro#openTask"
+   },
+   {
+    "method": "GET",
+    "path": "/api/tasks/{id}/worker-policy",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/task-worker-policy-settings.mjs#readTaskWorkerPolicy"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/tasks/{id}/worker-policy",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/task-worker-policy-settings.mjs#writeTaskWorkerPolicy"
    },
    {
     "method": "PUT",
@@ -445,6 +476,16 @@
     "method": "GET",
     "path": "/api/gui/backend-origin",
     "required": true
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/worker-policy",
+    "required": false
+   },
+   {
+    "method": "PUT",
+    "path": "/api/system/worker-policy",
+    "required": false
    },
    {
     "method": "GET",

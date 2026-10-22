@@ -1,0 +1,55 @@
+<details class="card task-worker-policy" aria-labelledby="task-worker-policy-heading">
+  <summary id="task-worker-policy-heading">Worker-Regeln für diesen Task</summary>
+  <p id="task-worker-policy-status" role="status" aria-live="polite">Task-Policy noch nicht geprüft.</p>
+  <form id="task-worker-policy-form" hidden>
+    <p id="task-worker-policy-effective" class="muted"></p>
+    <div class="task-worker-policy-grid">
+      <label>Abschlussmodus
+        <select name="mode">
+          <option value="inherit">Systemstandard verwenden</option>
+          <option value="simple_task">Einfacher Taskmodus</option>
+          <option value="balanced">Ausgewogen</option>
+          <option value="high_security">Hochsicherheit</option>
+        </select>
+      </label>
+      <label>GitHub-Prüfung
+        <select name="github_external_review">
+          <option value="inherit">Systemstandard verwenden</option>
+          <option value="on">Extern über PR-Checks und Reviews</option>
+          <option value="off">Interne Prüfung verwenden</option>
+        </select>
+      </label>
+      <label>Review-Aufgabe als Ersatz
+        <select name="allow_review_task_pickup">
+          <option value="inherit">Systemstandard verwenden</option>
+          <option value="on">Erlauben, wenn keine normale Aufgabe passt</option>
+          <option value="off">Nicht als Ersatz übernehmen</option>
+        </select>
+      </label>
+      <label class="task-worker-policy-check">
+        <input name="user_review_required" type="checkbox" /> Für diesen Task ein Nutzerreview verlangen
+      </label>
+    </div>
+    <p class="muted">Ein vorhandenes Nutzerreview bleibt verbindlich. Diese Task-Regel kann eine solche Pflicht nur hinzufügen oder vom Systemstandard erben.</p>
+    <div class="task-worker-policy-actions">
+      <button type="submit" class="btn btn-primary" id="task-worker-policy-save" disabled>Task-Regeln speichern</button>
+      <button type="button" class="btn" id="task-worker-policy-refresh" disabled>Neu laden</button>
+    </div>
+  </form>
+</details>
+
+<style>
+  .task-worker-policy {margin:1rem 0;padding:.8rem 1rem;border:1px solid var(--border);}
+  .task-worker-policy summary {cursor:pointer;font-weight:650;}
+  #task-worker-policy-status {color:var(--text-muted);overflow-wrap:anywhere;}
+  .task-worker-policy-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:.8rem;margin:.8rem 0;}
+  .task-worker-policy-grid label {display:flex;flex-direction:column;gap:.35rem;min-width:0;}
+  .task-worker-policy-grid select {max-width:100%;box-sizing:border-box;padding:.55rem;background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font:inherit;}
+  .task-worker-policy-check {flex-direction:row!important;align-items:flex-start;}
+  .task-worker-policy-actions {display:flex;gap:.55rem;flex-wrap:wrap;}
+</style>
+
+<script>
+  import {mountTaskWorkerPolicySettings} from "../lib/task-worker-policy-settings.mjs";
+  mountTaskWorkerPolicySettings();
+</script>

@@ -5,9 +5,31 @@
   "reviewed_source_commit": "8884fcd2277f5db89e1a267a81042b33358278b8",
   "license": "MIT",
   "files_sha256": {
+    ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
+    ".github/workflows/tests.yml": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
+    "README.md": "f915a0e6fc029a872a35ec5526acd7aa50d5a55050f51ef9499f5924bb56af7d",
+    "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
+    "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
+    "docs/CONSUMER_CONTRACT.md": "69a77e45be79abac10a2f6aef973c3df310f31602596354c6393423e5a347d21",
+    "ellmos-module.v2.json": "dd5053466f5e1be517f23fa8e48ed9ef8ac22d7ee47160c581ef6c6666d54d6d",
+    "package-lock.json": "43284a8c5fd75554fe117e84beb6c240e5a732bbfe6a573b9f17173228b7c9c6",
+    "package.json": "40598d20498cb106153cb27f522c630ea37fbf65e31146368a9013451b45889a",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
+    "public/page-reads.v1.json": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c",
+    "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
+    "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
+    "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "src/assets/agent-portraits.png": "a733ce82439cad152bc2e7f055f88f377f000d51c61e34939a5309b27093f5d8",
+    "src/assets/agent-workshop/provenance.json": "ce9d3c13bceb267452aa813371ae9eb8126f54d283521730b3a917bd4f68d764",
+    "src/assets/agent-workshop/workshop.jpg": "b3b102785c06ef1cef4e74cacff6445b94bddcdc5d9083c45748c4f21ebc5674",
+    "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
+    "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
+    "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
+    "src/assets/gemini-agent-portraits/copilot.jpg": "c673a9651e44f11a7be116562eb082411d7127d397550fd062d42c61a93c8a4c",
+    "src/assets/gemini-agent-portraits/gemini-umbruch.jpg": "514a9f32a3956175bbb1f1fc90158401a00e042020e690d56f35b4f902070751",
+    "src/assets/gemini-agent-portraits/gemini.jpg": "f18b2731f1a1cf528d03bc3ebc64aceacce04d5d7cf34e3abfa098c5f0713dd3",
+    "src/assets/gemini-agent-portraits/provenance.json": "93d46380216bf7c651b0268581d33124123772532a9936c3245ac375d2b06360",
     "src/assets/ticket-symbols/README.md": "88cced00eb2652e91337b6a561c629696cf301e6c2f2533f13a8063703a131ae",
     "src/assets/ticket-symbols/githubbot.svg": "b26066f87ef31061813b75694b7054bac108f2154f69055319103389c5470bde",
     "src/assets/ticket-symbols/office.svg": "0238736ed21a910fe80122ba980e83b29190b79adae52ab754dbda277848ce89",
@@ -27,100 +49,95 @@
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "1cda4d163d9baf87aac8aa747f4b42c1ec6262044bf8d620ee93215288bea546",
     "src/components/Header.astro": "c997c4aa86d16d0ab70edaaf3c6c3332d0e566cc629386d2872fd7ebd57a44e7",
+    "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824",
+    "src/components/TaskLeasePanel.astro": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
+    "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
+    "src/components/WorkerPolicySettings.astro": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3",
     "src/config/nav_config.json": "0dc51055b0da809445c73ec01cd29fe238b37000e7783ab84edd68ecfbbc078c",
     "src/layouts/BachLayout.astro": "8f45bbac50c150ea9d19f91794bb97b94ad103f5abc5cdef01e70a3c9cc43ac6",
+    "src/lib/agent-avatar-browser.mjs": "13bbd8fd864fcd5fafc4580322d2c19f50c94f36645d723fc812803acc17f68d",
     "src/lib/agent-avatar.mjs": "3057e2f7863031a5d157b7c0e0fb3659678a97fc6eacdeb8645775e263e26147",
+    "src/lib/agent-history.mjs": "9262398aac30160b5433bb3cbc572559e0e1fac4a33a68442bffe552f0c975aa",
+    "src/lib/agent-overview.mjs": "bf4a7d55b4faaa3c726dc2f18ce85e616db6a445bae054cb61beffdabc3b6463",
     "src/lib/capability-board-client.mjs": "7a80423bc472ade80f05065c57ef9b732493b40cd2900f0705b2c3af8f72d831",
     "src/lib/capability-board-ui.mjs": "cdf37bb84c2009c0be06fbe9ba2a9ff1156d50b9e6e2b2f74fcd1ea8c2d28f25",
+    "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
+    "src/lib/domain-pins.mjs": "0bc813215764e5e6fb77044bbd68756351b60ddb38035c188548b95d1a527bd3",
+    "src/lib/domain-routes.mjs": "ba4dd103080f7090c27121009a33efbc4e6af03a7afc75ca77bef4766aa10d08",
+    "src/lib/gemini-avatar-assets.mjs": "72f30b9af1c0374ab30aef6cdb5f5a662af8d4f9448ff86596e0b6fd607e115a",
+    "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
+    "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
+    "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
+    "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
+    "src/lib/task-filters.mjs": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1",
+    "src/lib/task-lease-panel.mjs": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
+    "src/lib/task-result-contract.mjs": "288ae1eca81861709ee878436c94e58faa23027e95b13ba7f0baad8f62a71410",
     "src/lib/task-summary.js": "e28cfddcc7ee559b74be8c9883b946b85571941dda13d5cba97aec3dfcc63d07",
+    "src/lib/task-worker-policy-settings.mjs": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78",
     "src/lib/ticket-symbol-assets.mjs": "207537da4144c4f1627d0086417ad384069085adb1aa8090d6f41f770e6d0b84",
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
+    "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
+    "src/lib/worker-policy-settings.mjs": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb",
     "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+    "src/pages/agenten/running.astro": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
+    "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
     "src/pages/governance/index.astro": "b734a00389abcf4ad580e5ffe0b0c513f64328dcc997684edb0b03a2ada7a477",
     "src/pages/governance/logs.astro": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
     "src/pages/governance/usecases.astro": "860a03ca99e466d9571ab93e350a24105ba3caff69a06f9a06c4a83ee14c3b19",
-    "src/pages/index.astro": "068fbeb644b24919654a846b7fdce7d983300ee74695af3c20c5410d7f1368b3",
+    "src/pages/index.astro": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d",
     "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
     "src/pages/memory.astro": "27de17373b2319a598efc7397bd2dfa96aeb1c543303581cdc93ce2edeb5b74a",
-    "src/pages/settings.astro": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+    "src/pages/settings.astro": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
+    "src/pages/tasks.astro": "96fb342acac1da54412292ce30de7643710b90514de9eff8d4ad4024d8f10f6c",
+    "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
+    "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
+    "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+    "src/scripts/domain-studio.mjs": "2b40b55a952eba22b1494a0405379bf3b6e7724e97845306ecdde115bea00283",
+    "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "cbb6f8ad9eb5516bd8f21e001bb35cdc80b3b2e247485709679c5248d7fe6341",
+    "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
+    "tests/agent-overview.test.mjs": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
+    "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
+    "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
+    "tests/domain-routes.test.mjs": "bdcc11061fbb9a12f670fe6917c890d722d46b9ba6b8f1f87adbe58b1579d353",
     "tests/fabrika.test.mjs": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
-    "tests/system-slots.test.mjs": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
+    "tests/frontend-parity.test.mjs": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5",
+    "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
+    "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
+    "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
+    "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
+    "tests/release-provenance.test.mjs": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
+    "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
+    "tests/system-slots.test.mjs": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b",
+    "tests/task-assignment.test.mjs": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
+    "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
+    "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
+    "tests/task-result-completion.test.mjs": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1",
+    "tests/task-result-history.test.mjs": "bda86e7450b9f0048570cd308c13d4c270b5dea9c784668e65b3cf07698cd855",
+    "tests/task-result-source.test.mjs": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
-    "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
-    "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/frontend-parity.test.mjs": "ff385d01f805114fe83415acf35d42f994d46f567a47f5e0bf97577b8c57f7f5",
-    "tests/task-assignment.test.mjs": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
-    "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
-    ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
-    "tests/release-provenance.test.mjs": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
-    "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
-    "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
-    "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
-    "package-lock.json": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
-    "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "ellmos-module.v2.json": "3881109b884457764bbbed3d42b4bf6e60a6a2aba845fabbefe311303d1d0c78",
-    "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
-    "src/assets/gemini-agent-portraits/claude-neon.jpg": "2f101bdd50a3904abcbe5b9af13fe6dff301f94f469d0cbb24172d76ba9e21f7",
-    "src/assets/gemini-agent-portraits/claude-opus.jpg": "22a3f0bda37c54a96d487186bff4c18552fa879ac38674588aded0f5b3f2a30c",
-    "src/assets/gemini-agent-portraits/copilot.jpg": "c673a9651e44f11a7be116562eb082411d7127d397550fd062d42c61a93c8a4c",
-    "src/assets/gemini-agent-portraits/gemini.jpg": "f18b2731f1a1cf528d03bc3ebc64aceacce04d5d7cf34e3abfa098c5f0713dd3",
-    "src/assets/gemini-agent-portraits/gemini-umbruch.jpg": "514a9f32a3956175bbb1f1fc90158401a00e042020e690d56f35b4f902070751",
-    "src/assets/gemini-agent-portraits/provenance.json": "93d46380216bf7c651b0268581d33124123772532a9936c3245ac375d2b06360",
-    "src/lib/gemini-avatar-assets.mjs": "72f30b9af1c0374ab30aef6cdb5f5a662af8d4f9448ff86596e0b6fd607e115a",
-    "src/lib/agent-avatar-browser.mjs": "13bbd8fd864fcd5fafc4580322d2c19f50c94f36645d723fc812803acc17f68d",
-    "src/lib/domain-routes.mjs": "ba4dd103080f7090c27121009a33efbc4e6af03a7afc75ca77bef4766aa10d08",
-    "tests/domain-routes.test.mjs": "bdcc11061fbb9a12f670fe6917c890d722d46b9ba6b8f1f87adbe58b1579d353",
-    "src/assets/agent-workshop/workshop.jpg": "b3b102785c06ef1cef4e74cacff6445b94bddcdc5d9083c45748c4f21ebc5674",
-    "src/assets/agent-workshop/provenance.json": "ce9d3c13bceb267452aa813371ae9eb8126f54d283521730b3a917bd4f68d764",
-    "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
-    "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
-    "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
-    "src/lib/domain-pins.mjs": "0bc813215764e5e6fb77044bbd68756351b60ddb38035c188548b95d1a527bd3",
-    "src/scripts/domain-studio.mjs": "2b40b55a952eba22b1494a0405379bf3b6e7724e97845306ecdde115bea00283",
-    "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
-    "src/lib/agent-history.mjs": "9262398aac30160b5433bb3cbc572559e0e1fac4a33a68442bffe552f0c975aa",
-    "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
-    "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
-    "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
-    "README.md": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
-    "docs/CONSUMER_CONTRACT.md": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
-    "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
-    "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
-    "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
-    "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
-    "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
-    "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
-    "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
-    "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "public/page-reads.v1.json": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
-    "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
-    "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
-    "tests/task-result-history.test.mjs": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
+    "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
+    "tests/worker-policy-settings.test.mjs": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -490,7 +507,7 @@
         "src/pages/tasks.astro": {
           "source_path": "system/gui/web/src/pages/tasks.astro",
           "source_sha256": "cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9",
-          "imported_sha256": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
+          "imported_sha256": "96fb342acac1da54412292ce30de7643710b90514de9eff8d4ad4024d8f10f6c",
           "adapted": true
         },
         "src/scripts/blueprint-studio.mjs": {
@@ -1255,6 +1272,367 @@
       ]
     },
     {
+      "date": "2026-10-15",
+      "scope": "Task2212: review/selection policy settings, task overrides and optional lease countdowns",
+      "source_base_commit": "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+      "changes": [
+        "Carry forward existing task2212 source implementation 3f28865 without changing runtime task authority.",
+        "Keep failed writes visible after readback and prevent delayed responses for an old task from replacing the new selection.",
+        "Backend worker-policy availability and user acceptance remain required; no runtime completion claim.",
+        "Preserve historical Task2138 hashes and validate the continuous subsequent provenance chain instead of rewriting history for a new feature."
+      ],
+      "files": [
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
+          "sha256": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
+          "sha256": "619deceffa24d6b8ec4532e8b1050612f2cf9a0d64826381f801f4c5166828a0"
+        },
+        {
+          "path": "src/components/TaskWorkerPolicySettings.astro",
+          "previous_sha256": null,
+          "sha256": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a"
+        },
+        {
+          "path": "src/components/WorkerPolicySettings.astro",
+          "previous_sha256": null,
+          "sha256": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3"
+        },
+        {
+          "path": "src/lib/consumer-api-auth.mjs",
+          "previous_sha256": null,
+          "sha256": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a"
+        },
+        {
+          "path": "src/lib/task-worker-policy-settings.mjs",
+          "previous_sha256": null,
+          "sha256": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78"
+        },
+        {
+          "path": "src/lib/worker-policy-settings.mjs",
+          "previous_sha256": null,
+          "sha256": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "sha256": "dbf08cc27db7bab2c65103bcf0ad6864cce481181e22b2659b3fb49304c1d77e"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+          "sha256": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "aa2871efe995b1b9ec6e653ac7d5028ad5ffe97ba4846b2279d92f4410b3f627",
+          "sha256": "b0f63ab6c0e970ecc3a476e63aa59181b9b8c68c93b05d437529f9ea5c204c42"
+        },
+        {
+          "path": "tests/worker-policy-settings.test.mjs",
+          "previous_sha256": null,
+          "sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
+          "sha256": "c86b5e105c8543afa2b820fd5a083fe5ba392b44c1068e608c84bb0a7bb0ecdd"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-15",
+      "scope": "Task2210: revision-bound personal confirmation and remaining completion gates",
+      "source_base_commit": "77d42f93c85eb66d1e74361535c13f6e18e4e288",
+      "changes": [
+        "Bind explicit personal confirmation to the full result revision and task contract.",
+        "Verify stored user and contract events through a fresh independent GET; keep outstanding review gates visible.",
+        "Do not equate successful personal confirmation or a read-only policy decision with task completion."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "b0f63ab6c0e970ecc3a476e63aa59181b9b8c68c93b05d437529f9ea5c204c42",
+          "sha256": "b75a32dae7f71249ca79a32bd7397b5de591668c091471fbb4e7dca6c5b82e5a"
+        },
+        {
+          "path": "src/lib/task-result-contract.mjs",
+          "previous_sha256": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
+          "sha256": "100a304fc5be7cef6b7991d30b7e5842e22a7978320e388ca7251f6746977a79"
+        },
+        {
+          "path": "tests/task-result-completion.test.mjs",
+          "previous_sha256": null,
+          "sha256": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-15",
+      "scope": "Task-Lease countdown and sorting moved to the Tasks board",
+      "source_base_commit": "f8890084c11fa18b51f84cdf8b0c7e103aaf96d3",
+      "changes": [
+        "Read in-progress Tasks and public Task-Lease observations with bounded pagination and concurrency.",
+        "Keep Agenten/Running for actual observed agent runs; no private lease capability enters the browser.",
+        "Preserve historical provenance records and show partial or unavailable observations explicitly."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "b75a32dae7f71249ca79a32bd7397b5de591668c091471fbb4e7dca6c5b82e5a",
+          "sha256": "ab01cd7d184d35ded1213a40a291dd817ac120f217841b600177ff068357f50a"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "dbf08cc27db7bab2c65103bcf0ad6864cce481181e22b2659b3fb49304c1d77e",
+          "sha256": "1ab970fe96788ddd92bd1ffec0d616810de91b29c02285b3a5681c81067ad987"
+        },
+        {
+          "path": "src/components/TaskLeasePanel.astro",
+          "previous_sha256": null,
+          "sha256": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7"
+        },
+        {
+          "path": "src/lib/task-lease-panel.mjs",
+          "previous_sha256": null,
+          "sha256": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f"
+        },
+        {
+          "path": "tests/task-lease-panel.test.mjs",
+          "previous_sha256": null,
+          "sha256": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "619deceffa24d6b8ec4532e8b1050612f2cf9a0d64826381f801f4c5166828a0",
+          "sha256": "821cd72b28cacf9749e4abad163bc3c2370a2bb4afc9473a404e912f4698b24c"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Taskboard: individual status filters and compact accessible actions",
+      "source_base_commit": "4f3afb56f2c932275b997606202d55a4f724743f",
+      "changes": [
+        "Preserve canonical pending, in_progress and review status selections in URL and API queries; retain open, done and all aggregates.",
+        "Require the Task API to confirm the selected status before displaying a page.",
+        "Keep result review and task actions legible inside the 120px column with bounded global styles and accessible names."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "ab01cd7d184d35ded1213a40a291dd817ac120f217841b600177ff068357f50a",
+          "sha256": "c1ca064b65e5c75738f47077964dc942980c1b71e40ef7896c0a64d08249883c"
+        },
+        {
+          "path": "src/lib/task-filters.mjs",
+          "previous_sha256": "2d1c53f87ad3884627d2deb9462e3e0744ba44159bbba5cd26364b504d904531",
+          "sha256": "128661563d7250e30e1d0468a29ef03d03bc5a82229d9c8394f9bc033e5f96c5"
+        },
+        {
+          "path": "tests/task-filters.test.mjs",
+          "previous_sha256": "9bbdb66ac95e0d9739a94cb64c97ec11700b89050e78609d19bbe57f8a34ca89",
+          "sha256": "d00ba41ad026716384a77ac16395a721d3a15bdf79ca8edf4f54a388780adea8"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Taskboard: include the actual archived status as an individual filter",
+      "changes": [
+        "Expose archived as an individual status while retaining aggregate filters and existing aliases.",
+        "Preserve the exact archived status in the URL, API query, and backend applied_filters receipt."
+      ],
+      "actual_backend_status_snapshot": {
+        "source": "NATIVE-ACTUAL-TASK-STATUS-VALUES.json",
+        "sha256": "9ab8579a8a8811c65d7f4fbe33def7b4a628039857a511c6faeba9e61350a8c4",
+        "observed_at": "2026-10-16T00:55:56.574096+00:00",
+        "status_counts": {
+          "archived": 4,
+          "blocked": 22,
+          "cancelled": 67,
+          "completed": 26,
+          "done": 1756,
+          "in_progress": 14,
+          "pending": 152,
+          "review": 158
+        }
+      },
+      "live_api_read": {
+        "method": "GET",
+        "path": "/api/tasks?status=archived&limit=1",
+        "observed_at": "2026-10-16T01:04:01.077700+00:00",
+        "http_status": 200,
+        "success": true,
+        "applied_status": "archived",
+        "total": 4,
+        "rows_returned": 1
+      },
+      "files": [
+        {
+          "path": "src/lib/task-filters.mjs",
+          "previous_sha256": "128661563d7250e30e1d0468a29ef03d03bc5a82229d9c8394f9bc033e5f96c5",
+          "sha256": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "c1ca064b65e5c75738f47077964dc942980c1b71e40ef7896c0a64d08249883c",
+          "sha256": "843f93a9bad2efb0b36062fc506c2b669e9ce7730f0d62bd6146417447c83463"
+        },
+        {
+          "path": "tests/task-filters.test.mjs",
+          "previous_sha256": "d00ba41ad026716384a77ac16395a721d3a15bdf79ca8edf4f54a388780adea8",
+          "sha256": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Shared Running and Dashboard agent overview",
+      "changes": [
+        "Running and Dashboard use one shared controller for access, function and actual-start facets, search, sorting, grouping, compact-list mode and saved preferences.",
+        "Dashboard Running counts require complete runtime evidence; unavailable or transitional source state remains unknown rather than zero.",
+        "The optional worker and core-agent status reads are declared on the Dashboard page."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "1ab970fe96788ddd92bd1ffec0d616810de91b29c02285b3a5681c81067ad987",
+          "sha256": "023d6b23883b584530a9e59150d550d370c16c7c1ef791c885869039e2932c79"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "068fbeb644b24919654a846b7fdce7d983300ee74695af3c20c5410d7f1368b3",
+          "sha256": "126ce712f9b983ab9a65d399a44fa623f564059b9153220245426174e25e3f9d"
+        },
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": null,
+          "sha256": "1f1e2920b8c0e5516d2362cfdbc8c889865199cf76caca2d179f7df3b2144836"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "821cd72b28cacf9749e4abad163bc3c2370a2bb4afc9473a404e912f4698b24c",
+          "sha256": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c"
+        },
+        {
+          "path": "tests/system-slots.test.mjs",
+          "previous_sha256": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
+          "sha256": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": null,
+          "sha256": "3f92f1d0c5e2fd123b3628358874b01ce4835c842a3aecb170516e9a9b2ed4a5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Shared runtime-card details and compact agent list",
+      "changes": [
+        "Use one shared read-only card-content renderer on Running and Dashboard, including portraits, identity, access/function, model, and available task/tool/round/budget/activity evidence.",
+        "Compact-list mode keeps status and actions while hiding portraits and secondary detail; narrow search controls use one column."
+      ],
+      "files": [
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": "1f1e2920b8c0e5516d2362cfdbc8c889865199cf76caca2d179f7df3b2144836",
+          "sha256": "df4e0e55f04cbdfa4f8076bdd25a9d1fb30421946aec40e43f7f4f808dd18b3e"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "023d6b23883b584530a9e59150d550d370c16c7c1ef791c885869039e2932c79",
+          "sha256": "3bd53b51d659bbdaa27ff1c84739d7d90e1056fe821fcad5944b8f88c9a8b369"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "126ce712f9b983ab9a65d399a44fa623f564059b9153220245426174e25e3f9d",
+          "sha256": "22e4f667ff7d32deeadedb53c37a78a0699939f3616d2959d04d9defc7f8cd0c"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "3f92f1d0c5e2fd123b3628358874b01ce4835c842a3aecb170516e9a9b2ed4a5",
+          "sha256": "a5fdfac78882cc70832c4bddf4e5125a3e15fa80b42eb9adfbb6e21727540be4"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Keep the shared card enhancement compatible with non-DOM status projections",
+      "changes": [
+        "Apply the shared DOM renderer only when the current card exposes the required DOM operations; preserve existing projections for non-DOM callers."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "3bd53b51d659bbdaa27ff1c84739d7d90e1056fe821fcad5944b8f88c9a8b369",
+          "sha256": "943a82e4684238d23966fa3ff0358be1377945b9ad39432ee5b1f1f5bdbebdbd"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Keep mixed Running source state visibly uncertain",
+      "changes": [
+        "Keep confirmed active-run cards visible while loading or uncertain sources retain a visible status notice.",
+        "Label worker activity as confirmed-only when any worker runtime status is unverified; do not imply a complete zero count.",
+        "Exercise mixed confirmed/unconfirmed states, empty confirmed state, and healthy confirmed state in the shared projection test."
+      ],
+      "files": [
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": "df4e0e55f04cbdfa4f8076bdd25a9d1fb30421946aec40e43f7f4f808dd18b3e",
+          "sha256": "916d5076d05f20d912b39520eb84366bc04365f5d6a541fa64df8e1e91d0c797"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "943a82e4684238d23966fa3ff0358be1377945b9ad39432ee5b1f1f5bdbebdbd",
+          "sha256": "f4afe3d5c50f4c32263c2ce19fe85f767fef5ecf9c7b3ba38fbe911aafd74367"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "a5fdfac78882cc70832c4bddf4e5125a3e15fa80b42eb9adfbb6e21727540be4",
+          "sha256": "6a5af2ababbcfa6b17ef324786eafd7514088c655d95fea5d5845c68d5ae0145"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "Keep shared overview filters and live summaries accurate",
+      "changes": [
+        "Compact-list display rules now apply only to cards that are not hidden, so filtering remains effective on Running and Dashboard.",
+        "Shared filter refreshes immediately update each page caption; Dashboard preserves its confirmed-count uncertainty note.",
+        "Regression tests cover mixed confirmed/unconfirmed sources and visible-count caption refresh."
+      ],
+      "files": [
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": "916d5076d05f20d912b39520eb84366bc04365f5d6a541fa64df8e1e91d0c797",
+          "sha256": "bf4a7d55b4faaa3c726dc2f18ce85e616db6a445bae054cb61beffdabc3b6463"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "f4afe3d5c50f4c32263c2ce19fe85f767fef5ecf9c7b3ba38fbe911aafd74367",
+          "sha256": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "22e4f667ff7d32deeadedb53c37a78a0699939f3616d2959d04d9defc7f8cd0c",
+          "sha256": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": "6a5af2ababbcfa6b17ef324786eafd7514088c655d95fea5d5845c68d5ae0145",
+          "sha256": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd"
+        }
+      ]
+    },
+    {
       "date": "2026-10-17",
       "scope": "BACH #2229: explicit operator reopen of parked tasks in the task edit dialog",
       "source_base_commit": "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
@@ -1283,6 +1661,267 @@
           "path": "tests/task-result-history.test.mjs",
           "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
           "sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2339: result provenance display without acceptance authority",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "changes": [
+        "Display trusted native, externally attested and unattested result source projections separately from acceptance.",
+        "Revoked or stale external receipts remain external and never fall back to a native source label.",
+        "Use fixed German labels through textContent and clear stale provenance on result reload.",
+        "Keep prior backend source pins and follow-up records unchanged; extend DOM regression fixture for the new text node."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
+          "sha256": "70fb5ccd8d19e5ecd88b04ac68949d0addf50bd3e3a0475a9e017d0567ec2664"
+        },
+        {
+          "path": "src/lib/task-result-contract.mjs",
+          "previous_sha256": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
+          "sha256": "2324f910d7db067accbcabf04365986ff73fab4fd5819c63fad1a947587fc1cb"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3",
+          "sha256": "3ac45341b1cc22145d886880409d70b2cb823ba4cf4adf97bf4b1f6d42608acf"
+        },
+        {
+          "path": "tests/task-result-source.test.mjs",
+          "previous_sha256": null,
+          "sha256": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "scope": "BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance",
+      "source_base_commit": "57c43df5f6b83d07caff4f5285c20873146e3bf2",
+      "merged_source_commit": "ff13cccde77a997ab4d0a0173db43ff88ee3c2be",
+      "common_base_commit": "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+      "branch_bases": [
+        "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+        "a5de187db1005b083e2ed4330f61aafc0553ba04",
+        "57c43df5f6b83d07caff4f5285c20873146e3bf2"
+      ],
+      "changes": [
+        "Preserve deployed policy, lease, completion and overview controls alongside main branch explicit operator reopen.",
+        "Keep both immutable historical follow-up branches and bind their current merged source hashes.",
+        "Release metadata0.2.25 and source-origin display do not claim consumer deployment or live model acceptance."
+      ],
+      "files": [
+        {
+          "path": ".github/workflows/tests.yml",
+          "previous_sha256": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
+          "other_parent_sha256": null,
+          "sha256": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+          "other_parent_sha256": "d7550460a6b4e0e5fe718f8cc8bc1773f18b0c457249e182cfa708702bfd9aac",
+          "sha256": "f915a0e6fc029a872a35ec5526acd7aa50d5a55050f51ef9499f5924bb56af7d"
+        },
+        {
+          "path": "RELEASE_GATE.md",
+          "previous_sha256": "b9801c975b90b3b2c03243576376f9dc168343c0cb10f5d3a8f188635e36287b",
+          "other_parent_sha256": "bae7e9bac289c90d1ece2e8854cfbfb542f716a71e532f6b3490fd43d167c1e1",
+          "sha256": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b"
+        },
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
+          "other_parent_sha256": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
+          "sha256": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "3881109b884457764bbbed3d42b4bf6e60a6a2aba845fabbefe311303d1d0c78",
+          "other_parent_sha256": "3881109b884457764bbbed3d42b4bf6e60a6a2aba845fabbefe311303d1d0c78",
+          "sha256": "dd5053466f5e1be517f23fa8e48ed9ef8ac22d7ee47160c581ef6c6666d54d6d"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+          "other_parent_sha256": "48108d74a389cb5295c3d805cbe637d9ba28108df0a79e29b6a5f7b368e8db29",
+          "sha256": "43284a8c5fd75554fe117e84beb6c240e5a732bbfe6a573b9f17173228b7c9c6"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
+          "other_parent_sha256": "68a798cffbcd11af2bd163d500fa51c665c82884031932b747b8a14ab2b2386a",
+          "sha256": "40598d20498cb106153cb27f522c630ea37fbf65e31146368a9013451b45889a"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eec635a71f91c4acafa01e4c73c16ac2f3386edaa86d201bcc999959f98109a5",
+          "other_parent_sha256": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c",
+          "sha256": "fa0c685cd1b171a2bf119282ce29ea890de078ad99852ca2580520b44c066f9c"
+        },
+        {
+          "path": "src/components/TaskLeasePanel.astro",
+          "previous_sha256": null,
+          "other_parent_sha256": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
+          "sha256": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7"
+        },
+        {
+          "path": "src/components/TaskWorkerPolicySettings.astro",
+          "previous_sha256": null,
+          "other_parent_sha256": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
+          "sha256": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a"
+        },
+        {
+          "path": "src/components/WorkerPolicySettings.astro",
+          "previous_sha256": null,
+          "other_parent_sha256": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3",
+          "sha256": "1ab5b1564a0965416363225d4a92194c9ded9fd75f6bdfcc49a4574e6aa884d3"
+        },
+        {
+          "path": "src/lib/agent-overview.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "bf4a7d55b4faaa3c726dc2f18ce85e616db6a445bae054cb61beffdabc3b6463",
+          "sha256": "bf4a7d55b4faaa3c726dc2f18ce85e616db6a445bae054cb61beffdabc3b6463"
+        },
+        {
+          "path": "src/lib/consumer-api-auth.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
+          "sha256": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a"
+        },
+        {
+          "path": "src/lib/task-assignment.mjs",
+          "previous_sha256": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
+          "other_parent_sha256": "99fdaf57c0eb093cd46eb3f1bdcaa58cea1fbfd89bef5142aab7224cbf4dfd7d",
+          "sha256": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc"
+        },
+        {
+          "path": "src/lib/task-filters.mjs",
+          "previous_sha256": "2d1c53f87ad3884627d2deb9462e3e0744ba44159bbba5cd26364b504d904531",
+          "other_parent_sha256": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1",
+          "sha256": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1"
+        },
+        {
+          "path": "src/lib/task-lease-panel.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
+          "sha256": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f"
+        },
+        {
+          "path": "src/lib/task-result-contract.mjs",
+          "previous_sha256": "2324f910d7db067accbcabf04365986ff73fab4fd5819c63fad1a947587fc1cb",
+          "other_parent_sha256": "100a304fc5be7cef6b7991d30b7e5842e22a7978320e388ca7251f6746977a79",
+          "sha256": "288ae1eca81861709ee878436c94e58faa23027e95b13ba7f0baad8f62a71410"
+        },
+        {
+          "path": "src/lib/task-worker-policy-settings.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78",
+          "sha256": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78"
+        },
+        {
+          "path": "src/lib/worker-policy-settings.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb",
+          "sha256": "eb8d4ba42fef592359c51381ea8126bcb34079a79d3a43bc6e32987a347a6edb"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "other_parent_sha256": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8",
+          "sha256": "ff08da071fd440196888f95877b1d80db05378fcb0b51a3f5d39f1ec22ec53a8"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "068fbeb644b24919654a846b7fdce7d983300ee74695af3c20c5410d7f1368b3",
+          "other_parent_sha256": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d",
+          "sha256": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+          "other_parent_sha256": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee",
+          "sha256": "9c15a9ea57c8c503726b5a7afdda585ff9f7d80ca71b19dc18d0ec3755cfb2ee"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "70fb5ccd8d19e5ecd88b04ac68949d0addf50bd3e3a0475a9e017d0567ec2664",
+          "other_parent_sha256": "843f93a9bad2efb0b36062fc506c2b669e9ce7730f0d62bd6146417447c83463",
+          "sha256": "96fb342acac1da54412292ce30de7643710b90514de9eff8d4ad4024d8f10f6c"
+        },
+        {
+          "path": "tests/agent-overview.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd",
+          "sha256": "03b0a78a5b426b39b9d9b14ada089dfec4590de974cef87f2efccfaa93022fbd"
+        },
+        {
+          "path": "tests/system-slots.test.mjs",
+          "previous_sha256": "6774afb50140ba47cc7c06d63d6df406871fee30aae139a8b0ffb3a10747e3c0",
+          "other_parent_sha256": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b",
+          "sha256": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b"
+        },
+        {
+          "path": "tests/task-assignment.test.mjs",
+          "previous_sha256": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
+          "other_parent_sha256": "5ee7ae0defcdc8ef36edc76c4da821f59ea078399c0c6d30c2a5d94115aef3e3",
+          "sha256": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef"
+        },
+        {
+          "path": "tests/task-filters.test.mjs",
+          "previous_sha256": "9bbdb66ac95e0d9739a94cb64c97ec11700b89050e78609d19bbe57f8a34ca89",
+          "other_parent_sha256": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
+          "sha256": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001"
+        },
+        {
+          "path": "tests/task-lease-panel.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
+          "sha256": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21"
+        },
+        {
+          "path": "tests/task-result-completion.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1",
+          "sha256": "7a4b0c059cdbe66d6ccf1e90b37bbb796be1a1a72c0f0aa19ee5fb6987b93ed1"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "3ac45341b1cc22145d886880409d70b2cb823ba4cf4adf97bf4b1f6d42608acf",
+          "other_parent_sha256": "c86b5e105c8543afa2b820fd5a083fe5ba392b44c1068e608c84bb0a7bb0ecdd",
+          "sha256": "ecab2b658e5c7ece4512ae443c6fd1ed4f6ec1b56fc2f504c2129ab8a4b4a2bd"
+        },
+        {
+          "path": "tests/task-result-source.test.mjs",
+          "previous_sha256": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43",
+          "other_parent_sha256": null,
+          "sha256": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43"
+        },
+        {
+          "path": "tests/worker-policy-settings.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54",
+          "sha256": "5f7cc8c2ccbf87754e92dc1abfe25e83f472866385216d668a426f9d991bfb54"
+        }
+      ]
+    },
+    {
+      "scope": "Task2071: align public Task-Lease consumer documentation with the shipped Tasks panel",
+      "source_base_commit": "44490a04135833b4a142776c07649a61f331137d",
+      "notes": "Document the public task/lease readbacks without bearer capabilities. Preserve the integration record by locating its explicit scope rather than assuming it remains the last follow-up. No application behavior or source import changed.",
+      "files": [
+        {
+          "path": "docs/CONSUMER_CONTRACT.md",
+          "previous_sha256": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
+          "sha256": "69a77e45be79abac10a2f6aef973c3df310f31602596354c6393423e5a347d21"
+        },
+        {
+          "path": "tests/task-result-history.test.mjs",
+          "previous_sha256": "ecab2b658e5c7ece4512ae443c6fd1ed4f6ec1b56fc2f504c2129ab8a4b4a2bd",
+          "sha256": "bda86e7450b9f0048570cd308c13d4c270b5dea9c784668e65b3cf07698cd855"
         }
       ]
     }
