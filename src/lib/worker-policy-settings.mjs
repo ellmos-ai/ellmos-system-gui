@@ -6,6 +6,9 @@ const orderings = new Set(['priority_then_created', 'oldest_first']);
 const policySources = new Set(['system_default', 'user_override']);
 const expiryUnits = new Map([['hours', 3600], ['minutes', 60], ['seconds', 1]]);
 const endpoint = '/api/system/worker-policy';
+const identityEndpoint = '/api/system/worker-model-principals';
+const modelPrincipalBackends = new Set(['ollama', 'openai', 'lmstudio', 'hermes', 'openrouter', 'claude-api']);
+const sha256 = /^[a-f0-9]{64}$/;
 const byId = (id) => document.getElementById(id);
 
 function record(value) {
@@ -22,9 +25,10 @@ function validPolicyResponse(value) {
   const policy = value.policy;
   return typeof policy.policy_version === 'string' && !!policy.policy_version.trim()
     && modes.has(policy.default_mode)
-    && Array.isArray(policy.reviewers)
+    && Array.isArray(policy.reviewers) && policy.reviewers.length <= 64
     && policy.reviewers.every((reviewer) => record(reviewer)
       && typeof reviewer.reviewer_id === 'string' && !!reviewer.reviewer_id.trim()
+      && reviewer.reviewer_id === reviewer.reviewer_id.trim() && reviewer.reviewer_id.length <= 180
       && tiers.has(reviewer.tier))
     && (policy.review_expiry_seconds === null
       || (Number.isSafeInteger(policy.review_expiry_seconds) && policy.review_expiry_seconds > 0))
@@ -33,6 +37,27 @@ function validPolicyResponse(value) {
     && typeof value.selection.resume_bound_task_first === 'boolean'
     && typeof value.selection.decompose_when_idle === 'boolean'
     && orderings.has(value.selection.normal_task_order);
+}
+
+function validModelPrincipalResponse(value) {
+  if (!record(value) || value.schema !== 'bach.worker-model-principals.v1'
+      || value.availability !== 'available'
+      || typeof value.configuration_version !== 'string' || !sha256.test(value.configuration_version)
+      || !Array.isArray(value.bindings) || value.bindings.length > 128) return false;
+  return value.bindings.every((binding) => record(binding)
+    && typeof binding.principal_id === 'string' && !!binding.principal_id.trim()
+    && binding.principal_id === binding.principal_id.trim()
+    && binding.principal_id.length <= 180
+    && modelPrincipalBackends.has(binding.backend_id)
+    && typeof binding.route_sha256 === 'string' && sha256.test(binding.route_sha256)
+    && Array.isArray(binding.requested_models) && binding.requested_models.length > 0
+    && binding.requested_models.length <= 64
+    && binding.requested_models.every((model) => typeof model === 'string'
+      && !!model.trim() && model === model.trim() && model.length <= 240)
+    && Array.isArray(binding.reported_models) && binding.reported_models.length > 0
+    && binding.reported_models.length <= 64
+    && binding.reported_models.every((model) => typeof model === 'string'
+      && !!model.trim() && model === model.trim() && model.length <= 240));
 }
 
 function comparableSettings(policy, selection) {
@@ -184,6 +209,78 @@ function renderPolicy(snapshot) {
   setExpiryAvailability(form);
 }
 
+function reviewerAvailabilityCard(reviewer, identitySnapshot) {
+  const bindings = identitySnapshot
+    ? identitySnapshot.bindings.filter((binding) => binding.principal_id === reviewer.reviewer_id)
+    : [];
+  const article = document.createElement('article');
+  article.className = 'worker-reviewer-availability-card';
+  article.setAttribute('aria-label', 'Reviewer ' + reviewer.reviewer_id);
+  const heading = document.createElement('h4');
+  heading.textContent = reviewer.reviewer_id;
+  const details = document.createElement('dl');
+  const rows = [
+    ['Zugelassene Stufe', reviewer.tier === 'top' ? 'Top' : 'Standard'],
+    ['Anbieterzuordnung', !identitySnapshot
+      ? 'Nicht bestätigt'
+      : bindings.length
+        ? `Bestätigt · ${bindings.length} Route${bindings.length === 1 ? '' : 'n'}`
+        : 'Keine bestätigte Modellroute'],
+    ['Laufzeitverfügbarkeit', !identitySnapshot
+      ? 'Unbekannt: kein bestätigter Principal-Snapshot.'
+      : bindings.length
+        ? 'Unbekannt: das Backend liefert keinen Live-Readiness-Status pro Reviewer.'
+        : 'Keine bestätigte Modellroute für diese Principal-ID.'],
+  ];
+  for (const [label, value] of rows) {
+    const row = document.createElement('div');
+    const term = document.createElement('dt');
+    term.textContent = label;
+    const description = document.createElement('dd');
+    description.textContent = value;
+    row.append(term, description);
+    details.append(row);
+  }
+  article.append(heading, details);
+  return article;
+}
+
+function renderReviewerAvailability(policySnapshot, identitySnapshot, identityError = '') {
+  const status = byId('worker-reviewer-availability-status');
+  const container = byId('worker-policy-reviewer-availability');
+  if (!status || !container) return;
+  container.replaceChildren();
+  const reviewers = policySnapshot?.policy?.reviewers;
+  if (!Array.isArray(reviewers) || !reviewers.length) {
+    status.textContent = 'Im aktuellen Policy-Snapshot sind keine Reviewer freigeschaltet.';
+    return;
+  }
+  status.textContent = identitySnapshot
+    ? 'Policy- und Principal-Snapshot bestätigt. Die Laufzeitbereitschaft einzelner Reviewer bleibt unbekannt.'
+    : 'Policy bestätigt; Principal-Zuordnung nicht bestätigt.'
+      + (identityError ? ' ' + identityError : '');
+  container.append(...reviewers.map((reviewer) => reviewerAvailabilityCard(reviewer, identitySnapshot)));
+}
+
+async function loadModelPrincipalSnapshot() {
+  try {
+    const response = await fetch(identityEndpoint, {
+      cache: 'no-store', credentials: 'same-origin', redirect: 'error',
+      headers: consumerApiHeaders(),
+    });
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    const value = await response.json();
+    if (!validModelPrincipalResponse(value))
+      throw new Error('Schema oder Verfügbarkeit des Principal-Snapshots ist nicht bestätigt.');
+    return {snapshot: value, error: ''};
+  } catch (error) {
+    return {
+      snapshot: null,
+      error: error instanceof Error ? error.message : 'Principal-Snapshot nicht verfügbar.',
+    };
+  }
+}
+
 function collectPolicy(snapshot) {
   const form = byId('worker-policy-form');
   const mode = form.elements.namedItem('default_mode').value;
@@ -249,6 +346,8 @@ export function mountWorkerPolicySettings() {
     setFormEnabled(false);
     refresh.disabled = true;
     showStatus('Worker-Policy wird gelesen …');
+    const reviewerStatus = byId('worker-reviewer-availability-status');
+    if (reviewerStatus) reviewerStatus.textContent = 'Reviewer-Status wird aus dem Backend gelesen …';
     try {
       const response = await fetch(endpoint, {
         cache: 'no-store', credentials: 'same-origin', redirect: 'error',
@@ -261,8 +360,10 @@ export function mountWorkerPolicySettings() {
         throw new Error('Readback bestätigt den Systemstandard nicht.');
       if (expectedPolicy && !sameSettings(value, expectedPolicy))
         throw new Error('Readback entspricht der gespeicherten Policy nicht.');
+      const identity = await loadModelPrincipalSnapshot();
       snapshot = value;
       renderPolicy(value);
+      renderReviewerAvailability(value, identity.snapshot, identity.error);
       setFormEnabled(true);
       showStatus('Backend-Policy gelesen · Änderungen werden erst nach bestätigtem Readback übernommen.', 'available');
       return true;
