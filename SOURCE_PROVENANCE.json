@@ -323,7 +323,8 @@
     "src/components/WorkerLeaseCountdown.astro": "c60b7c2e33e83d833ffdd85066c1aed3d18144108af9ffb0ef09c8960f33c52d",
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
-    "tests/worker-queue.test.mjs": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14"
+    "tests/worker-queue.test.mjs": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
+    "tests/page-reads.test.mjs": "317c12e37193420ad3f9d03786b530d3641db60ba9baeb267d3e07d6b95d6246"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -3522,6 +3523,24 @@
           "path": "tests/worker-queue.test.mjs",
           "previous_sha256": "a367d9bfc32f2e21198b7f5d37892f29a7edb23d4a6cbbd844f7e9bfa7367576",
           "sha256": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
+          "previously_unmapped": true
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "scope": "BACH #2069: GUI0.2.28 CI39735260662 existing duplicate-page fixture formatting",
+      "source_base_commit": "468484742e162a34c8577da8b29ce06ae3dd3ab9",
+      "changes": [
+        "Allow existing duplicate-page negative fixture to capture the actual JSON indentation and CRLF/LF, rather than assuming two spaces.",
+        "Keep exact duplicatePages empty-input and injected duplicate /daemon assertions; explicitly assert the page block exists. Test-case count unchanged; no new tests or manual execution.",
+        "Source manifest content, production logic, original imports and all48 previous followups unchanged."
+      ],
+      "files": [
+        {
+          "path": "tests/page-reads.test.mjs",
+          "previous_sha256": "d2d25e881ed07a55cf477ca56be3062f2a268ed6c49c40356af38f0dee3d4fbc",
+          "sha256": "317c12e37193420ad3f9d03786b530d3641db60ba9baeb267d3e07d6b95d6246",
           "previously_unmapped": true
         }
       ]
