@@ -19,7 +19,8 @@ function approved() {
   Object.assign(data.result,{user_review_revision:revision,user_review_event_id:31,
     contract_attestation_revision:revision,contract_attestation_event_id:32});
   data.completion_evaluation={schema:'bach.worker-completion-evaluation.v1',availability:'available',
-    task_id:42,result_id:23,result_revision:revision,
+    task_id:42,result_id:23,result_revision:revision,status:data.status,
+    result_sha256:data.result.result_sha256,task_version:data.task_version,status_revision:data.status_revision,
     decision:{state:'awaiting_review',completion_allowed:false}};
   return data;
 }
@@ -85,7 +86,10 @@ for(const [name,mutate] of [
 test('eligible completion from a read-only evaluation never becomes a displayed Done',()=>{
   const data=approved();data.completion_evaluation.decision={state:'completed',completion_allowed:true};
   assert.match(taskResultCompletionMessage(data),/Taskabschluss ist noch nicht bestätigt/);
-  data.status='done';data.status_revision=18;data.result.accepted=true;
+  data.status='done';data.status_revision=18;data.result.accepted=true;data.result.reason='accepted';
+  data.result.completion_decision={availability:'available',result_revision:revision,event_id:41,
+    decision_sha256:'e'.repeat(64)};
+  data.completion_evaluation.status='done';data.completion_evaluation.status_revision=18;
   assert.equal(taskResultCompletionMessage(data),'Abgenommen · erledigt.');
   assert.equal(resultAcceptanceConfirmed(target(),data,structuredClone(data)),true);
 });
@@ -98,7 +102,7 @@ test('stale evaluation cannot describe another revision as successfully reviewed
 });
 
 test('completed review child does not imply personal acceptance of its target',()=>{
-  const data=target();data.status='done';data.result.accepted=true;
+  const data=target();data.status='done';data.result.accepted=true;data.result.reason='accepted';
   data.result.completion_decision={availability:'administrative_review_child'};
   assert.equal(taskResultCompletionMessage(data),'Prüfaufgabe abgeschlossen.');
 });

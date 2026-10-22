@@ -4,6 +4,7 @@ import BachLayout from "../layouts/BachLayout.astro";
 import TaskCreateForm from "../components/TaskCreateForm.astro";
 import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.astro";
 import TaskLeasePanel from "../components/TaskLeasePanel.astro";
+import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
 ---
 
 <BachLayout title="Aufgaben" currentPath="/tasks">
@@ -96,10 +97,16 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
       <section class="task-worker-result" aria-live="polite">
         <h3>Ergebnis und Verlauf</h3>
         <p class="task-evidence-hint">Ergebnisabgabe und fachliche Abnahme werden getrennt angezeigt.</p>
+        <GitHubReviewEvidence />
         <p id="task-result-status">Noch nicht geprüft.</p>
         <p id="task-result-content" class="task-description" hidden></p>
         <p id="task-result-meta" class="muted" hidden></p>
         <p id="task-result-source" class="muted" hidden></p>
+        <section id="task-result-gates" class="task-result-gates" aria-labelledby="task-result-gates-heading" hidden>
+          <h4 id="task-result-gates-heading">Prüfschritte und Abnahme</h4>
+          <p class="muted">Jeder Schritt zeigt den aktuellen nativen Readback. Eine Worker-Meldung ist kein unabhängiger Nachweis; offene Ergebnisprüfung und nächste Aufgabenübernahme sind getrennte Zustände.</p>
+          <ol id="task-result-gate-list"></ol>
+        </section>
         <details>
           <summary>Persönliche Freigabe einrichten</summary>
           <p>Mit deiner Bestätigung erklärst du den Auftrag fachlich für erfüllt. Weitere erforderliche Prüfungen bleiben verbindlich. Der Schlüssel gilt in diesem Browser bis zum Schließen des Tabs.</p>
@@ -201,6 +208,13 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
     .task-worker-result details {margin:.8rem 0;}
     .task-worker-result label {display:flex;flex-direction:column;gap:.35rem;}
     .task-worker-result input {color:var(--text);background:var(--bg-card);border:1px solid var(--border);padding:.6rem;margin-bottom:.6rem;max-width:100%;box-sizing:border-box;}
+    .task-result-gates {margin-top:.8rem;padding:.7rem;border:1px solid var(--border);border-radius:var(--radius-sm);}
+    .task-result-gates ol {padding-left:1.5rem;margin-bottom:0;}
+    .task-result-gates li {margin:.65rem 0;overflow-wrap:anywhere;}
+    .task-result-gates li[data-state="confirmed"] strong {color:var(--success-text);}
+    .task-result-gates li[data-state="blocked"] strong,.task-result-gates li[data-state="stale"] strong {color:var(--error-text);}
+    .task-result-gate-state {margin-left:.45rem;font-size:.82em;color:var(--text-muted);}
+    .task-result-gate-detail {margin:.2rem 0 0;color:var(--text-muted);font-size:.88em;}
     .task-result-correction {margin-top:1rem;padding-top:.7rem;border-top:1px solid var(--border);}
     .task-result-correction textarea {display:block;width:100%;box-sizing:border-box;resize:vertical;color:var(--text);background:var(--bg-card);border:1px solid var(--border);padding:.6rem;font:inherit;}
     .task-result-history {margin-top:1rem;padding-top:.7rem;border-top:1px solid var(--border);}
@@ -250,11 +264,12 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
     import {createAssignmentController, taskResponseError, assignmentCatalogue, isGateReopenBlocked} from '../lib/task-assignment.mjs';
     import {readTaskFilters, taskFilterQuery, writeTaskFilters, readTaskPage, taskCountLabel} from '../lib/task-filters.mjs';
     import {correctionAttemptMatchesView, createCorrectionAttempt, generateCorrectionRequestId,
-      buildResultAcceptanceRequest, canConfirmTaskResult, resultAcceptanceConfirmed, taskResultCompletionMessage,
+      buildResultAcceptanceRequest, canConfirmTaskResult, resultAcceptanceConfirmed, taskResultAccepted,
+      taskResultCompletionMessage,
       isCurrentCorrectionTarget, normalizeCorrectionNote, parseTaskResultMaxCharsInput,
       resultMaxCharsEditChange,
       resultOperatorCapabilities, resultSourceSummary, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
-      transitionCorrectionAttempt, validateResultHistoryPage} from '../lib/task-result-contract.mjs';
+      taskResultGateSummary, transitionCorrectionAttempt, validateResultHistoryPage} from '../lib/task-result-contract.mjs';
     let allTasks = [];
     let currentFilters = readTaskFilters(location.search);
     let filteredTotal = null;
@@ -510,6 +525,32 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
       updateCorrectionCount();
       return true;
     }
+    function renderTaskResultGates(readback) {
+      const section = document.getElementById('task-result-gates');
+      const list = document.getElementById('task-result-gate-list');
+      const stateLabels = {
+        confirmed: 'Bestätigt', reported: 'Gemeldet', pending: 'Ausstehend',
+        unavailable: 'Nicht bestätigt', stale: 'Veraltet', blocked: 'Blockiert',
+        not_required: 'Nicht erforderlich', expired: 'Abgelaufen',
+      };
+      list.replaceChildren();
+      const gates = taskResultGateSummary(readback);
+      for (const gate of gates) {
+        const item = document.createElement('li');
+        const heading = document.createElement('strong');
+        const state = document.createElement('span');
+        const detail = document.createElement('p');
+        item.dataset.state = gate.state;
+        heading.textContent = gate.label;
+        state.className = 'task-result-gate-state';
+        state.textContent = stateLabels[gate.state] || 'Nicht bestätigt';
+        detail.className = 'task-result-gate-detail';
+        detail.textContent = gate.detail;
+        item.append(heading, state, detail);
+        list.append(item);
+      }
+      section.hidden = gates.length === 0;
+    }
     async function loadTaskResult(id, revision) {
       if (revision !== taskDetailRevision || selectedTask?.id !== id) return false;
       const requestGeneration = ++taskResultReadGeneration;
@@ -521,11 +562,13 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
       const accept = document.getElementById('task-result-accept');
       const correction = document.getElementById('task-result-correction');
       selectedResult = null; taskResultReadback = null; accept.hidden = true; accept.disabled = true;
+      window.dispatchEvent(new CustomEvent('bach:task-result-readback', {detail:{readback:null}}));
       taskResultCapabilities = {valid:false, accept_result:false, request_correction:false};
       correction.hidden = true; correction.querySelector('button[type="submit"]').disabled = true;
       taskResultStatusMessage = 'Ergebnis wird geprüft.';
       status.textContent = taskResultStatusMessage; text.hidden = meta.hidden = source.hidden = true;
       source.textContent = '';
+      renderTaskResultGates(null);
       resultKeyStatus();
       try {
         const response = await fetch('/api/tasks/' + encodeURIComponent(id) + '/result', {
@@ -541,6 +584,7 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
         }
         const result = data.result;
         taskResultReadback = data;
+        window.dispatchEvent(new CustomEvent('bach:task-result-readback', {detail:{readback:data}}));
         taskResultCapabilities = resultOperatorCapabilities(data);
         if (result == null) {
           taskResultStatusMessage = 'Kein Worker-Ergebnis gespeichert.';
@@ -550,11 +594,12 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
         if (result.schema !== 'bach.worker-result.v1' || result.task_id !== id || typeof result.result !== 'string') {
           throw new Error('Der Ergebnisinhalt ist nicht bestätigt.');
         }
+        renderTaskResultGates(data);
         text.textContent = result.result; text.hidden = false;
         const provenance = resultSourceSummary(data);
         source.textContent = provenance.label + ' ' + provenance.detail;
         source.hidden = false;
-        const accepted = result.accepted === true && ['done','completed'].includes(data.status);
+        const accepted = taskResultAccepted(data);
         taskResultStatusMessage = result.completion_policy_version === 1 ? taskResultCompletionMessage(data)
           : accepted ? 'Abgenommen · erledigt.'
           : result.reason === 'awaiting_review' ? 'Ergebnis abgegeben · Abnahme steht aus.'
@@ -814,10 +859,15 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
       }
     });
 
+    function resetGitHubReviewContext(id) {
+      window.dispatchEvent(new CustomEvent('bach:task-review-context', {detail:{id, task:null, readback:null}}));
+    }
+
     async function openTask(id, {releaseCorrectionGate = true} = {}) {
       if (!Number.isSafeInteger(id) || id <= 0) return;
       const mayReleaseCorrectionGate = releaseCorrectionGate && correctionGateTaskId === id && !correctionPostInFlight;
       const revision = ++taskDetailRevision;
+      resetGitHubReviewContext(id);
       selectedResult = null; taskResultReadback = null;
       taskResultCapabilities = {valid:false, accept_result:false, request_correction:false};
       taskResultStatusMessage = '';
@@ -858,6 +908,7 @@ import TaskLeasePanel from "../components/TaskLeasePanel.astro";
       } catch (cause) {
         if (revision !== taskDetailRevision) return null;
         selectedTask = null;
+        resetGitHubReviewContext(id);
         detailError(cause instanceof Error ? cause.message : 'Task konnte nicht geladen werden.');
         return null;
       }
