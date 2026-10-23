@@ -57,7 +57,7 @@
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/tasks.astro": "dfc32a1f73d3a389eea882cead1f62c0f8d9784ab28f4adf8ddd7678ab9e50e4",
-    "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+    "src/scripts/blueprint-studio.mjs": "7abc8b30d45da3a1e2c172634e8fd6e567f3939946edff8bb8a49f03d016865f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
@@ -176,6 +176,18 @@
           "path": "docs/CONSUMER_CONTRACT.md",
           "previous_sha256": "467b75411d8e01e809f3083b8dc609aeb78a8f2c1db8b0757617eecb3a5b38b5",
           "sha256": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "change": "Task1951: explicit immutable source lineage on edited blueprint copies; require backend revision contract and read back lineage",
+      "source_base_commit": "fe416d9e6ac098c07ac9b6e957cabc316bc6432f",
+      "files": [
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+          "sha256": "7abc8b30d45da3a1e2c172634e8fd6e567f3939946edff8bb8a49f03d016865f"
         }
       ]
     }
