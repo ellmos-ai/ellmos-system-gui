@@ -15,7 +15,7 @@
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "8ef7456d3a84539ec331966783130f14cb5e0a878b6c6743d97da1c187c97c0d",
     "public/page-reads.v1.json": "468eab18f98e66cb18b350fdd7c99b38f7467ac035f70d3cac22eb9df00d38c2",
-    "README.md": "c3e50c98a07f3a42f45c41749e3fd0d841efd45af8b4d1c8952b7cead5301a2b",
+    "README.md": "8284c04ed23012cc724e24c13cc6e12c06e118a756c798c9da2c3ee3247feb90",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
@@ -245,7 +245,7 @@
     "src/lib/gemini-avatar-assets.mjs": "72f30b9af1c0374ab30aef6cdb5f5a662af8d4f9448ff86596e0b6fd607e115a",
     "src/lib/model-sockets-ui.mjs": "1325abb9e163348b3542e906ab5fa16e7b905a2ad10332369db5245f6c0a7379",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
-    "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
+    "src/lib/subscription-agents-client.mjs": "1ab97108188b08594f24bacccca9f95b4e051c477f0fcfaa1ce2c608dab00765",
     "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
     "src/lib/task-filters.mjs": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1",
     "src/lib/task-lease-panel.mjs": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
@@ -331,8 +331,8 @@
     "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236",
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
     "src/lib/task-hindrances.mjs": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10",
-    "docs/subscription-workshop.md": "766c0d52d3c083641ce2bbc801afc1de44327a5a0f5d35e4bf0a25029655b6e5",
-    "src/components/SubscriptionAgentComposer.astro": "ea12dc1c745255b723e0eab65ae4680518d82eac54bec479f4382a1b937f4e9b",
+    "docs/subscription-workshop.md": "eda1d554bd23d9c2635d75c92fd143077a1d210ef559c6ee934b7149687c272f",
+    "src/components/SubscriptionAgentComposer.astro": "84b66b20f45e2dea32a012a5fb24d77905adafc69be249240f0607045aebde8f",
     "docs/BACH_FRONTEND_IMPORT_2026-10-08.md": "61548f8d27f9d6798b6abb3eb30aee9eddf128226f27e5304f4d37e46ca78db7",
     ".github/desktop-toolchain/package-lock.json": "5bcc39431a8772ebd0e0d1a1202eea14ce3b45875a8e8e0d8b4342f079e3f845",
     ".github/desktop-toolchain/package.json": "970e93779f89248574bd205a8f02ee038a997c8427bcb9702257d1f34bb4ae14",
@@ -4633,6 +4633,110 @@
       ],
       "changes": [
         "Retain the inherited branch histories and declare the two exact merge parents."
+      ],
+      "files": []
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2029: explicit pinned system/BACH boot selection and strict v2 preview validation",
+      "source_base_commit": "7e3ca7ec9869ae4c9289ac5ab4b47579937ed78b",
+      "backend_reference_commit": "943fd7bb9e7695d60afed0f39659185ab07bd65c",
+      "changes": [
+        "Use the existing skill library for explicit system and BACH boot roles, bound to exact source hashes and the shared deduplicated thirty-source budget.",
+        "Validate v2 schema, returned boot pins, text delivery and per-source roles without changing the separate v1 contract for direct callers.",
+        "Invalidate copied previews on input and reload; discard late preview and older source-load responses.",
+        "Match native Python Unicode code-point counters for prompts, user instructions and selection rules instead of counting UTF-16 code units; UTF-8 byte counters remain explicit.",
+        "Preserve the published 0.2.28/workshop surface and all historical source imports. No new tests, manual tests/builds, dispatch, claim, release or deployment.",
+        "Compatible backend, suitable deployed sources, target-readable references, Ocean parity and runtime/device/browser acceptance remain required."
+      ],
+      "files": [
+        {
+          "path": "src/lib/subscription-agents-client.mjs",
+          "previous_sha256": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
+          "sha256": "1ab97108188b08594f24bacccca9f95b4e051c477f0fcfaa1ce2c608dab00765"
+        },
+        {
+          "path": "src/components/SubscriptionAgentComposer.astro",
+          "previous_sha256": "ea12dc1c745255b723e0eab65ae4680518d82eac54bec479f4382a1b937f4e9b",
+          "sha256": "84b66b20f45e2dea32a012a5fb24d77905adafc69be249240f0607045aebde8f"
+        },
+        {
+          "path": "docs/subscription-workshop.md",
+          "previous_sha256": "766c0d52d3c083641ce2bbc801afc1de44327a5a0f5d35e4bf0a25029655b6e5",
+          "sha256": "eda1d554bd23d9c2635d75c92fd143077a1d210ef559c6ee934b7149687c272f"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
+          "sha256": "fa8fb2dca46790bef746f00b0b65b7f02019bb4d46ca78d58b9948899e151a0a"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2029: integrate existing pinned boot-source v2 workshop97 into combined Web/App GUI99",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "556d0ba181548c6662e52e18742a37d58b210bc0",
+      "upstream_candidate_commit": "a5fc0263ea340f4ac2d659e688cebc8e7e1605be",
+      "backend_reference_commit": "943fd7bb9e7695d60afed0f39659185ab07bd65c",
+      "changes": [
+        "Regular merge of the existing three boot source product/document files unchanged from97; retain the current shared GUI auth, desktop lifecycle, security, task/model controls and immutable blueprint revisions.",
+        "Keep current system/BACH boot pins, strict v2 roles/source counters, invalidation of stale previews and separate direct v1 callers. No silent v1 downgrade by the workshop.",
+        "Preserve complete source histories and original BACH import snapshots. Backend483, actual source suitability, Ocean parity, target-readable paths and functional consumer/device acceptance remain open."
+      ],
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "c3e50c98a07f3a42f45c41749e3fd0d841efd45af8b4d1c8952b7cead5301a2b",
+          "sha256": "8284c04ed23012cc724e24c13cc6e12c06e118a756c798c9da2c3ee3247feb90"
+        },
+        {
+          "path": "docs/subscription-workshop.md",
+          "previous_sha256": "766c0d52d3c083641ce2bbc801afc1de44327a5a0f5d35e4bf0a25029655b6e5",
+          "sha256": "eda1d554bd23d9c2635d75c92fd143077a1d210ef559c6ee934b7149687c272f"
+        },
+        {
+          "path": "src/components/SubscriptionAgentComposer.astro",
+          "previous_sha256": "ea12dc1c745255b723e0eab65ae4680518d82eac54bec479f4382a1b937f4e9b",
+          "sha256": "84b66b20f45e2dea32a012a5fb24d77905adafc69be249240f0607045aebde8f"
+        },
+        {
+          "path": "src/lib/subscription-agents-client.mjs",
+          "previous_sha256": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
+          "sha256": "1ab97108188b08594f24bacccca9f95b4e051c477f0fcfaa1ce2c608dab00765"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance",
+      "integration_scope": "Task2029: declare exact combined GUI99/onboarding97 merge parents",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "556d0ba181548c6662e52e18742a37d58b210bc0",
+      "branch_bases": [
+        "1d6c0f985834f10ae9e5e051205a33b83efaaa54",
+        "1dcf9e567102da60ca2703331ef4f17291ced3d8",
+        "2697e2c636799082b7b039683e3a8ffb5b4a7a16",
+        "2b0bb0fab82310cde4a7dbf153a6c779d0f2731a",
+        "2f64bcfbe4a73dcc6fb08b3c2081ebbb60b0e1a9",
+        "36d15e43111ec7ad3588d8cc45e5caf10395fcc6",
+        "3ad11d0ab647b9c68c5a15ef34343d81b42fcab5",
+        "425eb4c13c5eba89b722000bb7f09466d5a28e4a",
+        "556d0ba181548c6662e52e18742a37d58b210bc0",
+        "57c43df5f6b83d07caff4f5285c20873146e3bf2",
+        "7044f2f09e5836da9bf27d6b291e68d6c2148a91",
+        "7e3ca7ec9869ae4c9289ac5ab4b47579937ed78b",
+        "8e365a429e11ee47e4d68d619ebef2db11569a83",
+        "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+        "a5de187db1005b083e2ed4330f61aafc0553ba04",
+        "a5fc0263ea340f4ac2d659e688cebc8e7e1605be",
+        "e6e9a92eb849ecdb95d027e067504fa51476f715",
+        "ea0281220da61f682ec4c9b6cef235c6527244b4",
+        "fb37d36bcdec7fb07f4863fa89c6b6a1a7015481",
+        "fe416d9e6ac098c07ac9b6e957cabc316bc6432f"
+      ],
+      "changes": [
+        "Preserve inherited branch histories and declare the exact merge parents."
       ],
       "files": []
     }
