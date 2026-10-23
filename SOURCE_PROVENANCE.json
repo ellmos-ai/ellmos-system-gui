@@ -56,7 +56,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "dfc32a1f73d3a389eea882cead1f62c0f8d9784ab28f4adf8ddd7678ab9e50e4",
+    "src/pages/tasks.astro": "028864f13c3d968f355361c58997d7bd4d4408ea151baea5551a26627c75569e",
     "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
@@ -116,11 +116,13 @@
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "public/page-reads.v1.json": "e7a783ef9355850b637712d29e1743842cd0161f15259e9527d843691e3970d6",
+    "public/page-reads.v1.json": "8625fbb72013fde2513d4cdb1ea24587320c5c06ff9adb5a66cff68530092f3d",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
-    "tests/task-result-history.test.mjs": "16b134ed675ab9a11dbf657afc66f04352adac5efbb9da095cc5556b192be7f0"
+    "tests/task-result-history.test.mjs": "16b134ed675ab9a11dbf657afc66f04352adac5efbb9da095cc5556b192be7f0",
+    "src/lib/task-hindrances.mjs": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10",
+    "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -176,6 +178,40 @@
           "path": "docs/CONSUMER_CONTRACT.md",
           "previous_sha256": "467b75411d8e01e809f3083b8dc609aeb78a8f2c1db8b0757617eecb3a5b38b5",
           "sha256": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "change": "Task2212: shared task detail evidence from native lease and worker policy, version/status correlation, no client-side admission",
+      "source_base_commit": "fe416d9e6ac098c07ac9b6e957cabc316bc6432f",
+      "adapted_reference": {
+        "repository": "ellmos-ai/bach",
+        "commit": "93ad113755015d067dacd80c52452cb9de9a95dd",
+        "path": "system/gui/web/src/lib/task-hindrances.js",
+        "git_blob": "ac432df2e526e81fd7e635e5b104778c56a1c886",
+        "sha256": "0fd805906476b8395feff43f7f7f3b9686913bdf8fb62a6eed7478a0b6248380"
+      },
+      "files": [
+        {
+          "path": "src/lib/task-hindrances.mjs",
+          "previous_sha256": null,
+          "sha256": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "dfc32a1f73d3a389eea882cead1f62c0f8d9784ab28f4adf8ddd7678ab9e50e4",
+          "sha256": "028864f13c3d968f355361c58997d7bd4d4408ea151baea5551a26627c75569e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "e7a783ef9355850b637712d29e1743842cd0161f15259e9527d843691e3970d6",
+          "sha256": "8625fbb72013fde2513d4cdb1ea24587320c5c06ff9adb5a66cff68530092f3d"
+        },
+        {
+          "path": "docs/task-hindrances.md",
+          "previous_sha256": null,
+          "sha256": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
         }
       ]
     }

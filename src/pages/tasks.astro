@@ -81,6 +81,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         <div><dt>Erstellt am</dt><dd id="task-view-created_at"></dd></div>
         <div><dt>Abgeschlossen am</dt><dd id="task-view-completed_at"></dd></div>
       </dl>
+      <section aria-labelledby="task-hindrances-title"><h3 id="task-hindrances-title">Übernahme und Regeln</h3><div id="task-hindrances" aria-live="polite"></div></section>
       <h3>Beschreibung</h3><p id="task-view-description" class="task-description"></p>
       <section class="task-worker-result" aria-live="polite">
         <h3>Worker-Ergebnis</h3>
@@ -166,10 +167,18 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     .task-edit-grid input,.task-edit-grid select,.task-edit-grid textarea { min-width:0; width:100%; box-sizing:border-box; padding:.6rem; background:var(--bg-dark); color:var(--text); border:1px solid var(--border); border-radius:var(--radius-sm); font:inherit; }
     .task-edit-wide { grid-column:1/-1; }
     #task-detail-error { color:var(--error-text); overflow-wrap:anywhere; }
+    #task-hindrances {border:1px solid var(--border);border-radius:8px;padding:1rem;margin:.6rem 0 1.2rem;overflow-wrap:anywhere;}
+    #task-hindrances :global(.task-hindrances-grid) {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1rem;}
+    #task-hindrances :global(h4) {margin:.2rem 0 .5rem;}
+    #task-hindrances :global(ul) {padding-left:1.2rem;margin:0;font-size:.85rem;line-height:1.6;}
+    #task-hindrances :global(li[data-kind="unavailable"]) {color:var(--text-muted);}
+    #task-hindrances :global(li[data-kind="hindrance"]) {font-weight:600;}
+
     @media (max-width:620px) { .task-detail-grid,.task-edit-grid { grid-template-columns:minmax(0,1fr); } .task-edit-wide { grid-column:auto; } }
   </style>
 
   <script>
+    import {readTaskHindrances, renderTaskHindrances} from '../lib/task-hindrances.mjs';
     import {createAssignmentController, taskResponseError, assignmentCatalogue, isGateReopenBlocked} from '../lib/task-assignment.mjs';
     import {readTaskFilters, taskFilterQuery, writeTaskFilters, readTaskPage, taskCountLabel} from '../lib/task-filters.mjs';
     import {correctionAttemptMatchesView, createCorrectionAttempt, generateCorrectionRequestId,
@@ -729,10 +738,23 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       }
     });
 
+    async function loadTaskHindrances(task, revision) {
+      const container=document.getElementById('task-hindrances');
+      try {
+        const model=await readTaskHindrances(task);
+        if(revision!==taskDetailRevision||selectedTask!==task)return;
+        renderTaskHindrances(container,model);
+      } catch {
+        if(revision===taskDetailRevision&&selectedTask===task)
+          container.textContent='Übernahme- und Regeldaten sind nicht verfügbar. Die übrigen Aufgabendetails bleiben nutzbar.';
+      }
+    }
+
     async function openTask(id, {releaseCorrectionGate = true} = {}) {
       if (!Number.isSafeInteger(id) || id <= 0) return;
       const mayReleaseCorrectionGate = releaseCorrectionGate && correctionGateTaskId === id && !correctionPostInFlight;
       const revision = ++taskDetailRevision;
+      document.getElementById('task-hindrances').textContent='Übernahme- und Regeldaten werden geladen…';
       selectedResult = null; taskResultReadback = null;
       taskResultCapabilities = {valid:false, accept_result:false, request_correction:false};
       taskResultStatusMessage = '';
@@ -758,6 +780,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         document.getElementById('task-detail-view').hidden = false;
         document.getElementById('task-edit-form').hidden = true;
         panel.scrollIntoView({ behavior:'smooth', block:'start' });
+        void loadTaskHindrances(task, revision);
         const resultLoaded = await loadTaskResult(id, revision);
         if (revision !== taskDetailRevision) return null;
         const historyLoaded = await loadTaskResultHistory(id, revision);
