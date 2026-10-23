@@ -79,7 +79,7 @@
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
     "package.json": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
-    "package-lock.json": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+    "package-lock.json": "05a7c3f520300d30fe3ff60b403227f26ce23a4d4a129285e17fac19f49cf258",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
     "ellmos-module.v2.json": "3881109b884457764bbbed3d42b4bf6e60a6a2aba845fabbefe311303d1d0c78",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
@@ -120,7 +120,11 @@
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
-    "tests/task-result-history.test.mjs": "16b134ed675ab9a11dbf657afc66f04352adac5efbb9da095cc5556b192be7f0"
+    "tests/task-result-history.test.mjs": "16b134ed675ab9a11dbf657afc66f04352adac5efbb9da095cc5556b192be7f0",
+    "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
+    "tests/dompurify-compatibility.test.mjs": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
+    "tests/fixtures/dompurify-regressions.html": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
+    "tests/run-dompurify-browser.mjs": "c057af020427f46ae9dcbad1e955b9ff5dc816f87f316c2fc48f24dc5247237a"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -1304,6 +1308,59 @@
           "path": "tests/task-result-history.test.mjs",
           "previous_sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3",
           "sha256": "16b134ed675ab9a11dbf657afc66f04352adac5efbb9da095cc5556b192be7f0"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2435: DOMPurify3.4.17 compatibility patch",
+      "source_base_commit": "8e365a429e11ee47e4d68d619ebef2db11569a83",
+      "changes": [
+        "Resolve only DOMPurify to the maintainer-patched version inside Mermaid existing dependency range; preserve every other package record.",
+        "Add explicit synthetic browser regressions for shadow-root templates, detached in-place nodes and XHTML SMIL; retain SVG/MathML controls and existing strict/theme settings.",
+        "No direct dependency or override, Mermaid/KaTeX/application configuration change, consumer installation or release."
+      ],
+      "files": [
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+          "sha256": "05a7c3f520300d30fe3ff60b403227f26ce23a4d4a129285e17fac19f49cf258"
+        },
+        {
+          "path": "SECURITY.md",
+          "previous_sha256": "19421bd0936537d39ba60d19d3c84a51d41525197a1ad666947d086b7fa34231",
+          "sha256": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43"
+        },
+        {
+          "path": "tests/dompurify-compatibility.test.mjs",
+          "previous_sha256": null,
+          "sha256": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6"
+        },
+        {
+          "path": "tests/fixtures/dompurify-regressions.html",
+          "previous_sha256": null,
+          "sha256": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c"
+        },
+        {
+          "path": "tests/run-dompurify-browser.mjs",
+          "previous_sha256": null,
+          "sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2071: suppress Windows consoles in the DOMPurify browser runner",
+      "source_base_commit": "9c73e49ec582ce882d8dd0728f44ec7b777d2a06",
+      "changes": [
+        "Set windowsHide:true on the existing Chromium spawnSync boundary so a console-subsystem headless browser does not allocate a console from a hidden parent.",
+        "Preserve the DOMPurify3.4.17 patch, all browser fixtures, all compatibility cases and application behavior; no browser launch or new/manual tests."
+      ],
+      "files": [
+        {
+          "path": "tests/run-dompurify-browser.mjs",
+          "previous_sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
+          "sha256": "c057af020427f46ae9dcbad1e955b9ff5dc816f87f316c2fc48f24dc5247237a"
         }
       ]
     }
