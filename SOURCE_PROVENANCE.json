@@ -15,7 +15,7 @@
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "8ef7456d3a84539ec331966783130f14cb5e0a878b6c6743d97da1c187c97c0d",
     "public/page-reads.v1.json": "468eab18f98e66cb18b350fdd7c99b38f7467ac035f70d3cac22eb9df00d38c2",
-    "README.md": "2eb5179dca30e0d5917c4a0b43fb97a3d53ec766fec4d9372b2102a17c435146",
+    "README.md": "c3e50c98a07f3a42f45c41749e3fd0d841efd45af8b4d1c8952b7cead5301a2b",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
@@ -333,7 +333,25 @@
     "src/lib/task-hindrances.mjs": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10",
     "docs/subscription-workshop.md": "766c0d52d3c083641ce2bbc801afc1de44327a5a0f5d35e4bf0a25029655b6e5",
     "src/components/SubscriptionAgentComposer.astro": "ea12dc1c745255b723e0eab65ae4680518d82eac54bec479f4382a1b937f4e9b",
-    "docs/BACH_FRONTEND_IMPORT_2026-10-08.md": "61548f8d27f9d6798b6abb3eb30aee9eddf128226f27e5304f4d37e46ca78db7"
+    "docs/BACH_FRONTEND_IMPORT_2026-10-08.md": "61548f8d27f9d6798b6abb3eb30aee9eddf128226f27e5304f4d37e46ca78db7",
+    ".github/desktop-toolchain/package-lock.json": "5bcc39431a8772ebd0e0d1a1202eea14ce3b45875a8e8e0d8b4342f079e3f845",
+    ".github/desktop-toolchain/package.json": "970e93779f89248574bd205a8f02ee038a997c8427bcb9702257d1f34bb4ae14",
+    ".github/workflows/desktop.yml": "dd602c07505b0b8f70b6b267352c5386efbde8232618c749c858999156946405",
+    ".gitignore": "df0aa5c20f4343f59f8af967bd30894135af3c7a3d7a3cb03a87de731f54c919",
+    "desktop/connection.css": "5484e32ebcc1631af773b350dae51682c3a7d099b43510da36cbe8a98980e23b",
+    "desktop/connection.js": "bc522f98f6f0d73663ceeec433c49a5f8bad7f2bee030d0fd6f7fd486113f5be",
+    "desktop/index.html": "7849154183c5a3b9568610fd999b6c6f8af58d76b8eca5fc04f724092cbeae71",
+    "docs/DESKTOP-APP.md": "a0781515adebf307ff3a01f62b93e4cbc55e073a214f5eb595845bff8b90157a",
+    "scripts/package-desktop.py": "18a35a0d43b4ec83783fddc7561b72349bcaa6282210b86153da6db4cf8e919e",
+    "src-tauri/Cargo.lock": "634e09dbaa3cd9a41cc079652acb20140a93f1f1a39c95c9f47c62cd32c4fe3a",
+    "src-tauri/Cargo.toml": "d09ac62b7a75d89be77225c69a87799c2b4d8e7c66bf3f298784017f774ec395",
+    "src-tauri/build.rs": "f153c42b6de2a183d9e93507e953386ef62f54b50b835dd76be4e49253f7d365",
+    "src-tauri/capabilities/local-connection.json": "4675ec4c38e14d654c469fd9ff7eec36d86b8f69260738ba8ff8bec582db1ad8",
+    "src-tauri/icons/generate.py": "569f5475f12bc22254c58f37b9d66c8496b07c5e746f2c0ad65a7f10a70374f4",
+    "src-tauri/icons/icon.ico": "3851bd6980aee6f59283be811e0c7cfe5ba44bb21ab55811868bea27e8a101f7",
+    "src-tauri/icons/icon.png": "32ee9450e6c435653241d86be8370a6b36d169ba7bd93e892bce86ae4da7fe2d",
+    "src-tauri/src/main.rs": "a2743ea46fe3a5667b0ac05028c75c6e2f6d3101a0899bebd767abcab7e9fcd5",
+    "src-tauri/tauri.conf.json": "19095b22344a17c2ea514917672312a22afdf0d450023773d9eabe0dff1710fa"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -4301,6 +4319,179 @@
         "1d6c0f985834f10ae9e5e051205a33b83efaaa54",
         "1dcf9e567102da60ca2703331ef4f17291ced3d8",
         "2697e2c636799082b7b039683e3a8ffb5b4a7a16",
+        "3ad11d0ab647b9c68c5a15ef34343d81b42fcab5",
+        "425eb4c13c5eba89b722000bb7f09466d5a28e4a",
+        "57c43df5f6b83d07caff4f5285c20873146e3bf2",
+        "7044f2f09e5836da9bf27d6b291e68d6c2148a91",
+        "7e3ca7ec9869ae4c9289ac5ab4b47579937ed78b",
+        "8e365a429e11ee47e4d68d619ebef2db11569a83",
+        "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+        "a5de187db1005b083e2ed4330f61aafc0553ba04",
+        "e6e9a92eb849ecdb95d027e067504fa51476f715",
+        "ea0281220da61f682ec4c9b6cef235c6527244b4",
+        "fe416d9e6ac098c07ac9b6e957cabc316bc6432f"
+      ],
+      "changes": [
+        "Retain the inherited branch histories and declare the two exact merge parents."
+      ],
+      "files": []
+    },
+    {
+      "date": "2026-10-22",
+      "scope": "Task2337: Tauri desktop consumer in the existing shared GUI module",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+          "sha256": "f7c0a01c6635d2b8161956572e1f2a1a5f6267a6f5718329f4e2206da32cf66c"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2337: clear stale connection success on native backend return",
+      "source_base_commit": "3fd0ff58926f50c7eb7af60b9a8ab16e07e81d2f",
+      "desktop_predecessor_commit": "8ee81d13700c8cfce54628c98488cb89d60199b7",
+      "changes": [
+        "Carry the existing Tauri consumer and installer workflow into current shared GUI main.",
+        "Reload only the trusted bundled connection document after backend display ends; invalidate late attach responses.",
+        "Preserve failed-display errors, saved addresses and the existing local-only IPC boundary."
+      ],
+      "files": [
+        {
+          "path": "src-tauri/src/main.rs",
+          "previous_sha256": "57152b3ce58c7f60b72d51d81d55fc60c1dfc6637cebffbb7fa3535e9add88cd",
+          "sha256": "a2743ea46fe3a5667b0ac05028c75c6e2f6d3101a0899bebd767abcab7e9fcd5"
+        },
+        {
+          "path": "docs/DESKTOP-APP.md",
+          "previous_sha256": "e7d03796cab87d73dddba5aa918c401ba457b6dc77c1605247fcbb537e0ad81b",
+          "sha256": "a0781515adebf307ff3a01f62b93e4cbc55e073a214f5eb595845bff8b90157a"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2071: carry existing Tauri installers and corrected desktop lifecycle96 into the combined shared GUI99 source",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "2b0bb0fab82310cde4a7dbf153a6c779d0f2731a",
+      "upstream_candidate_commit": "2f64bcfbe4a73dcc6fb08b3c2081ebbb60b0e1a9",
+      "changes": [
+        "Normal merge of the exact existing candidate; retain the combined GUI028, task context, workshop, model configuration, native revision and profile-delete source.",
+        "Only source integration and provenance reconciliation; no independent approval or runtime acceptance.",
+        "Retain full historical provenance records and original import/source snapshots; files_sha256 is the current-byte authority."
+      ],
+      "files": [
+        {
+          "path": ".github/desktop-toolchain/package-lock.json",
+          "previous_sha256": null,
+          "sha256": "5bcc39431a8772ebd0e0d1a1202eea14ce3b45875a8e8e0d8b4342f079e3f845"
+        },
+        {
+          "path": ".github/desktop-toolchain/package.json",
+          "previous_sha256": null,
+          "sha256": "970e93779f89248574bd205a8f02ee038a997c8427bcb9702257d1f34bb4ae14"
+        },
+        {
+          "path": ".github/workflows/desktop.yml",
+          "previous_sha256": null,
+          "sha256": "dd602c07505b0b8f70b6b267352c5386efbde8232618c749c858999156946405"
+        },
+        {
+          "path": ".gitignore",
+          "previous_sha256": null,
+          "sha256": "df0aa5c20f4343f59f8af967bd30894135af3c7a3d7a3cb03a87de731f54c919"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "2eb5179dca30e0d5917c4a0b43fb97a3d53ec766fec4d9372b2102a17c435146",
+          "sha256": "c3e50c98a07f3a42f45c41749e3fd0d841efd45af8b4d1c8952b7cead5301a2b"
+        },
+        {
+          "path": "desktop/connection.css",
+          "previous_sha256": null,
+          "sha256": "5484e32ebcc1631af773b350dae51682c3a7d099b43510da36cbe8a98980e23b"
+        },
+        {
+          "path": "desktop/connection.js",
+          "previous_sha256": null,
+          "sha256": "bc522f98f6f0d73663ceeec433c49a5f8bad7f2bee030d0fd6f7fd486113f5be"
+        },
+        {
+          "path": "desktop/index.html",
+          "previous_sha256": null,
+          "sha256": "7849154183c5a3b9568610fd999b6c6f8af58d76b8eca5fc04f724092cbeae71"
+        },
+        {
+          "path": "docs/DESKTOP-APP.md",
+          "previous_sha256": null,
+          "sha256": "a0781515adebf307ff3a01f62b93e4cbc55e073a214f5eb595845bff8b90157a"
+        },
+        {
+          "path": "scripts/package-desktop.py",
+          "previous_sha256": null,
+          "sha256": "18a35a0d43b4ec83783fddc7561b72349bcaa6282210b86153da6db4cf8e919e"
+        },
+        {
+          "path": "src-tauri/Cargo.lock",
+          "previous_sha256": null,
+          "sha256": "634e09dbaa3cd9a41cc079652acb20140a93f1f1a39c95c9f47c62cd32c4fe3a"
+        },
+        {
+          "path": "src-tauri/Cargo.toml",
+          "previous_sha256": null,
+          "sha256": "d09ac62b7a75d89be77225c69a87799c2b4d8e7c66bf3f298784017f774ec395"
+        },
+        {
+          "path": "src-tauri/build.rs",
+          "previous_sha256": null,
+          "sha256": "f153c42b6de2a183d9e93507e953386ef62f54b50b835dd76be4e49253f7d365"
+        },
+        {
+          "path": "src-tauri/capabilities/local-connection.json",
+          "previous_sha256": null,
+          "sha256": "4675ec4c38e14d654c469fd9ff7eec36d86b8f69260738ba8ff8bec582db1ad8"
+        },
+        {
+          "path": "src-tauri/icons/generate.py",
+          "previous_sha256": null,
+          "sha256": "569f5475f12bc22254c58f37b9d66c8496b07c5e746f2c0ad65a7f10a70374f4"
+        },
+        {
+          "path": "src-tauri/icons/icon.ico",
+          "previous_sha256": null,
+          "sha256": "3851bd6980aee6f59283be811e0c7cfe5ba44bb21ab55811868bea27e8a101f7"
+        },
+        {
+          "path": "src-tauri/icons/icon.png",
+          "previous_sha256": null,
+          "sha256": "32ee9450e6c435653241d86be8370a6b36d169ba7bd93e892bce86ae4da7fe2d"
+        },
+        {
+          "path": "src-tauri/src/main.rs",
+          "previous_sha256": null,
+          "sha256": "a2743ea46fe3a5667b0ac05028c75c6e2f6d3101a0899bebd767abcab7e9fcd5"
+        },
+        {
+          "path": "src-tauri/tauri.conf.json",
+          "previous_sha256": null,
+          "sha256": "19095b22344a17c2ea514917672312a22afdf0d450023773d9eabe0dff1710fa"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance",
+      "integration_scope": "Task2071: declare exact combined GUI/candidate96 merge parents",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "2b0bb0fab82310cde4a7dbf153a6c779d0f2731a",
+      "branch_bases": [
+        "1d6c0f985834f10ae9e5e051205a33b83efaaa54",
+        "1dcf9e567102da60ca2703331ef4f17291ced3d8",
+        "2697e2c636799082b7b039683e3a8ffb5b4a7a16",
+        "2b0bb0fab82310cde4a7dbf153a6c779d0f2731a",
+        "2f64bcfbe4a73dcc6fb08b3c2081ebbb60b0e1a9",
         "3ad11d0ab647b9c68c5a15ef34343d81b42fcab5",
         "425eb4c13c5eba89b722000bb7f09466d5a28e4a",
         "57c43df5f6b83d07caff4f5285c20873146e3bf2",
