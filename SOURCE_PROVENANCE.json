@@ -37,10 +37,10 @@
     "src/lib/task-summary.js": "e28cfddcc7ee559b74be8c9883b946b85571941dda13d5cba97aec3dfcc63d07",
     "src/lib/ticket-symbol-assets.mjs": "207537da4144c4f1627d0086417ad384069085adb1aa8090d6f41f770e6d0b84",
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
-    "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+    "src/pages/agenten/blueprints.astro": "ed78a8b47063f6201b089512f70b662258ebe474b49a5f1be9e3793aedaf125a",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+    "src/pages/agenten/running.astro": "6e683bad850bfc26aa2fde88f5b5d621e334c63a475bef97e26b1811106e888e",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
@@ -57,7 +57,7 @@
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/tasks.astro": "df90cb873b9bc8aa1d75898e6097cf1a94ad6f02c4854422c4b02cf9ff2e2cee",
-    "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+    "src/scripts/blueprint-studio.mjs": "76b074d26bd203294db0ddb59d475f9b3c172ac2b531977b92d70301399511d7",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
@@ -120,7 +120,8 @@
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
-    "tests/task-result-history.test.mjs": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
+    "tests/task-result-history.test.mjs": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3",
+    "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -376,7 +377,7 @@
         "src/pages/agenten/blueprints.astro": {
           "source_path": "system/gui/web/src/pages/agenten/blueprints.astro",
           "source_sha256": "3725a2ca85f05682b16d5b6e5b5ac7e44fc9431df686e9aed349bcb2d006d316",
-          "imported_sha256": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
+          "imported_sha256": "ed78a8b47063f6201b089512f70b662258ebe474b49a5f1be9e3793aedaf125a",
           "adapted": true
         },
         "src/pages/agenten/fabrika.astro": {
@@ -394,7 +395,7 @@
         "src/pages/agenten/running.astro": {
           "source_path": "system/gui/web/src/pages/agenten/running.astro",
           "source_sha256": "c4700fb05438cdd20df993894f7b649be9f53a1a56b5dea80fa140164b943728",
-          "imported_sha256": "ca343f07d31ae30ff03561d5df816226d7a8939a1a8e0f2803dc8b6bda977cc7",
+          "imported_sha256": "6e683bad850bfc26aa2fde88f5b5d621e334c63a475bef97e26b1811106e888e",
           "adapted": true
         },
         "src/pages/agenten/sessions.astro": {
@@ -496,7 +497,7 @@
         "src/scripts/blueprint-studio.mjs": {
           "source_path": "system/gui/web/src/scripts/blueprint-studio.mjs",
           "source_sha256": "736857b5f8f657abae6886ea384a8a801210d56dfa1947c044995a4787708b88",
-          "imported_sha256": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+          "imported_sha256": "76b074d26bd203294db0ddb59d475f9b3c172ac2b531977b92d70301399511d7",
           "adapted": true
         },
         "src/styles/agent-avatars.css": {
@@ -1283,6 +1284,48 @@
           "path": "tests/task-result-history.test.mjs",
           "previous_sha256": "f536c9dda374e2be312c1baaa0126bfe549cbdd05f96f45c547b50e58d37b7cb",
           "sha256": "32dec51deff50d03bad8f0e90a218f91b5c564a93d545e50d56274427d614ab3"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "BACH #2010: optional blueprint colors and explicit instance override",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "changes": [
+        "Persist colors only when the native backend advertises bach.agent-colors.v1; require exact color readback after blueprint save.",
+        "Apply validated color to an additional card accent only; preserve text, background and runtime status. Distinguish blueprint inheritance and explicit instance overrides.",
+        "Migrate the main-worker Running and Blueprint text colors to reviewed theme text tokens and remove their contrast-test exemptions."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+          "sha256": "ed78a8b47063f6201b089512f70b662258ebe474b49a5f1be9e3793aedaf125a"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "sha256": "6e683bad850bfc26aa2fde88f5b5d621e334c63a475bef97e26b1811106e888e"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+          "sha256": "76b074d26bd203294db0ddb59d475f9b3c172ac2b531977b92d70301399511d7"
+        },
+        {
+          "path": "src/scripts/agent-color.mjs",
+          "previous_sha256": null,
+          "sha256": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5"
+        },
+        {
+          "path": "tests/agent-color.test.mjs",
+          "previous_sha256": null,
+          "sha256": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba"
+        },
+        {
+          "path": "tests/theme-contrast.test.mjs",
+          "previous_sha256": "93ba34b109a6b0392785e93e95eafa35bdf855933e58ba959e1999a58ea45e7d",
+          "sha256": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4"
         }
       ]
     }
