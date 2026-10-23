@@ -15,7 +15,7 @@
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "d06f68e429ad7420b0b5a981dd27160137819e8a69ad18a7c15407ca4fdb65e0",
-    "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
+    "README.md": "fa8fb2dca46790bef746f00b0b65b7f02019bb4d46ca78d58b9948899e151a0a",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
@@ -245,7 +245,7 @@
     "src/lib/gemini-avatar-assets.mjs": "72f30b9af1c0374ab30aef6cdb5f5a662af8d4f9448ff86596e0b6fd607e115a",
     "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
-    "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
+    "src/lib/subscription-agents-client.mjs": "1ab97108188b08594f24bacccca9f95b4e051c477f0fcfaa1ce2c608dab00765",
     "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
     "src/lib/task-filters.mjs": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1",
     "src/lib/task-lease-panel.mjs": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
@@ -325,8 +325,8 @@
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
     "tests/worker-queue.test.mjs": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
     "tests/page-reads.test.mjs": "317c12e37193420ad3f9d03786b530d3641db60ba9baeb267d3e07d6b95d6246",
-    "src/components/SubscriptionAgentComposer.astro": "ea12dc1c745255b723e0eab65ae4680518d82eac54bec479f4382a1b937f4e9b",
-    "docs/subscription-workshop.md": "766c0d52d3c083641ce2bbc801afc1de44327a5a0f5d35e4bf0a25029655b6e5"
+    "src/components/SubscriptionAgentComposer.astro": "84b66b20f45e2dea32a012a5fb24d77905adafc69be249240f0607045aebde8f",
+    "docs/subscription-workshop.md": "eda1d554bd23d9c2635d75c92fd143077a1d210ef559c6ee934b7149687c272f"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -3609,6 +3609,42 @@
           "path": "docs/subscription-workshop.md",
           "previous_sha256": null,
           "sha256": "766c0d52d3c083641ce2bbc801afc1de44327a5a0f5d35e4bf0a25029655b6e5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2029: explicit pinned system/BACH boot selection and strict v2 preview validation",
+      "source_base_commit": "7e3ca7ec9869ae4c9289ac5ab4b47579937ed78b",
+      "backend_reference_commit": "943fd7bb9e7695d60afed0f39659185ab07bd65c",
+      "changes": [
+        "Use the existing skill library for explicit system and BACH boot roles, bound to exact source hashes and the shared deduplicated thirty-source budget.",
+        "Validate v2 schema, returned boot pins, text delivery and per-source roles without changing the separate v1 contract for direct callers.",
+        "Invalidate copied previews on input and reload; discard late preview and older source-load responses.",
+        "Match native Python Unicode code-point counters for prompts, user instructions and selection rules instead of counting UTF-16 code units; UTF-8 byte counters remain explicit.",
+        "Preserve the published 0.2.28/workshop surface and all historical source imports. No new tests, manual tests/builds, dispatch, claim, release or deployment.",
+        "Compatible backend, suitable deployed sources, target-readable references, Ocean parity and runtime/device/browser acceptance remain required."
+      ],
+      "files": [
+        {
+          "path": "src/lib/subscription-agents-client.mjs",
+          "previous_sha256": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
+          "sha256": "1ab97108188b08594f24bacccca9f95b4e051c477f0fcfaa1ce2c608dab00765"
+        },
+        {
+          "path": "src/components/SubscriptionAgentComposer.astro",
+          "previous_sha256": "ea12dc1c745255b723e0eab65ae4680518d82eac54bec479f4382a1b937f4e9b",
+          "sha256": "84b66b20f45e2dea32a012a5fb24d77905adafc69be249240f0607045aebde8f"
+        },
+        {
+          "path": "docs/subscription-workshop.md",
+          "previous_sha256": "766c0d52d3c083641ce2bbc801afc1de44327a5a0f5d35e4bf0a25029655b6e5",
+          "sha256": "eda1d554bd23d9c2635d75c92fd143077a1d210ef559c6ee934b7149687c272f"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
+          "sha256": "fa8fb2dca46790bef746f00b0b65b7f02019bb4d46ca78d58b9948899e151a0a"
         }
       ]
     }

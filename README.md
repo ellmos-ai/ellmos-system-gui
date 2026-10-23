@@ -119,3 +119,5 @@ The separate **Universal GUI** is developed from `ellmos-unified-gui`; its Jinja
 German end-user labels intentionally use real umlauts. This technical README is in English.
 
 License: MIT.
+
+The external-agent workshop now binds explicitly selected system/BACH boot skills by exact source hash using the v2 preview contract. It requires a compatible backend (BACH draft PR483); it does not silently downgrade to a preview without boot sources. Source reloads and form edits invalidate old previews. Target readability, suitable deployed boot sources, Ocean parity and device/browser acceptance remain separate requirements. See [the workshop contract](docs/subscription-workshop.md).
