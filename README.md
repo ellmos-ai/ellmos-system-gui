@@ -57,6 +57,8 @@ python scripts/package_release.py
 
 `dist/dist-manifest.json` records file SHA-256 hashes and the exact source commit. The packager refuses a stale build and produces a deterministic ZIP including the MIT license. Consumers must pin and verify both the source commit and ZIP hash. A development build from uncommitted changes is not a publishable release receipt.
 
+The existing **Native GUI validation** workflow publishes each successfully verified web ZIP as a `web-preview-<OS>-<run-attempt>` Actions artifact, retained for 14 days. Download the artifact from the exact workflow run and unpack its outer Actions ZIP to obtain the unchanged distribution ZIP. The inner `dist/dist-manifest.json` identifies the actual CI checkout and every distributed file hash; a pull-request build may name its merge checkout rather than the branch head. Verify that exact source/tree and the ZIP hash before consumer use. These candidate artifacts are separate from a tagged release, installation and functional acceptance. Existing tests, clean-build/manifest/archive checks and consumer activation gates remain in place.
+
 `ellmos-module.v2.json` registers only `gui.static.distribution` and `gui.same-origin.client`. It owns no runtime state. Authentication, backend adapters, task authority and worker execution belong to the consumer; installing this static distribution does not make those capabilities available.
 
 ## Worker selection

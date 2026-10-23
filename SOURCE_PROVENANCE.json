@@ -6,7 +6,7 @@
   "license": "MIT",
   "files_sha256": {
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
-    ".github/workflows/tests.yml": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
+    ".github/workflows/tests.yml": "066acde0c6ddf0d216965824923f5a21a992aa54e64c46dd9761fd8448528456",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "6d015e494968a95f5e2374449fcc6a1f181f7a8fcc441fabe3d3f894c1790762",
@@ -15,7 +15,7 @@
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "8ef7456d3a84539ec331966783130f14cb5e0a878b6c6743d97da1c187c97c0d",
     "public/page-reads.v1.json": "468eab18f98e66cb18b350fdd7c99b38f7467ac035f70d3cac22eb9df00d38c2",
-    "README.md": "8284c04ed23012cc724e24c13cc6e12c06e118a756c798c9da2c3ee3247feb90",
+    "README.md": "f8eba3de1106457abafac50fc22aae4ccfb95f0129864ca94f971d98395ba041",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
@@ -4739,6 +4739,29 @@
         "Preserve inherited branch histories and declare the exact merge parents."
       ],
       "files": []
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task1829: expose the existing verified web preview ZIP through native GUI CI artifacts",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "2bb2b9b846d60a58eff22d9fd5f315929127cf6c",
+      "changes": [
+        "Append one upload-artifact v4 step after the unchanged clean build, manifest and archive verification; keep each OS/run-attempt output distinct with missing-file failure and14-day retention.",
+        "Upload the existing deterministic distribution ZIP unchanged, without hidden files or artifact replacement. Preserve every application/desktop/source-test/dependency/version and native acceptance gate.",
+        "Document exact CI checkout/source-tree/manifest/archive verification and the distinction from release, installation and functional acceptance."
+      ],
+      "files": [
+        {
+          "path": ".github/workflows/tests.yml",
+          "previous_sha256": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
+          "sha256": "066acde0c6ddf0d216965824923f5a21a992aa54e64c46dd9761fd8448528456"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "8284c04ed23012cc724e24c13cc6e12c06e118a756c798c9da2c3ee3247feb90",
+          "sha256": "f8eba3de1106457abafac50fc22aae4ccfb95f0129864ca94f971d98395ba041"
+        }
+      ]
     }
   ],
   "readme_banner": {

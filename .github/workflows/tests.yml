@@ -42,3 +42,11 @@ jobs:
         run: npm run build:release
       - name: Verify manifest hashes and local preview archive
         run: python scripts/package_release.py
+      - name: Upload verified web preview archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-preview-${{ runner.os }}-${{ github.run_attempt }}
+          path: release/ellmos-system-gui-*.zip
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
