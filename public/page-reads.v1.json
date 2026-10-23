@@ -377,6 +377,53 @@
     "method": "GET",
     "path": "/api/governance/status",
     "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/gui/capabilities",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/locks",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/policy-registry",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/decisions",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/policies",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/effective-policy",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/gui/capabilities",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
    }
   ],
   "/governance/logs": [
