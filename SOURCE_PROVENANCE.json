@@ -14,7 +14,7 @@
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "01c58d7eb81120dd1f21594b22772f2c39d835bcd270ff4a28f5adc9a3048589",
+    "public/page-reads.v1.json": "889e540f10a3b036f9b23125d0361fe3dda7912a11b534f8c4d11540681f1eda",
     "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -259,7 +259,7 @@
     "src/pages/agenten/blueprints.astro": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "1fb3ebab9266096e519d65c4c30333495c3438e56e7786e676759b911580d72c",
+    "src/pages/agenten/running.astro": "a8ac7736d6d826a9a32850e77d9ed95a5ecfed575664cb0ca7365e28b96c5a9c",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
@@ -271,7 +271,7 @@
     "src/pages/index.astro": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d",
     "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
     "src/pages/memory.astro": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c",
-    "src/pages/settings.astro": "754497308e7048fe2f4b10578dda928fe9d4eba551e0996cae97c13b6fb92e7e",
+    "src/pages/settings.astro": "5c56cd016f8f3b994d2e6517dfb6c62800ab347e08dc88fa6545a0f35da9646f",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
@@ -665,7 +665,7 @@
         "src/pages/agenten/blueprints.astro": {
           "source_path": "system/gui/web/src/pages/agenten/blueprints.astro",
           "source_sha256": "3725a2ca85f05682b16d5b6e5b5ac7e44fc9431df686e9aed349bcb2d006d316",
-          "imported_sha256": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
+          "imported_sha256": "7448194d06366c1e164fdff188284300b6dc565a7cf51804703a2ec60735bf34",
           "adapted": true
         },
         "src/pages/agenten/fabrika.astro": {
@@ -683,7 +683,7 @@
         "src/pages/agenten/running.astro": {
           "source_path": "system/gui/web/src/pages/agenten/running.astro",
           "source_sha256": "c4700fb05438cdd20df993894f7b649be9f53a1a56b5dea80fa140164b943728",
-          "imported_sha256": "1fb3ebab9266096e519d65c4c30333495c3438e56e7786e676759b911580d72c",
+          "imported_sha256": "ca343f07d31ae30ff03561d5df816226d7a8939a1a8e0f2803dc8b6bda977cc7",
           "adapted": true
         },
         "src/pages/agenten/sessions.astro": {
@@ -713,7 +713,7 @@
         "src/pages/governance/index.astro": {
           "source_path": "system/gui/web/src/pages/governance/index.astro",
           "source_sha256": "7e97d0d5130ff9d0161b836f37783c6ef4db3a5f0d2b3d3ce2b19ff48610c503",
-          "imported_sha256": "5371d2b101453c0cdcdf3edeff7c83e48a7f949b271652b6870ae35aadf4c137",
+          "imported_sha256": "cdbafcc6f34eb479d82b4f8cd4cd48ac3b4a67076058c9178b8548b0c5b33546",
           "adapted": true
         },
         "src/pages/governance/logs.astro": {
@@ -779,13 +779,13 @@
         "src/pages/tasks.astro": {
           "source_path": "system/gui/web/src/pages/tasks.astro",
           "source_sha256": "cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9",
-          "imported_sha256": "4c721e2ef8370acc47d91227839b50b149c15727c4637cc3871270095beef00c",
+          "imported_sha256": "ed62c7834a6437c8afed43050f95e4cbd7b00945656e92dc2e985e70e4084416",
           "adapted": true
         },
         "src/scripts/blueprint-studio.mjs": {
           "source_path": "system/gui/web/src/scripts/blueprint-studio.mjs",
           "source_sha256": "736857b5f8f657abae6886ea384a8a801210d56dfa1947c044995a4787708b88",
-          "imported_sha256": "dba34c659eaebca94b1f4820cd6fefea40e68f88ebf2414d34d03d8534ad0d70",
+          "imported_sha256": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
           "adapted": true
         },
         "src/styles/agent-avatars.css": {
@@ -3954,6 +3954,34 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "a2772303b7d92c771a8093b242117aa6a1f3d83184ae38db7a357ad8e8430c20",
           "sha256": "01c58d7eb81120dd1f21594b22772f2c39d835bcd270ff4a28f5adc9a3048589"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2212 CI: keep saved model configuration outside measured Running resources and preserve the historical import snapshot",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "e73594510e63985baea1d87bfef9211a16c9e72d",
+      "changes": [
+        "Move the unchanged model configuration component to Settings / Worker & Tasks; keep the R3 Running view and direct profile model bindings.",
+        "Move the five page-contract operations to Settings without changing their client or permissions.",
+        "Restore the historical BACH import snapshot from candidate83; files_sha256 and subsequent followups remain the current-byte authority. No source hashes or historical followups are removed."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "1fb3ebab9266096e519d65c4c30333495c3438e56e7786e676759b911580d72c",
+          "sha256": "a8ac7736d6d826a9a32850e77d9ed95a5ecfed575664cb0ca7365e28b96c5a9c"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "754497308e7048fe2f4b10578dda928fe9d4eba551e0996cae97c13b6fb92e7e",
+          "sha256": "5c56cd016f8f3b994d2e6517dfb6c62800ab347e08dc88fa6545a0f35da9646f"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "01c58d7eb81120dd1f21594b22772f2c39d835bcd270ff4a28f5adc9a3048589",
+          "sha256": "889e540f10a3b036f9b23125d0361fe3dda7912a11b534f8c4d11540681f1eda"
         }
       ]
     }

@@ -3,6 +3,7 @@
 import BachLayout from "../layouts/BachLayout.astro";
 import SystemClusterStatus from "../components/SystemClusterStatus.astro";
 import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
+import ModelSockets from "../components/ModelSockets.astro";
 ---
 
 <BachLayout title="Einstellungen & Setup" currentPath="/settings">
@@ -272,6 +273,11 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     <div class="tab-pane" id="pane-worker-policy" role="tabpanel" aria-labelledby="settings-tab-worker-policy" tabindex="0" hidden>
       <p class="text-muted">Abschlussmodi, Reviewer, Task-Auswahl und Review-Verfall. Hochsicherheit kann Läufe anhalten; ausgewogener Modus erlaubt unabhängige Weiterarbeit. GitHub-Aufgaben können ihre externe PR-Prüfung nutzen. Änderungen bleiben deaktiviert, solange das verbundene Backend keine versionierte Policy bestätigt.</p>
       <WorkerPolicySettings />
+    <details class="glass-card model-access-configuration" aria-labelledby="model-access-title">
+      <summary id="model-access-title">Gespeicherte lokale Modellangebote und Agentenzugriff</summary>
+      <p class="section-description">Lokale Haupt- und Fallbackziele unterliegen den gespeicherten Zugriffsregeln und der Ressourcenadmission. Eine gespeicherte Zuordnung belegt keine aktive Belegung; Cloudinferenz benötigt keinen lokalen Modellplatz.</p>
+      <ModelSockets />
+    </details>
     </div>
 
     <!-- TAB 5: CORE & REPO-KLÄRUNG -->

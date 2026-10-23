@@ -2,7 +2,6 @@
 // running.astro - Living & Running: Agenten, Laufzeit, Modelle & Ressourcen
 import BachLayout from "../../layouts/BachLayout.astro";
 import WorkerLeaseCountdown from '../../components/WorkerLeaseCountdown.astro';
-import ModelSockets from '../../components/ModelSockets.astro';
 import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
@@ -196,11 +195,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       </div>
     </div>
     <p id="fackel-feedback" class="torch-feedback" role="status" aria-live="polite"></p>
-    <details class="model-access-configuration" aria-labelledby="model-access-title">
-      <summary id="model-access-title">Gespeicherte lokale Modellangebote und Agentenzugriff</summary>
-      <p class="section-description">Lokale Haupt- und Fallbackziele unterliegen den gespeicherten Zugriffsregeln und der Ressourcenadmission. Eine gespeicherte Zuordnung belegt keine aktive Belegung; Cloudinferenz benötigt keinen lokalen Modellplatz.</p>
-      <ModelSockets />
-    </details>
   </details>
 
   <!-- 7. OPENROUTER FREE TIER KATALOG -->
