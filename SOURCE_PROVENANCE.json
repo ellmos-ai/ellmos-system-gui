@@ -40,7 +40,7 @@
     "src/pages/agenten/blueprints.astro": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+    "src/pages/agenten/running.astro": "81321bbd6d650704feba2263861eba9a296cc03cfa8e7b81d2bf3bf858514eaf",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
@@ -108,9 +108,9 @@
     "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
     "README.md": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
     "docs/CONSUMER_CONTRACT.md": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
-    "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
+    "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
-    "src/lib/model-sockets-ui.mjs": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
+    "src/lib/model-sockets-ui.mjs": "1325abb9e163348b3542e906ab5fa16e7b905a2ad10332369db5245f6c0a7379",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
@@ -122,7 +122,8 @@
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
     "tests/task-result-history.test.mjs": "16b134ed675ab9a11dbf657afc66f04352adac5efbb9da095cc5556b192be7f0",
     "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236",
-    "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2"
+    "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
+    "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -441,7 +442,7 @@
         "src/pages/agenten/running.astro": {
           "source_path": "system/gui/web/src/pages/agenten/running.astro",
           "source_sha256": "c4700fb05438cdd20df993894f7b649be9f53a1a56b5dea80fa140164b943728",
-          "imported_sha256": "ca343f07d31ae30ff03561d5df816226d7a8939a1a8e0f2803dc8b6bda977cc7",
+          "imported_sha256": "81321bbd6d650704feba2263861eba9a296cc03cfa8e7b81d2bf3bf858514eaf",
           "adapted": true
         },
         "src/pages/agenten/sessions.astro": {
@@ -1395,6 +1396,30 @@
           "sha256": "612e874f66cb2335c54de1dc8ec57f344f5d66e3e860085204f6474ac68be396"
         }
       ]
+    },
+    {
+      "date": "2026-10-23",
+      "task_id": 2011,
+      "session_id": "01a164ec-6c99-7ae0-8363-4981e58c2954",
+      "purpose": "Shared model offers and per-agent access; configuration separated from unmeasured residency/admission",
+      "files": {
+        "src/components/ModelSockets.astro": {
+          "previous_sha256": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
+          "sha256": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d"
+        },
+        "src/lib/model-sockets-ui.mjs": {
+          "previous_sha256": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
+          "sha256": "1325abb9e163348b3542e906ab5fa16e7b905a2ad10332369db5245f6c0a7379"
+        },
+        "src/pages/agenten/running.astro": {
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "sha256": "81321bbd6d650704feba2263861eba9a296cc03cfa8e7b81d2bf3bf858514eaf"
+        },
+        "docs/model-residency-access.md": {
+          "previous_sha256": null,
+          "sha256": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4"
+        }
+      }
     }
   ],
   "readme_banner": {

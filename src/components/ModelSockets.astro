@@ -2,7 +2,12 @@
 // Views and edits the consumer's single model registry; owns no runtime state.
 ---
 <div id="model-socket-editor" class="model-sockets">
-  <p>Ein Steckplatz ist ein lokales Modell. Seine Agentenslots sind Zuordnungen zu diesem Modell.</p>
+  <p>Lokale Modellangebote werden von Agenten gemeinsam genutzt. Gespeicherte Zugriffszuordnungen reservieren keinen eigenen Hardwareplatz. Jede lokale Anfrage benötigt eine Ressourcenadmission; Cloudinferenz benötigt keinen lokalen Modellplatz.</p>
+  <div class="model-actions" role="group" aria-label="Ansicht der lokalen Modellzugriffe">
+    <button type="button" class="btn btn-sm" data-sockets-view="models" data-sockets-view-models aria-pressed="true">Modellangebote</button>
+    <button type="button" class="btn btn-sm" data-sockets-view="agents" data-sockets-view-agents aria-pressed="false">Agentenzugriff</button>
+  </div>
+  <p data-sockets-provenance class="model-note"></p>
   <div class="model-actions">
     <button type="button" class="btn btn-sm" data-sockets-refresh>Zuordnungen neu prüfen</button>
     <button type="button" class="btn btn-sm" data-sockets-add disabled>＋ Lokales Modell zuordnen</button>
