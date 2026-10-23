@@ -151,6 +151,20 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/components/TaskCreateForm.astro#(module)"
+   },
+   {
+    "method": "GET",
+    "path": "/api/tasks/{id}/lease",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/task-hindrances.mjs#readNativeTaskLease"
+   },
+   {
+    "method": "GET",
+    "path": "/api/tasks/{id}/worker-policy",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/task-hindrances.mjs#readNativeTaskPolicy"
    }
   ],
   "/life": [

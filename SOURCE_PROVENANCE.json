@@ -14,7 +14,7 @@
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "766453c032683da19fdd9efb335ff8aebe54d05d77cdc6b0f1a50b0cfda3387b",
+    "public/page-reads.v1.json": "9e9f893dd88a1d1bbbb4106685e6e846618c90b941a13d4352308393e872cedf",
     "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -276,7 +276,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "fcb313a803b5e425f87d319cc9b17b8d71c5513ee68b660149ee5369c416c7e7",
+    "src/pages/tasks.astro": "4c721e2ef8370acc47d91227839b50b149c15727c4637cc3871270095beef00c",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
@@ -328,7 +328,9 @@
     "src/lib/worker-profile-delete.mjs": "4b840bb9c416d4dccf161043047d385a51c925a1dcbe50bc94e497fa092720b9",
     "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
-    "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236"
+    "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236",
+    "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
+    "src/lib/task-hindrances.mjs": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -429,6 +431,40 @@
           "path": "docs/blueprint-revisions.md",
           "previous_sha256": null,
           "sha256": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "change": "Task2212: shared task detail evidence from native lease and worker policy, version/status correlation, no client-side admission",
+      "source_base_commit": "fe416d9e6ac098c07ac9b6e957cabc316bc6432f",
+      "adapted_reference": {
+        "repository": "ellmos-ai/bach",
+        "commit": "93ad113755015d067dacd80c52452cb9de9a95dd",
+        "path": "system/gui/web/src/lib/task-hindrances.js",
+        "git_blob": "ac432df2e526e81fd7e635e5b104778c56a1c886",
+        "sha256": "0fd805906476b8395feff43f7f7f3b9686913bdf8fb62a6eed7478a0b6248380"
+      },
+      "files": [
+        {
+          "path": "src/lib/task-hindrances.mjs",
+          "previous_sha256": null,
+          "sha256": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "dfc32a1f73d3a389eea882cead1f62c0f8d9784ab28f4adf8ddd7678ab9e50e4",
+          "sha256": "028864f13c3d968f355361c58997d7bd4d4408ea151baea5551a26627c75569e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "e7a783ef9355850b637712d29e1743842cd0161f15259e9527d843691e3970d6",
+          "sha256": "8625fbb72013fde2513d4cdb1ea24587320c5c06ff9adb5a66cff68530092f3d"
+        },
+        {
+          "path": "docs/task-hindrances.md",
+          "previous_sha256": null,
+          "sha256": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
         }
       ]
     }
@@ -743,7 +779,7 @@
         "src/pages/tasks.astro": {
           "source_path": "system/gui/web/src/pages/tasks.astro",
           "source_sha256": "cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9",
-          "imported_sha256": "fcb313a803b5e425f87d319cc9b17b8d71c5513ee68b660149ee5369c416c7e7",
+          "imported_sha256": "4c721e2ef8370acc47d91227839b50b149c15727c4637cc3871270095beef00c",
           "adapted": true
         },
         "src/scripts/blueprint-studio.mjs": {
@@ -3817,6 +3853,72 @@
           "path": "tests/task-result-history.test.mjs",
           "previous_sha256": "d47a12008d401a8471a8d8fd9dda2d62a24979dda9ed43a5a0ea95689e856ce0",
           "sha256": "6b5ef44cbd5c9ac1a92d47d7d45068966b7caa08c501d5b19405ec89800ef7e4"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2212: native task lease and completion-policy observations in shared task details",
+      "source_base_commit": "fe416d9e6ac098c07ac9b6e957cabc316bc6432f",
+      "changes": [
+        "Add optional native lease/policy reads with version/status correlation; no admission simulation or worker/configuration writes.",
+        "Advance the mutable imported GUI artifact hash for tasks.astro; preserve the original pinned BACH source_sha256 and every historical follow-up record.",
+        "First CI39910998560 reported stale imported_sha256; this dated hash-chain entry corrects metadata without changing test conditions."
+      ],
+      "files": [
+        {
+          "path": "src/lib/task-hindrances.mjs",
+          "previous_sha256": null,
+          "sha256": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "dfc32a1f73d3a389eea882cead1f62c0f8d9784ab28f4adf8ddd7678ab9e50e4",
+          "sha256": "028864f13c3d968f355361c58997d7bd4d4408ea151baea5551a26627c75569e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "e7a783ef9355850b637712d29e1743842cd0161f15259e9527d843691e3970d6",
+          "sha256": "8625fbb72013fde2513d4cdb1ea24587320c5c06ff9adb5a66cff68530092f3d"
+        },
+        {
+          "path": "docs/task-hindrances.md",
+          "previous_sha256": null,
+          "sha256": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2212: carry native lease/policy observation93 into the existing GUI0.2.28 task thread",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "2697e2c636799082b7b039683e3a8ffb5b4a7a16",
+      "upstream_candidate_commit": "3ad11d0ab647b9c68c5a15ef34343d81b42fcab5",
+      "changes": [
+        "Reuse the existing read-only task-hindrance module without a second implementation.",
+        "Place its five groups inside the persistent task context; retain order/result/history layout and GitHub review-context reset.",
+        "Retain detail-generation/task-object stale response guards and original imported BACH source hashes."
+      ],
+      "files": [
+        {
+          "path": "docs/task-hindrances.md",
+          "previous_sha256": null,
+          "sha256": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "766453c032683da19fdd9efb335ff8aebe54d05d77cdc6b0f1a50b0cfda3387b",
+          "sha256": "9e9f893dd88a1d1bbbb4106685e6e846618c90b941a13d4352308393e872cedf"
+        },
+        {
+          "path": "src/lib/task-hindrances.mjs",
+          "previous_sha256": null,
+          "sha256": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "fcb313a803b5e425f87d319cc9b17b8d71c5513ee68b660149ee5369c416c7e7",
+          "sha256": "4c721e2ef8370acc47d91227839b50b149c15727c4637cc3871270095beef00c"
         }
       ]
     }
