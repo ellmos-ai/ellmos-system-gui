@@ -11,7 +11,7 @@
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "6d015e494968a95f5e2374449fcc6a1f181f7a8fcc441fabe3d3f894c1790762",
     "ellmos-module.v2.json": "88c5e74792e5501e273d379047a1df0e4ef1c2bc2edd7fadb9633e0ccce83c08",
-    "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
+    "package-lock.json": "998faa7a72fc9e9970fce91fc5129bc82c8143475b1e42ef366e8e6860a6a94e",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "8ef7456d3a84539ec331966783130f14cb5e0a878b6c6743d97da1c187c97c0d",
     "public/page-reads.v1.json": "468eab18f98e66cb18b350fdd7c99b38f7467ac035f70d3cac22eb9df00d38c2",
@@ -351,7 +351,11 @@
     "src-tauri/icons/icon.ico": "3851bd6980aee6f59283be811e0c7cfe5ba44bb21ab55811868bea27e8a101f7",
     "src-tauri/icons/icon.png": "32ee9450e6c435653241d86be8370a6b36d169ba7bd93e892bce86ae4da7fe2d",
     "src-tauri/src/main.rs": "a2743ea46fe3a5667b0ac05028c75c6e2f6d3101a0899bebd767abcab7e9fcd5",
-    "src-tauri/tauri.conf.json": "19095b22344a17c2ea514917672312a22afdf0d450023773d9eabe0dff1710fa"
+    "src-tauri/tauri.conf.json": "19095b22344a17c2ea514917672312a22afdf0d450023773d9eabe0dff1710fa",
+    "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
+    "tests/dompurify-compatibility.test.mjs": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
+    "tests/fixtures/dompurify-regressions.html": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
+    "tests/run-dompurify-browser.mjs": "c057af020427f46ae9dcbad1e955b9ff5dc816f87f316c2fc48f24dc5247237a"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -4502,6 +4506,129 @@
         "a5de187db1005b083e2ed4330f61aafc0553ba04",
         "e6e9a92eb849ecdb95d027e067504fa51476f715",
         "ea0281220da61f682ec4c9b6cef235c6527244b4",
+        "fe416d9e6ac098c07ac9b6e957cabc316bc6432f"
+      ],
+      "changes": [
+        "Retain the inherited branch histories and declare the two exact merge parents."
+      ],
+      "files": []
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2435: DOMPurify3.4.17 compatibility patch",
+      "source_base_commit": "8e365a429e11ee47e4d68d619ebef2db11569a83",
+      "changes": [
+        "Resolve only DOMPurify to the maintainer-patched version inside Mermaid existing dependency range; preserve every other package record.",
+        "Add explicit synthetic browser regressions for shadow-root templates, detached in-place nodes and XHTML SMIL; retain SVG/MathML controls and existing strict/theme settings.",
+        "No direct dependency or override, Mermaid/KaTeX/application configuration change, consumer installation or release."
+      ],
+      "files": [
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+          "sha256": "05a7c3f520300d30fe3ff60b403227f26ce23a4d4a129285e17fac19f49cf258"
+        },
+        {
+          "path": "SECURITY.md",
+          "previous_sha256": "19421bd0936537d39ba60d19d3c84a51d41525197a1ad666947d086b7fa34231",
+          "sha256": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43"
+        },
+        {
+          "path": "tests/dompurify-compatibility.test.mjs",
+          "previous_sha256": null,
+          "sha256": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6"
+        },
+        {
+          "path": "tests/fixtures/dompurify-regressions.html",
+          "previous_sha256": null,
+          "sha256": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c"
+        },
+        {
+          "path": "tests/run-dompurify-browser.mjs",
+          "previous_sha256": null,
+          "sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2071: suppress Windows consoles in the DOMPurify browser runner",
+      "source_base_commit": "9c73e49ec582ce882d8dd0728f44ec7b777d2a06",
+      "changes": [
+        "Set windowsHide:true on the existing Chromium spawnSync boundary so a console-subsystem headless browser does not allocate a console from a hidden parent.",
+        "Preserve the DOMPurify3.4.17 patch, all browser fixtures, all compatibility cases and application behavior; no browser launch or new/manual tests."
+      ],
+      "files": [
+        {
+          "path": "tests/run-dompurify-browser.mjs",
+          "previous_sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
+          "sha256": "c057af020427f46ae9dcbad1e955b9ff5dc816f87f316c2fc48f24dc5247237a"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2071: carry existing DOMPurify correction and windowless helper91 into the combined shared GUI99 source",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "36d15e43111ec7ad3588d8cc45e5caf10395fcc6",
+      "upstream_candidate_commit": "fb37d36bcdec7fb07f4863fa89c6b6a1a7015481",
+      "changes": [
+        "Normal merge of the exact existing candidate; retain the combined GUI028, task context, workshop, model configuration, native revision and profile-delete source.",
+        "Only source integration and provenance reconciliation; no independent approval or runtime acceptance.",
+        "Retain full historical provenance records and original import/source snapshots; files_sha256 is the current-byte authority."
+      ],
+      "files": [
+        {
+          "path": "SECURITY.md",
+          "previous_sha256": null,
+          "sha256": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
+          "sha256": "998faa7a72fc9e9970fce91fc5129bc82c8143475b1e42ef366e8e6860a6a94e"
+        },
+        {
+          "path": "tests/dompurify-compatibility.test.mjs",
+          "previous_sha256": null,
+          "sha256": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6"
+        },
+        {
+          "path": "tests/fixtures/dompurify-regressions.html",
+          "previous_sha256": null,
+          "sha256": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c"
+        },
+        {
+          "path": "tests/run-dompurify-browser.mjs",
+          "previous_sha256": null,
+          "sha256": "c057af020427f46ae9dcbad1e955b9ff5dc816f87f316c2fc48f24dc5247237a"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance",
+      "integration_scope": "Task2071: declare exact combined GUI/candidate91 merge parents",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "36d15e43111ec7ad3588d8cc45e5caf10395fcc6",
+      "branch_bases": [
+        "1d6c0f985834f10ae9e5e051205a33b83efaaa54",
+        "1dcf9e567102da60ca2703331ef4f17291ced3d8",
+        "2697e2c636799082b7b039683e3a8ffb5b4a7a16",
+        "2b0bb0fab82310cde4a7dbf153a6c779d0f2731a",
+        "2f64bcfbe4a73dcc6fb08b3c2081ebbb60b0e1a9",
+        "36d15e43111ec7ad3588d8cc45e5caf10395fcc6",
+        "3ad11d0ab647b9c68c5a15ef34343d81b42fcab5",
+        "425eb4c13c5eba89b722000bb7f09466d5a28e4a",
+        "57c43df5f6b83d07caff4f5285c20873146e3bf2",
+        "7044f2f09e5836da9bf27d6b291e68d6c2148a91",
+        "7e3ca7ec9869ae4c9289ac5ab4b47579937ed78b",
+        "8e365a429e11ee47e4d68d619ebef2db11569a83",
+        "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+        "a5de187db1005b083e2ed4330f61aafc0553ba04",
+        "e6e9a92eb849ecdb95d027e067504fa51476f715",
+        "ea0281220da61f682ec4c9b6cef235c6527244b4",
+        "fb37d36bcdec7fb07f4863fa89c6b6a1a7015481",
         "fe416d9e6ac098c07ac9b6e957cabc316bc6432f"
       ],
       "changes": [
