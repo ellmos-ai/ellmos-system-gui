@@ -32,7 +32,16 @@
         <label>Blueprint<select id="subscription-blueprint" name="blueprint_id" required><option value="">Blueprints werden geladen …</option></select></label>
         <p class="muted">Nur ganzzahlige, aktuelle Blueprint-Revisionen sind auswählbar. Unpassende Revisionen bleiben gesperrt.</p>
         <fieldset>
-          <legend>Aktuelle Skill-Quellen (höchstens 30 auswählen)</legend>
+          <legend>Bootquellen</legend>
+          <p class="muted">Wähle Systemwissen und BACH-Anleitung ausdrücklich aus derselben Skillbibliothek. Die Versionshashes werden gebunden. Prüfe die fachliche Eignung der gewählten Texte.</p>
+          <div class="field-grid">
+            <label>Systemwissen<select id="subscription-boot-system" name="boot_system" required><option value="">Quellen werden geladen …</option></select></label>
+            <label>BACH-Anleitung<select id="subscription-boot-bach" name="boot_bach" required><option value="">Quellen werden geladen …</option></select></label>
+          </div>
+          <p class="muted">Vollständiger Textmodus: Boot-, Blueprint- und Zusatzskills werden zusammen höchstens 30 unterschiedliche Quellen. Ein Pfadzugriff des Zielclients wird nicht bestätigt. Der Backendadapter muss den Bootquellen-Vertrag v2 unterstützen.</p>
+        </fieldset>
+        <fieldset>
+          <legend>Aktuelle Zusatzskills</legend>
           <div id="subscription-skills" class="skill-list"><p class="muted">Skill-Quellen werden geladen …</p></div>
         </fieldset>
       </section>
