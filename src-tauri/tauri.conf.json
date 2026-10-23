@@ -15,7 +15,20 @@
     }
   },
   "bundle": {
-    "active": false,
-    "icon": ["icons/icon.png", "icons/icon.ico"]
+    "active": true,
+    "icon": ["icons/icon.png", "icons/icon.ico"],
+    "publisher": "ellmos-ai",
+    "category": "Productivity",
+    "license": "MIT",
+    "homepage": "https://github.com/ellmos-ai/ellmos-system-gui",
+    "shortDescription": "Desktop connection to the shared BACH and Ocean GUI",
+    "windows": {
+      "webviewInstallMode": { "type": "embedBootstrapper" },
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["German", "English"],
+        "displayLanguageSelector": true
+      }
+    }
   }
 }
