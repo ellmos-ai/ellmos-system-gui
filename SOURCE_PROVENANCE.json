@@ -3781,7 +3781,7 @@
       "date": "2026-10-23",
       "scope": "Task2212: integrate existing GUI0.2.28 candidate83 with current shared main94",
       "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
-      "source_base_commit": "1dcf9e567102da60ca2703331ef4f17291ced3d8",
+      "source_base_commit": "7044f2f09e5836da9bf27d6b291e68d6c2148a91",
       "upstream_candidate_commit": "7044f2f09e5836da9bf27d6b291e68d6c2148a91",
       "changes": [
         "Preserve all original source hashes and complete history records from both parents.",
@@ -3854,7 +3854,8 @@
           "previous_sha256": "d47a12008d401a8471a8d8fd9dda2d62a24979dda9ed43a5a0ea95689e856ce0",
           "sha256": "6b5ef44cbd5c9ac1a92d47d7d45068966b7caa08c501d5b19405ec89800ef7e4"
         }
-      ]
+      ],
+      "integration_base_commit": "1dcf9e567102da60ca2703331ef4f17291ced3d8"
     },
     {
       "date": "2026-10-23",
@@ -3984,6 +3985,30 @@
           "sha256": "889e540f10a3b036f9b23125d0361fe3dda7912a11b534f8c4d11540681f1eda"
         }
       ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "integration_scope": "Task2212: reconcile the actually merged main83/93 provenance branches",
+      "source_base_commit": "99506a9268d5259f661fef78fc8f0081226841d7",
+      "branch_bases": [
+        "1dcf9e567102da60ca2703331ef4f17291ced3d8",
+        "2697e2c636799082b7b039683e3a8ffb5b4a7a16",
+        "3ad11d0ab647b9c68c5a15ef34343d81b42fcab5",
+        "57c43df5f6b83d07caff4f5285c20873146e3bf2",
+        "7044f2f09e5836da9bf27d6b291e68d6c2148a91",
+        "8e365a429e11ee47e4d68d619ebef2db11569a83",
+        "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+        "a5de187db1005b083e2ed4330f61aafc0553ba04",
+        "fe416d9e6ac098c07ac9b6e957cabc316bc6432f"
+      ],
+      "changes": [
+        "Declare the additional ancestor branches whose historical followups are retained by the normal main83/93 merges.",
+        "All additional branch commits were verified as ancestors; the original Task2212 merge predecessor hashes match candidate83, now recorded as that record source base.",
+        "Retain all original parent provenance records and Task2138 import snapshot hashes."
+      ],
+      "files": []
     }
   ],
   "readme_banner": {
