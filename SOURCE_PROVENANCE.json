@@ -13,9 +13,9 @@
     "ellmos-module.v2.json": "88c5e74792e5501e273d379047a1df0e4ef1c2bc2edd7fadb9633e0ccce83c08",
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
-    "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
+    "public/device-fetch.js": "8ef7456d3a84539ec331966783130f14cb5e0a878b6c6743d97da1c187c97c0d",
     "public/page-reads.v1.json": "468eab18f98e66cb18b350fdd7c99b38f7467ac035f70d3cac22eb9df00d38c2",
-    "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
+    "README.md": "2eb5179dca30e0d5917c4a0b43fb97a3d53ec766fec4d9372b2102a17c435146",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
@@ -262,16 +262,16 @@
     "src/pages/agenten/running.astro": "a8ac7736d6d826a9a32850e77d9ed95a5ecfed575664cb0ca7365e28b96c5a9c",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/agenten/subscription-agents.astro": "66d1ecedcf8e79503d2c632eca695fc86e7c56e88ed548d3c11c652a13802266",
-    "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
+    "src/pages/artefakte.astro": "e639fe0edd3fa4d8cf8f4bdac3d991418e27fe1858b0e713387ec6db1f711885",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
     "src/pages/governance/index.astro": "5371d2b101453c0cdcdf3edeff7c83e48a7f949b271652b6870ae35aadf4c137",
-    "src/pages/governance/logs.astro": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
+    "src/pages/governance/logs.astro": "83691edddaac2b0830d7cbdc48cd9f722efe24192ed4eb98264e753954f8858c",
     "src/pages/governance/usecases.astro": "860a03ca99e466d9571ab93e350a24105ba3caff69a06f9a06c4a83ee14c3b19",
     "src/pages/index.astro": "cf8df1450cb2b08aa3ba8fa8bd60da7c8a287f20d244463a0a8fa3f12e3ce47d",
-    "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
+    "src/pages/life.astro": "f160f629e7ce99a907169e2578a6c20104f9a24b263d055b12f6374960d10988",
     "src/pages/memory.astro": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c",
-    "src/pages/settings.astro": "5c56cd016f8f3b994d2e6517dfb6c62800ab347e08dc88fa6545a0f35da9646f",
+    "src/pages/settings.astro": "631de4d1f146374331864155b5da5a3d4e03986d4ba0fbfec7d84f4b1e359534",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
@@ -291,7 +291,7 @@
     "tests/agent-overview.test.mjs": "7bcf1f1fd3211e81c3ccc55acc50d2949cd8e7b24cc85f0dc2d61da00cdb9330",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
-    "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
+    "tests/device-fetch.test.mjs": "3ea45696feb096102c91419c3b32170744db27d813e8f95e7ee8d2e83521e81f",
     "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
     "tests/domain-routes.test.mjs": "bdcc11061fbb9a12f670fe6917c890d722d46b9ba6b8f1f87adbe58b1579d353",
     "tests/fabrika.test.mjs": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
@@ -332,7 +332,8 @@
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
     "src/lib/task-hindrances.mjs": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10",
     "docs/subscription-workshop.md": "766c0d52d3c083641ce2bbc801afc1de44327a5a0f5d35e4bf0a25029655b6e5",
-    "src/components/SubscriptionAgentComposer.astro": "ea12dc1c745255b723e0eab65ae4680518d82eac54bec479f4382a1b937f4e9b"
+    "src/components/SubscriptionAgentComposer.astro": "ea12dc1c745255b723e0eab65ae4680518d82eac54bec479f4382a1b937f4e9b",
+    "docs/BACH_FRONTEND_IMPORT_2026-10-08.md": "61548f8d27f9d6798b6abb3eb30aee9eddf128226f27e5304f4d37e46ca78db7"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -4170,6 +4171,150 @@
       ],
       "changes": [
         "Keep the complete inherited hash history while declaring the exact two merge parents and the verified GUI028 release ancestor of workshop95."
+      ],
+      "files": []
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task1958: integrate the existing HttpOnly GUI client on current main and correct final-source provenance",
+      "source_base_commit": "3fd0ff58926f50c7eb7af60b9a8ab16e07e81d2f",
+      "upstream_candidate_commit": "1768e439fa3915b9ff654cbec5bde259b49daa4d",
+      "changes": [
+        "Reuse all existing browser-cookie transport and its original tests without new application logic.",
+        "Preserve current main features, all previous main provenance records and immutable BACH source hashes.",
+        "Record current merged file hashes and adaptation flags; retain the original candidate discrepancies explicitly."
+      ],
+      "upstream_candidate_hash_mismatches": {
+        "README.md": {
+          "actual": "aa6756c6a76faf58efecf6627e0c29691ec871d8ffdc5e4c9d917f56e1a89ad3",
+          "pin": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300"
+        },
+        "src/pages/governance/logs.astro": {
+          "actual": "83691edddaac2b0830d7cbdc48cd9f722efe24192ed4eb98264e753954f8858c",
+          "pin": "fc550bdd6684c3c18786120a7abdbfd2a4d6fc677bcf0c9579c67d38e06fba0d"
+        }
+      },
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+          "sha256": "aa6756c6a76faf58efecf6627e0c29691ec871d8ffdc5e4c9d917f56e1a89ad3"
+        },
+        {
+          "path": "docs/BACH_FRONTEND_IMPORT_2026-10-08.md",
+          "previous_sha256": "ac82e1f6a18434cfff2bc2bec66203aee11f660eecfc13194b7af2e8be00bb0d",
+          "sha256": "61548f8d27f9d6798b6abb3eb30aee9eddf128226f27e5304f4d37e46ca78db7"
+        },
+        {
+          "path": "public/device-fetch.js",
+          "previous_sha256": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
+          "sha256": "8ef7456d3a84539ec331966783130f14cb5e0a878b6c6743d97da1c187c97c0d"
+        },
+        {
+          "path": "src/pages/artefakte.astro",
+          "previous_sha256": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
+          "sha256": "e639fe0edd3fa4d8cf8f4bdac3d991418e27fe1858b0e713387ec6db1f711885"
+        },
+        {
+          "path": "src/pages/governance/logs.astro",
+          "previous_sha256": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
+          "sha256": "83691edddaac2b0830d7cbdc48cd9f722efe24192ed4eb98264e753954f8858c"
+        },
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
+          "sha256": "f160f629e7ce99a907169e2578a6c20104f9a24b263d055b12f6374960d10988"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "85cad9fe450d22788ea8cd5500ebeb70a8a431a277c5590448ab4c136f07bcb1",
+          "sha256": "6b25bb308808f3511b2324c98a186883f935679a560abf4b9472f61dcdf999bf"
+        },
+        {
+          "path": "tests/device-fetch.test.mjs",
+          "previous_sha256": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
+          "sha256": "3ea45696feb096102c91419c3b32170744db27d813e8f95e7ee8d2e83521e81f"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2071: carry existing HttpOnly browser-session client98 into the combined shared GUI99 source",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "ea0281220da61f682ec4c9b6cef235c6527244b4",
+      "upstream_candidate_commit": "425eb4c13c5eba89b722000bb7f09466d5a28e4a",
+      "changes": [
+        "Normal merge of the exact existing candidate; retain the combined GUI028, task context, workshop, model configuration, native revision and profile-delete source.",
+        "Only source integration and provenance reconciliation; no independent approval or runtime acceptance.",
+        "Retain full historical provenance records and original import/source snapshots; files_sha256 is the current-byte authority."
+      ],
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
+          "sha256": "2eb5179dca30e0d5917c4a0b43fb97a3d53ec766fec4d9372b2102a17c435146"
+        },
+        {
+          "path": "docs/BACH_FRONTEND_IMPORT_2026-10-08.md",
+          "previous_sha256": null,
+          "sha256": "61548f8d27f9d6798b6abb3eb30aee9eddf128226f27e5304f4d37e46ca78db7"
+        },
+        {
+          "path": "public/device-fetch.js",
+          "previous_sha256": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
+          "sha256": "8ef7456d3a84539ec331966783130f14cb5e0a878b6c6743d97da1c187c97c0d"
+        },
+        {
+          "path": "src/pages/artefakte.astro",
+          "previous_sha256": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
+          "sha256": "e639fe0edd3fa4d8cf8f4bdac3d991418e27fe1858b0e713387ec6db1f711885"
+        },
+        {
+          "path": "src/pages/governance/logs.astro",
+          "previous_sha256": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
+          "sha256": "83691edddaac2b0830d7cbdc48cd9f722efe24192ed4eb98264e753954f8858c"
+        },
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
+          "sha256": "f160f629e7ce99a907169e2578a6c20104f9a24b263d055b12f6374960d10988"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "5c56cd016f8f3b994d2e6517dfb6c62800ab347e08dc88fa6545a0f35da9646f",
+          "sha256": "631de4d1f146374331864155b5da5a3d4e03986d4ba0fbfec7d84f4b1e359534"
+        },
+        {
+          "path": "tests/device-fetch.test.mjs",
+          "previous_sha256": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
+          "sha256": "3ea45696feb096102c91419c3b32170744db27d813e8f95e7ee8d2e83521e81f"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance",
+      "integration_scope": "Task2071: declare exact combined GUI/candidate98 merge parents",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "ea0281220da61f682ec4c9b6cef235c6527244b4",
+      "branch_bases": [
+        "1d6c0f985834f10ae9e5e051205a33b83efaaa54",
+        "1dcf9e567102da60ca2703331ef4f17291ced3d8",
+        "2697e2c636799082b7b039683e3a8ffb5b4a7a16",
+        "3ad11d0ab647b9c68c5a15ef34343d81b42fcab5",
+        "425eb4c13c5eba89b722000bb7f09466d5a28e4a",
+        "57c43df5f6b83d07caff4f5285c20873146e3bf2",
+        "7044f2f09e5836da9bf27d6b291e68d6c2148a91",
+        "7e3ca7ec9869ae4c9289ac5ab4b47579937ed78b",
+        "8e365a429e11ee47e4d68d619ebef2db11569a83",
+        "99cde50dfaa0f0306b6c5b70aebc4161db0fc71c",
+        "a5de187db1005b083e2ed4330f61aafc0553ba04",
+        "e6e9a92eb849ecdb95d027e067504fa51476f715",
+        "ea0281220da61f682ec4c9b6cef235c6527244b4",
+        "fe416d9e6ac098c07ac9b6e957cabc316bc6432f"
+      ],
+      "changes": [
+        "Retain the inherited branch histories and declare the two exact merge parents."
       ],
       "files": []
     }
