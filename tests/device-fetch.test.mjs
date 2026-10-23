@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import {consumerApiHeaders} from '../src/lib/consumer-api-auth.mjs';
 const script=readFileSync(new URL('../public/device-fetch.js',import.meta.url),'utf8');
 function harness({blocked=false,status=200}={}) {
   const calls=[], notices=[];
@@ -43,4 +44,32 @@ test('authentication failures create one local login notice without disclosing c
 });
 test('reloading the script keeps one fetch wrapper',()=>{
   const h=harness(),original=h.window.fetch;vm.runInContext(script,h.context);assert.equal(h.window.fetch,original);
+});
+
+test('policy headers ignore stale or blocked browser storage and preserve caller authority',()=>{
+  const descriptor=Object.getOwnPropertyDescriptor(globalThis,'localStorage');
+  try {
+    for (const blocked of [false,true]) {
+      let reads=0;
+      Object.defineProperty(globalThis,'localStorage',{configurable:true,get(){
+        reads++;if(blocked)throw Error('Storage unavailable');
+        return {getItem:()=> 'obsolete-fixture-device-token'};
+      }});
+      assert.equal(consumerApiHeaders().has('Authorization'),false);
+      for (const initial of [
+        {Accept:'application/json','X-BACH-Result-Operator':'temporary-fixture-operator'},
+        new Headers({Authorization:'Explicit fixture','X-BACH-Result-Operator':'temporary-fixture-operator'}),
+        [['Accept','application/json'],['X-BACH-Result-Operator','temporary-fixture-operator']],
+      ]) {
+        const before=new Headers(initial),headers=consumerApiHeaders(initial);
+        assert.deepEqual([...headers],[...before]);
+        headers.set('Accept','changed');
+        assert.deepEqual([...new Headers(initial)],[...before],'caller headers remain unchanged');
+      }
+      assert.equal(reads,0,'legacy storage must not override the browser session cookie');
+    }
+  } finally {
+    if(descriptor)Object.defineProperty(globalThis,'localStorage',descriptor);
+    else delete globalThis.localStorage;
+  }
 });

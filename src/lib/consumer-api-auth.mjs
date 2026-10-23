@@ -1,7 +1,5 @@
 export function consumerApiHeaders(initial = {}) {
-  const headers = new Headers(initial);
-  let token = '';
-  try { token = localStorage.getItem('bach_device_token') || ''; } catch (_) {}
-  if (token) headers.set('Authorization', `Bearer ${token}`);
-  return headers;
+  // Same-origin consumer requests use the browser-managed session cookie.
+  // Preserve explicit caller headers, including temporary operator authority.
+  return new Headers(initial);
 }

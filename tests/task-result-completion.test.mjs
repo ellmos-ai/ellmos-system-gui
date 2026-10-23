@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {buildResultAcceptanceRequest, canConfirmTaskResult, resultAcceptanceConfirmed,
-  taskResultCompletionMessage} from '../src/lib/task-result-contract.mjs';
+  taskResultCompletionMessage, taskResultGateSummary} from '../src/lib/task-result-contract.mjs';
 
 const version = 'a'.repeat(64);
 const revision = 'b'.repeat(64);
@@ -157,3 +157,55 @@ for(const [name,change] of [
     assert.deepEqual(h.errors.filter(Boolean),[]);
   });
 }
+
+test('public GitHub evidence binds its canonical string task ID and exact result revision',()=>{
+  for (const [status,state] of [['verified','confirmed'],['rejected','blocked']]) {
+    const data=approved();
+    data.completion_evaluation.decision.state=status==='verified'?'completed':'correction_required';
+    data.completion_evaluation.github_pr_review_required=true;
+    data.completion_evaluation.github={availability:'available',task_id:'42',result_revision:revision,status};
+    const gate=value=>taskResultGateSummary(value).find(item=>item.id==='external-approval');
+    assert.equal(gate(data).state,state);
+    assert.doesNotMatch(taskResultCompletionMessage(data),/· erledigt/);
+    for (const mutate of [
+      d=>{d.completion_evaluation.github.task_id=42;},
+      d=>{d.completion_evaluation.github.task_id='43';},
+      d=>{d.completion_evaluation.github.result_revision='d'.repeat(64);},
+      d=>{d.completion_evaluation.github.availability='unavailable';},
+      d=>{d.completion_evaluation.result_revision='d'.repeat(64);},
+    ]) {
+      const stale=structuredClone(data);mutate(stale);
+      assert.equal(gate(stale).state,'unavailable');
+    }
+    data.completion_evaluation.decision.state='awaiting_external_review';
+    assert.equal(gate(data).state,status==='verified'?'reported':'blocked');
+  }
+});
+
+test('public scope-checked model reviews keep identity, independence and policy guards',()=>{
+  for (const [status,state] of [['approved','confirmed'],['findings','blocked'],['rejected','blocked']]) {
+    const data=approved();
+    data.completion_evaluation.decision.state=status==='approved'?'completed':'correction_required';
+    data.result.model_review={schema:'bach.worker-result-review-evidence.v1',availability:'available',
+      task_id:42,result_id:23,result_revision:revision,independent:true,policy_eligible:true,status};
+    const gate=value=>taskResultGateSummary(value).find(item=>item.id==='independent-review');
+    assert.equal(gate(data).state,state);
+    assert.doesNotMatch(taskResultCompletionMessage(data),/· erledigt/);
+    for (const mutate of [
+      d=>{d.result.model_review.availability='recorded';},
+      d=>{d.result.model_review.availability='unavailable';},
+      d=>{d.result.model_review.schema='unknown';},
+      d=>{d.result.model_review.task_id=43;},
+      d=>{d.result.model_review.result_id=24;},
+      d=>{d.result.model_review.result_revision='d'.repeat(64);},
+      d=>{d.result.model_review.independent=false;},
+      d=>{d.result.model_review.policy_eligible=false;},
+      d=>{d.result.model_review.status='unknown';},
+    ]) {
+      const stale=structuredClone(data);mutate(stale);
+      assert.equal(gate(stale).state,'unavailable');
+    }
+    delete data.completion_evaluation;
+    assert.equal(gate(data).state,status==='approved'?'reported':'blocked');
+  }
+});
