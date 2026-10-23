@@ -785,9 +785,7 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/blueprint-revisions.mjs#restoreRevision"
-   }
-  ],
-  "/agenten/subscription-agents": [
+   },
    {
     "method": "GET",
     "path": "/api/gui/capabilities",
@@ -795,13 +793,8 @@
    },
    {
     "method": "GET",
-    "path": "/api/agent-studio/blueprints",
-    "required": true
-   },
-   {
-    "method": "GET",
     "path": "/api/capabilities/skills/library",
-    "required": true
+    "required": false
    },
    {
     "method": "POST",
@@ -809,6 +802,7 @@
     "required": false
    }
   ],
+  "/agenten/subscription-agents": [],
   "/agenten/fabrika": [],
   "/agenten/marblerun": [
    {
