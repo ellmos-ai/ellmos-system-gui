@@ -14,7 +14,7 @@
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "a2772303b7d92c771a8093b242117aa6a1f3d83184ae38db7a357ad8e8430c20",
+    "public/page-reads.v1.json": "01c58d7eb81120dd1f21594b22772f2c39d835bcd270ff4a28f5adc9a3048589",
     "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -3941,6 +3941,19 @@
           "path": "scripts/page-reads-bindings.mjs",
           "previous_sha256": "f72d84ffeaa3a8b857321aaa2135766d23e21c5db8d513776f4fa1abc29c896a",
           "sha256": "3363fd6b666e23655cb1f561c05ae15c3a0114b1101ec11c75db8d8fad5f2331"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Preserve existing page manifest indentation for focused source review",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "22cd2316e11282a7e62aa5b67bbaf3c200959fc4",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "a2772303b7d92c771a8093b242117aa6a1f3d83184ae38db7a357ad8e8430c20",
+          "sha256": "01c58d7eb81120dd1f21594b22772f2c39d835bcd270ff4a28f5adc9a3048589"
         }
       ]
     }
