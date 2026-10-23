@@ -3758,22 +3758,50 @@
       "task_id": 2011,
       "session_id": "01a164ec-6c99-7ae0-8363-4981e58c2954",
       "purpose": "Shared model offers and per-agent access; configuration separated from unmeasured residency/admission",
-      "files": {
-        "src/components/ModelSockets.astro": {
+      "files": [
+        {
+          "path": "src/components/ModelSockets.astro",
           "previous_sha256": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
           "sha256": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d"
         },
-        "src/lib/model-sockets-ui.mjs": {
+        {
+          "path": "src/lib/model-sockets-ui.mjs",
           "previous_sha256": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
           "sha256": "1325abb9e163348b3542e906ab5fa16e7b905a2ad10332369db5245f6c0a7379"
         },
-        "src/pages/agenten/running.astro": {
+        {
+          "path": "src/pages/agenten/running.astro",
           "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
           "sha256": "81321bbd6d650704feba2263861eba9a296cc03cfa8e7b81d2bf3bf858514eaf"
         },
-        "docs/model-residency-access.md": {
+        {
+          "path": "docs/model-residency-access.md",
           "previous_sha256": null,
           "sha256": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4"
+        }
+      ],
+      "historical_record": {
+        "date": "2026-10-23",
+        "task_id": 2011,
+        "session_id": "01a164ec-6c99-7ae0-8363-4981e58c2954",
+        "purpose": "Shared model offers and per-agent access; configuration separated from unmeasured residency/admission",
+        "files": {
+          "src/components/ModelSockets.astro": {
+            "previous_sha256": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
+            "sha256": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d"
+          },
+          "src/lib/model-sockets-ui.mjs": {
+            "previous_sha256": "0096662e9226d9d6b182c3742173a9272e991ed7b7584c14557fe5272d3f45f7",
+            "sha256": "1325abb9e163348b3542e906ab5fa16e7b905a2ad10332369db5245f6c0a7379"
+          },
+          "src/pages/agenten/running.astro": {
+            "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+            "sha256": "81321bbd6d650704feba2263861eba9a296cc03cfa8e7b81d2bf3bf858514eaf"
+          },
+          "docs/model-residency-access.md": {
+            "previous_sha256": null,
+            "sha256": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4"
+          }
         }
       }
     },
@@ -4007,6 +4035,17 @@
         "Declare the additional ancestor branches whose historical followups are retained by the normal main83/93 merges.",
         "All additional branch commits were verified as ancestors; the original Task2212 merge predecessor hashes match candidate83, now recorded as that record source base.",
         "Retain all original parent provenance records and Task2138 import snapshot hashes."
+      ],
+      "files": []
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2212 CI: normalize the retained Task2011 file map to the shared followup list format",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "d9cb9e9db98bfe52c1992a6e7a78c30470a9e979",
+      "changes": [
+        "Represent the four existing Task2011 file-map entries as the path-bearing list used by followup readers.",
+        "Retain the complete exact original record under historical_record, including original file keys, predecessor hashes and session identity. No historical field or value is discarded."
       ],
       "files": []
     }
