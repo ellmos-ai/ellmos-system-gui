@@ -34,6 +34,23 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     <div id="studio-team-grid" class="studio-grid"></div>
   </section>
 
+  <dialog id="revision-history" class="studio-dialog" aria-labelledby="revision-title">
+    <header class="studio-dialog-header"><h2 id="revision-title">Versionen</h2><button type="button" class="btn" id="revision-close" data-close="revision-history">Schließen</button></header>
+    <div class="studio-dialog-body">
+      <p id="revision-summary" class="studio-note"></p><p id="revision-policy" class="studio-note"></p>
+      <div class="studio-fields">
+        <label>Gespeicherte Definition<select id="revision-from"></select></label>
+        <label>Vergleichen mit<select id="revision-to"></select></label>
+      </div>
+      <div class="studio-actions"><button type="button" class="btn" id="revision-refresh">Neu laden</button><button type="button" class="btn" id="revision-more" hidden>Ältere Versionen laden</button><button type="button" class="btn" id="revision-compare">Vergleichen</button></div>
+      <p id="revision-hash" class="studio-note" style="overflow-wrap:anywhere"></p>
+      <details><summary>Gespeicherte Definition anzeigen</summary><pre id="revision-content" class="studio-prompt-preview"></pre></details>
+      <pre id="revision-diff" class="studio-prompt-preview" aria-label="Versionsvergleich"></pre>
+      <p id="revision-status" class="studio-message" role="status" aria-live="polite"></p>
+    </div>
+    <footer class="studio-dialog-footer"><button type="button" class="btn btn-primary" id="revision-restore" disabled>Auswahl als neue Version wiederherstellen</button></footer>
+  </dialog>
+
   <dialog id="blueprint-editor" class="studio-dialog" aria-labelledby="editor-title">
     <form id="blueprint-form">
       <header class="studio-dialog-header"><div><p class="studio-eyebrow" id="editor-revision">Neuer Blueprint</p><h2 id="editor-title">Blueprint anlegen</h2></div><button type="button" class="btn" data-close="blueprint-editor" aria-label="Editor schließen">Schließen</button></header>

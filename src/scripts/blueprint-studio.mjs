@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // One editor for the former factory and the real blueprint/controller contracts.
+import {createRevisionDialog} from '../lib/blueprint-revisions.mjs';
 import {createAvatar,mountAvatarPicker} from '../lib/agent-avatar.mjs';
 import {createSymbol,mountSymbolPicker} from '../lib/ticket-symbol.mjs';
 export const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char =>
@@ -65,6 +66,11 @@ function initializeStudio() {
     return data;
   }
   const post = (path,payload) => api(path,{method:"POST",body:JSON.stringify(payload)});
+  const revisions=createRevisionDialog({document,onRestored:async saved=>{
+    await loadData();const current=byId(saved.id);
+    if(!current||current.version!==saved.version)throw new Error('Die neue Vorlagenversion ist gespeichert, ihr Readback ist noch nicht bestätigt. Bitte neu laden.');
+    notify('studio-status','Vorlage als neue Version '+saved.version+' wiederhergestellt. Bestehende Agenten bleiben unverändert.');
+  }});
   const checked = id => [...$(id).querySelectorAll('input[type="checkbox"]:checked')].map(box => box.value);
   function choose(select, value) {
     if (value && ![...select.options].some(option => option.value === String(value))) select.add(new Option(String(value)+" (gespeichert)",String(value)));
@@ -94,7 +100,7 @@ function initializeStudio() {
       return '<article class="studio-card"><div class="studio-card-top">'+image+'<span class="studio-state" data-running="'+String(slot?.running===true)+'">'+escapeHtml(blueprintState(bp))+'</span></div>'+
         '<div><h3>'+escapeHtml(bp.title||bp.name)+'</h3><p>'+escapeHtml(bp.description||bp.persona_role||labels[bp.kind])+'</p></div>'+
         '<div class="studio-card-details"><span>'+escapeHtml(labels[bp.kind]||bp.kind)+'</span><span>· Version '+escapeHtml(bp.version)+'</span>'+(model?'<span>· '+escapeHtml(model)+'</span>':"")+'</div>'+
-        '<div class="studio-card-actions"><button class="btn" data-copy="'+id+'">'+(bp.is_template?"Kopie erstellen":"Duplizieren")+'</button>'+
+        '<div class="studio-card-actions"><button class="btn" data-revisions="'+id+'">Versionen</button><button class="btn" data-copy="'+id+'">'+(bp.is_template?"Kopie erstellen":"Duplizieren")+'</button>'+
         (!bp.is_template?'<button class="btn" data-edit="'+id+'">Bearbeiten</button>':"")+
         (canExecute?'<button class="btn" data-instance="'+id+'">'+(slot?"Steckplatz aktualisieren":"Als Steckplatz")+'</button>':"")+
         (slot?'<a class="btn" href="/tasks?assigned_slot='+encodeURIComponent(slot.id)+'">Aufgaben</a>':"")+
@@ -251,9 +257,9 @@ function initializeStudio() {
   handle("studio-refresh","click",loadData);handle("studio-new","click",()=>openEditor());
   handle("studio-search","input",render);handle("studio-kind","change",render);
   handle("studio-grid","click",async event=>{
-    const button=event.target.closest("[data-edit],[data-copy],[data-instance],[data-start],[data-delete]");if(!button)return;
-    const attr=Object.keys(button.dataset).find(key=>["edit","copy","instance","start","delete"].includes(key)),bp=byId(button.dataset[attr]);if(!bp)return;
-    if(attr==="edit")openEditor(bp);else if(attr==="copy")openEditor(bp,true);else if(attr==="instance")await openInstance(bp);else if(attr==="start")await runBlueprint(bp,button);
+    const button=event.target.closest("[data-edit],[data-copy],[data-instance],[data-start],[data-delete],[data-revisions]");if(!button)return;
+    const attr=Object.keys(button.dataset).find(key=>["edit","copy","instance","start","delete","revisions"].includes(key)),bp=byId(button.dataset[attr]);if(!bp)return;
+    if(attr==="revisions")await revisions.open(bp,state.revisionContract);else if(attr==="edit")openEditor(bp);else if(attr==="copy")openEditor(bp,true);else if(attr==="instance")await openInstance(bp);else if(attr==="start")await runBlueprint(bp,button);
     else if(confirm("Blueprint „"+(bp.title||bp.name)+"“ entfernen?")){await api("/api/agent-studio/blueprints/"+bp.id+"?expected_version="+encodeURIComponent(bp.version),{method:"DELETE"});await loadData();}
   });
   handle("bp-role","change",()=>{const prompt=state.prompts?.prompts?.["role_"+$("bp-role").value]?.effective;if(prompt)$("bp-persona").value=prompt;drawAvatar();},"editor-status");

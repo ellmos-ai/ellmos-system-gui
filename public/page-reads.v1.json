@@ -666,6 +666,34 @@
     "method": "POST",
     "path": "/api/agenten/teams",
     "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints/{id}/revisions",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#readHistory"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints/{id}/revisions/{version}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#readRevision"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints/{id}/revisions/diff",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#readRevisionDiff"
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-studio/blueprints/{id}/revisions/{version}/restore",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#restoreRevision"
    }
   ],
   "/agenten/subscription-agents": [
