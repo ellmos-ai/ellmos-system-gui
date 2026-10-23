@@ -37,7 +37,7 @@
     "src/lib/task-summary.js": "e28cfddcc7ee559b74be8c9883b946b85571941dda13d5cba97aec3dfcc63d07",
     "src/lib/ticket-symbol-assets.mjs": "207537da4144c4f1627d0086417ad384069085adb1aa8090d6f41f770e6d0b84",
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
-    "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+    "src/pages/agenten/blueprints.astro": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
     "src/pages/agenten/running.astro": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
@@ -57,7 +57,7 @@
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/tasks.astro": "dfc32a1f73d3a389eea882cead1f62c0f8d9784ab28f4adf8ddd7678ab9e50e4",
-    "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+    "src/scripts/blueprint-studio.mjs": "dba34c659eaebca94b1f4820cd6fefea40e68f88ebf2414d34d03d8534ad0d70",
     "src/styles/agent-avatars.css": "346320e7aa4944803e4913b53ec419ad3e9892d59d5a0edcaf7a29be770f83ce",
     "src/styles/main.css": "5a4da9cd36d38bbc218eeefcc27491022ec862aa2b1f3cb4ee2cb6d331c84681",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
@@ -116,11 +116,13 @@
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "public/page-reads.v1.json": "e7a783ef9355850b637712d29e1743842cd0161f15259e9527d843691e3970d6",
+    "public/page-reads.v1.json": "190b09faadd3c5e6ec780651e6e22e630a8098424cb267435d24141d671452b7",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
-    "tests/task-result-history.test.mjs": "16b134ed675ab9a11dbf657afc66f04352adac5efbb9da095cc5556b192be7f0"
+    "tests/task-result-history.test.mjs": "16b134ed675ab9a11dbf657afc66f04352adac5efbb9da095cc5556b192be7f0",
+    "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236",
+    "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -176,6 +178,51 @@
           "path": "docs/CONSUMER_CONTRACT.md",
           "previous_sha256": "467b75411d8e01e809f3083b8dc609aeb78a8f2c1db8b0757617eecb3a5b38b5",
           "sha256": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "change": "Task1951: explicit immutable source lineage on edited blueprint copies; require backend revision contract and read back lineage",
+      "source_base_commit": "fe416d9e6ac098c07ac9b6e957cabc316bc6432f",
+      "files": [
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+          "sha256": "7abc8b30d45da3a1e2c172634e8fd6e567f3939946edff8bb8a49f03d016865f"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "change": "Task1951 follow-up: authenticated recorded-version history, comparison, paging and explicit restore UI; optional page-read paths",
+      "source_base_commit": "fe416d9e6ac098c07ac9b6e957cabc316bc6432f",
+      "backend_reference_commit": "3d8876ddbbadaf0926f5b3ec7a07d7f7a8b2491e",
+      "files": [
+        {
+          "path": "src/lib/blueprint-revisions.mjs",
+          "previous_sha256": null,
+          "sha256": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "7abc8b30d45da3a1e2c172634e8fd6e567f3939946edff8bb8a49f03d016865f",
+          "sha256": "dba34c659eaebca94b1f4820cd6fefea40e68f88ebf2414d34d03d8534ad0d70"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+          "sha256": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "e7a783ef9355850b637712d29e1743842cd0161f15259e9527d843691e3970d6",
+          "sha256": "190b09faadd3c5e6ec780651e6e22e630a8098424cb267435d24141d671452b7"
+        },
+        {
+          "path": "docs/blueprint-revisions.md",
+          "previous_sha256": null,
+          "sha256": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2"
         }
       ]
     }
