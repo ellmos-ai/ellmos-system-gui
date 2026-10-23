@@ -175,7 +175,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
   <!-- 5. ANSICHT: RUNNING AGENTS & SYSTEMSLOTS -->
   <details class="card collapsible-section" aria-labelledby="core-agents-title" style="margin-bottom:1.5rem;">
-<summary class="card-header"><span><span class="card-title" id="core-agents-title">Modellsteckplätze & Agentenslots</span><span class="section-description">Lokale Modelle und ihre zugeordneten Agenten.</span></span></summary>
+<summary class="card-header"><span><span class="card-title" id="core-agents-title">Lokale Modelle & Agentenzugriff</span><span class="section-description">Gemeinsame lokale Modellangebote, gespeicherte Zugriffsregeln und getrennte Ressourcenbelege.</span></span></summary>
 
     <ModelSockets />
 
@@ -186,7 +186,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         Vorhandene Systemprofile:
       </h3>
       <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
-        Profile legen Rolle, Hauptmodell und Verhalten fest. Ein lokales Haupt- oder Fallbackmodell benötigt zusätzlich eine Zuordnung zum passenden Modellsteckplatz. Vollständig externe Agenten benötigen keine lokalen Slots.
+        Profile legen Rolle, Hauptmodell und Verhalten fest. Lokale Haupt- und Fallbackziele unterliegen den gespeicherten Zugriffsregeln und der Ressourcenadmission. Cloudinferenz benötigt keinen lokalen Modellplatz; eine gespeicherte Zuordnung belegt keine aktive Belegung.
       </p>
 
       <div id="core-agent-feedback" role="status" aria-live="polite"></div>

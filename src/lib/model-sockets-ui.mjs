@@ -6,7 +6,8 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
   const status = find('status'), targets = find('targets'), catalogueStatus = find('catalogue-status');
   const dialog = find('dialog'), fields = find('fields'), form = find('form'), feedback = find('feedback');
   const submit = find('save'), add = find('add');
-  let snapshot = null, catalogue = null, epoch = 0, writing = false, draft = null, inflight = null;
+  const viewButtons = [find('view-models'), find('view-agents')].filter(Boolean);
+  let snapshot = null, catalogue = null, epoch = 0, writing = false, draft = null, inflight = null, view = 'models';
   const node = (tag, text, className) => {
     const n = document.createElement(tag);
     if (text !== undefined) n.textContent = String(text);
@@ -36,45 +37,82 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
     !snapshot?.sockets.some(s => s.id === m.socket_id)) || [];
   const nameFor = slot => String(slot.name || slot.agent_id);
 
+  function appendBinding(container, socket, slot) {
+    const row = node('div', undefined, 'model-slot'); row.dataset.bindingId = slot.id;
+    row.append(node('strong', nameFor(slot)), node('small', slot.agent_id),
+      node('p', slot.orphaned ? 'Agentenprofil fehlt · gespeicherte Zuordnung' :
+        (slot.enabled ? 'Zuordnung freigegeben' : 'Zuordnung gesperrt') + ' · ' +
+        (slot.priority === 'foreground' ? 'Vordergrund' : 'Hintergrund')),
+      node('p', 'Kontextvorgabe: ' + (slot.context_tokens === null ? 'keine Vorgabe' : slot.context_tokens + ' Tokens') + ' · Lauf, KV-Belegung und Ressourcenanteil: nicht geprüft.', 'model-note'));
+    const slotActions = node('div', undefined, 'model-actions');
+    slotActions.append(button('Zugriff bearbeiten', () => openBinding(socket, slot), !editable() || slot.orphaned),
+      button('Zuordnung entfernen', () => removeBinding(slot), !editable()));
+    row.append(slotActions); container.append(row);
+
+  }
+
+  function renderAgentAccess() {
+    const agents = new Map(snapshot.unbound_agent_ids.map(id => [id, {id, name:id, bindings:[]}]));
+    for (const socket of snapshot.sockets) for (const slot of socket.slots) {
+      if (!agents.has(slot.agent_id)) agents.set(slot.agent_id, {id:slot.agent_id, name:nameFor(slot), bindings:[]});
+      agents.get(slot.agent_id).bindings.push({socket, slot});
+    }
+    if (!agents.size) targets.append(node('p', 'Die Quelle meldet keine Agentenprofile oder gespeicherten Zuordnungen.'));
+    for (const agent of [...agents.values()].sort((a,b) => a.name.localeCompare(b.name, 'de'))) {
+      const card = node('article', undefined, 'model-socket'); card.dataset.accessAgentId = agent.id;
+      card.append(node('h3', agent.name), node('small', agent.id),
+        node('p', agent.bindings.length + ' gespeicherte lokale Modellzuordnung(en).', 'model-note'));
+      if (!agent.bindings.length) card.append(node('p',
+        'Keine lokale Zuordnung gespeichert. Ein externes Ziel, ein Fallback oder ein laufender Zugriff ist hier nicht bestätigt.', 'model-note'));
+      for (const {socket, slot} of agent.bindings) {
+        const group = node('section');
+        group.append(node('h4', socket.model + ' · ' + socket.backend),
+          node('small', socket.host_id + ' · ' + (socket.enabled ? 'Modellangebot aktiviert' : 'Modellangebot deaktiviert')),
+          node('p', 'Residenz und Ressourcenadmission: nicht bestätigt. Diese Zuordnung reserviert keinen eigenen Hardwareplatz.', 'model-note'));
+        appendBinding(group, socket, slot); card.append(group);
+      }
+      targets.append(card);
+    }
+  }
+
   function render() {
     targets.replaceChildren();
     submit.disabled = writing || !!draft && !editable();
     add.disabled = !editable() || !catalogueFresh() || !modelsForAddition().length;
+    const provenance = find('provenance');
+    if (provenance) provenance.textContent = snapshot
+      ? 'Konfigurationsquelle: ' + (snapshot.migration_required ? 'Legacy-Vorschau' : 'kanonische Modellkonfiguration') +
+        ' · Host: ' + snapshot.host_id + ' · Version: ' + snapshot.configuration_version +
+        ' · Host-Anfragegrenze: ' + snapshot.host_inference_limit +
+        ' · Residenz, RAM-Reserve und tatsächliche Parallelität: nicht bestätigt.'
+      : 'Konfigurationsquelle und aktuelle Ressourcennutzung nicht verfügbar.';
+    for (const toggle of viewButtons)
+      toggle.setAttribute('aria-pressed', String(toggle.dataset.socketsView === view));
     if (!snapshot) return;
     status.textContent = snapshot.migration_required
       ? 'Zuordnungen noch nicht übernommen · bestehende Profile werden als Vorschau angezeigt. Modelländerungen sind erst nach der Einrichtung möglich.'
-      : 'Gespeicherte Modellzuordnungen · ' + snapshot.sockets.length + ' Steckplatz/Steckplätze. Das bestätigt keinen laufenden Agenten.';
+      : 'Gespeicherte Modellzuordnungen · ' + snapshot.sockets.length + ' lokale Modellangebote. Das bestätigt weder Residenz noch einen laufenden Agenten.';
+    if (view === 'agents') { renderAgentAccess(); return; }
     if (!snapshot.sockets.length) targets.append(node('p', 'Noch kein lokales Modell zugeordnet. Wähle ein bestätigtes Chatmodell aus dem Katalog.'));
     for (const socket of snapshot.sockets) {
       const card = node('article', undefined, 'model-socket'); card.dataset.socketId = socket.id;
       const title = node('div', undefined, 'model-socket-heading');
-      title.append(node('h3', socket.model), node('span', socket.enabled ? 'Freigegeben' : 'Gesperrt', 'badge'));
+      title.append(node('h3', socket.model), node('span', socket.enabled ? 'Angebot aktiviert' : 'Angebot deaktiviert', 'badge'));
       card.append(title, node('p', (socket.backend === 'ollama' ? 'Ollama' : 'LM Studio') + ' · ' + socket.host_id));
       const metadata = catalogue?.models.find(m => m.socket_id === socket.id);
       card.append(node('p', metadata ? (metadata.chat_eligible ? 'Chatfähig' : 'Nur Embedding / kein Chat') +
         (metadata.native_tools_capable ? ' · native Tools' : ' · keine native Toolfähigkeit gemeldet')
         : 'Modellangebot und Fähigkeiten derzeit nicht bestätigt.', 'model-note'));
-      card.append(node('p', 'Residenz und RAM-Anteil: nicht gemessen. Effektive Inferenzgrenze: ' +
-        socket.effective_max_active_slots + ' · geplant: ' + socket.max_active_slots, 'model-note'));
+      card.append(node('p', 'Residenz, Gewichts-/KV-Belegung und RAM-Anteil: nicht gemessen. Konfigurierte Anfragegrenze: ' +
+        socket.effective_max_active_slots + ' · geplant: ' + socket.max_active_slots + ' · Kapazitätsnachweis: ' + (socket.capacity_verified ? 'von der Quelle gemeldet' : 'nicht bestätigt'), 'model-note'));
       const actions = node('div', undefined, 'model-actions');
       actions.append(button('Modell bearbeiten', () => openSocket(socket), !editable()),
         button('Agent zuordnen', () => openBinding(socket), !editable() || !agentChoices(snapshot).length));
       card.append(actions);
       const slots = node('details', undefined, 'model-slot-list');
-      slots.append(node('summary', 'Agentenslots (' + socket.slots.length + ')'));
+      slots.append(node('summary', 'Agentenzugriffe (' + socket.slots.length + ')'));
       if (!socket.slots.length) slots.append(node('p', 'Diesem Modell ist noch kein Agent zugeordnet.'));
-      for (const slot of socket.slots) {
-        const row = node('div', undefined, 'model-slot'); row.dataset.bindingId = slot.id;
-        row.append(node('strong', nameFor(slot)), node('small', slot.agent_id),
-          node('p', slot.orphaned ? 'Agentenprofil fehlt · gespeicherte Zuordnung' :
-            (slot.enabled ? 'Zuordnung freigegeben' : 'Zuordnung gesperrt') + ' · ' +
-            (slot.priority === 'foreground' ? 'Vordergrund' : 'Hintergrund')),
-          node('p', 'Lauf und Ressourcenanteil: nicht geprüft.', 'model-note'));
-        const slotActions = node('div', undefined, 'model-actions');
-        slotActions.append(button('Slot bearbeiten', () => openBinding(socket, slot), !editable() || slot.orphaned),
-          button('Zuordnung entfernen', () => removeBinding(slot), !editable()));
-        row.append(slotActions); slots.append(row);
-      }
+      for (const slot of socket.slots) appendBinding(slots, socket, slot);
       card.append(slots); targets.append(card);
     }
   }
@@ -83,21 +121,21 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
     if (!editable()) return;
     if (!socket && (!catalogueFresh() || !modelsForAddition().length)) return;
     draft = {kind:'socket', snapshot:structuredClone(snapshot), socket}; fields.replaceChildren(); feedback.textContent = '';
-    find('title').textContent = socket ? 'Modellsteckplatz bearbeiten' : 'Lokales Modell zuordnen';
+    find('title').textContent = socket ? 'Modellangebot bearbeiten' : 'Lokales Modell zuordnen';
     if (socket) fields.append(node('p', socket.model + ' · ' + socket.backend));
     else select('Bestätigtes Chatmodell', 'model-choice', modelsForAddition().map(m => [m.socket_id, m.model + ' · ' + m.backend]));
     field('Modell für zugeordnete Agenten freigeben', 'enabled', 'checkbox', socket?.enabled ?? true);
-    const count = field('Geplante parallele Slots', 'max-active', 'number', socket?.max_active_slots ?? 1);
+    const count = field('Geplante parallele Modellanfragen', 'max-active', 'number', socket?.max_active_slots ?? 1);
     count.min = '1'; count.max = '1000'; count.step = '1'; count.required = true;
     select('Geplante Residenzregel', 'residency', [['exclusive','Exklusiv'],['shared','Gemeinsam']], socket?.residency_policy);
-    fields.append(node('p', 'Die geplante Parallelität ist noch keine Kapazitätsfreigabe. Aktuell gilt die bestätigte Hostgrenze aus der Übersicht. Speichern lädt kein Modell und startet keinen Agenten.', 'model-note'));
+    fields.append(node('p', 'Die geplante Parallelität ist keine Kapazitätsfreigabe. Die Übersicht nennt konfigurierte Grenzen; eine aktuelle Ressourcenadmission ist hier nicht bestätigt. Speichern lädt kein Modell und startet keinen Agenten.', 'model-note'));
     submit.disabled = false; dialog.showModal();
   }
 
   function openBinding(socket, slot) {
     if (!editable()) return;
     draft = {kind:'bind', snapshot:structuredClone(snapshot), socket, slot}; fields.replaceChildren(); feedback.textContent = '';
-    find('title').textContent = slot ? 'Agentenslot bearbeiten' : 'Agent einem Modell zuordnen';
+    find('title').textContent = slot ? 'Agentenzugriff bearbeiten' : 'Agent einem Modell zuordnen';
     fields.append(node('p', socket.model));
     const agent = select('Agentenprofil', 'agent', agentChoices(snapshot).map(a => [a.id, a.name]), slot?.agent_id);
     agent.disabled = !!slot;
@@ -197,6 +235,11 @@ export function mountModelSockets(root, {document = globalThis.document, fetcher
     })();
     return inflight;
   }
+  for (const toggle of viewButtons) toggle.addEventListener('click', () => {
+    const next = toggle.dataset.socketsView;
+    if (!['models', 'agents'].includes(next) || writing) return;
+    view = next; render();
+  });
   find('refresh').addEventListener('click', () => void refresh());
   window.addEventListener('bach:core-config-observed', event => {
     if (!snapshot || event.detail?.configuration_version === snapshot.configuration_version || writing) return;
