@@ -526,7 +526,7 @@
         "src/pages/tasks.astro": {
           "source_path": "system/gui/web/src/pages/tasks.astro",
           "source_sha256": "cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9",
-          "imported_sha256": "dfc32a1f73d3a389eea882cead1f62c0f8d9784ab28f4adf8ddd7678ab9e50e4",
+          "imported_sha256": "028864f13c3d968f355361c58997d7bd4d4408ea151baea5551a26627c75569e",
           "adapted": true
         },
         "src/scripts/blueprint-studio.mjs": {
@@ -1382,6 +1382,38 @@
           "path": "scripts/page-reads-bindings.mjs",
           "previous_sha256": "997a7268e59f251d832ae7cb5063517f80d4294762100852d21efc31f90c9b65",
           "sha256": "612e874f66cb2335c54de1dc8ec57f344f5d66e3e860085204f6474ac68be396"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2212: native task lease and completion-policy observations in shared task details",
+      "source_base_commit": "fe416d9e6ac098c07ac9b6e957cabc316bc6432f",
+      "changes": [
+        "Add optional native lease/policy reads with version/status correlation; no admission simulation or worker/configuration writes.",
+        "Advance the mutable imported GUI artifact hash for tasks.astro; preserve the original pinned BACH source_sha256 and every historical follow-up record.",
+        "First CI39910998560 reported stale imported_sha256; this dated hash-chain entry corrects metadata without changing test conditions."
+      ],
+      "files": [
+        {
+          "path": "src/lib/task-hindrances.mjs",
+          "previous_sha256": null,
+          "sha256": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "dfc32a1f73d3a389eea882cead1f62c0f8d9784ab28f4adf8ddd7678ab9e50e4",
+          "sha256": "028864f13c3d968f355361c58997d7bd4d4408ea151baea5551a26627c75569e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "e7a783ef9355850b637712d29e1743842cd0161f15259e9527d843691e3970d6",
+          "sha256": "8625fbb72013fde2513d4cdb1ea24587320c5c06ff9adb5a66cff68530092f3d"
+        },
+        {
+          "path": "docs/task-hindrances.md",
+          "previous_sha256": null,
+          "sha256": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
         }
       ]
     }
