@@ -208,3 +208,61 @@ test('a failed old-task save cannot overwrite the newly selected task after dela
   assert.match(h.status().textContent, /Task #42/);
   assert.doesNotMatch(h.status().textContent, /parallel geändert/);
 });
+
+const originRows = h => {
+  const rows = h.node('task-worker-policy-origins').children, pairs = {};
+  for (let i = 0; i < rows.length; i += 2) pairs[rows[i].textContent] = rows[i + 1].textContent;
+  return pairs;
+};
+test('inherited native user policy is shown as global user rule, never system default', async () => {
+  const value = taskSnapshot(41);
+  value.global_policy_source = 'user_override';
+  value.override = {mode:null, github_external_review:null, allow_review_task_pickup:null, require_user_review:false};
+  Object.assign(value.effective, {policy_source:'system_default', effective_mode:'simple_task',
+    state:'not_evaluated', reason:'completion_integrity_not_evaluated', user_review_required:false,
+    github_external_review:true, allow_review_task_pickup:false});
+  const h = harness('task', [response(value)]);
+  h.select(41); await tick();
+  const rows = originRows(h);
+  assert.equal(rows['Abschlussmodus'], 'Einfacher Taskmodus · globale Benutzerregel');
+  assert.equal(rows['GitHub-Prüfung'], 'extern über GitHub · globale Benutzerregel');
+  assert.equal(rows['Review-Aufgabe als Ersatz'], 'ausgeschlossen · globale Benutzerregel');
+  assert.equal(rows['Globale Herkunft'], 'globale Benutzerregel');
+  assert.doesNotMatch(h.node('task-worker-policy-origins').children.map(n=>n.textContent).join(' '), /Systemstandard/);
+  assert.match(h.node('task-worker-policy-versions').textContent, /Regelversion: policy-1/);
+  assert.match(h.node('task-worker-policy-versions').textContent, /Konfigurationsstand \(global und Task\): config-1/);
+  assert.match(h.node('task-worker-policy-versions').textContent, /Taskversion: task-1/);
+  assert.match(h.node('task-worker-policy-effective').textContent, /noch nicht ausgewertet/);
+  assert.ok(h.calls.every(c => !c.options.method || c.options.method === 'GET'));
+});
+test('task fields retain independent origins including explicit false and inherited mode', async () => {
+  const value = taskSnapshot(41);
+  value.global_policy_source = 'user_override';
+  value.override = {mode:null, github_external_review:false, allow_review_task_pickup:true, require_user_review:true};
+  Object.assign(value.effective, {github_external_review:false, allow_review_task_pickup:true});
+  const h = harness('task', [response(value)]); h.select(41); await tick();
+  const rows = originRows(h);
+  assert.equal(rows['Abschlussmodus'], 'Ausgewogen · globale Benutzerregel');
+  assert.equal(rows['GitHub-Prüfung'], 'intern · Task-Abweichung');
+  assert.equal(rows['Review-Aufgabe als Ersatz'], 'erlaubt · Task-Abweichung');
+  assert.equal(h.node('field:user_review_required').disabled, true);
+  assert.match(h.node('task-worker-policy-effective').textContent, /verbindlich erforderlich/);
+});
+for (const globalSource of [undefined, 'future_source', 'system_default']) {
+  test('global provenance ' + String(globalSource) + ' stays explicit without fabricated authority', async () => {
+    const value = taskSnapshot(41);
+    value.global_policy_source = globalSource;
+    value.override.mode = null;
+    const h = harness('task', [response(value)]);h.select(41);await tick();
+    const expected = globalSource === 'system_default' ? 'globaler Systemstandard' : 'globale Herkunft nicht bestätigt';
+    assert.equal(originRows(h)['Abschlussmodus'], 'Ausgewogen · ' + expected);
+    assert.equal(h.status().dataset.state, 'available');
+  });
+}
+test('explicit task mode stays separate from global source and does not reset global settings', async () => {
+  const value = taskSnapshot(41);value.global_policy_source='user_override';value.override.mode='high_security';value.effective.effective_mode='high_security';
+  const h = harness('task', [response(value)]);h.select(41);await tick();
+  assert.equal(originRows(h)['Abschlussmodus'], 'Hochsicherheit · Task-Abweichung');
+  assert.equal(originRows(h)['Globale Herkunft'], 'globale Benutzerregel');
+  assert.equal(h.calls.length,1);assert.match(h.calls[0].url,/tasks\/41\/worker-policy/);
+});

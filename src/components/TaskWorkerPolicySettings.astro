@@ -2,11 +2,16 @@
   <summary id="task-worker-policy-heading">Worker-Regeln für diesen Task</summary>
   <p id="task-worker-policy-status" role="status" aria-live="polite">Task-Policy noch nicht geprüft.</p>
   <form id="task-worker-policy-form" hidden>
+    <dl id="task-worker-policy-origins" class="task-worker-policy-origins"></dl>
     <p id="task-worker-policy-effective" class="muted"></p>
+    <details class="task-worker-policy-technical">
+      <summary>Regel- und Konfigurationsversionen</summary>
+      <p id="task-worker-policy-versions" class="muted"></p>
+    </details>
     <div class="task-worker-policy-grid">
       <label>Abschlussmodus
         <select name="mode">
-          <option value="inherit">Systemstandard verwenden</option>
+          <option value="inherit">Globale Regel übernehmen</option>
           <option value="simple_task">Einfacher Taskmodus</option>
           <option value="balanced">Ausgewogen</option>
           <option value="high_security">Hochsicherheit</option>
@@ -14,14 +19,14 @@
       </label>
       <label>GitHub-Prüfung
         <select name="github_external_review">
-          <option value="inherit">Systemstandard verwenden</option>
+          <option value="inherit">Globale Regel übernehmen</option>
           <option value="on">Extern über PR-Checks und Reviews</option>
           <option value="off">Interne Prüfung verwenden</option>
         </select>
       </label>
       <label>Review-Aufgabe als Ersatz
         <select name="allow_review_task_pickup">
-          <option value="inherit">Systemstandard verwenden</option>
+          <option value="inherit">Globale Regel übernehmen</option>
           <option value="on">Erlauben, wenn keine normale Aufgabe passt</option>
           <option value="off">Nicht als Ersatz übernehmen</option>
         </select>
@@ -30,7 +35,8 @@
         <input name="user_review_required" type="checkbox" /> Für diesen Task ein Nutzerreview verlangen
       </label>
     </div>
-    <p class="muted">Ein vorhandenes Nutzerreview bleibt verbindlich. Diese Task-Regel kann eine solche Pflicht nur hinzufügen oder vom Systemstandard erben.</p>
+    <p class="muted">Diese Task-Regel kann ein Nutzerreview zusätzlich verlangen. Eine bereits am Task wirksame Pflicht kann hier nicht entfernt werden.</p>
+    <p class="muted">Globale Regeln und ihre Systemstandards werden in den Einstellungen unter „Worker &amp; Aufgaben“ verwaltet. Diese Ansicht ändert nur die Abweichung dieses Tasks.</p>
     <div class="task-worker-policy-actions">
       <button type="submit" class="btn btn-primary" id="task-worker-policy-save" disabled>Task-Regeln speichern</button>
       <button type="button" class="btn" id="task-worker-policy-refresh" disabled>Neu laden</button>
@@ -42,6 +48,11 @@
   .task-worker-policy {margin:1rem 0;padding:.8rem 1rem;border:1px solid var(--border);}
   .task-worker-policy summary {cursor:pointer;font-weight:650;}
   #task-worker-policy-status {color:var(--text-muted);overflow-wrap:anywhere;}
+  .task-worker-policy-origins {display:grid;grid-template-columns:minmax(8rem,.4fr) minmax(0,1fr);gap:.4rem 1rem;}
+  .task-worker-policy-origins dt {font-weight:600;}
+  .task-worker-policy-origins dd {margin:0;overflow-wrap:anywhere;}
+  .task-worker-policy-technical p {overflow-wrap:anywhere;}
+  @media(max-width:600px){.task-worker-policy-origins{grid-template-columns:1fr}.task-worker-policy-origins dd{margin-bottom:.6rem}}
   .task-worker-policy-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:.8rem;margin:.8rem 0;}
   .task-worker-policy-grid label {display:flex;flex-direction:column;gap:.35rem;min-width:0;}
   .task-worker-policy-grid select {max-width:100%;box-sizing:border-box;padding:.55rem;background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font:inherit;}
