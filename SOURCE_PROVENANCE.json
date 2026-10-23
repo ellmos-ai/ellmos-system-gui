@@ -14,7 +14,7 @@
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "9e9f893dd88a1d1bbbb4106685e6e846618c90b941a13d4352308393e872cedf",
+    "public/page-reads.v1.json": "a2772303b7d92c771a8093b242117aa6a1f3d83184ae38db7a357ad8e8430c20",
     "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -316,7 +316,7 @@
     "tests/worker-policy-settings.test.mjs": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
     "tests/gui-shell-navigation.test.mjs": "ba8687c675c7fad2c06c635ce6156b70c2cb2d0892652e76df30b78751b1d8ad",
     "docs/GUI-SHELL-NAVIGATION.md": "631e940ff40d37608a523d3b52e29bd2406e6514c95ea961e3efb6d9c6037c5b",
-    "scripts/page-reads-bindings.mjs": "f72d84ffeaa3a8b857321aaa2135766d23e21c5db8d513776f4fa1abc29c896a",
+    "scripts/page-reads-bindings.mjs": "3363fd6b666e23655cb1f561c05ae15c3a0114b1101ec11c75db8d8fad5f2331",
     "src/lib/settings-connections.mjs": "1ef6196556c70917058cc243b6f5609468743feb49de219f42d3aec2be960955",
     "tests/settings-connections.test.mjs": "5ad0a09c43b7a215a5f4924d00bd84becadee8e862483337927a2f36c1f35d6a",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
@@ -3919,6 +3919,28 @@
           "path": "src/pages/tasks.astro",
           "previous_sha256": "fcb313a803b5e425f87d319cc9b17b8d71c5513ee68b660149ee5369c416c7e7",
           "sha256": "4c721e2ef8370acc47d91227839b50b149c15727c4637cc3871270095beef00c"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2212: declare the restored model configuration call sites in the shared page contract",
+      "session_id": "01a164da-cc28-7140-b499-d40dae7c2e11",
+      "source_base_commit": "280b5476bda2349f45d63999bd303ddd4604340c",
+      "changes": [
+        "Declare the two existing optional model configuration reads and the three validated configuration mutation alternatives.",
+        "Bind the existing unresolved saveSocketChange call site without changing model client behavior or source pins."
+      ],
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "9e9f893dd88a1d1bbbb4106685e6e846618c90b941a13d4352308393e872cedf",
+          "sha256": "a2772303b7d92c771a8093b242117aa6a1f3d83184ae38db7a357ad8e8430c20"
+        },
+        {
+          "path": "scripts/page-reads-bindings.mjs",
+          "previous_sha256": "f72d84ffeaa3a8b857321aaa2135766d23e21c5db8d513776f4fa1abc29c896a",
+          "sha256": "3363fd6b666e23655cb1f561c05ae15c3a0114b1101ec11c75db8d8fad5f2331"
         }
       ]
     }
