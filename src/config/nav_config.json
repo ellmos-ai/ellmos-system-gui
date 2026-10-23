@@ -126,13 +126,7 @@
         "href": "/agenten/blueprints",
         "label": "Agenten-Werkstatt",
         "icon": "🤖",
-        "description": "Vorlagen-Bibliothek: Agenten, Rollen, Workflows, Services & Contractus"
-      },
-      {
-        "href": "/agenten/subscription-agents",
-        "label": "Subscription Agents",
-        "icon": "🧩",
-        "description": "Quellengebundene Prompt-Vorschau ohne Start oder Taskübernahme"
+        "description": "Vorlagen für Agenten, Rollen und externe Startprompts"
       },
       {
         "href": "/agenten/running",

@@ -14,7 +14,7 @@
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923",
+    "public/page-reads.v1.json": "d06f68e429ad7420b0b5a981dd27160137819e8a69ad18a7c15407ca4fdb65e0",
     "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -230,7 +230,7 @@
     "src/components/TaskLeasePanel.astro": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
     "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
     "src/components/WorkerPolicySettings.astro": "51bd535eb231b0bbc12b7802cd50daafc3b007b2e3c89b2563fe9df44507bdcd",
-    "src/config/nav_config.json": "0dc51055b0da809445c73ec01cd29fe238b37000e7783ab84edd68ecfbbc078c",
+    "src/config/nav_config.json": "52a95e6b571e4d00ace28d224dd7403e5870271ce6433e348cc1c556df9b2a88",
     "src/layouts/BachLayout.astro": "98233dd65eae4491973c55bd73d8174509efcf70c5d57856b94ce4a1c7e0844e",
     "src/lib/agent-avatar-browser.mjs": "02b51e85852532af3549dbecd1b4c1b1bf7bf48eda7340f23523c7597ec44abf",
     "src/lib/agent-avatar-catalog.mjs": "6da91323ab28c22ddbe8555a3f59497c61c1d406bcd692fcd5bfb26643a82fc0",
@@ -256,12 +256,12 @@
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
-    "src/pages/agenten/blueprints.astro": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+    "src/pages/agenten/blueprints.astro": "bf83e97820b3dd2d934424e4ec65c1a36722e8d5d21e458f49fa0fa456382324",
     "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
     "src/pages/agenten/running.astro": "351b81e2c7cedae78a7497155c5c8a86c9e3c659935d557ae82e1a56ef354b98",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
-    "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
+    "src/pages/agenten/subscription-agents.astro": "66d1ecedcf8e79503d2c632eca695fc86e7c56e88ed548d3c11c652a13802266",
     "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
     "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
@@ -280,7 +280,7 @@
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/scripts/blueprint-studio.mjs": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+    "src/scripts/blueprint-studio.mjs": "633674ebf490a8d751f60aec32d7468e1698d8c23f02a957ee13f2f393e17051",
     "src/scripts/domain-studio.mjs": "2b40b55a952eba22b1494a0405379bf3b6e7724e97845306ecdde115bea00283",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
@@ -324,7 +324,9 @@
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
     "tests/worker-queue.test.mjs": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
-    "tests/page-reads.test.mjs": "317c12e37193420ad3f9d03786b530d3641db60ba9baeb267d3e07d6b95d6246"
+    "tests/page-reads.test.mjs": "317c12e37193420ad3f9d03786b530d3641db60ba9baeb267d3e07d6b95d6246",
+    "src/components/SubscriptionAgentComposer.astro": "ea12dc1c745255b723e0eab65ae4680518d82eac54bec479f4382a1b937f4e9b",
+    "docs/subscription-workshop.md": "766c0d52d3c083641ce2bbc801afc1de44327a5a0f5d35e4bf0a25029655b6e5"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -3559,6 +3561,54 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "161e2efa9691f941e8f0b9f337aa8fca170c9760d7b88acb95f8fd1dc7e47581",
           "sha256": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2030: integrate existing external-agent composer into common workshop",
+      "source_base_commit": "1d6c0f985834f10ae9e5e051205a33b83efaaa54",
+      "changes": [
+        "Embed the existing source-bound composer in the shared blueprint workshop without a second navigation entry or configuration store.",
+        "Keep the subscription client byte-identical, including exact revision validation, explicit copy and fallback, no start or task claim.",
+        "Retain the former route as a compatibility redirect with a visible link and declare composer API reads on the workshop.",
+        "Installed consumer 0.2.27-or-newer compatibility and runtime acceptance remain separate open gates."
+      ],
+      "files": [
+        {
+          "path": "src/components/SubscriptionAgentComposer.astro",
+          "previous_sha256": null,
+          "sha256": "ea12dc1c745255b723e0eab65ae4680518d82eac54bec479f4382a1b937f4e9b"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+          "sha256": "bf83e97820b3dd2d934424e4ec65c1a36722e8d5d21e458f49fa0fa456382324"
+        },
+        {
+          "path": "src/pages/agenten/subscription-agents.astro",
+          "previous_sha256": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
+          "sha256": "66d1ecedcf8e79503d2c632eca695fc86e7c56e88ed548d3c11c652a13802266"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+          "sha256": "633674ebf490a8d751f60aec32d7468e1698d8c23f02a957ee13f2f393e17051"
+        },
+        {
+          "path": "src/config/nav_config.json",
+          "previous_sha256": "0dc51055b0da809445c73ec01cd29fe238b37000e7783ab84edd68ecfbbc078c",
+          "sha256": "52a95e6b571e4d00ace28d224dd7403e5870271ce6433e348cc1c556df9b2a88"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923",
+          "sha256": "d06f68e429ad7420b0b5a981dd27160137819e8a69ad18a7c15407ca4fdb65e0"
+        },
+        {
+          "path": "docs/subscription-workshop.md",
+          "previous_sha256": null,
+          "sha256": "766c0d52d3c083641ce2bbc801afc1de44327a5a0f5d35e4bf0a25029655b6e5"
         }
       ]
     }

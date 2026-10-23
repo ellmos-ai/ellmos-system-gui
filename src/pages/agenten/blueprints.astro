@@ -1,5 +1,6 @@
 ---
 import BachLayout from "../../layouts/BachLayout.astro";
+import SubscriptionAgentComposer from "../../components/SubscriptionAgentComposer.astro";
 import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
@@ -17,7 +18,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     </div>
   </header>
   <p id="studio-status" class="studio-message" role="status" aria-live="polite">Blueprints werden geladen…</p>
-  <div class="studio-toolbar">
+  <div class="studio-toolbar" id="studio-toolbar">
     <label class="studio-search">Suchen<input id="studio-search" type="search" placeholder="Name, Rolle oder Beschreibung" /></label>
     <label>Typ<select id="studio-kind"><option value="">Alle Typen</option><option value="agent">Agenten</option><option value="role">Rollen</option><option value="skill">Skill-Vorlagen</option><option value="workflow">Workflow-Vorlagen</option><option value="service">Service-Vorlagen</option><option value="contractus">Arbeitsverträge</option></select></label>
     <button class="btn" id="studio-prompts">System- und Rollenvorlagen</button>
@@ -26,6 +27,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     <button role="tab" aria-selected="true" data-library="custom">Eigene Blueprints <span id="count-custom">–</span></button>
     <button role="tab" aria-selected="false" data-library="templates">Vorlagen <span id="count-templates">–</span></button>
     <button role="tab" aria-selected="false" data-library="teams">Teams <span id="count-teams">–</span></button>
+    <button role="tab" aria-selected="false" data-library="subscriptions" aria-controls="studio-subscriptions">Externe Agenten</button>
   </div>
   <section id="studio-grid" class="studio-grid" aria-label="Blueprints"></section>
   <section id="studio-teams" hidden>
@@ -33,6 +35,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     <p class="studio-note">Mitglieder und Koordination werden gespeichert. Ausführbare Abläufe und ihre Aufgaben stehen unter <a href="/agenten/marblerun">Ketten</a>.</p>
     <div id="studio-team-grid" class="studio-grid"></div>
   </section>
+
+  <section id="studio-subscriptions" hidden><SubscriptionAgentComposer /></section>
 
   <dialog id="blueprint-editor" class="studio-dialog" aria-labelledby="editor-title">
     <form id="blueprint-form">

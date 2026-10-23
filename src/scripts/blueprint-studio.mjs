@@ -50,6 +50,8 @@ function initializeStudio() {
   const state = {blueprints:[], teams:[], skills:[], tools:[], contracts:[], governance:[], core:null,
     prompts:null, library:"custom", edit:null, instance:null, instanceVersion:null, instanceConfig:null, promptVersion:null,
     team:null, avatar:"", symbol:"", modelRequest:0};
+  const initialTab = new URLSearchParams(location.search).get("tab");
+  if (["custom","templates","teams","subscriptions"].includes(initialTab)) state.library = initialTab;
   const labels = {agent:"Agent",role:"Rolle",skill:"Skill-Vorlage",workflow:"Workflow-Vorlage",service:"Service-Vorlage",contractus:"Arbeitsvertrag"};
   const icons = {agent:"🤖",role:"🎭",skill:"🧩",workflow:"⛓",service:"⚙",contractus:"📜"};
   const notify = (id,text,error=false) => { $(id).textContent=text; $(id).dataset.error=String(error); };
@@ -78,12 +80,20 @@ function initializeStudio() {
     const selectedSet = new Set(selected);
     target.innerHTML=items.map(item => '<label class="studio-option"><input type="checkbox" value="'+escapeHtml(item.id)+'" '+(selectedSet.has(item.id)?"checked":"")+' /><span>'+escapeHtml(item.name)+'<small>'+escapeHtml(item.description || "")+'</small></span></label>').join("");
   }
+  function renderLibraryPanels() {
+    document.querySelectorAll("[data-library]").forEach(button=>button.setAttribute("aria-selected",String(button.dataset.library===state.library)));
+    const showTeams=state.library==="teams", showSubscriptions=state.library==="subscriptions";
+    $("studio-grid").hidden=showTeams||showSubscriptions;
+    $("studio-teams").hidden=!showTeams;
+    $("studio-subscriptions").hidden=!showSubscriptions;
+    $("studio-toolbar").hidden=showSubscriptions;
+  }
   function render() {
     const custom=state.blueprints.filter(bp=>!bp.is_template), templates=state.blueprints.filter(bp=>bp.is_template);
     $("count-custom").textContent=custom.length; $("count-templates").textContent=templates.length; $("count-teams").textContent=state.teams.length;
-    document.querySelectorAll("[data-library]").forEach(button=>button.setAttribute("aria-selected",String(button.dataset.library===state.library)));
-    const showTeams=state.library==="teams"; $("studio-grid").hidden=showTeams; $("studio-teams").hidden=!showTeams;
-    if(showTeams) { renderTeams(); return; }
+    renderLibraryPanels();
+    if(state.library==="subscriptions") return;
+    if(state.library==="teams") { renderTeams(); return; }
     const query=$("studio-search").value.toLocaleLowerCase("de"),kind=$("studio-kind").value;
     const items=(state.library==="templates"?templates:custom).filter(bp=>(!kind||bp.kind===kind)&&
       [bp.title,bp.name,bp.description,bp.persona_role].join(" ").toLocaleLowerCase("de").includes(query));
@@ -239,7 +249,11 @@ function initializeStudio() {
   const handle = (id,event,fn,status="studio-status") => $(id).addEventListener(event,async e=>{try{await fn(e);}catch(error){notify(status,error.message,true);}});
   $("bp-pause-basis").addEventListener("change",syncPauseFields);
   document.querySelectorAll("[data-close]").forEach(button=>button.addEventListener("click",()=>close(button.dataset.close)));
-  document.querySelectorAll("[data-library]").forEach(button=>button.addEventListener("click",()=>{state.library=button.dataset.library;render();}));
+  document.querySelectorAll("[data-library]").forEach(button=>button.addEventListener("click",()=>{
+    state.library=button.dataset.library;
+    const url=new URL(location.href);url.searchParams.set("tab",state.library);history.replaceState(null,"",url);
+    render();
+  }));
   handle("studio-refresh","click",loadData);handle("studio-new","click",()=>openEditor());
   handle("studio-search","input",render);handle("studio-kind","change",render);
   handle("studio-grid","click",async event=>{
@@ -301,10 +315,10 @@ function initializeStudio() {
     if(!payload.leader_agent)throw new Error("Bitte mindestens ein Mitglied auswählen.");
     await post("/api/agenten/teams"+(state.team?"/"+state.team.id:""),payload);close("team-editor");await loadData();
   },"team-status");
+  renderLibraryPanels();
   loadData().then(()=>{
     const params=new URLSearchParams(location.search),id=params.get("edit")||params.get("copy");
     const bp=id?byId(id):state.blueprints.find(item=>item.name===params.get("blueprint"));
-    if(["custom","templates","teams"].includes(params.get("tab"))){state.library=params.get("tab");render();}
     if(bp)openEditor(bp,params.has("copy")||bp.is_template===1);else if(params.has("new"))openEditor();
     if(params.get("create")==="team")openTeam();
   }).catch(error=>notify("studio-status",error.message,true));
