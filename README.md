@@ -100,7 +100,7 @@ and shows the consumer's error as text. Failed reads are not shown as empty tabl
 
 BACH provides the reference REST adapters. Ocean must implement its own compatible handlers. The [consumer contract](docs/CONSUMER_CONTRACT.md) distinguishes configured adapter routes, runtime verification, installed modules and verified GUI artifacts. Missing adapters remain unavailable; a catalogue entry, saved profile or HTTP success alone cannot establish a running agent.
 
-The bundled `device-fetch.js` forwards an existing device credential only to same-origin `/api/` requests. Provider-session cookies remain browser-managed. Task assignment uses `/api/task-assignees` (`bach.task-assignees.v1`) and explicit catalogue CAS. Existing unknown slots remain visible and unchanged until the user selects a new binding.
+The bundled `device-fetch.js` leaves device authentication to the server-managed HttpOnly cookie and only adds the re-authentication notice for same-origin `/api/` failures. Provider-session cookies remain browser-managed. Task assignment uses `/api/task-assignees` (`bach.task-assignees.v1`) and explicit catalogue CAS. Existing unknown slots remain visible and unchanged until the user selects a new binding.
 
 Chat, device registration and legacy boards remain consumer routes outside this static Astro source.
 

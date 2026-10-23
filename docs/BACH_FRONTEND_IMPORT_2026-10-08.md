@@ -10,7 +10,7 @@ No backend module, chat template, database, host configuration, device key, gene
 
 ## Intentional adaptations
 
-- The device authentication helper is bundled as `public/device-fetch.js`; the layout loads `/device-fetch.js` from the same origin instead of depending on a consumer's `/static/js` tree. Existing explicit authorization wins. Cross-origin requests never receive the stored device credential.
+- The device authentication helper is bundled as `public/device-fetch.js`; the layout loads `/device-fetch.js` from the same origin instead of depending on a consumer's `/static/js` tree. Browser device credentials are carried by the consumer's server-managed HttpOnly cookie; the helper does not read or forward a token from browser storage. Existing explicit authorization wins and cross-origin requests receive no GUI credential.
 - The neutral dashboard description is retained. Machine-specific display labels are generalized to the backend or local host.
 - Idle/wakeup readiness remains `Nicht geprüft` without a matching backend observation.
 - Worker inventory must match the existing `bach.workers.status.v1` adapter schema. Expired, failed, paused and unknown profiles do not count as ready; a missing model/provider does not enable start.
