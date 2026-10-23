@@ -106,7 +106,7 @@
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
-    "README.md": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+    "README.md": "f7c0a01c6635d2b8161956572e1f2a1a5f6267a6f5718329f4e2206da32cf66c",
     "docs/CONSUMER_CONTRACT.md": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
     "src/components/ModelSockets.astro": "d5bcb8a2e07f378ead227d1de84d775de607d3098cc0d1c58aeddfab1590e02a",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
@@ -122,7 +122,25 @@
     "src/lib/task-result-contract.mjs": "33c2419cc05b4da59d7cf9c65e7bf8d8639ca34b8c3448bfa4fd67be70c48248",
     "tests/task-result-history.test.mjs": "16b134ed675ab9a11dbf657afc66f04352adac5efbb9da095cc5556b192be7f0",
     "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236",
-    "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2"
+    "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
+    ".github/desktop-toolchain/package-lock.json": "5bcc39431a8772ebd0e0d1a1202eea14ce3b45875a8e8e0d8b4342f079e3f845",
+    ".github/desktop-toolchain/package.json": "970e93779f89248574bd205a8f02ee038a997c8427bcb9702257d1f34bb4ae14",
+    ".github/workflows/desktop.yml": "dd602c07505b0b8f70b6b267352c5386efbde8232618c749c858999156946405",
+    ".gitignore": "df0aa5c20f4343f59f8af967bd30894135af3c7a3d7a3cb03a87de731f54c919",
+    "desktop/connection.css": "5484e32ebcc1631af773b350dae51682c3a7d099b43510da36cbe8a98980e23b",
+    "desktop/connection.js": "bc522f98f6f0d73663ceeec433c49a5f8bad7f2bee030d0fd6f7fd486113f5be",
+    "desktop/index.html": "7849154183c5a3b9568610fd999b6c6f8af58d76b8eca5fc04f724092cbeae71",
+    "docs/DESKTOP-APP.md": "a0781515adebf307ff3a01f62b93e4cbc55e073a214f5eb595845bff8b90157a",
+    "scripts/package-desktop.py": "18a35a0d43b4ec83783fddc7561b72349bcaa6282210b86153da6db4cf8e919e",
+    "src-tauri/Cargo.lock": "634e09dbaa3cd9a41cc079652acb20140a93f1f1a39c95c9f47c62cd32c4fe3a",
+    "src-tauri/Cargo.toml": "d09ac62b7a75d89be77225c69a87799c2b4d8e7c66bf3f298784017f774ec395",
+    "src-tauri/build.rs": "f153c42b6de2a183d9e93507e953386ef62f54b50b835dd76be4e49253f7d365",
+    "src-tauri/capabilities/local-connection.json": "4675ec4c38e14d654c469fd9ff7eec36d86b8f69260738ba8ff8bec582db1ad8",
+    "src-tauri/icons/generate.py": "569f5475f12bc22254c58f37b9d66c8496b07c5e746f2c0ad65a7f10a70374f4",
+    "src-tauri/icons/icon.ico": "3851bd6980aee6f59283be811e0c7cfe5ba44bb21ab55811868bea27e8a101f7",
+    "src-tauri/icons/icon.png": "32ee9450e6c435653241d86be8370a6b36d169ba7bd93e892bce86ae4da7fe2d",
+    "src-tauri/src/main.rs": "a2743ea46fe3a5667b0ac05028c75c6e2f6d3101a0899bebd767abcab7e9fcd5",
+    "src-tauri/tauri.conf.json": "19095b22344a17c2ea514917672312a22afdf0d450023773d9eabe0dff1710fa"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -1393,6 +1411,41 @@
           "path": "scripts/page-reads-bindings.mjs",
           "previous_sha256": "997a7268e59f251d832ae7cb5063517f80d4294762100852d21efc31f90c9b65",
           "sha256": "612e874f66cb2335c54de1dc8ec57f344f5d66e3e860085204f6474ac68be396"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "scope": "Task2337: Tauri desktop consumer in the existing shared GUI module",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+          "sha256": "f7c0a01c6635d2b8161956572e1f2a1a5f6267a6f5718329f4e2206da32cf66c"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2337: clear stale connection success on native backend return",
+      "source_base_commit": "3fd0ff58926f50c7eb7af60b9a8ab16e07e81d2f",
+      "desktop_predecessor_commit": "8ee81d13700c8cfce54628c98488cb89d60199b7",
+      "changes": [
+        "Carry the existing Tauri consumer and installer workflow into current shared GUI main.",
+        "Reload only the trusted bundled connection document after backend display ends; invalidate late attach responses.",
+        "Preserve failed-display errors, saved addresses and the existing local-only IPC boundary."
+      ],
+      "files": [
+        {
+          "path": "src-tauri/src/main.rs",
+          "previous_sha256": "57152b3ce58c7f60b72d51d81d55fc60c1dfc6637cebffbb7fa3535e9add88cd",
+          "sha256": "a2743ea46fe3a5667b0ac05028c75c6e2f6d3101a0899bebd767abcab7e9fcd5"
+        },
+        {
+          "path": "docs/DESKTOP-APP.md",
+          "previous_sha256": "e7d03796cab87d73dddba5aa918c401ba457b6dc77c1605247fcbb537e0ad81b",
+          "sha256": "a0781515adebf307ff3a01f62b93e4cbc55e073a214f5eb595845bff8b90157a"
         }
       ]
     }
