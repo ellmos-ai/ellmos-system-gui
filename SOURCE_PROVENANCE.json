@@ -228,7 +228,7 @@
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824",
     "src/components/TaskLeasePanel.astro": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
-    "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
+    "src/components/TaskWorkerPolicySettings.astro": "d7ffb9e35ccf3742dc7292dd9f76e2c2571ccc4a093d69a5f1e212652d823898",
     "src/components/WorkerPolicySettings.astro": "51bd535eb231b0bbc12b7802cd50daafc3b007b2e3c89b2563fe9df44507bdcd",
     "src/config/nav_config.json": "0dc51055b0da809445c73ec01cd29fe238b37000e7783ab84edd68ecfbbc078c",
     "src/layouts/BachLayout.astro": "98233dd65eae4491973c55bd73d8174509efcf70c5d57856b94ce4a1c7e0844e",
@@ -251,7 +251,7 @@
     "src/lib/task-lease-panel.mjs": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
     "src/lib/task-result-contract.mjs": "bca5e9943aae80e22344b8ed0120fc66331bad5fc884e1a93e7054da1d496bb3",
     "src/lib/task-summary.js": "e28cfddcc7ee559b74be8c9883b946b85571941dda13d5cba97aec3dfcc63d07",
-    "src/lib/task-worker-policy-settings.mjs": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78",
+    "src/lib/task-worker-policy-settings.mjs": "e8f0f415675c2961354f0d83f1e191f8432e0bf56a3acb2c94883aa0adebfc1b",
     "src/lib/ticket-symbol-assets.mjs": "207537da4144c4f1627d0086417ad384069085adb1aa8090d6f41f770e6d0b84",
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
@@ -313,7 +313,7 @@
     "tests/ticket-symbol.test.mjs": "a359ca8dded35b466be02b8de2d92913ee3789f3ef6c6a0971a23e375ec7a3da",
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
-    "tests/worker-policy-settings.test.mjs": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
+    "tests/worker-policy-settings.test.mjs": "a791bafa9972f0f6c3cf1addc951c599da6604272a6285be3d8c585298c182d6",
     "tests/gui-shell-navigation.test.mjs": "ba8687c675c7fad2c06c635ce6156b70c2cb2d0892652e76df30b78751b1d8ad",
     "docs/GUI-SHELL-NAVIGATION.md": "631e940ff40d37608a523d3b52e29bd2406e6514c95ea961e3efb6d9c6037c5b",
     "scripts/page-reads-bindings.mjs": "3092e2389245b8b41242db7d2e9360523465da1a9c4106911c92d7529a65887e",
@@ -3559,6 +3559,33 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "161e2efa9691f941e8f0b9f337aa8fca170c9760d7b88acb95f8fd1dc7e47581",
           "sha256": "40be77664c429e403ef52ad0eef76d9f8c3e88c908a1362455262a8b4cf27923"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2212: faithful global and per-field task policy provenance",
+      "source_base_commit": "1d6c0f985834f10ae9e5e051205a33b83efaaa54",
+      "changes": [
+        "Distinguish inherited user/global defaults from explicit task fields including false; unknown provenance remains unknown.",
+        "Show native configuration/task/policy revisions without claiming evaluated result integrity or acceptance.",
+        "Keep mandatory task user review and all CAS/readback/write behavior unchanged."
+      ],
+      "files": [
+        {
+          "path": "src/lib/task-worker-policy-settings.mjs",
+          "previous_sha256": "5682040ffd051f4b121971085eaabd95bfd078444cb8b84016978a5a68af6b78",
+          "sha256": "e8f0f415675c2961354f0d83f1e191f8432e0bf56a3acb2c94883aa0adebfc1b"
+        },
+        {
+          "path": "src/components/TaskWorkerPolicySettings.astro",
+          "previous_sha256": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
+          "sha256": "d7ffb9e35ccf3742dc7292dd9f76e2c2571ccc4a093d69a5f1e212652d823898"
+        },
+        {
+          "path": "tests/worker-policy-settings.test.mjs",
+          "previous_sha256": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
+          "sha256": "a791bafa9972f0f6c3cf1addc951c599da6604272a6285be3d8c585298c182d6"
         }
       ]
     }

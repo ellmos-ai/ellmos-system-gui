@@ -74,6 +74,35 @@ function setEnabled(enabled) {
   if (refresh) refresh.disabled = !enabled;
 }
 
+const modeLabels = {simple_task: 'Einfacher Taskmodus', balanced: 'Ausgewogen', high_security: 'Hochsicherheit'};
+function globalOrigin(snapshot) {
+  return snapshot.global_policy_source === 'user_override' ? 'globale Benutzerregel'
+    : snapshot.global_policy_source === 'system_default' ? 'globaler Systemstandard'
+    : 'globale Herkunft nicht bestätigt';
+}
+function fieldOrigin(snapshot, key) {
+  return snapshot.override[key] !== null ? 'Task-Abweichung' : globalOrigin(snapshot);
+}
+function renderPolicyOrigins(snapshot) {
+  const target = byId('task-worker-policy-origins');
+  target.replaceChildren();
+  const effective = snapshot.effective;
+  const rows = [
+    ['Abschlussmodus', modeLabels[effective.effective_mode] + ' · ' + fieldOrigin(snapshot, 'mode')],
+    ['GitHub-Prüfung', (effective.github_external_review ? 'extern über GitHub' : 'intern') + ' · ' + fieldOrigin(snapshot, 'github_external_review')],
+    ['Review-Aufgabe als Ersatz', (effective.allow_review_task_pickup ? 'erlaubt' : 'ausgeschlossen') + ' · ' + fieldOrigin(snapshot, 'allow_review_task_pickup')],
+    ['Globale Herkunft', globalOrigin(snapshot)],
+  ];
+  for (const [label, value] of rows) {
+    const term = document.createElement('dt'), description = document.createElement('dd');
+    term.textContent = label; description.textContent = value; target.append(term, description);
+  }
+  byId('task-worker-policy-versions').textContent =
+    'Regelversion: ' + effective.policy_version + ' · Konfigurationsstand (global und Task): ' +
+    snapshot.configuration_version + ' · Taskversion: ' + snapshot.task_version +
+    ' · Technischer Auswertungsstand: ' + effective.state + (effective.reason ? ' · ' + effective.reason : '');
+}
+
 function renderSnapshot(snapshot) {
   const form = byId('task-worker-policy-form');
   const override = snapshot.override;
@@ -86,10 +115,12 @@ function renderSnapshot(snapshot) {
   userReview.disabled = effective.user_review_required === true;
   userReview.title = effective.user_review_required === true
     ? 'Ein wirksames Nutzerreview kann hier nicht entfernt werden.' : '';
+  renderPolicyOrigins(snapshot);
   byId('task-worker-policy-effective').textContent =
-    `Wirksam: ${effective.effective_mode} · Quelle ${effective.policy_source} · ${effective.state}` +
-    `${effective.reason ? ' · ' + effective.reason : ''} · Nutzerreview ${effective.user_review_required ? 'erforderlich' : 'nicht erforderlich'} · ` +
-    `GitHub extern ${effective.github_external_review ? 'an' : 'aus'} · Review-Aufgabe ${effective.allow_review_task_pickup ? 'erlaubt' : 'aus'} · Policy ${effective.policy_version}`;
+    'Nutzerreview ' + (effective.user_review_required ? 'verbindlich erforderlich.' : 'laut Regel nicht erforderlich.') +
+    (effective.state === 'not_evaluated'
+      ? ' Dies ist die wirksame Konfiguration; die Integrität und Freigabe eines Ergebnisses sind noch nicht ausgewertet.'
+      : ' Ein Konfigurationsabruf bestätigt keine Ergebnisannahme.');
 }
 
 function collectOverride(snapshot) {
