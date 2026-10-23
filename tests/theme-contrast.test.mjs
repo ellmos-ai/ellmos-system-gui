@@ -70,7 +70,7 @@ test('the base colors of surfaces and borders stay unchanged (only text variants
 });
 
 // Writer area of the main worker; migrates to the -text tokens there (see P-CONTRAST hauptworker-uebergabe).
-const PENDING = ['agenten/running.astro', 'agenten/blueprints.astro'];
+const PENDING = [];
 
 test('no stylesheet or page uses a base status/accent color as text any more', () => {
   const offenders = [];
