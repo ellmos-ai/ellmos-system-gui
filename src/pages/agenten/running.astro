@@ -398,7 +398,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     #template-agent-picker pre { max-height:15rem; overflow:auto; font-size:.8rem; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../scripts/agent-color.mjs';</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -576,6 +576,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       for (const agent of active) {
         const card = coreElement('article',undefined,'core-agent-card');
         card.dataset.runningSlot = agent.id;
+        window.BachAgentColor?.applyAgentColor(card, agent);
         card.append(coreElement('h3',agent.name || agent.id),coreElement('span','Running','badge'));
         card.append(coreElement('p',agent.model || 'Modell nicht bestätigt'));
         card.append(coreElement('small','Tool: ' + (agent.current_tool || '—') + ' · Runde: ' + (agent.tool_round ?? 0) + (agent.task_id ? ' · Task #' + agent.task_id : '')));
@@ -638,6 +639,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       for (const agent of coreAgents) {
         const card = coreElement('article', undefined, 'core-agent-card');
         card.dataset.coreAgentId = agent.id;
+        window.BachAgentColor?.applyAgentColor(card, agent);
         const header = coreElement('div', undefined, 'core-slot-header');
         const enabled = agent.enabled === true;
         const toggle = coreElement('button', enabled ? '● AN' : '○ AUS', 'btn btn-sm core-slot-toggle');
@@ -727,6 +729,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         Object.entries(coreCatalog.slot_presets || {}).map(([value, item]) => ({value, label:item.name})));
       coreField(form, 'name', 'Bezeichnung', source.name);
       coreField(form, 'description', 'Beschreibung', source.description || '');
+      if (coreCatalog.color_contract === 'bach.agent-colors.v1') {
+        coreField(form, 'color_override', 'Eigene Farbe (#RRGGBB, leer = Blueprint/Standard)', coreEditorAgent?.color_override || '');
+        const colorInput = form.querySelector('[data-core-field="color_override"]');
+        colorInput.maxLength = 7;
+        colorInput.pattern = '#[0-9a-fA-F]{6}';
+        colorInput.placeholder = coreEditorAgent?.blueprint_color || '#3b82f6';
+      }
       coreField(form, 'backend', 'Anbieter', source.backend, 'select', coreCatalog.supported_backend_ids || []);
       coreField(form, 'model', 'Modell', source.model, 'text', [], source.backend);
       coreField(form, 'mode', 'Arbeitsmodus', source.mode, 'select', ['safe', 'full']);
@@ -851,7 +860,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         if (field === 'preset') {preset = input.value; continue;}
         let value = input.type === 'checkbox' ? input.checked : input.type === 'number' ? Number(input.value) : input.value;
         if (field.startsWith('custom_') && input.dataset.wasCustom !== 'true' && value === input.dataset.defaultText) value = '';
-        if (!coreEditorAgent || value !== coreEditorAgent[field]) changes[field] = value;
+        if (field === 'color_override') {
+          value = value === '' ? null : value.toLowerCase();
+          if (!coreEditorAgent || value !== (coreEditorAgent.color_override ?? null)) changes[field] = value;
+        } else if (!coreEditorAgent || value !== coreEditorAgent[field]) changes[field] = value;
       }
       if (form.querySelector('[data-core-field="pause_basis"]')?.value === 'none') {
         delete changes.pause_basis;
@@ -865,6 +877,11 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       try {
         const data = await coreRequest(coreEditorAgent ? '/' + encodeURIComponent(coreEditorAgent.id) : '',
           coreEditorAgent ? 'PUT' : 'POST', {configuration_version:coreEditorVersion, changes, preset});
+        if (Object.hasOwn(changes, 'color_override')) {
+          const saved = data.agents.find(agent => agent.id === (coreEditorAgent?.id || data.slot_id));
+          if (!saved || saved.color_override !== changes.color_override)
+            throw new Error('Gespeicherte Farbe nicht bestätigt. Entwurf bleibt geöffnet.');
+        }
         renderCoreAgents(data);
         document.getElementById('core-slot-editor').close();
         document.getElementById('core-agent-feedback').textContent = 'Agentenprofil gespeichert.';
@@ -1012,8 +1029,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                   </div>
                   <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem;">${escapeHtml(w.name || w.id)}</h3>
                   <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;">
-                    Modell: <code style="color:var(--accent);">${escapeHtml(w.model || 'Modell fehlt')}</code>
-                    ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--text-muted);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code style="color:var(--accent);">${escapeHtml(w.resolved_model)}</code></span>` : ''}
+                    Modell: <code style="color:var(--accent-text);">${escapeHtml(w.model || 'Modell fehlt')}</code>
+                    ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--text-muted);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code style="color:var(--accent-text);">${escapeHtml(w.resolved_model)}</code></span>` : ''}
                   </p>
                   <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">
                     ${escapeHtml(w.has_task_prompt === true ? 'Eigener Zusatzauftrag gespeichert' : w.has_task_prompt === false ? 'Kein eigener Zusatzauftrag gespeichert' : 'Zusatzauftrag hier nicht bestätigt')}
@@ -1024,7 +1041,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                 </div>
 
                 <div style="border-top:1px solid var(--border);padding-top:0.75rem;margin-top:0.75rem;display:flex;justify-content:space-between;align-items:center;gap:0.4rem;flex-wrap:wrap;">
-                  <button class="btn btn-sm" style="font-size:0.75rem;color:var(--error);" onclick="deleteWorker('${escapeHtml(w.id)}')">
+                  <button class="btn btn-sm" style="font-size:0.75rem;color:var(--error-text);" onclick="deleteWorker('${escapeHtml(w.id)}')">
                     🗑️
                   </button>
                   <div style="display:flex;gap:0.35rem;">
@@ -1064,12 +1081,12 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
               <div class="core-agent-card" data-appearance-worker="${escapeHtml(w.id)}" data-worker-id="${escapeHtml(w.id)}" style="border-color:#38bdf8;background:rgba(56,189,248,0.04);">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
                   <span class="badge" style="background:#0284c7;color:#fff;font-size:0.75rem;">⚡ RUNNING</span>
-                  <small style="color:var(--accent);">Runde ${toolRound}/${maxRounds}</small>
+                  <small style="color:var(--accent-text);">Runde ${toolRound}/${maxRounds}</small>
                 </div>
                 <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem;">${escapeHtml(w.name || w.id)}</h3>
                 <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;">
                   Modell: <code>${escapeHtml(w.model)}</code>
-                  ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--accent);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code>${escapeHtml(w.resolved_model)}</code></span>` : ''}
+                  ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--accent-text);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code>${escapeHtml(w.resolved_model)}</code></span>` : ''}
                 </p>
                 <p style="font-size:0.8rem;color:var(--text);margin-bottom:0.75rem;">
                   ${escapeHtml(w.current_activity || 'Verarbeitet Aufgabe…')}
@@ -1077,7 +1094,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
                 <div style="display:flex;justify-content:flex-end;gap:0.4rem;border-top:1px solid var(--border);padding-top:0.6rem;">
                   <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
-                  <button class="btn btn-sm" style="color:var(--error);" onclick="runWorkerAction('${escapeHtml(w.id)}', 'stop')">⏹ Stoppen</button>
+                  <button class="btn btn-sm" style="color:var(--error-text);" onclick="runWorkerAction('${escapeHtml(w.id)}', 'stop')">⏹ Stoppen</button>
                 </div>
               </div>
             `;
@@ -1085,6 +1102,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         }
         for(const card of document.querySelectorAll('[data-appearance-worker]')) {
           const worker=workers.find(item=>item.id===card.dataset.appearanceWorker);
+          window.BachAgentColor?.applyAgentColor(card, worker);
           if (window.BachWorkerQueue) window.BachWorkerQueue.appendQueueDetails(document,card,
             worker?.runtime_verified === true ? worker.queue_status : null,
             {key:worker?.id,available:true});
@@ -1225,7 +1243,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
               </div>
 
               <div style="display:flex;justify-content:space-between;align-items:center;">
-                <button class="btn btn-sm" style="font-size:0.72rem;color:var(--error);" onclick="deleteTeamFromRunning(${t.id})">🗑️ Löschen</button>
+                <button class="btn btn-sm" style="font-size:0.72rem;color:var(--error-text);" onclick="deleteTeamFromRunning(${t.id})">🗑️ Löschen</button>
                 <button class="btn btn-sm btn-primary" style="font-size:0.75rem;" onclick="saveTeamBeseelung(${t.id})">
                   ✨ Speichern
                 </button>
@@ -1234,7 +1252,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           `;
         }).join('');
       } catch (e) {
-        container.innerHTML = `<p style="color:var(--error);font-size:0.8rem;">Fehler: ${e.message}</p>`;
+        container.innerHTML = `<p style="color:var(--error-text);font-size:0.8rem;">Fehler: ${e.message}</p>`;
       }
     }
 
