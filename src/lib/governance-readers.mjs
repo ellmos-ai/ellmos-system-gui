@@ -35,14 +35,23 @@ export function effectiveQuery(filters = {}) {
 
 // Classifies a failed or malformed response. The auth gate answers 401 for every /api path,
 // so a 401 says nothing about the route itself.
+export const PUBLIC_UNAVAILABLE_CODES = new Set([
+  'policy_provider_not_configured', 'policy_provider_provenance_mismatch',
+  'policy_provider_import_mismatch', 'policy_provider_unavailable',
+  'policy_registry_missing', 'policy_registry_too_large', 'policy_registry_read_failed',
+]);
 export function describeFailure(status, body) {
-  const detail = text(body?.detail) || text(body?.error);
-  if (status === 401 || status === 403) return {state: 'auth', label: 'Geräteanmeldung fehlt oder ungültig (HTTP ' + status + ')', detail};
-  if (status === 404) return {state: 'route', label: 'Endpunkt am Backend nicht vorhanden (HTTP 404)', detail};
-  if (status === 409) return {state: 'changed', label: 'Registry änderte sich während des Lesens (HTTP 409)', detail};
-  if (status === 503) return {state: 'unavailable', label: 'Quelle nicht verfügbar (HTTP 503)', detail};
-  if (status === 0) return {state: 'network', label: 'Backend nicht erreichbar', detail};
-  return {state: 'error', label: 'Fehler (HTTP ' + status + ')', detail};
+  const candidate = text(body?.detail) || text(body?.error);
+  // Public codes only. Never print a provider exception or an arbitrary diagnostic.
+  const detail = status === 503 && PUBLIC_UNAVAILABLE_CODES.has(candidate) ? candidate : null;
+  if (status === 401 || status === 403) return {state:'auth', label:'Geräteanmeldung fehlt oder ungültig (HTTP ' + status + ')', detail:null};
+  if (status === 404) return {state:'route', label:'Endpunkt am Backend nicht vorhanden (HTTP 404)', detail:null};
+  if (status === 409) return candidate === 'policy_registry_changed_during_read'
+    ? {state:'changed', label:'Registry änderte sich während des Lesens (HTTP 409)', detail:candidate}
+    : {state:'conflict', label:'Lesekonflikt (HTTP 409)', detail:null};
+  if (status === 503) return {state:'unavailable', label:'Quelle nicht verfügbar (HTTP 503)', detail};
+  if (status === 0) return {state:'network', label:'Backend nicht erreichbar', detail:null};
+  return {state:'error', label:'Fehler (HTTP ' + status + ')', detail:null};
 }
 
 export function ageLabel(iso, now = Date.now()) {
@@ -97,6 +106,7 @@ function registryEntry(entry) {
   if (!isObject(entry) || !text(entry.id) || !text(entry.kind)) fail('Registry-Eintrag ohne id/kind');
   const pick = key => entry[key] === undefined || entry[key] === '' ? null : entry[key];
   return {
+    raw: entry,
     id: entry.id, kind: entry.kind, title: text(entry.title) || text(entry.name),
     scope: pick('scope'), version: pick('version'), privacy: pick('privacy'), status: pick('status'),
     adoption: pick('adoption'), priority: pick('priority'), precedence: pick('precedence'),
@@ -113,6 +123,7 @@ function registryMeta(body, kind, listKey = 'entries') {
   if (!isObject(body) || !text(body.availability) || !Array.isArray(body.entries) || !Array.isArray(body[listKey])) fail('/' + kind);
   const writer = isObject(body.decision_writer) ? body.decision_writer : null;
   return {
+    raw: body,
     kind, availability: body.availability, source: text(body.source), error: null,
     observedAt: text(body.observed_at), scannedAt: null, schema: text(body.schema),
     version: text(body.provider?.version), providerId: text(body.provider?.id),
@@ -148,6 +159,7 @@ export function parseEffective(body) {
   return {
     ...meta,
     effective: {
+      raw: eff,
       status: text(eff.status), reason: text(eff.reason),
       selected: eff.selected ? registryEntry(eff.selected) : null,
       candidateIds: eff.candidate_ids,
@@ -201,4 +213,13 @@ export function nextTabIndex(key, index, length) {
   if (key === 'ArrowRight') return (index + 1) % length;
   if (key === 'ArrowLeft') return (index - 1 + length) % length;
   return null;
+}
+
+// Kit file identity and provider runtime are independent observations.
+export function parseCapabilities(body) {
+  if (!isObject(body) || body.schema !== 'ellmos.gui.capabilities.v1' ||
+      !isObject(body.kit) || !isObject(body.modules)) fail('/capabilities');
+  const policy = body.modules['policy-registry'];
+  if (policy !== undefined && !isObject(policy)) fail('policy-registry capability');
+  return {raw:body, observedAt:text(body.observed_at), kit:body.kit, policy:policy ?? null};
 }

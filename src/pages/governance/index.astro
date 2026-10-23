@@ -10,7 +10,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
         🛡️ Governance CONTROL Room
       </h1>
       <p style="color:var(--text-muted);font-size:0.875rem;">
-        Zentrale Steuerung • Decision-Clicker (Human-in-the-Loop) • Lock-Master Haltefristen • Policy Registry (P-001 bis P-007)
+        Zentrale Steuerung • Decision-Clicker (Human-in-the-Loop) • Lock-Master Haltefristen • Policy Registry
       </p>
     </div>
 
@@ -38,6 +38,16 @@ import BachLayout from "../../layouts/BachLayout.astro";
     <a role="tab" id="tab-registry" href="/governance?tab=registry" data-tab="registry" aria-controls="gov-panel-reader">Registry</a>
     <a role="tab" id="tab-effective" href="/governance?tab=effective" data-tab="effective" aria-controls="gov-panel-reader">Wirksame Policy</a>
   </div>
+
+  <section class="card" aria-labelledby="gov-cap-title" style="margin-bottom:1rem">
+    <h2 id="gov-cap-title" class="card-title">Capabilities und Herkunft</h2>
+    <p>Kit-Prüfung, registrierter Adapter und Laufzeitstatus werden getrennt ausgewiesen.
+      Diese optionale Abfrage hat einen eigenen Zeitpunkt.</p>
+    <button type="button" class="btn btn-sm" id="gov-cap-reload">Capabilities neu laden</button>
+    <p id="gov-cap-state" role="status" aria-live="polite" class="gov-state"></p>
+    <dl id="gov-cap-meta" class="gov-meta"></dl>
+    <details id="gov-cap-response" hidden><summary>Vollständige Capabilities-Antwort</summary><pre id="gov-cap-json"></pre></details>
+  </section>
 
   <div id="gov-panel-status" role="tabpanel" aria-labelledby="tab-status">
     <p id="gov-status-meta" role="status" aria-live="polite" class="gov-state" style="font-size:.78rem;color:var(--text-muted)"></p>
@@ -102,31 +112,14 @@ import BachLayout from "../../layouts/BachLayout.astro";
     <!-- Policy Registry -->
     <div class="card">
       <div class="card-header">
-        <h2 class="card-title">📜 System-Policies (P-001 bis P-007)</h2>
-        <span class="badge badge-accent">7 konfiguriert</span>
+        <h2 class="card-title">📜 Policy Registry</h2>
+        <span class="badge">Registerstand separat laden</span>
       </div>
       <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem;">
-        Konfigurierte Richtlinien; die Durchsetzung pro Agent ist hier nicht geprüft:
+        Die Leseansicht zeigt den aktuellen Registerstand mit Quelle und Version.
+        Eine Quellenprüfung belegt keine Durchsetzung.
       </p>
-
-      <div style="display:flex;flex-direction:column;gap:0.75rem;font-size:0.82rem;">
-        <div style="padding:0.6rem;background:var(--bg-dark);border-radius:4px;display:flex;justify-content:space-between;">
-          <span><strong>P-001:</strong> Fail-Closed Git Protection</span>
-          <span>Durchsetzung nicht geprüft</span>
-        </div>
-        <div style="padding:0.6rem;background:var(--bg-dark);border-radius:4px;display:flex;justify-content:space-between;">
-          <span><strong>P-002:</strong> Two-Tree Rule</span>
-          <span>Durchsetzung nicht geprüft</span>
-        </div>
-        <div style="padding:0.6rem;background:var(--bg-dark);border-radius:4px;display:flex;justify-content:space-between;">
-          <span><strong>P-003:</strong> Device Token Auth</span>
-          <span>Durchsetzung nicht geprüft</span>
-        </div>
-        <div style="padding:0.6rem;background:var(--bg-dark);border-radius:4px;display:flex;justify-content:space-between;">
-          <span><strong>P-007:</strong> Proof-Note Freigabe in Forschungs-Repos</span>
-          <span>Durchsetzung nicht geprüft</span>
-        </div>
-      </div>
+      <a href="/governance?tab=registry" class="btn btn-sm">Registry öffnen</a>
     </div>
   </div>
 
@@ -218,9 +211,11 @@ import BachLayout from "../../layouts/BachLayout.astro";
     <dl id="gov-meta" class="gov-meta"></dl>
     <ul id="gov-notices" class="gov-notices"></ul>
     <div id="gov-rows"></div>
+    <details id="gov-response" hidden><summary>Vollständige öffentliche Antwort (einschließlich zusätzlicher Felder)</summary><pre id="gov-response-json"></pre></details>
   </section>
 
   <style>
+    pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:32rem;overflow:auto;font-size:.78rem}
     .gov-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
     .gov-tabs [role="tab"]{padding:.4rem .8rem;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-muted);text-decoration:none;font-size:.85rem}
     .gov-tabs [role="tab"][aria-selected="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
@@ -230,7 +225,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
     .gov-filters label{display:flex;flex-direction:column;font-size:.75rem;color:var(--text-muted);gap:.2rem}
     .gov-filters input,.gov-filters select{padding:.4rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:4px;color:var(--text)}
     .gov-state{font-size:.9rem;color:var(--text);min-height:1.4rem}
-    .gov-state[data-state="auth"],.gov-state[data-state="unavailable"],.gov-state[data-state="route"],.gov-state[data-state="error"],.gov-state[data-state="network"],.gov-state[data-state="changed"],.gov-state[data-state="stale"],.gov-state[data-state="contract"]{color:var(--warning-text)}
+    .gov-state[data-state="auth"],.gov-state[data-state="unavailable"],.gov-state[data-state="route"],.gov-state[data-state="error"],.gov-state[data-state="network"],.gov-state[data-state="changed"],.gov-state[data-state="conflict"],.gov-state[data-state="stale"],.gov-state[data-state="contract"]{color:var(--warning-text)}
     .gov-meta{display:grid;grid-template-columns:max-content 1fr;gap:.2rem 1rem;font-size:.8rem;margin:.75rem 0}
     .gov-meta dt{color:var(--text-muted)} .gov-meta dd{margin:0;color:var(--text);overflow-wrap:anywhere}
     .gov-notices{list-style:none;padding:0;margin:0 0 1rem;display:flex;flex-direction:column;gap:.4rem;font-size:.8rem}
@@ -242,7 +237,9 @@ import BachLayout from "../../layouts/BachLayout.astro";
 
   <script>
     import {readTab, registryQuery, effectiveQuery, describeFailure, ageLabel, viewState, writerNotice, nextTabIndex, decisionsView, classifyBody, BODY_PROBLEM,
-      parseStatus, parseLocks, parseDecisions, parsePolicies, parseRegistry, parseEffective} from '../../lib/governance-readers.mjs';
+      parseStatus, parseLocks, parseDecisions, parsePolicies, parseRegistry, parseEffective, parseCapabilities} from '../../lib/governance-readers.mjs';
+
+    import {createGovernanceRequest} from '../../lib/governance-request.mjs';
 
     const UNKNOWN = 'unbekannt';
     const READERS = {
@@ -359,40 +356,71 @@ import BachLayout from "../../layouts/BachLayout.astro";
       unavailable: () => 'Quelle nicht verfügbar: Zustand unbekannt.',
     };
 
-    async function load(reader, filters) {
-      const state = $('gov-state');
-      $('gov-meta').replaceChildren(); $('gov-notices').replaceChildren(); $('gov-rows').replaceChildren();
-      let url;
-      try { url = reader.url(filters); } catch (error) { state.dataset.state = 'error'; state.textContent = error.message; return; }
-      state.dataset.state = 'loading'; state.textContent = 'Lade ' + url.split('?')[0] + ' ...';
-      let response;
-      try { response = await fetch(url); } catch (_) {
-        const failure = describeFailure(0, null);
-        state.dataset.state = failure.state; state.textContent = failure.label; return;
-      }
-      let raw = '';
-      try { raw = await response.text(); } catch (_) { /* classified as empty below */ }
-      const parsed = classifyBody(raw);
-      const body = parsed.value;
-      if (!response.ok) {
-        const failure = describeFailure(response.status, body);
-        state.dataset.state = failure.state;
-        state.textContent = failure.label + (failure.detail ? ' · ' + failure.detail : '') + '. Es werden keine Ersatzdaten angezeigt.';
-        return;
-      }
-      if (parsed.kind !== 'ok') {
-        state.dataset.state = 'contract'; state.textContent = BODY_PROBLEM[parsed.kind] + '. Es werden keine Ersatzdaten angezeigt.'; return;
-      }
-      let model;
-      try { model = reader.parse(body); } catch (error) {
-        state.dataset.state = 'contract'; state.textContent = error.message + ' Es werden keine Ersatzdaten angezeigt.'; return;
-      }
-      const kind = viewState(model);
-      state.dataset.state = kind;
-      state.textContent = STATE_TEXT[kind](model);
-      renderMeta(model); renderNotices(model);
-      if (kind === 'ok' || kind === 'empty') renderRows(model);
+    function rawView(detailsId, preId) {
+      let payload = null;
+      const details = $(detailsId), pre = $(preId);
+      details.addEventListener('toggle', () => {
+        if (details.open && payload !== null) pre.textContent = JSON.stringify(payload, null, 2);
+      });
+      return value => {
+        payload = value; details.hidden = value === null; details.open = false;
+        pre.textContent = '';
+      };
     }
+    const setReaderRaw = rawView('gov-response', 'gov-response-json');
+    const setCapRaw = rawView('gov-cap-response', 'gov-cap-json');
+    const failureText = result => (result.failure?.label || result.label || 'Zustand unbekannt') +
+      (result.failure?.detail ? ' · ' + result.failure.detail : '') +
+      '. Es werden keine Ersatzdaten angezeigt.';
+    const readerRequest = createGovernanceRequest(result => {
+      const state = $('gov-state');
+      state.dataset.state = result.state;
+      $('gov-meta').replaceChildren(); $('gov-notices').replaceChildren(); $('gov-rows').replaceChildren();
+      setReaderRaw(null);
+      if (result.state === 'loading') { state.textContent = 'Leseanfrage läuft …'; return; }
+      if (result.state === 'idle') { state.textContent = ''; return; }
+      if (!result.model) { state.textContent = failureText(result); return; }
+      state.textContent = STATE_TEXT[result.state](result.model);
+      renderMeta(result.model); renderNotices(result.model);
+      if (result.state === 'ok' || result.state === 'empty') renderRows(result.model);
+      setReaderRaw(result.payload);
+    });
+    async function load(reader, filters) {
+      let url;
+      try { url = reader.url(filters); } catch (error) {
+        readerRequest.cancel();
+        $('gov-state').dataset.state = 'error'; $('gov-state').textContent = error.message; return;
+      }
+      return readerRequest.load(url, reader.parse,
+        (url, {signal}) => fetch(url, {method:'GET', cache:'no-store', signal}));
+    }
+    const capRequest = createGovernanceRequest(result => {
+      const state = $('gov-cap-state'), meta = $('gov-cap-meta');
+      state.dataset.state = result.state; meta.replaceChildren(); setCapRaw(null);
+      if (result.state === 'loading') { state.textContent = 'Capabilities werden gelesen …'; return; }
+      if (!result.model) { state.textContent = failureText(result); return; }
+      state.textContent = 'Capabilities-Antwort geladen; Laufzeit separat ausgewiesen.';
+      const {kit, policy, observedAt} = result.model;
+      const rows = [
+        ['Beobachtet', show(observedAt)],
+        ['Kit geprüft', show(kit.verified)],
+        ['Kit-Version', show(kit.version)],
+        ['Kit-Quellcommit', show(kit.revision)],
+        ['Policy-Adapter registriert', show(policy?.adapter_registered)],
+        ['Policy-Provider verfügbar', show(policy?.available)],
+        ['Policy-Laufzeit verifiziert', show(policy?.runtime_verified)],
+        ['Provider-Grundcode', show(policy?.reason_code)],
+        ['Provider-Beobachtung', show(policy?.observed_at)],
+      ];
+      for (const [key, value] of rows) { add(meta, 'dt', key); add(meta, 'dd', value); }
+      setCapRaw(result.payload);
+    });
+    function loadCapabilities() {
+      return capRequest.load('/api/gui/capabilities', parseCapabilities,
+        (_url, {signal}) => fetch('/api/gui/capabilities', {method:'GET', cache:'no-store', signal}), () => 'ok');
+    }
+    $('gov-cap-reload').addEventListener('click', loadCapabilities);
+    loadCapabilities();
 
     const STATUS_FAIL = 'Status nicht geladen: ';
     async function loadStatus() {
@@ -404,7 +432,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
         list.textContent = text + '. Es werden keine Ersatzdaten angezeigt.'; meta.textContent = '';
       };
       let response;
-      try { response = await fetch('/api/governance/status'); } catch (_) { failed(STATUS_FAIL + describeFailure(0, null).label); return; }
+      try { response = await fetch('/api/governance/status', {method:'GET', cache:'no-store'}); } catch (_) { failed(STATUS_FAIL + describeFailure(0, null).label); return; }
       let raw = '';
       try { raw = await response.text(); } catch (_) { /* classified as empty below */ }
       const parsed = classifyBody(raw);

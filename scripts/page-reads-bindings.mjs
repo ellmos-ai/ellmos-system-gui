@@ -3,6 +3,11 @@
 // explicit "METHOD path" alternatives it may produce. Every alternative needs a dynamic manifest entry whose found_in is
 // "file#function". A new unresolved call site, a changed alternative or a stale binding fails scripts/page-reads-check.mjs.
 export const BINDINGS = {
+  // Runtime-whitelisted read-only transport shared by the Governance views.
+  'src/lib/governance-request.mjs#createGovernanceRequest@1': [
+    'GET /api/governance/locks', 'GET /api/governance/policy-registry', 'GET /api/governance/decisions',
+    'GET /api/governance/policies', 'GET /api/governance/effective-policy', 'GET /api/gui/capabilities',
+  ],
   // INVENTORIES[kind] in capability-board-client.mjs: one inventory per board
   'src/lib/capability-board-ui.mjs#refresh@1': [
     'GET /api/capabilities/skills/library', 'GET /api/capabilities/plugins/inventory', 'GET /api/capabilities/mcp/connections',
