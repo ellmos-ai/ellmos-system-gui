@@ -124,7 +124,7 @@
     "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
     "tests/dompurify-compatibility.test.mjs": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
     "tests/fixtures/dompurify-regressions.html": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
-    "tests/run-dompurify-browser.mjs": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47"
+    "tests/run-dompurify-browser.mjs": "c057af020427f46ae9dcbad1e955b9ff5dc816f87f316c2fc48f24dc5247237a"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -1345,6 +1345,22 @@
           "path": "tests/run-dompurify-browser.mjs",
           "previous_sha256": null,
           "sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "scope": "Task2071: suppress Windows consoles in the DOMPurify browser runner",
+      "source_base_commit": "9c73e49ec582ce882d8dd0728f44ec7b777d2a06",
+      "changes": [
+        "Set windowsHide:true on the existing Chromium spawnSync boundary so a console-subsystem headless browser does not allocate a console from a hidden parent.",
+        "Preserve the DOMPurify3.4.17 patch, all browser fixtures, all compatibility cases and application behavior; no browser launch or new/manual tests."
+      ],
+      "files": [
+        {
+          "path": "tests/run-dompurify-browser.mjs",
+          "previous_sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
+          "sha256": "c057af020427f46ae9dcbad1e955b9ff5dc816f87f316c2fc48f24dc5247237a"
         }
       ]
     }

@@ -22,7 +22,7 @@ try {
     '--host-resolver-rules=MAP * ~NOTFOUND', '--allow-file-access-from-files',
     '--user-data-dir=' + profile, '--timeout=10000', '--virtual-time-budget=1500',
     pathToFileURL(fixture).href,
-  ], {encoding:'utf8', timeout:30000, maxBuffer:16 * 1024 * 1024});
+  ], {encoding:'utf8', windowsHide:true, timeout:30000, maxBuffer:16 * 1024 * 1024});
   if (result.error) throw result.error;
   assert.equal(result.status, 0, result.stderr);
   const match = result.stdout.match(/<pre id="result">([\s\S]*?)<\/pre>/);
