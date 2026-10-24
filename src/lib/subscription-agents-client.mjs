@@ -4,6 +4,9 @@ const SKILLS_URL = '/api/capabilities/skills/library';
 const COMPOSE_URL = '/api/agent-studio/subscription-agents/compose';
 const REQUEST_SCHEMA = 'bach.subscription-agent-onboarding.request.v1';
 const PREVIEW_SCHEMA = 'bach.subscription-agent-onboarding.preview.v1';
+const REQUEST_SCHEMA_V2 = 'bach.subscription-agent-onboarding.request.v2';
+const PREVIEW_SCHEMA_V2 = 'bach.subscription-agent-onboarding.preview.v2';
+const BOOT_ROLES = ['system', 'bach'];
 const SKILL_SCHEMA = 'bach.skill-library.v1';
 const CAPABILITIES_SCHEMA = 'ellmos.gui.capabilities.v1';
 const SAFE_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/;
@@ -175,6 +178,21 @@ export function buildComposeRequest(input, {blueprints, skills} = {}) {
   if (skillIds.length > 30 || skillIds.some(id => !knownSkills.has(id)))
     throw new SubscriptionAgentsError('invalid', 'Die Auswahl enthält unbekannte Skills oder überschreitet 30 Einträge.');
 
+  let bootSources;
+  if (input.bootSourceIds !== undefined) {
+    if (!hasExactKeys(input.bootSourceIds, BOOT_ROLES))
+      throw new SubscriptionAgentsError('invalid', 'Wähle je eine Quelle für Systemwissen und BACH-Anleitung.');
+    bootSources = {};
+    for (const role of BOOT_ROLES) {
+      const source = (skills ?? []).find(skill => skill.id === input.bootSourceIds[role]);
+      if (!source || !SAFE_ID.test(source.id) || !isDigest(source.sourceVersion))
+        throw new SubscriptionAgentsError('invalid', 'Bootquellen müssen aus der aktuellen Skillbibliothek stammen.');
+      bootSources[role] = {id: source.id, source_version: source.sourceVersion};
+    }
+    if (new Set([...Object.values(bootSources).map(ref => ref.id), ...blueprint.skillIds, ...skillIds]).size > 30)
+      throw new SubscriptionAgentsError('invalid', 'Boot-, Blueprint- und Zusatzskills überschreiten zusammen 30 Quellen.');
+  }
+
   const clientId = boundedText(input.clientId, 'Client-Kennung', 64, {required: true});
   if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/.test(clientId))
     throw new SubscriptionAgentsError('invalid', 'Die Client-Kennung ist ungültig.');
@@ -192,7 +210,8 @@ export function buildComposeRequest(input, {blueprints, skills} = {}) {
     throw new SubscriptionAgentsError('invalid', 'Gib einen Auftrag, Task-Referenzen oder eine Auswahlregel an.');
 
   return {
-    schema: REQUEST_SCHEMA,
+    schema: bootSources ? REQUEST_SCHEMA_V2 : REQUEST_SCHEMA,
+    ...(bootSources ? {boot_sources: bootSources} : {}),
     target_client: targetClient,
     blueprint: {id: blueprint.id, version: blueprint.version},
     selected_skill_ids: skillIds,
@@ -239,6 +258,9 @@ function isText(value, maximum, {empty = false} = {}) {
     && (empty || !!value.trim());
 }
 
+// The native Python contract counts Unicode code points, not UTF-16 code units.
+const characterCount = value => Array.from(value).length;
+
 function isCounter(value) { return Number.isSafeInteger(value) && value >= 0; }
 function isDigest(value) { return typeof value === 'string' && SHA256.test(value); }
 function isCanonicalBlueprintResponseId(value) {
@@ -257,12 +279,12 @@ function isPolicyRef(ref, kind) {
     && ref.enforcement_verified === false;
 }
 
-function sourceHasValidShape(row) {
+function sourceHasValidShape(row, versionTwo = false) {
   if (!isObject(row) || typeof row.kind !== 'string' || !Object.hasOwn(SOURCE_DETAILS, row.kind)) return false;
   const isUnavailablePolicy = ['policy', 'decision'].includes(row.kind) && row.state === 'unavailable';
   const details = isUnavailablePolicy
     ? ['enforcement_verified', 'read_only', 'count'] : SOURCE_DETAILS[row.kind];
-  const keys = [...SOURCE_KEYS, ...details];
+  const keys = [...SOURCE_KEYS, ...details, ...(versionTwo && row.kind === 'skill' ? ['boot_roles'] : [])];
   return hasExactKeys(row, keys)
     && isText(row.id, 512)
     && isText(row.state, 40)
@@ -289,11 +311,13 @@ function validatePolicySource(row) {
 
 export function validatePreview(payload, request, expected) {
   const invalid = () => failContract('Die Vorschau bestätigt den Preview-only-Vertrag und ihre Quellnachweise nicht.');
-  if (!hasExactKeys(payload, PREVIEW_KEYS) || payload.schema !== PREVIEW_SCHEMA
+  const versionTwo = request?.schema === REQUEST_SCHEMA_V2;
+  if (!hasExactKeys(payload, [...PREVIEW_KEYS, ...(versionTwo ? ['boot_sources', 'boot_delivery'] : [])])
+      || payload.schema !== (versionTwo ? PREVIEW_SCHEMA_V2 : PREVIEW_SCHEMA)
       || !['ready_for_review', 'needs_sources'].includes(payload.status)
       || !hasExactKeys(request, ['schema', 'target_client', 'blueprint', 'selected_skill_ids', 'user_task',
-        'task_refs', 'task_selection_rule', 'governance'])
-      || request.schema !== REQUEST_SCHEMA
+        'task_refs', 'task_selection_rule', 'governance', ...(versionTwo ? ['boot_sources'] : [])])
+      || request.schema !== (versionTwo ? REQUEST_SCHEMA_V2 : REQUEST_SCHEMA)
       || !hasExactKeys(request.target_client, Object.hasOwn(request.target_client ?? {}, 'workspace')
         ? ['client_id', 'host', 'name', 'workspace'] : ['client_id', 'host', 'name'])
       || (Object.hasOwn(request.target_client ?? {}, 'workspace') && !validWorkspace(request.target_client.workspace))
@@ -326,6 +350,23 @@ export function validatePreview(payload, request, expected) {
     knownSkills.set(skill.id, skill);
   }
   if (request.selected_skill_ids.some(id => !knownSkills.has(id))) invalid();
+  const bootRefs = [];
+  if (versionTwo) {
+    if (!hasExactKeys(request.boot_sources, BOOT_ROLES) || !hasExactKeys(payload.boot_sources, BOOT_ROLES)
+        || !hasExactKeys(payload.boot_delivery, ['mode', 'source', 'target_readability_verified', 'role_suitability_verified'])
+        || payload.boot_delivery.mode !== 'text' || payload.boot_delivery.source !== 'current_skill_library'
+        || payload.boot_delivery.target_readability_verified !== false
+        || payload.boot_delivery.role_suitability_verified !== false) invalid();
+    for (const role of BOOT_ROLES) {
+      const ref = request.boot_sources[role];
+      const returned = payload.boot_sources[role];
+      if (!hasExactKeys(ref, ['id', 'source_version']) || !hasExactKeys(returned, ['id', 'source_version'])
+          || typeof ref.id !== 'string' || !SAFE_ID.test(ref.id) || !isDigest(ref.source_version)
+          || knownSkills.get(ref.id)?.sourceVersion !== ref.source_version
+          || returned.id !== ref.id || returned.source_version !== ref.source_version) invalid();
+      bootRefs.push(ref);
+    }
+  }
 
   const target = payload.target_client;
   const targetKeys = Object.hasOwn(request.target_client, 'workspace')
@@ -341,9 +382,9 @@ export function validatePreview(payload, request, expected) {
       || previewBlueprint.id !== String(request.blueprint.id) || previewBlueprint.version !== request.blueprint.version
       || !isText(previewBlueprint.name, 80) || !isDigest(previewBlueprint.sha256)
       || !isText(payload.governance_scope, 256)
-      || typeof payload.prompt !== 'string' || payload.prompt.length === 0 || payload.prompt.length > 120000
+      || typeof payload.prompt !== 'string' || payload.prompt.length === 0 || characterCount(payload.prompt) > 120000
       || payload.max_prompt_chars !== 120000
-      || payload.prompt_chars !== payload.prompt.length
+      || payload.prompt_chars !== characterCount(payload.prompt)
       || payload.prompt_bytes !== new TextEncoder().encode(payload.prompt).length
       || !Array.isArray(payload.sources) || payload.sources.length > 128
       || !Array.isArray(payload.missing) || payload.missing.length > 64
@@ -362,7 +403,7 @@ export function validatePreview(payload, request, expected) {
 
   const sources = new Map();
   for (const row of payload.sources) {
-    if (!sourceHasValidShape(row) || sources.has(row.id)) invalid();
+    if (!sourceHasValidShape(row, versionTwo) || sources.has(row.id)) invalid();
     sources.set(row.id, row);
   }
   const missing = new Map();
@@ -374,7 +415,8 @@ export function validatePreview(payload, request, expected) {
     missing.set(key, item);
   }
   const getMissing = (kind, id) => missing.get(`${kind}\0${typeof id}:${String(id)}`);
-  const expectedSkillIds = [...new Set([...blueprint.skillIds, ...request.selected_skill_ids])];
+  const expectedSkillIds = [...new Set([...bootRefs.map(ref => ref.id), ...blueprint.skillIds, ...request.selected_skill_ids])];
+  if (versionTwo && expectedSkillIds.length > 30) invalid();
   const allowedSourceIds = new Set([
     `blueprint:${request.blueprint.id}`, `role:${blueprint.personaRole}`,
     'policy-registry:policy', 'policy-registry:decision', 'user-task',
@@ -400,6 +442,11 @@ export function validatePreview(payload, request, expected) {
     const row = sources.get(`skill:${skillId}`);
     const absent = getMissing('skill', skillId);
     if (!row || row.kind !== 'skill' || row.tools_granted !== false) invalid();
+    if (versionTwo) {
+      const roles = BOOT_ROLES.filter(role => request.boot_sources[role].id === skillId);
+      if (!Array.isArray(row.boot_roles) || row.boot_roles.length !== roles.length
+          || row.boot_roles.some((role, index) => role !== roles[index])) invalid();
+    }
     if (row.state === 'included') {
       const catalogSkill = knownSkills.get(skillId);
       if (absent || !catalogSkill || !isText(row.version, 80)
@@ -439,7 +486,7 @@ export function validatePreview(payload, request, expected) {
   if (!userTask || userTask.kind !== 'user_instruction'
       || userTask.state !== (request.user_task ? 'included' : 'empty') || userTask.version !== 1
       || userTask.host !== 'request' || userTask.path !== null
-      || userTask.source_bytes !== userTaskBytes || userTask.included_chars !== request.user_task.length
+      || userTask.source_bytes !== userTaskBytes || userTask.included_chars !== characterCount(request.user_task)
       || userTask.included_bytes !== userTaskBytes
       || (request.user_task ? !isDigest(userTask.sha256) : userTask.sha256 !== null)) invalid();
   const selectionRule = sources.get('task-selection-rule');
@@ -448,7 +495,7 @@ export function validatePreview(payload, request, expected) {
     if (!selectionRule || selectionRule.kind !== 'selection_rule' || selectionRule.state !== 'included'
         || selectionRule.version !== 1 || !isDigest(selectionRule.sha256)
         || selectionRule.host !== 'request' || selectionRule.path !== null
-        || selectionRule.source_bytes !== ruleBytes || selectionRule.included_chars !== request.task_selection_rule.length
+        || selectionRule.source_bytes !== ruleBytes || selectionRule.included_chars !== characterCount(request.task_selection_rule)
         || selectionRule.included_bytes !== ruleBytes || selectionRule.queue_scanned !== false
         || selectionRule.tasks_claimed !== false) invalid();
   } else if (selectionRule) invalid();
@@ -529,6 +576,16 @@ function renderBlueprints(rows) {
   }
 }
 
+function renderBootSources(rows) {
+  for (const role of BOOT_ROLES) {
+    const select = document.getElementById('subscription-boot-' + role);
+    if (!select) continue;
+    select.replaceChildren(new Option('Quelle ausdrücklich auswählen …', ''));
+    for (const row of rows)
+      select.add(new Option(row.name + ' · ' + row.id + ' · ' + row.version + ' · ' + row.sourceVersion.slice(0, 12), row.id));
+  }
+}
+
 function renderSkills(rows) {
   const list = document.getElementById('subscription-skills');
   if (!list) return;
@@ -554,7 +611,7 @@ function renderSources(rows) {
   if (!list) return;
   list.replaceChildren();
   for (const row of rows) {
-    const name = [row.kind, row.id, row.version].filter(value => typeof value === 'string' && SAFE_TOKEN.test(value)).join(' · ');
+    const name = [row.kind, row.id, row.version, ...(Array.isArray(row.boot_roles) ? row.boot_roles : [])].filter(value => typeof value === 'string' && SAFE_TOKEN.test(value)).join(' · ');
     const digest = typeof row.sha256 === 'string' && SHA256.test(row.sha256) ? row.sha256
       : typeof row.source_version === 'string' && SHA256.test(row.source_version) ? row.source_version : '';
     appendText(list, 'li', `${name || 'Quelle'}${digest ? ` · SHA-256 ${digest.slice(0, 16)}…` : ''}`);
@@ -583,11 +640,13 @@ export function initSubscriptionAgentsPage() {
   let blueprints = [];
   let skills = [];
   let lastPreview = null;
+  let previewEpoch = 0;
+  let refreshEpoch = 0;
+  let loadingSources = false;
   const composeButton = document.getElementById('subscription-compose');
 
-  async function refresh() {
-    if (composeButton) composeButton.disabled = true;
-    setStatus('subscription-status', 'Quellen werden geprüft …');
+  function invalidatePreview() {
+    previewEpoch += 1;
     lastPreview = null;
     setText('subscription-prompt', '');
     setText('subscription-preview-state', 'Noch keine bestätigte Vorschau.');
@@ -596,12 +655,25 @@ export function initSubscriptionAgentsPage() {
     renderMissing([]);
     const copyButton = document.getElementById('subscription-copy');
     if (copyButton) copyButton.disabled = true;
+    if (composeButton) composeButton.disabled = loadingSources || !blueprints.length || !skills.length
+      || declarationState(capabilityPayload) !== 'available';
+  }
+
+  async function refresh() {
+    const epoch = ++refreshEpoch;
+    loadingSources = true;
+    invalidatePreview();
+    if (composeButton) composeButton.disabled = true;
+    setStatus('subscription-status', 'Quellen werden geprüft …');
     const settled = await Promise.allSettled([loadCapabilities(), loadBlueprints(), loadSkillLibrary()]);
+    if (epoch !== refreshEpoch) return;
+    loadingSources = false;
     capabilityPayload = settled[0].status === 'fulfilled' ? settled[0].value : null;
     blueprints = settled[1].status === 'fulfilled' ? settled[1].value : [];
     skills = settled[2].status === 'fulfilled' ? settled[2].value : [];
     renderBlueprints(blueprints);
     renderSkills(skills);
+    renderBootSources(skills);
     const route = declarationState(capabilityPayload);
     setText('subscription-route-state', route === 'available' ? 'Vorschau-Route deklariert verfügbar'
       : route === 'unavailable' ? 'Vorschau-Route nicht verfügbar' : 'Vorschau-Route unbekannt');
@@ -613,12 +685,20 @@ export function initSubscriptionAgentsPage() {
     if (composeButton) composeButton.disabled = sourceErrors.length > 0 || route !== 'available';
   }
 
+  const onFormChange = () => {
+    invalidatePreview();
+    setStatus('subscription-status', 'Auswahl geändert. Eine neue Vorschau ist erforderlich.');
+  };
+  form.addEventListener('input', onFormChange);
+  form.addEventListener('change', onFormChange);
   form.addEventListener('submit', async event => {
     event.preventDefault();
-    if (!capabilityPayload || !blueprints.length || !skills.length) {
+    if (loadingSources || !capabilityPayload || !blueprints.length || !skills.length) {
       setStatus('subscription-status', 'Vorschau gesperrt: aktuelle Quellen oder Route fehlen.', true);
       return;
     }
+    invalidatePreview();
+    const epoch = previewEpoch;
     if (composeButton) composeButton.disabled = true;
     setStatus('subscription-status', 'Preview wird angefragt …');
     try {
@@ -630,6 +710,7 @@ export function initSubscriptionAgentsPage() {
         workspace: formInput(form, 'workspace'),
         blueprintId: formInput(form, 'blueprint_id'),
         selectedSkillIds,
+        bootSourceIds: {system: formInput(form, 'boot_system'), bach: formInput(form, 'boot_bach')},
         userTask: formInput(form, 'user_task'),
         taskRefs: formInput(form, 'task_refs'),
         taskSelectionRule: formInput(form, 'task_selection_rule'),
@@ -638,7 +719,9 @@ export function initSubscriptionAgentsPage() {
         decisionQuery: formInput(form, 'decision_query'),
       }, {blueprints, skills});
       const expectedBlueprint = blueprints.find(item => item.id === request.blueprint.id);
-      lastPreview = await composePreview(request, capabilityPayload, {blueprint: expectedBlueprint, skills});
+      const preview = await composePreview(request, capabilityPayload, {blueprint: expectedBlueprint, skills});
+      if (epoch !== previewEpoch) return;
+      lastPreview = preview;
       const ready = lastPreview.status === 'ready_for_review';
       setStatus('subscription-preview-state', ready
         ? 'Quellenstatus: Für Review bereit · kein Client- oder Laufzeitcheck'
@@ -651,6 +734,7 @@ export function initSubscriptionAgentsPage() {
       if (copyButton) copyButton.disabled = false;
       setStatus('subscription-status', 'Preview empfangen. Worker gestartet: nein · Task übernommen: nein · Queue gelesen: nein.');
     } catch (error) {
+      if (epoch !== previewEpoch) return;
       lastPreview = null;
       setText('subscription-prompt', '');
       const copyButton = document.getElementById('subscription-copy');
@@ -658,7 +742,8 @@ export function initSubscriptionAgentsPage() {
       const message = error instanceof SubscriptionAgentsError ? error.message : 'Die Preview konnte nicht bestätigt werden.';
       setStatus('subscription-status', message, true);
     } finally {
-      if (composeButton) composeButton.disabled = declarationState(capabilityPayload) !== 'available';
+      if (composeButton && epoch === previewEpoch)
+        composeButton.disabled = loadingSources || declarationState(capabilityPayload) !== 'available';
     }
   });
 

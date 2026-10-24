@@ -43,9 +43,9 @@ const pageTitle = title ? `${title} | System GUI` : "System GUI";
   </head>
 
   <body>
-    <Header currentPath={currentPath} />
+    <Header currentPath={currentPath} currentSearch={Astro.url.search} />
 
-    <main class="container">
+    <main class="container" id="main-content" tabindex="-1">
       <slot />
     </main>
 

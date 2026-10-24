@@ -1,0 +1,15 @@
+<div class="worker-lease-countdown-control">
+  <label for="running-lease-countdown-toggle">
+    <input id="running-lease-countdown-toggle" type="checkbox" />
+    Lease-Countdowns in Running anzeigen
+  </label>
+  <small>Nutzt nur den bestätigten Worker-Readback; die Anzeige ändert oder verlängert keine Lease.</small>
+</div>
+
+<style is:global>
+  .worker-lease-countdown-control {display:flex;align-items:center;gap:.35rem 1rem;flex-wrap:wrap;margin:.25rem 0 .75rem;color:var(--text-muted);font-size:.82rem}
+  .worker-lease-countdown-control label {display:flex;align-items:center;gap:.4rem;color:var(--text);font-weight:600}
+  .worker-lease-countdown-control input {accent-color:var(--accent)}
+  .worker-lease-countdown-control small {line-height:1.4}
+  .worker-lease-countdown {margin:.15rem 0 .5rem;font-size:.78rem;line-height:1.4;overflow-wrap:anywhere}
+</style>

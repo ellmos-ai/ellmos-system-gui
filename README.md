@@ -8,6 +8,15 @@ The productive frontend at public BACH commit `8884fcd2277f5db89e1a267a81042b333
 
 This repository owns the shared frontend after the import. Consumer transition copies must be replaced by a verified pinned release; they do not become separate frontend authorities. An HTML installation alone does not provide Ocean's missing backend adapters.
 
+## Desktop app
+
+The Tauri 2 desktop consumer lives in this same shared GUI module under
+`src-tauri/`. Its bundled connection screen opens the selected consumer's actual
+GUI origin, including that consumer's existing login. It does not bundle an
+older Astro build or own backend jobs. See [desktop setup and acceptance](docs/DESKTOP-APP.md).
+This is an implementation candidate; native compilation, installation and
+Windows/macOS/Linux device acceptance are tracked separately from a web release.
+
 ## Development and verification
 
 Build prerequisites: Node `>=22.12.0` and npm `>=9.6.5`; the release packager and release tests also require Python 3.9 or newer. Astro is pinned to `7.3.7`; the lock includes `http-cache-semantics 4.3.0` and `sharp 0.35.5`. The previous Astro 5 lock reported security advisories. Text files use LF consistently so provenance hashes remain stable across Windows and Unix checkouts.
@@ -21,6 +30,16 @@ npm run build
 The frontend contains 26 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance.
 
 ## Release
+
+Version 0.2.28 integrates the published reviewer-availability, result-gate, external GitHub evidence, worker-selection explanation and optional lease-countdown source changes. The selection view respects the reported model-enforcement setting and labels an absent setting or candidate sort order as unconfirmed. Existing 0.2.27 agent configuration, observed runtime resources, responsive navigation, thumbnails and routes remain included. This is an incremental delivery: task-hindrance integration, missing backend adapters, full BACH/Ocean parity and user acceptance remain separate open work. Source review, build, publication, release, consumer activation and visible functional acceptance are recorded separately.
+
+Version 0.2.27 integrates the reviewed separation of agent configuration from observed runtime models and resources, removes the old model-slot illustration, and brings connection/device settings to the front. Existing backend and device-auth contracts remain in place; missing observations stay unknown. The responsive navigation, task thread and thumbnail correction from 0.2.26 remain included. Source publication, release packaging, consumer pins, actual installation and visible functional acceptance are recorded separately.
+
+Version 0.2.26 integrates the responsive Claude-inspired navigation, compact task view and reviewed agent-thumbnail correction on the deployed 0.2.25 baseline. The mobile drawer contains keyboard focus and restores background interaction on close; branding remains consumer supplied. Source reviews, inherited-code tests, release packaging, consumer pins, Mac installation and visible product acceptance are recorded separately.
+
+Version 0.2.25 integrates the deployed 0.2.24 agent overview, policy settings and revision-bound result confirmation with the current main branch operator-reopen controls. Result views now distinguish current native, externally attested and unavailable provenance without granting acceptance rights. Source checks, a published release, consumer pins and live acceptance remain separate.
+
+Version 0.2.24 shares the agent overview controls across the dashboard and Living & Running pages, with consistent search, filters, grouping, sorting, cards and compact-list views. Runtime states without confirmation remain explicitly unconfirmed. This is a read-only presentation change; it does not provide automation CRUD, calendar scheduling or native worker deployment.
 
 Version 0.2.23 adds the reviewed memory-confidence projection: unmeasured values remain unmeasured, stored facts remain explicitly unvalidated, and legacy Hermes heuristics are labelled as unvalidated. No fixed confidence value is substituted. Compatible consumer confidence fields and lesson-promotion behavior must be activated with this release; source and build checks do not prove a measured confidence or successful native learning.
 
@@ -37,6 +56,8 @@ python scripts/package_release.py
 `build:release` verifies the clean source before building and stores its exact commit in a preparation receipt. The manifest generator and packager require that same clean commit.
 
 `dist/dist-manifest.json` records file SHA-256 hashes and the exact source commit. The packager refuses a stale build and produces a deterministic ZIP including the MIT license. Consumers must pin and verify both the source commit and ZIP hash. A development build from uncommitted changes is not a publishable release receipt.
+
+The existing **Native GUI validation** workflow publishes each successfully verified web ZIP as a `web-preview-<OS>-<run-attempt>` Actions artifact, retained for 14 days. Download the artifact from the exact workflow run and unpack its outer Actions ZIP to obtain the unchanged distribution ZIP. The inner `dist/dist-manifest.json` identifies the actual CI checkout and every distributed file hash; a pull-request build may name its merge checkout rather than the branch head. Verify that exact source/tree and the ZIP hash before consumer use. These candidate artifacts are separate from a tagged release, installation and functional acceptance. Existing tests, clean-build/manifest/archive checks and consumer activation gates remain in place.
 
 `ellmos-module.v2.json` registers only `gui.static.distribution` and `gui.same-origin.client`. It owns no runtime state. Authentication, backend adapters, task authority and worker execution belong to the consumer; installing this static distribution does not make those capabilities available.
 
@@ -100,7 +121,7 @@ and shows the consumer's error as text. Failed reads are not shown as empty tabl
 
 BACH provides the reference REST adapters. Ocean must implement its own compatible handlers. The [consumer contract](docs/CONSUMER_CONTRACT.md) distinguishes configured adapter routes, runtime verification, installed modules and verified GUI artifacts. Missing adapters remain unavailable; a catalogue entry, saved profile or HTTP success alone cannot establish a running agent.
 
-The bundled `device-fetch.js` forwards an existing device credential only to same-origin `/api/` requests. Provider-session cookies remain browser-managed. Task assignment uses `/api/task-assignees` (`bach.task-assignees.v1`) and explicit catalogue CAS. Existing unknown slots remain visible and unchanged until the user selects a new binding.
+The bundled `device-fetch.js` leaves device authentication to the server-managed HttpOnly cookie and only adds the re-authentication notice for same-origin `/api/` failures. Provider-session cookies remain browser-managed. Task assignment uses `/api/task-assignees` (`bach.task-assignees.v1`) and explicit catalogue CAS. Existing unknown slots remain visible and unchanged until the user selects a new binding.
 
 Chat, device registration and legacy boards remain consumer routes outside this static Astro source.
 
@@ -109,3 +130,5 @@ The separate **Universal GUI** is developed from `ellmos-unified-gui`; its Jinja
 German end-user labels intentionally use real umlauts. This technical README is in English.
 
 License: MIT.
+
+The external-agent workshop now binds explicitly selected system/BACH boot skills by exact source hash using the v2 preview contract. It requires a compatible backend (BACH draft PR483); it does not silently downgrade to a preview without boot sources. Source reloads and form edits invalidate old previews. Target readability, suitable deployed boot sources, Ocean parity and device/browser acceptance remain separate requirements. See [the workshop contract](docs/subscription-workshop.md).

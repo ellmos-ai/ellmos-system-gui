@@ -6,8 +6,9 @@ import vm from 'node:vm';
 import {
   buildCorrectionRequest, correctionAttemptMatchesView, createCorrectionAttempt,
   isCurrentCorrectionTarget, normalizeCorrectionNote, parseTaskResultMaxCharsInput, resultMaxCharsCreateChange,
-  resultMaxCharsEditChange, resultOperatorCapabilities, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
-  transitionCorrectionAttempt, validateCorrectionAcknowledgement, validateResultHistoryPage
+  resultMaxCharsEditChange, resultOperatorCapabilities, resultSourceSummary, supportsTaskResultMaxChars, taskResultMaxCharsReadback,
+  transitionCorrectionAttempt, validateCorrectionAcknowledgement, validateResultHistoryPage,
+  taskResultGateSummary, taskResultAccepted, taskResultCompletionMessage, canConfirmTaskResult
 } from '../src/lib/task-result-contract.mjs';
 
 const taskId = 23;
@@ -207,19 +208,29 @@ function resultLoaderHarness(initialKey='operator-key', gate={}) {
       throw new Error('unexpected selector: ' + selector);
     }
   };
+  const element = tag => ({tagName:tag.toUpperCase(), textContent:'', hidden:false, dataset:{}, children:[],
+    append(...children) {this.children.push(...children);},
+    replaceChildren(...children) {this.children=[...children];}});
+  const events = [];
   const nodes = {
+    'task-result-gates':element('section'),
+    'task-result-gate-list':element('ul'),
     'task-result-status':{textContent:'',hidden:false},
     'task-result-content':{textContent:'',hidden:true},
     'task-result-meta':{textContent:'',hidden:true},
+    'task-result-source':{textContent:'',hidden:true},
     'task-result-accept':{hidden:true,disabled:true},
     'task-result-correction':correctionForm,
     'task-result-key-status':{textContent:''}
   };
   const context = {
-    document:{getElementById(id) {
+    document:{createElement:element, getElementById(id) {
       if (!nodes[id]) throw new Error('unexpected node: ' + id);
       return nodes[id];
     }},
+    window:{dispatchEvent(event) {events.push(event);return true;}},
+    CustomEvent:class {constructor(type, init={}) {this.type=type;this.detail=init.detail;}},
+    taskResultGateSummary, taskResultAccepted, taskResultCompletionMessage, canConfirmTaskResult,
     fetch:(url, init) => new Promise(resolve => requests.push({url,init,resolve})),
     selectedTask:{id:taskId,task_version:version},
     taskDetailRevision:8,
@@ -234,6 +245,7 @@ function resultLoaderHarness(initialKey='operator-key', gate={}) {
     operatorKey:() => activeKey,
     resultKeyStatus:() => {},
     resultOperatorCapabilities,
+    resultSourceSummary,
     isCurrentCorrectionTarget,
     updateCorrectionCount:() => {}
   };
@@ -348,29 +360,51 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
     group.source_repository === 'ellmos-ai/bach'
       && group.source_commit === '8884fcd2277f5db89e1a267a81042b33358278b8');
   assert.ok(originalBach);
+  const importedSnapshots = {
+    'src/components/TaskCreateForm.astro': 'e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824',
+    'src/pages/tasks.astro': 'ed62c7834a6437c8afed43050f95e4cbd7b00945656e92dc2e985e70e4084416'
+  };
   const importedHistory = {
     'src/components/TaskCreateForm.astro': 'fcfbad55ec1a3a1b4324db717a4ef2e0d7149dba6724d1bfbe95a34b3daf1852',
     'src/pages/tasks.astro': 'cf776e1a6e562fa5800fe55fa4137e509313bbcaaf5a1565c1cfa460316321d9'
   };
+  const followup = provenance.followup_changes.find(change =>
+    change.scope === 'Task2138: version-bound task result history, correction requests, and result-length limits');
+  assert.ok(followup);
   for (const [path, sourceSha] of Object.entries(importedHistory)) {
     assert.equal(originalBach.files[path].source_sha256, sourceSha);
-    assert.equal(originalBach.files[path].imported_sha256, hash(path));
+    assert.equal(originalBach.files[path].imported_sha256, importedSnapshots[path]);
     assert.equal(originalBach.files[path].adapted, true);
   }
   for (const path of ['public/page-reads.v1.json', 'src/lib/task-result-contract.mjs', 'tests/task-result-history.test.mjs']) {
     assert.equal(provenance.source_imports.some(group => group.files?.[path]), false, path);
   }
 
-  const followup = provenance.followup_changes.find(change =>
-    change.scope === 'Task2138: version-bound task result history, correction requests, and result-length limits');
-  assert.ok(followup);
   assert.deepEqual(followup.files.map(file => file.path).sort(), [...paths].sort());
-  // Later follow-ups may change these files; the Task2138 record stays intact and chains into them.
-  const later = provenance.followup_changes.slice(provenance.followup_changes.indexOf(followup) + 1)
-    .flatMap(change => change.files ?? []);
+  const laterChanges = provenance.followup_changes.slice(provenance.followup_changes.indexOf(followup) + 1);
+  const merge = provenance.followup_changes.findLast(change =>
+    change.scope === 'BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance');
+  assert.equal(merge.scope, 'BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance');
+  const branchBases = new Set(merge.branch_bases);
+  assert.ok(branchBases.has('99cde50dfaa0f0306b6c5b70aebc4161db0fc71c'));
+  assert.ok(branchBases.has('a5de187db1005b083e2ed4330f61aafc0553ba04'));
   for (const file of followup.files) {
-    const next = later.find(entry => entry.path === file.path);
-    assert.equal(file.sha256, next ? next.previous_sha256 : hash(file.path), file.path);
+    const observed = new Set([file.sha256]);
+    let recordedHash = file.sha256;
+    for (const change of laterChanges) {
+      const next = change.files?.find(candidate => candidate.path === file.path);
+      if (!next) continue;
+      assert.ok(observed.has(next.previous_sha256), file.path + ': known provenance predecessor');
+      if (next.previous_sha256 !== recordedHash) {
+        assert.ok(branchBases.has(change.source_base_commit), file.path + ': declared source branch');
+      }
+      if (next.other_parent_sha256 !== undefined && next.other_parent_sha256 !== null) {
+        assert.ok(observed.has(next.other_parent_sha256), file.path + ': known merged predecessor');
+      }
+      recordedHash = next.sha256;
+      observed.add(recordedHash);
+    }
+    assert.equal(recordedHash, hash(file.path), file.path);
   }
 });
 
