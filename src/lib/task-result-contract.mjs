@@ -451,7 +451,7 @@ export function taskResultGateSummary(readback) {
 
     const github = evaluation.github;
     const githubCurrent = isRecord(github) && github.availability === 'available'
-      && github.task_id === readback.task_id && github.result_revision === result.result_revision;
+      && github.task_id === String(readback.task_id) && github.result_revision === result.result_revision;
     if (typeof evaluation.github_pr_review_required !== 'boolean') {
       gates.push(gate('external-approval', 'Externe GitHub-Prüfung', 'unavailable',
         'Der aktuelle Bedarf an einer externen Prüfung ist nicht bestätigt.'));
