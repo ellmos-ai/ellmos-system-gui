@@ -11,13 +11,15 @@
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
     "docs/GUI-AGENTS-LIVING-RUNNING.md": "f44152d48e125736fbea5d8478f0b0937219670190a5448de8a458f9ca5f9eb5",
+    "docs/GUI-LEGACY-ROUTE-FALLBACK.md": "8bce644156882b77f31e0d89a2463e25b4f26f229c6f35e9f8bf0054ca26e218",
     "docs/GUI-TASKS-ROUTINES.md": "53e7b8a74f4b630744629a328a0466cbfbf7f7186eaed605997bdc99e05812c4",
     "ellmos-module.v2.json": "88c5e74792e5501e273d379047a1df0e4ef1c2bc2edd7fadb9633e0ccce83c08",
     "package-lock.json": "9047de306c3746da0c2ddc279bfbbc04917918e2342dcb435c5f8ee63d6615e2",
-    "package.json": "e37bac544410b0d0e289c4eff5f5a0a5038a049f2c874021991296830d2de235",
+    "package.json": "682fcd8d8681efec301a840173f518b5f80431d8c2798d19ca3d1918c9da94f1",
+    "scripts/verify-navigation-routes.mjs": "efbfb0d8fb6338515ebb8db0038946ebe0cd8e2f4368f2b0e852a9612f44ece0",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "5badd0b29bd6fee0554724b67677604ed99c5c64c532922824b86fb27094ea68",
-    "README.md": "2eaaf86e7000e91f0e5fa9b1b8b0b72385e5754f11b51480bf3e64e3ce7122f6",
+    "public/page-reads.v1.json": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
+    "README.md": "81a919c2e4d5ba215359ed3bc6894047d8ac3dfef93441805e0d530fbb2f973e",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
@@ -226,6 +228,7 @@
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "1cda4d163d9baf87aac8aa747f4b42c1ec6262044bf8d620ee93215288bea546",
     "src/components/Header.astro": "244464b7c6de5e7b78544d160a81ae425a1b58afb908a61dbd3230019ea9b31a",
+    "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824",
@@ -244,6 +247,7 @@
     "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
     "src/lib/domain-pins.mjs": "0bc813215764e5e6fb77044bbd68756351b60ddb38035c188548b95d1a527bd3",
     "src/lib/domain-routes.mjs": "ba4dd103080f7090c27121009a33efbc4e6af03a7afc75ca77bef4766aa10d08",
+    "src/lib/navigation-route-inventory.mjs": "6bb0c8fa3818aa7b4f1dc086031ac1dbf27413f74a144d906feba5362271c045",
     "src/lib/gemini-avatar-assets.mjs": "72f30b9af1c0374ab30aef6cdb5f5a662af8d4f9448ff86596e0b6fd607e115a",
     "src/lib/model-sockets-ui.mjs": "1325abb9e163348b3542e906ab5fa16e7b905a2ad10332369db5245f6c0a7379",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
@@ -264,22 +268,35 @@
     "src/pages/agenten/running.astro": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/agenten/subscription-agents.astro": "037f8e681f6feeb351c990b73737ddc27420ee28b1c3b5a4abf735a297b4b89d",
+    "src/pages/ati.astro": "9654c6490c123e02a4f2e6028d1b22ce8740b2e0e0de2a2448f13c3ec4fd1f84",
     "src/pages/artefakte.astro": "676f47aa93f79e1fa6c040c6fb05e8a5373bf6c985170234e514587548055a95",
+    "src/pages/chat.astro": "60bdf982719bd83ee54d9627be6b6f702c4e4dcd08d1b3929bb46fcdfa428df8",
+    "src/pages/daemon.astro": "7c948758d295503b7d3e6b55c64ceaa0b980ac2bbdabe2a4186dcc60536d088b",
+    "src/pages/denkarium.astro": "8488258175615cdafdf292ee3bcc10b5004718a2c6c9d729facc4db77483a5bd",
     "src/pages/domains.astro": "a9c41b57fc2d188a8c0b5308a76a37c7eccc9227193cd88594810295f26994b0",
+    "src/pages/financial.astro": "17649d4da4c760da7b96d6970f0a968c385bd029cacbdeda85c391349fca3689",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
     "src/pages/governance/index.astro": "5371d2b101453c0cdcdf3edeff7c83e48a7f949b271652b6870ae35aadf4c137",
     "src/pages/governance/logs.astro": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
     "src/pages/governance/usecases.astro": "860a03ca99e466d9571ab93e350a24105ba3caff69a06f9a06c4a83ee14c3b19",
     "src/pages/index.astro": "89f5007f8b8612fd270409b8f976c70bc8bb0114217e82992ddd3ee9ac89419b",
+    "src/pages/gesundheit.astro": "9f95b2292aadeb45287b6edf0ddcdbc7906f9b35b0611bb792fc34128f15047c",
+    "src/pages/help.astro": "82907086a354539ee7789f331f682683f53403739ab7bc598c1ae0d60702d3b2",
+    "src/pages/inbox.astro": "85dea120a55114d1602027509fd2d9a7c720c5302edb36404baf7968a5a4c63e",
+    "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
     "src/pages/life.astro": "147bdbe39e5176879b495ff6db18648fc150a8132529739437adb37e5c83af0d",
+    "src/pages/maintenance.astro": "a1b17d66db4bcab4c279987582092f59c756bacfddb004c5257912fedc312147",
     "src/pages/routinen.astro": "2e057844239f82cb2a3d8a866e716856bb97b161b98f2e30407e9e06a8607932",
     "src/pages/memory.astro": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c",
+    "src/pages/persoenlich.astro": "f4f26c145c11721776c7e150032ed1d6a0d2d3e3f6172e6f891f821863ebc700",
     "src/pages/settings.astro": "360da39f96e3c413e9c812296b76596308f184ce00643a78d89a32760f7ded7d",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/tasks.astro": "e6cfdf38f70671bbdafa0bd30ce33f8ed0d03a91402009fc348e873c5d0b8146",
+    "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
+    "src/pages/tools.astro": "0e36442d37c4e1fc1a98b4f36fdf71788e46d68c4320e8352559806b0f0961ed",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
@@ -298,13 +315,14 @@
     "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
     "tests/domain-routes.test.mjs": "bdcc11061fbb9a12f670fe6917c890d722d46b9ba6b8f1f87adbe58b1579d353",
     "tests/fabrika.test.mjs": "25c92eb969278125447beafe4307d0be77bf64b82a7ac78fcd84594015c1067e",
-    "tests/frontend-parity.test.mjs": "a29adeed3d6be7cef6ea0c853d014cf970d8ac58ec923b1c6981cd7e576e6d09",
+    "tests/frontend-parity.test.mjs": "785cbeab20d13bee4ac217f293d8faa305a3fea04eccefd9d1e16d62b8c83941",
+    "tests/legacy-route-fallback.test.mjs": "d5c08ba2d492a9856bae6566770a8c7c80602f43492d279b860b7177068d5b5a",
     "tests/tasks-routines.test.mjs": "44bc4991decccb913512493e60c200992debcb79ad637b19f40685c1aef99ceb",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
     "tests/memory-facts.test.mjs": "a7c9724c7e28631f9a661fcde596f81fe5dd93375838259a6cf55244c24f3897",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
-    "tests/release-provenance.test.mjs": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
+    "tests/release-provenance.test.mjs": "15b7cc57e906331ec27975e00f1d41c11417768dc9f6027dbb2a39dc00f9fbd3",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
     "tests/system-slots.test.mjs": "47808749df56f089d2fd29e2f43e2d4fcf69e7ee89ebd2ddf00f3f813c9c289b",
     "tests/task-assignment.test.mjs": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
@@ -582,6 +600,135 @@
           "path": "README.md",
           "previous_sha256": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
           "sha256": "dfc0d03a4f57b927937f4a17e5d2e4dc23240a8cd0076dfa8c62dd096fd7fed7"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
+      "scope": "BACH #2468: sichtbarer Legacy-Routen-Rückfall und Build-Schranke für gemeinsame Navigation",
+      "source_base_commit": "0ae3cc449f146770376c37b67d53689738444ac7",
+      "changes": [
+        "Die gemessenen alten Zielpfade werden in einer gemeinsamen Inventardatei geführt; /routinen bleibt als neue gemeinsame Seite aus #2477 markiert.",
+        "Dreizehn verbleibende alte Zielpfade zeigen eine gemeinsame Hinweisseite mit Pfad, Ursache, Evidenzgrenze und Link auf Task #2468; /daemon schaltet den Kettenbereich nur mit ?tab=chains frei.",
+        "Der Build-Guard prüft beide Navigation-Presets, den Header-Schnellzugriff und alle Legacy-Einträge auf gemeinsame Astro-Seite oder sichtbaren Fallback.",
+        "Leere Page-Reads-Einträge halten die Manifestbindung für die statischen, API-freien Fallback-Seiten vollständig.",
+        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer-, Browser- oder Laufzeitnachweis."
+      ],
+      "files": [
+        {
+          "path": "package.json",
+          "previous_sha256": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
+          "sha256": "7f982fe89d710444520f0d263ddb62c29b337208c5f108a302d6a39124d07e4e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "5badd0b29bd6fee0554724b67677604ed99c5c64c532922824b86fb27094ea68",
+          "sha256": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "dfc0d03a4f57b927937f4a17e5d2e4dc23240a8cd0076dfa8c62dd096fd7fed7",
+          "sha256": "ae51f1a9ec3a4e0f24c7ee7b2207254807c2817b8c64c512e59dddb536c19198"
+        },
+        {
+          "path": "src/pages/daemon.astro",
+          "previous_sha256": "0304b371e2e6573213c00972e8d29b536717f7a10886ac8e76cc5deb46def622",
+          "sha256": "7c948758d295503b7d3e6b55c64ceaa0b980ac2bbdabe2a4186dcc60536d088b"
+        },
+        {
+          "path": "tests/frontend-parity.test.mjs",
+          "previous_sha256": "a29adeed3d6be7cef6ea0c853d014cf970d8ac58ec923b1c6981cd7e576e6d09",
+          "sha256": "785cbeab20d13bee4ac217f293d8faa305a3fea04eccefd9d1e16d62b8c83941"
+        },
+        {
+          "path": "docs/GUI-LEGACY-ROUTE-FALLBACK.md",
+          "previous_sha256": null,
+          "sha256": "8bce644156882b77f31e0d89a2463e25b4f26f229c6f35e9f8bf0054ca26e218"
+        },
+        {
+          "path": "scripts/verify-navigation-routes.mjs",
+          "previous_sha256": null,
+          "sha256": "e77582e2772bc9879a9bdd34796c6aa5633b6533df2c15ead738b0dc773dcb67"
+        },
+        {
+          "path": "src/components/LegacyRouteFallback.astro",
+          "previous_sha256": null,
+          "sha256": "e292c7a1bb3d1150293290abba73b8b6be8613eb773a969e95a0d10c85a18fb6"
+        },
+        {
+          "path": "src/lib/navigation-route-inventory.mjs",
+          "previous_sha256": null,
+          "sha256": "f68504c3871b904b4a98b1aa82b8b4fb1cbc1d49afa11951f645268ee37fae7e"
+        },
+        {
+          "path": "src/pages/ati.astro",
+          "previous_sha256": null,
+          "sha256": "e0dff9fc4c7b336a45bef54ad1c1f89a9e636099c8c6ca9166f15eafea9821e5"
+        },
+        {
+          "path": "src/pages/chat.astro",
+          "previous_sha256": null,
+          "sha256": "62d99cd336a8b47868d074d83d2bd1bc9436832e654458aec8eade03ea02b4fc"
+        },
+        {
+          "path": "src/pages/denkarium.astro",
+          "previous_sha256": null,
+          "sha256": "bff888f378054d93e66120c05aa1d1b2c887778f066ba561a837ab69ea1d507f"
+        },
+        {
+          "path": "src/pages/financial.astro",
+          "previous_sha256": null,
+          "sha256": "293313b2ca836cae4972fabdbc801a8e97b9d866fac03c587b39d455a7b0ab26"
+        },
+        {
+          "path": "src/pages/gesundheit.astro",
+          "previous_sha256": null,
+          "sha256": "cbe53a78532a2446cbf13a9223ff13dec73e8808601eb931cec016816914728d"
+        },
+        {
+          "path": "src/pages/help.astro",
+          "previous_sha256": null,
+          "sha256": "1653fce34339715390509133cb58fdf86b1dbc4febfa4607f618d6223ab10c0d"
+        },
+        {
+          "path": "src/pages/inbox.astro",
+          "previous_sha256": null,
+          "sha256": "388188dafcc624a021368a6937a07ff5dc9ae82da4fff8486be165de8842994c"
+        },
+        {
+          "path": "src/pages/kontakte.astro",
+          "previous_sha256": null,
+          "sha256": "e6392014695b3153519f5b5137afaf7fc65dfca8b7aa5ea5a22eb7ae30504ff7"
+        },
+        {
+          "path": "src/pages/maintenance.astro",
+          "previous_sha256": null,
+          "sha256": "b7e646093d69cf7e365ed24716ce714672a81cb0a2ccb9f197fb4e6404d8dd46"
+        },
+        {
+          "path": "src/pages/persoenlich.astro",
+          "previous_sha256": null,
+          "sha256": "cac42d770bd5d9a1ec7997eef7825355f595c0dd55b6723d83e7ba05d85fa76c"
+        },
+        {
+          "path": "src/pages/steuer.astro",
+          "previous_sha256": null,
+          "sha256": "c3690312793cdd6812c02921d34cd7806e8b009396ede25387fb95489a002f7a"
+        },
+        {
+          "path": "src/pages/tools.astro",
+          "previous_sha256": null,
+          "sha256": "21ea07cacb010be42ea73ea6a0d9f0c5b1cc431423cd0bbf9a119c18c0b1c2bd"
+        },
+        {
+          "path": "tests/legacy-route-fallback.test.mjs",
+          "previous_sha256": null,
+          "sha256": "476c553e4df87a726983f75e006f0d42b3b114ceaea3d4808952dca491ff2c03"
+        },
+        {
+          "path": "tests/release-provenance.test.mjs",
+          "previous_sha256": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
+          "sha256": "15b7cc57e906331ec27975e00f1d41c11417768dc9f6027dbb2a39dc00f9fbd3"
         }
       ]
     },
@@ -4173,6 +4320,47 @@
           "path": "README.md",
           "previous_sha256": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
           "sha256": "dfc0d03a4f57b927937f4a17e5d2e4dc23240a8cd0076dfa8c62dd096fd7fed7"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
+      "scope": "BACH #2468 follow-up: sichtbarer Legacy-Routen-Rückfall und Navigation-Build-Guard",
+      "source_base_commit": "0ae3cc449f146770376c37b67d53689738444ac7",
+      "changes": [
+        "Die neue Fallback-Inventur, die gemeinsamen Hinweisseiten und der Build-Guard werden als Task-2468-Fortsetzung festgehalten.",
+        "Die statischen Fallback-Seiten erhalten leere Page-Reads-Einträge; alte Laufzeit- und Backendzustände werden nicht behauptet."
+      ],
+      "files": [
+        {
+          "path": "package.json",
+          "previous_sha256": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
+          "sha256": "7f982fe89d710444520f0d263ddb62c29b337208c5f108a302d6a39124d07e4e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "5badd0b29bd6fee0554724b67677604ed99c5c64c532922824b86fb27094ea68",
+          "sha256": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "dfc0d03a4f57b927937f4a17e5d2e4dc23240a8cd0076dfa8c62dd096fd7fed7",
+          "sha256": "ae51f1a9ec3a4e0f24c7ee7b2207254807c2817b8c64c512e59dddb536c19198"
+        },
+        {
+          "path": "src/pages/daemon.astro",
+          "previous_sha256": "0304b371e2e6573213c00972e8d29b536717f7a10886ac8e76cc5deb46def622",
+          "sha256": "7c948758d295503b7d3e6b55c64ceaa0b980ac2bbdabe2a4186dcc60536d088b"
+        },
+        {
+          "path": "tests/frontend-parity.test.mjs",
+          "previous_sha256": "a29adeed3d6be7cef6ea0c853d014cf970d8ac58ec923b1c6981cd7e576e6d09",
+          "sha256": "785cbeab20d13bee4ac217f293d8faa305a3fea04eccefd9d1e16d62b8c83941"
+        },
+        {
+          "path": "tests/release-provenance.test.mjs",
+          "previous_sha256": "aaacd478b4e0eab9104d8e74f7c98b7f2046e639d98497cf301db8dc5756ef67",
+          "sha256": "15b7cc57e906331ec27975e00f1d41c11417768dc9f6027dbb2a39dc00f9fbd3"
         }
       ]
     },

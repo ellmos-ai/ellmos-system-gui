@@ -26,6 +26,18 @@
   }
  ],
  "pages": {
+  "/ati": [],
+  "/chat": [],
+  "/denkarium": [],
+  "/financial": [],
+  "/gesundheit": [],
+  "/help": [],
+  "/inbox": [],
+  "/kontakte": [],
+  "/maintenance": [],
+  "/persoenlich": [],
+  "/steuer": [],
+  "/tools": [],
   "/": [
    {
     "method": "GET",
