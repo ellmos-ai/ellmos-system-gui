@@ -71,7 +71,8 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
     </div>
   </div>
 
-  <!-- Task List -->
+  <!-- Task List and optional side panel -->
+  <div class="task-board-layout" id="task-board-layout">
   <div class="card task-table-scroll">
     <div id="tasks-table-container">
       <p style="text-align:center;padding:3rem;color:var(--text-muted);">Lade Aufgaben...</p>
@@ -183,6 +184,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
       <div class="task-detail-actions"><button type="button" class="btn" id="task-edit-cancel">Abbrechen</button><button type="submit" class="btn btn-primary">Änderungen speichern</button></div>
     </form>
   </section>
+  </div>
 
   <style>
     .hidden, [hidden] { display: none !important; }
@@ -231,6 +233,9 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
     .task-page-head {display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem;}
     .task-page-head h1 {font-size:1.6rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.25rem;}
     .task-filter-bar {display:flex;justify-content:space-between;align-items:end;gap:1rem;flex-wrap:wrap;padding:.8rem 1rem;margin-bottom:1rem;}
+    .task-board-layout {display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;align-items:start;}
+    .task-board-layout.is-open {grid-template-columns:minmax(0,1fr) minmax(19rem,26rem);}
+    .task-board-layout.is-open .task-detail {position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow:auto;}
     .task-overview-technical {margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:.75rem;}
     .task-overview-technical>summary,.task-technical-details>summary {cursor:pointer;color:var(--text-muted);font-size:.85rem;font-weight:500;}
     .task-overview-technical[open]>summary {margin-bottom:.75rem;}
@@ -256,7 +261,8 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
     :global(#tasks-table-container table) {min-width:42rem;font-size:.82rem !important;}
     :global(#tasks-table-container tbody tr:hover) {background:var(--bg-panel);}
     .task-detail :global(button:focus-visible),.task-detail :global(input:focus-visible),.task-detail :global(select:focus-visible),.task-detail :global(textarea:focus-visible),.task-detail summary:focus-visible,.task-overview-technical>summary:focus-visible {outline:2px solid var(--accent-blue-text);outline-offset:3px;}
-    @media(max-width:900px) {.task-detail-columns {grid-template-columns:minmax(0,1fr);} .task-context {border-top:1px solid var(--border);padding-top:1rem;}}
+    @media(max-width:1100px) {.task-board-layout.is-open {grid-template-columns:minmax(0,1fr) minmax(17rem,22rem);}}
+    @media(max-width:900px) {.task-board-layout.is-open {grid-template-columns:minmax(0,1fr);} .task-board-layout.is-open .task-detail {position:static;max-height:none;overflow:visible;} .task-detail-columns {grid-template-columns:minmax(0,1fr);} .task-context {border-top:1px solid var(--border);padding-top:1rem;}}
     @media(max-width:620px) {.task-detail {padding:.85rem;} .task-filter-bar {padding:.75rem;} .task-context .task-detail-grid>div {grid-template-columns:minmax(0,1fr);gap:.1rem;}}
   </style>
 
@@ -328,6 +334,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
       const normalizedStatus = status => String(status || '').trim().toLowerCase();
       const isDoneStatus = status => ['done', 'completed', 'closed'].includes(normalizedStatus(status));
       const isTerminalStatus = status => ['done', 'completed', 'closed', 'cancelled', 'canceled', 'duplicate'].includes(normalizedStatus(status));
+       const statusLabel = status => ({pending:'Offen',in_progress:'In Arbeit',review:'Zur Prüfung',blocked:'Blockiert',cancelled:'Abgebrochen',canceled:'Abgebrochen',archived:'Archiviert',duplicate:'Duplikat',done:'Erledigt',completed:'Erledigt',closed:'Beendet'}[normalizedStatus(status)] || 'Status unbekannt');
       document.getElementById('tasks-count-badge').textContent = taskCountLabel(filtered.length, filteredTotal, currentOffset);
       updateTaskPagination();
 
@@ -371,7 +378,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
                     ${escapeHtml(t.priority || 'normal')}
                   </td>
                   <td style="padding:0.75rem 0.5rem;">
-                    <span class="badge ${isDone ? 'badge-success' : 'badge-warning'}">${escapeHtml(t.status || 'open')}</span>
+                     <span class="badge ${isDone ? 'badge-success' : 'badge-warning'}" data-task-status="${escapeHtml(normalizedStatus(t.status) || 'unknown')}">${escapeHtml(statusLabel(t.status))}</span>
                   </td>
                   <td style="padding:0.75rem 0.5rem;text-align:right;width:120px;box-sizing:border-box;">
                     <div class="task-row-actions">
@@ -398,7 +405,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
       if (currentFilters.agent && ![...agent.options].some(o => o.value === currentFilters.agent)) agent.add(new Option(currentFilters.agent, currentFilters.agent));
       agent.value = currentFilters.agent;
     }
-    // Agentenliste kommt ausschliesslich aus /api/task-assignees (Filter ueber assigned_to).
+    // Agentenliste kommt ausschließlich aus /api/task-assignees (Filter über assigned_to).
     async function loadAgentOptions() {
       const select = document.getElementById('tasks-agent-filter');
       try {
@@ -877,6 +884,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
       document.getElementById('task-result-accept').hidden = true;
       const panel = document.getElementById('task-detail');
       panel.hidden = false;
+      document.getElementById('task-board-layout').classList.add('is-open');
       detailError('');
       try {
         const response = await fetch('/api/tasks/' + encodeURIComponent(id));
@@ -980,6 +988,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
       ++taskDetailRevision; selectedResult = null;
       resetTaskResultHistory();
       selectedTask = null; document.getElementById('task-detail').hidden = true;
+      document.getElementById('task-board-layout').classList.remove('is-open');
     });
     document.getElementById('task-edit-form').addEventListener('submit', async event => {
       event.preventDefault();

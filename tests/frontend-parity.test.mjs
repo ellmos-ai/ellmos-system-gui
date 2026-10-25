@@ -9,9 +9,9 @@ const page=read('src/pages/agenten/running.astro');
 const start=page.indexOf('function workerReadiness('),end=page.indexOf('async function loadBackgroundWorkers(',start);
 const readiness=vm.runInNewContext('('+page.slice(start,end).trim()+')');
 function paths(directory){return readdirSync(directory,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?paths(new URL(entry.name+'/',directory)):[new URL(entry.name,directory)]);}
-test('all twenty-six productive pages, including Subscription Agents, are present',()=>{
-  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,26);
-  for(const path of ['user-inbox','agenten/blueprints','agenten/subscription-agents','skills/plugins','skills/mcp','skills/software','skills/ocean','daemon','system/ocean','prompt-library'])assert.ok(read('src/pages/'+path+'.astro'));
+test('all twenty-seven productive pages, including Subscription Agents and Routinen & Jobs, are present',()=>{
+  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,27);
+  for(const path of ['user-inbox','agenten/blueprints','agenten/subscription-agents','routinen','skills/plugins','skills/mcp','skills/software','skills/ocean','daemon','system/ocean','prompt-library'])assert.ok(read('src/pages/'+path+'.astro'));
 });
 test('the shared branding contract and bundled same-origin authentication stay intact',()=>{
   assert.match(read('src/components/Header.astro'),/\/api\/gui\/brand/);
