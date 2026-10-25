@@ -1,5 +1,28 @@
 ---
 import BachLayout from '../layouts/BachLayout.astro';
 import DaemonChains from '../components/DaemonChains.astro';
+import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
+import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
+
+const route = legacyFallbackRoutes.find((entry) => entry.path === '/daemon');
+if (!route) throw new Error('Fallback-Konfiguration für /daemon fehlt.');
 ---
-<BachLayout title="Daemon-Ketten" currentPath="/daemon"><DaemonChains /></BachLayout>
+<BachLayout title="Daemon & Dienste" currentPath="/daemon">
+  <div id="daemon-legacy-fallback">
+    <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+  </div>
+  <div id="daemon-chain-content" hidden>
+    <DaemonChains />
+  </div>
+</BachLayout>
+
+<script is:inline>
+  (() => {
+    const showChains = new URLSearchParams(window.location.search).get('tab') === 'chains';
+    const fallback = document.getElementById('daemon-legacy-fallback');
+    const chains = document.getElementById('daemon-chain-content');
+    if (!fallback || !chains) return;
+    fallback.hidden = showChains;
+    chains.hidden = !showChains;
+  })();
+</script>

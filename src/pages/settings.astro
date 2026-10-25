@@ -266,6 +266,19 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
           <p id="theme-status" role="status" aria-live="polite">Theme noch nicht geprüft</p>
           <p class="card-desc">Benutzerfarben werden im Backend gespeichert. Die benutzerdefinierte Palette wird derzeit nicht auf jeder Seite vollständig angewendet.</p>
         </div>
+        <div class="glass-card">
+          <h3>🧭 Navigationsstil</h3>
+          <p class="card-desc">Wähle zwischen der neuen Arbeitsnavigation und der vertrauten Ocean-BACH-Klassik. Die Auswahl gilt für diese Browser-Instanz und ändert keine Backend-Daten.</p>
+          <label for="ui-preset-select">Oberflächenstil</label>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
+            <select id="ui-preset-select" style="padding:0.5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);">
+              <option value="standard">Standard bewährt</option>
+              <option value="classic">Ocean-BACH-Klassik</option>
+            </select>
+            <span id="ui-preset-status" class="badge" role="status" aria-live="polite">Standard bewährt</span>
+          </div>
+          <p class="card-desc" style="margin-top:0.65rem;">Beide Stile verwenden dieselben Seiten und Backend-Verträge; nur Gruppierung und Bezeichnungen der Navigation unterscheiden sich.</p>
+        </div>
       </div>
     </div>
 
@@ -846,5 +859,31 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     }
     refresh.addEventListener('click', loadBackendOrigin);
     loadBackendOrigin();
+
+    const uiPresetSelect = document.getElementById('ui-preset-select');
+    const uiPresetStatus = document.getElementById('ui-preset-status');
+    function currentUiPreset() {
+      return window.bachUiPreset?.get?.()
+        || (['standard', 'classic'].includes(document.documentElement.dataset.uiPreset)
+          ? document.documentElement.dataset.uiPreset : 'standard');
+    }
+    function syncUiPresetControls(event) {
+      const preset = event?.detail?.preset || currentUiPreset();
+      if (uiPresetSelect) uiPresetSelect.value = preset;
+      if (uiPresetStatus) {
+        uiPresetStatus.textContent = preset === 'classic' ? 'Ocean-BACH-Klassik' : 'Standard bewährt';
+      }
+    }
+    uiPresetSelect?.addEventListener('change', () => {
+      const preset = uiPresetSelect.value === 'classic' ? 'classic' : 'standard';
+      if (window.bachUiPreset?.set) window.bachUiPreset.set(preset);
+      else {
+        localStorage.setItem('bach-ui-preset', preset);
+        document.documentElement.dataset.uiPreset = preset;
+      }
+      syncUiPresetControls({ detail: { preset } });
+    });
+    window.addEventListener('bach-ui-preset-change', syncUiPresetControls);
+    syncUiPresetControls();
   });
 </script>

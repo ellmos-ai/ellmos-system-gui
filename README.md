@@ -18,7 +18,7 @@ node --test tests/*.test.mjs
 npm run build
 ```
 
-The frontend contains 26 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance.
+The frontend contains 39 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance. Every configured navigation path is checked at build time for a shared Astro page or a visible Task-2468 fallback.
 
 ## GUI walkthrough
 

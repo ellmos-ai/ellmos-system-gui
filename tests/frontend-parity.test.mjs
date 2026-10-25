@@ -9,9 +9,9 @@ const page=read('src/pages/agenten/running.astro');
 const start=page.indexOf('function workerReadiness('),end=page.indexOf('async function loadBackgroundWorkers(',start);
 const readiness=vm.runInNewContext('('+page.slice(start,end).trim()+')');
 function paths(directory){return readdirSync(directory,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?paths(new URL(entry.name+'/',directory)):[new URL(entry.name,directory)]);}
-test('all twenty-six productive pages, including Subscription Agents, are present',()=>{
-  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,26);
-  for(const path of ['user-inbox','agenten/blueprints','agenten/subscription-agents','skills/plugins','skills/mcp','skills/software','skills/ocean','daemon','system/ocean','prompt-library'])assert.ok(read('src/pages/'+path+'.astro'));
+test('all thirty-nine productive pages, including fallback routes and Routinen & Jobs, are present',()=>{
+  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,39);
+  for(const path of ['user-inbox','agenten/blueprints','agenten/subscription-agents','routinen','skills/plugins','skills/mcp','skills/software','skills/ocean','daemon','system/ocean','prompt-library'])assert.ok(read('src/pages/'+path+'.astro'));
 });
 test('the shared branding contract and bundled same-origin authentication stay intact',()=>{
   assert.match(read('src/components/Header.astro'),/\/api\/gui\/brand/);
@@ -55,28 +55,24 @@ test('verified core errors and unknown states never become ready',()=>{
 
 test('the Agenten-Werkstatt icon is consistent across navigation, heading, and shortcut',()=>{
   const robot=String.fromCodePoint(0x1f916);
-  const areas=JSON.parse(read('src/config/nav_config.json'));
-  const agents=areas.find(area=>area.id==='agenten');
-  const workshop=agents?.children?.find(item=>item.href==='/agenten/blueprints');
-  assert.equal(workshop?.label,'Agenten-Werkstatt');
+  const navigation=JSON.parse(read('src/config/nav_config.json'));
+  const links=Object.values(navigation.presets).flatMap(preset=>preset.sections.flatMap(section=>section.items.flatMap(item=>item.children||[item])));
+  const workshop=links.find(item=>item.href==='/agenten/fabrika');
+  assert.equal(workshop?.label,'Agenten-Bibliothek');
   assert.equal(workshop?.icon,robot);
-  const blueprintPage=read('src/pages/agenten/blueprints.astro');
-  assert.ok(blueprintPage.includes(`<h1><span aria-hidden="true">${robot}</span> Agenten-Werkstatt</h1>`));
+  const libraryPage=read('src/pages/agenten/fabrika.astro');
+  assert.ok(libraryPage.includes('/agenten/blueprints'));
   const dashboard=read('src/pages/index.astro');
-  const expectedLink=`<a href="/agenten/blueprints" class="btn">
-        <span aria-hidden="true">${robot}</span> Agenten-Werkstatt
-      </a>`;
-  assert.ok(dashboard.includes(expectedLink));
-  assert.doesNotMatch(dashboard,/href="\/agenten\/fabrika"/);
+  assert.doesNotMatch(dashboard,/Schnellstart &amp; Arbeitsbereiche/);
 });
 
 test('the deprecated Agents-Board is absent from navigation',()=>{
-  const areas=JSON.parse(read('src/config/nav_config.json'));
-  const dashboard=areas.find(area=>area.href==='/');
-  assert.ok(dashboard);
-  assert.equal(dashboard.children,undefined,'Dashboard must remain a direct link');
-  const hrefs=areas.flatMap(area=>area.children||[]).map(item=>item.href);
-  assert.ok(hrefs.includes('/agenten/blueprints'));
+  const navigation=JSON.parse(read('src/config/nav_config.json'));
+  const hrefs=Object.values(navigation.presets).flatMap(preset=>[
+    preset.home.href,
+    ...preset.sections.flatMap(section=>section.items.flatMap(item=>[item.href,...(item.children||[]).map(child=>child.href)].filter(Boolean))),
+  ]);
+  assert.ok(hrefs.includes('/agenten/fabrika'));
   assert.ok(hrefs.includes('/agenten/marblerun'));
   assert.ok(hrefs.includes('/tasks'));
   assert.ok(hrefs.includes('/skills'));

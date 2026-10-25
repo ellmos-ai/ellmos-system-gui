@@ -26,6 +26,18 @@
   }
  ],
  "pages": {
+  "/ati": [],
+  "/chat": [],
+  "/denkarium": [],
+  "/financial": [],
+  "/gesundheit": [],
+  "/help": [],
+  "/inbox": [],
+  "/kontakte": [],
+  "/maintenance": [],
+  "/persoenlich": [],
+  "/steuer": [],
+  "/tools": [],
   "/": [
    {
     "method": "GET",
@@ -518,6 +530,20 @@
    }
   ],
   "/governance/funk": [],
+  "/routinen": [
+   {
+    "method": "GET",
+    "path": "/api/routines",
+    "required": true
+   },
+   {
+    "method": "POST",
+    "path": "/api/routines/{id}/complete",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/pages/routinen.astro#completePersonalRoutine"
+   }
+  ],
   "/settings": [
    {
     "method": "GET",

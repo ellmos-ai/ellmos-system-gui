@@ -4,6 +4,8 @@ import test from 'node:test';
 
 const header = readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf8');
 const layout = readFileSync(new URL('../src/layouts/BachLayout.astro', import.meta.url), 'utf8');
+const settings = readFileSync(new URL('../src/pages/settings.astro', import.meta.url), 'utf8');
+const dashboard = readFileSync(new URL('../src/pages/index.astro', import.meta.url), 'utf8');
 const navConfig = JSON.parse(readFileSync(new URL('../src/config/nav_config.json', import.meta.url), 'utf8'));
 const frontmatter = header.match(/^---\r?\n([\s\S]*?)\r?\n---/);
 assert.ok(frontmatter, 'Header.astro has frontmatter');
@@ -47,14 +49,34 @@ test('server and browser active states use exact paths and exact query selection
   }
 });
 
-test('all configured navigation destinations are rendered in the sidebar', () => {
-  const configuredLinks = navConfig.flatMap((item) => item.children?.map((child) => child.href) ?? [item.href]);
-  assert.ok(configuredLinks.length >= 40);
+function flattenLinks(items) {
+  return items.flatMap((item) => item.href ? [item.href] : flattenLinks(item.children || []));
+}
+
+test('both approved navigation presets expose their complete templates', () => {
+  assert.equal(navConfig.schema, 'ellmos.gui.navigation.v2');
+  assert.equal(navConfig.default_preset, 'standard');
+  assert.deepEqual(Object.keys(navConfig.presets), ['standard', 'classic']);
+  assert.equal(navConfig.presets.standard.label, 'Standard bewährt');
+  assert.equal(navConfig.presets.classic.label, 'Ocean-BACH-Klassik');
+  assert.deepEqual(navConfig.presets.standard.sections.map((section) => section.label), ['ARBEIT', 'BETRIEB', 'DOMÄNEN', 'EINSTELLUNGEN']);
+  assert.deepEqual(navConfig.presets.classic.sections.map((section) => section.label), ['ARBEIT', 'LEBEN', 'SYSTEM']);
+  const configuredLinks = Object.values(navConfig.presets).flatMap((preset) => [
+    preset.home.href,
+    ...preset.sections.flatMap((section) => flattenLinks(section.items)),
+  ]);
+  assert.ok(configuredLinks.length >= 50);
   assert.match(header, /item\.children\.map\(\(child: any\)/);
   assert.doesNotMatch(header, /children\.filter\(/);
   assert.match(header, /data-nav-link/);
   assert.match(header, /id="domain-pins-menu"/);
   assert.match(header, /initializeDomainMenu\(\)/);
+  assert.match(header, /window\.bachUiPreset/);
+  assert.match(header, /localStorage\.getItem\(uiPresetKey\)/);
+  assert.match(layout, /localStorage\.getItem\("bach-ui-preset"\)/);
+  assert.match(settings, /id="ui-preset-select"/);
+  assert.match(settings, /Ocean-BACH-Klassik/);
+  assert.doesNotMatch(dashboard, /Schnellstart &amp; Arbeitsbereiche/);
 });
 
 test('mobile navigation exposes keyboard controls and returns focus when dismissed', () => {

@@ -1,21 +1,26 @@
 ---
 import BachLayout from '../../layouts/BachLayout.astro';
 ---
-<BachLayout title="Subscription Agents" currentPath="/agenten/subscription-agents">
+<BachLayout title="Prompt-Agenten" currentPath="/agenten/subscription-agents">
   <main class="subscription-board" aria-labelledby="subscription-title">
     <header class="subscription-header">
       <div>
-        <p class="eyebrow">BACH · Open-Ocean</p>
-        <h1 id="subscription-title">Subscription Agents</h1>
-        <p class="lead">Stelle einen quellengebundenen Startprompt zusammen. Diese Seite startet keinen Agenten und übernimmt keine Aufgabe.</p>
+        <p class="eyebrow">Agenten-Bibliothek · extern</p>
+        <h1 id="subscription-title">Prompt-Agenten</h1>
+        <p class="lead">Stelle einen quellengebundenen Startprompt für einen späteren Client zusammen. Prompt-Agenten werden extern zugeschaltet und von dieser GUI nicht gesteuert.</p>
       </div>
-      <button id="subscription-refresh" class="btn btn-secondary" type="button">Quellen neu laden</button>
+      <div class="subscription-actions">
+        <a class="btn btn-secondary" href="/agenten/fabrika">Agenten-Bibliothek</a>
+        <a class="btn btn-secondary" href="/agenten/running">Living &amp; Running</a>
+        <button id="subscription-refresh" class="btn btn-secondary" type="button">Quellen neu laden</button>
+      </div>
     </header>
 
     <section class="source-state" aria-label="Anbindung">
       <p id="subscription-status" role="status" aria-live="polite">Quellen werden geprüft …</p>
       <p><strong>BACH / verbundener Backendadapter:</strong> <span id="subscription-route-state">unbekannt</span></p>
       <p><strong>Open-Ocean:</strong> unbekannt, solange kein eigener Adapter diese Route bestätigt.</p>
+      <p><strong>Statusgrenze:</strong> Vorschau und Kopieren belegen weder einen Client-Start noch einen laufenden Agenten.</p>
     </section>
 
     <form id="subscription-form" class="subscription-form">
@@ -85,7 +90,7 @@ import BachLayout from '../../layouts/BachLayout.astro';
 
 <style>
   .subscription-board{display:grid;gap:1rem;max-width:1120px;margin:0 auto;padding:1rem}
-  .subscription-header,.preview-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .subscription-header,.preview-heading,.subscription-actions{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
   .subscription-header h1{margin:.2rem 0;font-size:clamp(1.6rem,3vw,2.3rem)}
   .eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;color:var(--text-muted);margin:0}
   .lead,.muted{color:var(--text-muted);line-height:1.55;font-size:.88rem}
