@@ -11,12 +11,13 @@
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
     "docs/GUI-AGENTS-LIVING-RUNNING.md": "f44152d48e125736fbea5d8478f0b0937219670190a5448de8a458f9ca5f9eb5",
+    "docs/GUI-TASKS-ROUTINES.md": "53e7b8a74f4b630744629a328a0466cbfbf7f7186eaed605997bdc99e05812c4",
     "ellmos-module.v2.json": "88c5e74792e5501e273d379047a1df0e4ef1c2bc2edd7fadb9633e0ccce83c08",
     "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
     "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "766453c032683da19fdd9efb335ff8aebe54d05d77cdc6b0f1a50b0cfda3387b",
-    "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
+    "public/page-reads.v1.json": "5badd0b29bd6fee0554724b67677604ed99c5c64c532922824b86fb27094ea68",
+    "README.md": "dfc0d03a4f57b927937f4a17e5d2e4dc23240a8cd0076dfa8c62dd096fd7fed7",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
@@ -271,13 +272,14 @@
     "src/pages/governance/usecases.astro": "860a03ca99e466d9571ab93e350a24105ba3caff69a06f9a06c4a83ee14c3b19",
     "src/pages/index.astro": "89f5007f8b8612fd270409b8f976c70bc8bb0114217e82992ddd3ee9ac89419b",
     "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
+    "src/pages/routinen.astro": "2e057844239f82cb2a3d8a866e716856bb97b161b98f2e30407e9e06a8607932",
     "src/pages/memory.astro": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c",
     "src/pages/settings.astro": "360da39f96e3c413e9c812296b76596308f184ce00643a78d89a32760f7ded7d",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "fcb313a803b5e425f87d319cc9b17b8d71c5513ee68b660149ee5369c416c7e7",
+    "src/pages/tasks.astro": "e6cfdf38f70671bbdafa0bd30ce33f8ed0d03a91402009fc348e873c5d0b8146",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
@@ -296,7 +298,8 @@
     "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
     "tests/domain-routes.test.mjs": "bdcc11061fbb9a12f670fe6917c890d722d46b9ba6b8f1f87adbe58b1579d353",
     "tests/fabrika.test.mjs": "384aa0178c04f67743a817d0cdf8ea1d5ca0c2c33e8b471a7dbd9b6a3d388390",
-    "tests/frontend-parity.test.mjs": "96fc8c758a050f1c87852dfdf26a936739245fcec827f9ad76a23663bfc72bef",
+    "tests/frontend-parity.test.mjs": "a29adeed3d6be7cef6ea0c853d014cf970d8ac58ec923b1c6981cd7e576e6d09",
+    "tests/tasks-routines.test.mjs": "44bc4991decccb913512493e60c200992debcb79ad637b19f40685c1aef99ceb",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
     "tests/memory-facts.test.mjs": "a7c9724c7e28631f9a661fcde596f81fe5dd93375838259a6cf55244c24f3897",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
@@ -529,6 +532,55 @@
           "path": "docs/GUI-AGENTS-LIVING-RUNNING.md",
           "previous_sha256": null,
           "sha256": "f44152d48e125736fbea5d8478f0b0937219670190a5448de8a458f9ca5f9eb5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
+      "scope": "BACH #2477: kompakter Aufgabenstatus, responsives Aufgaben-Seitenpanel und gemeinsame Liste für Routinen & Jobs",
+      "source_base_commit": "12f57030ff9051af5ae651808c25be21d84b1fed",
+      "changes": [
+        "Aufgaben zeigen Status als lokales Statusschild; Blockiert bleibt sichtbar, sperrt aber nicht die gesamte Oberfläche.",
+        "Die Aufgabendetails öffnen sich als responsives Seitenpanel und fallen auf kleinen Ansichten unter die Liste zurück.",
+        "Routinen und Jobs nutzen eine gemeinsame Liste mit Herkunftsfiltern; BACH-, Ocean- und Modul-Adapter werden ausdrücklich als nicht verfügbar markiert.",
+        "Nur persönliche Routinen werden über die vorhandenen API-Routen gelesen und abgeschlossen; fehlende Laufzeitadapter erzeugen keine Schein-Jobs oder Schein-Ausführung.",
+        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "fcb313a803b5e425f87d319cc9b17b8d71c5513ee68b660149ee5369c416c7e7",
+          "sha256": "e6cfdf38f70671bbdafa0bd30ce33f8ed0d03a91402009fc348e873c5d0b8146"
+        },
+        {
+          "path": "src/pages/routinen.astro",
+          "previous_sha256": null,
+          "sha256": "2e057844239f82cb2a3d8a866e716856bb97b161b98f2e30407e9e06a8607932"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "766453c032683da19fdd9efb335ff8aebe54d05d77cdc6b0f1a50b0cfda3387b",
+          "sha256": "5badd0b29bd6fee0554724b67677604ed99c5c64c532922824b86fb27094ea68"
+        },
+        {
+          "path": "tests/frontend-parity.test.mjs",
+          "previous_sha256": "96fc8c758a050f1c87852dfdf26a936739245fcec827f9ad76a23663bfc72bef",
+          "sha256": "a29adeed3d6be7cef6ea0c853d014cf970d8ac58ec923b1c6981cd7e576e6d09"
+        },
+        {
+          "path": "tests/tasks-routines.test.mjs",
+          "previous_sha256": null,
+          "sha256": "44bc4991decccb913512493e60c200992debcb79ad637b19f40685c1aef99ceb"
+        },
+        {
+          "path": "docs/GUI-TASKS-ROUTINES.md",
+          "previous_sha256": null,
+          "sha256": "53e7b8a74f4b630744629a328a0466cbfbf7f7186eaed605997bdc99e05812c4"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
+          "sha256": "dfc0d03a4f57b927937f4a17e5d2e4dc23240a8cd0076dfa8c62dd096fd7fed7"
         }
       ]
     }
@@ -4018,6 +4070,55 @@
           "previous_sha256": "d47a12008d401a8471a8d8fd9dda2d62a24979dda9ed43a5a0ea95689e856ce0",
           "other_parent_sha256": "16b134ed675ab9a11dbf657afc66f04352adac5efbb9da095cc5556b192be7f0",
           "sha256": "a8e65cb916164a023482cc2215a86c75aa6b85f40fdde167f250b03f7355381a"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
+      "scope": "BACH #2477: kompakter Aufgabenstatus, responsives Aufgaben-Seitenpanel und gemeinsame Liste für Routinen & Jobs",
+      "source_base_commit": "12f57030ff9051af5ae651808c25be21d84b1fed",
+      "changes": [
+        "Aufgaben zeigen Status als lokales Statusschild; Blockiert bleibt sichtbar, sperrt aber nicht die gesamte Oberfläche.",
+        "Die Aufgabendetails öffnen sich als responsives Seitenpanel und fallen auf kleinen Ansichten unter die Liste zurück.",
+        "Routinen und Jobs nutzen eine gemeinsame Liste mit Herkunftsfiltern; BACH-, Ocean- und Modul-Adapter werden ausdrücklich als nicht verfügbar markiert.",
+        "Nur persönliche Routinen werden über die vorhandenen API-Routen gelesen und abgeschlossen; fehlende Laufzeitadapter erzeugen keine Schein-Jobs oder Schein-Ausführung.",
+        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
+      ],
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "fcb313a803b5e425f87d319cc9b17b8d71c5513ee68b660149ee5369c416c7e7",
+          "sha256": "e6cfdf38f70671bbdafa0bd30ce33f8ed0d03a91402009fc348e873c5d0b8146"
+        },
+        {
+          "path": "src/pages/routinen.astro",
+          "previous_sha256": null,
+          "sha256": "2e057844239f82cb2a3d8a866e716856bb97b161b98f2e30407e9e06a8607932"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "766453c032683da19fdd9efb335ff8aebe54d05d77cdc6b0f1a50b0cfda3387b",
+          "sha256": "5badd0b29bd6fee0554724b67677604ed99c5c64c532922824b86fb27094ea68"
+        },
+        {
+          "path": "tests/frontend-parity.test.mjs",
+          "previous_sha256": "96fc8c758a050f1c87852dfdf26a936739245fcec827f9ad76a23663bfc72bef",
+          "sha256": "a29adeed3d6be7cef6ea0c853d014cf970d8ac58ec923b1c6981cd7e576e6d09"
+        },
+        {
+          "path": "tests/tasks-routines.test.mjs",
+          "previous_sha256": null,
+          "sha256": "44bc4991decccb913512493e60c200992debcb79ad637b19f40685c1aef99ceb"
+        },
+        {
+          "path": "docs/GUI-TASKS-ROUTINES.md",
+          "previous_sha256": null,
+          "sha256": "53e7b8a74f4b630744629a328a0466cbfbf7f7186eaed605997bdc99e05812c4"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
+          "sha256": "dfc0d03a4f57b927937f4a17e5d2e4dc23240a8cd0076dfa8c62dd096fd7fed7"
         }
       ]
     }

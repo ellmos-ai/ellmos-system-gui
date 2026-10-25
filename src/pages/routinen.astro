@@ -1,0 +1,217 @@
+---
+import BachLayout from "../layouts/BachLayout.astro";
+---
+<BachLayout title="Routinen & Jobs" currentPath="/routinen">
+  <main class="routine-board" aria-labelledby="routine-board-title">
+    <header class="routine-header">
+      <div>
+        <p class="routine-eyebrow">Arbeit · Betrieb · Life</p>
+        <h1 id="routine-board-title">Routinen &amp; Jobs</h1>
+        <p class="routine-lead">Eine gemeinsame Liste für geplante Routinen und Jobs. Persönliche Routinen gehören ausschließlich zu Life; BACH, Ocean und Module bleiben als eigene Wartungsherkünfte getrennt.</p>
+      </div>
+      <div class="routine-header-actions">
+        <a class="btn" href="/life?tab=routinen">Life-Routinen öffnen</a>
+        <button class="btn btn-primary" id="routine-refresh" type="button">Aktualisieren</button>
+      </div>
+    </header>
+
+    <section class="routine-filters card" aria-label="Routinen- und Jobfilter">
+      <label>Herkunft
+        <select id="routine-source-filter">
+          <option value="all">Alle Herkünfte</option>
+          <option value="bach">BACH</option>
+          <option value="ocean">Ocean</option>
+          <option value="module">Modul</option>
+          <option value="life">Life · persönlich</option>
+        </select>
+      </label>
+      <label>Typ
+        <select id="routine-kind-filter">
+          <option value="all">Routinen &amp; Jobs</option>
+          <option value="routine">Routinen</option>
+          <option value="job">Jobs</option>
+        </select>
+      </label>
+      <label class="routine-search">Suche
+        <input id="routine-search" type="search" maxlength="120" placeholder="Name, Herkunft oder Wartung" autocomplete="off" />
+      </label>
+      <p id="routine-status" class="routine-status" role="status" aria-live="polite">Quellen werden geprüft…</p>
+    </section>
+
+    <section class="routine-source-grid" aria-label="Quellenstatus">
+      <article class="source-card" data-source-card="bach"><strong>BACH</strong><span data-source-state>Adapter nicht geprüft</span></article>
+      <article class="source-card" data-source-card="ocean"><strong>Ocean</strong><span data-source-state>Adapter nicht geprüft</span></article>
+      <article class="source-card" data-source-card="module"><strong>Modul</strong><span data-source-state>Adapter nicht geprüft</span></article>
+      <article class="source-card" data-source-card="life"><strong>Life · persönlich</strong><span data-source-state>Adapter nicht geprüft</span></article>
+    </section>
+
+    <section class="routine-list-card card" aria-labelledby="routine-list-title">
+      <header class="routine-list-header"><div><h2 id="routine-list-title">Gemeinsame Liste</h2><p>Planung, nächste und letzte Ausführung, Laufstatus und Wartungsherkunft bleiben getrennt sichtbar.</p></div><span id="routine-count" class="badge">–</span></header>
+      <div class="routine-table-wrap">
+        <div class="routine-table routine-table-head" role="row">
+          <span role="columnheader">Routine / Job</span><span role="columnheader">Planung</span><span role="columnheader">Nächster Lauf</span><span role="columnheader">Letzter Lauf</span><span role="columnheader">Run-Schalter</span><span role="columnheader">Wartungsherkunft</span><span role="columnheader">Aktion</span>
+        </div>
+        <div id="routine-list" role="rowgroup"></div>
+      </div>
+    </section>
+  </main>
+</BachLayout>
+
+<script is:inline>
+  const routineState = {items: [], source: 'all', kind: 'all', query: ''};
+  const routineSources = {
+    bach: {label: 'BACH', maintenance: 'BACH · Adapter', available: false},
+    ocean: {label: 'Ocean', maintenance: 'Ocean · Adapter', available: false},
+    module: {label: 'Modul', maintenance: 'Modul · Adapter', available: false},
+    life: {label: 'Life · persönlich', maintenance: 'Life · persönliche Routine', available: true},
+  };
+  const text = (value, fallback = 'Nicht bestätigt') => value == null || String(value).trim() === '' ? fallback : String(value);
+  const routineStatus = message => { document.getElementById('routine-status').textContent = message; };
+  const routineDate = value => text(value, 'Nicht geplant');
+  const routineLabel = routine => text(routine.name, 'Unbenannte Routine');
+
+  function setSourceStates() {
+    for (const [key, source] of Object.entries(routineSources)) {
+      const card = document.querySelector(`[data-source-card="${key}"]`);
+      const state = card?.querySelector('[data-source-state]');
+      if (!state) continue;
+      state.textContent = source.available ? 'Persönliche Quelle geprüft' : 'Adapter nicht verfügbar';
+      card.dataset.state = source.available ? 'available' : 'unavailable';
+    }
+  }
+
+  function normalizeRoutine(item) {
+    const id = Number(item?.id);
+    if (!Number.isSafeInteger(id) || id < 1 || typeof item !== 'object' || item === null) return null;
+    return {
+      id,
+      source: 'life',
+      kind: 'routine',
+      name: routineLabel(item),
+      schedule: [item.interval_type, item.interval_value ? `alle ${item.interval_value}` : ''].filter(Boolean).join(' · ') || 'Nicht geplant',
+      next: item.next_due_at,
+      last: item.last_run_at || item.last_completed_at,
+      active: item.is_active === true,
+      due: item.is_due_today === true || item.is_overdue === true,
+      maintenance: routineSources.life.maintenance,
+    };
+  }
+
+  function filteredRoutines() {
+    const query = routineState.query.toLowerCase();
+    return routineState.items.filter(item => {
+      if (routineState.source !== 'all' && item.source !== routineState.source) return false;
+      if (routineState.kind !== 'all' && item.kind !== routineState.kind) return false;
+      if (!query) return true;
+      return [item.name, item.source, item.kind, item.schedule, item.maintenance].some(value => String(value).toLowerCase().includes(query));
+    });
+  }
+
+  function disabledRunControl(item) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'btn btn-sm routine-run-toggle';
+    button.disabled = true;
+    button.setAttribute('aria-pressed', item.active ? 'true' : 'false');
+    button.title = 'Der gemeinsame Adaptervertrag liefert keinen bestätigten Run-Umschalter.';
+    button.textContent = item.active ? 'Aktiv · nicht schaltbar' : 'Pausiert · nicht schaltbar';
+    return button;
+  }
+
+  function renderRoutines() {
+    const list = document.getElementById('routine-list');
+    list.replaceChildren();
+    const items = filteredRoutines();
+    document.getElementById('routine-count').textContent = `${items.length} Einträge`;
+    if (routineState.source !== 'all' && !routineSources[routineState.source]?.available) {
+      const empty = document.createElement('p');
+      empty.className = 'routine-empty';
+      empty.textContent = `${routineSources[routineState.source].label}: Adapter nicht verfügbar. Es werden keine Jobs erfunden.`;
+      list.append(empty);
+      return;
+    }
+    if (!items.length) {
+      const empty = document.createElement('p');
+      empty.className = 'routine-empty';
+      empty.textContent = routineState.kind === 'job' ? 'Keine Jobs aus einer bestätigten Quelle verfügbar.' : 'Keine Routinen für diese Auswahl vorhanden.';
+      list.append(empty);
+      return;
+    }
+    for (const item of items) {
+      const row = document.createElement('article');
+      row.className = 'routine-table routine-row';
+      row.setAttribute('role', 'row');
+      const name = document.createElement('div');
+      name.className = 'routine-name';
+      const title = document.createElement('strong');
+      title.textContent = item.name;
+      const meta = document.createElement('small');
+      meta.textContent = `${routineSources[item.source].label} · ${item.kind === 'job' ? 'Job' : 'Routine'}`;
+      name.append(title, meta);
+      const fields = [item.schedule, routineDate(item.next), routineDate(item.last)];
+      row.append(name, ...fields.map(value => { const node = document.createElement('span'); node.textContent = value; return node; }));
+      row.append(disabledRunControl(item));
+      const origin = document.createElement('span'); origin.className = 'routine-origin'; origin.textContent = item.maintenance; row.append(origin);
+      const actions = document.createElement('div'); actions.className = 'routine-row-actions';
+      if (item.due) {
+        const done = document.createElement('button'); done.type = 'button'; done.className = 'btn btn-sm'; done.textContent = 'Erledigt';
+        done.addEventListener('click', () => completePersonalRoutine(item.id)); actions.append(done);
+      } else {
+        const note = document.createElement('span'); note.className = 'routine-action-note'; note.textContent = 'Keine Aktion bestätigt'; actions.append(note);
+      }
+      row.append(actions); list.append(row);
+    }
+  }
+
+  async function loadPersonalRoutines() {
+    routineStatus('Life-Quelle wird geprüft…');
+    try {
+      const response = await fetch('/api/routines', {redirect: 'error'});
+      if (!response.ok) throw new Error(response.status === 401 || response.status === 403 ? 'Life-Quelle verlangt eine Geräteanmeldung.' : `Life-Quelle HTTP ${response.status}`);
+      const data = await response.json();
+      if (data?.success !== true || !Array.isArray(data.routines)) throw new Error('Life-Quelle lieferte keinen bestätigten Routinevertrag.');
+      routineState.items = data.routines.map(normalizeRoutine).filter(Boolean);
+      routineStatus('Life geprüft; BACH, Ocean und Modul bleiben ohne bestätigten Adapter verfügbar.');
+    } catch (error) {
+      routineState.items = [];
+      routineStatus(error instanceof Error ? error.message : 'Routinenquelle nicht bestätigt.');
+    }
+    setSourceStates(); renderRoutines();
+  }
+
+  async function completePersonalRoutine(id) {
+    routineStatus('Routineabschluss wird geprüft…');
+    try {
+      const response = await fetch(`/api/routines/${encodeURIComponent(id)}/complete`, {method: 'POST', redirect: 'error'});
+      if (!response.ok) throw new Error(`Routineabschluss HTTP ${response.status}`);
+      const data = await response.json();
+      if (data?.success !== true) throw new Error('Routineabschluss nicht bestätigt.');
+      await loadPersonalRoutines();
+    } catch (error) { routineStatus(error instanceof Error ? error.message : 'Routineabschluss nicht bestätigt.'); }
+  }
+
+  function syncRoutineFilters() {
+    routineState.source = document.getElementById('routine-source-filter').value;
+    routineState.kind = document.getElementById('routine-kind-filter').value;
+    routineState.query = document.getElementById('routine-search').value.trim();
+    renderRoutines();
+  }
+
+  document.getElementById('routine-source-filter').addEventListener('change', syncRoutineFilters);
+  document.getElementById('routine-kind-filter').addEventListener('change', syncRoutineFilters);
+  document.getElementById('routine-search').addEventListener('input', syncRoutineFilters);
+  document.getElementById('routine-refresh').addEventListener('click', loadPersonalRoutines);
+  setSourceStates(); renderRoutines(); loadPersonalRoutines();
+</script>
+
+<style>
+  .routine-board{display:grid;gap:1rem;max-width:1280px;margin:0 auto;padding:1rem}
+  .routine-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:1.2rem;border:1px solid var(--border);border-radius:12px;background:var(--bg-panel)}
+  .routine-eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.72rem;color:var(--text-muted);margin:0 0 .35rem}.routine-header h1{margin:.2rem 0;font-size:clamp(1.7rem,3vw,2.4rem)}
+  .routine-lead{max-width:62rem;color:var(--text-muted);line-height:1.55;margin:.45rem 0 0}.routine-header-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+  .routine-filters{display:flex;align-items:end;gap:1rem;flex-wrap:wrap;padding:1rem}.routine-filters label{display:grid;gap:.35rem;min-width:10rem;color:var(--text-muted);font-size:.8rem}.routine-filters select,.routine-filters input{padding:.6rem;background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:6px;font:inherit}.routine-search{flex:1}.routine-status{flex:1 1 100%;margin:0;color:var(--text-muted);font-size:.82rem}
+  .routine-source-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem}.source-card{display:grid;gap:.25rem;padding:.8rem;border:1px solid var(--border);border-radius:8px;background:var(--bg-panel)}.source-card span{color:var(--text-muted);font-size:.75rem}.source-card[data-state=available]{border-color:var(--accent-blue)}.source-card[data-state=unavailable]{border-style:dashed}
+  .routine-list-card{padding:1rem}.routine-list-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start}.routine-list-header h2{margin:0 0 .3rem}.routine-list-header p{color:var(--text-muted);font-size:.82rem;margin:0}.routine-table-wrap{overflow:auto;margin-top:1rem}.routine-table{display:grid;grid-template-columns:minmax(13rem,1.7fr) minmax(8rem,1fr) minmax(9rem,1fr) minmax(9rem,1fr) minmax(11rem,1.2fr) minmax(10rem,1.1fr) minmax(8rem,.9fr);gap:.65rem;align-items:center;min-width:940px}.routine-table-head{padding:.55rem .7rem;color:var(--text-muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}.routine-row{padding:.8rem .7rem;border-bottom:1px solid var(--border);font-size:.8rem}.routine-row>span{overflow-wrap:anywhere}.routine-name{display:grid;gap:.2rem;min-width:0}.routine-name strong{overflow-wrap:anywhere}.routine-name small{color:var(--text-muted)}.routine-origin{color:var(--text-muted)}.routine-run-toggle{white-space:normal;text-align:left}.routine-row-actions{display:flex;align-items:center;gap:.4rem;min-width:0}.routine-action-note{color:var(--text-muted);font-size:.72rem}.routine-empty{grid-column:1/-1;padding:2rem;color:var(--text-muted);text-align:center;border:1px dashed var(--border);border-radius:8px;margin:.8rem 0}
+  @media(max-width:900px){.routine-source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.routine-board{padding:.65rem}}
+  @media(max-width:560px){.routine-source-grid{grid-template-columns:1fr}.routine-header,.routine-filters,.routine-list-card{padding:.8rem}.routine-header-actions{width:100%}.routine-header-actions .btn{flex:1}.routine-filters label{min-width:0;width:100%}}
+</style>
