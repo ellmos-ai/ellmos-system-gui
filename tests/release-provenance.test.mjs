@@ -84,6 +84,6 @@ print('verified')`;
 
 test('build:release checks and pins source before invoking Astro',()=>{
   const packageJson=JSON.parse(readFileSync(join(root,'package.json'),'utf8'));
-  assert.match(packageJson.scripts['build:release'],/^node scripts\/release-manifest\.mjs --prepare-source && astro build &&/);
-  assert.equal(packageJson.scripts.build,'astro build');
+  assert.match(packageJson.scripts['build:release'],/^node scripts\/verify-navigation-routes\.mjs && node scripts\/release-manifest\.mjs --prepare-source && astro build &&/);
+  assert.equal(packageJson.scripts.build,'node scripts/verify-navigation-routes.mjs && astro build');
 });
