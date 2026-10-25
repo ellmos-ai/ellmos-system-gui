@@ -1,20 +1,32 @@
 ---
-// Header.astro - Single Source of Truth Navigation fuer BACH & OCEAN
+// Header.astro - Shared shell and route navigation for BACH & OCEAN
 import navConfig from "../config/nav_config.json";
 
 interface Props {
   currentPath?: string;
+  currentSearch?: string;
 }
 
-const { currentPath = "/" } = Astro.props;
+const { currentPath = "/", currentSearch = "" } = Astro.props;
+
+function matchesNavigationHref(href: string, pathname: string, search: string) {
+  if (!href || href === "#") return false;
+  const origin = "https://gui.invalid";
+  const target = new URL(href, origin);
+  const current = new URL(pathname || "/", origin);
+  if (search && !current.search) current.search = search;
+  const normalizePath = (value: string) => value.replace(/\/+$/, "") || "/";
+  const querySignature = (value: string) => [...new URLSearchParams(value).entries()]
+    .sort(([leftKey, leftValue], [rightKey, rightValue]) => leftKey.localeCompare(rightKey) || leftValue.localeCompare(rightValue))
+    .map(([key, entry]) => `${encodeURIComponent(key)}=${encodeURIComponent(entry)}`)
+    .join("&");
+  return target.origin === origin
+    && normalizePath(target.pathname) === normalizePath(current.pathname)
+    && querySignature(target.search) === querySignature(current.search);
+}
 
 function isActive(href: string) {
-  if (!href || href === "#") return false;
-  // Clean query params for base path matching
-  const cleanHref = href.split("?")[0];
-  const cleanCurrent = currentPath.split("?")[0];
-  if (cleanHref === "/" && cleanCurrent === "/") return true;
-  return cleanHref !== "/" && cleanCurrent.startsWith(cleanHref);
+  return matchesNavigationHref(href, currentPath, currentSearch);
 }
 
 function hasActiveChild(item: any) {
@@ -22,219 +34,98 @@ function hasActiveChild(item: any) {
 }
 ---
 
+<a class="skip-link" href="#main-content">Zum Inhalt springen</a>
+
 <header class="main-header" id="main-header">
-  <div class="header-left" style="display:flex;align-items:center;gap:1.5rem;">
-    <a href="/" class="logo" style="text-decoration: none;">
-      <span class="logo-icon" id="gui-brand-icon">◆</span>
+  <div class="header-left">
+    <button
+      class="nav-toggle"
+      id="nav-toggle"
+      type="button"
+      aria-controls="app-sidebar"
+      aria-expanded="false"
+      aria-label="Navigation öffnen"
+    >
+      <span class="nav-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+    <a href="/" class="logo">
+      <span class="logo-icon" id="gui-brand-icon" aria-hidden="true">◆</span>
       <img id="gui-brand-image" alt="" hidden width="28" height="28" />
       <span class="logo-text" id="gui-brand-label">System GUI</span>
     </a>
     <span id="backend-origin-badge" class="backend-origin-badge" role="status" aria-live="polite">Backend unbekannt</span>
-
-    <nav class="main-nav" aria-label="Hauptnavigation">
-      {navConfig.map((item) => (
-        item.children ? (
-          <div class={`nav-dropdown${hasActiveChild(item) ? " active" : ""}`}>
-            <button class={`nav-item nav-dropdown-toggle${hasActiveChild(item) ? " active" : ""}`} type="button">
-              <span class="nav-icon">{item.icon}</span>
-              <span class="nav-label">
-                {item.id === "assistant" ? (
-                  <>
-                    <span class="nav-label-full">Persönlicher Assistent</span>
-                    <span class="nav-label-short">Assistent</span>
-                  </>
-                ) : item.id === "governance" ? (
-                  <>
-                    <span class="nav-label-full">Governance & Control</span>
-                    <span class="nav-label-short">Governance</span>
-                  </>
-                ) : item.id === "domains" ? (
-                  <>
-                    <span class="nav-label-full">Meine Domänen</span>
-                    <span class="nav-label-short">Domänen</span>
-                  </>
-                ) : (
-                  item.label
-                )}
-              </span>
-              <span class="dropdown-arrow">▾</span>
-            </button>
-            <div class="dropdown-menu">
-              {item.children.filter((child: any) => item.id !== "domains" || child.href === "/domains").map((child: any) => (
-                <a
-                  href={child.href}
-                  target={child.target || undefined}
-                  rel={child.target === "_blank" ? "noopener noreferrer" : undefined}
-                  class={`dropdown-item${isActive(child.href) ? " active" : ""}`}
-                >
-                  <span class="dropdown-item-icon">{child.icon}</span>
-                  <div class="dropdown-item-text">
-                    <div class="dropdown-item-title">{child.label}</div>
-                    {child.description && <div class="dropdown-item-desc">{child.description}</div>}
-                  </div>
-                </a>
-              ))}
-              {item.id === "domains" && <div id="domain-pins-menu" aria-live="polite"><span class="dropdown-item">Pins werden geprüft…</span></div>}
-            </div>
-          </div>
-        ) : (
-          <a href={item.href} class={`nav-item${isActive(item.href) ? " active" : ""}`}>
-            <span class="nav-icon">{item.icon}</span>
-            <span class="nav-label">{item.label}</span>
-          </a>
-        )
-      ))}
-    </nav>
   </div>
 
-  <div class="header-right" style="display:flex;align-items:center;gap:1.25rem;">
+  <div class="header-right">
     <!-- Feste Schnellzugriffe (Kalender & Kontakte immer erreichbar) -->
-    <div class="quick-nav-actions" style="display:flex;align-items:center;gap:0.4rem;">
+    <div class="quick-nav-actions">
       <a href="/life?tab=kalender" class="quick-action-btn" title="Kalender (Termine, Routinen & Aufgaben)" aria-label="Kalender">
-        <span style="font-size:1.15rem;">📅</span>
+        <span aria-hidden="true">📅</span>
       </a>
       <a href="/kontakte" class="quick-action-btn" title="Kontakte & Netzwerk" aria-label="Kontakte">
-        <span style="font-size:1.15rem;">👥</span>
+        <span aria-hidden="true">👥</span>
       </a>
     </div>
 
     <!-- Theme Switcher -->
-    <div class="theme-switcher" id="theme-switcher">
-      <button class="theme-btn" data-theme="dark" title="Dunkler Modus (Dark)" type="button">🌙</button>
-      <button class="theme-btn" data-theme="light" title="Heller Modus (Light)" type="button">☀️</button>
-      <button class="theme-btn" data-theme="ocean" title="Ozean Modus (Ocean)" type="button">🌊</button>
-      <button class="theme-btn" data-theme="warm" title="Warmer Modus (Sepia/Warm)" type="button">🕯️</button>
+    <div class="theme-switcher" id="theme-switcher" role="group" aria-label="Farbschema">
+      <button class="theme-btn" data-theme="dark" aria-label="Dunkler Modus" title="Dunkler Modus (Dark)" type="button">🌙</button>
+      <button class="theme-btn" data-theme="light" aria-label="Heller Modus" title="Heller Modus (Light)" type="button">☀️</button>
+      <button class="theme-btn" data-theme="ocean" aria-label="Ozean Modus" title="Ozean Modus (Ocean)" type="button">🌊</button>
+      <button class="theme-btn" data-theme="warm" aria-label="Warmer Modus" title="Warmer Modus (Sepia/Warm)" type="button">🕯️</button>
     </div>
-
   </div>
 </header>
 
-<style>
-  .backend-origin-badge {
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    color: var(--text-muted);
-    font-size: 0.72rem;
-    padding: 0.3rem 0.55rem;
-    white-space: nowrap;
-  }
-  .backend-origin-badge[data-verified="true"] {
-    border-color: var(--success);
-    color: var(--text);
-  }
-  .quick-action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-sm);
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    text-decoration: none;
-    transition: all 0.2s ease;
-    cursor: pointer;
-  }
-  .quick-action-btn:hover {
-    background: var(--bg-hover);
-    border-color: var(--accent);
-    transform: translateY(-1px);
-  }
-  .nav-icon {
-    font-size: 0.95rem;
-    margin-right: 0.25rem;
-  }
-  .nav-label-short {
-    display: none;
-  }
-  @media (max-width: 1450px) {
-    .nav-label-full {
-      display: none;
-    }
-    .nav-label-short {
-      display: inline;
-    }
-    .nav-item, .nav-dropdown-toggle {
-      padding: 0.35rem 0.45rem;
-      font-size: 0.78rem;
-    }
-  }
-  @media (max-width: 1250px) {
-    .main-nav {
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .main-nav::-webkit-scrollbar {
-      display: none;
-    }
-  }
+<div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true" hidden></div>
 
-  /* Boundary alignment to eliminate dropdown clipping */
-  .nav-dropdown:first-child .dropdown-menu,
-  .nav-dropdown:nth-child(2) .dropdown-menu {
-    left: 0;
-    transform: none;
-  }
-  .nav-dropdown:last-child .dropdown-menu,
-  .nav-dropdown:nth-last-child(2) .dropdown-menu {
-    left: auto;
-    right: 0;
-    transform: none;
-  }
+<aside class="app-sidebar" id="app-sidebar" aria-label="Seitennavigation">
+  <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Navigation schließen">
+    <span aria-hidden="true">×</span>
+    <span>Schließen</span>
+  </button>
+  <nav class="main-nav" aria-label="Hauptnavigation">
+    {navConfig.map((item) => (
+      item.children ? (
+        <details class="sidebar-group" data-nav-group={item.id} open={hasActiveChild(item) ? true : undefined}>
+          <summary class="sidebar-group-title">
+            <span class="sidebar-group-icon" aria-hidden="true">{item.icon}</span>
+            <span>{item.label}</span>
+            <span class="sidebar-group-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="sidebar-group-links">
+            {item.children.map((child: any) => (
+              <a
+                href={child.href}
+                target={child.target || undefined}
+                rel={child.target === "_blank" ? "noopener noreferrer" : undefined}
+                class={`nav-item sidebar-link${isActive(child.href) ? " active" : ""}`}
+                data-nav-link
+                aria-current={isActive(child.href) ? "page" : undefined}
+              >
+                <span class="nav-icon" aria-hidden="true">{child.icon}</span>
+                <span class="nav-label">{child.label}</span>
+              </a>
+            ))}
+            {item.id === "domains" && <div id="domain-pins-menu" aria-live="polite"><span class="dropdown-item">Pins werden geprüft…</span></div>}
+          </div>
+        </details>
+      ) : (
+        <a
+          href={item.href}
+          class={`nav-item sidebar-link sidebar-home${isActive(item.href) ? " active" : ""}`}
+          data-nav-link
+          aria-current={isActive(item.href) ? "page" : undefined}
+        >
+          <span class="nav-icon" aria-hidden="true">{item.icon}</span>
+          <span class="nav-label">{item.label}</span>
+        </a>
+      )
+    ))}
+  </nav>
+</aside>
 
-  .dropdown-menu {
-    min-width: 250px;
-    max-width: 320px;
-    padding: 0.4rem;
-    box-sizing: border-box;
-  }
-  .dropdown-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: var(--radius-sm);
-    color: var(--text-normal);
-    text-decoration: none;
-    transition: background 0.15s ease;
-    white-space: normal !important;
-    word-break: break-word;
-  }
-  .dropdown-item:hover, .dropdown-item.active {
-    background: var(--bg-hover);
-    color: var(--accent-text);
-  }
-  .dropdown-item-icon {
-    font-size: 1.15rem;
-    line-height: 1.2;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .dropdown-item-text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    min-width: 0;
-    flex: 1;
-  }
-  .dropdown-item-title {
-    font-weight: 600;
-    font-size: 0.85rem;
-    line-height: 1.25;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .dropdown-item-desc {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    line-height: 1.3;
-    max-width: 240px;
-    white-space: normal;
-    word-break: break-word;
-    margin-top: 2px;
-  }
-</style>
+
 
 <script is:inline>
   async function refreshGuiBrand() {
@@ -315,7 +206,9 @@ function hasActiveChild(item: any) {
 
     // Update button states
     document.querySelectorAll('.theme-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+      const selected = btn.getAttribute('data-theme') === theme;
+      btn.classList.toggle('active', selected);
+      btn.setAttribute('aria-pressed', String(selected));
     });
   }
 
@@ -331,31 +224,144 @@ function hasActiveChild(item: any) {
     });
   });
 
-  // Dropdown Handling
-  document.querySelectorAll('.nav-dropdown').forEach(dd => {
-    let timer = null;
-    dd.addEventListener('mouseenter', () => {
-      if (timer) clearTimeout(timer);
-      dd.classList.add('open');
-    });
-    dd.addEventListener('mouseleave', () => {
-      timer = setTimeout(() => dd.classList.remove('open'), 200);
-    });
-    const toggle = dd.querySelector('.nav-dropdown-toggle');
-    if (toggle) {
-      toggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        dd.classList.toggle('open');
-      });
+  // Keep the mobile navigation reachable without changing desktop navigation state.
+  const navToggle = document.getElementById('nav-toggle');
+  const sidebar = document.getElementById('app-sidebar');
+  const sidebarClose = document.getElementById('sidebar-close');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  const mobileNavigation = window.matchMedia('(max-width: 860px)');
+  let mobileNavigationOpen = false;
+
+  function syncSidebarMode() {
+    if (!navToggle || !sidebar || !sidebarClose || !backdrop) return;
+    // Main and footer may not have been parsed when this inline script ran.
+    const backgroundShell = [
+      document.querySelector('.skip-link'),
+      document.getElementById('main-header'),
+      document.getElementById('main-content'),
+      document.querySelector('body > footer'),
+    ].filter(Boolean);
+    const mobile = mobileNavigation.matches;
+    if (!mobile) {
+      mobileNavigationOpen = false;
+      sidebar.classList.remove('is-open');
+      sidebar.inert = false;
+      sidebar.removeAttribute('aria-hidden');
+      sidebar.removeAttribute('aria-modal');
+      sidebar.removeAttribute('role');
+      backgroundShell.forEach((element) => { element.inert = false; });
+      backdrop.hidden = true;
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', 'Navigation öffnen');
+      document.body.classList.remove('nav-open');
+      return;
     }
+    sidebar.classList.toggle('is-open', mobileNavigationOpen);
+    sidebar.inert = !mobileNavigationOpen;
+    sidebar.setAttribute('aria-hidden', String(!mobileNavigationOpen));
+    backgroundShell.forEach((element) => { element.inert = mobileNavigationOpen; });
+    if (mobileNavigationOpen) {
+      sidebar.setAttribute('role', 'dialog');
+      sidebar.setAttribute('aria-modal', 'true');
+    } else {
+      sidebar.removeAttribute('aria-modal');
+      sidebar.removeAttribute('role');
+    }
+    backdrop.hidden = !mobileNavigationOpen;
+    navToggle.setAttribute('aria-expanded', String(mobileNavigationOpen));
+    navToggle.setAttribute('aria-label', mobileNavigationOpen ? 'Navigation schließen' : 'Navigation öffnen');
+    document.body.classList.toggle('nav-open', mobileNavigationOpen);
+  }
+
+  function setMobileNavigationOpen(open, returnFocus = false) {
+    if (!mobileNavigation.matches) return;
+    mobileNavigationOpen = open;
+    syncSidebarMode();
+    if (open) {
+      // Let the visibility transition start before moving focus into the drawer.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (mobileNavigationOpen && mobileNavigation.matches)
+          sidebarClose?.focus({ preventScroll: true });
+      }));
+    }
+    else if (returnFocus) navToggle?.focus({ preventScroll: true });
+  }
+
+  navToggle?.addEventListener('click', () => setMobileNavigationOpen(!mobileNavigationOpen));
+  backdrop?.addEventListener('click', () => setMobileNavigationOpen(false, true));
+  sidebar?.addEventListener('click', (event) => {
+    if (!mobileNavigation.matches) return;
+    if (event.target.closest('#sidebar-close')) setMobileNavigationOpen(false, true);
+    else if (event.target.closest('a[href]')) setMobileNavigationOpen(false, true);
   });
 
-  // Close dropdown on outside click
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.nav-dropdown')) {
-      document.querySelectorAll('.nav-dropdown.open').forEach(d => d.classList.remove('open'));
+  function trapMobileNavigationTab(event) {
+    if (event.key !== 'Tab' || !mobileNavigationOpen || !sidebar) return;
+    const focusableElements = [...sidebar.querySelectorAll('button:not([disabled]), a[href], summary, [tabindex]:not([tabindex="-1"])')]
+      .filter((element) => {
+        if (element.closest('[inert], [hidden]')) return false;
+        const closedDetails = element.closest('details:not([open])');
+        return !closedDetails || element.matches('summary');
+      });
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      sidebarClose?.focus({ preventScroll: true });
+      return;
     }
+    const first = focusableElements[0];
+    const last = focusableElements[focusableElements.length - 1];
+    if (event.shiftKey && (document.activeElement === first || !sidebar.contains(document.activeElement))) {
+      event.preventDefault();
+      last.focus({ preventScroll: true });
+    } else if (!event.shiftKey && (document.activeElement === last || !sidebar.contains(document.activeElement))) {
+      event.preventDefault();
+      first.focus({ preventScroll: true });
+    }
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && mobileNavigationOpen) {
+      setMobileNavigationOpen(false, true);
+      return;
+    }
+    trapMobileNavigationTab(event);
   });
+  mobileNavigation.addEventListener('change', syncSidebarMode);
+  syncSidebarMode();
+
+  function matchesCurrentNavigationRoute(href) {
+    if (!href || href === '#') return false;
+    const origin = window.location.origin;
+    const target = new URL(href, origin);
+    const current = new URL(window.location.href);
+    const normalizePath = (value) => value.replace(/\/+$/, '') || '/';
+    const querySignature = (value) => [...new URLSearchParams(value).entries()]
+      .sort(([leftKey, leftValue], [rightKey, rightValue]) => leftKey.localeCompare(rightKey) || leftValue.localeCompare(rightValue))
+      .map(([key, entry]) => `${encodeURIComponent(key)}=${encodeURIComponent(entry)}`)
+      .join('&');
+    return target.origin === origin
+      && normalizePath(target.pathname) === normalizePath(current.pathname)
+      && querySignature(target.search) === querySignature(current.search);
+  }
+
+  function refreshActiveNavigation() {
+    document.querySelectorAll('.app-sidebar a[href]').forEach((link) => {
+      const active = matchesCurrentNavigationRoute(link.getAttribute('href'));
+      link.classList.toggle('active', active);
+      if (active) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    document.querySelectorAll('[data-nav-group]').forEach((group) => {
+      const active = Boolean(group.querySelector('a.active'));
+      group.classList.toggle('active', active);
+      if (active) group.open = true;
+    });
+  }
+
+  refreshActiveNavigation();
+  window.addEventListener('popstate', refreshActiveNavigation);
+  const domainPinsMenu = document.getElementById('domain-pins-menu');
+  if (domainPinsMenu) new MutationObserver(refreshActiveNavigation).observe(domainPinsMenu, { childList: true, subtree: true });
 </script>
 
 <script>import {initializeDomainMenu} from "../lib/domain-pins.mjs";initializeDomainMenu();</script>
