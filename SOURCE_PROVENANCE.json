@@ -262,14 +262,14 @@
     "src/pages/agenten/running.astro": "351b81e2c7cedae78a7497155c5c8a86c9e3c659935d557ae82e1a56ef354b98",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
-    "src/pages/artefakte.astro": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
-    "src/pages/domains.astro": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
+    "src/pages/artefakte.astro": "676f47aa93f79e1fa6c040c6fb05e8a5373bf6c985170234e514587548055a95",
+    "src/pages/domains.astro": "a9c41b57fc2d188a8c0b5308a76a37c7eccc9227193cd88594810295f26994b0",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
     "src/pages/governance/index.astro": "5371d2b101453c0cdcdf3edeff7c83e48a7f949b271652b6870ae35aadf4c137",
     "src/pages/governance/logs.astro": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
     "src/pages/governance/usecases.astro": "860a03ca99e466d9571ab93e350a24105ba3caff69a06f9a06c4a83ee14c3b19",
     "src/pages/index.astro": "89f5007f8b8612fd270409b8f976c70bc8bb0114217e82992ddd3ee9ac89419b",
-    "src/pages/life.astro": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
+    "src/pages/life.astro": "147bdbe39e5176879b495ff6db18648fc150a8132529739437adb37e5c83af0d",
     "src/pages/memory.astro": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c",
     "src/pages/settings.astro": "360da39f96e3c413e9c812296b76596308f184ce00643a78d89a32760f7ded7d",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
@@ -328,7 +328,7 @@
     "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236",
     "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
-    "tests/gui100-regressions.test.mjs": "919f17d2a81e5d3febe3db4a6758244568a361c39b55a0606a86dba8d2e46dfc"
+    "tests/gui100-regressions.test.mjs": "036dd6c383c31630f4ce2a9e5e359fc2d18d71645d3c85fbc1f9eb61515c22d5"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -491,6 +491,38 @@
           "path": "docs/GUI-SHELL-NAVIGATION.md",
           "previous_sha256": "631e940ff40d37608a523d3b52e29bd2406e6514c95ea961e3efb6d9c6037c5b",
           "sha256": "7fc84c92860a38fb355e1764f5252e4587e7bc3de489033e4a8583be1aad6f67"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
+      "scope": "BACH #2476 follow-up: mobile reflow found by the GUI walkthrough (#2496)",
+      "source_base_commit": "ab93af84132429e9d618748bce0c214db9c4ed4c",
+      "changes": [
+        "Let calendar view choices, domain and artifact headings, their actions and artifact filters wrap on narrow screens.",
+        "Allow the domain, artifact and life card grids to shrink below their 320 px desktop minimum.",
+        "Add source regression tests; browser readback at 320/390/700/701 px is recorded in the PR, not claimed by this hash record."
+      ],
+      "files": [
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "47e1afcded8fd62a53e8df12223173afde49aa603ac55dd310d203c367ed7d62",
+          "sha256": "147bdbe39e5176879b495ff6db18648fc150a8132529739437adb37e5c83af0d"
+        },
+        {
+          "path": "src/pages/domains.astro",
+          "previous_sha256": "e319c433d9fe26f6817b80e1c61644928603d0bf32151ac11960b53e1b4ed5a1",
+          "sha256": "a9c41b57fc2d188a8c0b5308a76a37c7eccc9227193cd88594810295f26994b0"
+        },
+        {
+          "path": "src/pages/artefakte.astro",
+          "previous_sha256": "ea071853a2af6e8d633fb8c769acf41554bed8b02fc87f2dc6bbd973f06dc65e",
+          "sha256": "676f47aa93f79e1fa6c040c6fb05e8a5373bf6c985170234e514587548055a95"
+        },
+        {
+          "path": "tests/gui100-regressions.test.mjs",
+          "previous_sha256": "919f17d2a81e5d3febe3db4a6758244568a361c39b55a0606a86dba8d2e46dfc",
+          "sha256": "036dd6c383c31630f4ce2a9e5e359fc2d18d71645d3c85fbc1f9eb61515c22d5"
         }
       ]
     }

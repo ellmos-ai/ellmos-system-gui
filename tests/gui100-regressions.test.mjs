@@ -129,3 +129,39 @@ for(const close of ['escape','desktop']) {
     assert.equal(h.elements.get('body > footer').inert,false);
   });
 }
+
+const pageSource = name => readFileSync(new URL(`../src/pages/${name}.astro`, import.meta.url), 'utf8');
+function styleRule(source, selector) {
+  const start = source.indexOf(`${selector} {`);
+  assert.notEqual(start, -1, `CSS rule ${selector} exists`);
+  const end = source.indexOf('}', start);
+  assert.ok(end > start, `CSS rule ${selector} is closed`);
+  return source.slice(start + selector.length + 1, end);
+}
+test('calendar view choices reflow into a bounded mobile grid', () => {
+  const source = pageSource('life');
+  const mobile = source.slice(source.indexOf('@media (max-width: 700px)'));
+  const group = styleRule(mobile, '.cal-views-segmented');
+  assert.match(group, /display:\s*grid;/);
+  assert.match(group, /grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/);
+  const button = styleRule(mobile, '.cal-view-btn');
+  assert.match(button, /min-width:\s*0;/);
+  assert.match(button, /white-space:\s*normal;/);
+});
+test('domain heading and its actions wrap instead of forcing a wide row', () => {
+  const source = pageSource('domains');
+  assert.match(styleRule(source, '.page-header'), /flex-wrap:\s*wrap;/);
+  const actions = styleRule(source, '.header-actions');
+  assert.match(actions, /flex-wrap:\s*wrap;/);
+  assert.match(actions, /min-width:\s*0;/);
+  assert.match(actions, /max-width:\s*100%;/);
+});
+test('artifact heading and format filters wrap on narrow screens', () => {
+  assert.match(styleRule(pageSource('artefakte'), '.page-header'), /flex-wrap:\s*wrap;/);
+  assert.match(styleRule(pageSource('artefakte'), '.filter-bar'), /flex-wrap:\s*wrap;/);
+});
+for(const [page, selector] of [['domains','.domains-grid'], ['artefakte','.artefakte-grid'], ['life','.card-grid']]) {
+  test(`${selector} can shrink below the desktop card minimum`, () => {
+    assert.match(styleRule(pageSource(page), selector), /minmax\(min\(100%,\s*320px\),\s*1fr\)/);
+  });
+}
