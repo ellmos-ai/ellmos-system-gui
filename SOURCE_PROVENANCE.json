@@ -78,8 +78,8 @@
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "package.json": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
-    "package-lock.json": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+    "package.json": "28ac07381bb9f488ba5a82f7af859dfe000afd05d2eaf0cf8a0fd24d808a0b00",
+    "package-lock.json": "4dee98dbf0ef1abbcd895a27f9ce516629e9ae7c6db4cbb87f8544c4b79bad64",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
     "ellmos-module.v2.json": "3881109b884457764bbbed3d42b4bf6e60a6a2aba845fabbefe311303d1d0c78",
     "src/assets/gemini-agent-portraits/claude-friendly.jpg": "cceb8b2d2c12d262f8bbe361c2bb97daa633ceb111b11f4b1dd7d0e8b5f73b15",
@@ -106,7 +106,7 @@
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/memory-facts.test.mjs": "d07f329225a998b9088bdd8691f83eb84a12ee64350b8fbdb151922ec17947b6",
-    "README.md": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+    "README.md": "d08e69adc4d10bd3353393a91027dd448da13ba2aa65b8d7090f98d50f01b3ff",
     "docs/CONSUMER_CONTRACT.md": "caadcf075c439d83130a98e847f5c92cd44713adebad33da936f36f37063097d",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
@@ -1418,6 +1418,37 @@
         "docs/model-residency-access.md": {
           "previous_sha256": null,
           "sha256": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4"
+        }
+      }
+    },
+    {
+      "date": "2026-10-25",
+      "task_id": 2496,
+      "purpose": "GUI walkthrough stage 1: Playwright page walk (status, console, dead links, screenshots) from public/page-reads.v1.json; dev dependency playwright-core 1.64.1",
+      "files": {
+        "package.json": {
+          "previous_sha256": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
+          "sha256": "28ac07381bb9f488ba5a82f7af859dfe000afd05d2eaf0cf8a0fd24d808a0b00"
+        },
+        "package-lock.json": {
+          "previous_sha256": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+          "sha256": "4dee98dbf0ef1abbcd895a27f9ce516629e9ae7c6db4cbb87f8544c4b79bad64"
+        },
+        "README.md": {
+          "previous_sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+          "sha256": "d08e69adc4d10bd3353393a91027dd448da13ba2aa65b8d7090f98d50f01b3ff"
+        },
+        ".gitignore": {
+          "previous_sha256": "53fb4b8a6b517222f919c08bed908ac66425b1dc88b60b52da4c6de85f2a8333",
+          "sha256": "625ef633cf720a96d5247b39473b9d0821836e4e74015dcd4da0bbe84ca09a48"
+        },
+        "scripts/gui-walkthrough.mjs": {
+          "previous_sha256": null,
+          "sha256": "64f722a1ad68d1aee28bd70ef692961948adeea50d3f9b1f749a95246bb79f08"
+        },
+        "tests/gui-walkthrough.test.mjs": {
+          "previous_sha256": null,
+          "sha256": "0a74bd09e6c00aafe89ec198f2e735321d511673f43263f5208532164988cfea"
         }
       }
     }

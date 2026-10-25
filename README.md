@@ -20,6 +20,20 @@ npm run build
 
 The frontend contains 26 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance.
 
+## GUI walkthrough
+
+`scripts/gui-walkthrough.mjs` opens every page of `public/page-reads.v1.json` in Chromium (Playwright) against a running build and writes `reports/gui-walkthrough/<timestamp>/report.json` plus screenshots (git-ignored):
+
+```sh
+npm run build
+npx astro preview --port 4321 &
+node scripts/gui-walkthrough.mjs [--base http://127.0.0.1:4321] [--only /tasks,/memory] [--no-fail]
+```
+
+Per page it records the HTTP status, console errors, uncaught page errors, dead internal links (every distinct internal target is requested once), pages no other page links to, horizontal overflow and a full-page screenshot at 1440 and 390 px width, light and dark. The GUI ignores `prefers-color-scheme` and reads `localStorage["bach-theme"]`, so each variant sets that key. Failed `/api/` calls are listed separately as `backendErrors`: without a connected backend they are expected and do not fail the run; the exit code is 1 for HTTP errors, console or page errors and dead links. Playwright comes from the dev dependency `playwright-core` (no browser download; `chromium` must be installed, for example by `npx playwright-core install chromium`). `tests/gui-walkthrough.test.mjs` covers the page list, link classification and summary without a browser.
+
+Stage 2, not built yet: an LLM review of the report and screenshots against a fixed checklist (design goal and GUI design conversion from the Ocean plan, accessibility, navigation reachability, consistency across light/dark and phone/desktop). Planned input is `report.json` plus the PNGs, planned output a findings JSON with page, severity, rule and evidence, turned into tasks. The checklist and the model endpoint are decisions for the task owner; the walkthrough output format (`ellmos.gui.walkthrough.v1`) is the contract between the stages.
+
 ## Release
 
 Version 0.2.23 adds the reviewed memory-confidence projection: unmeasured values remain unmeasured, stored facts remain explicitly unvalidated, and legacy Hermes heuristics are labelled as unvalidated. No fixed confidence value is substituted. Compatible consumer confidence fields and lesson-promotion behavior must be activated with this release; source and build checks do not prove a measured confidence or successful native learning.
