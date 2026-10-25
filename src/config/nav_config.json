@@ -1,336 +1,443 @@
-[
-  {
-    "id": "dashboard",
-    "label": "Dashboard",
-    "icon": "🎵",
-    "href": "/"
-  },
-  {
-    "id": "tasks",
-    "label": "Aufgaben",
-    "icon": "📋",
-    "children": [
-      {
-        "href": "/tasks",
-        "label": "Aufgaben & Taskboard",
-        "icon": "📝",
-        "description": "Zentrales Aufgabenboard mit Status, Zuweisung & Filtern"
+{
+  "schema": "ellmos.gui.navigation.v2",
+  "default_preset": "standard",
+  "presets": {
+    "standard": {
+      "label": "Standard bewährt",
+      "description": "Die kompakte Arbeitsnavigation mit vier klaren Bereichen.",
+      "home": {
+        "id": "start",
+        "label": "Start",
+        "icon": "⌂",
+        "href": "/"
       },
-      {
-        "href": "/routinen?tab=bach",
-        "label": "Bachroutinen",
-        "icon": "🎼",
-        "description": "Automatisierte System- und Wartungsroutinen"
+      "sections": [
+        {
+          "id": "arbeit",
+          "label": "ARBEIT",
+          "items": [
+            {
+              "id": "chat",
+              "label": "Chat",
+              "icon": "💬",
+              "href": "/chat",
+              "description": "Persönliche Gespräche und Modellzugänge"
+            },
+            {
+              "id": "tasks",
+              "label": "Aufgaben",
+              "icon": "📋",
+              "href": "/tasks",
+              "description": "Aufgabenboard, Filter und Arbeitsverlauf"
+            },
+            {
+              "id": "messages",
+              "label": "Nachrichten",
+              "icon": "✉️",
+              "href": "/user-inbox",
+              "description": "Benachrichtigungen und Nachrichtenverlauf"
+            },
+            {
+              "id": "living-running",
+              "label": "Deine Agenten",
+              "icon": "⚡",
+              "href": "/agenten/running",
+              "description": "Living & Running, Läufe und Fortsetzung"
+            },
+            {
+              "id": "routines",
+              "label": "Routinen & Jobs",
+              "icon": "⏱️",
+              "href": "/routinen",
+              "description": "Eine gemeinsame Liste für Routinen und Jobs"
+            },
+            {
+              "id": "library",
+              "label": "Bibliothek",
+              "icon": "📚",
+              "children": [
+                {
+                  "id": "agent-library",
+                  "label": "Agenten-Bibliothek",
+                  "icon": "🤖",
+                  "href": "/agenten/fabrika",
+                  "description": "Vorlagen und Agenten zusammenstellen"
+                },
+                {
+                  "id": "prompt-agents",
+                  "label": "Prompt-Agenten",
+                  "icon": "🗣️",
+                  "href": "/agenten/subscription-agents",
+                  "description": "Extern zugeschaltete Prompt-Agenten"
+                },
+                {
+                  "id": "chains",
+                  "label": "Ketten",
+                  "icon": "⛓️",
+                  "href": "/agenten/marblerun",
+                  "description": "MarbleRun und Werkzeugketten"
+                },
+                {
+                  "id": "skill-keeper",
+                  "label": "Skill Keeper",
+                  "icon": "🧭",
+                  "href": "/skills",
+                  "description": "Skills und Fähigkeiten verwalten"
+                },
+                {
+                  "id": "ocean-modules",
+                  "label": "Ocean-Module",
+                  "icon": "🌊",
+                  "href": "/skills/ocean",
+                  "description": "Registrierte Ocean-Quellen durchsuchen"
+                },
+                {
+                  "id": "plugins",
+                  "label": "Plugins",
+                  "icon": "🧩",
+                  "href": "/skills/plugins",
+                  "description": "Plugin-Zustand und Erweiterungen"
+                },
+                {
+                  "id": "mcp",
+                  "label": "MCP",
+                  "icon": "🔌",
+                  "href": "/skills/mcp",
+                  "description": "MCP-Verbindungen und Cookbooks"
+                },
+                {
+                  "id": "software",
+                  "label": "Software",
+                  "icon": "🖥️",
+                  "href": "/skills/software",
+                  "description": "Softwaremodule und Werkzeuge"
+                },
+                {
+                  "id": "find-tools",
+                  "label": "Werkzeug finden",
+                  "icon": "🔎",
+                  "href": "/skills",
+                  "description": "Verfügbare Werkzeuge durchsuchen"
+                },
+                {
+                  "id": "profile-prompts",
+                  "label": "Profil & Prompts",
+                  "icon": "📝",
+                  "href": "/prompt-library",
+                  "description": "Profil- und Promptbibliothek"
+                }
+              ]
+            },
+            {
+              "id": "artifacts",
+              "label": "Artefakte",
+              "icon": "💾",
+              "href": "/artefakte",
+              "description": "Berichte, Exporte und generierte Ergebnisse"
+            }
+          ]
+        },
+        {
+          "id": "betrieb",
+          "label": "BETRIEB",
+          "items": [
+            {
+              "id": "connections",
+              "label": "Verbindungen",
+              "icon": "🔗",
+              "href": "/settings?tab=connections",
+              "description": "Backend- und Geräteverbindungen"
+            },
+            {
+              "id": "models-resources",
+              "label": "Modelle & Ressourcen",
+              "icon": "🧠",
+              "href": "/agenten/running?tab=resources",
+              "description": "Modelle, Zugänge und Ressourcenstatus"
+            },
+            {
+              "id": "systems",
+              "label": "Systeme",
+              "icon": "🖥️",
+              "href": "/system/ocean",
+              "description": "Systemübersicht und Ocean-Schaltplan"
+            },
+            {
+              "id": "services",
+              "label": "Dienste",
+              "icon": "⚙️",
+              "href": "/daemon",
+              "description": "Dienste, Daemons und Taktgeber"
+            },
+            {
+              "id": "maintenance",
+              "label": "Wartung",
+              "icon": "🛠️",
+              "href": "/maintenance",
+              "description": "Wartungs- und Integritätsprüfungen"
+            },
+            {
+              "id": "quality",
+              "label": "Qualität & Tests",
+              "icon": "✅",
+              "href": "/governance/logs",
+              "description": "Prüfungen, Nachweise und Auditspuren"
+            },
+            {
+              "id": "governance",
+              "label": "Governance",
+              "icon": "🛡️",
+              "children": [
+                {
+                  "id": "rules-decisions",
+                  "label": "Regeln & Entscheidungen",
+                  "icon": "📜",
+                  "href": "/governance",
+                  "description": "Regeln, Entscheidungen und Freigaben"
+                },
+                {
+                  "id": "locks",
+                  "label": "Locks",
+                  "icon": "🔒",
+                  "href": "/governance?tab=locks",
+                  "description": "Fail-closed Sperren und Lockstatus"
+                },
+                {
+                  "id": "hooks-guards",
+                  "label": "Hooks & Guards",
+                  "icon": "🪝",
+                  "href": "/governance?tab=hooks",
+                  "description": "Schutzmechanismen und Hook-Nachweise"
+                },
+                {
+                  "id": "authority",
+                  "label": "Authority / Permissions",
+                  "icon": "🗝️",
+                  "href": "/governance?tab=authority",
+                  "description": "Berechtigungen und Autoritätsgrenzen"
+                },
+                {
+                  "id": "audit",
+                  "label": "Logs & Audit",
+                  "icon": "📊",
+                  "href": "/governance/logs",
+                  "description": "System- und Agentenereignisse"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "domains",
+          "label": "DOMÄNEN",
+          "items": [
+            {
+              "id": "life",
+              "label": "Life",
+              "icon": "🌱",
+              "href": "/life",
+              "description": "Kalender, Routinen und Selbstmanagement"
+            },
+            {
+              "id": "other-domains",
+              "label": "Weitere Domänen",
+              "icon": "🌐",
+              "href": "/domains",
+              "description": "Fachmodule und angepinnte Domänen"
+            }
+          ]
+        },
+        {
+          "id": "settings-help",
+          "label": "EINSTELLUNGEN",
+          "items": [
+            {
+              "id": "settings",
+              "label": "Einstellungen",
+              "icon": "⚙️",
+              "href": "/settings",
+              "description": "Verbindungen, Darstellung und Regeln"
+            },
+            {
+              "id": "help",
+              "label": "Hilfe",
+              "icon": "❓",
+              "href": "/help",
+              "description": "Dokumentation und Orientierung"
+            }
+          ]
+        }
+      ]
+    },
+    "classic": {
+      "label": "Ocean-BACH-Klassik",
+      "description": "Die vertraute Navigation mit zehn Bereichen unter drei Überschriften.",
+      "home": {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "icon": "⌂",
+        "href": "/"
       },
-      {
-        "href": "/routinen?tab=ocean",
-        "label": "Oceanroutinen",
-        "icon": "🌊",
-        "description": "Verteilte Schwarm- und Hintergrundzyklen"
-      }
-    ]
-  },
-  {
-    "id": "assistant",
-    "label": "Persönlicher Assistent",
-    "icon": "🧘",
-    "children": [
-      {
-        "href": "/persoenlich",
-        "label": "Assistenten-Dashboard",
-        "icon": "📊",
-        "description": "Status, Haltung und Fokus von Buddha"
-      },
-      {
-        "href": "/chat",
-        "label": "Buddha Chat (Compare-Race)",
-        "icon": "💬",
-        "description": "Multi-Modell Dialog & Race-Evaluation"
-      },
-      {
-        "href": "/prompt-library",
-        "label": "Profil & Prompts",
-        "icon": "📚",
-        "description": "Systemprompts und Persönlichkeitsprofile"
-      },
-      {
-        "href": "/denkarium",
-        "label": "Denkarium",
-        "icon": "🔮",
-        "description": "Externes Gedanken- und Ideenlabor",
-        "target": "_blank"
-      }
-    ]
-  },
-  {
-    "id": "life",
-    "label": "Life",
-    "icon": "🌱",
-    "children": [
-      {
-        "href": "/life",
-        "label": "Life-Zentrale",
-        "icon": "🌿",
-        "description": "Ganzheitliche Lebensübersicht"
-      },
-      {
-        "href": "/life?tab=kalender",
-        "label": "Kalender (Tag, Woche, Monat, Jahr)",
-        "icon": "📅",
-        "description": "Tages-, Wochen-, Monatsansicht & Jahresüberblick"
-      },
-      {
-        "href": "/life?tab=routinen",
-        "label": "Deine Routinen",
-        "icon": "⏰",
-        "description": "Persönliche Lebens-, Haushalts- und Tagesroutinen"
-      },
-      {
-        "href": "/tasks?assigned_to=user",
-        "label": "Meine Aufgaben",
-        "icon": "👤",
-        "description": "Gefiltert auf persönliche Aufgaben"
-      },
-      {
-        "href": "/life?tab=selbstmanagement",
-        "label": "Selbstmanagement & ADHS",
-        "icon": "🎯",
-        "description": "Fokusstrategien und Entlastungsmethoden"
-      },
-      {
-        "href": "/financial",
-        "label": "Finanzen & Budget",
-        "icon": "💰",
-        "description": "Einnahmen, Ausgaben und Prognosen"
-      },
-      {
-        "href": "/life?tab=balance",
-        "label": "Lebenskreise & Reflexion",
-        "icon": "☯️",
-        "description": "Work-Life-Balance und psychologische Selbsteinschätzung"
-      },
-      {
-        "href": "/gesundheit",
-        "label": "Gesundheit & Vitalität",
-        "icon": "🩺",
-        "description": "Tracking, Wohlbefinden und Förderpläne"
-      }
-    ]
-  },
-  {
-    "id": "agenten",
-    "label": "Agenten",
-    "icon": "🤖",
-    "children": [
-      {
-        "href": "/agenten/blueprints",
-        "label": "Agenten-Werkstatt",
-        "icon": "🤖",
-        "description": "Vorlagen-Bibliothek: Agenten, Rollen, Workflows, Services & Contractus"
-      },
-      {
-        "href": "/agenten/subscription-agents",
-        "label": "Subscription Agents",
-        "icon": "🧩",
-        "description": "Quellengebundene Prompt-Vorschau ohne Start oder Taskübernahme"
-      },
-      {
-        "href": "/agenten/running",
-        "label": "Living & Running",
-        "icon": "⚡",
-        "description": "Aktive Instanzen, Beseelungen und Health"
-      },
-      {
-        "href": "/agenten/marblerun",
-        "label": "Ketten · MarbleRun",
-        "icon": "⛓️",
-        "description": "Agentenübergaben und Skills in geordneter Folge"
-      },
-      {
-        "href": "/agenten/sessions",
-        "label": "Verlauf · Chats & Läufe",
-        "icon": "📜",
-        "description": "Agenten-Chats, Task-Läufe und Session-Protokolle"
-      },
-      {
-        "href": "/user-inbox",
-        "label": "Inbox",
-        "icon": "✉️",
-        "description": "Nachrichten an dich"
-      },
-      {
-        "href": "/memory",
-        "label": "Memory",
-        "icon": "🧠",
-        "description": "Kognitiver Schaltplan, Arbeitsgedächtnis & Wissens-Inspektor"
-      }
-    ]
-  },
-  {
-    "id": "skills",
-    "label": "Skills & Software",
-    "icon": "🔌",
-    "children": [
-      {
-        "href": "/skills/plugins",
-        "label": "Plugins",
-        "icon": "🔌",
-        "description": "Plugin-Quellen und Client-Einstellungen"
-      },
-      {
-        "href": "/skills/mcp",
-        "label": "MCP-Connections",
-        "icon": "📚",
-        "description": "Serverkonfiguration und Rezeptbibliothek"
-      },
-      {
-        "href": "/skills",
-        "label": "Skill-Zentrale",
-        "icon": "📜",
-        "description": "Aktuelle Anleitungen bearbeiten und frühere Fassungen laden"
-      },
-      {
-        "href": "/skills/software",
-        "label": "Software",
-        "icon": "💻",
-        "description": "Eigenständige Anwendungen für deterministische Verarbeitung"
-      },
-      {
-        "href": "/skills/ocean",
-        "label": "Ocean",
-        "icon": "🌊",
-        "description": "Module und Repository-Quellen dieses Hosts"
-      }
-    ]
-  },
-  {
-    "id": "domains",
-    "label": "Meine Domänen",
-    "icon": "🌐",
-    "children": [
-      {
-        "href": "/domains",
-        "label": "Domänen & Fachmodule",
-        "icon": "🧩",
-        "description": "Slot-Dashboard: AI-Media, Förderplaner, Law-Checker, PC-Software"
-      },
-      {
-        "href": "/ati",
-        "label": "ATI Entwickler",
-        "icon": "🛠️",
-        "description": "Code-Entwicklung & einheitliche Entwickler-Tasks"
-      },
-      {
-        "href": "/steuer",
-        "label": "Theodor Steuer",
-        "icon": "⚖️",
-        "description": "Fachmodul Steuern, Belege & Abschreibungen"
-      },
-      {
-        "href": "/gesundheit",
-        "label": "Förderplaner & Diagnostik",
-        "icon": "🩺",
-        "description": "Spezifische pädagogische & therapeutische Pläne"
-      }
-    ]
-  },
-  {
-    "id": "files",
-    "label": "Dateien",
-    "icon": "📁",
-    "children": [
-      {
-        "href": "/inbox",
-        "label": "Inbox & Dateiverwaltung",
-        "icon": "📥",
-        "description": "Upload, Synchronisation und Cloud-Speicher"
-      },
-      {
-        "href": "/artefakte",
-        "label": "Artefakte & Exporte",
-        "icon": "💾",
-        "description": "Generierte Berichte, Diagramme, Pläne und Mockups"
-      }
-    ]
-  },
-  {
-    "id": "governance",
-    "label": "Governance & Control",
-    "icon": "🛡️",
-    "children": [
-      {
-        "href": "/governance",
-        "label": "Governance CONTROL Room",
-        "icon": "🏛️",
-        "description": "Zentrale Sicherheitsregeln, Audit und Richtlinien"
-      },
-      {
-        "href": "/governance?tab=locks",
-        "label": "Lock-Master & Decision-Clicker",
-        "icon": "🔒",
-        "description": "Fail-Closed Sperren, Freigaben und P-001 Prüfungen"
-      },
-      {
-        "href": "/governance/funk",
-        "label": "Agentenfunk",
-        "icon": "📻",
-        "description": "Inter-Agenten-Signale, Tracing und Handshakes"
-      },
-      {
-        "href": "/governance/usecases",
-        "label": "Use Cases & Workflows",
-        "icon": "📑",
-        "description": "Definierte Einsatzszenarien und Standard-Pfade"
-      },
-      {
-        "href": "/governance/logs",
-        "label": "Logs & Audit",
-        "icon": "📜",
-        "description": "Echtzeit-Streams aller System- und Agenten-Events"
-      },
-      {
-        "href": "/help",
-        "label": "Hilfe & Dokumentation",
-        "icon": "❓",
-        "description": "Handbücher, Architektur-Guides und Shortcuts"
-      }
-    ]
-  },
-  {
-    "id": "system",
-    "label": "System",
-    "icon": "⚙️",
-    "children": [
-      {
-        "href": "/settings",
-        "label": "Einstellungen & Setup",
-        "icon": "🔧",
-        "description": "Installer, Modulschaltplan aus ellmos-ai, Trithon, Salt"
-      },
-      {
-        "href": "/tools",
-        "label": "Tools & CLI-Werkzeuge",
-        "icon": "🔨",
-        "description": "Ausführbare Helfer, Converter und Diagnose-Tools"
-      },
-      {
-        "href": "/daemon",
-        "label": "Daemon & Chains",
-        "icon": "⛓️",
-        "description": "Dauerläufer, Taktgeber und Automation-Sidecars"
-      },
-      {
-        "href": "/system?tab=ocean",
-        "label": "Ocean-Ausbaustufen",
-        "icon": "🌊",
-        "description": "Stufenplan & Cluster-Status aller Ocean-Subsysteme"
-      },
-      {
-        "href": "/maintenance",
-        "label": "Wartung & Integrität",
-        "icon": "🩺",
-        "description": "Datenbank-Bereinigung, Vacuum und Konsistenzprüfungen"
-      }
-    ]
+      "sections": [
+        {
+          "id": "arbeit",
+          "label": "ARBEIT",
+          "items": [
+            {
+              "id": "tasks",
+              "label": "Aufgaben",
+              "icon": "📋",
+              "href": "/tasks",
+              "description": "Aufgabenboard und Arbeitsverlauf"
+            },
+            {
+              "id": "assistant",
+              "label": "Persönlicher Assistent",
+              "icon": "🧘",
+              "href": "/persoenlich",
+              "description": "Persönlicher Arbeitsbereich"
+            },
+            {
+              "id": "living-running",
+              "label": "Living & Running",
+              "icon": "⚡",
+              "href": "/agenten/running",
+              "description": "Laufende Agenten, Worker und Fortsetzung"
+            },
+            {
+              "id": "messages",
+              "label": "Nachrichten",
+              "icon": "✉️",
+              "href": "/user-inbox",
+              "description": "Benachrichtigungen und Verlauf"
+            },
+            {
+              "id": "agents",
+              "label": "Agenten",
+              "icon": "🤖",
+              "children": [
+                {
+                  "id": "agent-library",
+                  "label": "Agenten-Bibliothek",
+                  "icon": "📚",
+                  "href": "/agenten/fabrika",
+                  "description": "Vorlagen und Agentenbibliothek"
+                },
+                {
+                  "id": "memory",
+                  "label": "Memory",
+                  "icon": "🧠",
+                  "href": "/memory",
+                  "description": "Arbeitsgedächtnis und Wissensinspektor"
+                }
+              ]
+            },
+            {
+              "id": "skills-software",
+              "label": "Skills & Software",
+              "icon": "🔌",
+              "href": "/skills",
+              "description": "Skills, Plugins und Softwaremodule"
+            },
+            {
+              "id": "artifacts",
+              "label": "Artefakte & Exporte",
+              "icon": "💾",
+              "href": "/artefakte",
+              "description": "Berichte, Pläne und Exporte"
+            }
+          ]
+        },
+        {
+          "id": "leben",
+          "label": "LEBEN",
+          "items": [
+            {
+              "id": "domains",
+              "label": "Domänen",
+              "icon": "🌍",
+              "children": [
+                {
+                  "id": "life",
+                  "label": "Life",
+                  "icon": "🌱",
+                  "href": "/life",
+                  "description": "Life zuerst: Kalender und Routinen"
+                },
+                {
+                  "id": "other-domains",
+                  "label": "Weitere Domänen",
+                  "icon": "🧩",
+                  "href": "/domains",
+                  "description": "Fachmodule und Domänenpins"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "system",
+          "label": "SYSTEM",
+          "items": [
+            {
+              "id": "governance-control",
+              "label": "Governance & Control",
+              "icon": "🛡️",
+              "href": "/governance",
+              "description": "Regeln, Locks und Audit"
+            },
+            {
+              "id": "system",
+              "label": "System",
+              "icon": "⚙️",
+              "children": [
+                {
+                  "id": "connections",
+                  "label": "Verbindungen",
+                  "icon": "🔗",
+                  "href": "/settings?tab=connections",
+                  "description": "Backend- und Geräteverbindungen"
+                },
+                {
+                  "id": "models-resources",
+                  "label": "Modelle & Ressourcen",
+                  "icon": "🧠",
+                  "href": "/agenten/running?tab=resources",
+                  "description": "Modelle und Ressourcenstatus"
+                },
+                {
+                  "id": "services",
+                  "label": "Dienste",
+                  "icon": "⚙️",
+                  "href": "/daemon",
+                  "description": "Dienste und Daemons"
+                },
+                {
+                  "id": "maintenance",
+                  "label": "Wartung",
+                  "icon": "🛠️",
+                  "href": "/maintenance",
+                  "description": "Wartungs- und Integritätsprüfungen"
+                },
+                {
+                  "id": "quality",
+                  "label": "Qualität & Tests",
+                  "icon": "✅",
+                  "href": "/governance/logs",
+                  "description": "Qualitäts- und Auditnachweise"
+                },
+                {
+                  "id": "help",
+                  "label": "Hilfe",
+                  "icon": "❓",
+                  "href": "/help",
+                  "description": "Dokumentation und Orientierung"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   }
-]
+}
