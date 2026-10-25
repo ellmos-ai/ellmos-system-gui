@@ -8,6 +8,8 @@ interface Props {
 }
 
 const { currentPath = "/", currentSearch = "" } = Astro.props;
+const defaultPreset = navConfig.default_preset || "standard";
+const presetEntries = Object.entries(navConfig.presets || {});
 
 function matchesNavigationHref(href: string, pathname: string, search: string) {
   if (!href || href === "#") return false;
@@ -29,8 +31,13 @@ function isActive(href: string) {
   return matchesNavigationHref(href, currentPath, currentSearch);
 }
 
-function hasActiveChild(item: any) {
-  return item.children && item.children.some((c: any) => isActive(c.href));
+function hasActiveItem(item: any): boolean {
+  return Boolean(item.href && isActive(item.href))
+    || Boolean(item.children?.some((child: any) => hasActiveItem(child)));
+}
+
+function hasActiveSection(section: any): boolean {
+  return Boolean(section.items?.some((item: any) => hasActiveItem(item)));
 }
 ---
 
@@ -84,45 +91,86 @@ function hasActiveChild(item: any) {
     <span aria-hidden="true">×</span>
     <span>Schließen</span>
   </button>
-  <nav class="main-nav" aria-label="Hauptnavigation">
-    {navConfig.map((item) => (
-      item.children ? (
-        <details class="sidebar-group" data-nav-group={item.id} open={hasActiveChild(item) ? true : undefined}>
-          <summary class="sidebar-group-title">
-            <span class="sidebar-group-icon" aria-hidden="true">{item.icon}</span>
-            <span>{item.label}</span>
-            <span class="sidebar-group-chevron" aria-hidden="true">⌄</span>
-          </summary>
-          <div class="sidebar-group-links">
-            {item.children.map((child: any) => (
-              <a
-                href={child.href}
-                target={child.target || undefined}
-                rel={child.target === "_blank" ? "noopener noreferrer" : undefined}
-                class={`nav-item sidebar-link${isActive(child.href) ? " active" : ""}`}
-                data-nav-link
-                aria-current={isActive(child.href) ? "page" : undefined}
-              >
-                <span class="nav-icon" aria-hidden="true">{child.icon}</span>
-                <span class="nav-label">{child.label}</span>
-              </a>
-            ))}
-            {item.id === "domains" && <div id="domain-pins-menu" aria-live="polite"><span class="dropdown-item">Pins werden geprüft…</span></div>}
-          </div>
-        </details>
-      ) : (
-        <a
-          href={item.href}
-          class={`nav-item sidebar-link sidebar-home${isActive(item.href) ? " active" : ""}`}
-          data-nav-link
-          aria-current={isActive(item.href) ? "page" : undefined}
-        >
-          <span class="nav-icon" aria-hidden="true">{item.icon}</span>
-          <span class="nav-label">{item.label}</span>
-        </a>
-      )
-    ))}
-  </nav>
+  <div class="nav-preset-summary" id="nav-preset-summary" role="status" aria-live="polite">
+    <span class="nav-preset-summary-label">Navigationsstil</span>
+    <strong data-nav-preset-label>{navConfig.presets[defaultPreset]?.label || "Standard bewährt"}</strong>
+  </div>
+  {presetEntries.map(([presetId, preset]: [string, any]) => (
+    <div
+      class="nav-preset"
+      data-ui-preset={presetId}
+      data-nav-preset-label-value={preset.label}
+      aria-hidden={presetId !== defaultPreset ? "true" : "false"}
+      hidden={presetId !== defaultPreset}
+    >
+      <a
+        href={preset.home.href}
+        class={`nav-item sidebar-link sidebar-home${isActive(preset.home.href) ? " active" : ""}`}
+        data-nav-link
+        data-nav-id={preset.home.id}
+        aria-current={isActive(preset.home.href) ? "page" : undefined}
+        title={preset.home.description || undefined}
+      >
+        <span class="nav-icon" aria-hidden="true">{preset.home.icon}</span>
+        <span class="nav-label">{preset.home.label}</span>
+      </a>
+      <nav class="main-nav" aria-label={`${preset.label} Hauptnavigation`}>
+        {preset.sections.map((section: any) => (
+          <section class="nav-section" data-nav-section={section.id} aria-labelledby={`nav-section-${presetId}-${section.id}`}>
+            <h2 class="nav-section-title" id={`nav-section-${presetId}-${section.id}`}>{section.label}</h2>
+            <div class="nav-section-links">
+              {section.items.map((item: any) => (
+                item.children ? (
+                  <details class="sidebar-group sidebar-nested" data-nav-group={item.id} open={hasActiveItem(item) ? true : undefined}>
+                    <summary class="sidebar-group-title">
+                      <span class="sidebar-group-icon" aria-hidden="true">{item.icon}</span>
+                      <span>{item.label}</span>
+                      <span class="sidebar-group-chevron" aria-hidden="true">⌄</span>
+                    </summary>
+                    <div class="sidebar-group-links">
+                      {item.children.map((child: any) => (
+                        <a
+                          href={child.href}
+                          target={child.target || undefined}
+                          rel={child.target === "_blank" ? "noopener noreferrer" : undefined}
+                          class={`nav-item sidebar-link${isActive(child.href) ? " active" : ""}`}
+                          data-nav-link
+                          data-nav-id={child.id}
+                          aria-current={isActive(child.href) ? "page" : undefined}
+                          title={child.description || undefined}
+                        >
+                          <span class="nav-icon" aria-hidden="true">{child.icon}</span>
+                          <span class="nav-label">{child.label}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </details>
+                ) : (
+                  <a
+                    href={item.href}
+                    target={item.target || undefined}
+                    rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
+                    class={`nav-item sidebar-link${isActive(item.href) ? " active" : ""}`}
+                    data-nav-link
+                    data-nav-id={item.id}
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                    title={item.description || undefined}
+                  >
+                    <span class="nav-icon" aria-hidden="true">{item.icon}</span>
+                    <span class="nav-label">{item.label}</span>
+                  </a>
+                )
+              ))}
+            </div>
+          </section>
+        ))}
+      </nav>
+    </div>
+  ))}
+  <div class="sidebar-domain-pins">
+    <div class="sidebar-domain-pins-label">Angepinnte Domänen</div>
+    <div id="domain-pins-menu" aria-live="polite"><span class="dropdown-item">Pins werden geprüft…</span></div>
+  </div>
 </aside>
 
 
@@ -223,6 +271,36 @@ function hasActiveChild(item: any) {
       if (theme) applyTheme(theme);
     });
   });
+
+  // Navigation preset: Standard is the safe default; the choice is local to
+  // this browser until a consumer-side preference contract exists.
+  const validUiPresets = new Set(['standard', 'classic']);
+  const uiPresetKey = 'bach-ui-preset';
+  function normalizeUiPreset(value) {
+    return validUiPresets.has(value) ? value : 'standard';
+  }
+  function applyUiPreset(value, persist = true) {
+    const preset = normalizeUiPreset(value);
+    document.documentElement.dataset.uiPreset = preset;
+    document.querySelectorAll('[data-ui-preset]').forEach(panel => {
+      const active = panel.dataset.uiPreset === preset;
+      panel.hidden = !active;
+      panel.setAttribute('aria-hidden', String(!active));
+    });
+    const label = document.querySelector('[data-nav-preset-label]');
+    const activePanel = document.querySelector(`[data-ui-preset="${preset}"]`);
+    if (label && activePanel?.dataset.navPresetLabelValue) {
+      label.textContent = activePanel.dataset.navPresetLabelValue;
+    }
+    if (persist) localStorage.setItem(uiPresetKey, preset);
+    window.dispatchEvent(new CustomEvent('bach-ui-preset-change', { detail: { preset } }));
+    return preset;
+  }
+  window.bachUiPreset = {
+    get: () => normalizeUiPreset(localStorage.getItem(uiPresetKey) || document.documentElement.dataset.uiPreset),
+    set: (value) => applyUiPreset(value),
+  };
+  applyUiPreset(window.bachUiPreset.get(), false);
 
   // Keep the mobile navigation reachable without changing desktop navigation state.
   const navToggle = document.getElementById('nav-toggle');

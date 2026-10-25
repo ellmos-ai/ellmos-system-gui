@@ -26,6 +26,10 @@ const pageTitle = title ? `${title} | System GUI` : "System GUI";
         if (theme !== "dark") {
           document.documentElement.setAttribute("data-theme", theme);
         }
+        const preset = localStorage.getItem("bach-ui-preset");
+        if (preset === "standard" || preset === "classic") {
+          document.documentElement.setAttribute("data-ui-preset", preset);
+        }
       })();
     </script>
 
