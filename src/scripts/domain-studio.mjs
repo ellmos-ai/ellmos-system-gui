@@ -1,4 +1,4 @@
-import {domainWorkbenchRoute} from '../lib/domain-routes.mjs';
+import {domainWorkbenchRoute,domainAnonymizationRoute} from '../lib/domain-routes.mjs';
 import {loadDomainPins,setDomainPin,subscribePins,pinReadbackMatches} from '../lib/domain-pins.mjs';
 
 const node=(tag,className,text)=>{const n=document.createElement(tag);if(className)n.className=className;if(text!==undefined)n.textContent=String(text??'');return n;};
@@ -72,10 +72,19 @@ function initialize(){
         node('span','domain-state-badge'+(ready?' healthy':' gated'),ready?'⚡ Bereit':'⏸️ '+(states.runtime||'Inert')));
       if(domain.visibility==='private'||domain.is_private)badges.append(node('span','domain-state-badge private','🔒 Privat'));
       card.append(badges);
+      const anonymizationRoute=domainAnonymizationRoute(domain.id);
+      if(anonymizationRoute)card.append(node('p','domain-desc','Anonymisierungs-Job im vorhandenen Reiter: Klienten-ID, echter Name, manuelle Begriffe, Upload und aktive Anonymisierungen.'));
       const footer=node('div','domain-footer');footer.append(makePinButton(domain.id));
       const declared=domain.workbench_url||domain.fachseite_url,workbench=domainWorkbenchRoute(declared);
       if(workbench){const a=node('a','btn btn-primary btn-sm','Fachseite ↗');a.href=workbench;footer.append(a);}
-      else {const hint=node('span','text-muted',declared?'Fachseite noch nicht angebunden':'Keine Fachseite angebunden');hint.setAttribute('aria-disabled','true');footer.append(hint);}
+      else if(!anonymizationRoute){const hint=node('span','text-muted',declared?'Fachseite noch nicht angebunden':'Keine Fachseite angebunden');hint.setAttribute('aria-disabled','true');footer.append(hint);}
+      if(anonymizationRoute){
+        const a=node('a','btn btn-primary btn-sm','Anonymisierung ↗');
+        a.href=anonymizationRoute;
+        a.title='Dateien › Datei-Management › Quarantäne / Anonymisierung';
+        a.setAttribute('aria-label','Förderplaner: Quarantäne und Anonymisierung öffnen');
+        footer.append(a);
+      }
       card.append(footer);grid.append(card);
       if(domain.id===selected){selectionFound=true;card.tabIndex=-1;card.classList.add('selected-domain');requestAnimationFrame(()=>{card.scrollIntoView({block:'center'});card.focus({preventScroll:true});});}
     }
