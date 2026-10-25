@@ -1,17 +1,70 @@
 ---
 import BachLayout from "../../layouts/BachLayout.astro";
 ---
-<BachLayout title="Blueprint-Editor" currentPath="/agenten/blueprints">
-  <h1>Der Editor ist jetzt bei den Blueprints</h1>
-  <p>Rolle, Skills, Arbeitsvertrag und Modell werden dort gemeinsam bearbeitet.</p>
-  <a class="btn btn-primary" href="/agenten/blueprints?new=1">Blueprint-Editor öffnen</a>
+<BachLayout title="Agenten-Bibliothek" currentPath="/agenten/fabrika">
+  <main class="agent-library" aria-labelledby="agent-library-title">
+    <header class="library-header">
+      <div>
+        <p class="library-eyebrow">Agenten</p>
+        <h1 id="agent-library-title">Agenten-Bibliothek</h1>
+        <p class="library-lead">Vorlagen, Prompt-Agenten und Ketten gehören hier zusammen. Auswählen oder Bearbeiten ändert noch keinen Lauf.</p>
+      </div>
+      <a class="btn btn-primary" href="/agenten/running">Living &amp; Running</a>
+    </header>
+
+    <nav class="library-tabs" aria-label="Agenten-Bibliothek" role="tablist">
+      <a class="library-tab is-active" role="tab" aria-selected="true" href="/agenten/fabrika">Vorlagen</a>
+      <a class="library-tab" role="tab" aria-selected="false" href="/agenten/subscription-agents">Prompt-Agenten</a>
+      <a class="library-tab" role="tab" aria-selected="false" href="/agenten/marblerun">Ketten</a>
+    </nav>
+
+    <section class="library-grid" aria-label="Bibliotheksbereiche">
+      <article class="library-card">
+        <span class="library-icon" aria-hidden="true">🤖</span>
+        <div>
+          <h2>Vorlagen &amp; Blueprints</h2>
+          <p>Rolle, Skills, Arbeitsvertrag und Modell zu einem versionierten Agentenprofil zusammenstellen.</p>
+          <a class="btn" href="/agenten/blueprints">Agenten-Werkstatt öffnen</a>
+        </div>
+      </article>
+      <article class="library-card">
+        <span class="library-icon" aria-hidden="true">✍️</span>
+        <div>
+          <h2>Prompt-Agenten</h2>
+          <p>Quellengebundene Prompts für einen späteren Client vorbereiten. Extern zugeschaltet, nicht von dieser GUI gesteuert.</p>
+          <a class="btn" href="/agenten/subscription-agents">Prompt-Agenten öffnen</a>
+        </div>
+      </article>
+      <article class="library-card">
+        <span class="library-icon" aria-hidden="true">⛓️</span>
+        <div>
+          <h2>Ketten</h2>
+          <p>Mehrere Agenten oder Skills als Ablauf entwerfen. Ein Entwurf startet keinen Lauf.</p>
+          <a class="btn" href="/agenten/marblerun">Ketten-Editor öffnen</a>
+        </div>
+      </article>
+    </section>
+
+    <aside class="library-note" aria-label="Statusgrenze">
+      <strong>Living &amp; Running ist der Hauptpunkt für Zustände.</strong>
+      <span>Nur dort werden bestätigte Living- oder Running-Zustände und ausdrückliche Startaktionen angezeigt. Diese Bibliothek zeigt Auswahl und Bearbeitung.</span>
+    </aside>
+  </main>
 </BachLayout>
-<script is:inline>
-  const target = new URL("/agenten/blueprints", location.origin);
-  const old = new URLSearchParams(location.search);
-  const name = old.get("load") || old.get("blueprint");
-  if (name) target.searchParams.set("blueprint", name);
-  else if (old.get("tab") === "teams" || old.get("tab") === "teambuilding") target.searchParams.set("tab", "teams");
-  else target.searchParams.set("new", "1");
-  location.replace(target.pathname + target.search);
-</script>
+
+<style>
+  .agent-library{display:grid;gap:1rem;max-width:1120px;margin:0 auto;padding:1rem}
+  .library-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:1.2rem;border:1px solid var(--border);border-radius:12px;background:var(--bg-panel)}
+  .library-eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;color:var(--text-muted);margin:0 0 .35rem}
+  .library-header h1{margin:.2rem 0;font-size:clamp(1.7rem,3vw,2.4rem)}
+  .library-lead{max-width:58rem;color:var(--text-muted);line-height:1.55;margin:.5rem 0 0}
+  .library-tabs{display:flex;gap:.25rem;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+  .library-tab{padding:.75rem 1rem;color:var(--text-muted);text-decoration:none;border-bottom:2px solid transparent}
+  .library-tab:hover,.library-tab:focus-visible{color:var(--text)}
+  .library-tab.is-active{color:var(--text);border-bottom-color:var(--accent);font-weight:700}
+  .library-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+  .library-card{display:flex;gap:.85rem;align-items:flex-start;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--bg-panel)}
+  .library-card h2{font-size:1.05rem;margin:0 0 .35rem}.library-card p{color:var(--text-muted);font-size:.85rem;line-height:1.5;min-height:4.2rem;margin:0 0 .8rem}
+  .library-icon{font-size:1.6rem;line-height:1}.library-note{display:flex;gap:.5rem;flex-wrap:wrap;padding:.9rem 1rem;border-left:3px solid var(--accent-blue);background:var(--bg-panel);color:var(--text-muted);font-size:.82rem;line-height:1.5}.library-note strong{color:var(--text)}
+  @media(max-width:640px){.agent-library{padding:.55rem}.library-header{padding:1rem}.library-card{padding:.85rem}.library-card p{min-height:0}}
+</style>

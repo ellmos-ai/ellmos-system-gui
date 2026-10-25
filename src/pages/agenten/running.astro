@@ -203,8 +203,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <span class="badge" id="openrouter-credential-state">Wird geprüft</span>
     </summary>
     <p class="core-explanation">
-      <code>openrouter/free</code> wird unverändert an OpenRouter gesendet. Die Liste zeigt nur den kostenlosen Router
-      und Modelle, deren Ein- und Ausgabepreise null sind.
+      Der kostenlose Router und seine Modelle werden ausschließlich aus dem aktuellen Adapterkatalog angezeigt.
+      Ohne Katalogantwort bleibt die Auswahl nicht verfügbar.
     </p>
     <datalist id="openrouter-free-models"></datalist>
     <p id="openrouter-catalog-state" role="status" aria-live="polite">Modellkatalog wird geladen…</p>
@@ -441,15 +441,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       if (t == null) return '';
       return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
-
-    const AVAILABLE_MODELS = [
-      { id: "claude-3-7-sonnet", label: "🧠 Claude 3.7 Sonnet (Anthropic)" },
-      { id: "gemini-2.0-flash", label: "⚡ Gemini 2.0 Flash (Google)" },
-      { id: "codex-cli", label: "💻 Codex / GPT-4o (OpenAI)" },
-      { id: "ollama/qwen3.8:27b-mlx", label: "🦙 Ollama: Qwen 3.8 27B (lokal)" },
-      { id: "ollama/kimi-k3:cloud", label: "☁️ Kimi K3 Cloud (131k)" },
-      { id: "openrouter/free", label: "🆓 OpenRouter (Kostenlos / Free Tier)" }
-    ];
 
     let currentPriority = null;
     let coreConfigVersion = null;
@@ -1441,17 +1432,16 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
               <div style="display:flex;flex-direction:column;gap:0.4rem;background:var(--bg-dark);padding:0.6rem;border-radius:4px;border:1px solid var(--border);margin-bottom:0.6rem;">
                 ${members.map(m => {
-                  const curMod = modelsMap[m] || 'ollama/qwen3.8:27b-mlx';
+                  const curMod = typeof modelsMap[m] === 'string' ? modelsMap[m] : '';
                   return `
                     <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;">
                       <span style="font-size:0.78rem;color:var(--text);">🤖 ${escapeHtml(m)}</span>
-                      <select class="team-member-model-select" data-team="${t.id}" data-member="${escapeHtml(m)}" style="padding:0.2rem 0.4rem;font-size:0.72rem;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:4px;">
-                        ${AVAILABLE_MODELS.map(mod => `<option value="${mod.id}" ${mod.id === curMod ? 'selected' : ''}>${mod.label}</option>`).join('')}
-                      </select>
+                      <input class="team-member-model-input" data-team="${t.id}" data-member="${escapeHtml(m)}" value="${escapeHtml(curMod)}" placeholder="Modell-ID aus Adapter" aria-label="Modell-ID für ${escapeHtml(m)}" style="padding:0.2rem 0.4rem;font-size:0.72rem;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:4px;min-width:10rem;" />
                     </div>
                   `;
                 }).join('')}
               </div>
+              <small style="display:block;color:var(--text-muted);font-size:0.72rem;margin-bottom:0.6rem;">Keine Modellliste wird vorgetäuscht. Trage eine vom zuständigen Adapter gemeldete Modell-ID ein.</small>
 
               <div style="display:flex;justify-content:space-between;align-items:center;">
                 <button class="btn btn-sm" style="font-size:0.72rem;color:var(--error);" onclick="deleteTeamFromRunning(${t.id})">🗑️ Löschen</button>
@@ -1468,11 +1458,11 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     }
 
     async function saveTeamBeseelung(teamId) {
-      const selects = document.querySelectorAll(`.team-member-model-select[data-team="${teamId}"]`);
+      const selects = document.querySelectorAll(`.team-member-model-input[data-team="${teamId}"]`);
       const member_models = {};
       selects.forEach(sel => {
         const mem = sel.getAttribute('data-member');
-        member_models[mem] = sel.value;
+        if (mem && sel.value.trim()) member_models[mem] = sel.value.trim();
       });
 
       try {
