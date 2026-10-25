@@ -58,7 +58,7 @@ Vor einem gebündelten Frontend-Build werden alle API-Aufrufe über einen gemein
 - Prozessidentität berücksichtigt PID-Wiederverwendung durch Startzeit/Birth-Identity und Runtime-Pfad. Toleranzen für Zeitstempel werden je Zielplattform festgelegt und getestet.
 - Der Scheduler bekommt eine ausdrückliche Suspend-/Wake- und Nachholregel. Aufwachen darf nicht mehrere gleichartige Jobs unkontrolliert parallel auslösen.
 - Der Windows-Zombie-Killer bleibt auf eng erlaubte, einzeln geprüfte verwaiste Prozesse beschränkt. Er ist keine Job-Aufsicht für BACH und beendet keine Prozessbäume.
-- Das vorhandene --parent-pid-Verhalten koppelt einen Worker an die Tray-Elterninstanz: endet das Tray, endet der Worker. Dieses Verhalten ist keine Grundlage für persistente Backend-Worker.
+- Die tatsächliche Kopplung zwischen Tray, verwaltetem Serverprozess und dessen Arbeit ist je Host anhand gepinnter Quellen und gezielter Tests zu erfassen. Ein im Server laufender Worker ist kein unabhängig beaufsichtigter Prozess. Persistente Backend-Worker benötigen eine vom Tray unabhängige Aufsicht.
 - Erkennung eines laufenden Daemons und GUI-Verbindungsstatus sind getrennte Zustände. Eine fehlende Verbindung startet keinen zweiten Daemon.
 
 ## Umsetzungsphasen
