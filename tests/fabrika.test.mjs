@@ -1,9 +1,30 @@
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import test from "node:test";
+import {Script} from "node:vm";
 
 const read = path => readFileSync(new URL(`../src/pages/agenten/${path}.astro`, import.meta.url), "utf8");
 const library = read("fabrika");
+const source = library.match(/<script is:inline>([\s\S]*?)<\/script>/)[1];
+function redirect(search) {
+  let destination;
+  new Script(source).runInNewContext({URL, URLSearchParams, location: {origin: "https://gui.example.test", search, replace(value) { destination = value; }}});
+  return destination;
+}
+
+test("the bare library URL stays on the library", () => {
+  assert.equal(redirect(""), undefined);
+  assert.equal(redirect("?tab=other"), undefined);
+});
+test("legacy blueprint and team links keep their destination", () => {
+  assert.equal(redirect("?load=entwickler"), "/agenten/blueprints?blueprint=entwickler");
+  assert.equal(redirect("?blueprint=entwickler"), "/agenten/blueprints?blueprint=entwickler");
+  assert.equal(redirect("?tab=teambuilding"), "/agenten/blueprints?tab=teams");
+  assert.equal(redirect("?tab=teams"), "/agenten/blueprints?tab=teams");
+});
+test("legacy links cannot redirect to external sites", () => {
+  assert.equal(redirect("?load=https://external.example"), "/agenten/blueprints?blueprint=https%3A%2F%2Fexternal.example");
+});
 const promptAgents = read("subscription-agents");
 const running = read("running");
 

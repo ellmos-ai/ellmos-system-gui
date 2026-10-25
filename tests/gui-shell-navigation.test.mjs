@@ -115,7 +115,11 @@ test('mobile drawer makes background controls inert and restores them on close',
     const sidebarClose = makeElement();
     const backdrop = makeElement();
     const backgroundShell = Array.from({ length: 4 }, makeElement);
-    const document = { body: makeElement() };
+    const document = {
+      body: makeElement(),
+      querySelector(selector) {return backgroundShell[selector === '.skip-link' ? 0 : 3];},
+      getElementById(id) {return backgroundShell[id === 'main-header' ? 1 : 2];},
+    };
     const sync = new Function(
       'navToggle', 'sidebar', 'sidebarClose', 'backdrop', 'mobileNavigation', 'mobileNavigationOpen', 'document', 'backgroundShell',
       `${sidebarSyncSource[0]}\nsyncSidebarMode();`,
