@@ -20,6 +20,20 @@ npm run build
 
 The frontend contains 27 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance.
 
+## GUI walkthrough
+
+`scripts/gui-walkthrough.mjs` opens every page of `public/page-reads.v1.json` in Chromium (Playwright) against a running build and writes `reports/gui-walkthrough/<timestamp>/report.json` plus screenshots (git-ignored):
+
+```sh
+npm run build
+npx astro preview --port 4321 &
+node scripts/gui-walkthrough.mjs [--base http://127.0.0.1:4321] [--only /tasks,/memory] [--no-fail]
+```
+
+Per page it records the HTTP status, console errors, uncaught page errors, dead internal links (every distinct internal target is requested once), pages no other page links to, horizontal overflow and a full-page screenshot at 1440 and 390 px width, light and dark. The GUI ignores `prefers-color-scheme` and reads `localStorage["bach-theme"]`, so each variant sets that key. Failed `/api/` calls are listed separately as `backendErrors`: without a connected backend they are expected and do not fail the run; the exit code is 1 for HTTP errors, console or page errors and dead links. Playwright comes from the dev dependency `playwright-core` (no browser download; `chromium` must be installed, for example by `npx playwright-core install chromium`). `tests/gui-walkthrough.test.mjs` covers the page list, link classification and summary without a browser.
+
+Stage 2, not built yet: an LLM review of the report and screenshots against a fixed checklist (design goal and GUI design conversion from the Ocean plan, accessibility, navigation reachability, consistency across light/dark and phone/desktop). Planned input is `report.json` plus the PNGs, planned output a findings JSON with page, severity, rule and evidence, turned into tasks. The checklist and the model endpoint are decisions for the task owner; the walkthrough output format (`ellmos.gui.walkthrough.v1`) is the contract between the stages.
+
 ## Release
 
 Version 0.2.28 integrates the published reviewer-availability, result-gate, external GitHub evidence, worker-selection explanation and optional lease-countdown source changes. The selection view respects the reported model-enforcement setting and labels an absent setting or candidate sort order as unconfirmed. Existing 0.2.27 agent configuration, observed runtime resources, responsive navigation, thumbnails and routes remain included. This is an incremental delivery: task-hindrance integration, missing backend adapters, full BACH/Ocean parity and user acceptance remain separate open work. Source review, build, publication, release, consumer activation and visible functional acceptance are recorded separately.

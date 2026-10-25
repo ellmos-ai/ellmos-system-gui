@@ -308,16 +308,17 @@ function hasActiveSection(section: any): boolean {
   const sidebarClose = document.getElementById('sidebar-close');
   const backdrop = document.getElementById('sidebar-backdrop');
   const mobileNavigation = window.matchMedia('(max-width: 860px)');
-  const backgroundShell = [
-    document.querySelector('.skip-link'),
-    document.getElementById('main-header'),
-    document.getElementById('main-content'),
-    document.querySelector('body > footer'),
-  ].filter(Boolean);
   let mobileNavigationOpen = false;
 
   function syncSidebarMode() {
     if (!navToggle || !sidebar || !sidebarClose || !backdrop) return;
+    // Main and footer may not have been parsed when this inline script ran.
+    const backgroundShell = [
+      document.querySelector('.skip-link'),
+      document.getElementById('main-header'),
+      document.getElementById('main-content'),
+      document.querySelector('body > footer'),
+    ].filter(Boolean);
     const mobile = mobileNavigation.matches;
     if (!mobile) {
       mobileNavigationOpen = false;
@@ -354,7 +355,13 @@ function hasActiveSection(section: any): boolean {
     if (!mobileNavigation.matches) return;
     mobileNavigationOpen = open;
     syncSidebarMode();
-    if (open) sidebarClose?.focus({ preventScroll: true });
+    if (open) {
+      // Let the visibility transition start before moving focus into the drawer.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (mobileNavigationOpen && mobileNavigation.matches)
+          sidebarClose?.focus({ preventScroll: true });
+      }));
+    }
     else if (returnFocus) navToggle?.focus({ preventScroll: true });
   }
 
