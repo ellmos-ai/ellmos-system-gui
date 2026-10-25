@@ -385,14 +385,21 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
   const merge = provenance.followup_changes.findLast(change =>
     change.scope === 'BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance');
   assert.equal(merge.scope, 'BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance');
-  const branchBases = new Set(merge.branch_bases);
+  // Each later integration of the deployed GUI with main (e.g. BACH #2469) declares its branch bases the same way.
+  const integrations = provenance.followup_changes.filter(change =>
+    /integrate deployed GUI .*and current main without losing branch provenance$/.test(change.scope ?? ''));
+  assert.ok(integrations.includes(merge));
+  const branchBases = new Set(integrations.flatMap(change => change.branch_bases ?? []));
   assert.ok(branchBases.has('99cde50dfaa0f0306b6c5b70aebc4161db0fc71c'));
   assert.ok(branchBases.has('a5de187db1005b083e2ed4330f61aafc0553ba04'));
   for (const file of followup.files) {
     const observed = new Set([file.sha256]);
     let recordedHash = file.sha256;
     for (const change of laterChanges) {
-      const next = change.files?.find(candidate => candidate.path === file.path);
+      // Follow-up records list files as an array; the task 2011 record keys them by path.
+      const changeFiles = Array.isArray(change.files) ? change.files
+        : Object.entries(change.files ?? {}).map(([path, record]) => ({path, ...record}));
+      const next = changeFiles.find(candidate => candidate.path === file.path);
       if (!next) continue;
       assert.ok(observed.has(next.previous_sha256), file.path + ': known provenance predecessor');
       if (next.previous_sha256 !== recordedHash) {
@@ -405,5 +412,74 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
       observed.add(recordedHash);
     }
     assert.equal(recordedHash, hash(file.path), file.path);
+  }
+});
+
+function taskEditReadbackHarness({before, input, actual, omitActual=false}) {
+  const page=readFileSync(new URL('../src/pages/tasks.astro',import.meta.url),'utf8');
+  const start=page.indexOf("    document.getElementById('task-edit-form').addEventListener('submit', async event => {");
+  const end=page.indexOf('\n    async function completeTask(id)',start);
+  assert.ok(start >= 0 && end > start, 'actual edit submission handler must be present');
+  let handler;
+  const errors=[];
+  const requests=[];
+  let refreshes=0;
+  const submit={disabled:false};
+  const form={reportValidity:()=>true,querySelector(selector) {
+    if (selector==='button[type="submit"]') return submit;
+    if (selector==='[data-task-result-max-chars-field]') return {hidden:false};
+    throw new Error('unexpected selector: '+selector);
+  }};
+  const stored={id:taskId};
+  if (!omitActual) stored.result_max_chars=actual;
+  const context={
+    document:{getElementById(id) {
+      assert.equal(id,'task-edit-form');
+      return {addEventListener(name,callback) { assert.equal(name,'submit'); handler=callback; }};
+    }},
+    selectedTask:{id:taskId,result_max_chars:before},taskDetailRevision:8,
+    FormData:class {get(key) {return key==='result_max_chars' ? input : null;}},
+    detailError:message=>errors.push(message),
+    taskResultMaxCharsReadback,parseTaskResultMaxCharsInput,resultMaxCharsEditChange,
+    loadTaskResultMaxCharsCapabilities:async()=>({schema:'bach.task-capabilities.v1',
+      result_max_chars:{supported:true,min:1,max:3000,nullable:true}}),
+    editAssignment:{payload:()=>({}),invalidate:()=>{}},
+    fetch:async(url,init)=>{requests.push({url,payload:JSON.parse(init.body)});
+      return {ok:true,status:200,json:async()=>({status:'updated'})};},
+    isGateReopenBlocked:()=>false,
+    openTask:async()=>stored,loadTasks:async()=>{refreshes+=1;}
+  };
+  vm.createContext(context);
+  new vm.Script(page.slice(start,end)).runInContext(context);
+  return {run:()=>handler({preventDefault(){},currentTarget:form}),
+    errors,requests,submit,refreshes:()=>refreshes};
+}
+
+test('actual task edit readback accepts clearing the limit and exact integer boundaries',async()=>{
+  for (const [before,input,actual] of [[3000,'',null],[null,'1',1],[null,'3000',3000]]) {
+    const h=taskEditReadbackHarness({before,input,actual});
+    await h.run();
+    assert.equal(h.requests.length,1);
+    assert.equal(h.requests[0].payload.result_max_chars,actual);
+    assert.deepEqual(h.errors.filter(Boolean),[]);
+    assert.equal(h.refreshes(),1);
+    assert.equal(h.submit.disabled,false);
+  }
+});
+
+test('actual task edit readback rejects missing, string and different limit values',async()=>{
+  for (const sample of [
+    {before:3000,input:'',omitActual:true},
+    {before:null,input:'1',actual:'1'},
+    {before:null,input:'1',actual:2},
+    {before:3000,input:'',actual:0}
+  ]) {
+    const h=taskEditReadbackHarness(sample);
+    await h.run();
+    assert.equal(h.requests.length,1);
+    assert.equal(h.errors.filter(Boolean).length,1);
+    assert.match(h.errors.filter(Boolean)[0],/Ergebnislimit/);
+    assert.equal(h.refreshes(),0);
+    assert.equal(h.submit.disabled,false);
   }
 });

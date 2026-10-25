@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // One editor for the former factory and the real blueprint/controller contracts.
+import {createRevisionDialog} from '../lib/blueprint-revisions.mjs';
 import {createAvatar,mountAvatarPicker} from '../lib/agent-avatar.mjs';
 import {createSymbol,mountSymbolPicker} from '../lib/ticket-symbol.mjs';
 export const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char =>
@@ -49,7 +50,7 @@ function initializeStudio() {
   const $ = id => document.getElementById(id);
   const state = {blueprints:[], teams:[], skills:[], tools:[], contracts:[], governance:[], core:null,
     prompts:null, library:"custom", edit:null, instance:null, instanceVersion:null, instanceConfig:null, promptVersion:null,
-    team:null, avatar:"", symbol:"", modelRequest:0};
+    team:null, copy:null, revisionContract:null, avatar:"", symbol:"", modelRequest:0};
   const labels = {agent:"Agent",role:"Rolle",skill:"Skill-Vorlage",workflow:"Workflow-Vorlage",service:"Service-Vorlage",contractus:"Arbeitsvertrag"};
   const icons = {agent:"🤖",role:"🎭",skill:"🧩",workflow:"⛓",service:"⚙",contractus:"📜"};
   const notify = (id,text,error=false) => { $(id).textContent=text; $(id).dataset.error=String(error); };
@@ -65,6 +66,11 @@ function initializeStudio() {
     return data;
   }
   const post = (path,payload) => api(path,{method:"POST",body:JSON.stringify(payload)});
+  const revisions=createRevisionDialog({document,onRestored:async saved=>{
+    await loadData();const current=byId(saved.id);
+    if(!current||current.version!==saved.version)throw new Error('Die neue Vorlagenversion ist gespeichert, ihr Readback ist noch nicht bestätigt. Bitte neu laden.');
+    notify('studio-status','Vorlage als neue Version '+saved.version+' wiederhergestellt. Bestehende Agenten bleiben unverändert.');
+  }});
   const checked = id => [...$(id).querySelectorAll('input[type="checkbox"]:checked')].map(box => box.value);
   function choose(select, value) {
     if (value && ![...select.options].some(option => option.value === String(value))) select.add(new Option(String(value)+" (gespeichert)",String(value)));
@@ -94,7 +100,7 @@ function initializeStudio() {
       return '<article class="studio-card"><div class="studio-card-top">'+image+'<span class="studio-state" data-running="'+String(slot?.running===true)+'">'+escapeHtml(blueprintState(bp))+'</span></div>'+
         '<div><h3>'+escapeHtml(bp.title||bp.name)+'</h3><p>'+escapeHtml(bp.description||bp.persona_role||labels[bp.kind])+'</p></div>'+
         '<div class="studio-card-details"><span>'+escapeHtml(labels[bp.kind]||bp.kind)+'</span><span>· Version '+escapeHtml(bp.version)+'</span>'+(model?'<span>· '+escapeHtml(model)+'</span>':"")+'</div>'+
-        '<div class="studio-card-actions"><button class="btn" data-copy="'+id+'">'+(bp.is_template?"Kopie erstellen":"Duplizieren")+'</button>'+
+        '<div class="studio-card-actions"><button class="btn" data-revisions="'+id+'">Versionen</button><button class="btn" data-copy="'+id+'">'+(bp.is_template?"Kopie erstellen":"Duplizieren")+'</button>'+
         (!bp.is_template?'<button class="btn" data-edit="'+id+'">Bearbeiten</button>':"")+
         (canExecute?'<button class="btn" data-instance="'+id+'">'+(slot?"Steckplatz aktualisieren":"Als Steckplatz")+'</button>':"")+
         (slot?'<a class="btn" href="/tasks?assigned_slot='+encodeURIComponent(slot.id)+'">Aufgaben</a>':"")+
@@ -115,6 +121,7 @@ function initializeStudio() {
     notify("studio-status","Bibliothek wird geladen…");
     const data=await api("/api/agent-studio/blueprints");
     state.blueprints=[...(data.templates||[]),...(data.blueprints||[])];
+    state.revisionContract=data.blueprint_revision_contract;
     const requests=[["teams","/api/agenten/teams","teams"],["skills","/api/capabilities/skills","skills"],
       ["tools","/api/agent-studio/tools","tools"],["contracts","/api/agent-studio/contractus-presets","presets"],
       ["governance","/api/agent-studio/governance-presets","presets"],["core","/api/system/core-agents",null],
@@ -134,18 +141,25 @@ function initializeStudio() {
     mountSymbolPicker($("bp-symbols"),state.symbol,symbolUrls,value=>{state.symbol=value;drawAvatar();});
   }
   function editorPayload() {
-    const previous=state.edit||{};
+    const previous=state.edit||state.copy||{};
     const execution={backend:$("bp-backend").value,model:$("bp-model").value.trim(),mode:$("bp-mode").value,
       think:$("bp-think").checked,include_system_prompt:$("bp-include-system").checked,
       custom_system_prompt:$("bp-system").value,avatar:state.avatar,symbol:state.symbol,
       pause_after:$("bp-pause-basis").value==="none"?0:Number($("bp-pause-after").value),pause_minutes:Number($("bp-pause-minutes").value),pause_basis:$("bp-pause-basis").value==="tasks"?"tasks":"runs"};
     return {name:$("bp-name").value.trim().toLowerCase(),title:$("bp-title").value.trim(),kind:$("bp-kind").value,
       description:$("bp-description").value,persona_role:$("bp-role").value,persona_prompt:$("bp-persona").value,
-      expected_version:state.edit?.version||0,is_template:0,skills:checked("bp-skills"),animus_type:["claude","codex"].includes(execution.backend)?"cli":"api",
+      ...(state.copy?{derived_from:{blueprint_id:state.copy.id,version:state.copy.version,sha256:state.copy.content_sha256}}:{}),
+       expected_version:state.edit?.version||0,is_template:0,skills:checked("bp-skills"),animus_type:["claude","codex"].includes(execution.backend)?"cli":"api",
       modus:$("bp-modus").value,contractus:{...(previous.contractus||{}),turns:Number($("bp-turns").value),execution},
       governance:{...(previous.governance||{}),profile:$("bp-governance").value,tool_whitelist:checked("bp-tools")}};
   }
   function openEditor(blueprint=null,copy=false) {
+    if(copy&&(state.revisionContract!=="bach.blueprint-revisions.v1"||
+       !Number.isSafeInteger(blueprint?.id)||blueprint.id<=0||
+       !Number.isSafeInteger(blueprint?.version)||blueprint.version<=0||
+       !/^[a-f0-9]{64}$/.test(blueprint?.content_sha256||"")))
+      throw new Error("Kopieren ist erst mit belegter Quellversion und passendem Backend verfügbar. Bitte aktualisieren.");
+    state.copy=copy?blueprint:null;
     state.edit=blueprint&&!copy?blueprint:null;
     const bp=blueprint||{}, config=executionSettings(bp,currentLocal());
     $("blueprint-form").reset();$("bp-name").readOnly=!!state.edit;
@@ -243,9 +257,9 @@ function initializeStudio() {
   handle("studio-refresh","click",loadData);handle("studio-new","click",()=>openEditor());
   handle("studio-search","input",render);handle("studio-kind","change",render);
   handle("studio-grid","click",async event=>{
-    const button=event.target.closest("[data-edit],[data-copy],[data-instance],[data-start],[data-delete]");if(!button)return;
-    const attr=Object.keys(button.dataset).find(key=>["edit","copy","instance","start","delete"].includes(key)),bp=byId(button.dataset[attr]);if(!bp)return;
-    if(attr==="edit")openEditor(bp);else if(attr==="copy")openEditor(bp,true);else if(attr==="instance")await openInstance(bp);else if(attr==="start")await runBlueprint(bp,button);
+    const button=event.target.closest("[data-edit],[data-copy],[data-instance],[data-start],[data-delete],[data-revisions]");if(!button)return;
+    const attr=Object.keys(button.dataset).find(key=>["edit","copy","instance","start","delete","revisions"].includes(key)),bp=byId(button.dataset[attr]);if(!bp)return;
+    if(attr==="revisions")await revisions.open(bp,state.revisionContract);else if(attr==="edit")openEditor(bp);else if(attr==="copy")openEditor(bp,true);else if(attr==="instance")await openInstance(bp);else if(attr==="start")await runBlueprint(bp,button);
     else if(confirm("Blueprint „"+(bp.title||bp.name)+"“ entfernen?")){await api("/api/agent-studio/blueprints/"+bp.id+"?expected_version="+encodeURIComponent(bp.version),{method:"DELETE"});await loadData();}
   });
   handle("bp-role","change",()=>{const prompt=state.prompts?.prompts?.["role_"+$("bp-role").value]?.effective;if(prompt)$("bp-persona").value=prompt;drawAvatar();},"editor-status");
@@ -265,7 +279,12 @@ function initializeStudio() {
     try{
       const saved=await post("/api/agent-studio/blueprints",payload);await loadData();
       const readback=byId(saved.id);if(!readback||Number(readback.version)!==payload.expected_version+1||readback.persona_prompt!==payload.persona_prompt)throw new Error("Gespeicherte Version nicht bestätigt. Entwurf bleibt geöffnet.");
-      close("blueprint-editor");state.library="custom";render();notify("studio-status","Blueprint gespeichert · Version "+readback.version);
+      if(payload.derived_from&&(!readback.derived_from||
+         readback.derived_from.blueprint_id!==payload.derived_from.blueprint_id||
+         readback.derived_from.version!==payload.derived_from.version||
+         readback.derived_from.sha256!==payload.derived_from.sha256))
+         throw new Error("Herkunft der Kopie nicht bestätigt. Bitte die Bibliothek neu laden.");
+       close("blueprint-editor");state.library="custom";render();notify("studio-status","Blueprint gespeichert · Version "+readback.version);
     }finally{$("bp-save").disabled=false;}
   },"editor-status");
   handle("instance-backend","change",()=>loadModels("instance"),"instance-status");

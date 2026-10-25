@@ -408,6 +408,53 @@
     "method": "GET",
     "path": "/api/governance/status",
     "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/gui/capabilities",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/locks",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/policy-registry",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/decisions",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/policies",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/effective-policy",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/gui/capabilities",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
    }
   ],
   "/governance/logs": [
@@ -665,6 +712,34 @@
     "method": "POST",
     "path": "/api/agenten/teams",
     "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints/{id}/revisions",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#readHistory"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints/{id}/revisions/{version}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#readRevision"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints/{id}/revisions/diff",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#readRevisionDiff"
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-studio/blueprints/{id}/revisions/{version}/restore",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#restoreRevision"
    }
   ],
   "/agenten/subscription-agents": [

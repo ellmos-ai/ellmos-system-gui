@@ -1046,8 +1046,10 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
             if (actual != null && String(actual).trim() !== '') {
               throw new Error('Fälligkeitsdatum sollte gelöscht werden, ist aber noch gesetzt.');
             }
-          } else if (key === 'result_max_chars' && actual !== value) {
-            throw new Error('Das gespeicherte Ergebnislimit weicht ab. Bitte Task prüfen.');
+          } else if (key === 'result_max_chars') {
+            if (actual !== value) {
+              throw new Error('Das gespeicherte Ergebnislimit weicht ab. Bitte Task prüfen.');
+            }
           } else if (String(actual ?? '').trim() !== String(value).trim()) {
             throw new Error('Änderung gemeldet, aber der Kontrollabruf weicht ab. Bitte Task prüfen.');
           }
