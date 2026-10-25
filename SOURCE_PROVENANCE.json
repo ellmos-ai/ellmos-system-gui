@@ -10,6 +10,7 @@
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
+    "docs/GUI-AGENTS-LIVING-RUNNING.md": "f44152d48e125736fbea5d8478f0b0937219670190a5448de8a458f9ca5f9eb5",
     "ellmos-module.v2.json": "88c5e74792e5501e273d379047a1df0e4ef1c2bc2edd7fadb9633e0ccce83c08",
     "package-lock.json": "9047de306c3746da0c2ddc279bfbbc04917918e2342dcb435c5f8ee63d6615e2",
     "package.json": "e37bac544410b0d0e289c4eff5f5a0a5038a049f2c874021991296830d2de235",
@@ -257,11 +258,11 @@
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/pages/agenten/blueprints.astro": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
-    "src/pages/agenten/fabrika.astro": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
+    "src/pages/agenten/fabrika.astro": "55ed2d6cf16b8066675af532c820ce12edcb25dbf9d5ae4447aa5c5212ede801",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "351b81e2c7cedae78a7497155c5c8a86c9e3c659935d557ae82e1a56ef354b98",
+    "src/pages/agenten/running.astro": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
-    "src/pages/agenten/subscription-agents.astro": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
+    "src/pages/agenten/subscription-agents.astro": "037f8e681f6feeb351c990b73737ddc27420ee28b1c3b5a4abf735a297b4b89d",
     "src/pages/artefakte.astro": "676f47aa93f79e1fa6c040c6fb05e8a5373bf6c985170234e514587548055a95",
     "src/pages/domains.astro": "a9c41b57fc2d188a8c0b5308a76a37c7eccc9227193cd88594810295f26994b0",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
@@ -294,7 +295,7 @@
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
     "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
     "tests/domain-routes.test.mjs": "bdcc11061fbb9a12f670fe6917c890d722d46b9ba6b8f1f87adbe58b1579d353",
-    "tests/fabrika.test.mjs": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
+    "tests/fabrika.test.mjs": "25c92eb969278125447beafe4307d0be77bf64b82a7ac78fcd84594015c1067e",
     "tests/frontend-parity.test.mjs": "96fc8c758a050f1c87852dfdf26a936739245fcec827f9ad76a23663bfc72bef",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
     "tests/memory-facts.test.mjs": "a7c9724c7e28631f9a661fcde596f81fe5dd93375838259a6cf55244c24f3897",
@@ -496,6 +497,44 @@
     },
     {
       "date": "2026-10-25",
+      "scope": "BACH #2478: Living & Running als Agenten-Hauptpunkt, Agenten-Bibliothek und externe Prompt-Agenten",
+      "source_base_commit": "8f8d738fa5596d5300e0477b7f698e8498003d69",
+      "changes": [
+        "Die Agenten-Bibliothek bündelt Vorlagen, Prompt-Agenten und Ketten; Living & Running bleibt der einzige Hauptpunkt für bestätigte Zustände.",
+        "Prompt-Agenten werden als extern zugeschaltet und von dieser GUI nicht gesteuert ausgewiesen.",
+        "Die feste Modellliste und der feste Modell-Fallback in Running wurden entfernt; Team-Modellbindungen bleiben adaptergelieferte IDs oder leer.",
+        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/fabrika.astro",
+          "previous_sha256": "7960f20f812e908e3ab3592448ee655945602133d03ea6e4a431fd31d6336e72",
+          "sha256": "058405476c56ada83dcb75d1169c6c23b710162c0243fa48bf5c016c1f9c6718"
+        },
+        {
+          "path": "src/pages/agenten/subscription-agents.astro",
+          "previous_sha256": "0b4c9974edf2b494f364d6a4c5a4821bf8b4509f26160df54006d7b1b16ee5a4",
+          "sha256": "037f8e681f6feeb351c990b73737ddc27420ee28b1c3b5a4abf735a297b4b89d"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "351b81e2c7cedae78a7497155c5c8a86c9e3c659935d557ae82e1a56ef354b98",
+          "sha256": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d"
+        },
+        {
+          "path": "tests/fabrika.test.mjs",
+          "previous_sha256": "1a05aaf6aecd5a17ef88189fe3cefaf841e6413023417cef81adfe38d78d85f0",
+          "sha256": "384aa0178c04f67743a817d0cdf8ea1d5ca0c2c33e8b471a7dbd9b6a3d388390"
+        },
+        {
+          "path": "docs/GUI-AGENTS-LIVING-RUNNING.md",
+          "previous_sha256": null,
+          "sha256": "f44152d48e125736fbea5d8478f0b0937219670190a5448de8a458f9ca5f9eb5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
       "scope": "BACH #2476 follow-up: mobile reflow found by the GUI walkthrough (#2496)",
       "source_base_commit": "ab93af84132429e9d618748bce0c214db9c4ed4c",
       "changes": [
@@ -523,6 +562,27 @@
           "path": "tests/gui100-regressions.test.mjs",
           "previous_sha256": "919f17d2a81e5d3febe3db4a6758244568a361c39b55a0606a86dba8d2e46dfc",
           "sha256": "036dd6c383c31630f4ce2a9e5e359fc2d18d71645d3c85fbc1f9eb61515c22d5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
+      "scope": "BACH #2478 follow-up: keep saved factory links working on the library hub",
+      "source_base_commit": "55a98ba0aecfd3d5eb8cd20949897e95ca3b2ce8",
+      "changes": [
+        "Redirect only the former ?load=/?blueprint= editor links and ?tab=teams/teambuilding team links to the Blueprint editor; the bare /agenten/fabrika URL stays on the library.",
+        "Restore the legacy query regression cases next to the library content assertions (multibot review P2 on #104)."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/fabrika.astro",
+          "previous_sha256": "058405476c56ada83dcb75d1169c6c23b710162c0243fa48bf5c016c1f9c6718",
+          "sha256": "55ed2d6cf16b8066675af532c820ce12edcb25dbf9d5ae4447aa5c5212ede801"
+        },
+        {
+          "path": "tests/fabrika.test.mjs",
+          "previous_sha256": "384aa0178c04f67743a817d0cdf8ea1d5ca0c2c33e8b471a7dbd9b6a3d388390",
+          "sha256": "25c92eb969278125447beafe4307d0be77bf64b82a7ac78fcd84594015c1067e"
         }
       ]
     }
