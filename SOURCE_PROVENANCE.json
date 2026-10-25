@@ -11,11 +11,11 @@
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
     "ellmos-module.v2.json": "88c5e74792e5501e273d379047a1df0e4ef1c2bc2edd7fadb9633e0ccce83c08",
-    "package-lock.json": "3a9a05660049ae9ad880e3291e8df2e0b8d8f3521884782eb26ffcd48a4232c8",
-    "package.json": "2f792f39f435fc3ffedcf3b30ec1654ebe7d6b08c47d47f218756c94b6e6a040",
+    "package-lock.json": "9047de306c3746da0c2ddc279bfbbc04917918e2342dcb435c5f8ee63d6615e2",
+    "package.json": "e37bac544410b0d0e289c4eff5f5a0a5038a049f2c874021991296830d2de235",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "766453c032683da19fdd9efb335ff8aebe54d05d77cdc6b0f1a50b0cfda3387b",
-    "README.md": "5e2acd72e41fc2b59f096f946a44f3ad2c09a974e95db46aa9db3b23a2902047",
+    "README.md": "13c503cec5b1e7ff0da04ae0d4d41a1139d9404d99c647ba99c831c1b8d56776",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
@@ -4020,6 +4020,52 @@
           "sha256": "919f17d2a81e5d3febe3db4a6758244568a361c39b55a0606a86dba8d2e46dfc"
         }
       ]
+    },
+    {
+      "date": "2026-10-25",
+      "task_id": 2496,
+      "purpose": "GUI walkthrough stage 1: Playwright page walk (status, console, dead links, screenshots) from public/page-reads.v1.json; dev dependency playwright-core 1.64.1",
+      "files": {
+        "package.json": {
+          "previous_sha256": "f6e86125aea19851055297676d73a0c2aeb8e935df7bc17f6598ea9e3e987535",
+          "sha256": "28ac07381bb9f488ba5a82f7af859dfe000afd05d2eaf0cf8a0fd24d808a0b00"
+        },
+        "package-lock.json": {
+          "previous_sha256": "d1a72f176a376e0f37993337c32ee6c7f3e3116808106616de1ba043d001c89b",
+          "sha256": "4dee98dbf0ef1abbcd895a27f9ce516629e9ae7c6db4cbb87f8544c4b79bad64"
+        },
+        "README.md": {
+          "previous_sha256": "4d4c82dbe6e96f41adb3b6585e00478bf0288e12f9714c787bbac1b462aa4300",
+          "sha256": "d08e69adc4d10bd3353393a91027dd448da13ba2aa65b8d7090f98d50f01b3ff"
+        },
+        ".gitignore": {
+          "previous_sha256": "53fb4b8a6b517222f919c08bed908ac66425b1dc88b60b52da4c6de85f2a8333",
+          "sha256": "625ef633cf720a96d5247b39473b9d0821836e4e74015dcd4da0bbe84ca09a48"
+        },
+        "scripts/gui-walkthrough.mjs": {
+          "previous_sha256": null,
+          "sha256": "64f722a1ad68d1aee28bd70ef692961948adeea50d3f9b1f749a95246bb79f08"
+        },
+        "tests/gui-walkthrough.test.mjs": {
+          "previous_sha256": null,
+          "sha256": "0a74bd09e6c00aafe89ec198f2e735321d511673f43263f5208532164988cfea"
+        }
+      }
+    },
+    {
+      "task_id": 2496,
+      "parent_commit": "3105824f649ad4e8f6a626d8447258571ce63fc3",
+      "purpose": "Fail incomplete walkthrough matrices, failed visits, missing screenshots and invalid or empty page selections",
+      "files": {
+        "scripts/gui-walkthrough.mjs": {
+          "previous_sha256": "64f722a1ad68d1aee28bd70ef692961948adeea50d3f9b1f749a95246bb79f08",
+          "sha256": "06d47f4418af2150e28dc3d0fba6e71acfd7e8863c365e91ed7bfaad24a6c2c6"
+        },
+        "tests/gui-walkthrough.test.mjs": {
+          "previous_sha256": "0a74bd09e6c00aafe89ec198f2e735321d511673f43263f5208532164988cfea",
+          "sha256": "dec864bbcb5509afa75bf3b18c61440988f326915c0c2d1dd085e8ac7a4102d8"
+        }
+      }
     }
   ],
   "readme_banner": {
