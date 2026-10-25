@@ -1,8 +1,33 @@
 # Release gate: ellmos-system-gui
 
-**Current candidate: 0.2.21. This source preparation updates the version metadata for the already reviewed shared GUI changes; it does not claim publication, consumer pinning, browser acceptance, or native installation.**
+**Current candidate: 0.2.25.** Integration of deployed source `ff13cccde77a997ab4d0a0173db43ff88ee3c2be` with current main `a5de187db1005b083e2ed4330f61aafc0553ba04` and result-origin presentation `57c43df5f6b83d07caff4f5285c20873146e3bf2`. This candidate preserves the deployed policy controls, task leases, completion confirmation and agent overview, and the current main branch explicit operator-reopen controls.
 
-## Current candidate scope and checks (2026-10-12)
+## Current candidate scope and checks (2026-10-21)
+
+- Result-origin labels use trusted result DTOs and fixed text. Unavailable external provenance stays visibly external. Displaying provenance grants no acceptance or correction authority.
+- Original BACH source hashes and both source-branch histories are retained. The integration records both parent file hashes; divergent histories are not rewritten as a fictitious linear chain.
+- The pre-integration result-origin change passed426 source cases and a26-page build, with an independent source review. The combined candidate still requires its own full suite, clean-source release build, archive verification and independent review.
+- Browser acceptance of the combined candidate, publication, consumer pins and actual runtime installation remain separate checks. Earlier candidate checks below retain their dated scope.
+- Release procedure: commit the reviewed source, require a clean checkout, run `npm ci` and `npm run build:release`, package with `scripts/package_release.py`, then independently verify source commit, archive SHA-256, all dist hashes and MIT license.
+
+## Previous candidate 0.2.24 (2026-10-16)
+
+**Current candidate: 0.2.24.** This candidate records the reviewed shared agent overview and release metadata update. The browser acceptance and source checks below apply to the unchanged seven-file UI snapshot; version metadata and release documentation are the only additions in this candidate. This is not a claim of complete P10, publication, consumer pinning, native installation, or personal acceptance.
+
+## Current candidate scope and checks (2026-10-16)
+
+- Source base: `a3daee37d6621e37cb6135425006e59ad89b209f`. The candidate adds a shared read-only agent projection and consistent search, filters, grouping, sorting, cards and compact-list controls to the dashboard and Living & Running page. Unknown runtime state remains unconfirmed.
+- Source verification: 479 tests passed with no failures or skips. The pre-release build contained 26 HTML pages. The tests and build preceded the package-version and release-documentation updates; the application and UI source files are unchanged.
+- Browser acceptance: the independent Root GO readback on 2026-10-16 verified the filters, hidden-card behavior, summary consistency, and mobile layouts at 375 px and desktop at 1440 px. This verifies the reviewed page behavior only.
+- Scope limit: full P10 and automation CRUD/calendar remain open. Consumer pins, native deployment, and personal acceptance are separate gates and are not claimed here.
+- Release procedure: commit the reviewed source and metadata, require a clean checkout including untracked files, run `npm run build:release`, package with `scripts/package_release.py`, and independently verify the source commit, file hashes, archive SHA-256, and MIT license.
+- `dist/dist-manifest.json` must record the exact source commit and file hashes. Consumers must pin and verify both the source commit and ZIP hash. A development build from uncommitted changes is not a publishable release receipt.
+
+## Previous candidate record (2026-10-12)
+
+**Previous candidate: 0.2.21. This source preparation updates the version metadata for the already reviewed shared GUI changes; it does not claim publication, consumer pinning, browser acceptance, or native installation.**
+
+## Previous candidate scope and checks (2026-10-12)
 
 - Source base: `0843531b32fe37bb4f7335a78bf2f3c73998833e`, after the reviewed Task-Result UI merge. The candidate includes the previously merged data-age display, read-only/refresh safeguards, and task-result history and correction UI.
 - Task-result corrections require the dedicated operator capability and current result/task bindings. Ambiguous acknowledgements require an explicit reopen before another correction can be sent. `result_max_chars` is sent only when the backend advertises the strict capability; unsupported legacy backends keep their existing behavior.

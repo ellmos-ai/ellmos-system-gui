@@ -2,33 +2,61 @@
 // src/pages/settings.astro - Einstellungen, Setup, Ocean Modulschaltplan & Installer
 import BachLayout from "../layouts/BachLayout.astro";
 import SystemClusterStatus from "../components/SystemClusterStatus.astro";
+import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
 ---
 
 <BachLayout title="Einstellungen & Setup" currentPath="/settings">
   <div class="settings-container">
     <div class="page-header">
       <div class="header-content">
-        <h1><span class="icon">⚙️</span> Einstellungen & System-Setup</h1>
-        <p class="subtitle">Systemkonfiguration, Backend-Installer, Ocean Modulschaltplan & Autonomes Lernen</p>
-      </div>
-      <div class="header-actions">
-        <span class="badge">Modulstatus ungeprüft</span>
-        <button class="btn btn-secondary" onclick="loadOceanMap()">🔄 Aktualisieren</button>
+        <h1><span class="icon">⚙️</span> Einstellungen</h1>
+        <p class="subtitle">Verbindung, Gerät, Darstellung und Regeln für die tägliche Arbeit</p>
       </div>
     </div>
 
     <!-- Tab Bar -->
-    <div class="tab-bar">
-      <button class="tab-btn active" data-tab="ocean-map">🌊 Ocean Modulschaltplan</button>
-      <button class="tab-btn" data-tab="installer">📦 Installer & Erweiterungen</button>
-      <button class="tab-btn" data-tab="learning">🧠 NemoFold & Hermes (Lernen)</button>
-      <button class="tab-btn" data-tab="appearance">🎨 Darstellung</button>
-      <button class="tab-btn" data-tab="core">⚙️ Core & Repo-Klärung</button>
+    <div class="tab-bar" role="tablist" aria-label="Einstellungsbereiche">
+      <button class="tab-btn active" data-tab="connections" id="settings-tab-connections" type="button" role="tab" aria-controls="pane-connections" aria-selected="true" tabindex="0">🔗 Verbindungen & Gerät</button>
+      <button class="tab-btn" data-tab="appearance" id="settings-tab-appearance" type="button" role="tab" aria-controls="pane-appearance" aria-selected="false" tabindex="-1">🎨 Darstellung</button>
+      <button class="tab-btn" data-tab="worker-policy" id="settings-tab-worker-policy" type="button" role="tab" aria-controls="pane-worker-policy" aria-selected="false" tabindex="-1">🧭 Worker & Aufgaben</button>
+      <button class="tab-btn" data-tab="ocean-map" id="settings-tab-ocean-map" type="button" role="tab" aria-controls="pane-ocean-map" aria-selected="false" tabindex="-1">🌊 Ocean Modulschaltplan</button>
+      <button class="tab-btn" data-tab="installer" id="settings-tab-installer" type="button" role="tab" aria-controls="pane-installer" aria-selected="false" tabindex="-1">📦 Installer & Erweiterungen</button>
+      <button class="tab-btn" data-tab="learning" id="settings-tab-learning" type="button" role="tab" aria-controls="pane-learning" aria-selected="false" tabindex="-1">🧠 NemoFold & Hermes (Lernen)</button>
+      <button class="tab-btn" data-tab="core" id="settings-tab-core" type="button" role="tab" aria-controls="pane-core" aria-selected="false" tabindex="-1">⚙️ Core & Repo-Klärung</button>
+    </div>
+
+    <div class="tab-pane active" id="pane-connections" role="tabpanel" aria-labelledby="settings-tab-connections" tabindex="0">
+      <div class="card-grid">
+        <div class="glass-card">
+          <h2>Ausführendes Backend</h2>
+          <p class="card-desc">Hier wird geprüft, welche Instanz die Daten für diese Oberfläche bereitstellt.</p>
+          <p id="backend-origin-status" role="status" aria-live="polite">Backend-Herkunft noch nicht geprüft</p>
+          <p id="backend-instance-status">Instanz noch nicht bestätigt</p>
+          <p id="backend-observed-status" class="text-muted">Noch kein Prüfzeitpunkt</p>
+          <button id="backend-origin-refresh" class="btn btn-secondary" type="button">Verbindung erneut prüfen</button>
+          <p class="card-desc">Der Verbindungsbeleg bestätigt keine laufenden Agenten oder geladenen Modelle. Diese Zustände stehen unter <a href="/agenten/running">Running & Ressourcen</a>.</p>
+        </div>
+        <div class="glass-card">
+          <h2>Dieses Gerät und diese Oberfläche</h2>
+          <p id="settings-ui-origin">Adresse der Oberfläche wird gelesen…</p>
+          <p class="card-desc">Diese Adresse gehört zur Ansicht in deinem Browser. Bei einem Tunnel kann sie lokal sein, während das Backend auf einem anderen Rechner arbeitet.</p>
+          <a class="btn btn-secondary" href="/token-dashboard">Geräteanmeldung verwalten</a>
+          <p class="card-desc">Anmeldung, Betriebssystemberechtigungen und Sandbox sind getrennte Freigaben. Betriebssystemzugriffe sind hier nicht geprüft.</p>
+        </div>
+      </div>
+      <div class="glass-card">
+        <h2>Weitere Einstellungen</h2>
+        <p class="card-desc">Farbschema unter „Darstellung“, Aufgabenauswahl und Abschlussregeln unter „Worker & Aufgaben“. Architektur, Erweiterungen und Lernansichten bleiben in den weiteren Bereichen erreichbar.</p>
+      </div>
     </div>
 
     <!-- TAB 1: OCEAN MODULSCHALTPLAN -->
-    <div class="tab-pane active" id="pane-ocean-map">
+    <div class="tab-pane" id="pane-ocean-map" role="tabpanel" aria-labelledby="settings-tab-ocean-map" tabindex="0" hidden>
       <p class="text-muted">Systemaufbau · <a href="/skills/ocean">Ocean-Module und Quellen durchsuchen ↗</a></p>
+      <div class="header-actions">
+        <span class="badge">Modulstatus ungeprüft</span>
+        <button class="btn btn-secondary" type="button" onclick="loadOceanMap()">Modulschaltplan aktualisieren</button>
+      </div>
       <div class="glass-card">
         <h3><span class="icon">🌊</span> Ocean Architektur- & Modulschaltplan</h3>
         <p class="card-desc">Visuelle Topologie der Kernsysteme aus <code>ellmos-ai</code> (Trithon, Muschelgrund, Salt & Subsysteme)</p>
@@ -40,7 +68,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
     </div>
 
     <!-- TAB 2: INSTALLER & ERWEITERUNGEN -->
-    <div class="tab-pane" id="pane-installer">
+    <div class="tab-pane" id="pane-installer" role="tabpanel" aria-labelledby="settings-tab-installer" tabindex="0" hidden>
       <div class="card-grid">
         <div class="glass-card">
           <h3><span class="icon">📦</span> Backend-Installer</h3>
@@ -88,7 +116,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
     </div>
 
     <!-- TAB 3: NEMOFOLD & HERMES (LERNEN) -->
-    <div class="tab-pane" id="pane-learning">
+    <div class="tab-pane" id="pane-learning" role="tabpanel" aria-labelledby="settings-tab-learning" tabindex="0" hidden>
       <div class="card-grid">
         <div class="glass-card">
           <div class="learning-header">
@@ -219,7 +247,7 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
     </div>
 
     <!-- DARSTELLUNG: bestehender ThemeHandler mit Speicher-Readback -->
-    <div class="tab-pane" id="pane-appearance">
+    <div class="tab-pane" id="pane-appearance" role="tabpanel" aria-labelledby="settings-tab-appearance" tabindex="0" hidden>
       <div class="card-grid">
         <div class="glass-card">
           <h3>🎨 Darstellung</h3>
@@ -238,17 +266,16 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
           <p id="theme-status" role="status" aria-live="polite">Theme noch nicht geprüft</p>
           <p class="card-desc">Benutzerfarben werden im Backend gespeichert. Die benutzerdefinierte Palette wird derzeit nicht auf jeder Seite vollständig angewendet.</p>
         </div>
-        <div class="glass-card">
-          <h3>🔗 Backend-Verbindung</h3>
-          <p id="backend-origin-status" role="status">Backend-Herkunft noch nicht geprüft</p>
-          <button id="backend-origin-refresh" class="btn btn-secondary" type="button">Erneut prüfen</button>
-          <p class="card-desc">Eine erfolgreiche Datenbankverbindung belegt keine Modulinstallation oder aktive Agenten.</p>
-        </div>
       </div>
     </div>
 
+    <div class="tab-pane" id="pane-worker-policy" role="tabpanel" aria-labelledby="settings-tab-worker-policy" tabindex="0" hidden>
+      <p class="text-muted">Abschlussmodi, Reviewer, Task-Auswahl und Review-Verfall. Hochsicherheit kann Läufe anhalten; ausgewogener Modus erlaubt unabhängige Weiterarbeit. GitHub-Aufgaben können ihre externe PR-Prüfung nutzen. Änderungen bleiben deaktiviert, solange das verbundene Backend keine versionierte Policy bestätigt.</p>
+      <WorkerPolicySettings />
+    </div>
+
     <!-- TAB 5: CORE & REPO-KLÄRUNG -->
-    <div class="tab-pane" id="pane-core">
+    <div class="tab-pane" id="pane-core" role="tabpanel" aria-labelledby="settings-tab-core" tabindex="0" hidden>
       <div class="card-grid">
         <SystemClusterStatus />
 
@@ -282,6 +309,11 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+  }
+  .settings-container a:not(.btn) {
+    color: var(--accent-text);
+    text-decoration: underline;
+    text-underline-offset: .15em;
   }
   .page-header {
     display: flex;
@@ -335,6 +367,8 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
     flex-direction: column;
     gap: 1.25rem;
   }
+  .tab-pane[hidden] { display: none; }
+  .tab-btn:focus-visible, .tab-pane:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
   .tab-pane.active {
     display: flex;
   }
@@ -491,21 +525,6 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
 </style>
 
 <script is:inline>
-  function setupTabs() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabPanes = document.querySelectorAll('.tab-pane');
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tab = btn.getAttribute('data-tab');
-        tabButtons.forEach(b => b.classList.remove('active'));
-        tabPanes.forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        const target = document.getElementById('pane-' + tab);
-        if (target) target.classList.add('active');
-      });
-    });
-  }
-
   async function loadOceanMap() {
     const grid = document.getElementById('ocean-components-grid');
     if (!grid) return;
@@ -605,23 +624,6 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
       status.textContent = 'Theme nicht gespeichert: ' + error.message;
     } finally {
       save.disabled = false;
-    }
-  }
-
-  async function loadBackendOrigin() {
-    const status = document.getElementById('backend-origin-status');
-    status.textContent = 'Prüfe Backend-Herkunft…';
-    try {
-      const response = await fetch('/api/gui/backend-origin', { cache: 'no-store' });
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      const data = await response.json();
-      status.textContent = data.mode === 'server' || data.mode === 'local'
-        ? 'BACH-Datenquelle bestätigt · Modus: ' + data.mode
-        : data.connection_verified && data.schema_verified
-          ? 'Datenbankverbindung bestätigt · Instanzzuordnung unbekannt'
-          : 'Backend-Herkunft nicht bestätigt';
-    } catch (error) {
-      status.textContent = 'Backend-Herkunft nicht verfügbar: ' + error.message;
     }
   }
 
@@ -802,14 +804,47 @@ import SystemClusterStatus from "../components/SystemClusterStatus.astro";
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    setupTabs();
     loadOceanMap();
     loadTheme();
-    loadBackendOrigin();
     loadNemoFoldStats();
     loadNemoFoldCandidates();
     loadExternalArtifacts();
     document.getElementById('theme-save').addEventListener('click', saveTheme);
-    document.getElementById('backend-origin-refresh').addEventListener('click', loadBackendOrigin);
+  });
+</script>
+
+<script>
+  import { describeBackendOrigin, setupSettingsTabs } from '../lib/settings-connections.mjs';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setupSettingsTabs(document, window);
+    document.getElementById('settings-ui-origin').textContent = 'Adresse der Oberfläche: ' + window.location.origin;
+    const status = document.getElementById('backend-origin-status');
+    const instance = document.getElementById('backend-instance-status');
+    const observed = document.getElementById('backend-observed-status');
+    const refresh = document.getElementById('backend-origin-refresh');
+    async function loadBackendOrigin() {
+      refresh.disabled = true;
+      status.textContent = 'Prüfe Backend-Herkunft…';
+      instance.textContent = 'Instanz noch nicht bestätigt';
+      observed.textContent = 'Noch kein Prüfzeitpunkt';
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      try {
+        const response = await fetch('/api/gui/backend-origin', { cache: 'no-store', signal: controller.signal });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const state = describeBackendOrigin(await response.json());
+        status.textContent = state.summary;
+        instance.textContent = state.instance;
+        observed.textContent = state.observed;
+      } catch (_) {
+        status.textContent = 'Backend-Herkunft nicht verfügbar. Verbindung prüfen und erneut versuchen.';
+      } finally {
+        clearTimeout(timeout);
+        refresh.disabled = false;
+      }
+    }
+    refresh.addEventListener('click', loadBackendOrigin);
+    loadBackendOrigin();
   });
 </script>

@@ -1,13 +1,14 @@
 {
   "name": "ellmos-system-gui",
   "type": "module",
-  "version": "0.2.23",
+  "version": "0.2.28",
   "private": true,
   "scripts": {
     "dev": "astro dev --port 4321",
     "start": "astro dev",
     "build": "astro build",
     "build:release": "node scripts/release-manifest.mjs --prepare-source && astro build && node scripts/release-manifest.mjs",
+    "assets:agent-thumbnails": "node scripts/generate-agent-avatar-thumbnails.mjs",
     "preview": "astro preview",
     "test": "node --test tests/*.test.mjs"
   },
@@ -21,6 +22,7 @@
     }
   },
   "devDependencies": {
+    "sharp": "0.35.5",
     "playwright-core": "1.64.1"
   }
 }
