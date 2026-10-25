@@ -24,12 +24,23 @@ const MAX_LISTED = 20;
 
 // Page paths of the manifest, in manifest order.
 export function loadPageList(manifest) {
-  if (manifest?.schema !== MANIFEST_SCHEMA || typeof manifest.pages !== 'object' || manifest.pages === null)
+  if (manifest?.schema !== MANIFEST_SCHEMA || typeof manifest.pages !== 'object' || manifest.pages === null || Array.isArray(manifest.pages))
     throw new Error(`page list: expected schema ${MANIFEST_SCHEMA} with a pages object`);
   return Object.keys(manifest.pages).map(path => {
     if (!path.startsWith('/')) throw new Error(`page list: path must start with "/": ${path}`);
     return {path, slug: slugFor(path)};
   });
+}
+
+export function selectPages(list, only) {
+  if (list.length === 0) throw new Error('page list: no pages to visit');
+  if (only === undefined) return list;
+  if (!Array.isArray(only) || only.length === 0) throw new Error('--only must select at least one known page');
+  const known = new Set(list.map(page => page.path));
+  for (const path of only)
+    if (!known.has(path)) throw new Error(`--only contains an unknown page: ${path}`);
+  const selected = new Set(only);
+  return list.filter(page => selected.has(page.path));
 }
 
 export const slugFor = path => (path === '/' ? 'index' : path.replace(/^\/+|\/+$/g, '').replace(/\//g, '_'));
@@ -63,13 +74,28 @@ export function summarize(pages, links, base) {
       if (target !== from && linkedFrom.has(target)) linkedFrom.get(target).add(from);
     }
   const count = key => pages.reduce((n, p) => n + p.variants.reduce((m, v) => m + (v[key]?.length ?? 0), 0), 0);
-  const httpErrors = pages.filter(p => p.status === null || p.status >= 400).map(p => p.path);
+  const badStatus = status => !Number.isInteger(status) || status < 200 || status >= 400;
+  const httpErrors = pages.filter(p => badStatus(p.status) || p.variants.some(v => badStatus(v.status))).map(p => p.path);
+  const variantErrors = [];
+  const expected = new Set(VARIANTS.map(v => v.name));
+  for (const page of pages) {
+    for (const name of expected) {
+      const matches = page.variants.filter(v => v.variant === name);
+      if (matches.length !== 1) variantErrors.push({path: page.path, variant: name, reason: matches.length ? 'duplicate variant' : 'missing variant'});
+    }
+    for (const variant of page.variants) {
+      if (!expected.has(variant.variant)) variantErrors.push({path: page.path, variant: variant.variant, reason: 'unknown variant'});
+      if (variant.error) variantErrors.push({path: page.path, variant: variant.variant, reason: variant.error});
+      if (!variant.screenshot) variantErrors.push({path: page.path, variant: variant.variant, reason: 'missing screenshot'});
+    }
+  }
   const deadLinks = links.filter(l => l.error || l.status === null || l.status >= 400).map(l => ({url: l.url, status: l.status, foundOn: l.foundOn}));
   const unlisted = [...new Set(links.filter(l => l.url.startsWith(origin) && !l.url.startsWith(origin + '/api/'))
     .map(l => normalizePagePath(new URL(l.url).pathname)).filter(p => !known.has(p)))].sort();
   const summary = {
     pages: pages.length,
     httpErrors,
+    variantErrors,
     consoleErrors: count('consoleErrors'),
     pageErrors: count('pageErrors'),
     backendErrors: count('backendErrors'),
@@ -79,7 +105,7 @@ export function summarize(pages, links, base) {
     horizontalOverflow: pages.flatMap(p => p.variants.filter(v => v.horizontalOverflow).map(v => `${p.path} (${v.variant})`)),
     screenshots: pages.reduce((n, p) => n + p.variants.filter(v => v.screenshot).length, 0)
   };
-  summary.ok = summary.httpErrors.length + summary.consoleErrors + summary.pageErrors + summary.deadLinks.length === 0;
+  summary.ok = summary.pages > 0 && summary.variantErrors.length + summary.httpErrors.length + summary.consoleErrors + summary.pageErrors + summary.deadLinks.length === 0;
   return summary;
 }
 
@@ -119,8 +145,7 @@ async function visit(context, base, page, variant, outDir, harvest) {
 
 export async function walkthrough({base, outRoot, only, manifestPath}) {
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-  let list = loadPageList(manifest);
-  if (only?.length) list = list.filter(p => only.includes(p.path));
+  const list = selectPages(loadPageList(manifest), only);
   const {chromium} = await import('playwright-core');
   const outDir = join(outRoot, stamp());
   mkdirSync(join(outDir, 'screenshots'), {recursive: true});
@@ -189,6 +214,9 @@ if (isMain) {
   line('report', join(outDir, 'report.json'));
   line('pages', summary.pages);
   line('http errors', summary.httpErrors.length ? summary.httpErrors.join(', ') : 0);
+  line('variant errors', summary.variantErrors.length);
+  for (const error of summary.variantErrors.slice(0, MAX_LISTED))
+    console.log(`  ${error.path} (${error.variant}): ${error.reason}`);
   line('console errors', summary.consoleErrors);
   line('page errors', summary.pageErrors);
   line('backend errors (/api)', summary.backendErrors);

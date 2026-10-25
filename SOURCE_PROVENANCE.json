@@ -1451,6 +1451,21 @@
           "sha256": "0a74bd09e6c00aafe89ec198f2e735321d511673f43263f5208532164988cfea"
         }
       }
+    },
+    {
+      "task_id": 2496,
+      "parent_commit": "3105824f649ad4e8f6a626d8447258571ce63fc3",
+      "purpose": "Fail incomplete walkthrough matrices, failed visits, missing screenshots and invalid or empty page selections",
+      "files": {
+        "scripts/gui-walkthrough.mjs": {
+          "previous_sha256": "64f722a1ad68d1aee28bd70ef692961948adeea50d3f9b1f749a95246bb79f08",
+          "sha256": "06d47f4418af2150e28dc3d0fba6e71acfd7e8863c365e91ed7bfaad24a6c2c6"
+        },
+        "tests/gui-walkthrough.test.mjs": {
+          "previous_sha256": "0a74bd09e6c00aafe89ec198f2e735321d511673f43263f5208532164988cfea",
+          "sha256": "dec864bbcb5509afa75bf3b18c61440988f326915c0c2d1dd085e8ac7a4102d8"
+        }
+      }
     }
   ],
   "readme_banner": {

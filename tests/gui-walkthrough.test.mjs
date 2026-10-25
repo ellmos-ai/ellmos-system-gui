@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import {existsSync, readFileSync, readdirSync, statSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {join, relative, resolve} from 'node:path';
-import {THEME_KEY, VARIANTS, classifyLink, loadPageList, normalizePagePath, slugFor, summarize} from '../scripts/gui-walkthrough.mjs';
+import {THEME_KEY, VARIANTS, classifyLink, loadPageList, normalizePagePath, selectPages, slugFor, summarize} from '../scripts/gui-walkthrough.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const manifest = JSON.parse(readFileSync(resolve(root, 'public', 'page-reads.v1.json'), 'utf8'));
 const BASE = 'http://127.0.0.1:4321';
+const completeVariants = (extra = {}) => VARIANTS.map(v => ({variant: v.name, status: 200, consoleErrors: [], pageErrors: [], backendErrors: [], horizontalOverflow: false, screenshot: `${v.name}.png`, ...extra}));
 
 const astroPages = dir => readdirSync(dir).flatMap(name => {
   const full = join(dir, name);
@@ -26,6 +27,7 @@ test('page list comes from the manifest and covers every Astro page', () => {
 
 test('page list rejects a foreign schema and relative paths', () => {
   assert.throws(() => loadPageList({schema: 'other', pages: {}}), /schema/);
+  assert.throws(() => loadPageList({schema: manifest.schema, pages: []}), /schema/);
   assert.throws(() => loadPageList({schema: manifest.schema, pages: {tasks: []}}), /start with/);
 });
 
@@ -60,7 +62,7 @@ test('each variant sets the stored theme the layout reads, so light and dark sho
 });
 
 test('summary counts errors, dead links, orphans and unlisted targets', () => {
-  const variant = (extra = {}) => ({variant: 'desktop-light', consoleErrors: [], pageErrors: [], backendErrors: [], horizontalOverflow: false, screenshot: 'x.png', ...extra});
+  const variant = (extra = {}) => ({variant: 'desktop-light', status: 200, consoleErrors: [], pageErrors: [], backendErrors: [], horizontalOverflow: false, screenshot: 'x.png', ...extra});
   const pages = [
     {path: '/', status: 200, variants: [variant()]},
     {path: '/tasks', status: 200, variants: [variant({consoleErrors: ['boom'], backendErrors: [{url: `${BASE}/api/tasks`, text: '404'}]})]},
@@ -84,10 +86,37 @@ test('summary counts errors, dead links, orphans and unlisted targets', () => {
 });
 
 test('a clean run is ok; backend errors alone do not fail it', () => {
-  const variant = {variant: 'desktop-light', consoleErrors: [], pageErrors: [], backendErrors: [{url: `${BASE}/api/x`, text: '404'}], horizontalOverflow: false, screenshot: 'x.png'};
-  const pages = [{path: '/', status: 200, variants: [variant]}, {path: '/a', status: 200, variants: [variant]}];
+  const pages = ['/', '/a'].map(path => ({path, status: 200, variants: completeVariants({backendErrors: [{url: `${BASE}/api/x`, text: '404'}]})}));
   const links = [{url: `${BASE}/a`, status: 200, foundOn: ['/']}];
   assert.equal(summarize(pages, links, BASE).ok, true);
+});
+
+test('selection rejects empty manifests and every unknown or empty explicit selection', () => {
+  const pages = [{path: '/'}, {path: '/tasks'}];
+  assert.deepEqual(selectPages(pages), pages);
+  assert.deepEqual(selectPages(pages, ['/tasks', '/tasks']), [pages[1]]);
+  assert.throws(() => selectPages([], undefined), /no pages/);
+  assert.throws(() => selectPages(pages, []), /at least one/);
+  assert.throws(() => selectPages(pages, ['/missing']), /unknown page/);
+  assert.throws(() => selectPages(pages, ['/', '/missing']), /unknown page/);
+});
+
+test('every required variant must finish with a valid response and screenshot', () => {
+  const page = variants => [{path: '/', status: 200, variants}];
+  assert.equal(summarize(page(completeVariants()), [], BASE).ok, true);
+  for (const variant of VARIANTS) {
+    for (const failure of [{status: null}, {status: 503}, {status: undefined}, {screenshot: null}, {error: 'navigation timed out'}]) {
+      const variants = completeVariants().map(v => v.variant === variant.name ? {...v, ...failure} : v);
+      assert.equal(summarize(page(variants), [], BASE).ok, false, `${variant.name}: ${JSON.stringify(failure)}`);
+    }
+  }
+});
+
+test('missing, duplicate, unknown and zero-page results cannot succeed', () => {
+  const page = variants => [{path: '/', status: 200, variants}];
+  for (const variants of [[], completeVariants().slice(0, 2), [...completeVariants(), completeVariants()[0]], [...completeVariants(), {...completeVariants()[0], variant: 'other'}]])
+    assert.equal(summarize(page(variants), [], BASE).ok, false);
+  assert.equal(summarize([], [], BASE).ok, false);
 });
 
 test('the report folder is not tracked', () => {
