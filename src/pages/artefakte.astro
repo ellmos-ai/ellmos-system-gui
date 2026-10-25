@@ -50,6 +50,8 @@ import BachLayout from "../layouts/BachLayout.astro";
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     border-bottom: 1px solid var(--border);
     padding-bottom: 1.25rem;
   }
@@ -68,6 +70,7 @@ import BachLayout from "../layouts/BachLayout.astro";
   }
   .filter-bar {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
   .filter-btn {
@@ -92,7 +95,7 @@ import BachLayout from "../layouts/BachLayout.astro";
   }
   .artefakte-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
     gap: 1.25rem;
   }
   .artefakt-card {
