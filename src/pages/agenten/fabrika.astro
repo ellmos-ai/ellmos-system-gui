@@ -51,6 +51,18 @@ import BachLayout from "../../layouts/BachLayout.astro";
     </aside>
   </main>
 </BachLayout>
+<script is:inline>
+  // Saved links from the former factory keep their editor or team destination; the bare library URL stays here.
+  const old = new URLSearchParams(location.search);
+  const name = old.get("load") || old.get("blueprint");
+  const teams = old.get("tab") === "teams" || old.get("tab") === "teambuilding";
+  if (name || teams) {
+    const target = new URL("/agenten/blueprints", location.origin);
+    if (name) target.searchParams.set("blueprint", name);
+    else target.searchParams.set("tab", "teams");
+    location.replace(target.pathname + target.search);
+  }
+</script>
 
 <style>
   .agent-library{display:grid;gap:1rem;max-width:1120px;margin:0 auto;padding:1rem}

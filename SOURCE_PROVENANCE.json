@@ -258,7 +258,7 @@
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/pages/agenten/blueprints.astro": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
-    "src/pages/agenten/fabrika.astro": "058405476c56ada83dcb75d1169c6c23b710162c0243fa48bf5c016c1f9c6718",
+    "src/pages/agenten/fabrika.astro": "55ed2d6cf16b8066675af532c820ce12edcb25dbf9d5ae4447aa5c5212ede801",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
     "src/pages/agenten/running.astro": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
@@ -295,7 +295,7 @@
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
     "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
     "tests/domain-routes.test.mjs": "bdcc11061fbb9a12f670fe6917c890d722d46b9ba6b8f1f87adbe58b1579d353",
-    "tests/fabrika.test.mjs": "384aa0178c04f67743a817d0cdf8ea1d5ca0c2c33e8b471a7dbd9b6a3d388390",
+    "tests/fabrika.test.mjs": "25c92eb969278125447beafe4307d0be77bf64b82a7ac78fcd84594015c1067e",
     "tests/frontend-parity.test.mjs": "96fc8c758a050f1c87852dfdf26a936739245fcec827f9ad76a23663bfc72bef",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
     "tests/memory-facts.test.mjs": "a7c9724c7e28631f9a661fcde596f81fe5dd93375838259a6cf55244c24f3897",
@@ -562,6 +562,27 @@
           "path": "tests/gui100-regressions.test.mjs",
           "previous_sha256": "919f17d2a81e5d3febe3db4a6758244568a361c39b55a0606a86dba8d2e46dfc",
           "sha256": "036dd6c383c31630f4ce2a9e5e359fc2d18d71645d3c85fbc1f9eb61515c22d5"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
+      "scope": "BACH #2478 follow-up: keep saved factory links working on the library hub",
+      "source_base_commit": "55a98ba0aecfd3d5eb8cd20949897e95ca3b2ce8",
+      "changes": [
+        "Redirect only the former ?load=/?blueprint= editor links and ?tab=teams/teambuilding team links to the Blueprint editor; the bare /agenten/fabrika URL stays on the library.",
+        "Restore the legacy query regression cases next to the library content assertions (multibot review P2 on #104)."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/fabrika.astro",
+          "previous_sha256": "058405476c56ada83dcb75d1169c6c23b710162c0243fa48bf5c016c1f9c6718",
+          "sha256": "55ed2d6cf16b8066675af532c820ce12edcb25dbf9d5ae4447aa5c5212ede801"
+        },
+        {
+          "path": "tests/fabrika.test.mjs",
+          "previous_sha256": "384aa0178c04f67743a817d0cdf8ea1d5ca0c2c33e8b471a7dbd9b6a3d388390",
+          "sha256": "25c92eb969278125447beafe4307d0be77bf64b82a7ac78fcd84594015c1067e"
         }
       ]
     }
