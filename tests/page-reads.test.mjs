@@ -317,6 +317,8 @@ test('fixture: a "/api/..." text in a comment of a module is no read, the same t
 test('a page block that appears twice in the manifest file is found (JSON.parse would hide it)', () => {
   const text = readFileSync(resolve(root, 'public', 'page-reads.v1.json'), 'utf8');
   assert.deepEqual(duplicatePages(text), []);
-  const block = text.match(/\n {2}"\/daemon": \[[\s\S]*?\n {2}\]/)[0];
+  const pageBlock = text.match(/\r?\n([ \t]+)"\/daemon": \[[\s\S]*?\r?\n\1\]/);
+  assert.ok(pageBlock, 'the daemon page block must exist regardless of JSON indentation');
+  const block = pageBlock[0];
   assert.deepEqual(duplicatePages(text.replace(block, block + ',' + block)), ['/daemon']);
 });

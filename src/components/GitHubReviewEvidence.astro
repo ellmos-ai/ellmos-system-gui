@@ -1,0 +1,259 @@
+<section class="task-github-review" aria-labelledby="task-github-review-heading">
+  <h4 id="task-github-review-heading">Externe GitHub-Prüfung</h4>
+  <p id="task-github-review-contract-status" role="status" aria-live="polite">Prüfvertrag wird geladen.</p>
+  <dl id="task-github-review-contract" class="task-github-review-details" hidden>
+    <div><dt>Gebundener Pull Request</dt><dd id="task-github-review-pr"></dd></div>
+    <div><dt>Erforderliche Freigaben</dt><dd id="task-github-review-min-approvals"></dd></div>
+    <div><dt>Merge erforderlich</dt><dd id="task-github-review-merge-required"></dd></div>
+    <div><dt>Erforderliche Checks</dt><dd><ul id="task-github-review-required-checks"></ul></dd></div>
+  </dl>
+  <p id="task-github-review-evidence-status" role="status" aria-live="polite"></p>
+  <dl id="task-github-review-evidence" class="task-github-review-details" hidden>
+    <div><dt>Bestätigter Pull Request</dt><dd id="task-github-review-evidence-pr"></dd></div>
+    <div><dt>Bestätigter Head</dt><dd id="task-github-review-head"></dd></div>
+    <div><dt>Freigaben für diesen Head</dt><dd id="task-github-review-approvals"></dd></div>
+    <div><dt>Bestätigte Checks</dt><dd><ul id="task-github-review-evidence-checks"></ul></dd></div>
+  </dl>
+</section>
+
+<script>
+  const reviewHex64 = /^[a-f0-9]{64}$/;
+  const reviewHex40 = /^[a-f0-9]{40}$/;
+  let reviewTask = null;
+  let reviewReadback = null;
+
+  function reviewSetText(id, value) {
+    document.getElementById(id).textContent = value;
+  }
+
+  function reviewSetLink(id, url) {
+    const target = document.getElementById(id);
+    target.replaceChildren();
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = url;
+    target.append(link);
+  }
+
+  function reviewSetList(id, values) {
+    const list = document.getElementById(id);
+    list.replaceChildren();
+    for (const value of values) {
+      const item = document.createElement('li');
+      item.textContent = value;
+      list.append(item);
+    }
+  }
+
+  function reviewContract(task) {
+    const enabled = task?.github_pr_review_required;
+    const raw = task?.github_review_contract_json;
+    const hasContract = raw !== null && raw !== undefined && raw !== '';
+    if (enabled === false || enabled === 0) {
+      return hasContract
+        ? {required:false, contract:null, message:'Prüfgate und Vertragsdaten widersprechen sich; externer Status ist unbestätigt.'}
+        : {required:false, contract:null, message:'Für diesen Task ist keine externe GitHub-Prüfung aktiviert.'};
+    }
+    if (enabled !== true && enabled !== 1) {
+      return {required:null, contract:null, message:'Das Backend hat nicht bestätigt, ob eine externe GitHub-Prüfung erforderlich ist.'};
+    }
+    let value = raw;
+    if (typeof value === 'string') {
+      try { value = JSON.parse(value); } catch (_) { value = null; }
+    }
+    const keys = value && typeof value === 'object' && !Array.isArray(value)
+      ? Object.keys(value).sort() : [];
+    const expectedKeys = ['min_approvals','pull_url','require_merged','required_checks','schema'].sort();
+    const checks = value?.required_checks;
+    const valid = keys.length === expectedKeys.length
+      && keys.every((key, index) => key === expectedKeys[index])
+      && value.schema === 'bach.worker-github-review-contract.v1'
+      && typeof value.pull_url === 'string'
+      && /^https:\/\/github\.com\/ellmos-ai\/bach\/pull\/[1-9]\d*$/.test(value.pull_url)
+      && Array.isArray(checks) && checks.length >= 1 && checks.length <= 32
+      && checks.every(name => typeof name === 'string' && name.length > 0
+        && name.length <= 180 && name.trim() === name)
+      && new Set(checks).size === checks.length
+      && Number.isInteger(value.min_approvals) && value.min_approvals >= 1 && value.min_approvals <= 20
+      && typeof value.require_merged === 'boolean';
+    return valid
+      ? {required:true, contract:value, message:'Der native externe Prüfvertrag ist aktiv.'}
+      : {required:true, contract:null, message:'Externe Prüfung ist erforderlich, aber der native Prüfvertrag fehlt oder ist ungültig.'};
+  }
+
+  function reviewReason(reason) {
+    const messages = {
+      github_contract_missing: 'Der externe Prüfvertrag fehlt in der Ergebnisbewertung.',
+      github_contract_invalid: 'Der externe Prüfvertrag ist in der Ergebnisbewertung ungültig.',
+      github_pr_not_current: 'Pull Request, Zielrepository, Status oder Head stimmen nicht mit dem Vertrag überein.',
+      github_merge_required: 'Der Vertrag verlangt einen gemergten Pull Request; das ist nicht bestätigt.',
+      github_merge_requirements_unmet: 'Die externen Freigabe- oder Mergebedingungen sind noch nicht erfüllt.',
+      github_approval_missing: 'Die erforderlichen externen Freigaben für den aktuellen Head fehlen.',
+      github_checks_missing: 'Nicht alle vereinbarten Checks sind für den aktuellen Head erfolgreich.',
+      github_observation_invalid: 'Die externe GitHub-Antwort ist unvollständig oder ungültig.',
+      github_review_invalid: 'Die externe Reviewliste ist unvollständig oder ungültig.',
+      github_observer_unavailable: 'Die externe GitHub-Prüfung konnte nicht sicher gelesen werden.'
+    };
+    return Object.prototype.hasOwnProperty.call(messages, reason)
+      ? messages[reason] : 'Der externe Prüfnachweis ist nicht bestätigt.';
+  }
+
+  function reviewCurrentEvaluation(task, readback) {
+    const result = readback?.result;
+    const evaluation = readback?.completion_evaluation;
+    const taskIdValid = Number.isSafeInteger(task?.id) && task.id > 0;
+    const resultIdValid = Number.isSafeInteger(result?.result_id) && result.result_id > 0;
+    const current = Boolean(taskIdValid && result && evaluation && resultIdValid
+      && readback.schema === 'bach.task-result-readback.v1'
+      && readback.verified === true
+      && readback.task_id === task.id
+      && readback.task_version === task.task_version
+      && result.schema === 'bach.worker-result.v1'
+      && result.task_id === task.id
+      && Number.isSafeInteger(evaluation.task_id) && evaluation.task_id > 0
+      && evaluation.task_id === task.id
+      && Number.isSafeInteger(evaluation.result_id) && evaluation.result_id > 0
+      && evaluation.result_id === result.result_id
+      && result.result_revision === evaluation.result_revision
+      && reviewHex64.test(result.result_revision || '')
+      && result.result_sha256 === evaluation.result_sha256
+      && reviewHex64.test(evaluation.result_sha256 || '')
+      && result.task_version === task.task_version
+      && evaluation.schema === 'bach.worker-completion-evaluation.v1'
+      && evaluation.availability === 'available'
+      && evaluation.task_version === task.task_version
+      && evaluation.status === readback.status
+      && Number.isSafeInteger(readback.status_revision)
+      && evaluation.status_revision === readback.status_revision
+      && reviewHex64.test(evaluation.result_revision || ''));
+    return current ? evaluation : null;
+  }
+
+  function renderReviewEvidence(contractState) {
+    const evidence = document.getElementById('task-github-review-evidence');
+    evidence.hidden = true;
+    if (contractState.required === false) {
+      reviewSetText('task-github-review-evidence-status', contractState.message);
+      return;
+    }
+    if (contractState.required !== true) {
+      reviewSetText('task-github-review-evidence-status', contractState.message);
+      return;
+    }
+    if (!contractState.contract) {
+      reviewSetText('task-github-review-evidence-status', 'Externe GitHub-Freigabe nicht bestätigt, weil kein gültiger Vertrag vorliegt.');
+      return;
+    }
+    if (!reviewReadback) {
+      reviewSetText('task-github-review-evidence-status', 'Noch kein aktueller Ergebnisnachweis für PR und Head geladen.');
+      return;
+    }
+    if (reviewReadback.result == null) {
+      reviewSetText('task-github-review-evidence-status', 'Für diese TaskVersion liegt noch kein Ergebnis mit gebundenem PR-Head vor.');
+      return;
+    }
+    const evaluation = reviewReadback.completion_evaluation;
+    if (!evaluation || evaluation.schema !== 'bach.worker-completion-evaluation.v1'
+        || !Number.isSafeInteger(reviewTask?.id) || reviewTask.id <= 0
+        || !Number.isSafeInteger(evaluation.task_id) || evaluation.task_id <= 0
+        || evaluation.task_id !== reviewTask.id
+        || !Number.isSafeInteger(reviewReadback.result?.result_id) || reviewReadback.result.result_id <= 0
+        || evaluation.result_id !== reviewReadback.result.result_id) {
+      reviewSetText('task-github-review-evidence-status', 'Die externe Ergebnisbewertung passt nicht zu diesem Task und Ergebnis; Freigabe unbestätigt.');
+      return;
+    }
+    if (evaluation.availability !== 'available') {
+      reviewSetText('task-github-review-evidence-status', reviewReason(evaluation.reason));
+      return;
+    }
+    const current = reviewCurrentEvaluation(reviewTask, reviewReadback);
+    if (!current || current.github_pr_review_required !== true) {
+      reviewSetText('task-github-review-evidence-status', 'Die externe Ergebnisbewertung ist veraltet oder ihre Prüfpflicht stimmt nicht mit dem Taskvertrag überein.');
+      return;
+    }
+    const github = current.github;
+    if (!github || typeof github !== 'object') {
+      reviewSetText('task-github-review-evidence-status', 'Das Backend hat keinen externen GitHub-Prüfnachweis geliefert.');
+      return;
+    }
+    if (github.availability !== 'available' || !['verified','rejected'].includes(github.status)) {
+      reviewSetText('task-github-review-evidence-status', reviewReason(github.reason));
+      return;
+    }
+    const evidenceMatches = github.task_id === String(reviewTask.id)
+      && github.result_revision === current.result_revision
+      && github.pull_url === contractState.contract.pull_url
+      && reviewHex40.test(github.head_oid || '');
+    if (!evidenceMatches) {
+      reviewSetText('task-github-review-evidence-status', 'Der externe Nachweis ist nicht an diesen Vertrag, Task und Ergebnisstand gebunden.');
+      return;
+    }
+    if (github.status === 'rejected') {
+      reviewSetText('task-github-review-evidence-status', 'Externe GitHub-Prüfung abgelehnt für den gebundenen Pull Request und Head.');
+      return;
+    }
+    const checksMatch = Array.isArray(github.required_checks)
+      && github.required_checks.length === contractState.contract.required_checks.length
+      && github.required_checks.every((name, index) => name === contractState.contract.required_checks[index]);
+    if (!Number.isSafeInteger(github.approved_count)
+        || github.approved_count < contractState.contract.min_approvals || !checksMatch) {
+      reviewSetText('task-github-review-evidence-status', 'Der externe Prüfnachweis erfüllt die konkret vereinbarten Freigaben oder Checks nicht.');
+      return;
+    }
+    reviewSetLink('task-github-review-evidence-pr', github.pull_url);
+    reviewSetText('task-github-review-head', github.head_oid);
+    reviewSetText('task-github-review-approvals', `${github.approved_count} von mindestens ${contractState.contract.min_approvals}`);
+    reviewSetList('task-github-review-evidence-checks', github.required_checks);
+    evidence.hidden = false;
+    reviewSetText('task-github-review-evidence-status', 'Externe GitHub-Prüfung für den aktuellen Ergebnisstand bestätigt.');
+  }
+
+  function renderGitHubReview() {
+    const contractDetails = document.getElementById('task-github-review-contract');
+    contractDetails.hidden = true;
+    const state = reviewContract(reviewTask);
+    reviewSetText('task-github-review-contract-status', reviewTask
+      ? state.message : 'Taskvertrag wird geladen.');
+    if (state.contract) {
+      reviewSetLink('task-github-review-pr', state.contract.pull_url);
+      reviewSetText('task-github-review-min-approvals', String(state.contract.min_approvals));
+      reviewSetText('task-github-review-merge-required', state.contract.require_merged ? 'Ja' : 'Nein');
+      reviewSetList('task-github-review-required-checks', state.contract.required_checks);
+      contractDetails.hidden = false;
+    }
+    renderReviewEvidence(state);
+  }
+
+  window.addEventListener('bach:task-selected', event => {
+    reviewTask = event.detail?.task || null;
+    reviewReadback = null;
+    renderGitHubReview();
+  });
+
+  window.addEventListener('bach:task-result-readback', event => {
+    reviewReadback = event.detail?.readback || null;
+    renderGitHubReview();
+  });
+
+  window.addEventListener('bach:task-review-context', event => {
+    reviewTask = event.detail?.task || null;
+    reviewReadback = event.detail?.readback || null;
+    renderGitHubReview();
+  });
+
+  renderGitHubReview();
+</script>
+
+<style>
+  .task-github-review { margin: .75rem 0 1rem; padding: .8rem 1rem; border: 1px solid var(--border-color, #d8dee8); border-radius: .65rem; }
+  .task-github-review h4 { margin: 0 0 .4rem; }
+  .task-github-review p { margin: .35rem 0; }
+  .task-github-review-details { display: grid; gap: .45rem; margin: .65rem 0; }
+  .task-github-review-details > div { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(0, 2fr); gap: .5rem; }
+  .task-github-review-details dt { color: var(--text-muted, #64748b); }
+  .task-github-review-details dd { margin: 0; overflow-wrap: anywhere; }
+  .task-github-review-details ul { margin: 0; padding-left: 1.2rem; }
+  @media(max-width:620px) { .task-github-review-details > div { grid-template-columns: minmax(0, 1fr); gap: .1rem; } }
+</style>
