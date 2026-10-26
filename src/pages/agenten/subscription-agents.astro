@@ -2,7 +2,7 @@
 import BachLayout from '../../layouts/BachLayout.astro';
 ---
 <BachLayout title="Prompt-Agenten" currentPath="/agenten/subscription-agents">
-  <main class="subscription-board" aria-labelledby="subscription-title">
+  <section class="subscription-board" aria-labelledby="subscription-title">
     <header class="subscription-header">
       <div>
         <p class="eyebrow">Agenten-Bibliothek · extern</p>
@@ -83,7 +83,7 @@ import BachLayout from '../../layouts/BachLayout.astro';
       <textarea id="subscription-prompt" rows="18" readonly aria-label="Zusammengestellter Prompt"></textarea>
       <p class="muted">„Für Review bereit“ beschreibt nur den Quellenstatus. Es ist kein Client-Readiness-, Launcher-, Governance- oder Laufzeitnachweis. Das Kopieren geschieht ausschließlich nach Klick im Browser.</p>
     </section>
-  </main>
+  </section>
 </BachLayout>
 
 <script>import '../../lib/subscription-agents-client.mjs';</script>
