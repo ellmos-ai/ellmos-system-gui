@@ -10,12 +10,12 @@
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
-    "ellmos-module.v2.json": "88c5e74792e5501e273d379047a1df0e4ef1c2bc2edd7fadb9633e0ccce83c08",
-    "package-lock.json": "9047de306c3746da0c2ddc279bfbbc04917918e2342dcb435c5f8ee63d6615e2",
-    "package.json": "682fcd8d8681efec301a840173f518b5f80431d8c2798d19ca3d1918c9da94f1",
+    "ellmos-module.v2.json": "8253c068982983af1ba561a2a8b168bd4b7a0e52bf07aa8a615310915afa6a23",
+    "package-lock.json": "304f63d4b41a582821a908a98016b183bc928b33497c531d9053122e1b2fab13",
+    "package.json": "f333e62dcf3081ef323672f8808fa2617cc12114e9027423643eae7b22f2af90",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
-    "README.md": "81a919c2e4d5ba215359ed3bc6894047d8ac3dfef93441805e0d530fbb2f973e",
+    "README.md": "a41fa4866cc41d0b025aa6217253bebed35e48a321b131c1bdaeb6fa59c43aa6",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
@@ -257,11 +257,11 @@
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/pages/agenten/blueprints.astro": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
-    "src/pages/agenten/fabrika.astro": "55ed2d6cf16b8066675af532c820ce12edcb25dbf9d5ae4447aa5c5212ede801",
+    "src/pages/agenten/fabrika.astro": "4f21ef8a142b207271365d8ec04b3c93cf8b4f52e56cfb050002a4a6f5122615",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
     "src/pages/agenten/running.astro": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
-    "src/pages/agenten/subscription-agents.astro": "037f8e681f6feeb351c990b73737ddc27420ee28b1c3b5a4abf735a297b4b89d",
+    "src/pages/agenten/subscription-agents.astro": "f01a10b187b601eb605e20bc99bea44776785453ebe36560075d5e00d8dd6b82",
     "src/pages/artefakte.astro": "676f47aa93f79e1fa6c040c6fb05e8a5373bf6c985170234e514587548055a95",
     "src/pages/domains.astro": "a9c41b57fc2d188a8c0b5308a76a37c7eccc9227193cd88594810295f26994b0",
     "src/pages/governance/funk.astro": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
@@ -284,7 +284,7 @@
     "src/scripts/domain-studio.mjs": "d3daf0c27930731f116dc670eaadadead8283cee4e677f61097c4f0a044b249c",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
-    "src/styles/main.css": "e95a97b643f60cec862c3d1d6f28eaaffd1632648422554898a9d6e31de41177",
+    "src/styles/main.css": "111489bb0f7bfd20dac3fb13b5d401e9878e0d5164de55d920cda85edc528579",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
@@ -314,7 +314,7 @@
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/worker-policy-settings.test.mjs": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
-    "tests/gui-shell-navigation.test.mjs": "cb0c04df6830b7118a7f3819b1d55fb4fe76ec8d0ee2a72cd06aaecdfc3a511c",
+    "tests/gui-shell-navigation.test.mjs": "63b99b32ab2afd287c57e7b38d2f8bd96cfeb89bba64c3e417f723284d6c316b",
     "docs/GUI-SHELL-NAVIGATION.md": "7fc84c92860a38fb355e1764f5252e4587e7bc3de489033e4a8583be1aad6f67",
     "scripts/page-reads-bindings.mjs": "f72d84ffeaa3a8b857321aaa2135766d23e21c5db8d513776f4fa1abc29c896a",
     "src/lib/settings-connections.mjs": "1ef6196556c70917058cc243b6f5609468743feb49de219f42d3aec2be960955",
@@ -345,7 +345,7 @@
     "src/pages/inbox.astro": "85dea120a55114d1602027509fd2d9a7c720c5302edb36404baf7968a5a4c63e",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
     "src/pages/maintenance.astro": "a1b17d66db4bcab4c279987582092f59c756bacfddb004c5257912fedc312147",
-    "src/pages/routinen.astro": "2e057844239f82cb2a3d8a866e716856bb97b161b98f2e30407e9e06a8607932",
+    "src/pages/routinen.astro": "70e8133588b368b679f39154a62195cd2f23ba65f769879a8c5582d5d214be3f",
     "src/pages/persoenlich.astro": "f4f26c145c11721776c7e150032ed1d6a0d2d3e3f6172e6f891f821863ebc700",
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/tools.astro": "0e36442d37c4e1fc1a98b4f36fdf71788e46d68c4320e8352559806b0f0961ed",
@@ -782,6 +782,64 @@
           "path": "tests/fabrika.test.mjs",
           "previous_sha256": "384aa0178c04f67743a817d0cdf8ea1d5ca0c2c33e8b471a7dbd9b6a3d388390",
           "sha256": "25c92eb969278125447beafe4307d0be77bf64b82a7ac78fcd84594015c1067e"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-26",
+      "scope": "BACH #2476/#2477/#2478/#2468/#2583: shared GUI 0.2.29 release metadata",
+      "source_base_commit": "c91410553e1046f5de552b6b15ac9a7d8486d7c8",
+      "changes": [
+        "Bump package, lock and module versions to 0.2.29 and describe the already reviewed navigation, agent library, tasks and routines, legacy fallback, Förderplaner link and mobile reflow changes.",
+        "Hide the inactive navigation preset: .nav-preset display:block overrode the hidden attribute, so both presets were visible (fix first shipped in the Mac candidate 0.2.29-rc.2).",
+        "Replace the nested main element in fabrika, routinen and subscription-agents with a labelled section so BachLayout keeps the only main landmark; add source regression tests.",
+        "No dependency pin change; release packaging, consumer activation and product acceptance remain separate."
+      ],
+      "files": [
+        {
+          "path": "package.json",
+          "previous_sha256": "682fcd8d8681efec301a840173f518b5f80431d8c2798d19ca3d1918c9da94f1",
+          "sha256": "f333e62dcf3081ef323672f8808fa2617cc12114e9027423643eae7b22f2af90"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "9047de306c3746da0c2ddc279bfbbc04917918e2342dcb435c5f8ee63d6615e2",
+          "sha256": "304f63d4b41a582821a908a98016b183bc928b33497c531d9053122e1b2fab13"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "88c5e74792e5501e273d379047a1df0e4ef1c2bc2edd7fadb9633e0ccce83c08",
+          "sha256": "8253c068982983af1ba561a2a8b168bd4b7a0e52bf07aa8a615310915afa6a23"
+        },
+        {
+          "path": "README.md",
+          "previous_sha256": "81a919c2e4d5ba215359ed3bc6894047d8ac3dfef93441805e0d530fbb2f973e",
+          "sha256": "a41fa4866cc41d0b025aa6217253bebed35e48a321b131c1bdaeb6fa59c43aa6"
+        },
+        {
+          "path": "src/styles/main.css",
+          "previous_sha256": "e95a97b643f60cec862c3d1d6f28eaaffd1632648422554898a9d6e31de41177",
+          "sha256": "111489bb0f7bfd20dac3fb13b5d401e9878e0d5164de55d920cda85edc528579"
+        },
+        {
+          "path": "src/pages/agenten/fabrika.astro",
+          "previous_sha256": "55ed2d6cf16b8066675af532c820ce12edcb25dbf9d5ae4447aa5c5212ede801",
+          "sha256": "4f21ef8a142b207271365d8ec04b3c93cf8b4f52e56cfb050002a4a6f5122615"
+        },
+        {
+          "path": "src/pages/routinen.astro",
+          "previous_sha256": "2e057844239f82cb2a3d8a866e716856bb97b161b98f2e30407e9e06a8607932",
+          "sha256": "70e8133588b368b679f39154a62195cd2f23ba65f769879a8c5582d5d214be3f"
+        },
+        {
+          "path": "src/pages/agenten/subscription-agents.astro",
+          "previous_sha256": "037f8e681f6feeb351c990b73737ddc27420ee28b1c3b5a4abf735a297b4b89d",
+          "sha256": "f01a10b187b601eb605e20bc99bea44776785453ebe36560075d5e00d8dd6b82"
+        },
+        {
+          "path": "tests/gui-shell-navigation.test.mjs",
+          "previous_sha256": "cb0c04df6830b7118a7f3819b1d55fb4fe76ec8d0ee2a72cd06aaecdfc3a511c",
+          "sha256": "63b99b32ab2afd287c57e7b38d2f8bd96cfeb89bba64c3e417f723284d6c316b"
         }
       ]
     }

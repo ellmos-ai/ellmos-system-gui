@@ -1665,6 +1665,10 @@ body {
     display: block;
 }
 
+.nav-preset[hidden] {
+    display: none;
+}
+
 .nav-preset-summary {
     display: grid;
     gap: 0.1rem;

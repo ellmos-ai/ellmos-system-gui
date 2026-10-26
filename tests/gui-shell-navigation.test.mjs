@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import test from 'node:test';
 
 const header = readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf8');
@@ -255,4 +255,17 @@ test('shell redesign keeps device auth, saved themes, branding and backend-origi
   assert.match(header, /fetch\('\/api\/gui\/brand'/);
   assert.match(header, /fetch\('\/api\/gui\/backend-origin'/);
   assert.match(header, /Backend unbekannt/);
+});
+
+test('the inactive navigation preset stays hidden despite its display rule', () => {
+  const css = readFileSync(new URL('../src/styles/main.css', import.meta.url), 'utf8');
+  assert.match(css, /\.nav-preset\[hidden\]\s*\{\s*display:\s*none;\s*\}/);
+});
+
+test('pages leave the single main landmark to BachLayout', () => {
+  assert.equal((layout.match(/<main\b/g) || []).length, 1);
+  const pages = readdirSync(new URL('../src/pages/', import.meta.url), { recursive: true }).filter((path) => path.endsWith('.astro'));
+  assert.ok(pages.length > 0);
+  for (const path of pages)
+    assert.doesNotMatch(readFileSync(new URL('../src/pages/' + path.replaceAll('\\', '/'), import.meta.url), 'utf8'), /<main\b/, path);
 });
