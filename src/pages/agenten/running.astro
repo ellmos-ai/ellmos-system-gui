@@ -435,7 +435,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     #template-agent-picker pre { max-height:15rem; overflow:auto; font-size:.8rem; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {mountWorkerLeaseCountdown} from '../../lib/worker-lease-countdown.mjs';window.BachAgentOverview=AgentOverview;window.BachWorkerLeaseCountdown=mountWorkerLeaseCountdown(document);</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {mountWorkerLeaseCountdown} from '../../lib/worker-lease-countdown.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';window.BachAgentOverview=AgentOverview;window.BachWorkerLeaseCountdown=mountWorkerLeaseCountdown(document);window.BachProviderRequestStatus=providerRequestStatusText;</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -1197,6 +1197,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           readyGrid.innerHTML = profileWorkers.map(w => {
             const isPaused = w.status === 'paused';
             const state = workerReadiness(w);
+            const providerStatus = window.BachProviderRequestStatus?.(w) || '';
             return `
               <div class="core-agent-card" data-appearance-worker="${escapeHtml(w.id)}" style="display:flex;flex-direction:column;justify-content:space-between;">
                 <div>
@@ -1216,6 +1217,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                   <p style="font-size:0.8rem;color:var(--text);line-height:1.4;">
                     ${escapeHtml(w.current_activity || '')}
                   </p>
+                  ${providerStatus ? '<p class="provider-request-status" aria-label="Status der Provideranfrage" style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">' + escapeHtml(providerStatus) + '</p>' : ''}
                 </div>
 
                 <div class="agent-overview-actions" style="border-top:1px solid var(--border);padding-top:0.75rem;margin-top:0.75rem;display:flex;justify-content:space-between;align-items:center;gap:0.4rem;flex-wrap:wrap;">
@@ -1259,6 +1261,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           runningList.innerHTML = runningWorkers.map(w => {
             const toolRound = Number(w.tool_round) || 0;
             const maxRounds = Number(w.max_tool_rounds ?? 25) === 0 ? 'unbegrenzt' : Number(w.max_tool_rounds ?? 25);
+            const providerStatus = window.BachProviderRequestStatus?.(w) || '';
             return `
               <div class="core-agent-card" data-appearance-worker="${escapeHtml(w.id)}" data-worker-id="${escapeHtml(w.id)}" style="border-color:#38bdf8;background:rgba(56,189,248,0.04);">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
@@ -1273,6 +1276,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                 <p style="font-size:0.8rem;color:var(--text);margin-bottom:0.75rem;">
                   ${escapeHtml(w.current_activity || 'Verarbeitet Aufgabe…')}
                 </p>
+                ${providerStatus ? '<p class="provider-request-status" aria-label="Status der Provideranfrage" style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">' + escapeHtml(providerStatus) + '</p>' : ''}
 
                 <div class="agent-overview-actions" style="display:flex;justify-content:flex-end;gap:0.4rem;border-top:1px solid var(--border);padding-top:0.6rem;">
                   <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
