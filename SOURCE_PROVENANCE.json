@@ -11,7 +11,7 @@
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
     "ellmos-module.v2.json": "8253c068982983af1ba561a2a8b168bd4b7a0e52bf07aa8a615310915afa6a23",
-    "package-lock.json": "304f63d4b41a582821a908a98016b183bc928b33497c531d9053122e1b2fab13",
+    "package-lock.json": "76d26a5f82d75af94404f1888d28fa50baaf6a35c9cfc9db5afa8afe0bc117e4",
     "package.json": "f333e62dcf3081ef323672f8808fa2617cc12114e9027423643eae7b22f2af90",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
@@ -353,7 +353,11 @@
     "tests/tasks-routines.test.mjs": "44bc4991decccb913512493e60c200992debcb79ad637b19f40685c1aef99ceb",
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
     "tests/agent-color.test.mjs": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
-    "tests/theme-contrast.test.mjs": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4"
+    "tests/theme-contrast.test.mjs": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4",
+    "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
+    "tests/dompurify-compatibility.test.mjs": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
+    "tests/fixtures/dompurify-regressions.html": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
+    "tests/run-dompurify-browser.mjs": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -4601,6 +4605,54 @@
           "previous_sha256": "93ba34b109a6b0392785e93e95eafa35bdf855933e58ba959e1999a58ea45e7d",
           "other_parent_sha256": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4",
           "sha256": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-28",
+      "scope": "GUI PR #90: integrate DOMPurify 3.4.17 compatibility patch on current main while preserving source provenance",
+      "source_base_commit": "8e365a429e11ee47e4d68d619ebef2db11569a83",
+      "merged_source_commit": "9c73e49ec582ce882d8dd0728f44ec7b777d2a06",
+      "common_base_commit": "8e365a429e11ee47e4d68d619ebef2db11569a83",
+      "branch_bases": [
+        "8e365a429e11ee47e4d68d619ebef2db11569a83",
+        "e8466a00511e148854b10b2516b8f0d029268f35"
+      ],
+      "changes": [
+        "Resolve Mermaid’s existing DOMPurify range to 3.4.17 while retaining current-main package metadata and unrelated lockfile records.",
+        "Carry the existing synthetic sanitizer regressions and explicit offline browser runner through the current-main three-way merge.",
+        "Preserve the full current-main provenance history and bind the integrated file hashes; this records source integration only, not consumer installation or release."
+      ],
+      "files": [
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "304f63d4b41a582821a908a98016b183bc928b33497c531d9053122e1b2fab13",
+          "other_parent_sha256": "05a7c3f520300d30fe3ff60b403227f26ce23a4d4a129285e17fac19f49cf258",
+          "sha256": "76d26a5f82d75af94404f1888d28fa50baaf6a35c9cfc9db5afa8afe0bc117e4"
+        },
+        {
+          "path": "SECURITY.md",
+          "previous_sha256": "19421bd0936537d39ba60d19d3c84a51d41525197a1ad666947d086b7fa34231",
+          "other_parent_sha256": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
+          "sha256": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43"
+        },
+        {
+          "path": "tests/dompurify-compatibility.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
+          "sha256": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6"
+        },
+        {
+          "path": "tests/fixtures/dompurify-regressions.html",
+          "previous_sha256": null,
+          "other_parent_sha256": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
+          "sha256": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c"
+        },
+        {
+          "path": "tests/run-dompurify-browser.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
+          "sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47"
         }
       ]
     }

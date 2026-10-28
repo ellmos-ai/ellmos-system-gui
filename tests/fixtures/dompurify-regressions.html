@@ -1,0 +1,71 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>DOMPurify compatibility regressions</title>
+<pre id="result">pending</pre>
+<script src="../../node_modules/dompurify/dist/purify.js"></script>
+<script>
+// Isolated, synthetic inputs only. Run with a fresh headless browser profile.
+// These non-default sanitizer configurations do not describe the production app.
+const results = [];
+function check(name, run) {
+  try { run(); results.push({name, passed: true}); }
+  catch (error) { results.push({name, passed: false, error: String(error.message)}); }
+}
+function assert(condition, message) { if (!condition) throw new Error(message); }
+check('default sanitizer removes script and event attributes', () => {
+  const clean = DOMPurify.sanitize('<p onclick="fixture()">ok</p><script>fixture()</' + 'script>');
+  assert(clean === '<p>ok</p>', clean);
+});
+check('SVG diagram and MathML markup remain supported', () => {
+  const clean = DOMPurify.sanitize('<svg><g><text>diagram</text></g></svg><math><mi>x</mi></math>');
+  assert(clean.includes('<svg>') && clean.includes('<text>diagram</text>') && clean.includes('<math>'), clean);
+});
+for (const [name, fragments, delimiter] of [
+  ['dollar', ['$', '{fixture}'], '$' + '{'],
+  ['mustache', ['{', '{fixture', '}', '}'], '{{'],
+  ['erb', ['<', '%fixture%', '>'], '<%'],
+]) {
+  check('split ' + name + ' shadow-root template is scrubbed in-place', () => {
+    const host = document.createElement('div');
+    const shadow = host.attachShadow({mode: 'open'});
+    for (const text of fragments) {
+      shadow.append(document.createTextNode(text), document.createElement('object'));
+    }
+    document.body.append(host);
+    try {
+      DOMPurify.sanitize(host, {IN_PLACE: true, SAFE_FOR_TEMPLATES: true});
+      shadow.normalize();
+      assert(!shadow.textContent.includes(delimiter), shadow.textContent);
+    } finally { host.remove(); }
+  });
+}
+for (const removal of ['self', 'parent', 'sibling']) {
+  check('in-place detached ' + removal + ' has no armed event attributes', () => {
+    const purifier = DOMPurify(window);
+    const root = document.createElement('div');
+    root.innerHTML = '<figure><img class="remove-probe"><img class="event-probe" onerror="void 0"></figure><p>kept</p>';
+    const image = root.querySelector('.event-probe');
+    document.body.append(root);
+    purifier.addHook('afterSanitizeAttributes', node => {
+      if (node.nodeType !== 1 || !node.classList.contains('remove-probe')) return;
+      if (removal === 'self') node.remove();
+      else if (removal === 'parent') node.parentNode.remove();
+      else node.nextElementSibling.remove();
+    });
+    try {
+      purifier.sanitize(root, {IN_PLACE: true});
+      assert(image.getAttribute('onerror') === null, 'detached image retains onerror');
+    } finally { purifier.removeAllHooks(); root.remove(); }
+  });
+}
+check('XHTML SMIL cannot retain an href rewrite attribute', () => {
+  const clean = DOMPurify.sanitize(
+    '<svg xmlns="http://www.w3.org/2000/svg"><a><animate attributeName="href" values="x;javascript:void(0)" /></a></svg>',
+    {PARSER_MEDIA_TYPE: 'application/xhtml+xml', USE_PROFILES: {svg: true},
+      ADD_TAGS: ['animate'], ADD_ATTR: ['attributeName']});
+  assert(!/attributeName=["']href/i.test(clean), clean);
+});
+const receipt = {version: DOMPurify.version, results, passed: results.every(item => item.passed)};
+document.getElementById('result').textContent = JSON.stringify(receipt);
+document.documentElement.dataset.testResult = receipt.passed ? 'passed' : 'failed';
+</script>
