@@ -256,10 +256,10 @@
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
-    "src/pages/agenten/blueprints.astro": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
+    "src/pages/agenten/blueprints.astro": "de8d13bed1297e4b4f0e3d65624b95292ba0534ba24cfaa1c7fcbd2280b88b33",
     "src/pages/agenten/fabrika.astro": "4f21ef8a142b207271365d8ec04b3c93cf8b4f52e56cfb050002a4a6f5122615",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d",
+    "src/pages/agenten/running.astro": "9a7f36ba0dd7ddcf17f32e4ce71db55a4ca930867b61d676dc6335837e345986",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/agenten/subscription-agents.astro": "f01a10b187b601eb605e20bc99bea44776785453ebe36560075d5e00d8dd6b82",
     "src/pages/artefakte.astro": "676f47aa93f79e1fa6c040c6fb05e8a5373bf6c985170234e514587548055a95",
@@ -280,7 +280,7 @@
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/scripts/blueprint-studio.mjs": "dba34c659eaebca94b1f4820cd6fefea40e68f88ebf2414d34d03d8534ad0d70",
+    "src/scripts/blueprint-studio.mjs": "f8cbe49e3397f5e358bc7d269d6cde16a5dcacf36e7cbda7d59fe378130c2c1f",
     "src/scripts/domain-studio.mjs": "d3daf0c27930731f116dc670eaadadead8283cee4e677f61097c4f0a044b249c",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
@@ -350,7 +350,10 @@
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/tools.astro": "0e36442d37c4e1fc1a98b4f36fdf71788e46d68c4320e8352559806b0f0961ed",
     "tests/legacy-route-fallback.test.mjs": "d5c08ba2d492a9856bae6566770a8c7c80602f43492d279b860b7177068d5b5a",
-    "tests/tasks-routines.test.mjs": "44bc4991decccb913512493e60c200992debcb79ad637b19f40685c1aef99ceb"
+    "tests/tasks-routines.test.mjs": "44bc4991decccb913512493e60c200992debcb79ad637b19f40685c1aef99ceb",
+    "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
+    "tests/agent-color.test.mjs": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
+    "tests/theme-contrast.test.mjs": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -4110,6 +4113,48 @@
       }
     },
     {
+      "date": "2026-10-23",
+      "scope": "BACH #2010: optional blueprint colors and explicit instance override",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "changes": [
+        "Persist colors only when the native backend advertises bach.agent-colors.v1; require exact color readback after blueprint save.",
+        "Apply validated color to an additional card accent only; preserve text, background and runtime status. Distinguish blueprint inheritance and explicit instance overrides.",
+        "Migrate the main-worker Running and Blueprint text colors to reviewed theme text tokens and remove their contrast-test exemptions."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+          "sha256": "ed78a8b47063f6201b089512f70b662258ebe474b49a5f1be9e3793aedaf125a"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "sha256": "6e683bad850bfc26aa2fde88f5b5d621e334c63a475bef97e26b1811106e888e"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+          "sha256": "76b074d26bd203294db0ddb59d475f9b3c172ac2b531977b92d70301399511d7"
+        },
+        {
+          "path": "src/scripts/agent-color.mjs",
+          "previous_sha256": null,
+          "sha256": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5"
+        },
+        {
+          "path": "tests/agent-color.test.mjs",
+          "previous_sha256": null,
+          "sha256": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba"
+        },
+        {
+          "path": "tests/theme-contrast.test.mjs",
+          "previous_sha256": "93ba34b109a6b0392785e93e95eafa35bdf855933e58ba959e1999a58ea45e7d",
+          "sha256": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4"
+        }
+      ]
+    },
+    {
       "date": "2026-10-25",
       "scope": "BACH #2469: provenance repair for main-side changes that main did not record",
       "source_base_commit": "b6e335e86793bec9d248d4446da88e3a8841629d",
@@ -4505,6 +4550,59 @@
           "sha256": "dec864bbcb5509afa75bf3b18c61440988f326915c0c2d1dd085e8ac7a4102d8"
         }
       }
+    },
+    {
+      "date": "2026-10-28",
+      "scope": "BACH #2010: integrate optional blueprint colors with current main without losing branch provenance",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "merged_source_commit": "779901b5b56514b233c9963010d5d67008ec5acc",
+      "common_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "branch_bases": [
+        "a5de187db1005b083e2ed4330f61aafc0553ba04",
+        "a42adda6a9fe8d892578db3f7a09f7c1bef653ef"
+      ],
+      "changes": [
+        "Retain the current-main agent overview, queue, revision and error-state behavior while porting the optional color contract into the current render and save paths.",
+        "Preserve the #2010 helper and regression coverage, migrate the remaining Running text colors to theme text tokens, and remove the contrast-test exemptions."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
+          "other_parent_sha256": "ed78a8b47063f6201b089512f70b662258ebe474b49a5f1be9e3793aedaf125a",
+          "sha256": "de8d13bed1297e4b4f0e3d65624b95292ba0534ba24cfaa1c7fcbd2280b88b33"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d",
+          "other_parent_sha256": "6e683bad850bfc26aa2fde88f5b5d621e334c63a475bef97e26b1811106e888e",
+          "sha256": "9a7f36ba0dd7ddcf17f32e4ce71db55a4ca930867b61d676dc6335837e345986"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "dba34c659eaebca94b1f4820cd6fefea40e68f88ebf2414d34d03d8534ad0d70",
+          "other_parent_sha256": "76b074d26bd203294db0ddb59d475f9b3c172ac2b531977b92d70301399511d7",
+          "sha256": "f8cbe49e3397f5e358bc7d269d6cde16a5dcacf36e7cbda7d59fe378130c2c1f"
+        },
+        {
+          "path": "src/scripts/agent-color.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
+          "sha256": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5"
+        },
+        {
+          "path": "tests/agent-color.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
+          "sha256": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba"
+        },
+        {
+          "path": "tests/theme-contrast.test.mjs",
+          "previous_sha256": "93ba34b109a6b0392785e93e95eafa35bdf855933e58ba959e1999a58ea45e7d",
+          "other_parent_sha256": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4",
+          "sha256": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4"
+        }
+      ]
     }
   ],
   "readme_banner": {
