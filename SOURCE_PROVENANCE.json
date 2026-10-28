@@ -14,7 +14,7 @@
     "package-lock.json": "76d26a5f82d75af94404f1888d28fa50baaf6a35c9cfc9db5afa8afe0bc117e4",
     "package.json": "f333e62dcf3081ef323672f8808fa2617cc12114e9027423643eae7b22f2af90",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
+    "public/page-reads.v1.json": "12550a66e5e033d5548fb819a4ba4367e0875110eaaafeb43ec6b0c8ad0f1230",
     "README.md": "a41fa4866cc41d0b025aa6217253bebed35e48a321b131c1bdaeb6fa59c43aa6",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -276,7 +276,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "e6cfdf38f70671bbdafa0bd30ce33f8ed0d03a91402009fc348e873c5d0b8146",
+    "src/pages/tasks.astro": "bc70c8a6f2f86ccaa3cf8a639b9485c6b3474fc87ef044180ab40359abc0f01e",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
@@ -357,7 +357,9 @@
     "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
     "tests/dompurify-compatibility.test.mjs": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
     "tests/fixtures/dompurify-regressions.html": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
-    "tests/run-dompurify-browser.mjs": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47"
+    "tests/run-dompurify-browser.mjs": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
+    "src/lib/task-hindrances.mjs": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10",
+    "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -847,6 +849,40 @@
           "path": "tests/gui-shell-navigation.test.mjs",
           "previous_sha256": "cb0c04df6830b7118a7f3819b1d55fb4fe76ec8d0ee2a72cd06aaecdfc3a511c",
           "sha256": "63b99b32ab2afd287c57e7b38d2f8bd96cfeb89bba64c3e417f723284d6c316b"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "change": "Task2212: current-Main integration of shared task-detail lease and worker-policy observations from GUI PR #93",
+      "source_base_commit": "869da9ad3a68aee02600deb6c981aa7e873707cd",
+      "adapted_reference": {
+        "repository": "ellmos-ai/bach",
+        "commit": "93ad113755015d067dacd80c52452cb9de9a95dd",
+        "path": "system/gui/web/src/lib/task-hindrances.js",
+        "git_blob": "ac432df2e526e81fd7e635e5b104778c56a1c886",
+        "sha256": "0fd805906476b8395feff43f7f7f3b9686913bdf8fb62a6eed7478a0b6248380"
+      },
+      "files": [
+        {
+          "path": "src/lib/task-hindrances.mjs",
+          "previous_sha256": null,
+          "sha256": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "e6cfdf38f70671bbdafa0bd30ce33f8ed0d03a91402009fc348e873c5d0b8146",
+          "sha256": "bc70c8a6f2f86ccaa3cf8a639b9485c6b3474fc87ef044180ab40359abc0f01e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
+          "sha256": "12550a66e5e033d5548fb819a4ba4367e0875110eaaafeb43ec6b0c8ad0f1230"
+        },
+        {
+          "path": "docs/task-hindrances.md",
+          "previous_sha256": null,
+          "sha256": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
         }
       ]
     }
@@ -4653,6 +4689,38 @@
           "previous_sha256": null,
           "other_parent_sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
           "sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "scope": "GUI PR #93: three-way integrate Task2212 observations on current Main while retaining task-result and GitHub review-context behavior",
+      "source_base_commit": "869da9ad3a68aee02600deb6c981aa7e873707cd",
+      "changes": [
+        "Integrate PR #93 Task2212 read-only native lease and worker-policy observations into the current task detail; no admission, worker-state or configuration writes are added.",
+        "Preserve the current Main split detail layout, task result/history flow and resetGitHubReviewContext(id) behavior while adapting the feature to the current call site.",
+        "Rebind the feature and follow-up hashes to the integrated tree; retain the pinned BACH source hash and all prior provenance history."
+      ],
+      "files": [
+        {
+          "path": "src/lib/task-hindrances.mjs",
+          "previous_sha256": null,
+          "sha256": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "e6cfdf38f70671bbdafa0bd30ce33f8ed0d03a91402009fc348e873c5d0b8146",
+          "sha256": "bc70c8a6f2f86ccaa3cf8a639b9485c6b3474fc87ef044180ab40359abc0f01e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
+          "sha256": "12550a66e5e033d5548fb819a4ba4367e0875110eaaafeb43ec6b0c8ad0f1230"
+        },
+        {
+          "path": "docs/task-hindrances.md",
+          "previous_sha256": null,
+          "sha256": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
         }
       ]
     }
