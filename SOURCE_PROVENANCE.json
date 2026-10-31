@@ -259,7 +259,7 @@
     "src/pages/agenten/blueprints.astro": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
     "src/pages/agenten/fabrika.astro": "4f21ef8a142b207271365d8ec04b3c93cf8b4f52e56cfb050002a4a6f5122615",
     "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
-    "src/pages/agenten/running.astro": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d",
+    "src/pages/agenten/running.astro": "41cf5a63159d1d6dd1d0775b6b0506176ecb32080426195209a98089bb2efe72",
     "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
     "src/pages/agenten/subscription-agents.astro": "f01a10b187b601eb605e20bc99bea44776785453ebe36560075d5e00d8dd6b82",
     "src/pages/artefakte.astro": "676f47aa93f79e1fa6c040c6fb05e8a5373bf6c985170234e514587548055a95",
@@ -540,7 +540,7 @@
         {
           "path": "src/pages/agenten/running.astro",
           "previous_sha256": "351b81e2c7cedae78a7497155c5c8a86c9e3c659935d557ae82e1a56ef354b98",
-          "sha256": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d"
+          "sha256": "41cf5a63159d1d6dd1d0775b6b0506176ecb32080426195209a98089bb2efe72"
         },
         {
           "path": "tests/fabrika.test.mjs",
