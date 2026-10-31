@@ -459,7 +459,7 @@
       "scope": "BACH #2476/#2474: dual navigation presets and browser-local style selection",
       "source_base_commit": "a64c96f642c24b8ef84b88518ab36bdc28d570f7",
       "changes": [
-        "Implement the approved Standard bewährt and Ocean-BACH-Klassik navigation templates from the 25.10 walkthrough.",
+        "Implement the approved Standard bew\u00e4hrt and Ocean-BACH-Klassik navigation templates from the 25.10 walkthrough.",
         "Persist the selected navigation preset only in the browser, retain exact route matching and mobile focus behavior, and remove the dashboard Schnellstart block.",
         "Record current file hashes so the navigation change remains traceable without claiming backend or product acceptance."
       ],
@@ -521,10 +521,10 @@
       "scope": "BACH #2478: Living & Running als Agenten-Hauptpunkt, Agenten-Bibliothek und externe Prompt-Agenten",
       "source_base_commit": "8f8d738fa5596d5300e0477b7f698e8498003d69",
       "changes": [
-        "Die Agenten-Bibliothek bündelt Vorlagen, Prompt-Agenten und Ketten; Living & Running bleibt der einzige Hauptpunkt für bestätigte Zustände.",
+        "Die Agenten-Bibliothek b\u00fcndelt Vorlagen, Prompt-Agenten und Ketten; Living & Running bleibt der einzige Hauptpunkt f\u00fcr best\u00e4tigte Zust\u00e4nde.",
         "Prompt-Agenten werden als extern zugeschaltet und von dieser GUI nicht gesteuert ausgewiesen.",
         "Die feste Modellliste und der feste Modell-Fallback in Running wurden entfernt; Team-Modellbindungen bleiben adaptergelieferte IDs oder leer.",
-        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
+        "Die aktuellen Dateihashes wurden f\u00fcr die Nachverfolgbarkeit erg\u00e4nzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
       ],
       "files": [
         {
@@ -556,14 +556,14 @@
     },
     {
       "date": "2026-10-25",
-      "scope": "BACH #2477: kompakter Aufgabenstatus, responsives Aufgaben-Seitenpanel und gemeinsame Liste für Routinen & Jobs",
+      "scope": "BACH #2477: kompakter Aufgabenstatus, responsives Aufgaben-Seitenpanel und gemeinsame Liste f\u00fcr Routinen & Jobs",
       "source_base_commit": "12f57030ff9051af5ae651808c25be21d84b1fed",
       "changes": [
-        "Aufgaben zeigen Status als lokales Statusschild; Blockiert bleibt sichtbar, sperrt aber nicht die gesamte Oberfläche.",
-        "Die Aufgabendetails öffnen sich als responsives Seitenpanel und fallen auf kleinen Ansichten unter die Liste zurück.",
-        "Routinen und Jobs nutzen eine gemeinsame Liste mit Herkunftsfiltern; BACH-, Ocean- und Modul-Adapter werden ausdrücklich als nicht verfügbar markiert.",
-        "Nur persönliche Routinen werden über die vorhandenen API-Routen gelesen und abgeschlossen; fehlende Laufzeitadapter erzeugen keine Schein-Jobs oder Schein-Ausführung.",
-        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
+        "Aufgaben zeigen Status als lokales Statusschild; Blockiert bleibt sichtbar, sperrt aber nicht die gesamte Oberfl\u00e4che.",
+        "Die Aufgabendetails \u00f6ffnen sich als responsives Seitenpanel und fallen auf kleinen Ansichten unter die Liste zur\u00fcck.",
+        "Routinen und Jobs nutzen eine gemeinsame Liste mit Herkunftsfiltern; BACH-, Ocean- und Modul-Adapter werden ausdr\u00fccklich als nicht verf\u00fcgbar markiert.",
+        "Nur pers\u00f6nliche Routinen werden \u00fcber die vorhandenen API-Routen gelesen und abgeschlossen; fehlende Laufzeitadapter erzeugen keine Schein-Jobs oder Schein-Ausf\u00fchrung.",
+        "Die aktuellen Dateihashes wurden f\u00fcr die Nachverfolgbarkeit erg\u00e4nzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
       ],
       "files": [
         {
@@ -605,14 +605,14 @@
     },
     {
       "date": "2026-10-25",
-      "scope": "BACH #2468: sichtbarer Legacy-Routen-Rückfall und Build-Schranke für gemeinsame Navigation",
+      "scope": "BACH #2468: sichtbarer Legacy-Routen-R\u00fcckfall und Build-Schranke f\u00fcr gemeinsame Navigation",
       "source_base_commit": "0ae3cc449f146770376c37b67d53689738444ac7",
       "changes": [
-        "Die gemessenen alten Zielpfade werden in einer gemeinsamen Inventardatei geführt; /routinen bleibt als neue gemeinsame Seite aus #2477 markiert.",
+        "Die gemessenen alten Zielpfade werden in einer gemeinsamen Inventardatei gef\u00fchrt; /routinen bleibt als neue gemeinsame Seite aus #2477 markiert.",
         "Dreizehn verbleibende alte Zielpfade zeigen eine gemeinsame Hinweisseite mit Pfad, Ursache, Evidenzgrenze und Link auf Task #2468; /daemon schaltet den Kettenbereich nur mit ?tab=chains frei.",
-        "Der Build-Guard prüft beide Navigation-Presets, den Header-Schnellzugriff und alle Legacy-Einträge auf gemeinsame Astro-Seite oder sichtbaren Fallback.",
-        "Leere Page-Reads-Einträge halten die Manifestbindung für die statischen, API-freien Fallback-Seiten vollständig.",
-        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer-, Browser- oder Laufzeitnachweis."
+        "Der Build-Guard pr\u00fcft beide Navigation-Presets, den Header-Schnellzugriff und alle Legacy-Eintr\u00e4ge auf gemeinsame Astro-Seite oder sichtbaren Fallback.",
+        "Leere Page-Reads-Eintr\u00e4ge halten die Manifestbindung f\u00fcr die statischen, API-freien Fallback-Seiten vollst\u00e4ndig.",
+        "Die aktuellen Dateihashes wurden f\u00fcr die Nachverfolgbarkeit erg\u00e4nzt; daraus folgt kein Backend-, Consumer-, Browser- oder Laufzeitnachweis."
       ],
       "files": [
         {
@@ -790,7 +790,7 @@
       "scope": "BACH #2476/#2477/#2478/#2468/#2583: shared GUI 0.2.29 release metadata",
       "source_base_commit": "c91410553e1046f5de552b6b15ac9a7d8486d7c8",
       "changes": [
-        "Bump package, lock and module versions to 0.2.29 and describe the already reviewed navigation, agent library, tasks and routines, legacy fallback, Förderplaner link and mobile reflow changes.",
+        "Bump package, lock and module versions to 0.2.29 and describe the already reviewed navigation, agent library, tasks and routines, legacy fallback, F\u00f6rderplaner link and mobile reflow changes.",
         "Hide the inactive navigation preset: .nav-preset display:block overrode the hidden attribute, so both presets were visible (fix first shipped in the Mac candidate 0.2.29-rc.2).",
         "Replace the nested main element in fabrika, routinen and subscription-agents with a labelled section so BachLayout keeps the only main landmark; add source regression tests.",
         "No dependency pin change; release packaging, consumer activation and product acceptance remain separate."
@@ -4334,14 +4334,14 @@
     },
     {
       "date": "2026-10-25",
-      "scope": "BACH #2477: kompakter Aufgabenstatus, responsives Aufgaben-Seitenpanel und gemeinsame Liste für Routinen & Jobs",
+      "scope": "BACH #2477: kompakter Aufgabenstatus, responsives Aufgaben-Seitenpanel und gemeinsame Liste f\u00fcr Routinen & Jobs",
       "source_base_commit": "12f57030ff9051af5ae651808c25be21d84b1fed",
       "changes": [
-        "Aufgaben zeigen Status als lokales Statusschild; Blockiert bleibt sichtbar, sperrt aber nicht die gesamte Oberfläche.",
-        "Die Aufgabendetails öffnen sich als responsives Seitenpanel und fallen auf kleinen Ansichten unter die Liste zurück.",
-        "Routinen und Jobs nutzen eine gemeinsame Liste mit Herkunftsfiltern; BACH-, Ocean- und Modul-Adapter werden ausdrücklich als nicht verfügbar markiert.",
-        "Nur persönliche Routinen werden über die vorhandenen API-Routen gelesen und abgeschlossen; fehlende Laufzeitadapter erzeugen keine Schein-Jobs oder Schein-Ausführung.",
-        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
+        "Aufgaben zeigen Status als lokales Statusschild; Blockiert bleibt sichtbar, sperrt aber nicht die gesamte Oberfl\u00e4che.",
+        "Die Aufgabendetails \u00f6ffnen sich als responsives Seitenpanel und fallen auf kleinen Ansichten unter die Liste zur\u00fcck.",
+        "Routinen und Jobs nutzen eine gemeinsame Liste mit Herkunftsfiltern; BACH-, Ocean- und Modul-Adapter werden ausdr\u00fccklich als nicht verf\u00fcgbar markiert.",
+        "Nur pers\u00f6nliche Routinen werden \u00fcber die vorhandenen API-Routen gelesen und abgeschlossen; fehlende Laufzeitadapter erzeugen keine Schein-Jobs oder Schein-Ausf\u00fchrung.",
+        "Die aktuellen Dateihashes wurden f\u00fcr die Nachverfolgbarkeit erg\u00e4nzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
       ],
       "files": [
         {
@@ -4383,11 +4383,11 @@
     },
     {
       "date": "2026-10-25",
-      "scope": "BACH #2468 follow-up: sichtbarer Legacy-Routen-Rückfall und Navigation-Build-Guard",
+      "scope": "BACH #2468 follow-up: sichtbarer Legacy-Routen-R\u00fcckfall und Navigation-Build-Guard",
       "source_base_commit": "0ae3cc449f146770376c37b67d53689738444ac7",
       "changes": [
         "Die neue Fallback-Inventur, die gemeinsamen Hinweisseiten und der Build-Guard werden als Task-2468-Fortsetzung festgehalten.",
-        "Die statischen Fallback-Seiten erhalten leere Page-Reads-Einträge; alte Laufzeit- und Backendzustände werden nicht behauptet."
+        "Die statischen Fallback-Seiten erhalten leere Page-Reads-Eintr\u00e4ge; alte Laufzeit- und Backendzust\u00e4nde werden nicht behauptet."
       ],
       "files": [
         {

@@ -116,6 +116,10 @@ function registryEntry(entry) {
     sourceState: text(entry.source_state), sourceVerified: entry.source_verified === true,
     sourceSha256: text(entry.source_sha256), enforcementVerified: entry.enforcement_verified === true,
     hasConsumers: Object.prototype.hasOwnProperty.call(entry, 'consumers'),
+    consumers: Array.isArray(entry.consumers) ? entry.consumers.filter(c => typeof c === 'string') : null,
+    appliesToAllAgents: typeof entry.applies_to_all_agents === 'boolean' ? entry.applies_to_all_agents : null,
+    enforcementStatus: text(entry.enforcement_status),
+    valueKind: text(entry.value_kind),
   };
 }
 
@@ -222,4 +226,39 @@ export function parseCapabilities(body) {
   const policy = body.modules['policy-registry'];
   if (policy !== undefined && !isObject(policy)) fail('policy-registry capability');
   return {raw:body, observedAt:text(body.observed_at), kit:body.kit, policy:policy ?? null};
+}
+
+// Task #2134: Polaris star lease status for the decision panel (holder, fence, held, journal_open, last_rebaseline).
+export function parsePolarisStatus(body) {
+  if (!isObject(body)) fail('/polaris');
+  const held = body.held === true;
+  const holder = text(body.holder);
+  const fence = Number.isInteger(body.fence) ? body.fence : text(body.fence);
+  const journalOpen = body.journal_open === true;
+  const lastRebaseline = text(body.last_rebaseline);
+  return {
+    raw: body,
+    held,
+    holder,
+    fence: fence ?? null,
+    journalOpen,
+    lastRebaseline,
+    canCommitDecision: held && !journalOpen,
+    badgeLabel: held
+      ? 'Polaris-Stern gehalten (' + (holder || 'lokal') + (fence !== null && fence !== undefined ? ', Fence ' + fence : '') + ')'
+      : 'Kein Polaris-Stern gehalten (nur Vorschau/Entwurf)',
+  };
+}
+
+export function describePolarisWriteConflict(status, body) {
+  const code = text(body?.code) || text(body?.detail) || text(body?.error);
+  if (status === 409 && (code === 'no_star_held' || code === 'polaris_star_required' || code === 'fence_conflict')) {
+    return {
+      state: 'no_star',
+      badge: '409 Kein Stern',
+      label: 'Schreibzugriff abgelehnt (409 Kein Stern): Vor dem Speichern zuerst den Polaris-Stern anfordern und Rebaseline ausführen.',
+      code,
+    };
+  }
+  return describeFailure(status, body);
 }
