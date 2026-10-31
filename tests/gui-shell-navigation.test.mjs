@@ -269,3 +269,17 @@ test('pages leave the single main landmark to BachLayout', () => {
   for (const path of pages)
     assert.doesNotMatch(readFileSync(new URL('../src/pages/' + path.replaceAll('\\', '/'), import.meta.url), 'utf8'), /<main\b/, path);
 });
+
+test('classic monochrome line symbols are default with optional emoji switcher and top-right quick actions (#2467)', () => {
+  const css = readFileSync(new URL('../src/styles/main.css', import.meta.url), 'utf8');
+  assert.match(layout, /localStorage\.getItem\("bach-ui-icon-style"\)/);
+  assert.match(header, /window\.bachUiIconStyle/);
+  assert.match(header, /localStorage\.getItem\(uiIconStyleKey\)/);
+  assert.match(header, /icon-glyph-line/);
+  assert.match(header, /icon-glyph-emoji/);
+  assert.match(header, /href="\/help"\s+class="quick-action-btn"/);
+  assert.match(settings, /id="ui-icon-style-select"/);
+  assert.match(settings, /Klassische Strichsymbole \(Standard\)/);
+  assert.match(settings, /Bisherige Emoji-Symbole \(Farbig\)/);
+  assert.match(css, /html\[data-ui-icon-style="emoji"\]\s+\.icon-glyph-line\s*\{\s*display:\s*none;\s*\}/);
+});

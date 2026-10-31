@@ -14,7 +14,7 @@
     "package-lock.json": "304f63d4b41a582821a908a98016b183bc928b33497c531d9053122e1b2fab13",
     "package.json": "f333e62dcf3081ef323672f8808fa2617cc12114e9027423643eae7b22f2af90",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
+    "public/page-reads.v1.json": "d1ba46fe31da64fdf94c3f8db7656b80688ae829d3e83b0fe246dda53f253890",
     "README.md": "a41fa4866cc41d0b025aa6217253bebed35e48a321b131c1bdaeb6fa59c43aa6",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -223,7 +223,7 @@
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "1cda4d163d9baf87aac8aa747f4b42c1ec6262044bf8d620ee93215288bea546",
-    "src/components/Header.astro": "244464b7c6de5e7b78544d160a81ae425a1b58afb908a61dbd3230019ea9b31a",
+    "src/components/Header.astro": "a38874a14314512bdfbfc8093a7369d02397607198542f0076de8fab7f118c2b",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
     "src/components/TaskCreateForm.astro": "e8787032cc1d736d450e8ee12a30c0b6f46b5114a5a54e97218864c36cc40824",
@@ -231,7 +231,7 @@
     "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
     "src/components/WorkerPolicySettings.astro": "51bd535eb231b0bbc12b7802cd50daafc3b007b2e3c89b2563fe9df44507bdcd",
     "src/config/nav_config.json": "e9f0b110d3c759c7c18bdb7019ecab3432bebcbe8ba6e76f64a460005b02e7ce",
-    "src/layouts/BachLayout.astro": "bdb4bf46a2f1690e1481c59ac768474fce6f3fb84e83dc8e53a0e25bf8ee1782",
+    "src/layouts/BachLayout.astro": "d6ca0245d14ac1089021f51627f28c16a36114a705d6db0607e56b37c59f53ca",
     "src/lib/agent-avatar-browser.mjs": "02b51e85852532af3549dbecd1b4c1b1bf7bf48eda7340f23523c7597ec44abf",
     "src/lib/agent-avatar-catalog.mjs": "6da91323ab28c22ddbe8555a3f59497c61c1d406bcd692fcd5bfb26643a82fc0",
     "src/lib/agent-avatar.mjs": "963908968e71a4a05f01836dedbe153d1cd62c78f513ce25c4d7dc0f0e72a383",
@@ -271,7 +271,7 @@
     "src/pages/index.astro": "89f5007f8b8612fd270409b8f976c70bc8bb0114217e82992ddd3ee9ac89419b",
     "src/pages/life.astro": "147bdbe39e5176879b495ff6db18648fc150a8132529739437adb37e5c83af0d",
     "src/pages/memory.astro": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c",
-    "src/pages/settings.astro": "360da39f96e3c413e9c812296b76596308f184ce00643a78d89a32760f7ded7d",
+    "src/pages/settings.astro": "36870ec778a5404c8523ae18e267ca84bc098ca2128b47695e23f00af6a0e540",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
@@ -284,7 +284,7 @@
     "src/scripts/domain-studio.mjs": "d3daf0c27930731f116dc670eaadadead8283cee4e677f61097c4f0a044b249c",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
-    "src/styles/main.css": "111489bb0f7bfd20dac3fb13b5d401e9878e0d5164de55d920cda85edc528579",
+    "src/styles/main.css": "c19f7d81890a4f0cd0126635974e9f2c7d1b29eda8b9895717cf035b53dfdb77",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
@@ -314,7 +314,7 @@
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/worker-policy-settings.test.mjs": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
-    "tests/gui-shell-navigation.test.mjs": "63b99b32ab2afd287c57e7b38d2f8bd96cfeb89bba64c3e417f723284d6c316b",
+    "tests/gui-shell-navigation.test.mjs": "e364c57ef900459c7cf789e982afdec9def1b70e41a73c000e3643509ff455e6",
     "docs/GUI-SHELL-NAVIGATION.md": "7fc84c92860a38fb355e1764f5252e4587e7bc3de489033e4a8583be1aad6f67",
     "scripts/page-reads-bindings.mjs": "f72d84ffeaa3a8b857321aaa2135766d23e21c5db8d513776f4fa1abc29c896a",
     "src/lib/settings-connections.mjs": "1ef6196556c70917058cc243b6f5609468743feb49de219f42d3aec2be960955",
@@ -341,7 +341,7 @@
     "src/pages/denkarium.astro": "8488258175615cdafdf292ee3bcc10b5004718a2c6c9d729facc4db77483a5bd",
     "src/pages/financial.astro": "17649d4da4c760da7b96d6970f0a968c385bd029cacbdeda85c391349fca3689",
     "src/pages/gesundheit.astro": "9f95b2292aadeb45287b6edf0ddcdbc7906f9b35b0611bb792fc34128f15047c",
-    "src/pages/help.astro": "82907086a354539ee7789f331f682683f53403739ab7bc598c1ae0d60702d3b2",
+    "src/pages/help.astro": "a885286f36ce2dddf1ba5ac254d22702bda82054bd307498c34a2e10fff829bd",
     "src/pages/inbox.astro": "85dea120a55114d1602027509fd2d9a7c720c5302edb36404baf7968a5a4c63e",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
     "src/pages/maintenance.astro": "a1b17d66db4bcab4c279987582092f59c756bacfddb004c5257912fedc312147",
@@ -459,7 +459,7 @@
       "scope": "BACH #2476/#2474: dual navigation presets and browser-local style selection",
       "source_base_commit": "a64c96f642c24b8ef84b88518ab36bdc28d570f7",
       "changes": [
-        "Implement the approved Standard bew\u00e4hrt and Ocean-BACH-Klassik navigation templates from the 25.10 walkthrough.",
+        "Implement the approved Standard bewährt and Ocean-BACH-Klassik navigation templates from the 25.10 walkthrough.",
         "Persist the selected navigation preset only in the browser, retain exact route matching and mobile focus behavior, and remove the dashboard Schnellstart block.",
         "Record current file hashes so the navigation change remains traceable without claiming backend or product acceptance."
       ],
@@ -521,10 +521,10 @@
       "scope": "BACH #2478: Living & Running als Agenten-Hauptpunkt, Agenten-Bibliothek und externe Prompt-Agenten",
       "source_base_commit": "8f8d738fa5596d5300e0477b7f698e8498003d69",
       "changes": [
-        "Die Agenten-Bibliothek b\u00fcndelt Vorlagen, Prompt-Agenten und Ketten; Living & Running bleibt der einzige Hauptpunkt f\u00fcr best\u00e4tigte Zust\u00e4nde.",
+        "Die Agenten-Bibliothek bündelt Vorlagen, Prompt-Agenten und Ketten; Living & Running bleibt der einzige Hauptpunkt für bestätigte Zustände.",
         "Prompt-Agenten werden als extern zugeschaltet und von dieser GUI nicht gesteuert ausgewiesen.",
         "Die feste Modellliste und der feste Modell-Fallback in Running wurden entfernt; Team-Modellbindungen bleiben adaptergelieferte IDs oder leer.",
-        "Die aktuellen Dateihashes wurden f\u00fcr die Nachverfolgbarkeit erg\u00e4nzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
+        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
       ],
       "files": [
         {
@@ -540,7 +540,7 @@
         {
           "path": "src/pages/agenten/running.astro",
           "previous_sha256": "351b81e2c7cedae78a7497155c5c8a86c9e3c659935d557ae82e1a56ef354b98",
-          "sha256": "41cf5a63159d1d6dd1d0775b6b0506176ecb32080426195209a98089bb2efe72"
+          "sha256": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d"
         },
         {
           "path": "tests/fabrika.test.mjs",
@@ -556,14 +556,14 @@
     },
     {
       "date": "2026-10-25",
-      "scope": "BACH #2477: kompakter Aufgabenstatus, responsives Aufgaben-Seitenpanel und gemeinsame Liste f\u00fcr Routinen & Jobs",
+      "scope": "BACH #2477: kompakter Aufgabenstatus, responsives Aufgaben-Seitenpanel und gemeinsame Liste für Routinen & Jobs",
       "source_base_commit": "12f57030ff9051af5ae651808c25be21d84b1fed",
       "changes": [
-        "Aufgaben zeigen Status als lokales Statusschild; Blockiert bleibt sichtbar, sperrt aber nicht die gesamte Oberfl\u00e4che.",
-        "Die Aufgabendetails \u00f6ffnen sich als responsives Seitenpanel und fallen auf kleinen Ansichten unter die Liste zur\u00fcck.",
-        "Routinen und Jobs nutzen eine gemeinsame Liste mit Herkunftsfiltern; BACH-, Ocean- und Modul-Adapter werden ausdr\u00fccklich als nicht verf\u00fcgbar markiert.",
-        "Nur pers\u00f6nliche Routinen werden \u00fcber die vorhandenen API-Routen gelesen und abgeschlossen; fehlende Laufzeitadapter erzeugen keine Schein-Jobs oder Schein-Ausf\u00fchrung.",
-        "Die aktuellen Dateihashes wurden f\u00fcr die Nachverfolgbarkeit erg\u00e4nzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
+        "Aufgaben zeigen Status als lokales Statusschild; Blockiert bleibt sichtbar, sperrt aber nicht die gesamte Oberfläche.",
+        "Die Aufgabendetails öffnen sich als responsives Seitenpanel und fallen auf kleinen Ansichten unter die Liste zurück.",
+        "Routinen und Jobs nutzen eine gemeinsame Liste mit Herkunftsfiltern; BACH-, Ocean- und Modul-Adapter werden ausdrücklich als nicht verfügbar markiert.",
+        "Nur persönliche Routinen werden über die vorhandenen API-Routen gelesen und abgeschlossen; fehlende Laufzeitadapter erzeugen keine Schein-Jobs oder Schein-Ausführung.",
+        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
       ],
       "files": [
         {
@@ -605,14 +605,14 @@
     },
     {
       "date": "2026-10-25",
-      "scope": "BACH #2468: sichtbarer Legacy-Routen-R\u00fcckfall und Build-Schranke f\u00fcr gemeinsame Navigation",
+      "scope": "BACH #2468: sichtbarer Legacy-Routen-Rückfall und Build-Schranke für gemeinsame Navigation",
       "source_base_commit": "0ae3cc449f146770376c37b67d53689738444ac7",
       "changes": [
-        "Die gemessenen alten Zielpfade werden in einer gemeinsamen Inventardatei gef\u00fchrt; /routinen bleibt als neue gemeinsame Seite aus #2477 markiert.",
+        "Die gemessenen alten Zielpfade werden in einer gemeinsamen Inventardatei geführt; /routinen bleibt als neue gemeinsame Seite aus #2477 markiert.",
         "Dreizehn verbleibende alte Zielpfade zeigen eine gemeinsame Hinweisseite mit Pfad, Ursache, Evidenzgrenze und Link auf Task #2468; /daemon schaltet den Kettenbereich nur mit ?tab=chains frei.",
-        "Der Build-Guard pr\u00fcft beide Navigation-Presets, den Header-Schnellzugriff und alle Legacy-Eintr\u00e4ge auf gemeinsame Astro-Seite oder sichtbaren Fallback.",
-        "Leere Page-Reads-Eintr\u00e4ge halten die Manifestbindung f\u00fcr die statischen, API-freien Fallback-Seiten vollst\u00e4ndig.",
-        "Die aktuellen Dateihashes wurden f\u00fcr die Nachverfolgbarkeit erg\u00e4nzt; daraus folgt kein Backend-, Consumer-, Browser- oder Laufzeitnachweis."
+        "Der Build-Guard prüft beide Navigation-Presets, den Header-Schnellzugriff und alle Legacy-Einträge auf gemeinsame Astro-Seite oder sichtbaren Fallback.",
+        "Leere Page-Reads-Einträge halten die Manifestbindung für die statischen, API-freien Fallback-Seiten vollständig.",
+        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer-, Browser- oder Laufzeitnachweis."
       ],
       "files": [
         {
@@ -790,7 +790,7 @@
       "scope": "BACH #2476/#2477/#2478/#2468/#2583: shared GUI 0.2.29 release metadata",
       "source_base_commit": "c91410553e1046f5de552b6b15ac9a7d8486d7c8",
       "changes": [
-        "Bump package, lock and module versions to 0.2.29 and describe the already reviewed navigation, agent library, tasks and routines, legacy fallback, F\u00f6rderplaner link and mobile reflow changes.",
+        "Bump package, lock and module versions to 0.2.29 and describe the already reviewed navigation, agent library, tasks and routines, legacy fallback, Förderplaner link and mobile reflow changes.",
         "Hide the inactive navigation preset: .nav-preset display:block overrode the hidden attribute, so both presets were visible (fix first shipped in the Mac candidate 0.2.29-rc.2).",
         "Replace the nested main element in fabrika, routinen and subscription-agents with a labelled section so BachLayout keeps the only main landmark; add source regression tests.",
         "No dependency pin change; release packaging, consumer activation and product acceptance remain separate."
@@ -4334,14 +4334,14 @@
     },
     {
       "date": "2026-10-25",
-      "scope": "BACH #2477: kompakter Aufgabenstatus, responsives Aufgaben-Seitenpanel und gemeinsame Liste f\u00fcr Routinen & Jobs",
+      "scope": "BACH #2477: kompakter Aufgabenstatus, responsives Aufgaben-Seitenpanel und gemeinsame Liste für Routinen & Jobs",
       "source_base_commit": "12f57030ff9051af5ae651808c25be21d84b1fed",
       "changes": [
-        "Aufgaben zeigen Status als lokales Statusschild; Blockiert bleibt sichtbar, sperrt aber nicht die gesamte Oberfl\u00e4che.",
-        "Die Aufgabendetails \u00f6ffnen sich als responsives Seitenpanel und fallen auf kleinen Ansichten unter die Liste zur\u00fcck.",
-        "Routinen und Jobs nutzen eine gemeinsame Liste mit Herkunftsfiltern; BACH-, Ocean- und Modul-Adapter werden ausdr\u00fccklich als nicht verf\u00fcgbar markiert.",
-        "Nur pers\u00f6nliche Routinen werden \u00fcber die vorhandenen API-Routen gelesen und abgeschlossen; fehlende Laufzeitadapter erzeugen keine Schein-Jobs oder Schein-Ausf\u00fchrung.",
-        "Die aktuellen Dateihashes wurden f\u00fcr die Nachverfolgbarkeit erg\u00e4nzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
+        "Aufgaben zeigen Status als lokales Statusschild; Blockiert bleibt sichtbar, sperrt aber nicht die gesamte Oberfläche.",
+        "Die Aufgabendetails öffnen sich als responsives Seitenpanel und fallen auf kleinen Ansichten unter die Liste zurück.",
+        "Routinen und Jobs nutzen eine gemeinsame Liste mit Herkunftsfiltern; BACH-, Ocean- und Modul-Adapter werden ausdrücklich als nicht verfügbar markiert.",
+        "Nur persönliche Routinen werden über die vorhandenen API-Routen gelesen und abgeschlossen; fehlende Laufzeitadapter erzeugen keine Schein-Jobs oder Schein-Ausführung.",
+        "Die aktuellen Dateihashes wurden für die Nachverfolgbarkeit ergänzt; daraus folgt kein Backend-, Consumer- oder Laufzeitnachweis."
       ],
       "files": [
         {
@@ -4383,11 +4383,11 @@
     },
     {
       "date": "2026-10-25",
-      "scope": "BACH #2468 follow-up: sichtbarer Legacy-Routen-R\u00fcckfall und Navigation-Build-Guard",
+      "scope": "BACH #2468 follow-up: sichtbarer Legacy-Routen-Rückfall und Navigation-Build-Guard",
       "source_base_commit": "0ae3cc449f146770376c37b67d53689738444ac7",
       "changes": [
         "Die neue Fallback-Inventur, die gemeinsamen Hinweisseiten und der Build-Guard werden als Task-2468-Fortsetzung festgehalten.",
-        "Die statischen Fallback-Seiten erhalten leere Page-Reads-Eintr\u00e4ge; alte Laufzeit- und Backendzust\u00e4nde werden nicht behauptet."
+        "Die statischen Fallback-Seiten erhalten leere Page-Reads-Einträge; alte Laufzeit- und Backendzustände werden nicht behauptet."
       ],
       "files": [
         {
@@ -4505,6 +4505,18 @@
           "sha256": "dec864bbcb5509afa75bf3b18c61440988f326915c0c2d1dd085e8ac7a4102d8"
         }
       }
+    },
+    {
+      "date": "2026-10-31",
+      "scope": "BACH #2467/#2459: classic monochrome icon style switcher and /help manifest projection",
+      "source_base_commit": "a191dac",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
+          "sha256": "d1ba46fe31da64fdf94c3f8db7656b80688ae829d3e83b0fe246dda53f253890"
+        }
+      ]
     }
   ],
   "readme_banner": {

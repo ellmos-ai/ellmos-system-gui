@@ -277,7 +277,15 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
             </select>
             <span id="ui-preset-status" class="badge" role="status" aria-live="polite">Standard bewährt</span>
           </div>
-          <p class="card-desc" style="margin-top:0.65rem;">Beide Stile verwenden dieselben Seiten und Backend-Verträge; nur Gruppierung und Bezeichnungen der Navigation unterscheiden sich.</p>
+          <label for="ui-icon-style-select" style="display:block;margin-top:0.85rem;">Symbolsatz</label>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
+            <select id="ui-icon-style-select" style="padding:0.5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);">
+              <option value="line">Klassische Strichsymbole (Standard)</option>
+              <option value="emoji">Bisherige Emoji-Symbole (Farbig)</option>
+            </select>
+            <span id="ui-icon-style-status" class="badge" role="status" aria-live="polite">Klassische Strichsymbole</span>
+          </div>
+          <p class="card-desc" style="margin-top:0.65rem;">Beide Stile verwenden dieselben Seiten und Backend-Verträge; klassische einfarbige Strichsymbole sind Standard, die bisherigen farbigen Emoji-Symbole bleiben jederzeit wählbar.</p>
         </div>
       </div>
     </div>
@@ -885,5 +893,31 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     });
     window.addEventListener('bach-ui-preset-change', syncUiPresetControls);
     syncUiPresetControls();
+
+    const uiIconStyleSelect = document.getElementById('ui-icon-style-select');
+    const uiIconStyleStatus = document.getElementById('ui-icon-style-status');
+    function currentUiIconStyle() {
+      return window.bachUiIconStyle?.get?.()
+        || (['line', 'emoji'].includes(document.documentElement.dataset.uiIconStyle)
+          ? document.documentElement.dataset.uiIconStyle : 'line');
+    }
+    function syncUiIconStyleControls(event) {
+      const iconStyle = event?.detail?.iconStyle || currentUiIconStyle();
+      if (uiIconStyleSelect) uiIconStyleSelect.value = iconStyle;
+      if (uiIconStyleStatus) {
+        uiIconStyleStatus.textContent = iconStyle === 'emoji' ? 'Bisherige Emoji-Symbole' : 'Klassische Strichsymbole';
+      }
+    }
+    uiIconStyleSelect?.addEventListener('change', () => {
+      const iconStyle = uiIconStyleSelect.value === 'emoji' ? 'emoji' : 'line';
+      if (window.bachUiIconStyle?.set) window.bachUiIconStyle.set(iconStyle);
+      else {
+        localStorage.setItem('bach-ui-icon-style', iconStyle);
+        document.documentElement.dataset.uiIconStyle = iconStyle;
+      }
+      syncUiIconStyleControls({ detail: { iconStyle } });
+    });
+    window.addEventListener('bach-ui-icon-style-change', syncUiIconStyleControls);
+    syncUiIconStyleControls();
   });
 </script>

@@ -30,6 +30,8 @@ const pageTitle = title ? `${title} | System GUI` : "System GUI";
         if (preset === "standard" || preset === "classic") {
           document.documentElement.setAttribute("data-ui-preset", preset);
         }
+        const iconStyle = localStorage.getItem("bach-ui-icon-style");
+        document.documentElement.setAttribute("data-ui-icon-style", iconStyle === "emoji" ? "emoji" : "line");
       })();
     </script>
 
