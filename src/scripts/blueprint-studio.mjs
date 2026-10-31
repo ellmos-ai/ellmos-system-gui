@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 // One editor for the former factory and the real blueprint/controller contracts.
 import {createRevisionDialog} from '../lib/blueprint-revisions.mjs';
+import {applyAgentColor, normalizeAgentColor, colorReadbackMatches} from './agent-color.mjs';
 import {createAvatar,mountAvatarPicker} from '../lib/agent-avatar.mjs';
 import {createSymbol,mountSymbolPicker} from '../lib/ticket-symbol.mjs';
 export const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char =>
@@ -48,7 +49,7 @@ if (typeof document !== "undefined") initializeStudio();
 
 function initializeStudio() {
   const $ = id => document.getElementById(id);
-  const state = {blueprints:[], teams:[], skills:[], tools:[], contracts:[], governance:[], core:null,
+  const state = {colorSupported:false,blueprints:[], teams:[], skills:[], tools:[], contracts:[], governance:[], core:null,
     prompts:null, library:"custom", edit:null, instance:null, instanceVersion:null, instanceConfig:null, promptVersion:null,
     team:null, copy:null, revisionContract:null, avatar:"", symbol:"", modelRequest:0};
   const labels = {agent:"Agent",role:"Rolle",skill:"Skill-Vorlage",workflow:"Workflow-Vorlage",service:"Service-Vorlage",contractus:"Arbeitsvertrag"};
@@ -97,7 +98,7 @@ function initializeStudio() {
       const id=Number(bp.id), slot=bp.instance, canExecute=["agent","role"].includes(bp.kind);
       const image=canExecute?'<span data-portrait-blueprint="'+id+'"></span>':'<span data-symbol-blueprint="'+id+'"></span>';
       const model=slot?.model||bp.contractus?.execution?.model;
-      return '<article class="studio-card"><div class="studio-card-top">'+image+'<span class="studio-state" data-running="'+String(slot?.running===true)+'">'+escapeHtml(blueprintState(bp))+'</span></div>'+
+      return '<article class="studio-card" data-color-blueprint="'+id+'"><div class="studio-card-top">'+image+'<span class="studio-state" data-running="'+String(slot?.running===true)+'">'+escapeHtml(blueprintState(bp))+'</span></div>'+
         '<div><h3>'+escapeHtml(bp.title||bp.name)+'</h3><p>'+escapeHtml(bp.description||bp.persona_role||labels[bp.kind])+'</p></div>'+
         '<div class="studio-card-details"><span>'+escapeHtml(labels[bp.kind]||bp.kind)+'</span><span>· Version '+escapeHtml(bp.version)+'</span>'+(model?'<span>· '+escapeHtml(model)+'</span>':"")+'</div>'+
         '<div class="studio-card-actions"><button class="btn" data-revisions="'+id+'">Versionen</button><button class="btn" data-copy="'+id+'">'+(bp.is_template?"Kopie erstellen":"Duplizieren")+'</button>'+
@@ -107,6 +108,10 @@ function initializeStudio() {
         (slot&&slot.runtime_verified===true&&slot.running===false&&slot.enabled!==false?'<button class="btn btn-primary" data-start="'+id+'">'+startLabel(slot)+'</button>':"")+
         (!bp.is_template&&!slot?'<button class="btn" data-delete="'+id+'">Entfernen</button>':"")+'</div></article>';
     }).join("") || '<div class="studio-empty">'+(query||kind?"Keine passenden Blueprints.":"Noch keine eigenen Blueprints. Lege einen an oder übernimm eine Vorlage.")+'</div>';
+    for (const card of $("studio-grid").querySelectorAll("[data-color-blueprint]")) {
+      const bp = byId(card.dataset.colorBlueprint);
+      applyAgentColor(card, bp.instance || {color:bp.color,color_source:"blueprint"});
+    }
     for(const target of $("studio-grid").querySelectorAll('[data-portrait-blueprint]')) {
       const bp=byId(target.dataset.portraitBlueprint),slot=bp.instance;
       target.replaceChildren(createAvatar(document,slot?.avatar||bp.contractus?.execution?.avatar,slot||bp,atlasUrl,'studio-card-avatar'));
@@ -121,6 +126,7 @@ function initializeStudio() {
     notify("studio-status","Bibliothek wird geladen…");
     const data=await api("/api/agent-studio/blueprints");
     state.blueprints=[...(data.templates||[]),...(data.blueprints||[])];
+    state.colorSupported=data.color_contract==="bach.agent-colors.v1";
     state.revisionContract=data.blueprint_revision_contract;
     const requests=[["teams","/api/agenten/teams","teams"],["skills","/api/capabilities/skills","skills"],
       ["tools","/api/agent-studio/tools","tools"],["contracts","/api/agent-studio/contractus-presets","presets"],
@@ -147,7 +153,7 @@ function initializeStudio() {
       custom_system_prompt:$("bp-system").value,avatar:state.avatar,symbol:state.symbol,
       pause_after:$("bp-pause-basis").value==="none"?0:Number($("bp-pause-after").value),pause_minutes:Number($("bp-pause-minutes").value),pause_basis:$("bp-pause-basis").value==="tasks"?"tasks":"runs"};
     return {name:$("bp-name").value.trim().toLowerCase(),title:$("bp-title").value.trim(),kind:$("bp-kind").value,
-      description:$("bp-description").value,persona_role:$("bp-role").value,persona_prompt:$("bp-persona").value,
+      description:$("bp-description").value,...(state.colorSupported?{color:$("bp-use-color").checked ? normalizeAgentColor($("bp-color").value) : null}:{}),persona_role:$("bp-role").value,persona_prompt:$("bp-persona").value,
       ...(state.copy?{derived_from:{blueprint_id:state.copy.id,version:state.copy.version,sha256:state.copy.content_sha256}}:{}),
        expected_version:state.edit?.version||0,is_template:0,skills:checked("bp-skills"),animus_type:["claude","codex"].includes(execution.backend)?"cli":"api",
       modus:$("bp-modus").value,contractus:{...(previous.contractus||{}),turns:Number($("bp-turns").value),execution},
@@ -166,6 +172,11 @@ function initializeStudio() {
     $("bp-name").value=copy?(bp.name+"-kopie-"+crypto.randomUUID().slice(0,6)):bp.name||"";
     $("bp-title").value=copy?(bp.title||bp.name)+" · Kopie":bp.title||"";
     $("bp-description").value=bp.description||"";choose($("bp-kind"),bp.kind||"agent");
+    $("bp-use-color").checked=!!normalizeAgentColor(bp.color);
+    $("bp-color").value=normalizeAgentColor(bp.color)||"#3b82f6";
+    $("bp-use-color").disabled = !state.colorSupported;
+    $("bp-color").disabled = !state.colorSupported || !$("bp-use-color").checked;
+    $("bp-color-status").textContent=state.colorSupported?"Akzent der Kachel; Status und Text bleiben unabhängig.":"Farbkonfiguration ist an diesem Backend noch nicht verfügbar.";
     renderRoles(bp.persona_role);
     $("bp-persona").value=bp.persona_prompt||state.prompts?.prompts?.["role_"+$("bp-role").value]?.effective||"";
     $("bp-include-system").checked=config.include_system_prompt!==false;
@@ -252,6 +263,7 @@ function initializeStudio() {
   }
   const handle = (id,event,fn,status="studio-status") => $(id).addEventListener(event,async e=>{try{await fn(e);}catch(error){notify(status,error.message,true);}});
   $("bp-pause-basis").addEventListener("change",syncPauseFields);
+  $("bp-use-color").addEventListener("change",()=>{$("bp-color").disabled=!$("bp-use-color").checked;});
   document.querySelectorAll("[data-close]").forEach(button=>button.addEventListener("click",()=>close(button.dataset.close)));
   document.querySelectorAll("[data-library]").forEach(button=>button.addEventListener("click",()=>{state.library=button.dataset.library;render();}));
   handle("studio-refresh","click",loadData);handle("studio-new","click",()=>openEditor());
@@ -278,7 +290,7 @@ function initializeStudio() {
     event.preventDefault();const payload=editorPayload();$("bp-save").disabled=true;
     try{
       const saved=await post("/api/agent-studio/blueprints",payload);await loadData();
-      const readback=byId(saved.id);if(!readback||Number(readback.version)!==payload.expected_version+1||readback.persona_prompt!==payload.persona_prompt)throw new Error("Gespeicherte Version nicht bestätigt. Entwurf bleibt geöffnet.");
+      const readback=byId(saved.id);if(!readback||Number(readback.version)!==payload.expected_version+1||readback.persona_prompt!==payload.persona_prompt||!colorReadbackMatches(readback,payload.color))throw new Error("Gespeicherte Version nicht bestätigt. Entwurf bleibt geöffnet.");
       if(payload.derived_from&&(!readback.derived_from||
          readback.derived_from.blueprint_id!==payload.derived_from.blueprint_id||
          readback.derived_from.version!==payload.derived_from.version||

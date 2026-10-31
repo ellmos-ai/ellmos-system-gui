@@ -11,10 +11,10 @@
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
     "ellmos-module.v2.json": "9bb5045fc3a34d2a176adad672a7a6ace4d41131ac941d2c28195a519b087467",
-    "package-lock.json": "e732b8ea7ac2fb24ff841bd7471e9076d2869c37f263dcd2355c28793108b874",
+    "package-lock.json": "fcc89fbf518df74bc12ef18d1c76ff1490a14e125dd2f945585b27e71e978f75",
     "package.json": "80d3d2374e9acdde76c0843d79950f7c4bda199769d521d47cc66ff0d8d9b493",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "00499ecfd81263d1570d868a79b7b0e5897775bfa258f784aa6ebd0e2a2c1baa",
+    "public/page-reads.v1.json": "f425e865f871fee2025e703d8795bca311aa44baa402ba11159797dd1cf7299d",
     "README.md": "a41fa4866cc41d0b025aa6217253bebed35e48a321b131c1bdaeb6fa59c43aa6",
     "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -256,10 +256,10 @@
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
-    "src/pages/agenten/blueprints.astro": "a207674ca2e07d8fe99d2358e155c1bcd52c24927dfbf7f8fd2ee57caf0160dd",
+    "src/pages/agenten/blueprints.astro": "f7c3cb2afb9158f2a3ceb9e6719fd2b6e44eb1846c263fc0d1b5b2297cb853df",
     "src/pages/agenten/fabrika.astro": "403d4a89bd5248a0467d36c50d8f4da1f8a0a62d3ce318a366438cebebdb5ade",
     "src/pages/agenten/marblerun.astro": "e78628301216ceb7175f861ec54962101e5ba5f79f84131d76d9b22aa00a2973",
-    "src/pages/agenten/running.astro": "1209740fa203847c353f3aec481c0bf66c0ba34f2d544946698245dba1fd4f4a",
+    "src/pages/agenten/running.astro": "40ee1945bdc06480f4319dc2ec790e7db79966357dc36afadd9a400d33910e45",
     "src/pages/agenten/sessions.astro": "50cc6ca28113dcae540f15dba7da52adeeb878efafab028832c6782c4fedc0af",
     "src/pages/agenten/subscription-agents.astro": "6913198067d5130b5281509744f1cec6b148dd54de39bbe24e482b566b362b29",
     "src/pages/artefakte.astro": "155856d3bc6dda60ec2ff57173ddb8186c0d9f9b68e35d60bf100161fb2d5ab5",
@@ -276,11 +276,11 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "d08155bf1605ff4ea01d69b9004b9c079c3b96d21fdb48ff96c5f3a0a2a607a1",
+    "src/pages/tasks.astro": "6c51823a3c04389a106e079fa48a222928482b097ba6ff3fa6f8ffbe44688514",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-history.mjs": "3cb69a9e327c4975ef6c4024f2a223f5ea11b65d73e69e580f93f523fa567c01",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/scripts/blueprint-studio.mjs": "ed5c1ab3e730de3895687241777a6bcefbe0f8a6554168263dd8e30216424ff3",
+    "src/scripts/blueprint-studio.mjs": "e5ec034d151be478b3598f932e15f2afaa8f1895e7cdbb24252d9af9cd93e749",
     "src/scripts/domain-studio.mjs": "d883c4a608b1fd087a9c021eb6b8d496fb420a5d0412388e14c65d11cdd6d2ca",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
@@ -350,7 +350,16 @@
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "tests/legacy-route-fallback.test.mjs": "d5c08ba2d492a9856bae6566770a8c7c80602f43492d279b860b7177068d5b5a",
-    "tests/tasks-routines.test.mjs": "44bc4991decccb913512493e60c200992debcb79ad637b19f40685c1aef99ceb"
+    "tests/tasks-routines.test.mjs": "44bc4991decccb913512493e60c200992debcb79ad637b19f40685c1aef99ceb",
+    "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
+    "tests/agent-color.test.mjs": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
+    "tests/theme-contrast.test.mjs": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4",
+    "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
+    "tests/dompurify-compatibility.test.mjs": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
+    "tests/fixtures/dompurify-regressions.html": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
+    "tests/run-dompurify-browser.mjs": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
+    "src/lib/task-hindrances.mjs": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10",
+    "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -840,6 +849,40 @@
           "path": "tests/gui-shell-navigation.test.mjs",
           "previous_sha256": "cb0c04df6830b7118a7f3819b1d55fb4fe76ec8d0ee2a72cd06aaecdfc3a511c",
           "sha256": "63b99b32ab2afd287c57e7b38d2f8bd96cfeb89bba64c3e417f723284d6c316b"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "change": "Task2212: current-Main integration of shared task-detail lease and worker-policy observations from GUI PR #93",
+      "source_base_commit": "869da9ad3a68aee02600deb6c981aa7e873707cd",
+      "adapted_reference": {
+        "repository": "ellmos-ai/bach",
+        "commit": "93ad113755015d067dacd80c52452cb9de9a95dd",
+        "path": "system/gui/web/src/lib/task-hindrances.js",
+        "git_blob": "ac432df2e526e81fd7e635e5b104778c56a1c886",
+        "sha256": "0fd805906476b8395feff43f7f7f3b9686913bdf8fb62a6eed7478a0b6248380"
+      },
+      "files": [
+        {
+          "path": "src/lib/task-hindrances.mjs",
+          "previous_sha256": null,
+          "sha256": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "e6cfdf38f70671bbdafa0bd30ce33f8ed0d03a91402009fc348e873c5d0b8146",
+          "sha256": "bc70c8a6f2f86ccaa3cf8a639b9485c6b3474fc87ef044180ab40359abc0f01e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
+          "sha256": "12550a66e5e033d5548fb819a4ba4367e0875110eaaafeb43ec6b0c8ad0f1230"
+        },
+        {
+          "path": "docs/task-hindrances.md",
+          "previous_sha256": null,
+          "sha256": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
         }
       ]
     }
@@ -4110,6 +4153,48 @@
       }
     },
     {
+      "date": "2026-10-23",
+      "scope": "BACH #2010: optional blueprint colors and explicit instance override",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "changes": [
+        "Persist colors only when the native backend advertises bach.agent-colors.v1; require exact color readback after blueprint save.",
+        "Apply validated color to an additional card accent only; preserve text, background and runtime status. Distinguish blueprint inheritance and explicit instance overrides.",
+        "Migrate the main-worker Running and Blueprint text colors to reviewed theme text tokens and remove their contrast-test exemptions."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "9f601342bf3c720b9fa45d5dfcd7d9250c927aadf6223c91ada6ac3a311f28fb",
+          "sha256": "ed78a8b47063f6201b089512f70b662258ebe474b49a5f1be9e3793aedaf125a"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8494e65dd4341e282154b72aa4cbfc6379fb7c68d28f32453a20fd5e0270ae31",
+          "sha256": "6e683bad850bfc26aa2fde88f5b5d621e334c63a475bef97e26b1811106e888e"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "ee72118d617de9495f50c3e0d1fb746283a4731445efe6fd97fa72e08a273d7f",
+          "sha256": "76b074d26bd203294db0ddb59d475f9b3c172ac2b531977b92d70301399511d7"
+        },
+        {
+          "path": "src/scripts/agent-color.mjs",
+          "previous_sha256": null,
+          "sha256": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5"
+        },
+        {
+          "path": "tests/agent-color.test.mjs",
+          "previous_sha256": null,
+          "sha256": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba"
+        },
+        {
+          "path": "tests/theme-contrast.test.mjs",
+          "previous_sha256": "93ba34b109a6b0392785e93e95eafa35bdf855933e58ba959e1999a58ea45e7d",
+          "sha256": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4"
+        }
+      ]
+    },
+    {
       "date": "2026-10-25",
       "scope": "BACH #2469: provenance repair for main-side changes that main did not record",
       "source_base_commit": "b6e335e86793bec9d248d4446da88e3a8841629d",
@@ -4507,43 +4592,185 @@
       }
     },
     {
-      "date": "2026-10-31",
-      "scope": "BACH #2467/#2459: classic monochrome icon style switcher and /help manifest projection",
-      "source_base_commit": "a191dac",
+      "date": "2026-10-28",
+      "scope": "BACH #2010: integrate optional blueprint colors with current main without losing branch provenance",
+      "source_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "merged_source_commit": "779901b5b56514b233c9963010d5d67008ec5acc",
+      "common_base_commit": "a5de187db1005b083e2ed4330f61aafc0553ba04",
+      "branch_bases": [
+        "a5de187db1005b083e2ed4330f61aafc0553ba04",
+        "a42adda6a9fe8d892578db3f7a09f7c1bef653ef"
+      ],
+      "changes": [
+        "Retain the current-main agent overview, queue, revision and error-state behavior while porting the optional color contract into the current render and save paths.",
+        "Preserve the #2010 helper and regression coverage, migrate the remaining Running text colors to theme text tokens, and remove the contrast-test exemptions."
+      ],
       "files": [
         {
-          "path": "public/page-reads.v1.json",
-          "previous_sha256": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
-          "sha256": "d1ba46fe31da64fdf94c3f8db7656b80688ae829d3e83b0fe246dda53f253890"
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
+          "other_parent_sha256": "ed78a8b47063f6201b089512f70b662258ebe474b49a5f1be9e3793aedaf125a",
+          "sha256": "de8d13bed1297e4b4f0e3d65624b95292ba0534ba24cfaa1c7fcbd2280b88b33"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "3555c60fb1e5772f710b930e60854afa7e5d4cc6d96123f7cdb60c8f33bbca2d",
+          "other_parent_sha256": "6e683bad850bfc26aa2fde88f5b5d621e334c63a475bef97e26b1811106e888e",
+          "sha256": "9a7f36ba0dd7ddcf17f32e4ce71db55a4ca930867b61d676dc6335837e345986"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "dba34c659eaebca94b1f4820cd6fefea40e68f88ebf2414d34d03d8534ad0d70",
+          "other_parent_sha256": "76b074d26bd203294db0ddb59d475f9b3c172ac2b531977b92d70301399511d7",
+          "sha256": "f8cbe49e3397f5e358bc7d269d6cde16a5dcacf36e7cbda7d59fe378130c2c1f"
+        },
+        {
+          "path": "src/scripts/agent-color.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
+          "sha256": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5"
+        },
+        {
+          "path": "tests/agent-color.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
+          "sha256": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba"
+        },
+        {
+          "path": "tests/theme-contrast.test.mjs",
+          "previous_sha256": "93ba34b109a6b0392785e93e95eafa35bdf855933e58ba959e1999a58ea45e7d",
+          "other_parent_sha256": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4",
+          "sha256": "ace73cd4e332e17a7b249f251e89576ea12f94d6c6c4bc5b3658326ace12d3a4"
         }
       ]
     },
     {
-      "scope": "GUI Durchgang 2026-10-31: Living & Running unification, vertical task detail stack + split resizer, Models & Resources in Settings, theme persistence",
+      "date": "2026-10-28",
+      "scope": "GUI PR #90: integrate DOMPurify 3.4.17 compatibility patch on current main while preserving source provenance",
+      "source_base_commit": "8e365a429e11ee47e4d68d619ebef2db11569a83",
+      "merged_source_commit": "9c73e49ec582ce882d8dd0728f44ec7b777d2a06",
+      "common_base_commit": "8e365a429e11ee47e4d68d619ebef2db11569a83",
+      "branch_bases": [
+        "8e365a429e11ee47e4d68d619ebef2db11569a83",
+        "e8466a00511e148854b10b2516b8f0d029268f35"
+      ],
+      "changes": [
+        "Resolve Mermaid’s existing DOMPurify range to 3.4.17 while retaining current-main package metadata and unrelated lockfile records.",
+        "Carry the existing synthetic sanitizer regressions and explicit offline browser runner through the current-main three-way merge.",
+        "Preserve the full current-main provenance history and bind the integrated file hashes; this records source integration only, not consumer installation or release."
+      ],
       "files": [
         {
-          "path": "public/page-reads.v1.json",
-          "previous_sha256": "d1ba46fe31da64fdf94c3f8db7656b80688ae829d3e83b0fe246dda53f253890",
-          "sha256": "00499ecfd81263d1570d868a79b7b0e5897775bfa258f784aa6ebd0e2a2c1baa"
+          "path": "package-lock.json",
+          "previous_sha256": "304f63d4b41a582821a908a98016b183bc928b33497c531d9053122e1b2fab13",
+          "other_parent_sha256": "05a7c3f520300d30fe3ff60b403227f26ce23a4d4a129285e17fac19f49cf258",
+          "sha256": "76d26a5f82d75af94404f1888d28fa50baaf6a35c9cfc9db5afa8afe0bc117e4"
+        },
+        {
+          "path": "SECURITY.md",
+          "previous_sha256": "19421bd0936537d39ba60d19d3c84a51d41525197a1ad666947d086b7fa34231",
+          "other_parent_sha256": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
+          "sha256": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43"
+        },
+        {
+          "path": "tests/dompurify-compatibility.test.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
+          "sha256": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6"
+        },
+        {
+          "path": "tests/fixtures/dompurify-regressions.html",
+          "previous_sha256": null,
+          "other_parent_sha256": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
+          "sha256": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c"
+        },
+        {
+          "path": "tests/run-dompurify-browser.mjs",
+          "previous_sha256": null,
+          "other_parent_sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
+          "sha256": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "scope": "GUI PR #93: three-way integrate Task2212 observations on current Main while retaining task-result and GitHub review-context behavior",
+      "source_base_commit": "869da9ad3a68aee02600deb6c981aa7e873707cd",
+      "changes": [
+        "Integrate PR #93 Task2212 read-only native lease and worker-policy observations into the current task detail; no admission, worker-state or configuration writes are added.",
+        "Preserve the current Main split detail layout, task result/history flow and resetGitHubReviewContext(id) behavior while adapting the feature to the current call site.",
+        "Rebind the feature and follow-up hashes to the integrated tree; retain the pinned BACH source hash and all prior provenance history."
+      ],
+      "files": [
+        {
+          "path": "src/lib/task-hindrances.mjs",
+          "previous_sha256": null,
+          "sha256": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10"
         },
         {
           "path": "src/pages/tasks.astro",
           "previous_sha256": "e6cfdf38f70671bbdafa0bd30ce33f8ed0d03a91402009fc348e873c5d0b8146",
-          "sha256": "e847ea8332b63040b007300e73a8c1e8c2fd0246fa6c81002d1896d1a733d981"
+          "sha256": "bc70c8a6f2f86ccaa3cf8a639b9485c6b3474fc87ef044180ab40359abc0f01e"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "eba96c0ee44cb327e3b67853c10c1d45f4ac060d651bf8ea3566b32db3c473d1",
+          "sha256": "12550a66e5e033d5548fb819a4ba4367e0875110eaaafeb43ec6b0c8ad0f1230"
+        },
+        {
+          "path": "docs/task-hindrances.md",
+          "previous_sha256": null,
+          "sha256": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
         }
       ]
     },
     {
       "date": "2026-10-31",
-      "scope": "BACH #2466/#2468/#2477-#2488: unified Ocean-BACH GUI restructuring packages 1-8",
+      "scope": "BACH #2466-#2488: unified Ocean-BACH GUI restructuring packages 1-8 and Living & Running unification",
+      "source_base_commit": "a191dac",
       "changes": [
         "Complete GUI restructuring across Dashboard, Agenten-Bibliothek, Tasks & Routines, Nachrichten-Zentrale, Memory & Architecture, Skills/Plugins/MCP/Tools, Artefakte/Anonymizer, and Governance/System/Wartung."
       ],
       "files": [
         {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "8253c068982983af1ba561a2a8b168bd4b7a0e52bf07aa8a615310915afa6a23",
+          "sha256": "9bb5045fc3a34d2a176adad672a7a6ace4d41131ac941d2c28195a519b087467"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "76d26a5f82d75af94404f1888d28fa50baaf6a35c9cfc9db5afa8afe0bc117e4",
+          "sha256": "fcc89fbf518df74bc12ef18d1c76ff1490a14e125dd2f945585b27e71e978f75"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "f333e62dcf3081ef323672f8808fa2617cc12114e9027423643eae7b22f2af90",
+          "sha256": "80d3d2374e9acdde76c0843d79950f7c4bda199769d521d47cc66ff0d8d9b493"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "12550a66e5e033d5548fb819a4ba4367e0875110eaaafeb43ec6b0c8ad0f1230",
+          "sha256": "f425e865f871fee2025e703d8795bca311aa44baa402ba11159797dd1cf7299d"
+        },
+        {
           "path": "src/components/CapabilityBoard.astro",
           "previous_sha256": "1cda4d163d9baf87aac8aa747f4b42c1ec6262044bf8d620ee93215288bea546",
           "sha256": "bf8f8952c7eadd20980168649841a86a7ebcc94b6f164c789ab3dac4b14678f4"
+        },
+        {
+          "path": "src/components/Header.astro",
+          "previous_sha256": "244464b7c6de5e7b78544d160a81ae425a1b58afb908a61dbd3230019ea9b31a",
+          "sha256": "004d1ac738b50ee9cab4338a88a5ad2241cc2f4b4041ebbe5c0ee640dbee57fc"
+        },
+        {
+          "path": "src/config/nav_config.json",
+          "previous_sha256": "e9f0b110d3c759c7c18bdb7019ecab3432bebcbe8ba6e76f64a460005b02e7ce",
+          "sha256": "5d0097800d99a69300642ec75971e4ccf70e4b860a79458e353a6bdd16149012"
+        },
+        {
+          "path": "src/layouts/BachLayout.astro",
+          "previous_sha256": "bdb4bf46a2f1690e1481c59ac768474fce6f3fb84e83dc8e53a0e25bf8ee1782",
+          "sha256": "d6ca0245d14ac1089021f51627f28c16a36114a705d6db0607e56b37c59f53ca"
         },
         {
           "path": "src/lib/capability-board-ui.mjs",
@@ -4551,9 +4778,14 @@
           "sha256": "6a0c64b6e9793b007af854f4c70568300f28209a4257cfb6e437e92374b986c1"
         },
         {
+          "path": "src/lib/domain-pins.mjs",
+          "previous_sha256": "0bc813215764e5e6fb77044bbd68756351b60ddb38035c188548b95d1a527bd3",
+          "sha256": "e6c4fd1700f0cfc0995c17c0ec3cb66d3ac12f7457eff13b96421d314999a813"
+        },
+        {
           "path": "src/pages/agenten/blueprints.astro",
-          "previous_sha256": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
-          "sha256": "a207674ca2e07d8fe99d2358e155c1bcd52c24927dfbf7f8fd2ee57caf0160dd"
+          "previous_sha256": "de8d13bed1297e4b4f0e3d65624b95292ba0534ba24cfaa1c7fcbd2280b88b33",
+          "sha256": "f7c3cb2afb9158f2a3ceb9e6719fd2b6e44eb1846c263fc0d1b5b2297cb853df"
         },
         {
           "path": "src/pages/agenten/fabrika.astro",
@@ -4564,6 +4796,11 @@
           "path": "src/pages/agenten/marblerun.astro",
           "previous_sha256": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
           "sha256": "e78628301216ceb7175f861ec54962101e5ba5f79f84131d76d9b22aa00a2973"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "9a7f36ba0dd7ddcf17f32e4ce71db55a4ca930867b61d676dc6335837e345986",
+          "sha256": "40ee1945bdc06480f4319dc2ec790e7db79966357dc36afadd9a400d33910e45"
         },
         {
           "path": "src/pages/agenten/sessions.astro",
@@ -4587,13 +4824,18 @@
         },
         {
           "path": "src/pages/governance/funk.astro",
-          "previous_sha256": "0095fa8deb135c9122c313f8880ee7b507f3d36eb7b70e1d065ef8b05ce17242",
+          "previous_sha256": "6a34faee02eba0cc2f0025debf56f488e89ef7a58af32b87854ac0e0e702b732",
           "sha256": "94774ab81ec1cc208f56abbe15218652f5a7105e24eb60c72e6df8a605e8b72f"
         },
         {
           "path": "src/pages/governance/index.astro",
           "previous_sha256": "5371d2b101453c0cdcdf3edeff7c83e48a7f949b271652b6870ae35aadf4c137",
           "sha256": "54afb640e95a711e26b7054a42c753e9ebca96424e44eb365d593894617ae27d"
+        },
+        {
+          "path": "src/pages/governance/logs.astro",
+          "previous_sha256": "52fd6129dbf3eb8dca3c056253bd3e5069210b140470a7510d1c959324ac7ed2",
+          "sha256": "659f4e634b8d30d9d0dc9c6800a899c993266bf04ba5dbc273d09af3f4a50145"
         },
         {
           "path": "src/pages/index.astro",
@@ -4612,13 +4854,13 @@
         },
         {
           "path": "src/pages/settings.astro",
-          "previous_sha256": "6c73743c53b0e262633b8b1f40221170c701552edd82c9c98e2c302618aafea0",
+          "previous_sha256": "360da39f96e3c413e9c812296b76596308f184ce00643a78d89a32760f7ded7d",
           "sha256": "ca52aad5cbd820ce883ec48cbb28c002fba39584885728bfdf0144e73f2fb4af"
         },
         {
           "path": "src/pages/tasks.astro",
-          "previous_sha256": "e847ea8332b63040b007300e73a8c1e8c2fd0246fa6c81002d1896d1a733d981",
-          "sha256": "d08155bf1605ff4ea01d69b9004b9c079c3b96d21fdb48ff96c5f3a0a2a607a1"
+          "previous_sha256": "bc70c8a6f2f86ccaa3cf8a639b9485c6b3474fc87ef044180ab40359abc0f01e",
+          "sha256": "6c51823a3c04389a106e079fa48a222928482b097ba6ff3fa6f8ffbe44688514"
         },
         {
           "path": "src/scripts/agent-history.mjs",
@@ -4627,8 +4869,23 @@
         },
         {
           "path": "src/scripts/blueprint-studio.mjs",
-          "previous_sha256": "dba34c659eaebca94b1f4820cd6fefea40e68f88ebf2414d34d03d8534ad0d70",
-          "sha256": "ed5c1ab3e730de3895687241777a6bcefbe0f8a6554168263dd8e30216424ff3"
+          "previous_sha256": "f8cbe49e3397f5e358bc7d269d6cde16a5dcacf36e7cbda7d59fe378130c2c1f",
+          "sha256": "e5ec034d151be478b3598f932e15f2afaa8f1895e7cdbb24252d9af9cd93e749"
+        },
+        {
+          "path": "src/scripts/domain-studio.mjs",
+          "previous_sha256": "d3daf0c27930731f116dc670eaadadead8283cee4e677f61097c4f0a044b249c",
+          "sha256": "d883c4a608b1fd087a9c021eb6b8d496fb420a5d0412388e14c65d11cdd6d2ca"
+        },
+        {
+          "path": "src/styles/main.css",
+          "previous_sha256": "111489bb0f7bfd20dac3fb13b5d401e9878e0d5164de55d920cda85edc528579",
+          "sha256": "62f0634aef301bff5c5628eb861c85d949694337688ad6403925da03c3b6ce31"
+        },
+        {
+          "path": "tests/gui-shell-navigation.test.mjs",
+          "previous_sha256": "63b99b32ab2afd287c57e7b38d2f8bd96cfeb89bba64c3e417f723284d6c316b",
+          "sha256": "e364c57ef900459c7cf789e982afdec9def1b70e41a73c000e3643509ff455e6"
         },
         {
           "path": "src/pages/daemon.astro",
@@ -4642,7 +4899,7 @@
         },
         {
           "path": "src/pages/help.astro",
-          "previous_sha256": "a885286f36ce2dddf1ba5ac254d22702bda82054bd307498c34a2e10fff829bd",
+          "previous_sha256": "82907086a354539ee7789f331f682683f53403739ab7bc598c1ae0d60702d3b2",
           "sha256": "14d138fd8e72c9813aeb93ef5c9f8242d4e5c88e3fd3095078efd9b1a6a22d1f"
         },
         {
