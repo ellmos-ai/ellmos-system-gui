@@ -179,14 +179,22 @@ import BachLayout from "../../layouts/BachLayout.astro";
   <!-- Mittlerer Bereich: Lock-Monitor & Policies Split -->
   <div class="grid grid-cols-2">
     <!-- Lock-Master Live Monitor -->
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">🔒 Lock-Master (Aktive Sperren & Haltefristen)</h2>
-        <span class="badge" id="locks-count-badge">Lock-Feed nicht geprüft</span>
+    <div class="card" id="lock-master-card">
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+        <h2 class="card-title">🔒 Lock-Master (Aktive Sperren &amp; Haltefristen)</h2>
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <span class="badge" id="locks-count-badge">Lock-Feed nicht geprüft</span>
+          <a href="http://127.0.0.1:8095" target="_blank" rel="noopener noreferrer" class="btn btn-sm" title="Eigenständige Lock-Master Vollansicht öffnen">↗ Vollansicht (:8095)</a>
+        </div>
       </div>
-      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem;">
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
         Gesperrte Bereiche (<code>LOCK.user.*</code>, <code>LOCK.condition.*</code>) sind für alle KI-Agenten Fail-Closed (Read-Only).
       </p>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.85rem;">
+        <a href="http://127.0.0.1:8095/#user-lock" target="_blank" rel="noopener noreferrer" class="btn btn-sm">🔒 Nutzersperre setzen / aufheben</a>
+        <a href="http://127.0.0.1:8095/#condition-release" target="_blank" rel="noopener noreferrer" class="btn btn-sm">🔓 Bedingungssperre aufheben</a>
+        <a href="http://127.0.0.1:8095/#prune-stale" target="_blank" rel="noopener noreferrer" class="btn btn-sm">🧹 Abgelaufene Sperren prüfen (Probelauf)</a>
+      </div>
 
       <div id="locks-list" style="display:flex;flex-direction:column;gap:0.75rem;">
         <div style="padding:0.75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);">
