@@ -27,11 +27,15 @@ const pageTitle = title ? `${title} | System GUI` : "System GUI";
           document.documentElement.setAttribute("data-theme", theme);
         }
         const preset = localStorage.getItem("bach-ui-preset");
-        if (preset === "standard" || preset === "classic") {
-          document.documentElement.setAttribute("data-ui-preset", preset);
+        if (preset === "standard" || preset === "classic" || preset === "ocean-bach-classic") {
+          document.documentElement.setAttribute("data-ui-preset", preset === "ocean-bach-classic" ? "classic" : preset);
         }
         const iconStyle = localStorage.getItem("bach-ui-icon-style");
         document.documentElement.setAttribute("data-ui-icon-style", iconStyle === "emoji" ? "emoji" : "line");
+        const navScope = localStorage.getItem("bach-ui-nav-scope");
+        document.documentElement.setAttribute("data-ui-nav-scope", ["compact", "all", "custom"].includes(navScope) ? navScope : "compact");
+        const density = localStorage.getItem("bach-ui-density");
+        document.documentElement.setAttribute("data-ui-density", ["compact", "standard", "spacious"].includes(density) ? density : "standard");
       })();
     </script>
 

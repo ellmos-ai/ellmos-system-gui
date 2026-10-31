@@ -617,6 +617,16 @@
     "required": false
    },
    {
+    "method": "GET",
+    "path": "/api/settings/ui",
+    "required": true
+   },
+   {
+    "method": "PUT",
+    "path": "/api/settings/ui",
+    "required": false
+   },
+   {
     "method": "POST",
     "path": "/api/learning/nemofold/candidates/{id}/approve",
     "required": false,

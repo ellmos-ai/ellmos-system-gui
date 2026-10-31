@@ -292,8 +292,8 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
           <p class="card-desc">Benutzerfarben werden im Backend gespeichert. Die benutzerdefinierte Palette wird derzeit nicht auf jeder Seite vollständig angewendet.</p>
         </div>
         <div class="glass-card">
-          <h3><span class="icon" aria-hidden="true">🧭</span> Navigationsstil</h3>
-          <p class="card-desc">Wähle zwischen der neuen Arbeitsnavigation und der vertrauten Ocean-BACH-Klassik. Die Auswahl gilt für diese Browser-Instanz und ändert keine Backend-Daten.</p>
+          <h3><span class="icon" aria-hidden="true">🧭</span> Navigationsstil &amp; Darstellung</h3>
+          <p class="card-desc">Wähle zwischen der neuen Arbeitsnavigation und der vertrauten Ocean-BACH-Klassik sowie Bereichsauswahl, Symbolsatz und Dichte. Die Auswahl wirkt seitenweit und wird über das verbundene Backend gespeichert.</p>
           <label for="ui-preset-select">Oberflächenstil</label>
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
             <select id="ui-preset-select" style="padding:0.5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);">
@@ -301,6 +301,15 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
               <option value="classic">Ocean-BACH-Klassik</option>
             </select>
             <span id="ui-preset-status" class="badge" role="status" aria-live="polite">Standard bewährt</span>
+          </div>
+          <label for="ui-nav-scope-select" style="display:block;margin-top:0.85rem;">Bereichsauswahl</label>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
+            <select id="ui-nav-scope-select" style="padding:0.5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);">
+              <option value="compact">Kompakt (aktive Gruppe offen)</option>
+              <option value="all">Alle Bereiche aufgeklappt</option>
+              <option value="custom">Eigene Auswahl &amp; Domänen-Fokus</option>
+            </select>
+            <span id="ui-nav-scope-status" class="badge" role="status" aria-live="polite">Kompakt</span>
           </div>
           <label for="ui-icon-style-select" style="display:block;margin-top:0.85rem;">Symbolsatz</label>
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
@@ -310,6 +319,20 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
             </select>
             <span id="ui-icon-style-status" class="badge" role="status" aria-live="polite">Klassische Strichsymbole</span>
           </div>
+          <label for="ui-density-select" style="display:block;margin-top:0.85rem;">Darstellungsdichte</label>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
+            <select id="ui-density-select" style="padding:0.5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);">
+              <option value="compact">Kompakt</option>
+              <option value="standard" selected>Standard</option>
+              <option value="spacious">Großzügig</option>
+            </select>
+            <span id="ui-density-status" class="badge" role="status" aria-live="polite">Standard</span>
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1rem;">
+            <button id="ui-save" class="btn btn-primary" type="button" disabled>Darstellung speichern</button>
+            <button id="ui-reset" class="btn btn-secondary" type="button">Auf Standard zurücksetzen</button>
+          </div>
+          <p id="ui-settings-status" role="status" aria-live="polite" style="margin-top:0.65rem;">Darstellung noch nicht geprüft</p>
           <p class="card-desc" style="margin-top:0.65rem;">Beide Stile verwenden dieselben Seiten und Backend-Verträge; klassische einfarbige Strichsymbole sind Standard, die bisherigen farbigen Emoji-Symbole bleiben jederzeit wählbar.</p>
         </div>
       </div>
@@ -1100,6 +1123,17 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
 
     const uiPresetSelect = document.getElementById('ui-preset-select');
     const uiPresetStatus = document.getElementById('ui-preset-status');
+    const uiNavScopeSelect = document.getElementById('ui-nav-scope-select');
+    const uiNavScopeStatus = document.getElementById('ui-nav-scope-status');
+    const uiIconStyleSelect = document.getElementById('ui-icon-style-select');
+    const uiIconStyleStatus = document.getElementById('ui-icon-style-status');
+    const uiDensitySelect = document.getElementById('ui-density-select');
+    const uiDensityStatus = document.getElementById('ui-density-status');
+    const uiSaveBtn = document.getElementById('ui-save');
+    const uiResetBtn = document.getElementById('ui-reset');
+    const uiSettingsStatus = document.getElementById('ui-settings-status');
+    let uiAdapterAvailable = false;
+
     function currentUiPreset() {
       return window.bachUiPreset?.get?.()
         || (['standard', 'classic'].includes(document.documentElement.dataset.uiPreset)
@@ -1124,8 +1158,30 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     window.addEventListener('bach-ui-preset-change', syncUiPresetControls);
     syncUiPresetControls();
 
-    const uiIconStyleSelect = document.getElementById('ui-icon-style-select');
-    const uiIconStyleStatus = document.getElementById('ui-icon-style-status');
+    function currentUiNavScope() {
+      return window.bachUiNavScope?.get?.()
+        || (['compact', 'all', 'custom'].includes(document.documentElement.dataset.uiNavScope)
+          ? document.documentElement.dataset.uiNavScope : 'compact');
+    }
+    function syncUiNavScopeControls(event) {
+      const navScope = event?.detail?.navScope || currentUiNavScope();
+      if (uiNavScopeSelect) uiNavScopeSelect.value = navScope;
+      if (uiNavScopeStatus) {
+        uiNavScopeStatus.textContent = navScope === 'all' ? 'Alle Bereiche' : navScope === 'custom' ? 'Eigene Auswahl' : 'Kompakt';
+      }
+    }
+    uiNavScopeSelect?.addEventListener('change', () => {
+      const navScope = ['compact', 'all', 'custom'].includes(uiNavScopeSelect.value) ? uiNavScopeSelect.value : 'compact';
+      if (window.bachUiNavScope?.set) window.bachUiNavScope.set(navScope);
+      else {
+        localStorage.setItem('bach-ui-nav-scope', navScope);
+        document.documentElement.dataset.uiNavScope = navScope;
+      }
+      syncUiNavScopeControls({ detail: { navScope } });
+    });
+    window.addEventListener('bach-ui-nav-scope-change', syncUiNavScopeControls);
+    syncUiNavScopeControls();
+
     function currentUiIconStyle() {
       return window.bachUiIconStyle?.get?.()
         || (['line', 'emoji'].includes(document.documentElement.dataset.uiIconStyle)
@@ -1149,5 +1205,134 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     });
     window.addEventListener('bach-ui-icon-style-change', syncUiIconStyleControls);
     syncUiIconStyleControls();
+
+    function currentUiDensity() {
+      return window.bachUiDensity?.get?.()
+        || (['compact', 'standard', 'spacious'].includes(document.documentElement.dataset.uiDensity)
+          ? document.documentElement.dataset.uiDensity : 'standard');
+    }
+    function syncUiDensityControls(event) {
+      const density = event?.detail?.density || currentUiDensity();
+      if (uiDensitySelect) uiDensitySelect.value = density;
+      if (uiDensityStatus) {
+        uiDensityStatus.textContent = density === 'compact' ? 'Kompakt' : density === 'spacious' ? 'Großzügig' : 'Standard';
+      }
+    }
+    uiDensitySelect?.addEventListener('change', () => {
+      const density = ['compact', 'standard', 'spacious'].includes(uiDensitySelect.value) ? uiDensitySelect.value : 'standard';
+      if (window.bachUiDensity?.set) window.bachUiDensity.set(density);
+      else {
+        localStorage.setItem('bach-ui-density', density);
+        document.documentElement.dataset.uiDensity = density;
+      }
+      syncUiDensityControls({ detail: { density } });
+    });
+    window.addEventListener('bach-ui-density-change', syncUiDensityControls);
+    syncUiDensityControls();
+
+    function applyBackendUiState(data) {
+      const preset = data.preset === 'ocean-bach-classic' || data.preset === 'classic' ? 'classic' : 'standard';
+      const navScope = ['compact', 'all', 'custom'].includes(data.nav_scope) ? data.nav_scope : 'compact';
+      const iconStyle = data.icon_style === 'emoji' ? 'emoji' : 'line';
+      const density = ['compact', 'standard', 'spacious'].includes(data.density) ? data.density : 'standard';
+      if (window.bachUiPreset?.set) window.bachUiPreset.set(preset, true);
+      if (window.bachUiNavScope?.set) window.bachUiNavScope.set(navScope, true);
+      if (window.bachUiIconStyle?.set) window.bachUiIconStyle.set(iconStyle, true);
+      if (window.bachUiDensity?.set) window.bachUiDensity.set(density, true);
+      syncUiPresetControls({ detail: { preset } });
+      syncUiNavScopeControls({ detail: { navScope } });
+      syncUiIconStyleControls({ detail: { iconStyle } });
+      syncUiDensityControls({ detail: { density } });
+    }
+
+    async function loadUiSettings() {
+      if (uiSaveBtn) uiSaveBtn.disabled = true;
+      try {
+        const response = await fetch('/api/settings/ui', { cache: 'no-store' });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        if (!data || data.success !== true || typeof data.preset !== 'string' || typeof data.nav_scope !== 'string'
+            || typeof data.icon_style !== 'string' || typeof data.density !== 'string') {
+          throw new Error('Adapter-Antwort ungültig');
+        }
+        uiAdapterAvailable = true;
+        applyBackendUiState(data);
+        if (uiSettingsStatus) {
+          uiSettingsStatus.textContent = data.configured
+            ? 'Gespeicherte Darstellung aus dem Backend geladen'
+            : 'Backend-Standard aktiv · noch keine eigene Auswahl gespeichert';
+        }
+        if (uiSaveBtn) uiSaveBtn.disabled = false;
+      } catch (error) {
+        uiAdapterAvailable = false;
+        if (uiSaveBtn) uiSaveBtn.disabled = true;
+        if (uiSettingsStatus) {
+          uiSettingsStatus.textContent = 'Backend-Adapter für /api/settings/ui nicht verfügbar (' + error.message + ') · Auswahl wirkt lokal im Browser';
+        }
+      }
+    }
+
+    async function persistUiSettings(payload, confirmationLabel) {
+      const token = localStorage.getItem('bach_device_token');
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers.Authorization = 'Bearer ' + token;
+      if (uiSaveBtn) uiSaveBtn.disabled = true;
+      if (uiResetBtn) uiResetBtn.disabled = true;
+      if (uiSettingsStatus) uiSettingsStatus.textContent = 'Speichere Darstellung…';
+      try {
+        const response = await fetch('/api/settings/ui', {
+          method: 'PUT', cache: 'no-store', headers, body: JSON.stringify(payload),
+        });
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Geräteanmeldung erforderlich. Bitte /token-dashboard öffnen.');
+        }
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const saved = await response.json();
+        const readbackResponse = await fetch('/api/settings/ui', { cache: 'no-store' });
+        if (!readbackResponse.ok) throw new Error('Readback HTTP ' + readbackResponse.status);
+        const readback = await readbackResponse.json();
+        if (!saved.success || !readback.configured
+            || readback.preset !== payload.preset
+            || readback.nav_scope !== payload.nav_scope
+            || readback.icon_style !== payload.icon_style
+            || readback.density !== payload.density) {
+          throw new Error('Speicherung durch Readback nicht bestätigt');
+        }
+        applyBackendUiState(readback);
+        if (uiSettingsStatus) uiSettingsStatus.textContent = confirmationLabel;
+      } catch (error) {
+        if (uiSettingsStatus) uiSettingsStatus.textContent = 'Darstellung nicht im Backend gespeichert: ' + error.message;
+      } finally {
+        if (uiSaveBtn) uiSaveBtn.disabled = !uiAdapterAvailable;
+        if (uiResetBtn) uiResetBtn.disabled = false;
+      }
+    }
+
+    uiSaveBtn?.addEventListener('click', () => {
+      const payload = {
+        preset: currentUiPreset() === 'classic' ? 'ocean-bach-classic' : 'standard',
+        nav_scope: currentUiNavScope(),
+        icon_style: currentUiIconStyle() === 'emoji' ? 'emoji' : 'classic',
+        density: currentUiDensity(),
+      };
+      persistUiSettings(payload, 'Gespeicherte Darstellung im Backend bestätigt');
+    });
+
+    uiResetBtn?.addEventListener('click', () => {
+      const defaults = {
+        preset: 'standard',
+        nav_scope: 'compact',
+        icon_style: 'classic',
+        density: 'standard',
+      };
+      applyBackendUiState(defaults);
+      if (!uiAdapterAvailable) {
+        if (uiSettingsStatus) uiSettingsStatus.textContent = 'Auf Standard zurückgesetzt (nur lokal; Backend-Adapter nicht verfügbar)';
+        return;
+      }
+      persistUiSettings(defaults, 'Standardwerte im Backend gespeichert und bestätigt');
+    });
+
+    loadUiSettings();
   });
 </script>

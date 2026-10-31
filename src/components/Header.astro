@@ -337,9 +337,10 @@ function lineIconSvg(id: string): string {
 
   // Navigation preset: Standard is the safe default; the choice is local to
   // this browser until a consumer-side preference contract exists.
-  const validUiPresets = new Set(['standard', 'classic']);
+  const validUiPresets = new Set(['standard', 'classic', 'ocean-bach-classic']);
   const uiPresetKey = 'bach-ui-preset';
   function normalizeUiPreset(value) {
+    if (value === 'ocean-bach-classic') return 'classic';
     return validUiPresets.has(value) ? value : 'standard';
   }
   function applyUiPreset(value, persist = true) {
@@ -361,13 +362,14 @@ function lineIconSvg(id: string): string {
   }
   window.bachUiPreset = {
     get: () => normalizeUiPreset(localStorage.getItem(uiPresetKey) || document.documentElement.dataset.uiPreset),
-    set: (value) => applyUiPreset(value),
+    set: (value, persist = true) => applyUiPreset(value, persist),
   };
   applyUiPreset(window.bachUiPreset.get(), false);
 
-  const validUiIconStyles = new Set(['line', 'emoji']);
+  const validUiIconStyles = new Set(['line', 'classic', 'emoji']);
   const uiIconStyleKey = 'bach-ui-icon-style';
   function normalizeUiIconStyle(value) {
+    if (value === 'classic') return 'line';
     return validUiIconStyles.has(value) ? value : 'line';
   }
   function applyUiIconStyle(value, persist = true) {
@@ -379,9 +381,52 @@ function lineIconSvg(id: string): string {
   }
   window.bachUiIconStyle = {
     get: () => normalizeUiIconStyle(localStorage.getItem(uiIconStyleKey) || document.documentElement.dataset.uiIconStyle),
-    set: (value) => applyUiIconStyle(value),
+    set: (value, persist = true) => applyUiIconStyle(value, persist),
   };
   applyUiIconStyle(window.bachUiIconStyle.get(), false);
+
+  const validUiNavScopes = new Set(['compact', 'all', 'custom']);
+  const uiNavScopeKey = 'bach-ui-nav-scope';
+  function normalizeUiNavScope(value) {
+    return validUiNavScopes.has(value) ? value : 'compact';
+  }
+  function applyUiNavScope(value, persist = true) {
+    const navScope = normalizeUiNavScope(value);
+    document.documentElement.dataset.uiNavScope = navScope;
+    document.querySelectorAll('[data-nav-group]').forEach((group) => {
+      if (navScope === 'all') {
+        group.open = true;
+      } else if (navScope === 'compact') {
+        group.open = Boolean(group.querySelector('a.active'));
+      }
+    });
+    if (persist) localStorage.setItem(uiNavScopeKey, navScope);
+    window.dispatchEvent(new CustomEvent('bach-ui-nav-scope-change', { detail: { navScope } }));
+    return navScope;
+  }
+  window.bachUiNavScope = {
+    get: () => normalizeUiNavScope(localStorage.getItem(uiNavScopeKey) || document.documentElement.dataset.uiNavScope),
+    set: (value, persist = true) => applyUiNavScope(value, persist),
+  };
+  applyUiNavScope(window.bachUiNavScope.get(), false);
+
+  const validUiDensities = new Set(['compact', 'standard', 'spacious']);
+  const uiDensityKey = 'bach-ui-density';
+  function normalizeUiDensity(value) {
+    return validUiDensities.has(value) ? value : 'standard';
+  }
+  function applyUiDensity(value, persist = true) {
+    const density = normalizeUiDensity(value);
+    document.documentElement.dataset.uiDensity = density;
+    if (persist) localStorage.setItem(uiDensityKey, density);
+    window.dispatchEvent(new CustomEvent('bach-ui-density-change', { detail: { density } }));
+    return density;
+  }
+  window.bachUiDensity = {
+    get: () => normalizeUiDensity(localStorage.getItem(uiDensityKey) || document.documentElement.dataset.uiDensity),
+    set: (value, persist = true) => applyUiDensity(value, persist),
+  };
+  applyUiDensity(window.bachUiDensity.get(), false);
 
   // Keep the mobile navigation reachable without changing desktop navigation state.
   const navToggle = document.getElementById('nav-toggle');

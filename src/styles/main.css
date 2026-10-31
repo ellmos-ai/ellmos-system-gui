@@ -1709,6 +1709,45 @@ html:not([data-ui-icon-style="emoji"]) .domain-icon {
     opacity: 0.88;
 }
 
+html[data-ui-density="compact"] .app-sidebar .nav-item,
+html[data-ui-density="compact"] .app-sidebar .sidebar-link.nav-item,
+html[data-ui-density="compact"] .sidebar-group-title {
+    min-height: 32px;
+    padding: 0.35rem 0.55rem;
+}
+
+html[data-ui-density="compact"] .glass-card {
+    padding: 1rem;
+}
+
+html[data-ui-density="compact"] .data-table th,
+html[data-ui-density="compact"] .data-table td {
+    padding: 0.45rem 0.6rem;
+}
+
+html[data-ui-density="spacious"] .app-sidebar .nav-item,
+html[data-ui-density="spacious"] .app-sidebar .sidebar-link.nav-item,
+html[data-ui-density="spacious"] .sidebar-group-title {
+    min-height: 44px;
+    padding: 0.7rem 0.8rem;
+}
+
+html[data-ui-density="spacious"] .glass-card {
+    padding: 1.85rem;
+}
+
+html[data-ui-density="spacious"] .data-table th,
+html[data-ui-density="spacious"] .data-table td {
+    padding: 0.95rem 0.9rem;
+}
+
+html[data-ui-nav-scope="custom"] .sidebar-domain-pins {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 0.7rem 0.5rem;
+}
+
+
 
 .nav-preset-summary {
     display: grid;
