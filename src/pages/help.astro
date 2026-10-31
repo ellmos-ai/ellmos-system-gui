@@ -1,11 +1,50 @@
 ---
-import BachLayout from '../layouts/BachLayout.astro';
-import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
-import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
+import BachLayout from "../layouts/BachLayout.astro";
+import LegacyRouteFallback from "../components/LegacyRouteFallback.astro";
+import { legacyFallbackRoutes } from "../lib/navigation-route-inventory.mjs";
 
-const route = legacyFallbackRoutes.find((entry) => entry.path === '/help');
-if (!route) throw new Error('Fallback-Konfiguration für /help fehlt.');
+const route = legacyFallbackRoutes.find((entry) => entry.path === "/help");
+if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
 ---
 <BachLayout title={route.label} currentPath={route.path}>
+  <section class="help-projection-panel" id="ocean-help-projection" style="margin-bottom:1.5rem;padding:1.25rem;border-radius:12px;border:1px solid rgba(148,163,184,0.22);background:rgba(15,23,42,0.5);">
+    <h1 style="margin:0 0 0.5rem 0;font-size:1.35rem;">Ocean &amp; BACH Dokumentation (#2459)</h1>
+    <p style="margin:0 0 0.75rem 0;opacity:0.85;">
+      Verbindliche Rangfolge bei Abweichungen: <strong>1. Jüngere Nutzerentscheidung</strong> &rarr;
+      <strong>2. Aktueller Umbauplan</strong> &rarr;
+      <strong>3. Moduldoku (Manifest <code>ellmos.module.v2</code>)</strong> &rarr;
+      <strong>4. Kerndoku des installierten Kerns (<code>docs/CORE.md</code> / <code>SKILL.md</code>)</strong>.
+    </p>
+    <div id="help-module-manifest-list" data-schema="ellmos.open-ocean.help-projection.v1" style="display:grid;gap:0.65rem;">
+      <div class="help-core-card" style="padding:0.75rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);">
+        <strong>Kerndokumentation (Ocean &amp; BACH)</strong>
+        <div style="font-size:0.9rem;opacity:0.85;">Einstieg: <code>docs/CORE.md</code>, <code>SKILL.md</code> &middot; Sprachen: <code>de, en, es, ja, ru, zh</code></div>
+      </div>
+    </div>
+  </section>
   <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+  <script is:inline>
+    (async function loadManifestHelpProjection() {
+      const container = document.getElementById("help-module-manifest-list");
+      if (!container) return;
+      try {
+        const res = await fetch("/api/domains/modules");
+        if (!res.ok) return;
+        const payload = await res.json();
+        const items = Array.isArray(payload?.modules) ? payload.modules : [];
+        for (const mod of items) {
+          const docs = mod?.docs || {};
+          const entry = docs.entry || "README.md";
+          const langs = Array.isArray(docs.languages) && docs.languages.length ? docs.languages.join(", ") : "de, en";
+          const card = document.createElement("div");
+          card.className = "help-module-card";
+          card.style.cssText = "padding:0.75rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);";
+          card.innerHTML = `<strong>${mod.id || mod.name || "Modul"}</strong> <span style="opacity:0.75;">v${mod.version || "0.0.0"}</span><div style="font-size:0.9rem;opacity:0.85;">Doku-Einstieg: <code>${entry}</code> &middot; Sprachen: <code>${langs}</code></div>`;
+          container.appendChild(card);
+        }
+      } catch (_err) {
+        // Honest readback: keep static core documentation card if module endpoint is offline.
+      }
+    })();
+  </script>
 </BachLayout>
