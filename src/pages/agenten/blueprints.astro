@@ -5,26 +5,31 @@ import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
 import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 ---
-<BachLayout title="Agenten-Werkstatt" currentPath="/agenten/blueprints">
+<BachLayout title="Agenten-Bibliothek · Vorlagen" currentPath="/agenten/blueprints">
   <div class="workshop-scene">
+  <nav class="studio-tabs" role="tablist" aria-label="Agenten-Bibliothek Hauptreiter" style="margin-bottom:1rem;">
+    <a class="btn btn-primary" role="tab" aria-selected="true" href="/agenten/blueprints">🤖 Vorlagen</a>
+    <a class="btn" role="tab" aria-selected="false" href="/agenten/subscription-agents">✍️ Prompt-Agenten</a>
+    <a class="btn" role="tab" aria-selected="false" href="/agenten/marblerun">⛓️ Ketten (MarbleRun &amp; Toolchains)</a>
+  </nav>
   <header class="studio-header" data-portrait-atlas={portraitAtlas.src} data-ticket-symbols={JSON.stringify(TICKET_SYMBOL_URLS)} id="studio-portrait-source">
-    <div class="workshop-intro"><p class="studio-eyebrow">Vorlagenbibliothek</p><h1><span aria-hidden="true">🤖</span> Agenten-Werkstatt</h1><p class="studio-lead">Hier kannst du Vorlagen und Blueprints für Agenten und Rollen erstellen und versionieren.</p><p class="studio-note">Agenten zusammenstellen und aktivieren: <a href="/agenten/running">Living & Running</a>.</p></div>
+    <div class="workshop-intro"><p class="studio-eyebrow">Agenten-Bibliothek · Reiter 1</p><h1><span aria-hidden="true">🤖</span> Agenten-Bibliothek · Vorlagen</h1><p class="studio-lead">Hier kannst du Vorlagen für Agenten und Rollen erstellen und versionieren.</p><p class="studio-note">Agenten zusammenstellen und aktivieren: <a href="/agenten/running">Living & Running</a>. Standard-Systemagenten auf Werkzustand zurücksetzen: <a href="/settings?tab=core#system-agent-restore">Systemeinstellungen</a>.</p></div>
     <div class="studio-actions">
       <button class="btn" id="studio-refresh">Aktualisieren</button>
-      <button class="btn btn-primary" id="studio-new">Neuer Blueprint</button>
-      <a class="btn" href="/agenten/running">Living & Running</a>
+      <button class="btn btn-primary" id="studio-new">Neue Vorlage</button>
+      <a class="btn" href="/agenten/running">Deine Agenten</a>
       <a class="btn" href="/agenten/marblerun">Ketten</a>
     </div>
   </header>
-  <p id="studio-status" class="studio-message" role="status" aria-live="polite">Blueprints werden geladen…</p>
+  <p id="studio-status" class="studio-message" role="status" aria-live="polite">Vorlagen werden geladen…</p>
   <div class="studio-toolbar">
     <label class="studio-search">Suchen<input id="studio-search" type="search" placeholder="Name, Rolle oder Beschreibung" /></label>
     <label>Typ<select id="studio-kind"><option value="">Alle Typen</option><option value="agent">Agenten</option><option value="role">Rollen</option><option value="skill">Skill-Vorlagen</option><option value="workflow">Workflow-Vorlagen</option><option value="service">Service-Vorlagen</option><option value="contractus">Arbeitsverträge</option></select></label>
-    <button class="btn" id="studio-prompts">System- und Rollenvorlagen</button>
+    <button class="btn" id="studio-prompts" hidden>System- und Rollenvorlagen</button>
   </div>
-  <div class="studio-tabs" role="tablist" aria-label="Blueprint-Bibliothek">
-    <button role="tab" aria-selected="true" data-library="custom">Eigene Blueprints <span id="count-custom">–</span></button>
-    <button role="tab" aria-selected="false" data-library="templates">Vorlagen <span id="count-templates">–</span></button>
+  <div class="studio-tabs" role="tablist" aria-label="Vorlagen-Bibliothek">
+    <button role="tab" aria-selected="true" data-library="custom">Eigene Vorlagen <span id="count-custom">–</span></button>
+    <button role="tab" aria-selected="false" data-library="templates">Mitgelieferte Vorlagen <span id="count-templates">–</span></button>
     <button role="tab" aria-selected="false" data-library="teams">Teams <span id="count-teams">–</span></button>
   </div>
   <section id="studio-grid" class="studio-grid" aria-label="Blueprints"></section>

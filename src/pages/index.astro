@@ -56,7 +56,7 @@ import {TICKET_SYMBOL_URLS} from '../lib/ticket-symbol-assets.mjs';
         </div>
         <div>
           <span style="display:block;font-size:2rem;font-weight:800;color:var(--accent-blue-text);" id="stat-agents-total">–</span>
-          <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Schablonen</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Vorlagen</span>
         </div>
       </div>
     </div>
@@ -87,10 +87,10 @@ import {TICKET_SYMBOL_URLS} from '../lib/ticket-symbol-assets.mjs';
   <section class="card dashboard-agent-overview" aria-labelledby="dashboard-agent-overview-title" data-portrait-atlas={portraitAtlas.src} data-ticket-symbols={JSON.stringify(TICKET_SYMBOL_URLS)}>
     <div class="card-header">
       <div>
-        <h2 id="dashboard-agent-overview-title" class="card-title">⚡ Aktuelle Running-Läufe</h2>
+        <h2 id="dashboard-agent-overview-title" class="card-title">⚡ Aktuelle Running-Läufe (Kompaktansicht)</h2>
         <p id="dashboard-agent-overview-summary" role="status" aria-live="polite" style="margin:.35rem 0 0;color:var(--text-muted);font-size:.8rem;">Laufstatus unbekannt · Daten werden geprüft.</p>
       </div>
-      <a href="/agenten/running" class="btn" style="padding:0.25rem 0.6rem;font-size:0.75rem;">Living & Running →</a>
+      <a href="/agenten/running" class="btn" style="padding:0.25rem 0.6rem;font-size:0.75rem;">Deine Agenten · Running →</a>
     </div>
     <div class="agent-overview-controls" aria-label="Running-Läufe filtern und sortieren">
       <label class="agent-overview-search">Suchen<input id="dashboard-agent-overview-query" data-agent-overview-control="query" type="search" maxlength="120" placeholder="Name, Anbieter oder Modell" /></label>
@@ -99,9 +99,9 @@ import {TICKET_SYMBOL_URLS} from '../lib/ticket-symbol-assets.mjs';
       <label>Tatsächliche Startart<select id="dashboard-agent-overview-start" data-agent-overview-control="start"><option value="all">Alle Startarten</option><option value="unknown">Unbekannt</option></select></label>
       <label>Sortierung<select id="dashboard-agent-overview-sort" data-agent-overview-control="sort"><option value="name">Name</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option><option value="status">Status</option></select></label>
       <label>Gruppierung<select id="dashboard-agent-overview-group" data-agent-overview-control="group"><option value="none">Aus</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option></select></label>
-      <label>Darstellung<select id="dashboard-agent-overview-view" data-agent-overview-control="view"><option value="cards">Karten</option><option value="list">Kompakte Liste</option></select></label>
+      <label>Darstellung<select id="dashboard-agent-overview-view" data-agent-overview-control="view"><option value="list" selected>Kompakte Liste</option><option value="cards">Karten</option></select></label>
     </div>
-    <div id="dashboard-running-agents" class="agent-overview-container dashboard-running-agents" data-agent-overview-lane="running" aria-live="polite">
+    <div id="dashboard-running-agents" class="agent-overview-container dashboard-running-agents agent-overview-list" data-agent-overview-lane="running" aria-live="polite">
       <p class="dashboard-agent-overview-note">Laufstatus unbekannt · Daten werden geprüft.</p>
     </div>
   </section>
@@ -228,7 +228,7 @@ import {TICKET_SYMBOL_URLS} from '../lib/ticket-symbol-assets.mjs';
     const open = document.createElement('a');
     open.href = '/agenten/running';
     open.className = 'btn btn-sm';
-    open.textContent = 'Aktionen in Living & Running';
+    open.textContent = 'Aktionen in Deine Agenten';
     actions.append(open);
     card.append(actions);
     return card;

@@ -222,7 +222,7 @@
     "src/assets/ticket-symbols/topics.svg": "bfce095b28736f6d8062ff49a031154951a3d94c8953adf7e249ba69b777db97",
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
-    "src/components/CapabilityBoard.astro": "1cda4d163d9baf87aac8aa747f4b42c1ec6262044bf8d620ee93215288bea546",
+    "src/components/CapabilityBoard.astro": "bf8f8952c7eadd20980168649841a86a7ebcc94b6f164c789ab3dac4b14678f4",
     "src/components/Header.astro": "004d1ac738b50ee9cab4338a88a5ad2241cc2f4b4041ebbe5c0ee640dbee57fc",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
@@ -238,7 +238,7 @@
     "src/lib/agent-history.mjs": "9262398aac30160b5433bb3cbc572559e0e1fac4a33a68442bffe552f0c975aa",
     "src/lib/agent-overview.mjs": "725afad772bd605c5599e6ceb78d71304ae2d8f2706b9deb5fd19433b0a18f12",
     "src/lib/capability-board-client.mjs": "7a80423bc472ade80f05065c57ef9b732493b40cd2900f0705b2c3af8f72d831",
-    "src/lib/capability-board-ui.mjs": "cdf37bb84c2009c0be06fbe9ba2a9ff1156d50b9e6e2b2f74fcd1ea8c2d28f25",
+    "src/lib/capability-board-ui.mjs": "6a0c64b6e9793b007af854f4c70568300f28209a4257cfb6e437e92374b986c1",
     "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
     "src/lib/domain-pins.mjs": "e6c4fd1700f0cfc0995c17c0ec3cb66d3ac12f7457eff13b96421d314999a813",
     "src/lib/domain-routes.mjs": "2dd127d08b0f53110306e09ca256b75c138ca56fcc444f0f4e62f59f75403dd3",
@@ -256,31 +256,31 @@
     "src/lib/ticket-symbol.mjs": "3bc8a5ec6b10a37ccac2d7247b6659f7fbf02c2dc56be1516d87f458085cce31",
     "src/lib/usecase-source.mjs": "632666e0726893e3f8fc58a3000e9700f1cd136ab55b989dae89a245b4667183",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
-    "src/pages/agenten/blueprints.astro": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
-    "src/pages/agenten/fabrika.astro": "4f21ef8a142b207271365d8ec04b3c93cf8b4f52e56cfb050002a4a6f5122615",
-    "src/pages/agenten/marblerun.astro": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
+    "src/pages/agenten/blueprints.astro": "a207674ca2e07d8fe99d2358e155c1bcd52c24927dfbf7f8fd2ee57caf0160dd",
+    "src/pages/agenten/fabrika.astro": "403d4a89bd5248a0467d36c50d8f4da1f8a0a62d3ce318a366438cebebdb5ade",
+    "src/pages/agenten/marblerun.astro": "e78628301216ceb7175f861ec54962101e5ba5f79f84131d76d9b22aa00a2973",
     "src/pages/agenten/running.astro": "1209740fa203847c353f3aec481c0bf66c0ba34f2d544946698245dba1fd4f4a",
-    "src/pages/agenten/sessions.astro": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
-    "src/pages/agenten/subscription-agents.astro": "f01a10b187b601eb605e20bc99bea44776785453ebe36560075d5e00d8dd6b82",
-    "src/pages/artefakte.astro": "676f47aa93f79e1fa6c040c6fb05e8a5373bf6c985170234e514587548055a95",
-    "src/pages/domains.astro": "a9c41b57fc2d188a8c0b5308a76a37c7eccc9227193cd88594810295f26994b0",
-    "src/pages/governance/funk.astro": "0095fa8deb135c9122c313f8880ee7b507f3d36eb7b70e1d065ef8b05ce17242",
-    "src/pages/governance/index.astro": "5371d2b101453c0cdcdf3edeff7c83e48a7f949b271652b6870ae35aadf4c137",
+    "src/pages/agenten/sessions.astro": "50cc6ca28113dcae540f15dba7da52adeeb878efafab028832c6782c4fedc0af",
+    "src/pages/agenten/subscription-agents.astro": "6913198067d5130b5281509744f1cec6b148dd54de39bbe24e482b566b362b29",
+    "src/pages/artefakte.astro": "155856d3bc6dda60ec2ff57173ddb8186c0d9f9b68e35d60bf100161fb2d5ab5",
+    "src/pages/domains.astro": "c16adc26bae104f8952a99ca3d40367b0ed7e9fc24289dfdb88d66ebb4934a7d",
+    "src/pages/governance/funk.astro": "94774ab81ec1cc208f56abbe15218652f5a7105e24eb60c72e6df8a605e8b72f",
+    "src/pages/governance/index.astro": "54afb640e95a711e26b7054a42c753e9ebca96424e44eb365d593894617ae27d",
     "src/pages/governance/logs.astro": "659f4e634b8d30d9d0dc9c6800a899c993266bf04ba5dbc273d09af3f4a50145",
     "src/pages/governance/usecases.astro": "860a03ca99e466d9571ab93e350a24105ba3caff69a06f9a06c4a83ee14c3b19",
-    "src/pages/index.astro": "89f5007f8b8612fd270409b8f976c70bc8bb0114217e82992ddd3ee9ac89419b",
-    "src/pages/life.astro": "147bdbe39e5176879b495ff6db18648fc150a8132529739437adb37e5c83af0d",
-    "src/pages/memory.astro": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c",
-    "src/pages/settings.astro": "6c73743c53b0e262633b8b1f40221170c701552edd82c9c98e2c302618aafea0",
+    "src/pages/index.astro": "6bc4d682340263c20c84894966941cfb9f7270a918c9a0c1b018ec501c44dba2",
+    "src/pages/life.astro": "8c4622ccddce007634bd9d3df5dbcec926f3364703d4b9deca465829a25940a1",
+    "src/pages/memory.astro": "47ab9040873b20341882c6d9463eb70a523ef6c4852d5e4357f9bb3f397f6952",
+    "src/pages/settings.astro": "ca52aad5cbd820ce883ec48cbb28c002fba39584885728bfdf0144e73f2fb4af",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/tasks.astro": "e847ea8332b63040b007300e73a8c1e8c2fd0246fa6c81002d1896d1a733d981",
+    "src/pages/tasks.astro": "d08155bf1605ff4ea01d69b9004b9c079c3b96d21fdb48ff96c5f3a0a2a607a1",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
-    "src/scripts/agent-history.mjs": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
+    "src/scripts/agent-history.mjs": "3cb69a9e327c4975ef6c4024f2a223f5ea11b65d73e69e580f93f523fa567c01",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/scripts/blueprint-studio.mjs": "dba34c659eaebca94b1f4820cd6fefea40e68f88ebf2414d34d03d8534ad0d70",
+    "src/scripts/blueprint-studio.mjs": "ed5c1ab3e730de3895687241777a6bcefbe0f8a6554168263dd8e30216424ff3",
     "src/scripts/domain-studio.mjs": "d883c4a608b1fd087a9c021eb6b8d496fb420a5d0412388e14c65d11cdd6d2ca",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
@@ -337,18 +337,18 @@
     "src/lib/navigation-route-inventory.mjs": "6bb0c8fa3818aa7b4f1dc086031ac1dbf27413f74a144d906feba5362271c045",
     "src/pages/ati.astro": "9654c6490c123e02a4f2e6028d1b22ce8740b2e0e0de2a2448f13c3ec4fd1f84",
     "src/pages/chat.astro": "60bdf982719bd83ee54d9627be6b6f702c4e4dcd08d1b3929bb46fcdfa428df8",
-    "src/pages/daemon.astro": "7c948758d295503b7d3e6b55c64ceaa0b980ac2bbdabe2a4186dcc60536d088b",
-    "src/pages/denkarium.astro": "8488258175615cdafdf292ee3bcc10b5004718a2c6c9d729facc4db77483a5bd",
+    "src/pages/daemon.astro": "9843948aaa9cd0962e92a4e082bdb5fbd10096ca89842c7bbc1690d14db8ffa8",
+    "src/pages/denkarium.astro": "4ccb31a635bf1559382f23fd2e714d3d01d360c096fa02d0b863679c6bd4e4b7",
     "src/pages/financial.astro": "17649d4da4c760da7b96d6970f0a968c385bd029cacbdeda85c391349fca3689",
     "src/pages/gesundheit.astro": "9f95b2292aadeb45287b6edf0ddcdbc7906f9b35b0611bb792fc34128f15047c",
-    "src/pages/help.astro": "a885286f36ce2dddf1ba5ac254d22702bda82054bd307498c34a2e10fff829bd",
-    "src/pages/inbox.astro": "85dea120a55114d1602027509fd2d9a7c720c5302edb36404baf7968a5a4c63e",
+    "src/pages/help.astro": "14d138fd8e72c9813aeb93ef5c9f8242d4e5c88e3fd3095078efd9b1a6a22d1f",
+    "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
-    "src/pages/maintenance.astro": "a1b17d66db4bcab4c279987582092f59c756bacfddb004c5257912fedc312147",
-    "src/pages/routinen.astro": "70e8133588b368b679f39154a62195cd2f23ba65f769879a8c5582d5d214be3f",
+    "src/pages/maintenance.astro": "eb7ed835e311b7e2a140b53d199e2ee597adccbe5c067125994eddc95fbb1a7b",
+    "src/pages/routinen.astro": "340e830452394e3459046d39717767de8ad263506939f28827a641dc1e1249bb",
     "src/pages/persoenlich.astro": "f4f26c145c11721776c7e150032ed1d6a0d2d3e3f6172e6f891f821863ebc700",
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
-    "src/pages/tools.astro": "0e36442d37c4e1fc1a98b4f36fdf71788e46d68c4320e8352559806b0f0961ed",
+    "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "tests/legacy-route-fallback.test.mjs": "d5c08ba2d492a9856bae6566770a8c7c80602f43492d279b860b7177068d5b5a",
     "tests/tasks-routines.test.mjs": "44bc4991decccb913512493e60c200992debcb79ad637b19f40685c1aef99ceb"
   },
@@ -1240,7 +1240,7 @@
         "src/pages/agenten/marblerun.astro": {
           "source_path": "system/gui/web/src/pages/agenten/marblerun.astro",
           "source_sha256": "4e6c2c1496c21c9f83f2c1099a2768a07b6f8e72a873b66386f982ec46ef3c91",
-          "imported_sha256": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
+          "imported_sha256": "e78628301216ceb7175f861ec54962101e5ba5f79f84131d76d9b22aa00a2973",
           "adapted": true
         },
         "src/scripts/marblerun-studio.mjs": {
@@ -4530,6 +4530,140 @@
           "path": "src/pages/tasks.astro",
           "previous_sha256": "e6cfdf38f70671bbdafa0bd30ce33f8ed0d03a91402009fc348e873c5d0b8146",
           "sha256": "e847ea8332b63040b007300e73a8c1e8c2fd0246fa6c81002d1896d1a733d981"
+        }
+      ]
+    },
+    {
+      "date": "2026-10-31",
+      "scope": "BACH #2466/#2468/#2477-#2488: unified Ocean-BACH GUI restructuring packages 1-8",
+      "changes": [
+        "Complete GUI restructuring across Dashboard, Agenten-Bibliothek, Tasks & Routines, Nachrichten-Zentrale, Memory & Architecture, Skills/Plugins/MCP/Tools, Artefakte/Anonymizer, and Governance/System/Wartung."
+      ],
+      "files": [
+        {
+          "path": "src/components/CapabilityBoard.astro",
+          "previous_sha256": "1cda4d163d9baf87aac8aa747f4b42c1ec6262044bf8d620ee93215288bea546",
+          "sha256": "bf8f8952c7eadd20980168649841a86a7ebcc94b6f164c789ab3dac4b14678f4"
+        },
+        {
+          "path": "src/lib/capability-board-ui.mjs",
+          "previous_sha256": "cdf37bb84c2009c0be06fbe9ba2a9ff1156d50b9e6e2b2f74fcd1ea8c2d28f25",
+          "sha256": "6a0c64b6e9793b007af854f4c70568300f28209a4257cfb6e437e92374b986c1"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "1a12e930e465728788e0ce111ca2cabc357252b3c62395ef38f7a655bfb17a8e",
+          "sha256": "a207674ca2e07d8fe99d2358e155c1bcd52c24927dfbf7f8fd2ee57caf0160dd"
+        },
+        {
+          "path": "src/pages/agenten/fabrika.astro",
+          "previous_sha256": "4f21ef8a142b207271365d8ec04b3c93cf8b4f52e56cfb050002a4a6f5122615",
+          "sha256": "403d4a89bd5248a0467d36c50d8f4da1f8a0a62d3ce318a366438cebebdb5ade"
+        },
+        {
+          "path": "src/pages/agenten/marblerun.astro",
+          "previous_sha256": "fa6a2504866516d94325da9243d18d2aa63c1c36c82acc9abde8543069257bef",
+          "sha256": "e78628301216ceb7175f861ec54962101e5ba5f79f84131d76d9b22aa00a2973"
+        },
+        {
+          "path": "src/pages/agenten/sessions.astro",
+          "previous_sha256": "f2ab5b33b432603a8188b3aa94c679b279dd9127e9fe7f20933c88acb7860034",
+          "sha256": "50cc6ca28113dcae540f15dba7da52adeeb878efafab028832c6782c4fedc0af"
+        },
+        {
+          "path": "src/pages/agenten/subscription-agents.astro",
+          "previous_sha256": "f01a10b187b601eb605e20bc99bea44776785453ebe36560075d5e00d8dd6b82",
+          "sha256": "6913198067d5130b5281509744f1cec6b148dd54de39bbe24e482b566b362b29"
+        },
+        {
+          "path": "src/pages/artefakte.astro",
+          "previous_sha256": "676f47aa93f79e1fa6c040c6fb05e8a5373bf6c985170234e514587548055a95",
+          "sha256": "155856d3bc6dda60ec2ff57173ddb8186c0d9f9b68e35d60bf100161fb2d5ab5"
+        },
+        {
+          "path": "src/pages/domains.astro",
+          "previous_sha256": "a9c41b57fc2d188a8c0b5308a76a37c7eccc9227193cd88594810295f26994b0",
+          "sha256": "c16adc26bae104f8952a99ca3d40367b0ed7e9fc24289dfdb88d66ebb4934a7d"
+        },
+        {
+          "path": "src/pages/governance/funk.astro",
+          "previous_sha256": "0095fa8deb135c9122c313f8880ee7b507f3d36eb7b70e1d065ef8b05ce17242",
+          "sha256": "94774ab81ec1cc208f56abbe15218652f5a7105e24eb60c72e6df8a605e8b72f"
+        },
+        {
+          "path": "src/pages/governance/index.astro",
+          "previous_sha256": "5371d2b101453c0cdcdf3edeff7c83e48a7f949b271652b6870ae35aadf4c137",
+          "sha256": "54afb640e95a711e26b7054a42c753e9ebca96424e44eb365d593894617ae27d"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "previous_sha256": "89f5007f8b8612fd270409b8f976c70bc8bb0114217e82992ddd3ee9ac89419b",
+          "sha256": "6bc4d682340263c20c84894966941cfb9f7270a918c9a0c1b018ec501c44dba2"
+        },
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "147bdbe39e5176879b495ff6db18648fc150a8132529739437adb37e5c83af0d",
+          "sha256": "8c4622ccddce007634bd9d3df5dbcec926f3364703d4b9deca465829a25940a1"
+        },
+        {
+          "path": "src/pages/memory.astro",
+          "previous_sha256": "c6e169c685a0991af3e53c2338eb9c888a657347d3d91d970da79bae888be85c",
+          "sha256": "47ab9040873b20341882c6d9463eb70a523ef6c4852d5e4357f9bb3f397f6952"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "6c73743c53b0e262633b8b1f40221170c701552edd82c9c98e2c302618aafea0",
+          "sha256": "ca52aad5cbd820ce883ec48cbb28c002fba39584885728bfdf0144e73f2fb4af"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "e847ea8332b63040b007300e73a8c1e8c2fd0246fa6c81002d1896d1a733d981",
+          "sha256": "d08155bf1605ff4ea01d69b9004b9c079c3b96d21fdb48ff96c5f3a0a2a607a1"
+        },
+        {
+          "path": "src/scripts/agent-history.mjs",
+          "previous_sha256": "b2bb7c0f0ee45b692093a1c64fd0fbc19d912318c8abce866c2f3c8472a507f1",
+          "sha256": "3cb69a9e327c4975ef6c4024f2a223f5ea11b65d73e69e580f93f523fa567c01"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "dba34c659eaebca94b1f4820cd6fefea40e68f88ebf2414d34d03d8534ad0d70",
+          "sha256": "ed5c1ab3e730de3895687241777a6bcefbe0f8a6554168263dd8e30216424ff3"
+        },
+        {
+          "path": "src/pages/daemon.astro",
+          "previous_sha256": "7c948758d295503b7d3e6b55c64ceaa0b980ac2bbdabe2a4186dcc60536d088b",
+          "sha256": "9843948aaa9cd0962e92a4e082bdb5fbd10096ca89842c7bbc1690d14db8ffa8"
+        },
+        {
+          "path": "src/pages/denkarium.astro",
+          "previous_sha256": "8488258175615cdafdf292ee3bcc10b5004718a2c6c9d729facc4db77483a5bd",
+          "sha256": "4ccb31a635bf1559382f23fd2e714d3d01d360c096fa02d0b863679c6bd4e4b7"
+        },
+        {
+          "path": "src/pages/help.astro",
+          "previous_sha256": "a885286f36ce2dddf1ba5ac254d22702bda82054bd307498c34a2e10fff829bd",
+          "sha256": "14d138fd8e72c9813aeb93ef5c9f8242d4e5c88e3fd3095078efd9b1a6a22d1f"
+        },
+        {
+          "path": "src/pages/inbox.astro",
+          "previous_sha256": "85dea120a55114d1602027509fd2d9a7c720c5302edb36404baf7968a5a4c63e",
+          "sha256": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577"
+        },
+        {
+          "path": "src/pages/maintenance.astro",
+          "previous_sha256": "a1b17d66db4bcab4c279987582092f59c756bacfddb004c5257912fedc312147",
+          "sha256": "eb7ed835e311b7e2a140b53d199e2ee597adccbe5c067125994eddc95fbb1a7b"
+        },
+        {
+          "path": "src/pages/routinen.astro",
+          "previous_sha256": "70e8133588b368b679f39154a62195cd2f23ba65f769879a8c5582d5d214be3f",
+          "sha256": "340e830452394e3459046d39717767de8ad263506939f28827a641dc1e1249bb"
+        },
+        {
+          "path": "src/pages/tools.astro",
+          "previous_sha256": "0e36442d37c4e1fc1a98b4f36fdf71788e46d68c4320e8352559806b0f0961ed",
+          "sha256": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870"
         }
       ]
     }

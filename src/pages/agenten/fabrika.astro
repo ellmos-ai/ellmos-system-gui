@@ -13,7 +13,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
     </header>
 
     <nav class="library-tabs" aria-label="Agenten-Bibliothek" role="tablist">
-      <a class="library-tab is-active" role="tab" aria-selected="true" href="/agenten/fabrika">Vorlagen</a>
+      <a class="library-tab is-active" role="tab" aria-selected="true" href="/agenten/blueprints">Vorlagen</a>
       <a class="library-tab" role="tab" aria-selected="false" href="/agenten/subscription-agents">Prompt-Agenten</a>
       <a class="library-tab" role="tab" aria-selected="false" href="/agenten/marblerun">Ketten</a>
     </nav>
@@ -22,14 +22,16 @@ import BachLayout from "../../layouts/BachLayout.astro";
       <article class="library-card">
         <span class="library-icon" aria-hidden="true">🤖</span>
         <div>
-          <h2>Vorlagen &amp; Blueprints</h2>
-          <p>Rolle, Skills, Arbeitsvertrag und Modell zu einem versionierten Agentenprofil zusammenstellen.</p>
-          <a class="btn" href="/agenten/blueprints">Agenten-Werkstatt öffnen</a>
+          <span class="badge badge-accent" style="margin-bottom:.35rem;display:inline-block;">Reiter 1 · Vorlagen</span>
+          <h2>Vorlagen</h2>
+          <p>Rolle, Skills, Arbeitsvertrag und Modell zu einer versionierten Agentenvorlage zusammenstellen.</p>
+          <a class="btn btn-primary" href="/agenten/blueprints">Vorlagen öffnen</a>
         </div>
       </article>
       <article class="library-card">
         <span class="library-icon" aria-hidden="true">✍️</span>
         <div>
+          <span class="badge" style="margin-bottom:.35rem;display:inline-block;">Reiter 2 · Extern zugeschaltet</span>
           <h2>Prompt-Agenten</h2>
           <p>Quellengebundene Prompts für einen späteren Client vorbereiten. Extern zugeschaltet, nicht von dieser GUI gesteuert.</p>
           <a class="btn" href="/agenten/subscription-agents">Prompt-Agenten öffnen</a>
@@ -38,9 +40,13 @@ import BachLayout from "../../layouts/BachLayout.astro";
       <article class="library-card">
         <span class="library-icon" aria-hidden="true">⛓️</span>
         <div>
-          <h2>Ketten</h2>
-          <p>Mehrere Agenten oder Skills als Ablauf entwerfen. Ein Entwurf startet keinen Lauf.</p>
-          <a class="btn" href="/agenten/marblerun">Ketten-Editor öffnen</a>
+          <span class="badge" style="margin-bottom:.35rem;display:inline-block;">Reiter 3 · Agentenkette &amp; Befehlskette</span>
+          <h2>Ketten (MarbleRun &amp; Toolchains)</h2>
+          <p>Agentenketten (MarbleRun) und Befehlsketten (Toolchains) mit klarem Art-Schild entwerfen. Ein Entwurf startet keinen Lauf.</p>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <a class="btn" href="/agenten/marblerun">Agentenketten · MarbleRun</a>
+            <a class="btn" href="/daemon?tab=chains">Befehlsketten · Toolchains</a>
+          </div>
         </div>
       </article>
     </section>

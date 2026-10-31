@@ -3,6 +3,11 @@ import BachLayout from '../../layouts/BachLayout.astro';
 ---
 <BachLayout title="Prompt-Agenten" currentPath="/agenten/subscription-agents">
   <section class="subscription-board" aria-labelledby="subscription-title">
+    <nav class="subscription-actions" role="tablist" aria-label="Agenten-Bibliothek Hauptreiter">
+      <a class="btn btn-secondary" role="tab" aria-selected="false" href="/agenten/blueprints">🤖 Vorlagen</a>
+      <a class="btn btn-primary" role="tab" aria-selected="true" href="/agenten/subscription-agents">✍️ Prompt-Agenten</a>
+      <a class="btn btn-secondary" role="tab" aria-selected="false" href="/agenten/marblerun">⛓️ Ketten (MarbleRun &amp; Toolchains)</a>
+    </nav>
     <header class="subscription-header">
       <div>
         <p class="eyebrow">Agenten-Bibliothek · extern</p>

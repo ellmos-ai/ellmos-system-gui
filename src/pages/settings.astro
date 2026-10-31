@@ -44,6 +44,31 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
           <p class="card-desc">Anmeldung, Betriebssystemberechtigungen und Sandbox sind getrennte Freigaben. Betriebssystemzugriffe sind hier nicht geprüft.</p>
         </div>
       </div>
+      <div class="card-grid">
+        <div class="glass-card" id="operating-mode-card">
+          <h2>🧭 Betriebsart (#2485)</h2>
+          <p class="card-desc">Lege fest, ob dieses Gerät eigenständig lokal arbeitet, im Verbund mit dem Leader (Mac Studio) synchronisiert oder als reiner Server läuft.</p>
+          <label for="operating-mode-select" style="display:block;font-size:0.82rem;color:var(--text-muted);margin-bottom:0.35rem;">Aktive Betriebsart</label>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+            <select id="operating-mode-select" style="padding:0.5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);">
+              <option value="cluster" selected>Verbund mit Leader (Mac Studio · Standard)</option>
+              <option value="standalone">Einzelgerät (alles lokal)</option>
+              <option value="server_only">Nur Server (Headless Backend)</option>
+            </select>
+            <a href="/system/ocean" class="btn btn-secondary">🖥️ Betrieb › Systeme öffnen</a>
+          </div>
+        </div>
+        <div class="glass-card" id="cloud-mounts">
+          <h2>🔗 Cloud, Netzlaufwerke &amp; Mounts (#2483)</h2>
+          <p class="card-desc">Aus der früheren Dateieingangs-Seite übernommene Mount- und Brückenübersicht:</p>
+          <ul style="margin:0 0 0.75rem 0;padding-left:1.2rem;font-size:0.84rem;color:var(--text-muted);line-height:1.6;">
+            <li><strong>OneDrive / .SYNC:</strong> Gemeinsamer Regel-, Skill- und Konfigurations-Transfer (<code>sync_agy.py</code>)</li>
+            <li><strong>Tailscale &amp; SSH-Tunnel:</strong> Mac Studio Leader-Verbindung (Port 8000 Loopback-Forwarding)</li>
+            <li><strong>FileCommander-Schutz:</strong> Cloud-Lock-Prüfung (<code>fc_check_cloud_lock</code>) vor Dateioperationen</li>
+          </ul>
+          <a href="/system/ocean" class="btn btn-secondary">Sync-Netzbild (system-gap-master) prüfen →</a>
+        </div>
+      </div>
       <div class="glass-card">
         <h2>Weitere Einstellungen</h2>
         <p class="card-desc">Farbschema unter „Darstellung“, Aufgabenauswahl und Abschlussregeln unter „Worker & Aufgaben“. Architektur, Erweiterungen und Lernansichten bleiben in den weiteren Bereichen erreichbar.</p>
@@ -342,6 +367,37 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
         </div>
 
         <SystemClusterStatus />
+
+        <div class="glass-card" id="inbox-rules">
+          <h3><span class="icon">📥</span> Dateieingang · Ordner- &amp; Scan-Regeln (#2483)</h3>
+          <p class="card-desc">Aus der früheren <code>/inbox</code>-Seite in die Einstellungen überführt: Überwachte Eingangsordner und automatische Vorverarbeitung.</p>
+          <div class="repo-box">
+            <div class="repo-item">
+              <span class="badge badge-accent">Scan-Regeln</span>
+              <strong>Eingangsordner &amp; OCR-Vorprüfung</strong>
+              <p>Neue PDF-, Markdown- und JSON-Dokumente werden im Export- und Artefaktverzeichnis bereitgestellt. Vor externer Weitergabe greift die Anonymisierung.</p>
+            </div>
+            <div class="repo-item" id="automations-n8n">
+              <span class="badge badge-secondary">Automationen &amp; n8n</span>
+              <strong>Workflow-Trigger &amp; n8n-Brücke</strong>
+              <p>Webhook- und Zeitplan-Automationen werden zusammen mit den Systemroutinen unter <a href="/routinen">Routinen &amp; Jobs</a> gesteuert.</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.85rem;">
+            <a href="/artefakte" class="btn btn-secondary">💾 Artefakte &amp; Exporte</a>
+            <a href="/anonymizer" class="btn btn-secondary">🎭 Datenschutz &amp; Anonymisierung</a>
+            <a href="/routinen" class="btn btn-secondary">⏱️ Routinen &amp; Jobs</a>
+          </div>
+        </div>
+
+        <div class="glass-card" id="restore-system-agents">
+          <h3><span class="icon">🔄</span> Standard-Systemagenten &amp; Werkseinstellungen (#2478)</h3>
+          <p class="card-desc">Aus der Agenten-Bibliothek hierher verschoben, damit die tägliche Vorlagen-Auswahl aufgeräumt bleibt:</p>
+          <p style="font-size:0.84rem;color:var(--text-muted);margin:0 0 0.85rem 0;">
+            Stellt die mitgelieferten System- und Rollenvorlagen (Buddha, Ticket-Master, Task-Master, Specialist-Vorlagen) bei Bedarf wieder her oder öffnet den Systemprompt-Inspektor.
+          </p>
+          <a href="/agenten/blueprints?restore=prompts" class="btn btn-secondary">🔄 Standard-Systemagenten wiederherstellen / prüfen</a>
+        </div>
 
         <div class="glass-card">
           <h3><span class="icon">🏛️</span> Repo- & Architektur-Klassifizierung</h3>

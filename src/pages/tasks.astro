@@ -27,7 +27,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
     </div>
   </div>
 
-  <details class="task-overview-technical">
+  <details class="task-overview-technical" hidden>
     <summary>Übernahmen und Laufdetails</summary>
     <TaskLeasePanel />
   </details>
@@ -384,7 +384,10 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
                     ${escapeHtml(t.priority || 'normal')}
                   </td>
                   <td style="padding:0.75rem 0.5rem;">
-                     <span class="badge ${isDone ? 'badge-success' : 'badge-warning'}" data-task-status="${escapeHtml(normalizedStatus(t.status) || 'unknown')}">${escapeHtml(statusLabel(t.status))}</span>
+                     <div style="display:flex;flex-direction:column;gap:0.25rem;align-items:flex-start;">
+                       <span class="badge ${isDone ? 'badge-success' : 'badge-warning'}" data-task-status="${escapeHtml(normalizedStatus(t.status) || 'unknown')}">${escapeHtml(statusLabel(t.status))}</span>
+                       ${normalizedStatus(t.status) === 'in_progress' || normalizedStatus(t.status) === 'progress' ? `<span class="badge badge-accent task-inline-lease-badge" data-task-lease-badge="${Number(t.id)}" style="font-size:0.7rem;">⚡ läuft · ${escapeHtml(rawAssignee)}${t.lease_expires_in_minutes ? ` · noch ${escapeHtml(t.lease_expires_in_minutes)} Min.` : ''}</span>` : ''}
+                     </div>
                   </td>
                   <td style="padding:0.75rem 0.5rem;text-align:right;width:120px;box-sizing:border-box;">
                     <div class="task-row-actions">

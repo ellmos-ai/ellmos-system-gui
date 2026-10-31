@@ -6,6 +6,62 @@ import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
 const route = legacyFallbackRoutes.find((entry) => entry.path === '/maintenance');
 if (!route) throw new Error('Fallback-Konfiguration für /maintenance fehlt.');
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+<BachLayout title="Betrieb › Wartung & Integrität" currentPath={route.path}>
+  <div class="page-head" style="margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+    <div>
+      <p class="eyebrow" style="margin:0 0 0.25rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Betrieb › Wartung (#2485, #2488)</p>
+      <h1 style="margin:0 0 0.35rem 0;font-size:1.65rem;">🛠️ Wartung, System-Health &amp; Datenbankpflege</h1>
+      <p style="margin:0;opacity:0.85;font-size:0.9rem;">
+        Zentrale Wartungsansicht im neuen Astro-Design: System-Health, SQLite-Datenbankpflege (<code>bach.db</code>), Lock-Prüfung und Qualitäts-Checkups.
+      </p>
+    </div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <a href="/daemon" class="btn btn-secondary btn-sm">⚙️ Dienste</a>
+      <a href="/routinen" class="btn btn-secondary btn-sm">⏱️ Routinen &amp; Jobs</a>
+      <a href="/governance/usecases" class="btn btn-secondary btn-sm">✅ Qualität &amp; Tests</a>
+      <a href="/governance/logs" class="btn btn-secondary btn-sm">📜 Logs &amp; Audit</a>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-bottom:1.25rem;">
+    <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;font-size:1.05rem;">🩺 1. System-Health &amp; Adapter</h2>
+        <span class="badge">Betrieb</span>
+      </div>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Prüft Erreichbarkeit des BACH/Ocean-Backends, aktive Geräte-ID-Sitzung und Laufzeit-Verbindungen.</p>
+      <a href="/settings?tab=connections" class="btn btn-secondary btn-sm" style="justify-self:start;">Verbindungsstatus prüfen →</a>
+    </article>
+
+    <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;font-size:1.05rem;">🗄️ 2. Datenbankpflege (bach.db)</h2>
+        <span class="badge">SQLite</span>
+      </div>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Tabellenbestände (<code>memory_facts</code>, <code>memory_lessons</code>, <code>tasks</code>), Integritätsprüfung und Backup-Stand.</p>
+      <a href="/memory" class="btn btn-secondary btn-sm" style="justify-self:start;">Datenbank-Inspektor öffnen →</a>
+    </article>
+
+    <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;font-size:1.05rem;">🔒 3. Lock-Hygiene &amp; Sperren</h2>
+        <span class="badge">Fail-Closed</span>
+      </div>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Prüfung abgelaufener Arbeits-Locks (<code>prune_stale_locks.py</code>) bei striktem Schutz aller <code>LOCK.user.*</code>-Sperren.</p>
+      <a href="/governance?tab=locks" class="btn btn-secondary btn-sm" style="justify-self:start;">Lock-Monitor öffnen →</a>
+    </article>
+
+    <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h2 style="margin:0;font-size:1.05rem;">✅ 4. Qualität, Tests &amp; Use Cases</h2>
+        <span class="badge">ellmos-tests</span>
+      </div>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Vertrags- und Oberflächentests sowie Use-Case-Prüfungen unter Betrieb › Qualität &amp; Tests.</p>
+      <a href="/governance/usecases" class="btn btn-secondary btn-sm" style="justify-self:start;">Qualität &amp; Tests öffnen →</a>
+    </article>
+  </div>
+
+  <div hidden>
+    <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+  </div>
 </BachLayout>

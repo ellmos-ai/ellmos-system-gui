@@ -326,5 +326,6 @@ function initializeStudio() {
     if(["custom","templates","teams"].includes(params.get("tab"))){state.library=params.get("tab");render();}
     if(bp)openEditor(bp,params.has("copy")||bp.is_template===1);else if(params.has("new"))openEditor();
     if(params.get("create")==="team")openTeam();
+    if(params.get("restore")==="prompts")$("studio-prompts")?.click();
   }).catch(error=>notify("studio-status",error.message,true));
 }

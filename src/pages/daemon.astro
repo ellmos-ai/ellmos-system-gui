@@ -7,8 +7,60 @@ import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
 const route = legacyFallbackRoutes.find((entry) => entry.path === '/daemon');
 if (!route) throw new Error('Fallback-Konfiguration für /daemon fehlt.');
 ---
-<BachLayout title="Daemon & Dienste" currentPath="/daemon">
-  <div id="daemon-legacy-fallback">
+<BachLayout title="Betrieb › Dienste & Dauerläufer" currentPath="/daemon">
+  <section style="margin-bottom:1.25rem;padding:1.25rem;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+      <div>
+        <p style="margin:0 0 0.25rem;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Betrieb › Dienste (#2485, #2488)</p>
+        <h1 style="margin:0 0 0.3rem;font-size:1.55rem;">⚙️ Dienste &amp; Hintergrund-Dauerläufer</h1>
+        <p style="margin:0;font-size:0.86rem;color:var(--text-muted);">
+          Dauerhaft laufende Systemdienste (GUI-Server, Telegram-Bridge, Scheduler, Doku-Pflegedienst). Zeitgesteuerte Einzeljobs liegen unter <a href="/routinen">Routinen &amp; Jobs</a>, Befehlsketten unter <a href="/agenten/marblerun">Agenten-Bibliothek › Ketten</a>.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <a href="/daemon" class="btn btn-sm btn-primary">⚙️ Dauerläufer-Dienste</a>
+        <a href="/daemon?tab=chains" class="btn btn-sm">⛓️ Befehlsketten (Toolchains)</a>
+        <a href="/routinen" class="btn btn-sm">⏱️ Routinen &amp; Jobs</a>
+        <a href="/maintenance" class="btn btn-sm">🛠️ Wartung</a>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0.85rem;">
+      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+          <strong>🌐 BACH/Ocean GUI-Server</strong>
+          <span class="badge">launchd · Port 8000</span>
+        </div>
+        <p style="margin:0;font-size:0.82rem;color:var(--text-muted);">FastAPI + Astro-Oberfläche (<code>com.bach.gui-server</code>) mit automatischer Loopback-Geräte-ID-Sitzung.</p>
+      </article>
+
+      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+          <strong>⏱️ Daemon- &amp; Job-Scheduler</strong>
+          <span class="badge">Hintergrunddienst</span>
+        </div>
+        <p style="margin:0;font-size:0.82rem;color:var(--text-muted);">Steuert periodische Wartungs-, Sync- und Toolchain-Läufe gemäß konfiguriertem Takt.</p>
+      </article>
+
+      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+          <strong>✈️ Telegram- &amp; Connector-Dienst</strong>
+          <span class="badge">Connector-Bridge</span>
+        </div>
+        <p style="margin:0;font-size:0.82rem;color:var(--text-muted);">Optionale Nachrichten- und Benachrichtigungsbrücke für mobile Rückfragen und Eingangssignale.</p>
+      </article>
+
+      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+          <strong>📘 Doku- &amp; Register-Pflegedienst</strong>
+          <span class="badge">Hintergrundpflege</span>
+        </div>
+        <p style="margin:0;font-size:0.82rem;color:var(--text-muted);">Hält Modulmanifeste, Skill-Kataloge und Lock-Caches aktuell.</p>
+      </article>
+    </div>
+  </section>
+
+  <div id="daemon-legacy-fallback" hidden>
     <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
   </div>
   <div id="daemon-chain-content" hidden>

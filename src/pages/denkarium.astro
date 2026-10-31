@@ -6,6 +6,169 @@ import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
 const route = legacyFallbackRoutes.find((entry) => entry.path === '/denkarium');
 if (!route) throw new Error('Fallback-Konfiguration für /denkarium fehlt.');
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+<BachLayout title="Notizen · Gedanken & Logbuch" currentPath={route.path}>
+  <div class="page-head" style="margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+    <div>
+      <p class="eyebrow" style="margin:0 0 0.25rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Notizen · Gedanken · Logbuch (#2455, #2480)</p>
+      <h1 style="margin:0 0 0.35rem 0;font-size:1.65rem;">📝 Notizen (Gedanken &amp; Logbuch)</h1>
+      <p style="margin:0;opacity:0.85;font-size:0.9rem;">
+        Schnelle Gedankenablage (vormals Denkarium) und chronologisches Arbeits- &amp; Tageslogbuch in einer gemeinsamen Astro-Ansicht.
+      </p>
+    </div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <a href="/memory" class="btn btn-secondary btn-sm">💾 Langzeitgedächtnis (bach.db)</a>
+      <a href="/life" class="btn btn-secondary btn-sm">🌱 Life-Zentrale</a>
+    </div>
+  </div>
+
+  <!-- Filter-Balken: Alle / Gedanken / Logbuch + Suche -->
+  <section class="card" style="padding:1rem 1.25rem;margin-bottom:1.25rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+    <div style="display:flex;gap:0.45rem;flex-wrap:wrap;" role="tablist" aria-label="Notizen-Filter">
+      <button type="button" class="btn btn-primary btn-sm note-filter-btn" data-note-kind="all">📚 Alle Notizen</button>
+      <button type="button" class="btn btn-secondary btn-sm note-filter-btn" data-note-kind="gedanken">💭 Gedanken (Impulse &amp; Ideen)</button>
+      <button type="button" class="btn btn-secondary btn-sm note-filter-btn" data-note-kind="logbuch">📓 Logbuch (Chronik &amp; Entscheidungen)</button>
+    </div>
+    <div style="display:flex;gap:0.5rem;align-items:center;flex:1;min-width:220px;max-width:380px;">
+      <input id="notes-search-input" type="search" placeholder="Notizen nach Stichwort oder Tag filtern …" style="width:100%;padding:0.45rem 0.7rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);font-size:0.85rem;" />
+    </div>
+  </section>
+
+  <!-- Neue Notiz anlegen + Notizen-Liste -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.25rem;align-items:start;">
+    <section class="card" style="padding:1.25rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);">
+      <h2 style="margin:0 0 0.75rem 0;font-size:1.05rem;">➕ Neue Notiz erfassen</h2>
+      <form id="note-create-form" style="display:grid;gap:0.75rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;">
+          <label style="font-size:0.8rem;color:var(--text-muted);display:grid;gap:0.25rem;">
+            Bereich
+            <select id="note-kind-select" style="padding:0.45rem;border-radius:6px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);">
+              <option value="gedanken">💭 Gedanken (Impuls / Idee)</option>
+              <option value="logbuch">📓 Logbuch (Eintrag / Chronik)</option>
+            </select>
+          </label>
+          <label style="font-size:0.8rem;color:var(--text-muted);display:grid;gap:0.25rem;">
+            Stichwort / Tag
+            <input id="note-tag-input" type="text" placeholder="z. B. Fokus, Architektur, Alltag" style="padding:0.45rem;border-radius:6px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);" />
+          </label>
+        </div>
+        <label style="font-size:0.8rem;color:var(--text-muted);display:grid;gap:0.25rem;">
+          Titel
+          <input id="note-title-input" type="text" required placeholder="Kurzer Titel des Gedankens oder Logbucheintrags …" style="padding:0.45rem;border-radius:6px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);" />
+        </label>
+        <label style="font-size:0.8rem;color:var(--text-muted);display:grid;gap:0.25rem;">
+          Inhalt
+          <textarea id="note-body-input" rows="4" required placeholder="Spontanen Gedanken, Notiz oder Tagesprotokoll festhalten …" style="padding:0.5rem;border-radius:6px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);"></textarea>
+        </label>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
+          <button type="submit" class="btn btn-primary btn-sm">💾 Notiz sichern</button>
+          <span id="note-save-status" style="font-size:0.8rem;color:var(--text-muted);">Wird lokal im Browser &amp; Arbeitsgedächtnis gehalten</span>
+        </div>
+      </form>
+    </section>
+
+    <section class="card" style="padding:1.25rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+        <h2 style="margin:0;font-size:1.05rem;">📋 Gespeicherte Notizen</h2>
+        <span class="badge" id="notes-count-badge">0 Einträge</span>
+      </div>
+      <div id="notes-list-container" style="display:grid;gap:0.65rem;"></div>
+    </section>
+  </div>
+
+  <div hidden>
+    <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+  </div>
+
+  <script is:inline>
+    (function initNotizenPage() {
+      const STORAGE_KEY = 'bach.notizen.items.v1';
+      const defaultNotes = [
+        { id: 'n-1', kind: 'gedanken', tag: 'Fokus & ADHS', title: 'Spontane Impulse zwischenspeichern', body: 'Während eines 25-Minuten-Fokusintervalls neue Ideen hier unter Gedanken ablegen, ohne den aktuellen Arbeitsschritt zu verlassen.', createdAt: '2026-10-31 09:00' },
+        { id: 'n-2', kind: 'logbuch', tag: 'Ocean & BACH', title: 'Gemeinsame Astro-Oberfläche aktiv', body: 'Notizen bündelt das frühere Denkarium (Gedanken) und das Arbeitslogbuch unter /notizen.', createdAt: '2026-10-31 12:30' }
+      ];
+      let currentFilter = new URLSearchParams(window.location.search).get('kind') || 'all';
+      let searchQuery = '';
+
+      function loadNotes() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          const parsed = raw ? JSON.parse(raw) : null;
+          return Array.isArray(parsed) && parsed.length ? parsed : defaultNotes;
+        } catch (_err) {
+          return defaultNotes;
+        }
+      }
+
+      function saveNotes(items) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        } catch (_err) {}
+      }
+
+      function renderNotes() {
+        const listEl = document.getElementById('notes-list-container');
+        const countEl = document.getElementById('notes-count-badge');
+        if (!listEl) return;
+        const all = loadNotes();
+        const filtered = all.filter((item) => {
+          const kindOk = currentFilter === 'all' || item.kind === currentFilter;
+          const q = searchQuery.trim().toLowerCase();
+          const textOk = !q || `${item.title} ${item.body} ${item.tag || ''}`.toLowerCase().includes(q);
+          return kindOk && textOk;
+        });
+        if (countEl) countEl.textContent = `${filtered.length} Einträge`;
+        listEl.innerHTML = filtered.map((item) => `
+          <article style="padding:0.85rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;margin-bottom:0.35rem;">
+              <strong>${item.kind === 'logbuch' ? '📓 Logbuch' : '💭 Gedanken'} · ${item.title}</strong>
+              <span class="badge">${item.tag || 'Notiz'}</span>
+            </div>
+            <p style="margin:0 0 0.35rem 0;font-size:0.85rem;color:var(--text);white-space:pre-wrap;">${item.body}</p>
+            <small style="color:var(--text-muted);font-size:0.75rem;">${item.createdAt || ''}</small>
+          </article>
+        `).join('') || '<p style="margin:0;color:var(--text-muted);font-size:0.85rem;">Keine Notizen für diesen Filter.</p>';
+      }
+
+      document.querySelectorAll('.note-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          currentFilter = btn.getAttribute('data-note-kind') || 'all';
+          document.querySelectorAll('.note-filter-btn').forEach((b) => {
+            const active = b.getAttribute('data-note-kind') === currentFilter;
+            b.classList.toggle('btn-primary', active);
+            b.classList.toggle('btn-secondary', !active);
+          });
+          renderNotes();
+        });
+      });
+
+      document.getElementById('notes-search-input')?.addEventListener('input', (e) => {
+        searchQuery = e.target.value || '';
+        renderNotes();
+      });
+
+      document.getElementById('note-create-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const kind = document.getElementById('note-kind-select')?.value || 'gedanken';
+        const tag = document.getElementById('note-tag-input')?.value?.trim() || 'Notiz';
+        const title = document.getElementById('note-title-input')?.value?.trim();
+        const body = document.getElementById('note-body-input')?.value?.trim();
+        if (!title || !body) return;
+        const items = loadNotes();
+        items.unshift({
+          id: 'n-' + Date.now(),
+          kind,
+          tag,
+          title,
+          body,
+          createdAt: new Date().toISOString().slice(0, 16).replace('T', ' ')
+        });
+        saveNotes(items);
+        document.getElementById('note-title-input').value = '';
+        document.getElementById('note-body-input').value = '';
+        renderNotes();
+      });
+
+      renderNotes();
+    })();
+  </script>
 </BachLayout>

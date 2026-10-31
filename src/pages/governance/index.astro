@@ -22,12 +22,103 @@ import BachLayout from "../../layouts/BachLayout.astro";
   </div>
 
   <!-- Governance Modul-Tabs -->
-  <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border);padding-bottom:0.5rem;flex-wrap:wrap;">
-    <a href="/governance" class="btn btn-sm btn-primary">🏛️ Control Room</a>
-    <a href="/governance/funk" class="btn btn-sm">📻 Agentenfunk</a>
-    <a href="/governance/usecases" class="btn btn-sm">📑 Use Cases & Workflows</a>
-    <a href="/governance/logs" class="btn btn-sm">📜 Logs & Audit</a>
+  <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem;border-bottom:1px solid var(--border);padding-bottom:0.5rem;flex-wrap:wrap;">
+    <a href="/governance" class="btn btn-sm btn-primary">🏛️ Control Room &amp; Erlaubnisse</a>
+    <a href="/governance#hooks-guards" class="btn btn-sm">🪝 Hooks &amp; Guards</a>
+    <a href="/agenten/sessions?tab=funk" class="btn btn-sm">📻 Agentenfunk (in Nachrichten)</a>
+    <a href="/governance/usecases" class="btn btn-sm">✅ Betrieb › Qualität &amp; Tests (ellmos-tests)</a>
+    <a href="/governance/logs" class="btn btn-sm">📜 Logs &amp; Audit</a>
   </div>
+
+  <!-- GANZ OBEN: ERLAUBNISSE FÜR AUSSENWIRKUNG (Aktion × Akteur: erlaubt / Rückfrage / nie · #2484) -->
+  <section class="card" id="external-permissions-matrix" style="margin-bottom:1.5rem;border:1px solid var(--accent);background:var(--bg-card);">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;flex-wrap:wrap;">
+      <div>
+        <h2 class="card-title" style="margin:0 0 0.25rem 0;">🛡️ Erlaubnisse für Außenwirkung (Handlung × Akteur · #2484)</h2>
+        <p style="margin:0;font-size:0.83rem;color:var(--text-muted);">
+          Verbindliche Matrix für Aktionen mit Außenwirkung: Jede Zelle regelt pro Akteur, ob eine Handlung <strong>erlaubt</strong>, nur nach <strong>Rückfrage</strong> (Human-in-the-Loop) oder <strong>nie</strong> zulässig ist.
+        </p>
+      </div>
+      <span class="badge">Fail-Closed Standard</span>
+    </div>
+    <div style="overflow-x:auto;margin-top:0.85rem;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.83rem;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);text-align:left;color:var(--text-muted);">
+            <th style="padding:0.55rem;">Handlung mit Außenwirkung</th>
+            <th style="padding:0.55rem;">Buddha Chat</th>
+            <th style="padding:0.55rem;">Claude-Konsole</th>
+            <th style="padding:0.55rem;">Codex / Gemini</th>
+            <th style="padding:0.55rem;">Hintergrundworker</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.55rem;"><strong>🖥️ Bildschirmsteuerung (open-compute)</strong></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage</span></td>
+            <td style="padding:0.55rem;"><span class="badge">erlaubt (mit Signal)</span></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage</span></td>
+            <td style="padding:0.55rem;"><span class="badge">nie</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.55rem;"><strong>🔀 GitHub-Push / Pull Request (P-001)</strong></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage</span></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage (Branch+PR)</span></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage (Branch+PR)</span></td>
+            <td style="padding:0.55rem;"><span class="badge">nie (ohne Auftrag)</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.55rem;"><strong>✉️ E-Mail-Versand &amp; externe Nachrichten</strong></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage</span></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage</span></td>
+            <td style="padding:0.55rem;"><span class="badge">nie</span></td>
+            <td style="padding:0.55rem;"><span class="badge">nie</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.55rem;"><strong>💼 LinkedIn-Beiträge &amp; Social Outreach</strong></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage</span></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage</span></td>
+            <td style="padding:0.55rem;"><span class="badge">nie</span></td>
+            <td style="padding:0.55rem;"><span class="badge">nie</span></td>
+          </tr>
+          <tr>
+            <td style="padding:0.55rem;"><strong>🎬 YouTube-Uploads &amp; Releases</strong></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage</span></td>
+            <td style="padding:0.55rem;"><span class="badge">Rückfrage</span></td>
+            <td style="padding:0.55rem;"><span class="badge">nie</span></td>
+            <td style="padding:0.55rem;"><span class="badge">nie</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- HOOKS & GUARDS (aus /memory Reiter 4 & 5 hierher verschoben · #2480) -->
+  <section class="card" id="hooks-guards" style="margin-bottom:1.5rem;border:1px solid var(--border);background:var(--bg-card);">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+      <div>
+        <h2 class="card-title" style="margin:0 0 0.25rem 0;">🪝 Hooks &amp; Guards (Selbstkontrolle &amp; Berechtigung · #2480)</h2>
+        <p style="margin:0;font-size:0.83rem;color:var(--text-muted);">
+          Aus der Memory-Ansicht (Reiter 4 &amp; 5) hierher überführt: Deterministische Skript-Guards, modellgestützte Aufsicht und Hooker-Zustellung.
+        </p>
+      </div>
+      <a href="/help?tab=architecture" class="btn btn-sm">🏗️ Kognitiver Schaltplan in Hilfe →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0.85rem;margin-top:0.85rem;font-size:0.83rem;">
+      <div style="padding:0.85rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);">
+        <strong style="color:var(--text);">⚙️ Deterministische Skript-Guards (PreToolUse)</strong>
+        <p style="margin:0.35rem 0 0;color:var(--text-muted);">Erzwingt P-001 (Git-Push-Schutz), OneDrive-Git-Schutz, Pfad-Locks (<code>LOCK.user.*</code>) und Regex-/Secret-Filter vor jeder Werkzeugausführung.</p>
+      </div>
+      <div style="padding:0.85rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);">
+        <strong style="color:var(--text);">🧠 Modellgestützte LLM-Guards (Aufsicht)</strong>
+        <p style="margin:0.35rem 0 0;color:var(--text-muted);">Goal-Evaluator (<code>/goal</code> Kriterienprüfung), Disambiguierungs-Wächter (<code>/grill-me</code>) und Anti-Konfabulations-Gate.</p>
+      </div>
+      <div style="padding:0.85rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);">
+        <strong style="color:var(--text);">💉 Hooker-Anschlüsse (MemoryHooker &amp; WorkflowHooker)</strong>
+        <p style="margin:0.35rem 0 0;color:var(--text-muted);">Prüft Trigger, Cooldowns und Abschluss-Gates pro Agenten-Host (Claude, Codex, Gemini, Kimi, Mac-BACH).</p>
+      </div>
+    </div>
+  </section>
 
   <!-- Seiteninterne Lese-Tabs (#2014): ?tab= wird ausgewertet, alles read-only -->
   <div role="tablist" aria-label="Governance-Ansichten" id="gov-tablist" class="gov-tabs">

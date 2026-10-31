@@ -6,6 +6,112 @@ import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
 const route = legacyFallbackRoutes.find((entry) => entry.path === '/tools');
 if (!route) throw new Error('Fallback-Konfiguration für /tools fehlt.');
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+<BachLayout title="Werkzeuge & Modul-Fähigkeiten" currentPath={route.path}>
+  <div class="page-head" style="margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+    <div>
+      <p class="eyebrow" style="margin:0 0 0.25rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Skills &amp; Software · Werkzeuge (#2481)</p>
+      <h1 style="margin:0 0 0.35rem 0;font-size:1.65rem;">🛠️ Werkzeuge an Modulen &amp; Suche „Werkzeug finden“</h1>
+      <p style="margin:0;opacity:0.85;font-size:0.9rem;">
+        Die frühere Einzel-Werkzeugseite ist aufgelöst: Werkzeuge werden direkt an ihren Modulkarten und über die zentrale Suche unter <a href="/skills">Skills &amp; Software</a> geführt.
+      </p>
+    </div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <a href="/skills" class="btn btn-primary btn-sm">📚 Skill-Zentrale öffnen →</a>
+      <a href="/skills/mcp" class="btn btn-secondary btn-sm">🔌 ControlCenter-MCP</a>
+      <a href="/skills/software" class="btn btn-secondary btn-sm">📦 Software-Katalog</a>
+    </div>
+  </div>
+
+  <!-- Suche: Werkzeug finden -->
+  <section class="card" style="padding:1.1rem 1.25rem;margin-bottom:1.25rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+    <label style="flex:1;min-width:240px;display:grid;gap:0.3rem;font-size:0.82rem;color:var(--text-muted);">
+      🔎 Werkzeug finden (über Modulkarten &amp; BACH-Kern filtern)
+      <input id="tool-finder-input" type="search" placeholder="Werkzeug, Skript oder Modul suchen (z. B. json_R, encoding_fixer, ocr, markdown, anonymizer) …" style="width:100%;padding:0.55rem 0.75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);font-size:0.9rem;" />
+    </label>
+    <span class="badge" id="tool-finder-count">Alle Modulgruppen</span>
+  </section>
+
+  <!-- Modulkarten mit ihren Werkzeugen + BACH-Kern vs. Extraktionskandidaten -->
+  <div id="tool-module-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;">
+    <article class="card tool-module-card" data-keywords="bach kern core json_r encoding_fixer markdown_service umlaut_fixer lock_status" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+        <h2 style="margin:0;font-size:1.05rem;">⚙️ BACH-Kern (Basis-Werkzeuge)</h2>
+        <span class="badge">Verbleibt im Kern</span>
+      </div>
+      <p style="margin:0 0 0.65rem;font-size:0.84rem;color:var(--text-muted);">Kleine deterministische Reparatur- und Formatwerkzeuge direkt für Agenten und Systemläufe.</p>
+      <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+        <span class="badge">json_R</span>
+        <span class="badge">encoding_fixer</span>
+        <span class="badge">umlaut_fixer</span>
+        <span class="badge">markdown_service</span>
+        <span class="badge">lock_status</span>
+      </div>
+    </article>
+
+    <article class="card tool-module-card" data-keywords="controlcenter filecommander codecommander mcp suche capability" style="padding:1.15rem;border:1px solid var(--accent);background:var(--bg-card);border-radius:var(--radius-md);">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+        <h2 style="margin:0;font-size:1.05rem;">⭐ ControlCenter &amp; Commander-Suite</h2>
+        <a href="/skills/mcp" class="btn btn-secondary btn-sm">MCP öffnen ↗</a>
+      </div>
+      <p style="margin:0 0 0.65rem;font-size:0.84rem;color:var(--text-muted);">Bündelt alle MCP-Werkzeuge, Dateisystem-Operationen und Code-Analysen.</p>
+      <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+        <span class="badge">controlcenter_find_capability</span>
+        <span class="badge">fc_search_files</span>
+        <span class="badge">fc_ocr</span>
+        <span class="badge">cc_analyze_code</span>
+        <span class="badge">cc_md_to_pdf</span>
+      </div>
+    </article>
+
+    <article class="card tool-module-card" data-keywords="anonymizer datenschutz schwärzung pii" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+        <h2 style="margin:0;font-size:1.05rem;">🎭 Datenschutz &amp; Anonymisierung</h2>
+        <a href="/anonymizer" class="btn btn-secondary btn-sm">Modul öffnen ↗</a>
+      </div>
+      <p style="margin:0 0 0.65rem;font-size:0.84rem;color:var(--text-muted);">Querschnittsdienst zum Schwärzen, Pseudonymisieren und Prüfen sensibler Dokumente und Artefakte.</p>
+      <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+        <span class="badge">document-anonymizer</span>
+        <span class="badge">pii-redactor</span>
+        <span class="badge">export-deanonymizer</span>
+      </div>
+    </article>
+
+    <article class="card tool-module-card" data-keywords="doc-services media-studio clip-storyboard-director steuer foerderplaner extraktion" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+        <h2 style="margin:0;font-size:1.05rem;">📦 Eigenständige Ocean-Fachmodule</h2>
+        <a href="/domains" class="btn btn-secondary btn-sm">Domänen öffnen ↗</a>
+      </div>
+      <p style="margin:0 0 0.65rem;font-size:0.84rem;color:var(--text-muted);">Aus dem früheren BACH-Sammelbestand in eigene Apps und Module überführte Werkzeuge.</p>
+      <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+        <span class="badge">doc-services</span>
+        <span class="badge">ai-media-editor</span>
+        <span class="badge">clip-storyboard-director</span>
+        <span class="badge">steuer-assistent</span>
+        <span class="badge">foerderplaner</span>
+      </div>
+    </article>
+  </div>
+
+  <div hidden>
+    <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+  </div>
+
+  <script is:inline>
+    (function initToolFinder() {
+      const input = document.getElementById('tool-finder-input');
+      const countEl = document.getElementById('tool-finder-count');
+      const cards = Array.from(document.querySelectorAll('.tool-module-card'));
+      input?.addEventListener('input', () => {
+        const q = (input.value || '').trim().toLowerCase();
+        let shown = 0;
+        cards.forEach((card) => {
+          const hay = `${card.textContent || ''} ${card.getAttribute('data-keywords') || ''}`.toLowerCase();
+          const match = !q || hay.includes(q);
+          card.style.display = match ? '' : 'none';
+          if (match) shown += 1;
+        });
+        if (countEl) countEl.textContent = q ? `${shown} / ${cards.length} Modulgruppen` : 'Alle Modulgruppen';
+      });
+    })();
+  </script>
 </BachLayout>

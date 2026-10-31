@@ -36,10 +36,34 @@ const tabs = [
     <button type="button" role="tab" id="tab-zuordnung" data-skills-tab="zuordnung" aria-controls="assignment-panel" aria-selected="false" tabindex="-1">Zuordnung</button>
   </div>}
   <div id="skills-panel" role={board==='skills'?'tabpanel':undefined} aria-labelledby={board==='skills'?'tab-anleitungen':undefined}>
-  {board==='software' && <p class="processing-guide">Deterministische Verarbeitung: Software · Leichte und mittlere Aufgaben: lokale Modelle · Schwere Aufgaben: externe Modelle</p>}
+  {board==='software' && <p class="processing-guide">Deterministische Verarbeitung: Software · Leichte und mittlere Aufgaben: lokale Modelle · Schwere Aufgaben: externe Modelle · <a href="/tools">🛠️ Werkzeuge nach Modulen &amp; Suche öffnen →</a></p>}
+  {board==='mcp' && (
+    <section class="mcp-controlcenter-spotlight" style="margin:1.1rem 0;padding:1rem 1.2rem;border-radius:var(--radius-md);border:1px solid var(--accent);background:var(--bg-card);display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+      <div>
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.3rem;">
+          <span class="badge" style="background:var(--accent);color:#fff;">⭐ Haupt-Einstieg · Bündelt alle</span>
+          <strong style="font-size:1.05rem;color:var(--text);">ellmos-controlcenter-mcp (ControlCenter-MCP)</strong>
+        </div>
+        <p style="margin:0;font-size:0.85rem;color:var(--text-muted);">
+          Zentraler Meta-Server für Capability-Discovery (<code>controlcenter_find_capability</code>, <code>controlcenter_find_skill</code>), Profile, Tool-Bundles, Locks und Governance. Alte Servernamen wie <code>bach-codecommander</code> oder <code>bach-filecommander</code> sind als <strong>veraltet</strong> gekennzeichnet und durch <code>ellmos-codecommander</code> / <code>ellmos-filecommander</code> ersetzt.
+        </p>
+      </div>
+      <a href="/tools" class="btn btn-secondary btn-sm">🔎 Werkzeug finden →</a>
+    </section>
+  )}
   <div class="board-toolbar">
-    <label class="board-search">Suchen<input type="search" id="board-search" placeholder="Name oder Beschreibung" autocomplete="off" /></label>
+    <label class="board-search">{board==='skills' ? 'Skill oder Werkzeug suchen' : 'Suchen'}<input type="search" id="board-search" placeholder={board==='skills' ? 'Name, Beschreibung oder Werkzeug finden …' : 'Name oder Beschreibung'} autocomplete="off" /></label>
     {board==='skills' && <label>Kategorie<select id="board-category"><option value="">Alle Kategorien</option></select></label>}
+    {board==='skills' && (
+      <label>Sprachfassungen
+        <select id="board-lang-filter">
+          <option value="grouped" selected>Gruppiert (nur Standardsprache)</option>
+          <option value="all">Alle Sprachfassungen einzeln</option>
+          <option value="de">Nur Deutsch (de)</option>
+          <option value="en">Nur Englisch (en)</option>
+        </select>
+      </label>
+    )}
     <span id="board-count" class="badge">Quelle wird geladen …</span>
   </div>
   <p id="board-status" role="status" aria-live="polite">Einträge werden geladen …</p>
@@ -50,6 +74,23 @@ const tabs = [
     <p id="recipe-status" role="status"></p>
   </section>}
   {board!=='skills' && <details class="board-sources"><summary>Quellen dieses Hosts</summary><div id="board-sources"></div></details>}
+  {board==='skills' && (
+    <section id="skill-keeper" class="card" style="margin-top:1.75rem;padding:1.25rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-card);">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:0.75rem;">
+        <div>
+          <span class="badge">🌙 Skill Keeper · Hermes (aus Memory umgezogen · #2480)</span>
+          <h2 style="margin:0.35rem 0 0.25rem;font-size:1.2rem;">Hermes Skill-Gärtner &amp; Destillation</h2>
+          <p style="margin:0;font-size:0.85rem;color:var(--text-muted);">
+            Extrahiert wiederverwendbare Abläufe und Lessons Learned aus Sitzungen nach Rauschfilterung (~76%) und schlägt neue <code>SKILL.md</code>-Kandidaten zur Operator-Freigabe vor.
+          </p>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <a href="/tools" class="btn btn-secondary btn-sm">🛠️ Werkzeuge an Modulen &amp; Suche</a>
+          <a href="/memory" class="btn btn-secondary btn-sm">💾 Langzeitgedächtnis (Lessons)</a>
+        </div>
+      </div>
+    </section>
+  )}
   </div>
   {board==='skills' && <section id="assignment-panel" role="tabpanel" aria-labelledby="tab-zuordnung" hidden>
     <p class="as-muted">Welche Experten, Skills, Dienste und Workflows gehören zu welchem Agenten. Gespeichert wird in der Datenbank des verbundenen Systems; die Zuordnung in der Agenten-Werkstatt bleibt der Hauptweg, dieser Tab ist der zusätzliche.</p>
@@ -76,6 +117,16 @@ const tabs = [
   <label>Kennung<input id="skill-id" type="text" maxlength="80" pattern="[A-Za-z0-9][A-Za-z0-9._\-]{0,79}" required /></label>
   <p id="skill-source-info"></p>
   <label>Fassung als Vorlage<select id="skill-history"><option value="">Aktuelle Fassung</option></select></label>
+  <label>Sprachfassung im Seitenpanel
+    <select id="skill-lang-variant">
+      <option value="de" selected>Deutsch (Standardsprache · SKILL.md)</option>
+      <option value="en">English (SKILL.en.md)</option>
+      <option value="es">Español (SKILL.es.md)</option>
+      <option value="ja">日本語 (SKILL.ja.md)</option>
+      <option value="ru">Русский (SKILL.ru.md)</option>
+      <option value="zh">中文 (SKILL.zh.md)</option>
+    </select>
+  </label>
   <label>Symbol aus Ticket-Master<div id="skill-symbols" class="symbol-picker"></div></label>
   <label>Anleitung<textarea id="skill-content" rows="18" spellcheck="false"></textarea></label>
   <p class="editor-note">Die Versionsnummer steht im Kopf der Anleitung. Frühere Fassungen bleiben erhalten. Agenten mit einer älteren Skill-Bindung müssen nach einer Änderung neu eingerichtet werden.</p>
@@ -132,6 +183,10 @@ const tabs = [
   .board-grid :global(.plug-evidence summary) {cursor:pointer;color:var(--text)}
   .board-grid :global(.plug-evidence summary:focus-visible) {outline:2px solid var(--accent);outline-offset:2px}
   .board-grid :global(.plug-evidence p) {margin:.3rem 0 0;color:var(--text-muted)}
+  .board-grid :global(.card-head-row) {display:flex;justify-content:space-between;align-items:flex-start;gap:.65rem;min-height:2.6rem}
+  .board-grid :global(.plug-switch-btn) {display:inline-flex;align-items:center;gap:.35rem;height:2.1rem;padding:0 .65rem;border-radius:999px;border:1px solid var(--border);background:var(--bg-dark);color:var(--text);font-size:.75rem;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap}
+  .board-grid :global(.plug-switch-btn[aria-pressed="true"]) {border-color:var(--success);background:color-mix(in srgb,var(--success) 18%,var(--bg-dark))}
+  .board-grid :global(.capability-card.mcp-primary-card) {border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 </style>
 <style is:global>
   .skills-tabs {display:flex;gap:.3rem;margin:1.2rem 0 0;flex-wrap:wrap}

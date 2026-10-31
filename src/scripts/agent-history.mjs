@@ -94,17 +94,18 @@ function initialize(){
   for(const button of root.querySelectorAll('[data-history-tab]'))button.addEventListener('click',()=>{
     clearDetail();tab=button.dataset.historyTab;
     for(const b of root.querySelectorAll('[data-history-tab]'))b.setAttribute('aria-pressed',String(b===button));
-    const inbox=tab==='inbox';
-    document.getElementById('history-panel').hidden=inbox;document.getElementById('inbox-panel').hidden=!inbox;
-    const url=new URL(location.href);if(inbox)url.searchParams.set('tab','inbox');else url.searchParams.delete('tab');history.replaceState(null,'',url);
+    const inbox=tab==='inbox',funk=tab==='funk';
+    document.getElementById('history-panel').hidden=inbox||funk;document.getElementById('inbox-panel').hidden=!inbox;
+    const funkPanel=document.getElementById('funk-panel');if(funkPanel)funkPanel.hidden=!funk;
+    const url=new URL(location.href);if(inbox)url.searchParams.set('tab','inbox');else if(funk)url.searchParams.set('tab','funk');else url.searchParams.delete('tab');history.replaceState(null,'',url);
     document.getElementById('history-session-filters').hidden=tab!=='sessions';
     document.getElementById('history-task-filters').hidden=tab!=='tasks';
     document.getElementById('history-pager').hidden=tab==='notes';
-    if(inbox)document.dispatchEvent(new CustomEvent('bach:inbox-show'));else refresh();
+    if(inbox)document.dispatchEvent(new CustomEvent('bach:inbox-show'));else if(!funk)refresh();
   });
   for(const input of [profile,archive,taskStatus])input.addEventListener('change',()=>{clearDetail();refresh(true);});
   document.getElementById('history-task-form').addEventListener('submit',event=>{event.preventDefault();if(taskInput.checkValidity())refresh(true);});
-  document.getElementById('history-refresh').addEventListener('click',()=>{if(tab==='inbox')document.dispatchEvent(new CustomEvent('bach:inbox-refresh'));else refresh();});
+  document.getElementById('history-refresh').addEventListener('click',()=>{if(tab==='inbox')document.dispatchEvent(new CustomEvent('bach:inbox-refresh'));else if(tab!=='funk')refresh();});
   prev.addEventListener('click',()=>{if(tab==='sessions')sessionOffset=Math.max(0,sessionOffset-25);else taskOffset=Math.max(0,taskOffset-25);refresh();});
   next.addEventListener('click',()=>{if(tab==='sessions')sessionOffset+=25;else taskOffset+=25;refresh();});
   async function profiles(){
@@ -121,6 +122,7 @@ function initialize(){
     const params=new URLSearchParams(location.search),task=Number(params.get('task'));
     if(Number.isSafeInteger(task)&&task>0&&task<=2147483647){taskInput.value=String(task);root.querySelector('[data-history-tab="tasks"]').click();}
     else if(params.get('tab')==='inbox')root.querySelector('[data-history-tab="inbox"]').click();
+    else if(params.get('tab')==='funk')root.querySelector('[data-history-tab="funk"]')?.click();
     else await refresh();
   }
   profiles();

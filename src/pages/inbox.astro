@@ -6,6 +6,45 @@ import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
 const route = legacyFallbackRoutes.find((entry) => entry.path === '/inbox');
 if (!route) throw new Error('Fallback-Konfiguration für /inbox fehlt.');
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+<BachLayout title="Artefakte, Dateieingang & Datenschutz" currentPath={route.path}>
+  <div class="page-head" style="margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+    <div>
+      <p class="eyebrow" style="margin:0 0 0.25rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Artefakte &amp; Datenschutz · Aufgelöste Altseite (#2483)</p>
+      <h1 style="margin:0 0 0.35rem 0;font-size:1.65rem;">💾 Dateien &rarr; Artefakte, Einstellungen &amp; Datenschutz</h1>
+      <p style="margin:0;opacity:0.85;font-size:0.9rem;">
+        Die frühere Sammelseite <code>/inbox</code> (Dateien) wurde aufgelöst und in ihre vier klaren Zielbereiche überführt:
+      </p>
+    </div>
+    <a href="/artefakte" class="btn btn-primary btn-sm">💾 Zu Artefakte &amp; Exporte →</a>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1rem;margin-bottom:1.25rem;">
+    <article class="card" style="padding:1.15rem;border:1px solid var(--accent);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
+      <h2 style="margin:0;font-size:1.05rem;">💾 1. Artefakte &amp; Exporte</h2>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Alle erzeugten und hochgeladenen Arbeitsdateien, Vorschau, Download, Datei hinzufügen und direkte Übergabe an die Anonymisierung.</p>
+      <a href="/artefakte" class="btn btn-primary btn-sm" style="justify-self:start;">Artefakte &amp; Exporte öffnen →</a>
+    </article>
+
+    <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
+      <h2 style="margin:0;font-size:1.05rem;">🎭 2. Datenschutz &amp; Anonymisierung</h2>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Eigenständige Querschnitts-Domäne für Schwärzung, Pseudonymisierung und De-Anonymisierung sensibler Dokumente.</p>
+      <a href="/anonymizer" class="btn btn-secondary btn-sm" style="justify-self:start;">Anonymizer öffnen →</a>
+    </article>
+
+    <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
+      <h2 style="margin:0;font-size:1.05rem;">⚙️ 3. Ordner-/Scan-Regeln &amp; n8n</h2>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Überwachte Eingangsordner, Verarbeitungsregeln und n8n-Automations-Trigger liegen in den Systemeinstellungen.</p>
+      <a href="/settings?tab=core#inbox-rules" class="btn btn-secondary btn-sm" style="justify-self:start;">Einstellungen › Dateieingang →</a>
+    </article>
+
+    <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
+      <h2 style="margin:0;font-size:1.05rem;">🔗 4. Cloud &amp; Mounts</h2>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">OneDrive, Netzlaufwerke und Host-Brücken werden unter Betrieb › Verbindungen verwaltet.</p>
+      <a href="/settings?tab=connections#cloud-mounts" class="btn btn-secondary btn-sm" style="justify-self:start;">Verbindungen &amp; Mounts →</a>
+    </article>
+  </div>
+
+  <div hidden>
+    <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+  </div>
 </BachLayout>

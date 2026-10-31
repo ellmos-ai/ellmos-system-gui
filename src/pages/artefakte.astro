@@ -7,13 +7,26 @@ import BachLayout from "../layouts/BachLayout.astro";
   <div class="artefakte-container">
     <div class="page-header">
       <div class="header-content">
-        <h1><span class="icon">💾</span> Artefakte & Exporte</h1>
-        <p class="subtitle">Dateien im BACH-Exportverzeichnis. Die Herkunft einzelner Dateien ist ungeprüft.</p>
+        <h1><span class="icon">💾</span> Artefakte &amp; Exporte (Dateizentrale)</h1>
+        <p class="subtitle">Ersetzt die frühere Dateieingangs-Altseite (#2483): Dateien im BACH-Exportverzeichnis, Datei hinzufügen und direkte Übergabe an Datenschutz &amp; Anonymisierung.</p>
       </div>
-      <div class="header-actions">
+      <div class="header-actions" style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button class="btn btn-primary" type="button" onclick="document.getElementById('artefakt-upload-panel')?.toggleAttribute('hidden')">➕ Datei / Artefakt hinzufügen</button>
+        <a href="/anonymizer" class="btn btn-secondary">🎭 Datenschutz &amp; Anonymisierung</a>
+        <a href="/settings?tab=core#inbox-rules" class="btn btn-secondary">⚙️ Dateieingang &amp; Scan-Regeln</a>
         <button class="btn btn-secondary" onclick="loadArtefakte()">🔄 Aktualisieren</button>
       </div>
     </div>
+
+    <!-- Datei / Artefakt hinzufügen -->
+    <section id="artefakt-upload-panel" class="card" hidden style="padding:1.15rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-card);">
+      <h2 style="margin:0 0 0.5rem 0;font-size:1.05rem;">➕ Datei oder Text-Artefakt hinzufügen</h2>
+      <p style="margin:0 0 0.75rem 0;font-size:0.85rem;color:var(--text-muted);">Wähle eine lokale Datei zur Vorschau/Anonymisierung oder öffne direkt das Modul <a href="/anonymizer">Datenschutz &amp; Anonymisierung (/anonymizer)</a>.</p>
+      <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+        <input id="artefakt-local-file" type="file" style="padding:0.4rem;border-radius:6px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);font-size:0.84rem;" />
+        <a href="/anonymizer" class="btn btn-primary btn-sm">🎭 Im Anonymizer prüfen &amp; schwärzen →</a>
+      </div>
+    </section>
 
     <!-- Quick Filter -->
     <div class="filter-bar">
@@ -31,7 +44,10 @@ import BachLayout from "../layouts/BachLayout.astro";
     <section id="artefakt-detail" class="card" hidden aria-live="polite">
       <h2 id="artefakt-detail-title">Artefakt</h2>
       <pre id="artefakt-preview" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:32rem;overflow:auto;"></pre>
-      <button id="artefakt-download" class="btn btn-primary" type="button">Herunterladen</button>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.75rem;">
+        <button id="artefakt-download" class="btn btn-primary" type="button">Herunterladen</button>
+        <a id="artefakt-anonymize-link" href="/anonymizer" class="btn btn-secondary">🎭 Anonymisieren</a>
+      </div>
     </section>
   </div>
 </BachLayout>
@@ -220,12 +236,19 @@ import BachLayout from "../layouts/BachLayout.astro";
       const type = document.createElement('span');
       type.className = 'badge badge-accent';
       type.textContent = item.type;
+      const actionsWrap = document.createElement('div');
+      actionsWrap.style.cssText = 'display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap;';
+      const anonLink = document.createElement('a');
+      anonLink.className = 'btn btn-sm btn-secondary';
+      anonLink.href = '/anonymizer?file=' + encodeURIComponent(item.filename || item.id || '');
+      anonLink.textContent = '🎭 Anonymisieren';
       const details = document.createElement('button');
       details.className = 'btn btn-sm btn-secondary';
       details.type = 'button';
       details.textContent = 'Details';
       details.addEventListener('click', () => showArtifact(item));
-      footer.append(type, details);
+      actionsWrap.append(anonLink, details);
+      footer.append(type, actionsWrap);
       card.append(header, filename, footer);
       grid.append(card);
     }

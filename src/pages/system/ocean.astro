@@ -2,4 +2,64 @@
 import BachLayout from '../../layouts/BachLayout.astro';
 import OceanSystem from '../../components/OceanSystem.astro';
 ---
-<BachLayout title="System Ocean" currentPath="/system"><OceanSystem /></BachLayout>
+<BachLayout title="Betrieb › Systeme & Sync-Netzbild" currentPath="/system">
+  <section style="margin-bottom:1.5rem;padding:1.25rem;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+      <div>
+        <p style="margin:0 0 0.25rem;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Betrieb › Systeme · Multi-Host &amp; Sync (#2485)</p>
+        <h2 style="margin:0 0 0.3rem;font-size:1.35rem;">🖥️ Gerätekarten je Host &amp; system-gap-master Sync-Netzbild</h2>
+        <p style="margin:0;font-size:0.86rem;color:var(--text-muted);">
+          Überblick über die verbundenen Systeme im Arbeitsverbund, ihre Rollen und die Synchronisationswege (<code>.SYNC</code>, Tailscale/SSH, 48h-Sync-Ziel).
+        </p>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <a href="/settings?tab=connections#operating-mode-card" class="btn btn-sm">🧭 Betriebsart einstellen</a>
+        <a href="/daemon" class="btn btn-sm">⚙️ Dienste</a>
+        <a href="/maintenance" class="btn btn-sm">🛠️ Wartung</a>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0.85rem;margin-bottom:1rem;">
+      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--accent);background:var(--bg-panel);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+          <strong>🍎 Mac Studio (Leader)</strong>
+          <span class="badge">24/7 Server &amp; Compute</span>
+        </div>
+        <p style="margin:0;font-size:0.81rem;color:var(--text-muted);">Zentraler BACH/Ocean-Server, Qwen 3.5 / Ollama Compute-Host, <code>bach.db</code> Hauptinstanz via Tailscale/SSH.</p>
+      </article>
+
+      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+          <strong>💻 ASUS-GEI (Laptop)</strong>
+          <span class="badge">Operator-Arbeitsplatz</span>
+        </div>
+        <p style="margin:0;font-size:0.81rem;color:var(--text-muted);">Primärer Windows-Arbeitsplatz (Claude, Gemini/Antigravity, Codex, Kimi, Tauri Desktop-Shell, SSH-Loopback :8000).</p>
+      </article>
+
+      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+          <strong>🖥️ WORKSTATION-LG</strong>
+          <span class="badge">Workstation-Knoten</span>
+        </div>
+        <p style="margin:0;font-size:0.81rem;color:var(--text-muted);">Stationärer Windows-Host im <code>.SYNC</code>-Verbund (eigener Konfigurations- und Inventarslot <code>workstation</code>).</p>
+      </article>
+
+      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+          <strong>📓 IDEAPAD-GEI</strong>
+          <span class="badge">Mobiler Begleit-Host</span>
+        </div>
+        <p style="margin:0;font-size:0.81rem;color:var(--text-muted);">Mobiler Knoten im <code>.SYNC</code>-Transfer mit abgeleitetem Regel- und Skill-Bestand.</p>
+      </article>
+    </div>
+
+    <div style="padding:0.85rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-panel);font-size:0.83rem;display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+      <div>
+        <strong>🕸️ system-gap-master · Sync-Netzbild:</strong>
+        <span style="color:var(--text-muted);"> OneDrive <code>.SYNC</code> (Regeln, Skills, Manifeste) &harr; Tailscale/SSH (Credentials &amp; Live-Backend) &middot; Soll-Takt: alle aktiven Systeme innerhalb von 48 Stunden synchron.</span>
+      </div>
+      <a href="/routinen" class="btn btn-sm">⏱️ Sync-Routinen öffnen →</a>
+    </div>
+  </section>
+  <OceanSystem />
+</BachLayout>

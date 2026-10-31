@@ -2,18 +2,18 @@
 import BachLayout from "../../layouts/BachLayout.astro";
 import TaskCreateForm from "../../components/TaskCreateForm.astro";
 ---
-<BachLayout title="Sessions & Protokolle" currentPath="/agenten/sessions">
-  <section id="native-history" aria-label="Sessions und Protokolle" class="history-container">
+<BachLayout title="Nachrichten · Benachrichtigungen, Verlauf & Agentenfunk" currentPath="/agenten/sessions">
+  <section id="native-history" aria-label="Nachrichten, Verlauf und Agentenfunk" class="history-container">
     <header class="history-heading">
-      <div><h1>📜 Sessions & Protokolle</h1><p class="text-muted">Gespeicherte Dialoge, Aufgabenereignisse, Gedächtnisnotizen und deine Nutzer-Inbox.</p></div>
+      <div><h1>✉️ Nachrichten</h1><p class="text-muted">Benachrichtigungen, Verlauf · Chats &amp; Läufe (inkl. Taskereignisse &amp; Diagnose) sowie Agentenfunk unter einem Dach.</p></div>
       <button id="history-refresh" class="btn btn-secondary" type="button">🔄 Aktualisieren</button>
     </header>
-    <nav class="history-tabs" aria-label="Verlaufsquelle">
-      <button class="btn btn-secondary" type="button" data-history-tab="sessions" aria-pressed="true">💬 Dialoge</button>
+    <nav class="history-tabs" aria-label="Nachrichtenbereiche">
+      <button class="btn btn-secondary" type="button" data-history-tab="inbox" aria-pressed="false">✉️ Benachrichtigungen</button>
+      <button class="btn btn-secondary" type="button" data-history-tab="sessions" aria-pressed="true">💬 Verlauf · Chats &amp; Läufe</button>
       <button class="btn btn-secondary" type="button" data-history-tab="tasks" aria-pressed="false">📋 Taskereignisse</button>
       <button class="btn btn-secondary" type="button" data-history-tab="notes" aria-pressed="false">📝 Gedächtnisnotizen</button>
-      <button class="btn btn-secondary" type="button" data-history-tab="inbox" aria-pressed="false">✉️ Nutzer-Inbox</button>
-      <a class="btn btn-secondary" href="/memory">🧠 Gedächtnis & Prozessmodell</a>
+      <button class="btn btn-secondary" type="button" data-history-tab="funk" aria-pressed="false">📻 Agentenfunk</button>
     </nav>
     <div id="history-panel" class="history-panel">
     <section id="history-session-filters" class="history-filters" aria-label="Dialogfilter">
@@ -53,8 +53,34 @@ import TaskCreateForm from "../../components/TaskCreateForm.astro";
       <p class="text-muted">Dialog mit dem Assistenten: <a href="/chat">Persönlicher Assistent</a> · Aufgaben zuweisen: <a href="/tasks">Taskboard</a>. Eine Aufgabe aus der Nachricht wird nur angelegt, nicht gestartet.</p>
       <TaskCreateForm id="inbox-task-create" label="Neue Aufgabe" />
     </section>
+    <section id="funk-panel" aria-label="Agentenfunk" hidden>
+      <div class="inbox-columns">
+        <section class="history-card">
+          <h2>📡 Signal übertragen</h2>
+          <p class="text-muted">Nachrichten und Signale zwischen Agenten. Es gilt der geprüfte Empfänger- und Zustellvertrag.</p>
+          <div class="history-filters" style="display:grid;gap:.65rem;margin-top:.75rem;">
+            <label>Absender<input type="text" value="Geräteidentität noch nicht gebunden" disabled /></label>
+            <label>Ziel<select disabled><option>Empfängerregistrierung fehlt</option></select></label>
+            <label>Signaltyp<select disabled><option>Transportvertrag fehlt</option></select></label>
+            <label>Inhalt<input type="text" placeholder="Nachrichtenversand noch nicht angebunden" disabled /></label>
+            <button type="button" class="btn btn-secondary" disabled>Signal senden</button>
+          </div>
+        </section>
+        <section class="history-card">
+          <h2>📜 Zustellung &amp; Verlauf (Agentenfunk)</h2>
+          <p class="text-muted">Für einen Verlauf braucht die Oberfläche quittierte Sendungen, Empfängerbezug und eine zugriffsgeschützte Quelle.</p>
+          <p role="status" class="text-muted" style="padding:.65rem;border:1px solid var(--border);border-radius:6px;margin-top:.75rem;">Keine Transportmessung verfügbar · <a href="/governance/funk">Vollständige Agentenfunk-Ansicht</a></p>
+        </section>
+      </div>
+    </section>
     <dialog id="history-dialog" class="history-dialog" aria-labelledby="history-dialog-title">
-      <header class="history-heading"><h2 id="history-dialog-title">Gespeicherter Dialog</h2><button class="btn btn-secondary" type="button" data-close>Schließen</button></header>
+      <header class="history-heading">
+        <div>
+          <h2 id="history-dialog-title">Gespeicherter Dialog</h2>
+          <p class="text-muted" style="margin:0;font-size:.82rem;">Verlaufsdiagnose &amp; Übergabe · <a href="/chat">Im Chat mit Modell fortsetzen →</a></p>
+        </div>
+        <button class="btn btn-secondary" type="button" data-close>Schließen</button>
+      </header>
       <div id="history-dialog-content"></div>
     </dialog>
   </section>

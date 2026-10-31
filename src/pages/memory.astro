@@ -65,11 +65,17 @@ const mermaidCode = `flowchart TD
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
     <div>
       <h1 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;color:var(--text);">
-        🧠 Kognitiver Memory-Schaltplan & Prozess-Topologie
+        🧠 Langzeitgedächtnis &amp; Memory-Zentrale
       </h1>
       <p style="color:var(--text-muted);font-size:0.875rem;">
-        Soll-Modell als kognitive Analogie. Tabellenzahlen werden gemessen; Architektur und Hook-Anschlüsse sind getrennt zu prüfen.
+        Langzeitgedächtnis (<code>bach.db</code>, Gardener-Suche &amp; USMC). Kognitiver Schaltplan, Guards und Skill Keeper sind zusätzlich in ihren Fachbereichen verankert.
       </p>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.65rem;">
+        <a href="/help?tab=architecture" class="btn btn-secondary btn-sm">🏗️ Hilfe › Architektur (Schaubild, Reiter 1–3, 6 &amp; Modulschaltplan)</a>
+        <a href="/governance#hooks-guards" class="btn btn-secondary btn-sm">🛡️ Governance › Hooks &amp; Guards (Reiter 4 &amp; 5)</a>
+        <a href="/skills#skill-keeper" class="btn btn-secondary btn-sm">🌙 Skills &amp; Software › Skill Keeper (Reiter 7 Hermes)</a>
+        <a href="/notizen" class="btn btn-secondary btn-sm">📝 Notizen (Gedanken &amp; Logbuch)</a>
+      </div>
     </div>
 
     <!-- Live Kognitions-Statuschips -->
@@ -297,18 +303,18 @@ const mermaidCode = `flowchart TD
 
     <!-- Tab Navigation -->
     <div style="display:flex;gap:0.4rem;border-bottom:1px solid var(--border);padding-bottom:0.75rem;margin-bottom:1.5rem;overflow-x:auto;">
-      <button class="insp-tab-btn active" id="tab-btn-ctx" onclick="selectInspector('ctx')">🗣️ 1. Kontextfenster</button>
+      <button class="insp-tab-btn" id="tab-btn-ctx" onclick="selectInspector('ctx')">🗣️ 1. Kontextfenster</button>
       <button class="insp-tab-btn" id="tab-btn-ze" onclick="selectInspector('ze')">👑 2. Zentrale Exekutive</button>
       <button class="insp-tab-btn" id="tab-btn-sensors" onclick="selectInspector('sensors')">📡 3. Sensoren & Messtechnik</button>
       <button class="insp-tab-btn" id="tab-btn-guards" onclick="selectInspector('guards')">🛡️ 4. Selbstkontroll-Guards</button>
       <button class="insp-tab-btn" id="tab-btn-auth" onclick="selectInspector('auth')">⚖️ 5. Berechtigung & Hooker</button>
       <button class="insp-tab-btn" id="tab-btn-start" onclick="selectInspector('start')">🚀 6. Startprompt</button>
-      <button class="insp-tab-btn" id="tab-btn-learn" onclick="selectInspector('learn')">🌙 7. Lernen</button>
-      <button class="insp-tab-btn" id="tab-btn-ltm" onclick="selectInspector('ltm')">💾 8. Langzeitgedächtnis</button>
+      <button class="insp-tab-btn" id="tab-btn-learn" onclick="selectInspector('learn')">🌙 7. Lernen (Skill Keeper)</button>
+      <button class="insp-tab-btn active" id="tab-btn-ltm" onclick="selectInspector('ltm')">💾 8. Langzeitgedächtnis (Gardener &amp; DB)</button>
     </div>
 
     <!-- PANEL 1: ZENTRUM - AKTIVES KONTEXTFENSTER -->
-    <div class="insp-panel" id="panel-ctx" style="display:block;">
+    <div class="insp-panel" id="panel-ctx" style="display:none;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
         <div>
           <h3 style="margin:0;font-size:1.2rem;color:var(--text);">🗣️ Das Aktive Kontextfenster (Phonologische Schleife)</h3>
@@ -620,7 +626,7 @@ const mermaidCode = `flowchart TD
     </div>
 
     <!-- PANEL 8: LANGZEITGEDÄCHTNIS -->
-    <div class="insp-panel" id="panel-ltm" style="display:none;">
+    <div class="insp-panel" id="panel-ltm" style="display:block;">
       <h3 style="margin:0 0 0.5rem 0;font-size:1.2rem;color:var(--text);">💾 Langzeitgedächtnis (3 Zugriffspfade in bach.db)</h3>
       <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1rem;">
         Die drei sauberen Wege zwischen Arbeitsgedächtnis und persistenter Datenbank:
