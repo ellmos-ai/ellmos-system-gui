@@ -16,13 +16,13 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
 
     <!-- Tab Bar -->
     <div class="tab-bar" role="tablist" aria-label="Einstellungsbereiche">
-      <button class="tab-btn active" data-tab="connections" id="settings-tab-connections" type="button" role="tab" aria-controls="pane-connections" aria-selected="true" tabindex="0">🔗 Verbindungen & Gerät</button>
-      <button class="tab-btn" data-tab="appearance" id="settings-tab-appearance" type="button" role="tab" aria-controls="pane-appearance" aria-selected="false" tabindex="-1">🎨 Darstellung</button>
-      <button class="tab-btn" data-tab="worker-policy" id="settings-tab-worker-policy" type="button" role="tab" aria-controls="pane-worker-policy" aria-selected="false" tabindex="-1">🧭 Worker & Aufgaben</button>
-      <button class="tab-btn" data-tab="ocean-map" id="settings-tab-ocean-map" type="button" role="tab" aria-controls="pane-ocean-map" aria-selected="false" tabindex="-1">🌊 Ocean Modulschaltplan</button>
-      <button class="tab-btn" data-tab="installer" id="settings-tab-installer" type="button" role="tab" aria-controls="pane-installer" aria-selected="false" tabindex="-1">📦 Installer & Erweiterungen</button>
-      <button class="tab-btn" data-tab="learning" id="settings-tab-learning" type="button" role="tab" aria-controls="pane-learning" aria-selected="false" tabindex="-1">🧠 NemoFold & Hermes (Lernen)</button>
-      <button class="tab-btn" data-tab="core" id="settings-tab-core" type="button" role="tab" aria-controls="pane-core" aria-selected="false" tabindex="-1">⚙️ Core & Repo-Klärung</button>
+      <button class="tab-btn active" data-tab="connections" id="settings-tab-connections" type="button" role="tab" aria-controls="pane-connections" aria-selected="true" tabindex="0"><span class="icon" aria-hidden="true">🔗</span> Verbindungen & Gerät</button>
+      <button class="tab-btn" data-tab="appearance" id="settings-tab-appearance" type="button" role="tab" aria-controls="pane-appearance" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🎨</span> Darstellung</button>
+      <button class="tab-btn" data-tab="worker-policy" id="settings-tab-worker-policy" type="button" role="tab" aria-controls="pane-worker-policy" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🧭</span> Worker & Aufgaben</button>
+      <button class="tab-btn" data-tab="ocean-map" id="settings-tab-ocean-map" type="button" role="tab" aria-controls="pane-ocean-map" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🌊</span> Ocean Modulschaltplan</button>
+      <button class="tab-btn" data-tab="installer" id="settings-tab-installer" type="button" role="tab" aria-controls="pane-installer" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">📦</span> Installer & Erweiterungen</button>
+      <button class="tab-btn" data-tab="learning" id="settings-tab-learning" type="button" role="tab" aria-controls="pane-learning" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🧠</span> NemoFold & Hermes (Lernen)</button>
+      <button class="tab-btn" data-tab="core" id="settings-tab-core" type="button" role="tab" aria-controls="pane-core" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">⚙️</span> Core & Repo-Klärung</button>
     </div>
 
     <div class="tab-pane active" id="pane-connections" role="tabpanel" aria-labelledby="settings-tab-connections" tabindex="0">
@@ -250,7 +250,7 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     <div class="tab-pane" id="pane-appearance" role="tabpanel" aria-labelledby="settings-tab-appearance" tabindex="0" hidden>
       <div class="card-grid">
         <div class="glass-card">
-          <h3>🎨 Darstellung</h3>
+          <h3><span class="icon" aria-hidden="true">🎨</span> Darstellung</h3>
           <p class="card-desc">Theme des verbundenen Backends. Eine Änderung gilt erst nach bestätigtem Speichern und erneutem Lesen.</p>
           <label for="theme-select">Farbschema</label>
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;">
@@ -267,7 +267,7 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
           <p class="card-desc">Benutzerfarben werden im Backend gespeichert. Die benutzerdefinierte Palette wird derzeit nicht auf jeder Seite vollständig angewendet.</p>
         </div>
         <div class="glass-card">
-          <h3>🧭 Navigationsstil</h3>
+          <h3><span class="icon" aria-hidden="true">🧭</span> Navigationsstil</h3>
           <p class="card-desc">Wähle zwischen der neuen Arbeitsnavigation und der vertrauten Ocean-BACH-Klassik. Die Auswahl gilt für diese Browser-Instanz und ändert keine Backend-Daten.</p>
           <label for="ui-preset-select">Oberflächenstil</label>
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">

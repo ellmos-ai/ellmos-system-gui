@@ -1702,7 +1702,9 @@ html[data-ui-icon-style="emoji"] .icon-glyph-emoji {
 html:not([data-ui-icon-style="emoji"]) .icon,
 html:not([data-ui-icon-style="emoji"]) .card-icon,
 html:not([data-ui-icon-style="emoji"]) .stat-icon,
-html:not([data-ui-icon-style="emoji"]) .learning-icon {
+html:not([data-ui-icon-style="emoji"]) .learning-icon,
+html:not([data-ui-icon-style="emoji"]) .dropdown-item-icon,
+html:not([data-ui-icon-style="emoji"]) .domain-icon {
     filter: grayscale(1) contrast(1.15);
     opacity: 0.88;
 }
