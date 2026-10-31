@@ -59,7 +59,7 @@ function initialize(){
     for(const domain of inventory){
       if(typeof domain.id!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/.test(domain.id))continue;
       const card=node('article','domain-card');card.dataset.domainId=domain.id;card.id='domain-'+domain.id;
-      const header=node('div','domain-header');header.append(node('span','domain-icon',domain.icon||'🧩'));
+      const header=node('div','domain-header');const iconWrap=node('span','domain-icon');iconWrap.append(createDomainIconElement(domain.id,domain.icon||'🧩',20));header.append(iconWrap);
       const title=node('div','domain-title-wrap');title.append(node('h3','',domain.name||domain.id),node('span','domain-type-badge',(domain.kind||'Fachmodul')+' · '+(domain.category||'domain')));
       header.append(title);card.append(header);
       const caps=Array.isArray(domain.capabilities)?domain.capabilities:[];
