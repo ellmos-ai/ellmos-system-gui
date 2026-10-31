@@ -22,7 +22,7 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
       <button class="tab-btn" data-tab="ocean-map" id="settings-tab-ocean-map" type="button" role="tab" aria-controls="pane-ocean-map" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🌊</span> Ocean Modulschaltplan</button>
       <button class="tab-btn" data-tab="installer" id="settings-tab-installer" type="button" role="tab" aria-controls="pane-installer" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">📦</span> Installer & Erweiterungen</button>
       <button class="tab-btn" data-tab="learning" id="settings-tab-learning" type="button" role="tab" aria-controls="pane-learning" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🧠</span> NemoFold & Hermes (Lernen)</button>
-      <button class="tab-btn" data-tab="core" id="settings-tab-core" type="button" role="tab" aria-controls="pane-core" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">⚙️</span> Core & Repo-Klärung</button>
+      <button class="tab-btn" data-tab="core" id="settings-tab-core" type="button" role="tab" aria-controls="pane-core" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🧠</span> Modelle, Ressourcen & Core</button>
     </div>
 
     <div class="tab-pane active" id="pane-connections" role="tabpanel" aria-labelledby="settings-tab-connections" tabindex="0">
@@ -295,9 +295,52 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
       <WorkerPolicySettings />
     </div>
 
-    <!-- TAB 5: CORE & REPO-KLÄRUNG -->
+    <!-- TAB 5: MODELLE, RESSOURCEN & CORE -->
     <div class="tab-pane" id="pane-core" role="tabpanel" aria-labelledby="settings-tab-core" tabindex="0" hidden>
       <div class="card-grid">
+        <div class="glass-card" id="models-resources" style="grid-column: 1 / -1;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.75rem;">
+            <h3 style="margin:0;"><span class="icon">🧠</span> Modelle & Ressourcen</h3>
+            <span class="badge" id="settings-torch-observed-at">Nicht geprüft</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:0.75rem;">
+            <div class="repo-item">
+              <strong>Aktueller Fackelhalter</strong>
+              <p id="settings-fackel-holder" style="margin:0.25rem 0;">Nicht geprüft</p>
+              <small id="settings-fackel-owner-reason" style="color:var(--text-muted);display:block;">Ein aktueller Halternachweis fehlt.</small>
+            </div>
+            <div class="repo-item">
+              <strong>Compute-Vorrang</strong>
+              <p id="settings-fackel-priority" style="margin:0.25rem 0;">Nicht geprüft</p>
+              <button id="settings-btn-toggle-fackel" class="btn btn-secondary" type="button" onclick="toggleSettingsFackel()" disabled style="margin:0.35rem 0;padding:0.25rem 0.6rem;font-size:0.78rem;">Vorrang ändern</button>
+              <small style="color:var(--text-muted);display:block;">Einstellung ändert die Bevorzugung zwischen Compute und Ollama.</small>
+            </div>
+            <div class="repo-item">
+              <strong>Lokaler Compute-Turn</strong>
+              <p id="settings-compute-turn-status" style="margin:0.25rem 0;">Nicht geprüft</p>
+              <small id="settings-compute-turn-reason" style="color:var(--text-muted);display:block;">Aktueller Turn und wartende Vordergrundanfragen.</small>
+            </div>
+            <div class="repo-item">
+              <strong>Gemessene lokale Modellressourcen</strong>
+              <p id="settings-fackel-capacity" style="margin:0.25rem 0;">Nicht geprüft</p>
+              <small id="settings-fackel-loaded-models" style="color:var(--text-muted);display:block;">Modellnamen nicht bestätigt.</small>
+              <small id="settings-fackel-compute" style="color:var(--text-muted);display:block;">Geladene Einheiten & Hostverbindung.</small>
+              <small style="color:var(--text-muted);display:block;margin-top:0.25rem;">Die Belegung ist eine gemeinsame Hostmessung. Modellresidenz und RAM-Anteil je Agent oder Modell bleiben ohne eigenen Beleg unbekannt.</small>
+            </div>
+          </div>
+          <p id="settings-fackel-feedback" role="status" aria-live="polite" style="font-size:0.8rem;color:var(--text-muted);margin:0.5rem 0 0 0;"></p>
+        </div>
+
+        <div class="glass-card" id="settings-openrouter-card" style="grid-column: 1 / -1;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.5rem;">
+            <h3 style="margin:0;"><span class="icon">🌐</span> OpenRouter · kostenlose Modelle (Free Tier)</h3>
+            <span class="badge" id="settings-openrouter-credential-state">Wird geprüft</span>
+          </div>
+          <p class="card-desc">Der kostenlose Router und seine Modelle werden ausschließlich aus dem aktuellen Adapterkatalog angezeigt. Ohne Katalogantwort bleibt die Auswahl nicht verfügbar.</p>
+          <p id="settings-openrouter-catalog-state" role="status" aria-live="polite" style="font-size:0.85rem;margin:0.5rem 0;">Modellkatalog wird geladen…</p>
+          <div id="settings-openrouter-model-list" style="display:flex;flex-wrap:wrap;gap:0.45rem;"></div>
+        </div>
+
         <SystemClusterStatus />
 
         <div class="glass-card">
@@ -597,6 +640,7 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
   async function loadTheme() {
     const status = document.getElementById('theme-status');
     const save = document.getElementById('theme-save');
+    const storedLocal = localStorage.getItem('bach-theme');
     save.disabled = true;
     try {
       const response = await fetch('/api/settings/theme', { cache: 'no-store' });
@@ -604,13 +648,17 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
       const data = await response.json();
       if (!data.success || !['dark', 'light', 'ocean', 'warm', 'custom'].includes(data.theme))
         throw new Error('Theme-Antwort ungültig');
-      document.getElementById('theme-select').value = data.theme;
-      applyStoredTheme(data.theme);
+      const activeTheme = ['dark', 'light', 'ocean', 'warm', 'custom'].includes(storedLocal) ? storedLocal : data.theme;
+      document.getElementById('theme-select').value = activeTheme;
+      applyStoredTheme(activeTheme);
       status.textContent = data.configured
-        ? 'Gespeichertes Theme: ' + data.theme
+        ? 'Gespeichertes Theme: ' + activeTheme
         : 'Backend-Standard: ' + data.theme + ' · noch keine eigene Auswahl';
       save.disabled = !localStorage.getItem('bach_device_token');
     } catch (error) {
+      if (['dark', 'light', 'ocean', 'warm', 'custom'].includes(storedLocal)) {
+        document.getElementById('theme-select').value = storedLocal;
+      }
       status.textContent = 'Theme nicht verfügbar: ' + error.message;
     }
   }
@@ -824,13 +872,139 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     }
   }
 
+  let settingsCurrentPriority = null;
+  async function loadSettingsModelsResources() {
+    try {
+      const res = await fetch('/api/system/cluster-cockpit');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const f = data.fackel;
+      if (!f || !f.ownership || !f.capacity || !f.compute_lock) throw new Error('Statusantwort unvollständig');
+      const owner = f.ownership;
+      const ownerTime = Date.parse(owner.observed_at || '');
+      const freshOwner = Number.isFinite(ownerTime) && Math.abs(Date.now() - ownerTime) <= 300000;
+      const owned = owner.state === 'owned_by_this_system' && owner.holder_is_this_system === true && owner.flame === true && freshOwner;
+      document.getElementById('settings-fackel-holder').textContent = owned ? String(owner.holder || 'Eigenes System') :
+        owner.state === 'foreign' && freshOwner ? String(owner.holder || 'Fremdes System') :
+        owner.state === 'competing_compute_reported' && freshOwner ? 'Rechenjobs melden Konkurrenz' :
+        owner.state === 'idle' && freshOwner ? 'Derzeit kein lokaler BACH-Lauf' :
+        owner.state === 'stale' ? 'Status veraltet' : 'Nicht geprüft';
+      document.getElementById('settings-fackel-owner-reason').textContent = owned ? 'Frischer Halternachweis für dieses System.' :
+        owner.state === 'foreign' && freshOwner ? 'Ein anderes System hält die Fackel.' :
+        owner.state === 'competing_compute_reported' && freshOwner ? 'Ein lokaler Compute-Lock meldet konkurrierende Rechenjobs.' :
+        owner.state === 'idle' && freshOwner ? 'Der lokale Control-Dienst bestätigt, dass BACH gerade keine Inferenz ausführt.' :
+        owner.state === 'stale' ? 'Der letzte Halternachweis ist zu alt.' : 'Der Hardware-Halteradapter fehlt oder liefert keinen Beleg.';
+      settingsCurrentPriority = ['compute', 'ollama'].includes(f.priority?.value) ? f.priority.value : null;
+      document.getElementById('settings-fackel-priority').textContent = settingsCurrentPriority === 'compute' ? 'Compute' :
+        settingsCurrentPriority === 'ollama' ? 'Ollama' : 'Nicht geprüft';
+      const btn = document.getElementById('settings-btn-toggle-fackel');
+      if (btn) {
+        btn.disabled = !settingsCurrentPriority;
+        btn.textContent = settingsCurrentPriority === 'compute' ? 'Ollama-Vorrang setzen' :
+          settingsCurrentPriority === 'ollama' ? 'Compute-Vorrang setzen' : 'Vorrang nicht verfügbar';
+      }
+      const lock = f.compute_lock;
+      document.getElementById('settings-fackel-compute').textContent = lock.state === 'reported_unverified'
+        ? (Number.isSafeInteger(lock.reported_jobs) && lock.reported_jobs >= 0 ? `Lockdatei meldet ${lock.reported_jobs} Job(s)` : 'Lockdatei meldet Jobs')
+        : lock.state === 'none_reported' ? 'Frische Lockdatei meldet keine Jobs' : 'Nicht geprüft';
+      const turn = f.compute_turn;
+      const confirmedTurn = turn && turn.source === 'local_control_api' && typeof turn.active === 'boolean';
+      document.getElementById('settings-compute-turn-status').textContent = confirmedTurn
+        ? (turn.active ? 'Inferenz läuft' : 'Kein aktiver Turn') : 'Nicht geprüft';
+      document.getElementById('settings-compute-turn-reason').textContent = confirmedTurn
+        ? (Number.isInteger(turn.foreground_waiters) && turn.foreground_waiters >= 0 ? turn.foreground_waiters + ' Vordergrundanfrage(n) warten.' : 'Wartende Anfragen nicht bestätigt.')
+        : 'Control-Adapter meldet keinen bestätigten Turn.';
+      const cap = f.capacity;
+      const reportedModelCount = Number.isSafeInteger(cap.loaded_model_count) && cap.loaded_model_count >= 0 ? cap.loaded_model_count : null;
+      const reportedModels = Array.isArray(cap.loaded_models) && cap.loaded_models.every(m => typeof m === 'string' && m.trim().length > 0) ? cap.loaded_models : null;
+      const modelNamesComplete = reportedModels !== null && reportedModelCount === reportedModels.length;
+      const capacityMeasured = cap.state === 'measured' && reportedModelCount !== null
+        && Number.isFinite(cap.occupied_units) && cap.occupied_units >= 0
+        && Number.isFinite(cap.used_gib) && cap.used_gib >= 0
+        && Number.isFinite(cap.capacity_gib) && cap.capacity_gib > 0;
+      const fmt = v => new Intl.NumberFormat('de-DE', {maximumFractionDigits:2}).format(v);
+      document.getElementById('settings-fackel-capacity').textContent = capacityMeasured
+        ? `${reportedModelCount} geladene Modelle · ${fmt(cap.used_gib)} / ${fmt(cap.capacity_gib)} GiB gemeinsame Modellkapazität · ${fmt(cap.occupied_units)} Fackelanteile belegt`
+        : cap.state === 'partial' ? 'Ollama antwortet; Fackelspeicher nicht messbar' : 'Nicht geprüft';
+      document.getElementById('settings-fackel-loaded-models').textContent = modelNamesComplete
+        ? (reportedModelCount === 0 ? 'Ollama meldet keine geladenen Modelle.' : `Ollama meldet geladene Modelle: ${reportedModels.join(', ')}`)
+        : 'Modellnamen nicht bestätigt.';
+      const observed = Date.parse(data.observed_at || '');
+      document.getElementById('settings-torch-observed-at').textContent = Number.isFinite(observed)
+        ? 'Geprüft ' + new Date(observed).toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}) : 'Nicht geprüft';
+    } catch (_) {}
+  }
+
+  async function toggleSettingsFackel() {
+    if (!settingsCurrentPriority) return;
+    const desired = settingsCurrentPriority === 'compute' ? 'ollama' : 'compute';
+    const btn = document.getElementById('settings-btn-toggle-fackel');
+    const feedback = document.getElementById('settings-fackel-feedback');
+    if (btn) btn.disabled = true;
+    if (feedback) feedback.textContent = 'Vorrang wird gespeichert…';
+    try {
+      const res = await fetch('/api/system/fackel', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({preference: desired})
+      });
+      const data = await res.json();
+      if (!res.ok || data.ok !== true || data.preference !== desired || data.ownership_changed !== false) throw new Error('Speicherung nicht bestätigt');
+      await loadSettingsModelsResources();
+      if (feedback) feedback.textContent = 'Vorrang gespeichert. Der Fackelbesitz wurde nicht verändert.';
+    } catch (_) {
+      if (feedback) feedback.textContent = 'Vorrang konnte nicht bestätigt werden.';
+      await loadSettingsModelsResources();
+    }
+  }
+
+  async function loadSettingsOpenRouter() {
+    const credentialState = document.getElementById('settings-openrouter-credential-state');
+    const catalogState = document.getElementById('settings-openrouter-catalog-state');
+    const list = document.getElementById('settings-openrouter-model-list');
+    if (!credentialState || !catalogState || !list) return;
+    try {
+      const [statusResponse, modelsResponse] = await Promise.all([
+        fetch('/api/system/openrouter/status'),
+        fetch('/api/system/openrouter/models')
+      ]);
+      if (!statusResponse.ok || !modelsResponse.ok) throw new Error('Geräteanmeldung oder Dienst fehlt');
+      const [status, catalog] = await Promise.all([statusResponse.json(), modelsResponse.json()]);
+      credentialState.textContent = status.credential?.configured === true ? 'Schlüssel konfiguriert' : 'Schlüssel fehlt';
+      credentialState.className = 'badge ' + (status.credential?.configured === true ? 'badge-accent' : '');
+      const models = (catalog.models || []).filter(item => item && item.free === true && typeof item.id === 'string');
+      list.replaceChildren(...models.map(item => {
+        const code = document.createElement('code');
+        code.textContent = item.id;
+        code.title = item.name || item.id;
+        code.style.cssText = 'border:1px solid var(--border);border-radius:4px;padding:0.2rem 0.45rem;font-size:0.78rem;';
+        return code;
+      }));
+      catalogState.textContent = `${models.length} kostenlose Auswahl(en) verfügbar · OpenRouter Free Tier`;
+    } catch (_) {
+      credentialState.textContent = 'Status nicht verfügbar';
+      catalogState.textContent = 'OpenRouter-Katalog nicht erreichbar.';
+      list.replaceChildren();
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     loadOceanMap();
     loadTheme();
     loadNemoFoldStats();
     loadNemoFoldCandidates();
     loadExternalArtifacts();
+    loadSettingsModelsResources();
+    loadSettingsOpenRouter();
     document.getElementById('theme-save').addEventListener('click', saveTheme);
+    document.getElementById('theme-select')?.addEventListener('change', event => {
+      const selected = event.target.value;
+      if (['dark', 'light', 'ocean', 'warm', 'custom'].includes(selected)) {
+        if (typeof window.applyTheme === 'function') window.applyTheme(selected, true);
+        else applyStoredTheme(selected);
+        const status = document.getElementById('theme-status');
+        if (status) status.textContent = 'Theme lokal übernommen: ' + selected;
+      }
+    });
   });
 </script>
 

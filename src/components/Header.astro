@@ -306,7 +306,9 @@ function lineIconSvg(id: string): string {
     } else {
       root.setAttribute('data-theme', theme);
     }
-    if (persist) localStorage.setItem('bach-theme', theme);
+    if (persist) {
+      localStorage.setItem('bach-theme', theme);
+    }
 
     // Update button states
     document.querySelectorAll('.theme-btn').forEach(btn => {
@@ -314,7 +316,12 @@ function lineIconSvg(id: string): string {
       btn.classList.toggle('active', selected);
       btn.setAttribute('aria-pressed', String(selected));
     });
+    const themeSelect = document.getElementById('theme-select');
+    if (themeSelect && ['dark', 'light', 'ocean', 'warm', 'custom'].includes(theme)) {
+      themeSelect.value = theme;
+    }
   }
+  window.applyTheme = applyTheme;
 
   // Initialize Theme
   const savedTheme = localStorage.getItem('bach-theme') || 'dark';

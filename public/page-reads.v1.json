@@ -630,6 +630,21 @@
     "method": "GET",
     "path": "/api/system/worker-model-principals",
     "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/system/fackel",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/openrouter/status",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/openrouter/models",
+    "required": false
    }
   ],
   "/agenten/blueprints": [

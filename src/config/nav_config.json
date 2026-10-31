@@ -152,7 +152,7 @@
               "id": "models-resources",
               "label": "Modelle & Ressourcen",
               "icon": "🧠",
-              "href": "/agenten/running?tab=resources",
+              "href": "/settings?tab=core",
               "description": "Modelle, Zugänge und Ressourcenstatus"
             },
             {
@@ -402,7 +402,7 @@
                   "id": "models-resources",
                   "label": "Modelle & Ressourcen",
                   "icon": "🧠",
-                  "href": "/agenten/running?tab=resources",
+                  "href": "/settings?tab=core",
                   "description": "Modelle und Ressourcenstatus"
                 },
                 {
