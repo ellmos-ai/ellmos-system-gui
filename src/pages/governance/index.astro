@@ -120,6 +120,59 @@ import BachLayout from "../../layouts/BachLayout.astro";
     </div>
   </section>
 
+  <!-- TRANSPARENTE ENTSCHEIDUNGSVERARBEITUNGSREGELN & 3-STUFEN-AUTORITÄTS-TUNNEL (doc_machine.config.json) -->
+  <section class="card" id="decision-processing-rules-card" data-schema="ellmos.governance.decision-rules-and-tunneling.v1" style="margin-bottom:1.5rem;border:1px solid var(--border);background:var(--bg-card);">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+      <div>
+        <h2 class="card-title" style="margin:0 0 0.25rem 0;">⚖️ Transparente Entscheidungsverarbeitungsregeln &amp; 3-Stufen-Autoritäts-Tunnel</h2>
+        <p style="margin:0;font-size:0.83rem;color:var(--text-muted);">
+          Bestimmt das Verhalten von BACH &amp; Ocean deterministisch (<code>config/doc_machine.config.json</code> &amp; <code>escalation_ladder.py</code>): Kein künstlicher Verfalls-Timer; Schutz vor der Autoritätswüste (<code>error_authority_desert</code>).
+        </p>
+      </div>
+      <span class="badge" id="wishes-redirect-badge">Lokal in Ocean/BACH (wishes_redirect: aus)</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0.85rem;margin-top:0.85rem;font-size:0.83rem;">
+      <div style="padding:0.85rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);">
+        <strong style="color:var(--text);">🚇 3-Stufen-Autoritäts-Tunneling</strong>
+        <ul style="margin:0.4rem 0 0;padding-left:1.1rem;color:var(--text-muted);">
+          <li><strong>Stufe 1 (~80 % Alltag):</strong> <code>semantic_tunneling</code> via Goal/Plan (verhindert Autoritätswüste).</li>
+          <li><strong>Stufe 2 (~15 % Schwellen):</strong> <code>quote_evidence_tunnel</code> (&lt;1 ms Wortwörtlich-Check aus NemoFold).</li>
+          <li><strong>Stufe 3 (~5 % Irreversibel):</strong> <code>hard_gate</code> (<code>LOCK.user.*</code>, Sicherheits-Hash, Ed25519).</li>
+        </ul>
+      </div>
+      <div style="padding:0.85rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);">
+        <strong style="color:var(--text);">🧭 3-Ursachen-Routing (<code>decision_processing_rules</code>)</strong>
+        <ul style="margin:0.4rem 0 0;padding-left:1.1rem;color:var(--text-muted);">
+          <li><strong>1. Ungewollte Erosion:</strong> <code>["local_taskplan", "user_notification"]</code> (P1-Reparatur-Task + Hinweis).</li>
+          <li><strong>2. Geplantes Terraforming:</strong> <code>["local_taskplan"]</code> (P2-Bau-Task + SOLL/IST-Trennung).</li>
+          <li><strong>3. Erfolgtes Terraforming:</strong> <code>["local_doc_update"]</code> (Doku &amp; 6 Sprachen lokal nachziehen).</li>
+        </ul>
+      </div>
+      <div style="padding:0.85rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);">
+        <strong style="color:var(--text);">🧞 Lokale Wishes-Come-True &amp; Entwickler-Umleitung</strong>
+        <p style="margin:0.4rem 0 0;color:var(--text-muted);" id="gov-decision-rules-live">
+          Standard: Lokale Task in BACH/Ocean (<code>local_taskplan</code>) oder lokale MarbleRun-Staffette (<code>wishes-come-true-local</code>). Entwickler-Umleitung (<code>wishes_redirect</code>) in <code>doc_machine.config.json</code> frei kombinierbar.
+        </p>
+      </div>
+    </div>
+  </section>
+  <script is:inline>
+    (async function loadGovernanceDecisionRules() {
+      try {
+        const res = await fetch("/api/governance/decision-rules");
+        if (!res.ok) return;
+        const data = await res.json();
+        const cfg = data?.doc_machine_config || {};
+        const badge = document.getElementById("wishes-redirect-badge");
+        if (badge && cfg.wishes_redirect) {
+          badge.textContent = cfg.wishes_redirect.enabled
+            ? `wishes_redirect AKTIV -> ${cfg.wishes_redirect.target_mode}`
+            : `Lokal (${cfg.execution_locality || "local_ocean_bach_only"}) · wishes_redirect: aus`;
+        }
+      } catch (_e) {}
+    })();
+  </script>
+
   <!-- Seiteninterne Lese-Tabs (#2014): ?tab= wird ausgewertet, alles read-only -->
   <div role="tablist" aria-label="Governance-Ansichten" id="gov-tablist" class="gov-tabs">
     <a role="tab" id="tab-status" href="/governance?tab=status" data-tab="status" aria-controls="gov-panel-status">Control Room</a>

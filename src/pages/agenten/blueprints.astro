@@ -32,6 +32,65 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     <button role="tab" aria-selected="false" data-library="templates">Mitgelieferte Vorlagen <span id="count-templates">–</span></button>
     <button role="tab" aria-selected="false" data-library="teams">Teams <span id="count-teams">–</span></button>
   </div>
+  <section id="ocean-role-socket-panel" class="studio-header" data-schema="ellmos.role-socket-catalog.v1" style="margin-bottom:1.1rem;">
+    <div style="width:100%;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.5rem;">
+        <div>
+          <p class="studio-eyebrow" style="margin:0;">Ocean-Rollen · Dual-Routing &amp; Flexible Anbieter-Sockel (<code>ellmos.role-socket-catalog.v1</code>)</p>
+          <h2 style="font-size:1.15rem;margin:0.15rem 0 0;">🔌 6 Koordinatoren (ehem. Bosse), Domänen-Experten &amp; 19 Modul-Rollen (<code>roles[]</code>)</h2>
+        </div>
+        <label style="flex-direction:row;align-items:center;gap:0.45rem;margin:0;">
+          <span>Aktiver Anbieter-Sockel:</span>
+          <select id="ocean-socket-provider-select" style="width:auto;padding:0.35rem 0.65rem;">
+            <option value="claude">Claude (Opus / Sonnet / Haiku)</option>
+            <option value="codex">Codex / OpenAI (GPT-5.4)</option>
+            <option value="agy">Gemini / Antigravity (3.1 Pro / Flash)</option>
+            <option value="kimi">Kimi (K2.5)</option>
+            <option value="ollama">Ollama Lokal (Qwen 3.5 35B)</option>
+            <option value="openrouter">OpenRouter</option>
+          </select>
+        </label>
+      </div>
+      <p class="studio-note" style="margin:0 0 0.65rem 0;">
+        <strong>Semantisches Routing:</strong> Umbrella-Skills (<code>*-umbrella</code>) + <code>semantic-persona-routing</code> &middot;
+        <strong>Deterministisches Routing:</strong> <code>ellmos-controlcenter-mcp</code> (<code>resolve_semantic_route</code> / <code>switch_profile</code>) &middot;
+        <strong>Modell-Sockel:</strong> <code>reasoning_coordinator</code> | <code>domain_specialist</code> | <code>fast_worker</code>.
+      </p>
+      <div id="ocean-role-socket-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.65rem;font-size:0.8rem;"></div>
+    </div>
+  </section>
+  <script is:inline>
+    (async function initOceanRoleSockets() {
+      const container = document.getElementById("ocean-role-socket-list");
+      const select = document.getElementById("ocean-socket-provider-select");
+      if (!container || !select) return;
+      let catalogData = null;
+      function render(provider) {
+        if (!catalogData) return;
+        const sockets = catalogData?.role_socket_catalog?.provider_sockets || {};
+        const templates = Array.isArray(catalogData?.templates) ? catalogData.templates : [];
+        container.innerHTML = templates.slice(0, 12).map((tpl) => {
+          const sockId = tpl.socket_id || "domain_specialist";
+          const resolvedModel = sockets[sockId]?.providers?.[provider] || provider;
+          const badge = tpl.source === "module_manifest_role" ? `📦 ${tpl.module_id}` : `🧭 ${tpl.tier || "role"}`;
+          const routeInfo = tpl.semantic_route ? `Umbrella: <code>${tpl.semantic_route}</code>` : `Prompt: <code>${tpl.prompt || "SKILL.md"}</code>`;
+          return `<div style="padding:0.65rem;border:1px solid var(--border);border-radius:8px;background:var(--bg-dark);">
+            <div style="display:flex;justify-content:space-between;gap:0.4rem;"><strong>${tpl.label || tpl.role_id}</strong><span class="studio-state">${badge}</span></div>
+            <div style="margin-top:0.25rem;color:var(--text-muted);">${routeInfo}</div>
+            <div style="margin-top:0.25rem;color:var(--text-muted);">Sockel <code>${sockId}</code> &rarr; <strong>${resolvedModel}</strong></div>
+          </div>`;
+        }).join("");
+      }
+      select.addEventListener("change", () => render(select.value));
+      try {
+        const res = await fetch("/api/agenten/library");
+        if (res.ok) {
+          catalogData = await res.json();
+          render(select.value);
+        }
+      } catch (_e) {}
+    })();
+  </script>
   <section id="studio-grid" class="studio-grid" aria-label="Blueprints"></section>
   <section id="studio-teams" hidden>
     <div class="studio-section-heading"><h2>Teams</h2><button id="studio-new-team" class="btn">Team anlegen</button></div>

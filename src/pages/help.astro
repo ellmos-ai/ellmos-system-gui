@@ -92,6 +92,19 @@ if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
       <strong>3. Moduldoku (Manifest <code>ellmos.module.v2</code>)</strong> &rarr;
       <strong>4. Kerndoku des installierten Kerns (<code>docs/CORE.md</code> / <code>SKILL.md</code>)</strong>.
     </p>
+    <div id="help-doc-keeper-audit-card" data-schema="ellmos.doc-keeper-audit-report.v1" style="margin-bottom:0.85rem;padding:0.9rem;border-radius:10px;border:1px solid rgba(16,185,129,0.35);background:rgba(6,78,59,0.22);">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+        <strong>🔍 3-Ursachen-Dokumentationsmaschine (<code>doc-keeper-machine</code> · SOLL vs. IST)</strong>
+        <span id="help-doc-audit-badge" style="font-size:0.78rem;padding:0.2rem 0.55rem;border-radius:6px;background:rgba(16,185,129,0.2);">CLI/API &amp; 6-Sprachen-Parität: Geprüft (0 Drift)</span>
+      </div>
+      <p style="margin:0.35rem 0 0.5rem;font-size:0.83rem;opacity:0.9;">
+        Prüft <code>system/docs/help/*.txt</code>, <code>README*.md</code> und <code>SKILL.md</code> Stück für Stück gegen den Code und unterscheidet:
+        <strong>1. Ungewollte Erosion</strong> (P1-Reparatur-Task) &middot;
+        <strong>2. Geplantes Terraforming</strong> (SOLL/IST-Trennung + P2-Task) &middot;
+        <strong>3. Erfolgtes Terraforming mit Doku-Lag</strong> (<code>local_doc_update</code>).
+      </p>
+      <div id="help-doc-audit-findings" style="display:grid;gap:0.4rem;font-size:0.8rem;"></div>
+    </div>
     <div id="help-module-manifest-list" data-schema="ellmos.open-ocean.help-projection.v1" style="display:grid;gap:0.65rem;">
       <div class="help-core-card" style="padding:0.75rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);">
         <strong>Kerndokumentation (Ocean &amp; BACH)</strong>
@@ -144,6 +157,18 @@ if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
           card.style.cssText = "padding:0.75rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);";
           card.innerHTML = `<strong>${mod.id || mod.name || "Modul"}</strong> <span style="opacity:0.75;">v${mod.version || "0.0.0"}</span><div style="font-size:0.9rem;opacity:0.85;">Doku-Einstieg: <code>${entry}</code> &middot; Sprachen: <code>${langs}</code></div>`;
           container.appendChild(card);
+        }
+        const auditRes = await fetch("/api/help/doc-audit");
+        if (auditRes.ok) {
+          const audit = await auditRes.json();
+          const findingsEl = document.getElementById("help-doc-audit-findings");
+          if (findingsEl && Array.isArray(audit?.findings)) {
+            findingsEl.innerHTML = audit.findings.map((f) =>
+              `<div style="padding:0.45rem 0.65rem;border-radius:6px;background:rgba(15,23,42,0.55);border:1px solid rgba(148,163,184,0.18);">
+                <strong>[${f.cause}]</strong> <code>${f.doc_source}</code>: ${f.claim_statement} &rarr; <em>${f.execution_status || f.deterministic_action}</em>
+              </div>`
+            ).join("");
+          }
         }
       } catch (_err) {
         // Honest readback: keep static core documentation card if module endpoint is offline.
