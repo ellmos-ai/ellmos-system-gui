@@ -29,3 +29,14 @@ Historical release audit: 2026-10-03. Productive source import: 2026-10-08; rele
 - Update source/archive consumer pins only after a fresh committed release and independent review.
 
 - Final release scripts enforce clean source and a matching pre-build commit receipt.
+
+## TASKWRITER — 2026-11-01
+
+- #508: erledigt, easy/local, Priorität medium — aktuelle Release-Orientierung abgleichen. Quelle: package.json 0.2.30, README bis 0.2.29, RELEASE_GATE aktueller Kandidat 0.2.25. Diese Versionen beweisen keine Veröffentlichung oder Abnahme.
+- #509: offen, special/central, Priorität medium — getrennte Release-, Konsumenten- und sichtbare Abnahmegates freigeben. Vollständige Kriterien/Quellen/Blocker in TASKPLAN, keine Volltextduplikation.
+
+Zwei neue Aufgaben, keine erledigt/zusammengeführt. Arbeitsbaum zuvor sauber und vollständiger Lockscan frei. AGENTS, TODO und Release-Gate gelesen; README und Paketmetadaten ausgewertet; sämtliche verlinkten Verbraucher-/Importbelege noch nicht vollständig geprüft, deshalb kein Projektsiegel. API/UTF-8/Diff zurückgelesen. Keine Tests, Builds, Veröffentlichungen, Deployments oder Änderungen der CCC-Pause.
+
+## TASKSOLVER #508 — 2026-11-01
+
+Aktuelle Orientierung in README und RELEASE_GATE ergänzt: Quelle 0.2.30/HEAD d248e503, lokales 0.2.30-Archiv/Commit 1306be35 und GitHub latest v0.2.28 sind getrennt belegt. Archivmanifest-Dateihashes und LICENSE-Bytes unabhängig geprüft; keine Gleichheit mit HEAD oder Verbraucherinstallation behauptet. Alte Current-candidate-Abschnitte historisch eingeordnet. #508 abgeschlossen; #509 special/central bleibt offen. JSON-/UTF-8-/Link-/Diff-Readback durchgeführt; kein Build/Test, keine Veröffentlichung, CCC-Pause unverändert.

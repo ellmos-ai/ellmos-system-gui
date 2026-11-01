@@ -1,8 +1,22 @@
 # Release gate: ellmos-system-gui
 
-**Current candidate: 0.2.25.** Integration of deployed source `ff13cccde77a997ab4d0a0173db43ff88ee3c2be` with current main `a5de187db1005b083e2ed4330f61aafc0553ba04` and result-origin presentation `57c43df5f6b83d07caff4f5285c20873146e3bf2`. This candidate preserves the deployed policy controls, task leases, completion confirmation and agent overview, and the current main branch explicit operator-reopen controls.
+## Current evidence snapshot — 2026-11-01
 
-## Current candidate scope and checks (2026-10-21)
+| State | Evidence and limit |
+|---|---|
+| Local source version | `package.json`: **0.2.30**; HEAD `d248e503ba5451c5b1605d193a4f7d1ba0b9c472`. Version metadata is not a release receipt. |
+| Local archive | `release/ellmos-system-gui-0.2.30-1306be35dbe7.zip`, SHA-256 `fa06c7aafcc1bc5c3c670d1c998fa7a0585d2562f2bcc4acda03a4d7ed6ea067`. Its manifest and retained build-source receipt bind commit `1306be35dbe725eba99c71dd1d8dd2e05735bb82`, not local HEAD. All 376 declared dist file hashes and the included root LICENSE bytes were checked. This is archive integrity, not current-source or functional acceptance. |
+| Latest published GitHub release | Read-only API `repos/ellmos-ai/ellmos-system-gui/releases/latest`: **v0.2.28**, published 2026-10-22T07:07:14Z; listed ZIP `ellmos-system-gui-0.2.28-1d6c0f985834.zip`, API digest `sha256:5b79f083ed58cdbc59b09a250efa715780e7c8074f45bca93b16682af18072f4`. Remote archive bytes were not downloaded or independently verified in this review. |
+| Current-source review and clean release build | Not established here; no new source review, dependency install or build was run. |
+| BACH/Ocean consumer pins and installation | Not verified here. A local ZIP or source version does not establish either consumer's active pin, installed adapters or runtime state. |
+| Visible browser/device/functional acceptance | Open/not verified for this source/archive combination. TASKPLAN #509 retains the separate authorization and acceptance gates. |
+
+No version change, publication, consumer modification, test or build occurred. The user's CCC pause remains in effect. Dated candidate sections below retain their historical scope.
+
+
+**Historical candidate: 0.2.25 (2026-10-21).** Integration of deployed source `ff13cccde77a997ab4d0a0173db43ff88ee3c2be` with current main `a5de187db1005b083e2ed4330f61aafc0553ba04` and result-origin presentation `57c43df5f6b83d07caff4f5285c20873146e3bf2`. This candidate preserves the deployed policy controls, task leases, completion confirmation and agent overview, and the current main branch explicit operator-reopen controls.
+
+## Historical candidate scope and checks (2026-10-21)
 
 - Result-origin labels use trusted result DTOs and fixed text. Unavailable external provenance stays visibly external. Displaying provenance grants no acceptance or correction authority.
 - Original BACH source hashes and both source-branch histories are retained. The integration records both parent file hashes; divergent histories are not rewritten as a fictitious linear chain.
@@ -12,9 +26,9 @@
 
 ## Previous candidate 0.2.24 (2026-10-16)
 
-**Current candidate: 0.2.24.** This candidate records the reviewed shared agent overview and release metadata update. The browser acceptance and source checks below apply to the unchanged seven-file UI snapshot; version metadata and release documentation are the only additions in this candidate. This is not a claim of complete P10, publication, consumer pinning, native installation, or personal acceptance.
+**Historical candidate: 0.2.24 (2026-10-16).** This candidate records the reviewed shared agent overview and release metadata update. The browser acceptance and source checks below apply to the unchanged seven-file UI snapshot; version metadata and release documentation are the only additions in this candidate. This is not a claim of complete P10, publication, consumer pinning, native installation, or personal acceptance.
 
-## Current candidate scope and checks (2026-10-16)
+## Historical candidate scope and checks (2026-10-16)
 
 - Source base: `a3daee37d6621e37cb6135425006e59ad89b209f`. The candidate adds a shared read-only agent projection and consistent search, filters, grouping, sorting, cards and compact-list controls to the dashboard and Living & Running page. Unknown runtime state remains unconfirmed.
 - Source verification: 479 tests passed with no failures or skips. The pre-release build contained 26 HTML pages. The tests and build preceded the package-version and release-documentation updates; the application and UI source files are unchanged.
