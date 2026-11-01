@@ -1,0 +1,29 @@
+:root { color-scheme: light dark; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #f5f7fa; color: #172333; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 36px 28px; }
+main { width: min(100%, 520px); }
+.identity { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; letter-spacing: .09em; }
+.mark { display: grid; place-items: center; background: #0d608c; color: #fff; border-radius: 10px; width: 36px; height: 36px; font-size: 30px; line-height: 1; }
+.separator { color: #667080; font-weight: 400; }
+h1 { margin: 28px 0 10px; font-size: clamp(30px, 5vw, 40px); line-height: 1.15; font-weight: 650; letter-spacing: -.035em; }
+.intro { margin: 0 0 28px; color: #44546a; line-height: 1.6; }
+label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 8px; }
+input[type="url"] { display: block; width: 100%; padding: 12px 14px; border: 1px solid #91a0b3; border-radius: 9px; font: inherit; background: #fff; color: inherit; }
+input:focus-visible, button:focus-visible { outline: 3px solid #087aad; outline-offset: 3px; }
+.help { font-size: 12px; line-height: 1.55; color: #44546a; margin: 9px 0 16px; }
+.check { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; font-weight: 400; line-height: 1.5; }
+.check input { margin: 3px 0 0; accent-color: #0d608c; }
+button { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-top: 22px; padding: 12px 15px; border: 0; border-radius: 9px; background: #0d608c; color: #fff; font: inherit; font-weight: 650; cursor: pointer; }
+button:hover { background: #084d73; }
+button:disabled { opacity: .65; cursor: wait; }
+#connection-status { margin: 15px 0 0; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+#connection-status[data-state="error"] { color: #a8202c; }
+.details { margin-top: 26px; padding-top: 18px; border-top: 1px solid #c8d0da; font-size: 12px; color: #44546a; line-height: 1.6; }
+.details p { margin: 0 0 5px; }
+@media (prefers-color-scheme: dark) {
+  :root { background: #101923; color: #e9eef5; }
+  .intro, .help, .details { color: #b3c1d1; }
+  input[type="url"] { background: #172431; border-color: #708298; }
+  .details { border-color: #35475b; }
+  #connection-status[data-state="error"] { color: #ff9da5; }
+}

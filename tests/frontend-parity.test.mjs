@@ -10,7 +10,7 @@ const start=page.indexOf('function workerReadiness('),end=page.indexOf('async fu
 const readiness=vm.runInNewContext('('+page.slice(start,end).trim()+')');
 function paths(directory){return readdirSync(directory,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?paths(new URL(entry.name+'/',directory)):[new URL(entry.name,directory)]);}
 test('all thirty-nine productive pages, including fallback routes and Routinen & Jobs, are present',()=>{
-  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,39);
+  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,40);
   for(const path of ['user-inbox','agenten/blueprints','agenten/subscription-agents','routinen','skills/plugins','skills/mcp','skills/software','skills/ocean','daemon','system/ocean','prompt-library'])assert.ok(read('src/pages/'+path+'.astro'));
 });
 test('the shared branding contract and bundled same-origin authentication stay intact',()=>{

@@ -1,0 +1,10 @@
+{
+  "name": "ellmos-desktop-build-tools",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Pinned build tools for the shared BACH Ocean desktop consumer",
+  "license": "MIT",
+  "dependencies": {
+    "@tauri-apps/cli": "2.12.4"
+  }
+}

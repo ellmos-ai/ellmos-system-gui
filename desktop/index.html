@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BACH · Ocean verbinden</title>
+    <link rel="stylesheet" href="connection.css">
+    <script src="connection.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <div class="identity" aria-label="BACH und Ocean"><span class="mark">≈</span> BACH <span class="separator">/</span> OCEAN</div>
+      <h1>Dein Arbeitsraum.</h1>
+      <p class="intro">Öffne die gemeinsame Oberfläche deiner BACH- oder Ocean-Instanz.</p>
+      <form id="connection-form">
+        <label for="backend-url">Backendadresse</label>
+        <input id="backend-url" name="backend-url" type="url" placeholder="https://backend.example.org/" autocomplete="url" spellcheck="false" required maxlength="2048" aria-describedby="address-help">
+        <p id="address-help" class="help">Verwende die Adresse, unter der du die Oberfläche auch im Browser erreichst.</p>
+        <label class="check"><input id="allow-loopback-http" type="checkbox"> HTTP für diese lokale Loopbackadresse erlauben</label>
+        <button id="connect" type="submit">Verbinden <span aria-hidden="true">↗</span></button>
+      </form>
+      <p id="connection-status" role="status" aria-live="polite">Bereit zum Verbinden.</p>
+      <div class="details">
+        <p>Die Anmeldung erfolgt in deiner gewählten Instanz.</p>
+        <p>Agenten und Hintergrundaufgaben werden dort verwaltet und laufen unabhängig vom App-Fenster weiter.</p>
+      </div>
+    </main>
+  </body>
+</html>
