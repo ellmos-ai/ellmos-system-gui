@@ -1,0 +1,45 @@
+---
+import { fallbackTask } from '../lib/navigation-route-inventory.mjs';
+
+interface Props {
+  route: string;
+  label: string;
+  reason: string;
+  nextHref: string;
+  nextLabel: string;
+}
+
+const { route, label, reason, nextHref, nextLabel } = Astro.props;
+const headingId = `legacy-fallback-${route.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')}`;
+---
+
+<section class="legacy-route-fallback card" data-legacy-fallback="true" data-route={route} aria-labelledby={headingId}>
+  <p class="legacy-route-eyebrow">Gemeinsame Oberfläche · Rückfall erkannt</p>
+  <h1 id={headingId}>{label}</h1>
+  <p class="legacy-route-lead">
+    Dieser Zielpfad ist noch nicht auf die gemeinsame Astro-Oberfläche umgestellt. Die alte BACH-Vorlage wird nicht still angezeigt;
+    hier siehst du den gemessenen Rückfall und den offenen Umsetzungspunkt.
+  </p>
+  <dl class="legacy-route-facts">
+    <div><dt>Gemessener Pfad</dt><dd><code>{route}</code></dd></div>
+    <div><dt>Ursache</dt><dd>{reason}</dd></div>
+    <div><dt>Ausführung</dt><dd>Keine Laufzeit- oder Backend-Aussage aus dieser Hinweisseite</dd></div>
+  </dl>
+  <div class="legacy-route-actions">
+    <a class="btn btn-primary" href={fallbackTask.href}>{fallbackTask.label}</a>
+    <a class="btn btn-secondary" href={nextHref}>{nextLabel}</a>
+  </div>
+</section>
+
+<style>
+  .legacy-route-fallback { max-width: 58rem; margin: 2rem auto; padding: clamp(1.25rem, 3vw, 2.25rem); }
+  .legacy-route-eyebrow { color: var(--warning, #f0b429); font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .legacy-route-fallback h1 { margin: .35rem 0 .75rem; }
+  .legacy-route-lead { max-width: 48rem; color: var(--text-muted); line-height: 1.65; }
+  .legacy-route-facts { display: grid; gap: .75rem; margin: 1.5rem 0; }
+  .legacy-route-facts div { display: grid; gap: .2rem; padding: .75rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-panel); }
+  .legacy-route-facts dt { color: var(--text-muted); font-size: .76rem; font-weight: 700; text-transform: uppercase; }
+  .legacy-route-facts dd { margin: 0; line-height: 1.5; }
+  .legacy-route-actions { display: flex; flex-wrap: wrap; gap: .65rem; }
+  @media (max-width: 560px) { .legacy-route-actions > .btn { width: 100%; text-align: center; } }
+</style>

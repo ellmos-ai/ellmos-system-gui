@@ -291,7 +291,7 @@ export function taskResultGateSummary(readback) {
   const review = result.model_review;
   const reviewCurrent = currentResult && isSha256(result.result_revision) && isRecord(review)
     && review.schema === 'bach.worker-result-review-evidence.v1'
-    && review.availability === 'available' && review.task_id === readback.task_id
+    && review.availability === 'recorded' && review.task_id === readback.task_id
     && review.result_id === result.result_id && review.result_revision === result.result_revision;
   const gates = [];
 

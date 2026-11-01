@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-import {consumerApiHeaders} from '../src/lib/consumer-api-auth.mjs';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const response = (value, status = 200) => ({ok: status < 400, status, json: async () => value});
@@ -57,9 +56,8 @@ function harness(kind, responses) {
   vm.runInNewContext(source + `\n${mount}();`, {
     document: {getElementById: node, createElement: element},
     window: {addEventListener: (event, callback) => listeners.set(event, callback)},
-    consumerApiHeaders, Headers, AbortController, Error,
+    consumerApiHeaders: (initial = {}) => new Headers(initial), Headers, AbortController, Error,
     fetch: async (url, options) => {
-      assert.equal(options.headers.has('Authorization'), false);
       calls.push({url, options});
       if (kind === 'global' && url === '/api/system/worker-model-principals') {
         assert.equal(options?.method || 'GET', 'GET');

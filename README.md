@@ -8,15 +8,6 @@ The productive frontend at public BACH commit `8884fcd2277f5db89e1a267a81042b333
 
 This repository owns the shared frontend after the import. Consumer transition copies must be replaced by a verified pinned release; they do not become separate frontend authorities. An HTML installation alone does not provide Ocean's missing backend adapters.
 
-## Desktop app
-
-The Tauri 2 desktop consumer lives in this same shared GUI module under
-`src-tauri/`. Its bundled connection screen opens the selected consumer's actual
-GUI origin, including that consumer's existing login. It does not bundle an
-older Astro build or own backend jobs. See [desktop setup and acceptance](docs/DESKTOP-APP.md).
-This is an implementation candidate; native compilation, installation and
-Windows/macOS/Linux device acceptance are tracked separately from a web release.
-
 ## Development and verification
 
 Build prerequisites: Node `>=22.12.0` and npm `>=9.6.5`; the release packager and release tests also require Python 3.9 or newer. Astro is pinned to `7.3.7`; the lock includes `http-cache-semantics 4.3.0` and `sharp 0.35.5`. The previous Astro 5 lock reported security advisories. Text files use LF consistently so provenance hashes remain stable across Windows and Unix checkouts.
@@ -27,9 +18,25 @@ node --test tests/*.test.mjs
 npm run build
 ```
 
-The frontend contains 26 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance.
+The frontend contains 39 HTML pages. Its tests exercise frontend rendering, source-version conflicts, receipt correlation, safe device authentication and source provenance using synthetic local fixtures. They do not claim browser, device or provider acceptance. Every configured navigation path is checked at build time for a shared Astro page or a visible Task-2468 fallback.
+
+## GUI walkthrough
+
+`scripts/gui-walkthrough.mjs` opens every page of `public/page-reads.v1.json` in Chromium (Playwright) against a running build and writes `reports/gui-walkthrough/<timestamp>/report.json` plus screenshots (git-ignored):
+
+```sh
+npm run build
+npx astro preview --port 4321 &
+node scripts/gui-walkthrough.mjs [--base http://127.0.0.1:4321] [--only /tasks,/memory] [--no-fail]
+```
+
+Per page it records the HTTP status, console errors, uncaught page errors, dead internal links (every distinct internal target is requested once), pages no other page links to, horizontal overflow and a full-page screenshot at 1440 and 390 px width, light and dark. The GUI ignores `prefers-color-scheme` and reads `localStorage["bach-theme"]`, so each variant sets that key. Failed `/api/` calls are listed separately as `backendErrors`: without a connected backend they are expected and do not fail the run; the exit code is 1 for HTTP errors, console or page errors and dead links. Playwright comes from the dev dependency `playwright-core` (no browser download; `chromium` must be installed, for example by `npx playwright-core install chromium`). `tests/gui-walkthrough.test.mjs` covers the page list, link classification and summary without a browser.
+
+Stage 2, not built yet: an LLM review of the report and screenshots against a fixed checklist (design goal and GUI design conversion from the Ocean plan, accessibility, navigation reachability, consistency across light/dark and phone/desktop). Planned input is `report.json` plus the PNGs, planned output a findings JSON with page, severity, rule and evidence, turned into tasks. The checklist and the model endpoint are decisions for the task owner; the walkthrough output format (`ellmos.gui.walkthrough.v1`) is the contract between the stages.
 
 ## Release
+
+Version 0.2.29 delivers the shared GUI shell from the 25 October walkthrough: two switchable navigation styles (Standard bewährt and Ocean-BACH-Klassik, stored only in the browser), the agent library with Living & Running as the runtime view and preserved links from the former factory, a combined tasks and routines view, visible fallback pages for 13 legacy routes guarded at build time, the Förderplaner link to the existing anonymisation tab, mobile reflow fixes found by the walkthrough, only the selected navigation style visible and a single main landmark per page. Missing backend adapters stay unavailable, and consumers that still serve their own pages for these routes keep doing so. Source review, release packaging, consumer pins, installation and visible functional acceptance are recorded separately.
 
 Version 0.2.28 integrates the published reviewer-availability, result-gate, external GitHub evidence, worker-selection explanation and optional lease-countdown source changes. The selection view respects the reported model-enforcement setting and labels an absent setting or candidate sort order as unconfirmed. Existing 0.2.27 agent configuration, observed runtime resources, responsive navigation, thumbnails and routes remain included. This is an incremental delivery: task-hindrance integration, missing backend adapters, full BACH/Ocean parity and user acceptance remain separate open work. Source review, build, publication, release, consumer activation and visible functional acceptance are recorded separately.
 
@@ -56,8 +63,6 @@ python scripts/package_release.py
 `build:release` verifies the clean source before building and stores its exact commit in a preparation receipt. The manifest generator and packager require that same clean commit.
 
 `dist/dist-manifest.json` records file SHA-256 hashes and the exact source commit. The packager refuses a stale build and produces a deterministic ZIP including the MIT license. Consumers must pin and verify both the source commit and ZIP hash. A development build from uncommitted changes is not a publishable release receipt.
-
-The existing **Native GUI validation** workflow publishes each successfully verified web ZIP as a `web-preview-<OS>-<run-attempt>` Actions artifact, retained for 14 days. Download the artifact from the exact workflow run and unpack its outer Actions ZIP to obtain the unchanged distribution ZIP. The inner `dist/dist-manifest.json` identifies the actual CI checkout and every distributed file hash; a pull-request build may name its merge checkout rather than the branch head. Verify that exact source/tree and the ZIP hash before consumer use. These candidate artifacts are separate from a tagged release, installation and functional acceptance. Existing tests, clean-build/manifest/archive checks and consumer activation gates remain in place.
 
 `ellmos-module.v2.json` registers only `gui.static.distribution` and `gui.same-origin.client`. It owns no runtime state. Authentication, backend adapters, task authority and worker execution belong to the consumer; installing this static distribution does not make those capabilities available.
 
@@ -121,7 +126,7 @@ and shows the consumer's error as text. Failed reads are not shown as empty tabl
 
 BACH provides the reference REST adapters. Ocean must implement its own compatible handlers. The [consumer contract](docs/CONSUMER_CONTRACT.md) distinguishes configured adapter routes, runtime verification, installed modules and verified GUI artifacts. Missing adapters remain unavailable; a catalogue entry, saved profile or HTTP success alone cannot establish a running agent.
 
-The bundled `device-fetch.js` leaves device authentication to the server-managed HttpOnly cookie and only adds the re-authentication notice for same-origin `/api/` failures. Provider-session cookies remain browser-managed. Task assignment uses `/api/task-assignees` (`bach.task-assignees.v1`) and explicit catalogue CAS. Existing unknown slots remain visible and unchanged until the user selects a new binding.
+The bundled `device-fetch.js` forwards an existing device credential only to same-origin `/api/` requests. Provider-session cookies remain browser-managed. Task assignment uses `/api/task-assignees` (`bach.task-assignees.v1`) and explicit catalogue CAS. Existing unknown slots remain visible and unchanged until the user selects a new binding.
 
 Chat, device registration and legacy boards remain consumer routes outside this static Astro source.
 
@@ -130,5 +135,3 @@ The separate **Universal GUI** is developed from `ellmos-unified-gui`; its Jinja
 German end-user labels intentionally use real umlauts. This technical README is in English.
 
 License: MIT.
-
-The external-agent workshop now binds explicitly selected system/BACH boot skills by exact source hash using the v2 preview contract. It requires a compatible backend (BACH draft PR483); it does not silently downgrade to a preview without boot sources. Source reloads and form edits invalidate old previews. Target readability, suitable deployed boot sources, Ocean parity and device/browser acceptance remain separate requirements. See [the workshop contract](docs/subscription-workshop.md).

@@ -58,6 +58,6 @@ test('light SVG strokes have a constant dark backing and visible selection and k
 test('artifact title and navigation use the requested floppy disk icon',()=>{
   const page=readFileSync(new URL('../src/pages/artefakte.astro',import.meta.url),'utf8');
   const nav=JSON.parse(readFileSync(new URL('../src/config/nav_config.json',import.meta.url),'utf8'));
-  const link=nav.flatMap(section=>section.children||[]).find(link=>link.href==='/artefakte');
+  const link=Object.values(nav.presets).flatMap(preset=>preset.sections.flatMap(section=>section.items.flatMap(item=>[item,...(item.children||[])]))).find(link=>link.href==='/artefakte');
   assert.equal(link.icon,'💾');assert.match(page,/<span class="icon">💾<\/span> Artefakte/);
 });

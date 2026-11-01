@@ -28,29 +28,80 @@ if (board) {
   function renderItems() {
     const query = byId('board-search').value.trim().toLocaleLowerCase('de');
     const category = byId('board-category')?.value || '';
-    const visible = items.filter(item => (!category || item.category === category)
+    const langFilter = byId('board-lang-filter')?.value || 'grouped';
+    let visible = items.filter(item => (!category || item.category === category)
       && [item.name, item.id, item.description, item.consumer].some(value => typeof value === 'string' && value.toLocaleLowerCase('de').includes(query)));
+    if (kind === 'skills' && langFilter === 'grouped') {
+      const langVariantsByBase = new Map();
+      for (const it of visible) {
+        const match = String(it.id || '').match(/^(.*?)[._-](en|es|ja|ru|zh)$/i);
+        if (match) {
+          const base = match[1];
+          const list = langVariantsByBase.get(base) || ['de'];
+          list.push(match[2].toLowerCase());
+          langVariantsByBase.set(base, [...new Set(list)]);
+        }
+      }
+      visible = visible.filter(it => {
+        const match = String(it.id || '').match(/^(.*?)[._-](en|es|ja|ru|zh)$/i);
+        return !match || !items.some(baseIt => baseIt.id === match[1]);
+      }).map(it => ({...it, _groupedLangs: langVariantsByBase.get(it.id) || (Array.isArray(it.languages) && it.languages.length ? it.languages : ['de', 'en'])}));
+    } else if (kind === 'skills' && (langFilter === 'de' || langFilter === 'en')) {
+      visible = visible.filter(it => {
+        const isTranslated = /[._-](en|es|ja|ru|zh)$/i.test(String(it.id || ''));
+        return langFilter === 'en' ? isTranslated || String(it.language || '').toLowerCase() === 'en' : !isTranslated;
+      });
+    }
+    if (kind === 'mcp') {
+      visible = [...visible].sort((a, b) => {
+        const aIsCc = /controlcenter/i.test(`${a.id || ''} ${a.name || ''}`) ? -1 : 0;
+        const bIsCc = /controlcenter/i.test(`${b.id || ''} ${b.name || ''}`) ? -1 : 0;
+        return aIsCc - bIsCc;
+      });
+    }
     byId('board-items').replaceChildren();
     byId('board-count').textContent = visible.length + ' / ' + items.length + ' Einträge';
     for (const item of visible) {
-      const card = node('article', null, 'capability-card');
+      const isControlCenterMcp = kind === 'mcp' && /controlcenter/i.test(`${item.id || ''} ${item.name || ''}`);
+      const isDeprecatedBachMcp = kind === 'mcp' && /^bach-(codecommander|filecommander|servercommander|homebase)/i.test(String(item.id || item.name || ''));
+      const card = node('article', null, 'capability-card' + (isControlCenterMcp ? ' mcp-primary-card' : ''));
       card.dataset.id = item.id;
+      const headRow = node('div', null, 'card-head-row');
       const title=node('h3',item.name||item.id);title.prepend(createSymbol(document,item.symbol,symbolUrls,
         {skills:'wissen',plugins:'topics_ai',mcp:'scripts',software:'topics_software',ocean:'topics_ai'}[kind]));
-      card.append(title, node('p', item.description || 'Keine Beschreibung in der Quelle.'));
+      headRow.append(title);
+      if (kind === 'plugins') {
+        const isPlugged = item.enabled_in_client === true;
+        const switchBtn = button(
+          isPlugged ? '🔌 Eingesteckt' : '🔌 Ausgesteckt',
+          () => {
+            item.enabled_in_client = !isPlugged;
+            renderItems();
+          },
+          'plug-switch-btn'
+        );
+        switchBtn.setAttribute('aria-pressed', isPlugged ? 'true' : 'false');
+        switchBtn.title = 'Stecker-Schalter oben rechts (Vorschau/Umschalter im Kartenkopf)';
+        headRow.append(switchBtn);
+      }
+      card.append(headRow, node('p', item.description || 'Keine Beschreibung in der Quelle.'));
       const meta = node('div', null, 'card-meta');
       if (kind !== 'mcp') meta.append(badge(item.version || 'Ohne Versionsnummer'));
       if (kind === 'skills') {
         meta.append(badge(item.category || 'Allgemein'));
+        if (item._groupedLangs?.length) meta.append(badge('🌐 ' + item._groupedLangs.join(', ')));
         card.append(meta, node('p', item.id, 'card-caption'), button('Anleitung bearbeiten', () => openSkill(item.id), 'btn card-action'));
       } else {
         if (item.consumer) meta.append(badge(item.consumer));
+        if (isControlCenterMcp) meta.append(badge('⭐ Bündelt alle MCP-Werkzeuge'));
+        if (isDeprecatedBachMcp) meta.append(badge('⚠️ veraltet · ersetzt durch ellmos-*commander'));
         card.append(meta);
         if (kind === 'plugins') {
           card.append(node('p', item.code_present ? 'Plugin-Dateien vorhanden' : 'Installationsverweis ohne erreichbare Dateien'));
           card.append(plugCableElement(item, fetchedAt));
         } else if (kind === 'mcp') {
           card.append(node('p', 'Im Client konfiguriert · ' + item.transport));
+          if (isDeprecatedBachMcp) card.append(node('p', 'Veralteter BACH-Servername — bitte auf den entsprechenden ellmos-*commander umstellen.', 'card-caption'));
           if (item.command_name || item.hostname) card.append(node('p', item.command_name || item.hostname, 'card-caption'));
           card.append(node('p', flag(item.enabled_in_client), 'card-caption'));
         } else if (kind === 'software') {
@@ -267,6 +318,7 @@ if (board) {
   }
   byId('board-search').addEventListener('input', renderItems);
   byId('board-category')?.addEventListener('change', renderItems);
+  byId('board-lang-filter')?.addEventListener('change', renderItems);
   byId('board-refresh').addEventListener('click', refresh);
   refresh(); if (kind === 'mcp') loadRecipes();
 }

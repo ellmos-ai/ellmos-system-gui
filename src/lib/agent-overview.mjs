@@ -64,9 +64,14 @@ export function writeAgentOverviewPreferences(value, storage) {
   return normalized;
 }
 
+function displayedAgentModel(agent) {
+  return (isConfirmedAgentRunning(agent) ? cleanText(agent.resolved_model) : '')
+    || cleanText(agent.model);
+}
+
 export function classifyAgentAccess(agent = {}) {
   const backend = cleanText(agent.backend).toLowerCase();
-  const model = cleanText(agent.resolved_model || agent.model).toLowerCase();
+  const model = displayedAgentModel(agent).toLowerCase();
   if (backend === 'ollama' && model.endsWith(':cloud')) return 'cloud';
   if (['ollama', 'lmstudio'].includes(backend)) return 'local';
   if (['claude', 'codex'].includes(backend)) return 'prompt';
@@ -161,7 +166,7 @@ export function createAgentOverviewContent(document, agent = {}, {
 
   const functionFacet = classifyAgentFunction(agent, source);
   const accessLabel = ACCESS_LABELS[classifyAgentAccess(agent)];
-  const model = cleanText(agent.resolved_model || agent.model) || 'unbekannt';
+  const model = displayedAgentModel(agent) || 'unbekannt';
   const details = document.createElement('div');
   details.className = 'agent-overview-runtime-meta';
   const fields = [

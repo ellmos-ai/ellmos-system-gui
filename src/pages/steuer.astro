@@ -1,0 +1,11 @@
+---
+import BachLayout from '../layouts/BachLayout.astro';
+import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
+import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
+
+const route = legacyFallbackRoutes.find((entry) => entry.path === '/steuer');
+if (!route) throw new Error('Fallback-Konfiguration für /steuer fehlt.');
+---
+<BachLayout title={route.label} currentPath={route.path}>
+  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+</BachLayout>

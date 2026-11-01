@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import test from 'node:test';
 
 const header = readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf8');
 const layout = readFileSync(new URL('../src/layouts/BachLayout.astro', import.meta.url), 'utf8');
+const settings = readFileSync(new URL('../src/pages/settings.astro', import.meta.url), 'utf8');
+const dashboard = readFileSync(new URL('../src/pages/index.astro', import.meta.url), 'utf8');
 const navConfig = JSON.parse(readFileSync(new URL('../src/config/nav_config.json', import.meta.url), 'utf8'));
 const frontmatter = header.match(/^---\r?\n([\s\S]*?)\r?\n---/);
 assert.ok(frontmatter, 'Header.astro has frontmatter');
@@ -47,14 +49,34 @@ test('server and browser active states use exact paths and exact query selection
   }
 });
 
-test('all configured navigation destinations are rendered in the sidebar', () => {
-  const configuredLinks = navConfig.flatMap((item) => item.children?.map((child) => child.href) ?? [item.href]);
-  assert.ok(configuredLinks.length >= 40);
+function flattenLinks(items) {
+  return items.flatMap((item) => item.href ? [item.href] : flattenLinks(item.children || []));
+}
+
+test('both approved navigation presets expose their complete templates', () => {
+  assert.equal(navConfig.schema, 'ellmos.gui.navigation.v2');
+  assert.equal(navConfig.default_preset, 'standard');
+  assert.deepEqual(Object.keys(navConfig.presets), ['standard', 'classic']);
+  assert.equal(navConfig.presets.standard.label, 'Standard bewährt');
+  assert.equal(navConfig.presets.classic.label, 'Ocean-BACH-Klassik');
+  assert.deepEqual(navConfig.presets.standard.sections.map((section) => section.label), ['ARBEIT', 'BETRIEB', 'DOMÄNEN', 'EINSTELLUNGEN']);
+  assert.deepEqual(navConfig.presets.classic.sections.map((section) => section.label), ['ARBEIT', 'LEBEN', 'SYSTEM']);
+  const configuredLinks = Object.values(navConfig.presets).flatMap((preset) => [
+    preset.home.href,
+    ...preset.sections.flatMap((section) => flattenLinks(section.items)),
+  ]);
+  assert.ok(configuredLinks.length >= 50);
   assert.match(header, /item\.children\.map\(\(child: any\)/);
   assert.doesNotMatch(header, /children\.filter\(/);
   assert.match(header, /data-nav-link/);
   assert.match(header, /id="domain-pins-menu"/);
   assert.match(header, /initializeDomainMenu\(\)/);
+  assert.match(header, /window\.bachUiPreset/);
+  assert.match(header, /localStorage\.getItem\(uiPresetKey\)/);
+  assert.match(layout, /localStorage\.getItem\("bach-ui-preset"\)/);
+  assert.match(settings, /id="ui-preset-select"/);
+  assert.match(settings, /Ocean-BACH-Klassik/);
+  assert.doesNotMatch(dashboard, /Schnellstart &amp; Arbeitsbereiche/);
 });
 
 test('mobile navigation exposes keyboard controls and returns focus when dismissed', () => {
@@ -93,7 +115,11 @@ test('mobile drawer makes background controls inert and restores them on close',
     const sidebarClose = makeElement();
     const backdrop = makeElement();
     const backgroundShell = Array.from({ length: 4 }, makeElement);
-    const document = { body: makeElement() };
+    const document = {
+      body: makeElement(),
+      querySelector(selector) {return backgroundShell[selector === '.skip-link' ? 0 : 3];},
+      getElementById(id) {return backgroundShell[id === 'main-header' ? 1 : 2];},
+    };
     const sync = new Function(
       'navToggle', 'sidebar', 'sidebarClose', 'backdrop', 'mobileNavigation', 'mobileNavigationOpen', 'document', 'backgroundShell',
       `${sidebarSyncSource[0]}\nsyncSidebarMode();`,
@@ -229,4 +255,47 @@ test('shell redesign keeps device auth, saved themes, branding and backend-origi
   assert.match(header, /fetch\('\/api\/gui\/brand'/);
   assert.match(header, /fetch\('\/api\/gui\/backend-origin'/);
   assert.match(header, /Backend unbekannt/);
+});
+
+test('the inactive navigation preset stays hidden despite its display rule', () => {
+  const css = readFileSync(new URL('../src/styles/main.css', import.meta.url), 'utf8');
+  assert.match(css, /\.nav-preset\[hidden\]\s*\{\s*display:\s*none;\s*\}/);
+});
+
+test('pages leave the single main landmark to BachLayout', () => {
+  assert.equal((layout.match(/<main\b/g) || []).length, 1);
+  const pages = readdirSync(new URL('../src/pages/', import.meta.url), { recursive: true }).filter((path) => path.endsWith('.astro'));
+  assert.ok(pages.length > 0);
+  for (const path of pages)
+    assert.doesNotMatch(readFileSync(new URL('../src/pages/' + path.replaceAll('\\', '/'), import.meta.url), 'utf8'), /<main\b/, path);
+});
+
+test('classic monochrome line symbols are default with optional emoji switcher and top-right quick actions (#2467)', () => {
+  const css = readFileSync(new URL('../src/styles/main.css', import.meta.url), 'utf8');
+  assert.match(layout, /localStorage\.getItem\("bach-ui-icon-style"\)/);
+  assert.match(layout, /localStorage\.getItem\("bach-ui-nav-scope"\)/);
+  assert.match(layout, /localStorage\.getItem\("bach-ui-density"\)/);
+  assert.match(header, /window\.bachUiIconStyle/);
+  assert.match(header, /window\.bachUiNavScope/);
+  assert.match(header, /window\.bachUiDensity/);
+  assert.match(header, /localStorage\.getItem\(uiIconStyleKey\)/);
+  assert.match(header, /localStorage\.getItem\(uiNavScopeKey\)/);
+  assert.match(header, /localStorage\.getItem\(uiDensityKey\)/);
+  assert.match(header, /icon-glyph-line/);
+  assert.match(header, /icon-glyph-emoji/);
+  assert.match(header, /href="\/help"\s+class="quick-action-btn"/);
+  assert.match(settings, /id="ui-preset-select"/);
+  assert.match(settings, /id="ui-nav-scope-select"/);
+  assert.match(settings, /id="ui-icon-style-select"/);
+  assert.match(settings, /id="ui-density-select"/);
+  assert.match(settings, /id="ui-save"/);
+  assert.match(settings, /id="ui-reset"/);
+  assert.match(settings, /id="ui-settings-status"/);
+  assert.match(settings, /fetch\('\/api\/settings\/ui', \{ cache: 'no-store' \}\)/);
+  assert.match(settings, /method: 'PUT', cache: 'no-store'/);
+  assert.match(settings, /Klassische Strichsymbole \(Standard\)/);
+  assert.match(settings, /Bisherige Emoji-Symbole \(Farbig\)/);
+  assert.match(css, /html\[data-ui-icon-style="emoji"\]\s+\.icon-glyph-line\s*\{\s*display:\s*none;\s*\}/);
+  assert.match(css, /html\[data-ui-density="compact"\]/);
+  assert.match(css, /html\[data-ui-density="spacious"\]/);
 });

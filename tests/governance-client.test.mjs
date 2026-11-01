@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createGovernanceRequest} from '../src/lib/governance-request.mjs';
-import {parseRegistry,parseEffective,parseCapabilities,describeFailure} from '../src/lib/governance-readers.mjs';
+import {parseRegistry,parseEffective,parseCapabilities,describeFailure,parsePolarisStatus,describePolarisWriteConflict} from '../src/lib/governance-readers.mjs';
 const URL='/api/governance/policy-registry';
 const entry=()=>({id:'p1',kind:'policy',extension:{nested:['kept']}});
 const registry=(tag='current')=>({schema:'bach.policy-registry.v1',availability:'available',entries:[entry()],count:1,registry_version:tag,provider:{id:'policy-registry',extra:tag},extension:{tag,list:[{unknown:true}]}});
@@ -126,4 +126,21 @@ test('backslash URL cannot escape the relative endpoint origin',async()=>{
  const {states,reader}=client();let calls=0;
  await reader.load(String.raw`/\example.invalid/api/governance/locks`,parseRegistry,async()=>{calls++;return response(registry());});
  assert.equal(calls,0);assert.equal(last(states).state,'contract');cleared(last(states));
+});
+
+test('Polaris status parser and 409 Kein Stern write conflict helper (#2134)', () => {
+  const held = parsePolarisStatus({held: true, holder: 'mac-studio', fence: 17, journal_open: false, last_rebaseline: '2026-10-31T05:00:00Z'});
+  assert.equal(held.held, true);
+  assert.equal(held.holder, 'mac-studio');
+  assert.equal(held.fence, 17);
+  assert.equal(held.canCommitDecision, true);
+  assert.ok(held.badgeLabel.includes('Fence 17'));
+
+  const unheld = parsePolarisStatus({held: false, holder: null, fence: 18, journal_open: true});
+  assert.equal(unheld.canCommitDecision, false);
+  assert.ok(unheld.badgeLabel.includes('Kein Polaris-Stern'));
+
+  const conflict = describePolarisWriteConflict(409, {code: 'no_star_held'});
+  assert.equal(conflict.state, 'no_star');
+  assert.equal(conflict.badge, '409 Kein Stern');
 });

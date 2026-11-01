@@ -26,6 +26,29 @@
   }
  ],
  "pages": {
+  "/ati": [],
+  "/chat": [],
+  "/denkarium": [],
+  "/financial": [],
+  "/gesundheit": [],
+  "/help": [
+   {
+    "method": "GET",
+    "path": "/api/domains/modules",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/help/doc-audit",
+    "required": false
+   }
+  ],
+  "/inbox": [],
+  "/kontakte": [],
+  "/maintenance": [],
+  "/persoenlich": [],
+  "/steuer": [],
+  "/tools": [],
   "/": [
    {
     "method": "GET",
@@ -469,6 +492,11 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/governance-request.mjs#createGovernanceRequest"
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/decision-rules",
+    "required": false
    }
   ],
   "/governance/logs": [
@@ -532,6 +560,20 @@
    }
   ],
   "/governance/funk": [],
+  "/routinen": [
+   {
+    "method": "GET",
+    "path": "/api/routines",
+    "required": true
+   },
+   {
+    "method": "POST",
+    "path": "/api/routines/{id}/complete",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/pages/routinen.astro#completePersonalRoutine"
+   }
+  ],
   "/settings": [
    {
     "method": "GET",
@@ -585,6 +627,16 @@
     "required": false
    },
    {
+    "method": "GET",
+    "path": "/api/settings/ui",
+    "required": true
+   },
+   {
+    "method": "PUT",
+    "path": "/api/settings/ui",
+    "required": false
+   },
+   {
     "method": "POST",
     "path": "/api/learning/nemofold/candidates/{id}/approve",
     "required": false,
@@ -614,35 +666,19 @@
     "required": false
    },
    {
-    "method": "GET",
-    "path": "/api/system/model-sockets",
+    "method": "POST",
+    "path": "/api/system/fackel",
     "required": false
    },
    {
     "method": "GET",
-    "path": "/api/system/model-sockets/catalog",
+    "path": "/api/system/openrouter/status",
     "required": false
    },
    {
-    "method": "PUT",
-    "path": "/api/system/model-sockets",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/model-sockets.mjs#saveSocketChange"
-   },
-   {
-    "method": "PUT",
-    "path": "/api/system/model-sockets/bindings/{agent_id}/{socket_id}",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/model-sockets.mjs#saveSocketChange"
-   },
-   {
-    "method": "DELETE",
-    "path": "/api/system/model-sockets/bindings/{binding_id}",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/model-sockets.mjs#saveSocketChange"
+    "method": "GET",
+    "path": "/api/system/openrouter/models",
+    "required": false
    }
   ],
   "/agenten/blueprints": [
@@ -788,13 +824,25 @@
    },
    {
     "method": "GET",
+    "path": "/api/agenten/library",
+    "required": false
+   }
+  ],
+  "/agenten/subscription-agents": [
+   {
+    "method": "GET",
     "path": "/api/gui/capabilities",
     "required": false
    },
    {
     "method": "GET",
+    "path": "/api/agent-studio/blueprints",
+    "required": true
+   },
+   {
+    "method": "GET",
     "path": "/api/capabilities/skills/library",
-    "required": false
+    "required": true
    },
    {
     "method": "POST",
@@ -802,7 +850,6 @@
     "required": false
    }
   ],
-  "/agenten/subscription-agents": [],
   "/agenten/fabrika": [],
   "/agenten/marblerun": [
    {
@@ -1470,6 +1517,153 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/prompt-library.mjs#createPromptClient"
+   }
+  ],
+  "/agenten/bibliothek": [
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints",
+    "required": true
+   },
+   {
+    "method": "GET",
+    "path": "/api/agenten/teams",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#loadData"
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/skills",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#loadData"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/tools",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#loadData"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/contractus-presets",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#loadData"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/governance-presets",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#loadData"
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/core-agents",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/core-prompts",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/workers/models",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-studio/blueprints",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-studio/blueprints/{id}/start",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#runBlueprint"
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-studio/blueprints/{id}/materialize",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#initializeStudio"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/agent-studio/blueprints/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#initializeStudio"
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-studio/synthesize-prompt",
+    "required": false
+   },
+   {
+    "method": "PUT",
+    "path": "/api/system/core-prompts/{key}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#mutatePrompt"
+   },
+   {
+    "method": "POST",
+    "path": "/api/system/core-prompts/{key}/reset",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#mutatePrompt"
+   },
+   {
+    "method": "POST",
+    "path": "/api/agenten/teams/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/blueprint-studio.mjs#initializeStudio"
+   },
+   {
+    "method": "POST",
+    "path": "/api/agenten/teams",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints/{id}/revisions",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#readHistory"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints/{id}/revisions/{version}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#readRevision"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-studio/blueprints/{id}/revisions/diff",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#readRevisionDiff"
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-studio/blueprints/{id}/revisions/{version}/restore",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/blueprint-revisions.mjs#restoreRevision"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agenten/library",
+    "required": false
    }
   ]
  }

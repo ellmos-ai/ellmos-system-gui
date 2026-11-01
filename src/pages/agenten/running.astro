@@ -1,41 +1,40 @@
 ---
-// running.astro - Living & Running: Agenten, Laufzeit, Modelle & Ressourcen
+// running.astro - Deine Agenten · Living & Running
 import BachLayout from "../../layouts/BachLayout.astro";
-import WorkerLeaseCountdown from '../../components/WorkerLeaseCountdown.astro';
 import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
 import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 ---
 
-<BachLayout title="Living & Running" currentPath="/agenten/running">
+<BachLayout title="Deine Agenten · Living & Running" currentPath="/agenten/running">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
     <div>
       <h1 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;">
-        ⚡ Living & Running
+        ⚡ Deine Agenten · Living & Running
       </h1>
       <p style="color:var(--text-muted);font-size:0.875rem;">
-        Einsatzbereite Agenten, Teams & Ketten • Running und Verlauf • Modelle & Ressourcen
+        Running und Verlauf • Deine Agenten • Teams und Staffeln
       </p>
     </div>
 
     <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
       <a href="/agenten/blueprints?new=1" class="btn">
-        <span>＋</span> Blueprint anlegen
+        <span>＋</span> Vorlage anlegen
       </a>
-      <a href="/agenten/blueprints" class="btn">
-        <span>📐</span> Agenten-Werkstatt
+      <a href="/agenten/fabrika" class="btn">
+        <span>🤖</span> Agenten-Bibliothek
       </a>
       <button class="btn btn-primary" onclick="refreshAll(true)">
-        <span>🔄</span> Jetzt aktualisieren
+        <span>🔄</span> Aktualisieren
       </button>
     </div>
   </div>
 
+  <div class="running-history-group">
   <!-- Aktuell arbeitende Agenten; Ready-Worker werden nicht als Running ausgegeben. -->
-  <section class="card" aria-labelledby="running-agents-title" style="margin-bottom:1.5rem;">
+  <section class="card" aria-labelledby="running-agents-title">
     <div class="card-header"><h2 class="card-title" id="running-agents-title">⚡ Running · Aktive Läufe</h2></div>
-    <WorkerLeaseCountdown />
 
     <div class="agent-overview-controls" role="group" aria-label="Gemeinsame Gliederung für einsatzbereite und laufende Agenten">
       <label class="agent-overview-search">Suchen<input id="agent-overview-query" data-agent-overview-control="query" type="search" maxlength="120" placeholder="Name, Anbieter oder Modell" /></label>
@@ -45,7 +44,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <label>Sortierung<select id="agent-overview-sort" data-agent-overview-control="sort"><option value="name">Name</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option><option value="status">Status</option></select></label>
       <label>Gruppierung<select id="agent-overview-group" data-agent-overview-control="group"><option value="none">Aus</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option></select></label>
       <label>Darstellung<select id="agent-overview-view" data-agent-overview-control="view"><option value="cards">Karten</option><option value="list">Kompakte Liste</option></select></label>
-      <small id="agent-overview-summary" role="status" aria-live="polite">Gemeinsame Filter für Running und Living / Ready.</small>
+      <small id="agent-overview-summary" role="status" aria-live="polite">Gemeinsame Filter für Running und Deine Agenten.</small>
     </div>
 
     <p id="running-empty-state" class="text-muted" role="status" aria-live="polite">Aktive Läufe werden geprüft…</p>
@@ -54,7 +53,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
   </section>
 
   <!-- 6. VERLAUF SESSIONS & LÄUFE (TIMELINE) -->
-  <details class="card" id="activity-timeline" style="margin-bottom:1.5rem;">
+  <details class="card" id="activity-timeline">
     <summary class="card-header" style="cursor:pointer;">📜 Verlauf: Sessions & Task-Läufe <span id="activity-count" class="badge">Wird geladen</span></summary>
     <p style="margin:1rem;"><a href="/agenten/sessions" class="btn btn-secondary btn-sm">Gespeicherte Dialoge & dauerhafte Taskereignisse öffnen</a></p>
     <button class="btn btn-sm" type="button" onclick="refreshActivity()">Neu laden</button>
@@ -75,49 +74,44 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       </table>
     </div>
   </details>
+  </div>
 
   <div class="agent-creation-group">
-  <!-- 3. ANSICHT: EINSATZBEREITE FERTIGE AGENTEN (LIVING / READY) -->
-  <details class="card collapsible-section" aria-labelledby="ready-agents-title">
-<summary class="card-header"><span><span class="card-title" id="ready-agents-title">✨ Einsatzbereite fertige Agenten (Living / Ready)</span><span class="section-description">Konfigurierte Agentenprofile in Ruhestellung · Bearbeiten, Zuweisen und ausdrücklich starten.</span></span></summary>
-    <button class="btn btn-sm" type="button" onclick="loadBackgroundWorkers()">Neu prüfen</button>
+  <!-- 3. ANSICHT: DEINE AGENTEN (LIVING / READY) -->
+  <details class="card collapsible-section" aria-labelledby="ready-agents-title" open>
+    <summary class="card-header"><span><span class="card-title" id="ready-agents-title">✨ Deine Agenten</span><span class="section-description">Konfigurierte Agentenprofile in Ruhestellung · Erstellen, Bearbeiten, Zuweisen und ausdrücklich starten.</span></span></summary>
+    <div class="section-action-bar">
+      <div class="creation-actions">
+        <button class="btn btn-sm btn-primary" type="button" onclick="openOneOffModal()">✨ Agenten erstellen</button>
+        <button class="btn btn-sm" type="button" onclick="openPickupWerkstattModal()">🏭 Vorlage auswählen</button>
+        <button class="btn btn-sm" type="button" onclick="openCoreEditor()">＋ Systemprofil</button>
+      </div>
+      <button class="btn btn-sm" type="button" onclick="loadBackgroundWorkers(); loadCoreSlots();">🔄 Neu prüfen</button>
+    </div>
     <p id="worker-status-summary" role="status" aria-live="polite" style="font-size:0.8rem;color:var(--text-muted);margin:0.5rem 0 1rem 0;">Workerstatus wird geprüft…</p>
-    <p id="worker-profile-delete-status" role="status" aria-live="polite" class="text-muted"></p>
-    <div id="ready-agents-grid" class="agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:1rem;">
+    <div id="ready-agents-grid" class="core-grid agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:1rem;">
       <p class="loading-state" style="grid-column:1/-1;text-align:center;padding:2rem;">Prüfe einsatzbereite Agenten…</p>
     </div>
     <section class="core-agent-ready" aria-labelledby="core-agent-ready-title">
       <h3 id="core-agent-ready-title">System- und Core-Agenten</h3>
       <p class="section-description">Systemprofile nutzen dieselben Zugangs-, Funktions-, Startart- und Darstellungsfilter. Die Modellbindung steht direkt beim Agentenprofil; sie bestätigt keine Modellresidenz oder laufende Nutzung. Laufende Profile erscheinen im Running-Bereich.</p>
       <div id="core-agent-feedback" role="status" aria-live="polite"></div>
-      <div id="core-agent-cards" class="core-grid agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;">
+      <div id="core-agent-cards" class="core-grid agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:1rem;">
         <p class="loading-state">System-Agenten werden geprüft…</p>
       </div>
     </section>
   </details>
 
-  <!-- 1. DUAL ACTIONS HUB (ZWEI MÖGLICHKEITEN) -->
-  <section class="card dual-actions-card" aria-labelledby="agent-creation-title">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
-      <div>
-        <h2 id="agent-creation-title" style="font-size:1.2rem;font-weight:700;margin:0 0 0.25rem 0;">Agenten, Teams und Staffeln erstellen</h2>
-        <p style="font-size:0.825rem;color:var(--text);margin:0;">
-          Vorlage mit einem Modell ausstatten oder einen eigenen Agenten zusammenstellen.
-        </p>
-      </div>
+  <!-- 4. ANSICHT: TEAMS UND STAFFELN -->
+  <details class="card collapsible-section" open>
+    <summary class="card-header"><span><span class="card-title" id="ready-teams-title">👥 Teams und Staffeln</span><span class="section-description">Teamkonfigurationen und sequenzielle Agenten- oder Skillfolgen erstellen und ausstatten.</span></span></summary>
+    <div class="section-action-bar">
       <div class="creation-actions">
-        <button class="btn btn-primary" type="button" onclick="openOneOffModal()">✨ Agenten erstellen</button>
-        <button class="btn" type="button" onclick="openPickupTeamModal()">👥 Teams erstellen</button>
-        <a class="btn" href="/agenten/marblerun?new=1">⛓️ Staffel erstellen</a>
-        <button class="btn" type="button" onclick="openPickupWerkstattModal()">🏭 Vorlage auswählen</button>
+        <button class="btn btn-sm btn-primary" type="button" onclick="openPickupTeamModal()">👥 Team erstellen</button>
+        <a class="btn btn-sm" href="/agenten/marblerun?new=1">⛓️ Staffel erstellen</a>
       </div>
+      <button class="btn btn-sm" type="button" onclick="loadTeamsBeseelen(); loadStaffelnBeseelen();">🔄 Aktualisieren</button>
     </div>
-  </section>
-
-  <!-- 4. ANSICHT: EINSATZBEREITE FERTIGE TEAMS & KETTEN -->
-  <details class="card collapsible-section">
-<summary class="card-header"><span><span class="card-title" id="ready-teams-title">👥 Einsatzbereite Teams & Staffeln</span><span class="section-description">Teamkonfigurationen und sequenzielle Agenten- oder Skillfolgen.</span></span></summary>
-    <button class="btn btn-sm" type="button" onclick="loadTeamsBeseelen(); loadStaffelnBeseelen();">Aktualisieren</button>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:1.5rem;margin-top:1rem;align-items:start;">
       <!-- TEAMS BESEELEN -->
@@ -129,7 +123,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
               Mitglieder mit Modellen ausstatten & starten
             </p>
           </div>
-          <button class="btn btn-sm btn-primary" onclick="openPickupTeamModal()">+ Team abholen</button>
+          <button class="btn btn-sm btn-primary" onclick="openPickupTeamModal()">+ Team erstellen</button>
         </div>
         <div id="teams-beseelen-container" style="display:flex;flex-direction:column;gap:1rem;margin-top:0.75rem;">
           <p class="loading-state">Lade konfigurierte Teams...</p>
@@ -156,8 +150,20 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
   </div>
 
+  <div class="card models-relocated-banner" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:0.85rem 1.1rem;margin-bottom:1rem;">
+    <div>
+      <strong style="font-size:0.9rem;">🧠 Modelle & Ressourcen im System- und Einstellungsbereich</strong>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin:0.15rem 0 0 0;">Hardware-Fackel, Compute-Vorrang, lokale Modellkapazität und OpenRouter Free Tier befinden sich unter Einstellungen & Betrieb.</p>
+    </div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <a href="/settings?tab=core" class="btn btn-sm btn-primary">Zu Modelle & Ressourcen →</a>
+      <button type="button" class="btn btn-sm" onclick="const d=document.getElementById('running-models-resources-drawer');if(d)d.hidden=!d.hidden;">Hier ein-/ausblenden</button>
+    </div>
+  </div>
+
+  <div id="running-models-resources-drawer" hidden>
   <!-- Gemessene lokale Modell- und Ressourcenansicht nach den Agentenbereichen. -->
-  <details class="card hardware-torch" id="models-resources" aria-labelledby="models-resources-title" open>
+  <details class="card hardware-torch" id="models-resources" aria-labelledby="models-resources-title">
     <summary class="torch-summary">
       <span id="models-resources-title">🧠 Modelle & Ressourcen</span>
       <span class="badge" id="torch-observed-at">Nicht geprüft</span>
@@ -204,13 +210,14 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <span class="badge" id="openrouter-credential-state">Wird geprüft</span>
     </summary>
     <p class="core-explanation">
-      <code>openrouter/free</code> wird unverändert an OpenRouter gesendet. Die Liste zeigt nur den kostenlosen Router
-      und Modelle, deren Ein- und Ausgabepreise null sind.
+      Der kostenlose Router und seine Modelle werden ausschließlich aus dem aktuellen Adapterkatalog angezeigt.
+      Ohne Katalogantwort bleibt die Auswahl nicht verfügbar.
     </p>
     <datalist id="openrouter-free-models"></datalist>
     <p id="openrouter-catalog-state" role="status" aria-live="polite">Modellkatalog wird geladen…</p>
     <div id="openrouter-model-list" class="openrouter-model-list" role="list"></div>
   </details>
+  </div>
 
   <!-- POP-UP MODAL 2: EIGENE EINZELANFERTIGUNG (ONE-OFF) -->
   <div id="modal-create-oneoff" class="modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(3px);">
@@ -352,18 +359,24 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     @media(max-width:680px) {.agent-overview-controls .agent-overview-search {grid-column:span 1}}
     .core-agent-ready {margin-top:1.3rem}
     .core-agent-ready>h3 {margin:.2rem 0;font-size:1rem}
+    .section-action-bar {display:flex;justify-content:space-between;align-items:center;gap:.65rem;flex-wrap:wrap;margin:.75rem 0 .5rem;padding:.55rem .75rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm)}
+    .running-history-group {margin-bottom:1.5rem;padding:.85rem;border:1px solid rgb(14 165 233 / .4);border-radius:var(--radius);background:color-mix(in srgb, var(--accent-blue, #0ea5e9) 7%, var(--bg-card))}
+    .running-history-group > .card {margin-bottom:.75rem;background:var(--bg-card);border-color:rgb(14 165 233 / .24)}
+    .running-history-group > .card:last-child {margin-bottom:0}
+    :global([data-theme="light"]) .running-history-group {background:color-mix(in srgb, #0ea5e9 6%, #fff)}
+    :global([data-theme="light"]) .running-history-group > .card {background:#fff}
 
-    #core-agent-cards :global(.core-agent-card) {display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
-    #core-agent-cards :global(.core-slot-header), #core-agent-cards :global(.core-slot-identity) {display:flex;align-items:center;gap:.65rem;justify-content:space-between}
-    #core-agent-cards :global(.core-slot-identity) {justify-content:flex-start}
-    #core-agent-cards :global(.core-avatar) {width:48px;height:48px;border-radius:50%;object-fit:cover;flex:none}
-    #core-agent-cards :global(.core-avatar-default) {display:grid;place-items:center;font-size:1.8rem;background:var(--bg-card)}
-    #core-agent-cards :global(h3) {margin:0;font-size:1rem}
-    #core-agent-cards :global(small) {color:var(--text-muted);overflow-wrap:anywhere}
-    #core-agent-cards :global(.core-slot-model) {overflow-wrap:anywhere;font-size:.85rem}
-    #core-agent-cards :global(.core-slot-toggle[data-enabled="true"]) {background:#166534;color:#fff;border-color:#16a34a}
-    #core-agent-cards :global(.core-slot-toggle[data-enabled="false"]) {background:#7f1d1d;color:#fff;border-color:#ef4444}
-    #core-agent-cards :global(.core-actions), #core-slot-editor .core-actions {display:flex;gap:.5rem;flex-wrap:wrap;margin-top:auto}
+    :global(.core-agent-card) {display:flex;flex-direction:column;gap:.65rem;min-width:0;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
+    :global(.core-agent-card .core-slot-header), :global(.core-agent-card .core-slot-identity) {display:flex;align-items:center;gap:.65rem;justify-content:space-between}
+    :global(.core-agent-card .core-slot-identity) {justify-content:flex-start}
+    :global(.core-agent-card .core-avatar) {width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none}
+    :global(.core-agent-card .core-avatar-default) {display:grid;place-items:center;font-size:1.6rem;background:var(--bg-card)}
+    :global(.core-agent-card h3) {margin:0;font-size:1rem}
+    :global(.core-agent-card small) {color:var(--text-muted);overflow-wrap:anywhere}
+    :global(.core-agent-card .core-slot-model) {overflow-wrap:anywhere;font-size:.85rem}
+    :global(.core-agent-card .core-slot-toggle[data-enabled="true"]) {background:#166534;color:#fff;border-color:#16a34a}
+    :global(.core-agent-card .core-slot-toggle[data-enabled="false"]) {background:#7f1d1d;color:#fff;border-color:#ef4444}
+    :global(.core-agent-card .core-actions), :global(.core-agent-card .agent-overview-actions), #core-slot-editor .core-actions {display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;margin-top:auto;padding-top:.75rem;border-top:1px solid var(--border)}
     #core-agent-cards :global(.core-slot-add) {min-height:150px;border:1px dashed var(--accent)}
     .core-slot-modal {width:min(800px,94vw);max-height:88vh;margin:auto;overflow-y:auto;color:var(--text);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
     .core-slot-modal::backdrop {background:rgba(0,0,0,.7)}
@@ -436,21 +449,12 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     #template-agent-picker pre { max-height:15rem; overflow:auto; font-size:.8rem; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {mountWorkerLeaseCountdown} from '../../lib/worker-lease-countdown.mjs';window.BachAgentOverview=AgentOverview;window.BachWorkerLeaseCountdown=mountWorkerLeaseCountdown(document);</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';window.BachAgentOverview=AgentOverview;window.BachProviderRequestStatus=providerRequestStatusText;</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
       return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
-
-    const AVAILABLE_MODELS = [
-      { id: "claude-3-7-sonnet", label: "🧠 Claude 3.7 Sonnet (Anthropic)" },
-      { id: "gemini-2.0-flash", label: "⚡ Gemini 2.0 Flash (Google)" },
-      { id: "codex-cli", label: "💻 Codex / GPT-4o (OpenAI)" },
-      { id: "ollama/qwen3.8:27b-mlx", label: "🦙 Ollama: Qwen 3.8 27B (lokal)" },
-      { id: "ollama/kimi-k3:cloud", label: "☁️ Kimi K3 Cloud (131k)" },
-      { id: "openrouter/free", label: "🆓 OpenRouter (Kostenlos / Free Tier)" }
-    ];
 
     let currentPriority = null;
     let coreConfigVersion = null;
@@ -860,6 +864,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           target.append(card);
           if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(target, card, agent, 'core', 'ready');
         }
+        window.BachAgentColor?.applyAgentColor(card, agent);
       }
       const add = coreElement('button', '+ Agentenprofil', 'btn core-slot-add');
       add.addEventListener('click', () => openCoreEditor());
@@ -911,6 +916,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         Object.entries(coreCatalog.slot_presets || {}).map(([value, item]) => ({value, label:item.name})));
       coreField(form, 'name', 'Bezeichnung', source.name);
       coreField(form, 'description', 'Beschreibung', source.description || '');
+      if (coreCatalog.color_contract === 'bach.agent-colors.v1') {
+        coreField(form, 'color_override', 'Eigene Farbe (#RRGGBB, leer = Blueprint/Standard)', coreEditorAgent?.color_override || '');
+        const colorInput = form.querySelector('[data-core-field="color_override"]');
+        colorInput.maxLength = 7;
+        colorInput.pattern = '#[0-9a-fA-F]{6}';
+        colorInput.placeholder = coreEditorAgent?.blueprint_color || '#3b82f6';
+      }
       coreField(form, 'backend', 'Anbieter', source.backend, 'select', coreCatalog.supported_backend_ids || []);
       coreField(form, 'model', 'Modell', source.model, 'text', [], source.backend);
       coreField(form, 'mode', 'Arbeitsmodus', source.mode, 'select', ['safe', 'full']);
@@ -1035,7 +1047,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         if (field === 'preset') {preset = input.value; continue;}
         let value = input.type === 'checkbox' ? input.checked : input.type === 'number' ? Number(input.value) : input.value;
         if (field.startsWith('custom_') && input.dataset.wasCustom !== 'true' && value === input.dataset.defaultText) value = '';
-        if (!coreEditorAgent || value !== coreEditorAgent[field]) changes[field] = value;
+        if (field === 'color_override') {
+          value = value === '' ? null : value.toLowerCase();
+          if (!coreEditorAgent || value !== (coreEditorAgent.color_override ?? null)) changes[field] = value;
+        } else if (!coreEditorAgent || value !== coreEditorAgent[field]) changes[field] = value;
       }
       if (form.querySelector('[data-core-field="pause_basis"]')?.value === 'none') {
         delete changes.pause_basis;
@@ -1049,6 +1064,11 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       try {
         const data = await coreRequest(coreEditorAgent ? '/' + encodeURIComponent(coreEditorAgent.id) : '',
           coreEditorAgent ? 'PUT' : 'POST', {configuration_version:coreEditorVersion, changes, preset});
+        if (Object.hasOwn(changes, 'color_override')) {
+          const saved = data.agents.find(agent => agent.id === (coreEditorAgent?.id || data.slot_id));
+          if (!saved || saved.color_override !== changes.color_override)
+            throw new Error('Gespeicherte Farbe nicht bestätigt. Entwurf bleibt geöffnet.');
+        }
         renderCoreAgents(data);
         document.getElementById('core-slot-editor').close();
         document.getElementById('core-agent-feedback').textContent = 'Agentenprofil gespeichert.';
@@ -1120,18 +1140,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     // ── BACKGROUND WORKERS (EINSATZBEREIT vs. RUNNING) ──
     let workerQueueSnapshots = new Map();
     let workerQueueAvailable = false;
-    const pendingWorkerDeletes = new Set();
-
-    function updateWorkerDeleteButtons() {
-      for (const button of document.querySelectorAll('[data-worker-delete]')) {
-        const id = button.dataset.workerDelete;
-        const state = window.BachWorkerProfileDelete?.deletionState(workerQueueSnapshots.get(id), pendingWorkerDeletes.has(id));
-        button.disabled = !state?.allowed;
-        button.title = state?.reason || 'Profilverwaltung wird geladen.';
-        const reason = document.getElementById('worker-delete-reason-' + id);
-        if (reason) reason.textContent = state?.allowed ? '' : button.title;
-      }
-    }
 
     function renderWorkerSelectionPolicies() {
       if (!window.BachWorkerSelectionPolicy) return;
@@ -1173,27 +1181,23 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         waiting, label:waiting ? 'Living · Wartet auf Aufgaben' : !configured && canEdit ? 'Modell oder Anbieter fehlt' : status === 'running' ? 'Laufstatus nicht bestätigt' : labels[status] || 'Status unbekannt'};
     }
 
-    async function loadBackgroundWorkers(commandReadback = false) {
+    async function loadBackgroundWorkers() {
       const epoch = ++workerRefreshEpoch;
       const summary = document.getElementById('worker-status-summary');
       const readyGrid = document.getElementById('ready-agents-grid');
       const runningList = document.getElementById('running-workers-list');
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
       try {
-        const response = await fetch('/api/system/workers', {cache:'no-store', redirect:'error', signal:controller.signal});
+        const response = await fetch('/api/system/workers');
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
+        if (epoch !== workerRefreshEpoch) return;
         if (data.schema !== 'bach.workers.status.v1' || data.availability !== 'available' || !Array.isArray(data.workers))
           throw new Error('Workerquelle ist nicht bestätigt');
-        const profiles = window.BachWorkerProfileDelete?.readWorkerProfiles(data);
-        if (!profiles) throw new Error('Profilverwaltung ist nicht verfügbar.');
-        if (epoch !== workerRefreshEpoch) return commandReadback ? data : null;
         rememberWorkerSelectionPolicyStates();
         agentOverviewController?.beginContainer(readyGrid);
         agentOverviewController?.beginContainer(runningList);
         workerQueueAvailable = true;
-        workerQueueSnapshots = new Map(profiles.map(worker=>[worker.id,worker]));
+        workerQueueSnapshots = new Map(data.workers.filter(worker=>worker && typeof worker.id==='string').map(worker=>[worker.id,worker]));
         renderCoreQueueDiagnostics();
         const workers = data.workers.filter(worker=>worker && typeof worker === 'object' && worker.system!==true);
 
@@ -1223,6 +1227,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           readyGrid.innerHTML = profileWorkers.map(w => {
             const isPaused = w.status === 'paused';
             const state = workerReadiness(w);
+            const providerStatus = window.BachProviderRequestStatus?.(w) || '';
             return `
               <div class="core-agent-card" data-appearance-worker="${escapeHtml(w.id)}" style="display:flex;flex-direction:column;justify-content:space-between;">
                 <div>
@@ -1234,7 +1239,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                   </div>
                   <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem;">${escapeHtml(w.name || w.id)}</h3>
                   <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;">
-                    Modellbindung: <code style="color:var(--accent);">${escapeHtml(w.model || 'Modell fehlt')}</code>
+                    Modellbindung: <code style="color:var(--accent-text);">${escapeHtml(w.model || 'Modell fehlt')}</code>
                   </p>
                   <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">
                     ${escapeHtml(w.has_task_prompt === true ? 'Eigener Zusatzauftrag gespeichert' : w.has_task_prompt === false ? 'Kein eigener Zusatzauftrag gespeichert' : 'Zusatzauftrag hier nicht bestätigt')}
@@ -1242,33 +1247,21 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
                   <p style="font-size:0.8rem;color:var(--text);line-height:1.4;">
                     ${escapeHtml(w.current_activity || '')}
                   </p>
+                  ${providerStatus ? '<p class="provider-request-status" aria-label="Status der Provideranfrage" style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">' + escapeHtml(providerStatus) + '</p>' : ''}
                 </div>
 
-                <div class="agent-overview-actions" style="border-top:1px solid var(--border);padding-top:0.75rem;margin-top:0.75rem;display:flex;justify-content:space-between;align-items:center;gap:0.4rem;flex-wrap:wrap;">
-                  <button class="btn btn-sm" type="button" style="font-size:0.75rem;color:var(--error);" data-worker-delete="${escapeHtml(w.id)}" aria-describedby="worker-delete-reason-${escapeHtml(w.id)}" disabled>
-                    🗑️ Profil löschen
-                  </button>
-                  <div style="display:flex;gap:0.35rem;">
-                    <button class="btn btn-sm" style="font-size:0.75rem;" ${state.canEdit ? '' : 'disabled'} onclick="editWorkerConfiguration('${escapeHtml(w.id)}')">
-                      ✏️ Bearbeiten
-                    </button>
-                    ${state.waiting ? `
-                      <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
-                      <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'stop')">⏹ Stoppen</button>
-                    ` : !state.canStart ? `<span class="text-muted">Start derzeit nicht bestätigt</span>` : isPaused ? `
-                      <button class="btn btn-sm btn-primary" style="font-size:0.75rem;" onclick="runWorkerAction('${escapeHtml(w.id)}', 'start')">
-                        ▶ Fortsetzen
-                      </button>
-                    ` : `
-                      <button class="btn btn-sm" style="font-size:0.75rem;" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">
-                        ⏸ Pause
-                      </button>
-                      <button class="btn btn-sm btn-primary" style="font-size:0.75rem;" onclick="runWorkerAction('${escapeHtml(w.id)}', 'start')">
-                        ▶ Start
-                      </button>
-                    `}
-                  </div>
-                  <small id="worker-delete-reason-${escapeHtml(w.id)}" class="text-muted" style="flex-basis:100%;">Profilstatus wird geprüft.</small>
+                <div class="agent-overview-actions">
+                  ${state.waiting ? `
+                    <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
+                    <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'stop')">⏹ Stoppen</button>
+                  ` : !state.canStart ? `<span class="text-muted" style="font-size:0.75rem;">Start nicht bestätigt</span>` : isPaused ? `
+                    <button class="btn btn-sm btn-primary" onclick="runWorkerAction('${escapeHtml(w.id)}', 'start')">▶ Fortsetzen</button>
+                  ` : `
+                    <button class="btn btn-sm btn-primary" onclick="runWorkerAction('${escapeHtml(w.id)}', 'start')">▶ Start</button>
+                    <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
+                  `}
+                  <button class="btn btn-sm" ${state.canEdit ? '' : 'disabled'} onclick="editWorkerConfiguration('${escapeHtml(w.id)}')">Bearbeiten</button>
+                  <button class="btn btn-sm" style="color:var(--error-text);margin-left:auto;" title="Workerprofil löschen" onclick="deleteWorker('${escapeHtml(w.id)}')">🗑️</button>
                 </div>
               </div>
             `;
@@ -1276,7 +1269,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         }
         for (const card of readyGrid.querySelectorAll('[data-appearance-worker]')) {
           const worker = profileWorkers.find(item => item.id === card.dataset.appearanceWorker);
-          if (worker) registerAgentOverviewCard(readyGrid, card, worker, 'worker', 'ready');
+          if (worker) {
+            registerAgentOverviewCard(readyGrid, card, worker, 'worker', 'ready');
+            window.BachAgentColor?.applyAgentColor(card, worker);
+          }
         }
 
         // 2. Render Running Workers
@@ -1286,24 +1282,26 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           runningList.innerHTML = runningWorkers.map(w => {
             const toolRound = Number(w.tool_round) || 0;
             const maxRounds = Number(w.max_tool_rounds ?? 25) === 0 ? 'unbegrenzt' : Number(w.max_tool_rounds ?? 25);
+            const providerStatus = window.BachProviderRequestStatus?.(w) || '';
             return `
               <div class="core-agent-card" data-appearance-worker="${escapeHtml(w.id)}" data-worker-id="${escapeHtml(w.id)}" style="border-color:#38bdf8;background:rgba(56,189,248,0.04);">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
                   <span class="badge" style="background:#0284c7;color:#fff;font-size:0.75rem;">⚡ RUNNING</span>
-                  <small style="color:var(--accent);">Runde ${toolRound}/${maxRounds}</small>
+                  <small style="color:var(--accent-text);">Runde ${toolRound}/${maxRounds}</small>
                 </div>
                 <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem;">${escapeHtml(w.name || w.id)}</h3>
                 <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;">
                   Modell: <code>${escapeHtml(w.model)}</code>
-                  ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--accent);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code>${escapeHtml(w.resolved_model)}</code></span>` : ''}
+                  ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--accent-text);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code>${escapeHtml(w.resolved_model)}</code></span>` : ''}
                 </p>
                 <p style="font-size:0.8rem;color:var(--text);margin-bottom:0.75rem;">
                   ${escapeHtml(w.current_activity || 'Verarbeitet Aufgabe…')}
                 </p>
+                ${providerStatus ? '<p class="provider-request-status" aria-label="Status der Provideranfrage" style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">' + escapeHtml(providerStatus) + '</p>' : ''}
 
-                <div class="agent-overview-actions" style="display:flex;justify-content:flex-end;gap:0.4rem;border-top:1px solid var(--border);padding-top:0.6rem;">
+                <div class="agent-overview-actions">
                   <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
-                  <button class="btn btn-sm" style="color:var(--error);" onclick="runWorkerAction('${escapeHtml(w.id)}', 'stop')">⏹ Stoppen</button>
+                  <button class="btn btn-sm" style="color:var(--error-text);" onclick="runWorkerAction('${escapeHtml(w.id)}', 'stop')">⏹ Stoppen</button>
                 </div>
               </div>
             `;
@@ -1311,7 +1309,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         }
         for (const card of runningList.querySelectorAll('[data-worker-id]')) {
           const worker = runningWorkers.find(item => item.id === card.dataset.workerId);
-          if (worker) registerAgentOverviewCard(runningList, card, worker, 'worker', 'running');
+          if (worker) {
+            registerAgentOverviewCard(runningList, card, worker, 'worker', 'running');
+            window.BachAgentColor?.applyAgentColor(card, worker);
+          }
         }
         for(const card of document.querySelectorAll('[data-appearance-worker]')) {
           const worker=workers.find(item=>item.id===card.dataset.appearanceWorker);
@@ -1322,11 +1323,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           if(worker&&heading)heading.prepend(window.BachAvatars.createAvatar(document,worker.avatar,worker,
             document.getElementById('core-slot-editor').dataset.portraitAtlas,'agent-avatar-preview'));
           if (worker?.runtime_verified === true && ['idle', 'completed', 'running'].includes(worker.status)) {
-            const actions = coreElement('div', undefined, 'core-actions');
+            const actions = card.querySelector('.agent-overview-actions') || coreElement('div', undefined, 'core-actions');
             const assign = coreElement('a', 'Aufgabe zuweisen', 'btn btn-sm');
             assign.href = '/tasks?create=1&assign_slot=' + encodeURIComponent(worker.id);
-            actions.append(assign);
-            card.append(actions);
+            const deleteBtn = actions.querySelector('button[title="Workerprofil löschen"]');
+            if (deleteBtn) actions.insertBefore(assign, deleteBtn);
+            else actions.append(assign);
+            if (!actions.parentNode) card.append(actions);
           }
         }
         runningList.querySelectorAll('[data-worker-id]').forEach(card => {
@@ -1361,13 +1364,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         renderWorkerSelectionPolicies();
         applyAgentOverviewControls();
         window.BachWorkerLeaseCountdown?.update(runningWorkers);
-        updateWorkerDeleteButtons();
-        return data;
       } catch (error) {
-        if (epoch !== workerRefreshEpoch) {
-          if (commandReadback) throw new Error('Der aktuelle Profilbestand konnte nicht bestätigt werden.');
-          return null;
-        }
+        if (epoch !== workerRefreshEpoch) return;
         summary.textContent = 'Workerstatus konnte nicht geladen werden.';
         rememberWorkerSelectionPolicyStates();
         agentOverviewController?.beginContainer(readyGrid);
@@ -1382,10 +1380,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         window.BachWorkerLeaseCountdown?.clear();
         updateRunningGroupState('workers', 0, 'unavailable');
         applyAgentOverviewControls();
-        if (commandReadback) throw new Error('Der aktuelle Profilbestand konnte nicht bestätigt werden. Bitte neu prüfen.');
-        return null;
-      } finally {
-        clearTimeout(timeout);
       }
     }
 
@@ -1423,61 +1417,23 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     }
 
     async function deleteWorker(workerId) {
-      if (pendingWorkerDeletes.has(workerId)) return;
-      const feedback = document.getElementById('worker-profile-delete-status');
-      const api = window.BachWorkerProfileDelete;
-      let label = workerId;
-      const announce = text => {feedback.textContent = `${label}: ${text}`;};
-      if (!api) {feedback.textContent = 'Profilverwaltung ist nicht verfügbar.'; return;}
-      pendingWorkerDeletes.add(workerId);
-      updateWorkerDeleteButtons();
-      let controller, timeout;
+      if (!confirm('Diesen Worker wirklich löschen?')) return;
+      workerRefreshEpoch += 1;
       try {
-        announce('Aktueller Profil- und Laufstatus wird geprüft…');
-        const before = api.readWorkerProfiles(await loadBackgroundWorkers(true));
-        const worker = before.find(item => item.id === workerId);
-        if (!worker) {announce('Das Profil ist im aktuellen Bestand nicht mehr vorhanden.'); return;}
-        label = worker.name || worker.id;
-        const state = api.deletionState(worker);
-        if (!state.allowed) throw new Error(state.reason);
-        if (!confirm(`Das inaktive Agentenprofil „${worker.name || worker.id}“ wirklich löschen?`)) {
-          announce('Löschung abgebrochen.');
-          return;
-        }
-        announce('Löschung wird angefordert…');
-        controller = new AbortController();
-        timeout = setTimeout(() => controller.abort(), 15000);
         const res = await fetch(`/api/system/workers/${encodeURIComponent(workerId)}/delete`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({}), redirect:'error', signal:controller.signal
+          body: JSON.stringify({})
         });
-        let result;
-        try {result = await res.json();}
-        catch (_error) {throw new Error('Die Löschantwort ist nicht lesbar. Bestand neu prüfen; nicht blind wiederholen.');}
-        if (!res.ok) throw new Error(api.deletionError(res.status, result));
-        api.requireDeleteAck(result, workerId);
-        clearTimeout(timeout);
-        announce('Löschantwort bestätigt; Profilbestand wird neu geprüft…');
-        const after = api.readWorkerProfiles(await loadBackgroundWorkers(true));
-        if (after.some(item => item.id === workerId)) throw new Error('Das Profil steht weiterhin im aktuellen Bestand. Löschung nicht bestätigt; bitte neu prüfen.');
-        announce('Agentenprofil gelöscht und aktueller Bestand bestätigt.');
+        if (res.ok) {
+          loadBackgroundWorkers();
+        } else {
+          alert('Fehler beim Löschen des Workers.');
+        }
       } catch (e) {
-        announce(e.name === 'AbortError'
-          ? 'Die Anfrage wurde nicht rechtzeitig bestätigt. Bestand neu prüfen; nicht blind wiederholen.'
-          : 'Löschung nicht bestätigt: ' + e.message);
-      } finally {
-        clearTimeout(timeout);
-        pendingWorkerDeletes.delete(workerId);
-        updateWorkerDeleteButtons();
+        alert('Netzwerkfehler: ' + e.message);
       }
     }
-
-    document.addEventListener('click', event => {
-      const button = event.target?.closest?.('[data-worker-delete]');
-      if (button && !button.disabled && document.getElementById('ready-agents-grid')?.contains(button))
-        deleteWorker(button.dataset.workerDelete);
-    });
 
     // ── TEAMS & STAFFELN BESEELEN ──
     async function loadTeamsBeseelen() {
@@ -1506,20 +1462,19 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
               <div style="display:flex;flex-direction:column;gap:0.4rem;background:var(--bg-dark);padding:0.6rem;border-radius:4px;border:1px solid var(--border);margin-bottom:0.6rem;">
                 ${members.map(m => {
-                  const curMod = modelsMap[m] || 'ollama/qwen3.8:27b-mlx';
+                  const curMod = typeof modelsMap[m] === 'string' ? modelsMap[m] : '';
                   return `
                     <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;">
                       <span style="font-size:0.78rem;color:var(--text);">🤖 ${escapeHtml(m)}</span>
-                      <select class="team-member-model-select" data-team="${t.id}" data-member="${escapeHtml(m)}" style="padding:0.2rem 0.4rem;font-size:0.72rem;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:4px;">
-                        ${AVAILABLE_MODELS.map(mod => `<option value="${mod.id}" ${mod.id === curMod ? 'selected' : ''}>${mod.label}</option>`).join('')}
-                      </select>
+                      <input class="team-member-model-input" data-team="${t.id}" data-member="${escapeHtml(m)}" value="${escapeHtml(curMod)}" placeholder="Modell-ID aus Adapter" aria-label="Modell-ID für ${escapeHtml(m)}" style="padding:0.2rem 0.4rem;font-size:0.72rem;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:4px;min-width:10rem;" />
                     </div>
                   `;
                 }).join('')}
               </div>
+              <small style="display:block;color:var(--text-muted);font-size:0.72rem;margin-bottom:0.6rem;">Keine Modellliste wird vorgetäuscht. Trage eine vom zuständigen Adapter gemeldete Modell-ID ein.</small>
 
               <div style="display:flex;justify-content:space-between;align-items:center;">
-                <button class="btn btn-sm" style="font-size:0.72rem;color:var(--error);" onclick="deleteTeamFromRunning(${t.id})">🗑️ Löschen</button>
+                <button class="btn btn-sm" style="font-size:0.72rem;color:var(--error-text);" onclick="deleteTeamFromRunning(${t.id})">🗑️ Löschen</button>
                 <button class="btn btn-sm btn-primary" style="font-size:0.75rem;" onclick="saveTeamBeseelung(${t.id})">
                   ✨ Speichern
                 </button>
@@ -1528,16 +1483,16 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           `;
         }).join('');
       } catch (e) {
-        container.innerHTML = `<p style="color:var(--error);font-size:0.8rem;">Fehler: ${e.message}</p>`;
+        container.innerHTML = `<p style="color:var(--error-text);font-size:0.8rem;">Fehler: ${e.message}</p>`;
       }
     }
 
     async function saveTeamBeseelung(teamId) {
-      const selects = document.querySelectorAll(`.team-member-model-select[data-team="${teamId}"]`);
+      const selects = document.querySelectorAll(`.team-member-model-input[data-team="${teamId}"]`);
       const member_models = {};
       selects.forEach(sel => {
         const mem = sel.getAttribute('data-member');
-        member_models[mem] = sel.value;
+        if (mem && sel.value.trim()) member_models[mem] = sel.value.trim();
       });
 
       try {
@@ -1893,6 +1848,12 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      if (location.hash === '#models-resources' || new URLSearchParams(location.search).get('tab') === 'resources') {
+        const drawer = document.getElementById('running-models-resources-drawer');
+        if (drawer) drawer.hidden = false;
+        const torch = document.getElementById('models-resources');
+        if (torch) torch.open = true;
+      }
       initializeAgentOverviewControls();
       document.getElementById('worker-blueprint-backend')?.addEventListener('change', () => loadWorkerBlueprintModels());
       document.getElementById('worker-blueprint-sub-mode')?.addEventListener('change', updateWorkerCreationModeFields);
@@ -1927,6 +1888,4 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
 <script>
   import "../../scripts/agent-template-picker.mjs";
-  import * as workerProfileDeletion from '../../lib/worker-profile-delete.mjs';
-  window.BachWorkerProfileDelete = workerProfileDeletion;
 </script>

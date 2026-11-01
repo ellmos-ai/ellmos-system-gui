@@ -385,14 +385,21 @@ test('Task2138 provenance binds the five delivered files and preserves pinned BA
   const merge = provenance.followup_changes.findLast(change =>
     change.scope === 'BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance');
   assert.equal(merge.scope, 'BACH #2331/#2339: integrate deployed GUI and current main without losing branch provenance');
-  const branchBases = new Set(merge.branch_bases);
+  // Each later integration of the deployed GUI with main (e.g. BACH #2469) declares its branch bases the same way.
+  const integrations = provenance.followup_changes.filter(change =>
+    /integrate deployed GUI .*and current main without losing branch provenance$/.test(change.scope ?? ''));
+  assert.ok(integrations.includes(merge));
+  const branchBases = new Set(integrations.flatMap(change => change.branch_bases ?? []));
   assert.ok(branchBases.has('99cde50dfaa0f0306b6c5b70aebc4161db0fc71c'));
   assert.ok(branchBases.has('a5de187db1005b083e2ed4330f61aafc0553ba04'));
   for (const file of followup.files) {
     const observed = new Set([file.sha256]);
     let recordedHash = file.sha256;
     for (const change of laterChanges) {
-      const next = change.files?.find(candidate => candidate.path === file.path);
+      // Follow-up records list files as an array; the task 2011 record keys them by path.
+      const changeFiles = Array.isArray(change.files) ? change.files
+        : Object.entries(change.files ?? {}).map(([path, record]) => ({path, ...record}));
+      const next = changeFiles.find(candidate => candidate.path === file.path);
       if (!next) continue;
       assert.ok(observed.has(next.previous_sha256), file.path + ': known provenance predecessor');
       if (next.previous_sha256 !== recordedHash) {

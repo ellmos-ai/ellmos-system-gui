@@ -51,6 +51,14 @@ import BachLayout from "../layouts/BachLayout.astro";
       <p class="loading-state">Lade Fachmodule...</p>
     </div>
     <div class="glass-card">
+      <h3>🎭 Querschnitts-Domäne: Datenschutz &amp; Anonymisierung (#2483)</h3>
+      <p>Schwärzung, Pseudonymisierung und De-Anonymisierung sensibler Dokumente (Steuer, Förderung, Therapie, Recht) stehen als domänenübergreifender Fachdienst unter <a href="/anonymizer">Datenschutz &amp; Anonymisierung (/anonymizer)</a> sowie direkt an jedem Eintrag unter <a href="/artefakte">Artefakte &amp; Exporte</a> bereit.</p>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;">
+        <a href="/anonymizer" class="btn btn-primary btn-sm">🎭 Datenschutz &amp; Anonymisierung öffnen →</a>
+        <a href="/artefakte" class="btn btn-secondary btn-sm">💾 Artefakte &amp; Exporte</a>
+      </div>
+    </div>
+    <div class="glass-card">
       <h3>Domänen-Anbindung in Arbeit</h3>
       <p>Die Manifestliste ist angebunden. Für „installiert“ fehlt ein autoritatives Installationsregister; für „arbeitet“ fehlt ein Domain-Job- oder Session-Provider. Fachliche Aktionen werden erst verlinkt, wenn Manifest-ID, Backend-Vertrag und Route eindeutig zusammenpassen.</p>
     </div>
@@ -82,6 +90,8 @@ import BachLayout from "../layouts/BachLayout.astro";
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     border-bottom: 1px solid var(--border);
     padding-bottom: 1.25rem;
   }
@@ -101,6 +111,9 @@ import BachLayout from "../layouts/BachLayout.astro";
   .header-actions {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
     gap: 0.75rem;
   }
   .stats-row {
@@ -143,7 +156,7 @@ import BachLayout from "../layouts/BachLayout.astro";
   }
   .domains-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
     gap: 1.25rem;
   }
   .selected-domain {outline:2px solid var(--accent);outline-offset:3px;}
