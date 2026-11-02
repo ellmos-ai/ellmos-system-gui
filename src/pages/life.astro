@@ -215,10 +215,10 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
         <div class="glass-card">
           <h3><span class="icon">⏱️</span> Fokus-Timer & Arbeits-Intervall</h3>
-          <div class="timer-widget">
-            <div class="timer-display" id="timer-display" role="timer" aria-live="off">25:00</div>
+          <div class="timer-widget" data-countdown-click-gated="true">
+            <div class="timer-display" id="timer-display" role="timer" aria-live="off" data-timer-state="idle">25:00</div>
             <div class="timer-controls">
-              <button class="btn btn-primary" id="btn-timer-start">Start</button>
+              <button class="btn btn-primary" id="btn-timer-start" data-click-gate="explicit-start">Start</button>
               <button class="btn btn-secondary" id="btn-timer-reset">Reset</button>
               <button class="btn btn-secondary" id="btn-focus-window" type="button">Eigenes Fokusfenster öffnen</button>
             </div>
@@ -256,14 +256,15 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
     <!-- TAB 7: GESUNDHEIT -->
     <div class="tab-pane" id="pane-gesundheit">
-      <div class="glass-card">
+      <div class="glass-card" id="inline-health-module-panel" data-inline-health-view="true">
         <div class="card-header-action" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
           <div>
              <h3><span class="icon">🩺</span> Gesundheit</h3>
-             <p class="card-desc">Gesundheitsbereich im Life-Tab – Fachanbindung in Arbeit</p>
+             <p class="card-desc">Integrierte Gesundheitsansicht im Life-Tab (ohne externe Port-Weiterleitung, GUX-051)</p>
            </div>
+           <span class="badge badge-secondary" id="health-provider-badge">Lokal integriert</span>
          </div>
-         <p>Die bisherige Gesundheitsansicht enthält nur geplante Funktionen. Für Vitalwerte, Arzttermine und Medikamente fehlen ein geprüfter Fachadapter, ein Datenvertrag und ein Gerätezugriffsvertrag. Hier werden keine Gesundheitsdaten gelesen oder angezeigt.</p>
+         <p id="health-provider-status">Die bisherige Gesundheitsansicht enthält nur geplante Funktionen. Für Vitalwerte, Arzttermine und Medikamente fehlen ein geprüfter Fachadapter, ein Datenvertrag und ein Gerätezugriffsvertrag. Hier werden keine Gesundheitsdaten gelesen oder angezeigt.</p>
          <ul><li>Fachmodul und installierte Web-Oberfläche verifizieren</li><li>Autorisierte Gesundheits-API anbinden</li><li>Erst danach Eingabe und Anzeige ergänzen</li></ul>
       </div>
     </div>
@@ -1406,6 +1407,12 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
             btnUpToday.disabled = true;
             btnUpToday.title = data.uptoday.message;
           }
+        }
+        const healthBadge = document.getElementById('health-provider-badge');
+        const healthStatus = document.getElementById('health-provider-status');
+        if (healthBadge && data.health) {
+          healthBadge.textContent = data.health.available ? 'Fachmodul bereit' : 'Kein externer Port-Sprung';
+          if (healthStatus && data.health.message) healthStatus.textContent = String(data.health.message);
         }
       } catch (_) {}
     }

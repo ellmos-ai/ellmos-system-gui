@@ -19,11 +19,14 @@ function initialize(){
   modal.addEventListener('close',()=>{detailEpoch++;detail.replaceChildren();});
   async function openDialog(row){
     const request=++detailEpoch,agent_id=selectedProfile();
+    const includeTools=Boolean(document.getElementById('history-include-tools')?.checked);
+    const resumeLink=document.getElementById('history-resume-link');
+    if(resumeLink)resumeLink.href='/chat?resume_session='+encodeURIComponent(String(row.id));
     document.getElementById('history-dialog-title').textContent=row.name||'Gespeicherter Dialog';
     detail.replaceChildren(node('p','Gespeicherten Ausschnitt laden…'));
     if(!modal.open)modal.showModal();
     try{
-      const data=await loadSession(row.id,agent_id);
+      const data=await loadSession(row.id,agent_id,{include_tools:includeTools});
       if(request!==detailEpoch||!modal.open||selectedProfile()!==agent_id)return;
       detail.replaceChildren(node('p',stamp(data.updated_at||data.created_at)+' · '+(data.archived?'Archivierter Ausschnitt':'Aktueller gespeicherter Ausschnitt'),'text-muted'));
       if(!data.messages.length)detail.append(node('p','Keine sichtbaren Nachrichten gespeichert.'));
@@ -78,9 +81,10 @@ function initialize(){
         makePager(data,taskOffset);
       }else{
         const notes=await loadMemoryNotes({signal});if(request!==epoch)return;
-        status.textContent='Erfasste Gedächtniszusammenfassungen. Die gespeicherten Dialoge stehen im Tab Dialoge.';
-        count.textContent=notes.length+' jüngste Notizen';
-        if(!notes.length)content.append(node('p','Keine Gedächtniszusammenfassungen vorhanden.','text-muted'));
+        const isLessons=tab==='lessons';
+        status.textContent=isLessons?'Kuratierte Lessons & Best-Practices aus abgeschlossenen Läufen (GUX-042).':'Erfasste Gedächtniszusammenfassungen. Die gespeicherten Dialoge stehen im Tab Dialoge.';
+        count.textContent=notes.length+(isLessons?' Lessons / Notizen':' jüngste Notizen');
+        if(!notes.length)content.append(node('p',isLessons?'Keine Lessons oder Best-Practices vorhanden.':'Keine Gedächtniszusammenfassungen vorhanden.','text-muted'));
         for(const note of notes){
           const card=node('article',undefined,'history-card');card.append(node('h2',note.summary||'Ohne Zusammenfassung'));
           card.append(node('p',stamp(note.started_at)+(note.ended_at?' – '+stamp(note.ended_at):''),'text-muted'));content.append(card);
@@ -100,7 +104,7 @@ function initialize(){
     const url=new URL(location.href);if(inbox)url.searchParams.set('tab','inbox');else if(funk)url.searchParams.set('tab','funk');else url.searchParams.delete('tab');history.replaceState(null,'',url);
     document.getElementById('history-session-filters').hidden=tab!=='sessions';
     document.getElementById('history-task-filters').hidden=tab!=='tasks';
-    document.getElementById('history-pager').hidden=tab==='notes';
+    document.getElementById('history-pager').hidden=tab==='notes'||tab==='lessons';
     if(inbox)document.dispatchEvent(new CustomEvent('bach:inbox-show'));else if(!funk)refresh();
   });
   for(const input of [profile,archive,taskStatus])input.addEventListener('change',()=>{clearDetail();refresh(true);});

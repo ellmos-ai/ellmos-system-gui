@@ -76,9 +76,9 @@ export async function loadSessionPage(options={}){
   if(agent_id!==null)query.set('agent_id',String(agent_id));
   return validateSessionPage(await read('/api/agent-history/sessions?'+query,options.signal),{offset,limit,agent_id,archive});
 }
-export async function loadSession(snapshot_id,agent_id=null,{signal}={}){
+export async function loadSession(snapshot_id,agent_id=null,{signal,include_tools=false}={}){
   if(!integer(snapshot_id,1,2147483647)||(agent_id!==null&&!integer(agent_id,1,2147483647)))throw new Error('Ungültige Dialogkennung.');
-  const query=new URLSearchParams();if(agent_id!==null)query.set('agent_id',String(agent_id));
+  const query=new URLSearchParams();if(agent_id!==null)query.set('agent_id',String(agent_id));if(include_tools===true)query.set('include_tools','true');
   return validateSession(await read('/api/agent-history/sessions/'+snapshot_id+(query.size?'?'+query:''),signal),{snapshot_id,agent_id});
 }
 export async function loadTaskPage(options={}){

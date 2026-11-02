@@ -96,6 +96,8 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
       <article class="task-order" aria-labelledby="task-order-heading">
         <h3 id="task-order-heading">Auftrag</h3>
         <p id="task-view-description" class="task-description"></p>
+        <h4>Nächste Handlung &amp; Begründung</h4>
+        <p id="task-view-rationale" class="task-rationale">Noch nicht berechnet.</p>
       </article>
       <section class="task-worker-result" aria-live="polite">
         <h3>Ergebnis und Verlauf</h3>
@@ -283,6 +285,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
 
   <script>
     import {readTaskHindrances, renderTaskHindrances} from '../lib/task-hindrances.mjs';
+    import {taskRationale} from '../lib/task-rationale.mjs';
     import {createAssignmentController, taskResponseError, assignmentCatalogue, isGateReopenBlocked} from '../lib/task-assignment.mjs';
     import {readTaskFilters, taskFilterQuery, writeTaskFilters, readTaskPage, taskCountLabel} from '../lib/task-filters.mjs';
     import {correctionAttemptMatchesView, createCorrectionAttempt, generateCorrectionRequestId,
@@ -345,6 +348,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
 
     function renderTasks() {
       const container = document.getElementById('tasks-table-container');
+      const tasksById = new Map(allTasks.map(x => [Number(x.id), x]));
       let filtered = allTasks;
 
       const normalizedStatus = status => String(status || '').trim().toLowerCase();
@@ -379,6 +383,8 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
               const rawAssignee = t.assigned_to || t.assignee || 'Unzugewiesen';
               const isUser = rawAssignee.toLowerCase() === 'user';
               const badgeClass = isUser ? 'badge-accent' : 'badge-success';
+              const rationale = taskRationale(t, tasksById);
+              const rationaleText = rationale ? escapeHtml(rationale.action + ' – ' + rationale.reason) : 'Erklärung nicht verfügbar.';
 
               return `
                 <tr style="border-bottom:1px solid rgba(255,255,255,0.03);opacity:${isDone ? '0.55' : '1'};">
@@ -386,6 +392,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
                   <td style="padding:0.75rem 0.5rem;">
                     <div style="font-weight:600;color:var(--text);${isDone ? 'text-decoration:line-through;' : ''}">${escapeHtml(t.title || t.name || 'Unbenannt')}</div>
                     ${t.description ? `<div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;">${escapeHtml(t.description.slice(0, 100))}</div>` : ''}
+                    <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem;">Nächste Handlung: ${rationaleText}</div>
                   </td>
                   <td style="padding:0.75rem 0.5rem;">
                     <span class="badge ${badgeClass}">${escapeHtml(rawAssignee)}</span>
@@ -930,6 +937,11 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
         window.dispatchEvent(new CustomEvent('bach:task-selected', {detail:{id, task}}));
         for (const key of ['status','priority','category','assigned_to','created_by','modified_by','due_date','depends_on','required_model','assigned_slot','created_at','completed_at','description']) {
           document.getElementById('task-view-' + key).textContent = task[key] == null || task[key] === '' ? '–' : String(task[key]);
+        }
+        const rationaleEl = document.getElementById('task-view-rationale');
+        if (rationaleEl) {
+          const rationale = taskRationale(task, new Map(allTasks.map(x => [Number(x.id), x])));
+          rationaleEl.textContent = rationale ? (rationale.action + ' – ' + rationale.reason) : 'Erklärung nicht verfügbar.';
         }
         document.getElementById('task-detail-view').hidden = false;
         document.getElementById('task-edit-form').hidden = true;

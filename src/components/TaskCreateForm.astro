@@ -33,6 +33,13 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
       <label>Kategorie
         <input name="category" placeholder="z. B. Organisation" autocomplete="off" />
       </label>
+      <label>Speicherziel (Ablageort)
+        <select name="storage_target" data-task-storage-target>
+          <option value="task_db" selected>TaskDB (Standard)</option>
+          <option value="ticket_file">Ticket-Datei (_TICKETS)</option>
+          <option value="dual">Doppelablage (TaskDB + Ticket)</option>
+        </select>
+      </label>
       <label>Zugewiesen an
         <select name="assigned_to" data-task-assignee disabled={fixedAssignee}><option value="user">Benutzer</option></select>
       </label>
@@ -190,6 +197,9 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
         for (const key of ['due_date','depends_on']) {
           if (text(key)) payload[key] = text(key);
         }
+        if (text('storage_target') && text('storage_target') !== 'task_db') {
+          payload.storage_target = text('storage_target');
+        }
         try {
           const limitText = String(values.get('result_max_chars') || '').trim();
           if (limitText) {
@@ -209,7 +219,7 @@ const { id, label = "Neue Aufgabe", defaultAssignee = "user", fixedAssignee = fa
           const check = await fetch('/api/tasks/' + encodeURIComponent(result.id));
           if (!check.ok) throw new Error('Aufgabe wurde gespeichert, der Kontrollabruf ist fehlgeschlagen. Bitte Liste aktualisieren.');
           const stored = await check.json();
-          if (Object.entries(payload).some(([key, expected]) => key !== 'assignment_configuration_version' && String(stored[key] ?? '').trim() !== String(expected).trim())) {
+          if (Object.entries(payload).some(([key, expected]) => key !== 'assignment_configuration_version' && key !== 'storage_target' && String(stored[key] ?? '').trim() !== String(expected).trim())) {
             throw new Error('Aufgabe wurde gespeichert, der Kontrollabruf weicht ab. Bitte Liste aktualisieren.');
           }
           dialog.close(); form.reset();
