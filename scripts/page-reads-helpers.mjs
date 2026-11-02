@@ -20,6 +20,7 @@ export const HELPERS = [
   {file: 'src/scripts/blueprint-studio.mjs', name: 'api', url: 0, options: 1},
   {file: 'src/scripts/blueprint-studio.mjs', name: 'post', url: 0, method: 'POST'},
   {file: 'src/scripts/marblerun-studio.mjs', name: 'api', url: 0, options: 1},
+  {file: 'src/scripts/installation-updates.mjs', name: 'requestJson', url: 0, method: 'GET'},
 ];
 
 // Files whose fetch calls only forward the caller's arguments (they wrap the global fetch for every page).

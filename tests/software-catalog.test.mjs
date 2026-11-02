@@ -34,6 +34,7 @@ test('refresh failures clear stale applications and show the actual failure', as
     kind:'software', INVENTORIES, catalogMatches, describeSourceError,
     byId: id => nodes[id] || null,
     renderItems: () => {},
+    focusRequestedComponent: () => {},
     requestJson: async () => {if (answer instanceof Error) throw answer; return answer;}
   });
   vm.runInContext('let items=[], inventoryGeneration=0;\n' + source.slice(start,end) +

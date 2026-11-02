@@ -35,4 +35,9 @@ export const BINDINGS = {
   'src/lib/prompt-library.mjs#createPromptClient@1': ['GET /api/prompt-library/{id}'],
   'src/lib/prompt-library.mjs#createPromptClient@2': ['PUT /api/prompt-library/{id}'],
   'src/lib/prompt-library.mjs#createPromptClient@3': ['DELETE /api/prompt-library/{id}'],
+  // INVENTORY_SOURCES[i].route in installation-updates-model.mjs
+  'src/scripts/installation-updates.mjs#loadSource@1': [
+    'GET /api/capabilities/skills/library', 'GET /api/capabilities/plugins/inventory', 'GET /api/capabilities/mcp/connections',
+    'GET /api/capabilities/software', 'GET /api/capabilities/ocean',
+  ],
 };

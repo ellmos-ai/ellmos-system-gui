@@ -14,9 +14,9 @@
     "package-lock.json": "e1e1fd367e7b5948dcb06b91c833b00d5e2f494bb128ffbc27db784779b6848f",
     "package.json": "80d3d2374e9acdde76c0843d79950f7c4bda199769d521d47cc66ff0d8d9b493",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "15b3afd9cb11e35df1bc5df0a0e017a0bbc3d90c8c861412b71c3852b97bb17b",
-    "README.md": "a41fa4866cc41d0b025aa6217253bebed35e48a321b131c1bdaeb6fa59c43aa6",
-    "RELEASE_GATE.md": "844d11735cb565bbc2001a524e14e10ccb47f3d173167e607d8172a9275a111b",
+    "public/page-reads.v1.json": "c0cd44e1fcdffed0bf2345e51c7e1393eed19f0cf81f2dd43db57e118e26396c",
+    "README.md": "84d38716588cb3d20f7ecaa3c139226afd76d030a3089a90d673c31a2897f3d1",
+    "RELEASE_GATE.md": "b02a1d52cc76749313484ecd72e01fa9a4cf3965e724ac4c393d92659d53be73",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
@@ -222,7 +222,7 @@
     "src/assets/ticket-symbols/topics.svg": "bfce095b28736f6d8062ff49a031154951a3d94c8953adf7e249ba69b777db97",
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
-    "src/components/CapabilityBoard.astro": "bf8f8952c7eadd20980168649841a86a7ebcc94b6f164c789ab3dac4b14678f4",
+    "src/components/CapabilityBoard.astro": "3c2dcfeec112e396671d86cc75d28f211faf34f96951d23a4c8a7509055c8dbe",
     "src/components/Header.astro": "7df14c212ba9641588810d8a72415d9ceb276d8440664b986d83b37c0b28aef1",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
@@ -230,7 +230,7 @@
     "src/components/TaskLeasePanel.astro": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
     "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
     "src/components/WorkerPolicySettings.astro": "51bd535eb231b0bbc12b7802cd50daafc3b007b2e3c89b2563fe9df44507bdcd",
-    "src/config/nav_config.json": "5d0097800d99a69300642ec75971e4ccf70e4b860a79458e353a6bdd16149012",
+    "src/config/nav_config.json": "6dccd2d4fc7184f0148b2e8886baa984277e3ee37e4fd348ca69c34052cd9799",
     "src/layouts/BachLayout.astro": "4ac810003a1c3132f6d0bcec97566ce2ecfa7550d0d75664af37aadaf52195d8",
     "src/lib/agent-avatar-browser.mjs": "02b51e85852532af3549dbecd1b4c1b1bf7bf48eda7340f23523c7597ec44abf",
     "src/lib/agent-avatar-catalog.mjs": "6da91323ab28c22ddbe8555a3f59497c61c1d406bcd692fcd5bfb26643a82fc0",
@@ -238,7 +238,7 @@
     "src/lib/agent-history.mjs": "9262398aac30160b5433bb3cbc572559e0e1fac4a33a68442bffe552f0c975aa",
     "src/lib/agent-overview.mjs": "725afad772bd605c5599e6ceb78d71304ae2d8f2706b9deb5fd19433b0a18f12",
     "src/lib/capability-board-client.mjs": "7a80423bc472ade80f05065c57ef9b732493b40cd2900f0705b2c3af8f72d831",
-    "src/lib/capability-board-ui.mjs": "6a0c64b6e9793b007af854f4c70568300f28209a4257cfb6e437e92374b986c1",
+    "src/lib/capability-board-ui.mjs": "ae4d73808cb1b95c904c02d5996cb2ba5e3ac6cc9eba249e6801619b9a9cb123",
     "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
     "src/lib/domain-pins.mjs": "e6c4fd1700f0cfc0995c17c0ec3cb66d3ac12f7457eff13b96421d314999a813",
     "src/lib/domain-routes.mjs": "2dd127d08b0f53110306e09ca256b75c138ca56fcc444f0f4e62f59f75403dd3",
@@ -295,7 +295,7 @@
     "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
     "tests/domain-routes.test.mjs": "eb151b9752db41b5c22c441df8ca6c403b105ada24d4edf5bd90763d08277d6e",
     "tests/fabrika.test.mjs": "25c92eb969278125447beafe4307d0be77bf64b82a7ac78fcd84594015c1067e",
-    "tests/frontend-parity.test.mjs": "85a02a13062927cfc95fc1e5cdefac2d2562ffa32b17bac3e7ee5a0489ad5bf6",
+    "tests/frontend-parity.test.mjs": "b85d5c61811fa494fa45ef1fc96ffd1e1156365e0ec9f6a1c31f79333e381bc0",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
     "tests/memory-facts.test.mjs": "a7c9724c7e28631f9a661fcde596f81fe5dd93375838259a6cf55244c24f3897",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
@@ -316,7 +316,7 @@
     "tests/worker-policy-settings.test.mjs": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
     "tests/gui-shell-navigation.test.mjs": "169079fe4ea3fe54e91d22eb3a1bd1e3bd8009000ccfd8f052758c375a57887b",
     "docs/GUI-SHELL-NAVIGATION.md": "7fc84c92860a38fb355e1764f5252e4587e7bc3de489033e4a8583be1aad6f67",
-    "scripts/page-reads-bindings.mjs": "f72d84ffeaa3a8b857321aaa2135766d23e21c5db8d513776f4fa1abc29c896a",
+    "scripts/page-reads-bindings.mjs": "18e302f68f10c41b38de566297a5f166ed0be156692740f502c1c2fb58331c48",
     "src/lib/settings-connections.mjs": "1ef6196556c70917058cc243b6f5609468743feb49de219f42d3aec2be960955",
     "tests/settings-connections.test.mjs": "5ad0a09c43b7a215a5f4924d00bd84becadee8e862483337927a2f36c1f35d6a",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
@@ -359,7 +359,12 @@
     "tests/fixtures/dompurify-regressions.html": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
     "tests/run-dompurify-browser.mjs": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
     "src/lib/task-hindrances.mjs": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10",
-    "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78"
+    "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
+    "src/pages/notizen.astro": "481e8af4ab7b4607290b3e0401ad54127023ec8176d77a9ffe2a7a272722bc87",
+    "src/pages/system/installation-updates.astro": "6876c0537889cd9854dbbc05eaa8a5b0d16a45b4d282802d0c003a8abb4b397a",
+    "src/lib/installation-updates-model.mjs": "4a64629270ef1a1b911d365f8bb001f46859dfbeae6a11e5c78dbf483d5bb8c2",
+    "src/scripts/installation-updates.mjs": "c6fcc4aaee0cb0056246cb870008e27e6a538cb18037ca4fe6793f68cbbbcb6c",
+    "tests/installation-updates-model.test.mjs": "1bade7c2d7173da34f2c0decc5de811e24e5d9ef616b1edcbad4f003eb29d924"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -4931,6 +4936,16 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "1fb257ef1b493ce65a59ff16086dc8510d5af7172babcad6b85853dcb5f540d8",
           "sha256": "15b3afd9cb11e35df1bc5df0a0e017a0bbc3d90c8c861412b71c3852b97bb17b"
+        }
+      ]
+    },
+    {
+      "scope": "Ocean-BACH Plan (#2069, #2070, #2455, #2480): bind /notizen and /system/installation-updates page-reads",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "15b3afd9cb11e35df1bc5df0a0e017a0bbc3d90c8c861412b71c3852b97bb17b",
+          "sha256": "c0cd44e1fcdffed0bf2345e51c7e1393eed19f0cf81f2dd43db57e118e26396c"
         }
       ]
     }

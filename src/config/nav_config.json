@@ -134,6 +134,13 @@
               "icon": "💾",
               "href": "/artefakte",
               "description": "Berichte, Exporte und generierte Ergebnisse"
+            },
+            {
+              "id": "notes",
+              "label": "Notizen",
+              "icon": "📝",
+              "href": "/notizen",
+              "description": "Gedanken (vormals Denkarium) und chronologisches Logbuch"
             }
           ]
         },
@@ -161,6 +168,13 @@
               "icon": "🖥️",
               "href": "/system/ocean",
               "description": "Systemübersicht und Ocean-Schaltplan"
+            },
+            {
+              "id": "installation-updates",
+              "label": "Installation & Updates",
+              "icon": "📦",
+              "href": "/system/installation-updates",
+              "description": "Komponentenquellen, Installationsstände und verfügbare Aktionen prüfen"
             },
             {
               "id": "services",
@@ -345,6 +359,13 @@
               "icon": "💾",
               "href": "/artefakte",
               "description": "Berichte, Pläne und Exporte"
+            },
+            {
+              "id": "notes",
+              "label": "Notizen",
+              "icon": "📝",
+              "href": "/notizen",
+              "description": "Gedanken und Logbuch"
             }
           ]
         },
@@ -404,6 +425,13 @@
                   "icon": "🧠",
                   "href": "/settings?tab=core",
                   "description": "Modelle und Ressourcenstatus"
+                },
+                {
+                  "id": "installation-updates",
+                  "label": "Installation & Updates",
+                  "icon": "📦",
+                  "href": "/system/installation-updates",
+                  "description": "Komponentenquellen und Installationsstände prüfen"
                 },
                 {
                   "id": "services",

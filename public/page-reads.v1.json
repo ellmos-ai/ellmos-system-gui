@@ -1665,6 +1665,54 @@
     "path": "/api/agenten/library",
     "required": false
    }
+  ],
+  "/notizen": [],
+  "/system/installation-updates": [
+   {
+    "method": "GET",
+    "path": "/api/gui/capabilities",
+    "required": true
+   },
+   {
+    "method": "GET",
+    "path": "/api/gui/backend-origin",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/skills/library",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/installation-updates.mjs#loadSource"
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/plugins/inventory",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/installation-updates.mjs#loadSource"
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/mcp/connections",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/installation-updates.mjs#loadSource"
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/software",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/installation-updates.mjs#loadSource"
+   },
+   {
+    "method": "GET",
+    "path": "/api/capabilities/ocean",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/scripts/installation-updates.mjs#loadSource"
+   }
   ]
  }
 }

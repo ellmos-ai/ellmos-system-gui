@@ -10,6 +10,7 @@ if (board) {
   const kind = board.dataset.board;
   const symbolUrls=JSON.parse(board.dataset.ticketSymbols);
   const byId = id => document.getElementById(id);
+  const requestedComponentId = new URLSearchParams(window.location.search).get('component_id');
   const node = (tag, text, className) => {
     const element = document.createElement(tag);
     if (text !== undefined && text !== null) element.textContent = String(text);
@@ -127,6 +128,23 @@ if (board) {
     if (!visible.length) byId('board-items').append(node('p', query || category ? 'Keine passenden Einträge.' : 'In den erreichbaren Quellen sind keine Einträge vorhanden.'));
   }
 
+  function focusRequestedComponent() {
+    if (!requestedComponentId || !/^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/.test(requestedComponentId)) return;
+    const cards = [...byId('board-items').querySelectorAll('.capability-card')];
+    const card = cards.find(element => element.dataset.id === requestedComponentId);
+    if (!card) {
+      byId('board-status').textContent = 'Der verknüpfte Eintrag wurde in diesem Bestand nicht gefunden.';
+      return;
+    }
+    card.dataset.targeted = 'true';
+    card.tabIndex = -1;
+    card.setAttribute('aria-label', 'Verknüpfte Komponente');
+    requestAnimationFrame(() => {
+      card.scrollIntoView({block: 'center', behavior: 'smooth'});
+      card.focus({preventScroll: true});
+    });
+  }
+
   async function refresh() {
     const generation = ++inventoryGeneration;
     byId('board-status').textContent = 'Host-Quellen werden gelesen …';
@@ -163,6 +181,7 @@ if (board) {
         for (const error of data.errors || []) sources.append(node('p', 'Nicht lesbar: ' + error.source + ' (' + error.reason + ')'));
       }
       renderItems();
+      focusRequestedComponent();
     } catch (error) {
       if (generation !== inventoryGeneration) return;
       items = []; renderItems();
