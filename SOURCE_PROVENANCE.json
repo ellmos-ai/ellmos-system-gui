@@ -7,30 +7,30 @@
   "files_sha256": {
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
     ".github/workflows/tests.yml": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
-    "README.md": "84d38716588cb3d20f7ecaa3c139226afd76d030a3089a90d673c31a2897f3d1",
-    "RELEASE_GATE.md": "b02a1d52cc76749313484ecd72e01fa9a4cf3965e724ac4c393d92659d53be73",
-    "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
+    "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
     "docs/CONSUMER_CONTRACT.md": "4cf9ead92f42d54887ca51b11300a7f5f419db047740c09d19d60579b8a3b0a0",
     "docs/GUI-AGENTS-LIVING-RUNNING.md": "f44152d48e125736fbea5d8478f0b0937219670190a5448de8a458f9ca5f9eb5",
     "docs/GUI-LEGACY-ROUTE-FALLBACK.md": "8bce644156882b77f31e0d89a2463e25b4f26f229c6f35e9f8bf0054ca26e218",
     "docs/GUI-SHELL-NAVIGATION.md": "7fc84c92860a38fb355e1764f5252e4587e7bc3de489033e4a8583be1aad6f67",
     "docs/GUI-TASKS-ROUTINES.md": "53e7b8a74f4b630744629a328a0466cbfbf7f7186eaed605997bdc99e05812c4",
-    "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
-    "ellmos-module.v2.json": "9bb5045fc3a34d2a176adad672a7a6ace4d41131ac941d2c28195a519b087467",
+    "ellmos-module.v2.json": "c883d1e76c7911d5f4377220f3a3e05ce68a4f7feffcdc5af9dbd2a77116c70d",
     "package-lock.json": "e1e1fd367e7b5948dcb06b91c833b00d5e2f494bb128ffbc27db784779b6848f",
-    "package.json": "80d3d2374e9acdde76c0843d79950f7c4bda199769d521d47cc66ff0d8d9b493",
+    "package.json": "ea89ae9d120aeeeb04599c9333c404a5de14bac63727f32c7712fed9854ba8a2",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "c0cd44e1fcdffed0bf2345e51c7e1393eed19f0cf81f2dd43db57e118e26396c",
+    "public/page-reads.v1.json": "c5ad4340021880acda54159fccd9dc986a52a4987d8a787678cbbf5b1a5b5ac7",
+    "README.md": "84d38716588cb3d20f7ecaa3c139226afd76d030a3089a90d673c31a2897f3d1",
+    "RELEASE_GATE.md": "b02a1d52cc76749313484ecd72e01fa9a4cf3965e724ac4c393d92659d53be73",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
     "scripts/page-reads-bindings.mjs": "18e302f68f10c41b38de566297a5f166ed0be156692740f502c1c2fb58331c48",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/verify-navigation-routes.mjs": "efbfb0d8fb6338515ebb8db0038946ebe0cd8e2f4368f2b0e852a9612f44ece0",
+    "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
     "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik-data.png": "37d97cd458b18adb58e2f277c2f09c4954908a3ad7f57820edf162aa4aa28366",
     "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik-large.webp": "5dfa5ddaafb16949f58f8c2cdf1e88e4050817f34e7a35e43375c2bcbf37578b",
     "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik.webp": "791fbd92f3c5be2096d0454f38cdd87272a5ded5e10371e49bd977cf3f344d35",
@@ -215,13 +215,12 @@
     "src/assets/gemini-agent-portraits/gemini-umbruch.jpg": "514a9f32a3956175bbb1f1fc90158401a00e042020e690d56f35b4f902070751",
     "src/assets/gemini-agent-portraits/gemini.jpg": "f18b2731f1a1cf528d03bc3ebc64aceacce04d5d7cf34e3abfa098c5f0713dd3",
     "src/assets/gemini-agent-portraits/provenance.json": "93d46380216bf7c651b0268581d33124123772532a9936c3245ac375d2b06360",
-    "src/assets/ticket-symbols/README.md": "88cced00eb2652e91337b6a561c629696cf301e6c2f2533f13a8063703a131ae",
     "src/assets/ticket-symbols/githubbot.svg": "b26066f87ef31061813b75694b7054bac108f2154f69055319103389c5470bde",
     "src/assets/ticket-symbols/office.svg": "0238736ed21a910fe80122ba980e83b29190b79adae52ab754dbda277848ce89",
+    "src/assets/ticket-symbols/README.md": "88cced00eb2652e91337b6a561c629696cf301e6c2f2533f13a8063703a131ae",
     "src/assets/ticket-symbols/scripts.svg": "9d036e885b92847c2f9657e9a547a35f06b649fdd3e92d51f2e78886eb81e4a7",
     "src/assets/ticket-symbols/server.svg": "fd3f41d4a1e4cf23155ef98c2d490bcff2504c41acade389e01192ace87248bd",
     "src/assets/ticket-symbols/sync.svg": "f0413e3c8b8055a5f4d0dfd3a3d33a6aa0e8ea594a8e1c498a085e7465b9ace8",
-    "src/assets/ticket-symbols/topics.svg": "bfce095b28736f6d8062ff49a031154951a3d94c8953adf7e249ba69b777db97",
     "src/assets/ticket-symbols/topics_ai.svg": "9b1fd6dd1f34b64d23c93a3f8f7650c263100064abd9c549d9a66fbd991e425a",
     "src/assets/ticket-symbols/topics_gesim.svg": "4ccdebb85135c3b2d246320ecc6000753cf6faa4fc0605a479725ff233131d50",
     "src/assets/ticket-symbols/topics_hardware.svg": "82f3306e7f8f2a23af95be4838c5afda7ea71b9838ca219821e923367ab388b8",
@@ -230,11 +229,12 @@
     "src/assets/ticket-symbols/topics_software.svg": "a984e05ebfa0e285473aa795587ff6d42e0a87f29cb8078ef356b7d29b570499",
     "src/assets/ticket-symbols/topics_umbruch.svg": "682e10660b4f896e7b2b52e2d487844248754871060210669cd66cb64011b70e",
     "src/assets/ticket-symbols/topics_uni.svg": "45b565524ec66eff4b5f87a12729afc958d5ff2027af337f8472ecde0fe1bd19",
+    "src/assets/ticket-symbols/topics.svg": "bfce095b28736f6d8062ff49a031154951a3d94c8953adf7e249ba69b777db97",
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
-    "src/components/CapabilityBoard.astro": "3c2dcfeec112e396671d86cc75d28f211faf34f96951d23a4c8a7509055c8dbe",
+    "src/components/CapabilityBoard.astro": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
-    "src/components/Header.astro": "7df14c212ba9641588810d8a72415d9ceb276d8440664b986d83b37c0b28aef1",
+    "src/components/Header.astro": "56f14cb5d989ddb2d002a7c225b5bdc5deccc8c016885b49cf4229fad218d798",
     "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
@@ -244,6 +244,7 @@
     "src/components/WorkerLeaseCountdown.astro": "c60b7c2e33e83d833ffdd85066c1aed3d18144108af9ffb0ef09c8960f33c52d",
     "src/components/WorkerPolicySettings.astro": "51bd535eb231b0bbc12b7802cd50daafc3b007b2e3c89b2563fe9df44507bdcd",
     "src/config/nav_config.json": "6dccd2d4fc7184f0148b2e8886baa984277e3ee37e4fd348ca69c34052cd9799",
+    "src/i18n/world.json": "5162900f4327c3b9143f7a38c29276e1f6ed9cee0617da86d361881a462fc2db",
     "src/layouts/BachLayout.astro": "4ac810003a1c3132f6d0bcec97566ce2ecfa7550d0d75664af37aadaf52195d8",
     "src/lib/agent-avatar-browser.mjs": "02b51e85852532af3549dbecd1b4c1b1bf7bf48eda7340f23523c7597ec44abf",
     "src/lib/agent-avatar-catalog.mjs": "6da91323ab28c22ddbe8555a3f59497c61c1d406bcd692fcd5bfb26643a82fc0",
@@ -257,10 +258,11 @@
     "src/lib/domain-pins.mjs": "e6c4fd1700f0cfc0995c17c0ec3cb66d3ac12f7457eff13b96421d314999a813",
     "src/lib/domain-routes.mjs": "2dd127d08b0f53110306e09ca256b75c138ca56fcc444f0f4e62f59f75403dd3",
     "src/lib/gemini-avatar-assets.mjs": "72f30b9af1c0374ab30aef6cdb5f5a662af8d4f9448ff86596e0b6fd607e115a",
+    "src/lib/i18n.mjs": "726aded8be4e35e10363ad7fccb85f5e4b041db2639884d67a65c4f9ef76e5ab",
     "src/lib/installation-updates-model.mjs": "4a64629270ef1a1b911d365f8bb001f46859dfbeae6a11e5c78dbf483d5bb8c2",
     "src/lib/model-sockets-ui.mjs": "1325abb9e163348b3542e906ab5fa16e7b905a2ad10332369db5245f6c0a7379",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
-    "src/lib/navigation-route-inventory.mjs": "6bb0c8fa3818aa7b4f1dc086031ac1dbf27413f74a144d906feba5362271c045",
+    "src/lib/navigation-route-inventory.mjs": "552b78fd401da4d34446c6053440ea6cc159ce5c677af22e9b44fc55bae0de3b",
     "src/lib/settings-connections.mjs": "1ef6196556c70917058cc243b6f5609468743feb49de219f42d3aec2be960955",
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
     "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
@@ -285,7 +287,8 @@
     "src/pages/agenten/subscription-agents.astro": "6913198067d5130b5281509744f1cec6b148dd54de39bbe24e482b566b362b29",
     "src/pages/artefakte.astro": "155856d3bc6dda60ec2ff57173ddb8186c0d9f9b68e35d60bf100161fb2d5ab5",
     "src/pages/ati.astro": "9654c6490c123e02a4f2e6028d1b22ce8740b2e0e0de2a2448f13c3ec4fd1f84",
-    "src/pages/chat.astro": "60bdf982719bd83ee54d9627be6b6f702c4e4dcd08d1b3929bb46fcdfa428df8",
+    "src/pages/chat.astro": "ca664ed260a538be9afa1403c24da48288d0f6b965360586e146bdfa003df41c",
+    "src/pages/connectors.astro": "8bbf1117573a7019b9a4bc6016930000fe9b01affab9a29e2cf8b627235b4b4d",
     "src/pages/daemon.astro": "9843948aaa9cd0962e92a4e082bdb5fbd10096ca89842c7bbc1690d14db8ffa8",
     "src/pages/denkarium.astro": "4ccb31a635bf1559382f23fd2e714d3d01d360c096fa02d0b863679c6bd4e4b7",
     "src/pages/domains.astro": "c16adc26bae104f8952a99ca3d40367b0ed7e9fc24289dfdb88d66ebb4934a7d",
@@ -302,9 +305,12 @@
     "src/pages/life.astro": "e586862ecd94c293e24dafd14e2dd41be061a609140f7a952eae990abb8dc89a",
     "src/pages/maintenance.astro": "eb7ed835e311b7e2a140b53d199e2ee597adccbe5c067125994eddc95fbb1a7b",
     "src/pages/memory.astro": "47ab9040873b20341882c6d9463eb70a523ef6c4852d5e4357f9bb3f397f6952",
+    "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
     "src/pages/notizen.astro": "481e8af4ab7b4607290b3e0401ad54127023ec8176d77a9ffe2a7a272722bc87",
     "src/pages/persoenlich.astro": "f4f26c145c11721776c7e150032ed1d6a0d2d3e3f6172e6f891f821863ebc700",
     "src/pages/routinen.astro": "340e830452394e3459046d39717767de8ad263506939f28827a641dc1e1249bb",
+    "src/pages/sensation.astro": "1c9644cf4505354aebd82ce6b84220bd6d39337718bfb189cc9526f8b4812b31",
+    "src/pages/sessions.astro": "bb515024c04451ca8b7e3b586350707a7da29db6dc5467c2172aca3ff87a8774",
     "src/pages/settings.astro": "4de68d122b57cf8a180304f133ea348e5c6be717e80a78169cfa220463184239",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
@@ -312,6 +318,7 @@
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "6876c0537889cd9854dbbc05eaa8a5b0d16a45b4d282802d0c003a8abb4b397a",
+    "src/pages/talk.astro": "27d49d2f66828193dd002d23c0100b334e00875bdae30e37e53ccdc564967801",
     "src/pages/tasks.astro": "c5f9c6532f57005fd7b77ebbce2ba0e231175222f2679cb976ea9898a750f658",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
@@ -323,7 +330,7 @@
     "src/scripts/installation-updates.mjs": "c6fcc4aaee0cb0056246cb870008e27e6a538cb18037ca4fe6793f68cbbbcb6c",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
-    "src/styles/main.css": "41b78dc86ef4063aab1224b97bc3bfa85a60450711111a315982733b7a5c89d0",
+    "src/styles/main.css": "6d35a309c0123f5e0ce12c057241650b037d6490894ff1deadbf547bcb7b932a",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
     "tests/agent-color.test.mjs": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
@@ -337,11 +344,11 @@
     "tests/dompurify-compatibility.test.mjs": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
     "tests/fabrika.test.mjs": "25c92eb969278125447beafe4307d0be77bf64b82a7ac78fcd84594015c1067e",
     "tests/fixtures/dompurify-regressions.html": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
-    "tests/frontend-parity.test.mjs": "b85d5c61811fa494fa45ef1fc96ffd1e1156365e0ec9f6a1c31f79333e381bc0",
+    "tests/frontend-parity.test.mjs": "edd924216e4383b8094f53e61cc6453064118b723b10987a5523bea1fb8e66de",
     "tests/gui-shell-navigation.test.mjs": "169079fe4ea3fe54e91d22eb3a1bd1e3bd8009000ccfd8f052758c375a57887b",
     "tests/gui100-regressions.test.mjs": "036dd6c383c31630f4ce2a9e5e359fc2d18d71645d3c85fbc1f9eb61515c22d5",
     "tests/installation-updates-model.test.mjs": "1bade7c2d7173da34f2c0decc5de811e24e5d9ef616b1edcbad4f003eb29d924",
-    "tests/legacy-route-fallback.test.mjs": "d5c08ba2d492a9856bae6566770a8c7c80602f43492d279b860b7177068d5b5a",
+    "tests/legacy-route-fallback.test.mjs": "4f3d0f210ccb35ee904f493695636b966e5761460c66add8cec4c2f3f286d7d3",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
     "tests/memory-facts.test.mjs": "a7c9724c7e28631f9a661fcde596f81fe5dd93375838259a6cf55244c24f3897",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
@@ -4993,6 +5000,96 @@
           "path": "tests/task-rationale.test.mjs",
           "previous_sha256": null,
           "sha256": "b4b110fb3ea3ca97e1d385a460c03aac4a69e50cf58f39c1a10fb0f25ffa7889"
+        }
+      ]
+    },
+    {
+      "scope": "Ocean-BACH Release 0.2.31: layout width normalization, world i18n pack, and /chat, /modules, /talk, /sensation, /connectors, /sessions pages",
+      "files": [
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "9bb5045fc3a34d2a176adad672a7a6ace4d41131ac941d2c28195a519b087467",
+          "sha256": "c883d1e76c7911d5f4377220f3a3e05ce68a4f7feffcdc5af9dbd2a77116c70d"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "80d3d2374e9acdde76c0843d79950f7c4bda199769d521d47cc66ff0d8d9b493",
+          "sha256": "ea89ae9d120aeeeb04599c9333c404a5de14bac63727f32c7712fed9854ba8a2"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "c0cd44e1fcdffed0bf2345e51c7e1393eed19f0cf81f2dd43db57e118e26396c",
+          "sha256": "c5ad4340021880acda54159fccd9dc986a52a4987d8a787678cbbf5b1a5b5ac7"
+        },
+        {
+          "path": "src/components/CapabilityBoard.astro",
+          "previous_sha256": "3c2dcfeec112e396671d86cc75d28f211faf34f96951d23a4c8a7509055c8dbe",
+          "sha256": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b"
+        },
+        {
+          "path": "src/components/Header.astro",
+          "previous_sha256": "7df14c212ba9641588810d8a72415d9ceb276d8440664b986d83b37c0b28aef1",
+          "sha256": "56f14cb5d989ddb2d002a7c225b5bdc5deccc8c016885b49cf4229fad218d798"
+        },
+        {
+          "path": "src/lib/navigation-route-inventory.mjs",
+          "previous_sha256": "6bb0c8fa3818aa7b4f1dc086031ac1dbf27413f74a144d906feba5362271c045",
+          "sha256": "552b78fd401da4d34446c6053440ea6cc159ce5c677af22e9b44fc55bae0de3b"
+        },
+        {
+          "path": "src/pages/chat.astro",
+          "previous_sha256": "60bdf982719bd83ee54d9627be6b6f702c4e4dcd08d1b3929bb46fcdfa428df8",
+          "sha256": "ca664ed260a538be9afa1403c24da48288d0f6b965360586e146bdfa003df41c"
+        },
+        {
+          "path": "src/styles/main.css",
+          "previous_sha256": "41b78dc86ef4063aab1224b97bc3bfa85a60450711111a315982733b7a5c89d0",
+          "sha256": "6d35a309c0123f5e0ce12c057241650b037d6490894ff1deadbf547bcb7b932a"
+        },
+        {
+          "path": "tests/frontend-parity.test.mjs",
+          "previous_sha256": "b85d5c61811fa494fa45ef1fc96ffd1e1156365e0ec9f6a1c31f79333e381bc0",
+          "sha256": "edd924216e4383b8094f53e61cc6453064118b723b10987a5523bea1fb8e66de"
+        },
+        {
+          "path": "tests/legacy-route-fallback.test.mjs",
+          "previous_sha256": "d5c08ba2d492a9856bae6566770a8c7c80602f43492d279b860b7177068d5b5a",
+          "sha256": "4f3d0f210ccb35ee904f493695636b966e5761460c66add8cec4c2f3f286d7d3"
+        },
+        {
+          "path": "src/i18n/world.json",
+          "previous_sha256": null,
+          "sha256": "5162900f4327c3b9143f7a38c29276e1f6ed9cee0617da86d361881a462fc2db"
+        },
+        {
+          "path": "src/lib/i18n.mjs",
+          "previous_sha256": null,
+          "sha256": "726aded8be4e35e10363ad7fccb85f5e4b041db2639884d67a65c4f9ef76e5ab"
+        },
+        {
+          "path": "src/pages/modules.astro",
+          "previous_sha256": null,
+          "sha256": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1"
+        },
+        {
+          "path": "src/pages/talk.astro",
+          "previous_sha256": null,
+          "sha256": "27d49d2f66828193dd002d23c0100b334e00875bdae30e37e53ccdc564967801"
+        },
+        {
+          "path": "src/pages/sensation.astro",
+          "previous_sha256": null,
+          "sha256": "1c9644cf4505354aebd82ce6b84220bd6d39337718bfb189cc9526f8b4812b31"
+        },
+        {
+          "path": "src/pages/connectors.astro",
+          "previous_sha256": null,
+          "sha256": "8bbf1117573a7019b9a4bc6016930000fe9b01affab9a29e2cf8b627235b4b4d"
+        },
+        {
+          "path": "src/pages/sessions.astro",
+          "previous_sha256": null,
+          "sha256": "bb515024c04451ca8b7e3b586350707a7da29db6dc5467c2172aca3ff87a8774"
         }
       ]
     }

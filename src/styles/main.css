@@ -1360,7 +1360,60 @@ a:not(.nav-item):not(.dropdown-item):not([class*="btn"]):hover {
     max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 1.25rem;
+}
+
+/* Normalize nested page wrappers inside #main-content so pages never jump horizontally */
+#main-content > .running-page,
+#main-content > .fabrika-page,
+#main-content > .subscription-page,
+#main-content > .sessions-page,
+#main-content > .domains-page,
+#main-content > .routines-page,
+#main-content > .settings-page,
+#main-content > .artifacts-page,
+#main-content > .usecases-page,
+#main-content > .life-page,
+#main-content > .legacy-route-fallback,
+#main-content > .chat-page,
+#main-content > .modules-page,
+#main-content > .talk-page,
+#main-content > .sensation-page,
+#main-content > .connectors-page {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.lang-switcher {
+    appearance: none;
+    padding: 0.32rem 0.6rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--shell-border, var(--border));
+    background: var(--bg-card, var(--bg-panel));
+    color: var(--text);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    line-height: 1.2;
+}
+
+.lang-switcher:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.subnav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.5rem 0;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
 }
 
 .grid {

@@ -1,0 +1,79 @@
+---
+// sensation.astro - Unified ELLMOS Sensation Camera, Mic, Presence & Consent Panel
+import BachLayout from "../layouts/BachLayout.astro";
+---
+
+<BachLayout title="ELLMOS Sensation · Sensorik & Präsenz" currentPath="/governance">
+  <div class="sensation-page">
+    <header class="card-header" style="margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
+      <div>
+        <span class="badge">👁️ ellmos-sensation · Kamera, Mikrofon, Sound &amp; Präsenz-Gate</span>
+        <h1 style="margin:0.35rem 0 0.2rem;font-size:1.5rem;">ELLMOS Sensation — Geräte-Sensorik &amp; Präsenzschutz</h1>
+        <p style="margin:0;color:var(--text-muted);font-size:0.9rem;">
+          Berechtigungsgesteuerter Zugriff auf Kamera, Mikrofone und Klangerzeugung. Erkennt Nutzer-Präsenz am PC und pausiert bei Anwesenheit automatisch störende Desktop-Automationen (<code>open-compute</code>).
+        </p>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <a href="/governance" class="btn btn-secondary">🛡️ Governance &amp; Control</a>
+        <a href="/talk" class="btn btn-secondary">🎙️ ELLMOS Talk</a>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-3" style="margin-bottom:1.5rem;">
+      <section class="card">
+        <span class="badge">📷 Kamera-Gate</span>
+        <h2 style="margin:0.4rem 0;font-size:1.15rem;" id="sen-cam-state">Prüfe Berechtigung …</h2>
+        <p style="margin:0 0 0.75rem;font-size:0.84rem;color:var(--text-muted);">Präsenzerkennung am Arbeitsplatz (Opt-in über Tray / Governance).</p>
+        <button type="button" class="btn btn-secondary" data-perm-toggle="camera">Kamera umschalten</button>
+      </section>
+      <section class="card">
+        <span class="badge">🎙️ Mikrofon-Gate</span>
+        <h2 style="margin:0.4rem 0;font-size:1.15rem;" id="sen-mic-state">Prüfe Berechtigung …</h2>
+        <p style="margin:0 0 0.75rem;font-size:0.84rem;color:var(--text-muted);">Steuert den Zugriff für <code>ellmos-voice-io</code> und <code>ellmos-talk</code>.</p>
+        <button type="button" class="btn btn-secondary" data-perm-toggle="microphone">Mikrofon umschalten</button>
+      </section>
+      <section class="card">
+        <span class="badge">🖥️ Open-Compute Guard</span>
+        <h2 style="margin:0.4rem 0;font-size:1.15rem;" id="sen-guard-state">Aktiv (Nutzer hat Vorrang)</h2>
+        <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Sobald Nutzer-Präsenz erkannt wird, pausiert <code>open-compute</code> automatisch.</p>
+      </section>
+    </div>
+  </div>
+
+  <script is:inline>
+    (async function initSensationPage() {
+      const camEl = document.getElementById('sen-cam-state');
+      const micEl = document.getElementById('sen-mic-state');
+      let perms = {};
+
+      async function loadPerms() {
+        try {
+          const res = await fetch('/api/permissions');
+          if (!res.ok) return;
+          const data = await res.json();
+          perms = data.permissions || data || {};
+          if (camEl) camEl.textContent = perms.camera ? '✅ Freigegeben' : '🔒 Gesperrt (Fail-Closed)';
+          if (micEl) micEl.textContent = (perms.microphone || perms.speech_to_text) ? '✅ Freigegeben' : '🔒 Gesperrt (Fail-Closed)';
+        } catch (_) {}
+      }
+
+      document.querySelectorAll('[data-perm-toggle]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const key = btn.getAttribute('data-perm-toggle');
+          if (!key) return;
+          const next = !perms[key];
+          try {
+            await fetch('/api/permissions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ [key]: next }),
+            });
+            await loadPerms();
+          } catch (_) {}
+        });
+      });
+
+      await loadPerms();
+    })();
+  </script>
+</BachLayout>

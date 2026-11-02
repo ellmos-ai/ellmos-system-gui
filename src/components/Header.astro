@@ -130,6 +130,20 @@ function lineIconSvg(id: string): string {
       </a>
     </div>
 
+    <!-- World Language Pack Switcher -->
+    <select id="lang-switcher" class="lang-switcher" aria-label="Sprache wählen / Select language" title="World Language Pack (10 Sprachen)">
+      <option value="de">🇩🇪 DE</option>
+      <option value="en">🇬🇧 EN</option>
+      <option value="es">🇪🇸 ES</option>
+      <option value="fr">🇫🇷 FR</option>
+      <option value="zh">🇨🇳 ZH</option>
+      <option value="ja">🇯🇵 JA</option>
+      <option value="ru">🇷🇺 RU</option>
+      <option value="ar">🇸🇦 AR</option>
+      <option value="pt">🇵🇹 PT</option>
+      <option value="hi">🇮🇳 HI</option>
+    </select>
+
     <!-- Theme Switcher -->
     <div class="theme-switcher" id="theme-switcher" role="group" aria-label="Farbschema">
       <button class="theme-btn" data-theme="dark" aria-label="Dunkler Modus" title="Dunkler Modus (Dark)" type="button"><span class="icon-glyph icon-glyph-line" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span><span class="icon-glyph icon-glyph-emoji" aria-hidden="true">🌙</span></button>
@@ -543,6 +557,11 @@ function lineIconSvg(id: string): string {
       .sort(([leftKey, leftValue], [rightKey, rightValue]) => leftKey.localeCompare(rightKey) || leftValue.localeCompare(rightValue))
       .map(([key, entry]) => `${encodeURIComponent(key)}=${encodeURIComponent(entry)}`)
       .join('&');
+    if (normalizePath(target.pathname) === '/user-inbox'
+        && normalizePath(current.pathname) === '/agenten/sessions'
+        && current.searchParams.get('tab') === 'inbox') {
+      return true;
+    }
     return target.origin === origin
       && normalizePath(target.pathname) === normalizePath(current.pathname)
       && querySignature(target.search) === querySignature(current.search);
@@ -568,4 +587,9 @@ function lineIconSvg(id: string): string {
   if (domainPinsMenu) new MutationObserver(refreshActiveNavigation).observe(domainPinsMenu, { childList: true, subtree: true });
 </script>
 
-<script>import {initializeDomainMenu} from "../lib/domain-pins.mjs";initializeDomainMenu();</script>
+<script>
+  import {initializeDomainMenu} from "../lib/domain-pins.mjs";
+  import {initializeWorldI18n} from "../lib/i18n.mjs";
+  initializeDomainMenu();
+  initializeWorldI18n();
+</script>

@@ -1,0 +1,49 @@
+---
+// connectors.astro - Unified Connectors & Embodied Control Hub (Messaging, SmartHome, Robotics MCP)
+import BachLayout from "../layouts/BachLayout.astro";
+---
+
+<BachLayout title="Connectoren & Geräte-Steuerung" currentPath="/settings">
+  <div class="connectors-page">
+    <header class="card-header" style="margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
+      <div>
+        <span class="badge">🔌 Connectoren · Messaging, HomeControl &amp; Robotics MCP</span>
+        <h1 style="margin:0.35rem 0 0.2rem;font-size:1.5rem;">Connectoren &amp; Geräte-Steuerung verbinden</h1>
+        <p style="margin:0;color:var(--text-muted);font-size:0.9rem;">
+          Verbinde Messaging-Kanäle (Telegram, WhatsApp, Discord, E-Mail-Bridge) sowie Smart-Home-Geräte (<code>ellmos-homecontrol</code>) und Roboter-Telemetrie (<code>ellmos-robotics</code> MCP).
+        </p>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <a href="/settings?tab=connections" class="btn btn-secondary">⚙️ Verbindungs-Einstellungen</a>
+        <a href="/system/installation-updates" class="btn btn-secondary">📦 Installer-Assistent</a>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-3">
+      <section class="card">
+        <span class="badge">📱 Telegram Bot</span>
+        <h2 style="margin:0.4rem 0;font-size:1.15rem;">Telegram Connector</h2>
+        <p style="margin:0 0 0.75rem;font-size:0.84rem;color:var(--text-muted);">Secret-Ref: <code>keyring://ellmos/telegram</code> oder <code>ENV:TELEGRAM_BOT_TOKEN</code>.</p>
+        <a href="/settings?tab=connections" class="btn btn-primary btn-sm">Konfigurieren</a>
+      </section>
+      <section class="card">
+        <span class="badge">💬 WhatsApp &amp; Discord</span>
+        <h2 style="margin:0.4rem 0;font-size:1.15rem;">Multi-Channel Bridge</h2>
+        <p style="margin:0 0 0.75rem;font-size:0.84rem;color:var(--text-muted);">Secret-Ref: <code>ENV:WHATSAPP_API_TOKEN</code> / <code>ENV:DISCORD_BOT_TOKEN</code>.</p>
+        <a href="/settings?tab=connections" class="btn btn-primary btn-sm">Konfigurieren</a>
+      </section>
+      <section class="card">
+        <span class="badge">🏠 ellmos-homecontrol</span>
+        <h2 style="margin:0.4rem 0;font-size:1.15rem;">SmartHome &amp; Haushaltsgeräte</h2>
+        <p style="margin:0 0 0.75rem;font-size:0.84rem;color:var(--text-muted);">HomeAssistant / Matter / MQTT Adapter mit Dry-Run-Safety-Gate.</p>
+        <a href="/modules" class="btn btn-secondary btn-sm">Modul-Status prüfen</a>
+      </section>
+      <section class="card">
+        <span class="badge">🤖 ellmos-robotics</span>
+        <h2 style="margin:0.4rem 0;font-size:1.15rem;">Robotics MCP Standard</h2>
+        <p style="margin:0 0 0.75rem;font-size:0.84rem;color:var(--text-muted);">MCP-Tools für Telemetrie, Pose, Not-Stopp (<code>robotics_emergency_stop</code>) &amp; Aktuatorik.</p>
+        <a href="/modules" class="btn btn-secondary btn-sm">Modul-Status prüfen</a>
+      </section>
+    </div>
+  </div>
+</BachLayout>

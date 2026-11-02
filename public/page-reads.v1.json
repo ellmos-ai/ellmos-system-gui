@@ -27,7 +27,14 @@
  ],
  "pages": {
   "/ati": [],
-  "/chat": [],
+  "/chat": [
+   {
+    "method": "POST",
+    "path": "/api/chat/send",
+    "required": false
+   }
+  ],
+  "/connectors": [],
   "/denkarium": [],
   "/financial": [],
   "/gesundheit": [],
@@ -46,8 +53,40 @@
   "/inbox": [],
   "/kontakte": [],
   "/maintenance": [],
+  "/modules": [
+   {
+    "method": "GET",
+    "path": "/api/ocean/stack-bindings",
+    "required": true
+   },
+   {
+    "method": "GET",
+    "path": "/api/ocean/transfer-contracts",
+    "required": false
+   }
+  ],
   "/persoenlich": [],
+  "/sensation": [
+   {
+    "method": "GET",
+    "path": "/api/permissions",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/permissions",
+    "required": false
+   }
+  ],
+  "/sessions": [],
   "/steuer": [],
+  "/talk": [
+   {
+    "method": "GET",
+    "path": "/api/talk/state",
+    "required": false
+   }
+  ],
   "/tools": [],
   "/": [
    {

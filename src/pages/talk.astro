@@ -1,0 +1,120 @@
+---
+// talk.astro - Unified ELLMOS Talk Live Voice & Emotion Visualizer inside BachLayout
+import BachLayout from "../layouts/BachLayout.astro";
+---
+
+<BachLayout title="ELLMOS Talk · Live Voice & Visualizer" currentPath="/chat">
+  <div class="talk-page">
+    <header class="card-header" style="margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
+      <div>
+        <span class="badge">🎙️ ellmos-talk · Dual-Model Live Voice &amp; Emotion Visualizer</span>
+        <h1 style="margin:0.35rem 0 0.2rem;font-size:1.5rem;">ELLMOS Talk — Live-Sprachdialog</h1>
+        <p style="margin:0;color:var(--text-muted);font-size:0.9rem;">
+          Abwechselndes Live-Sprechen über ein schnelles vorgeschaltetes Sprachmodell neben dem Hauptmodell (Buddha / Claude / Gemini / Codex) mit emotionsgesteuerter Muster- und Farbvisualisierung.
+        </p>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <a href="/chat" class="btn btn-secondary">💬 Zurück zum Chat</a>
+        <a href="/sensation" class="btn btn-secondary">👁️ Sensation &amp; Mikrofon-Rechte</a>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-2">
+      <section class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:360px;text-align:center;gap:1rem;">
+        <div id="talk-orb" style="width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #38bdf8, #1d4ed8 65%, #0f172a);box-shadow:0 0 48px rgba(56,189,248,0.45);display:flex;align-items:center;justify-content:center;font-size:3rem;transition:all 0.35s ease;">
+          <span id="talk-emoji">🧘</span>
+        </div>
+        <div>
+          <strong id="talk-state-title" style="font-size:1.15rem;display:block;">Modus: Bereit (Wake-Word: „Hey Ocean“ / „Hey Buddha“)</strong>
+          <span id="talk-emotion-badge" class="badge" style="margin-top:0.35rem;display:inline-block;">Emotion: Ruhig · Muster: Harmonische Welle</span>
+        </div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;">
+          <button type="button" class="btn btn-primary" id="talk-toggle-btn">🎙️ Live-Gespräch starten</button>
+          <button type="button" class="btn btn-secondary" id="talk-emotion-cycle-btn">🎨 Emotion / Muster testen</button>
+        </div>
+      </section>
+
+      <section class="card" style="display:flex;flex-direction:column;gap:0.9rem;">
+        <h2 class="card-title">Dual-Model &amp; Stimmen-Konfiguration</h2>
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.85rem;">
+          <span>Hauptmodell (Deep Reasoning / Persona):</span>
+          <select id="talk-main-model" class="lang-switcher">
+            <option value="buddha">🧘 Buddha (qwen3.8:27b-mlx)</option>
+            <option value="claude">🟣 Claude Opus / Sonnet</option>
+            <option value="gemini">🔵 Gemini Pro / Flash</option>
+            <option value="codex">🟢 GPT / Codex</option>
+          </select>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.85rem;">
+          <span>Vorgeschaltetes Fast-Voice-Modell (Turn-Taking &amp; Rückmeldung):</span>
+          <select id="talk-fast-model" class="lang-switcher">
+            <option value="qwen-fast">⚡ qwen3-0.6b-voice (Lokal · &lt;120ms Latenz)</option>
+            <option value="piper-de-en">🗣️ Piper / Kokoro TTS (Deutsch &amp; Englisch + World)</option>
+          </select>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.85rem;">
+          <span>Aktivierungswort (Wake-Word):</span>
+          <input type="text" id="talk-wakeword" value="Hey Ocean" style="padding:0.5rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);" />
+        </label>
+        <p id="talk-api-status" style="margin:0;font-size:0.8rem;color:var(--text-muted);" role="status">
+          Prüfe <code>/api/talk/state</code> …
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script is:inline>
+    (function initTalkPage() {
+      const orb = document.getElementById('talk-orb');
+      const emojiEl = document.getElementById('talk-emoji');
+      const stateTitle = document.getElementById('talk-state-title');
+      const emotionBadge = document.getElementById('talk-emotion-badge');
+      const toggleBtn = document.getElementById('talk-toggle-btn');
+      const cycleBtn = document.getElementById('talk-emotion-cycle-btn');
+      const apiStatus = document.getElementById('talk-api-status');
+
+      const moods = [
+        { name: 'Ruhig', pattern: 'Harmonische Welle', emoji: '🧘', color: '#38bdf8' },
+        { name: 'Fokussiert', pattern: 'Konzentrischer Puls', emoji: '🧠', color: '#818cf8' },
+        { name: 'Freudig', pattern: 'Goldene Resonanz', emoji: '😊', color: '#f59e0b' },
+        { name: 'Aufmerksam', pattern: 'Smaragd-Radar', emoji: '👂', color: '#10b981' },
+      ];
+      let moodIdx = 0;
+      let active = false;
+
+      function applyMood(m) {
+        if (orb) {
+          orb.style.background = `radial-gradient(circle at 35% 35%, ${m.color}, #0f172a 75%)`;
+          orb.style.boxShadow = `0 0 56px ${m.color}88`;
+        }
+        if (emojiEl) emojiEl.textContent = m.emoji;
+        if (emotionBadge) emotionBadge.textContent = `Emotion: ${m.name} · Muster: ${m.pattern}`;
+      }
+
+      cycleBtn?.addEventListener('click', () => {
+        moodIdx = (moodIdx + 1) % moods.length;
+        applyMood(moods[moodIdx]);
+      });
+
+      toggleBtn?.addEventListener('click', () => {
+        active = !active;
+        if (stateTitle) {
+          stateTitle.textContent = active
+            ? 'Modus: Zuhören aktiv (Mikrofon-Stream verbunden)'
+            : 'Modus: Bereit (Wake-Word: „Hey Ocean“ / „Hey Buddha“)';
+        }
+        toggleBtn.textContent = active ? '⏹️ Live-Gespräch beenden' : '🎙️ Live-Gespräch starten';
+        applyMood(moods[active ? 3 : 0]);
+      });
+
+      fetch('/api/talk/state')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data && apiStatus) {
+            apiStatus.textContent = `Verbunden mit ellmos-talk Engine (Status: ${data.mode || 'idle'}).`;
+          }
+        })
+        .catch(() => {});
+    })();
+  </script>
+</BachLayout>

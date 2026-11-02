@@ -1,0 +1,18 @@
+---
+// sessions.astro - Unified redirect/entry for /sessions -> /agenten/sessions
+import BachLayout from "../layouts/BachLayout.astro";
+---
+
+<BachLayout title="Sitzungen & Nachrichten" currentPath="/agenten/sessions">
+  <div class="sessions-page">
+    <section class="card">
+      <h1 style="margin:0 0 0.5rem;font-size:1.35rem;">Sitzungen &amp; Nachrichten werden geöffnet …</h1>
+      <p style="margin:0;color:var(--text-muted);">
+        Weiterleitung zu <a href="/agenten/sessions">/agenten/sessions</a>.
+      </p>
+    </section>
+  </div>
+  <script is:inline>
+    window.location.replace('/agenten/sessions' + window.location.search + window.location.hash);
+  </script>
+</BachLayout>

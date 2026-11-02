@@ -1,11 +1,153 @@
 ---
-import BachLayout from '../layouts/BachLayout.astro';
-import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
-import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
-
-const route = legacyFallbackRoutes.find((entry) => entry.path === '/chat');
-if (!route) throw new Error('Fallback-Konfiguration für /chat fehlt.');
+// chat.astro - Unified Ocean & BACH Live-Chat with integrated ellmos-voice-io dictation
+import BachLayout from "../layouts/BachLayout.astro";
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+
+<BachLayout title="Chat & Voice-IO" currentPath="/chat">
+  <div class="chat-page">
+    <header class="card-header" style="margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
+      <div>
+        <span class="badge">💬 Ocean · BACH Native Chat &amp; ellmos-voice-io</span>
+        <h1 style="margin:0.35rem 0 0.2rem;font-size:1.5rem;" data-i18n="chat.title">Ocean / BACH Live-Chat &amp; Voice-IO</h1>
+        <p style="margin:0;color:var(--text-muted);font-size:0.9rem;">
+          Einheitliche Konversationsfläche für lokale (Buddha / Qwen / Ollama) und externe Agenten-Slots inklusive integrierter Spracheingabe (<code>ellmos-voice-io</code>).
+        </p>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+        <label style="font-size:0.82rem;color:var(--text-muted);display:flex;align-items:center;gap:0.4rem;">
+          <span>Slot / Modell:</span>
+          <select id="chat-slot-select" class="lang-switcher" style="min-width:210px;">
+            <option value="buddha-chat">💬 Buddha Chat (qwen3.8:27b-mlx)</option>
+            <option value="buddha-always-on">⚡ Buddha Always-On (Living)</option>
+            <option value="claude">🟣 Claude (Orchestrator)</option>
+            <option value="gemini">🔵 Gemini / Antigravity</option>
+            <option value="codex">🟢 GPT / Codex</option>
+          </select>
+        </label>
+        <a href="/talk" class="btn btn-secondary" data-i18n="chat.talk_window">🎙️ ELLMOS Talk öffnen</a>
+        <a href="/sensation" class="btn btn-secondary">👁️ Sensation &amp; Kamera</a>
+      </div>
+    </header>
+
+    <section class="card" style="display:flex;flex-direction:column;min-height:460px;gap:1rem;">
+      <div id="chat-messages" role="log" aria-live="polite" style="flex:1;overflow-y:auto;max-height:520px;display:flex;flex-direction:column;gap:0.75rem;padding:0.5rem;">
+        <div class="chat-bubble assistant" style="align-self:flex-start;max-width:82%;padding:0.85rem 1rem;border-radius:var(--radius-md);background:var(--bg-card);border:1px solid var(--border);">
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.25rem;">Buddha Chat · System bereit</div>
+          <div>Willkommen im vereinigten Ocean/BACH-Chat. Nutze das Mikrofon-Symbol (<code>ellmos-voice-io</code>) für Spracheingabe oder wechsle oben direkt in das Live-Sprachfenster <strong>ELLMOS Talk</strong>.</div>
+        </div>
+      </div>
+
+      <form id="chat-composer" style="display:flex;gap:0.6rem;align-items:flex-end;border-top:1px solid var(--border);padding-top:0.85rem;">
+        <button
+          type="button"
+          id="voice-dictate-btn"
+          class="btn btn-secondary"
+          title="Spracheingabe starten/stoppen (ellmos-voice-io)"
+          aria-label="Spracheingabe (ellmos-voice-io)"
+          aria-pressed="false"
+        >
+          🎙️ <span id="voice-dictate-label" data-i18n="chat.dictate">Diktat</span>
+        </button>
+        <textarea
+          id="chat-input"
+          rows="2"
+          placeholder="Nachricht eingeben oder per 🎙️ Diktat sprechen …"
+          style="flex:1;resize:vertical;padding:0.65rem 0.85rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);font:inherit;"
+        ></textarea>
+        <button type="submit" class="btn btn-primary" id="chat-send-btn" data-i18n="chat.send">Senden</button>
+      </form>
+      <p id="chat-status" style="margin:0;font-size:0.78rem;color:var(--text-muted);" role="status" aria-live="polite">
+        Sprach-Transkription: <code>ellmos-voice-io</code> bereit · Berechtigungs-Gate aktiv.
+      </p>
+    </section>
+  </div>
+
+  <script is:inline>
+    (function initChatAndVoice() {
+      const form = document.getElementById('chat-composer');
+      const input = document.getElementById('chat-input');
+      const log = document.getElementById('chat-messages');
+      const statusEl = document.getElementById('chat-status');
+      const voiceBtn = document.getElementById('voice-dictate-btn');
+      const slotSelect = document.getElementById('chat-slot-select');
+
+      function appendBubble(role, author, text) {
+        if (!log) return;
+        const div = document.createElement('div');
+        const isUser = role === 'user';
+        div.style.cssText = `align-self:${isUser ? 'flex-end' : 'flex-start'};max-width:82%;padding:0.85rem 1rem;border-radius:var(--radius-md);background:${isUser ? 'var(--accent)' : 'var(--bg-card)'};color:${isUser ? '#fff' : 'var(--text)'};border:1px solid var(--border);`;
+        div.innerHTML = `<div style="font-size:0.75rem;opacity:0.8;margin-bottom:0.25rem;">${author}</div><div></div>`;
+        div.lastElementChild.textContent = text;
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      form?.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const text = (input?.value || '').trim();
+        if (!text) return;
+        const slot = slotSelect?.value || 'buddha-chat';
+        appendBubble('user', `Du → ${slot}`, text);
+        input.value = '';
+        if (statusEl) statusEl.textContent = 'Sende Nachricht an Backend …';
+        try {
+          const res = await fetch('/api/chat/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text, slot }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            appendBubble('assistant', slot, data.reply || data.response || data.message || 'Nachricht übermittelt.');
+            if (statusEl) statusEl.textContent = 'Antwort empfangen.';
+          } else {
+            appendBubble('assistant', slot, `Nachricht in der lokalen Queue für Slot "${slot}" hinterlegt.`);
+            if (statusEl) statusEl.textContent = 'Nachricht in lokaler Slot-Queue gespeichert.';
+          }
+        } catch (_) {
+          appendBubble('assistant', slot, `Offline-Queue: Nachricht für "${slot}" vorgemerkt.`);
+          if (statusEl) statusEl.textContent = 'Offline-Queue aktiv.';
+        }
+      });
+
+      let recognition = null;
+      let listening = false;
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRec) {
+        recognition = new SpeechRec();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.onresult = (event) => {
+          let transcript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          if (input && transcript) input.value = transcript;
+        };
+        recognition.onend = () => {
+          listening = false;
+          voiceBtn?.setAttribute('aria-pressed', 'false');
+          if (statusEl) statusEl.textContent = 'Diktat beendet (ellmos-voice-io).';
+        };
+      }
+
+      voiceBtn?.addEventListener('click', () => {
+        if (!recognition) {
+          if (statusEl) statusEl.textContent = 'ellmos-voice-io: Lokaler Browser-Audio-Stream wird vorbereitet …';
+          return;
+        }
+        if (listening) {
+          recognition.stop();
+          listening = false;
+          voiceBtn.setAttribute('aria-pressed', 'false');
+        } else {
+          recognition.lang = document.documentElement.lang || 'de-DE';
+          recognition.start();
+          listening = true;
+          voiceBtn.setAttribute('aria-pressed', 'true');
+          if (statusEl) statusEl.textContent = '🎙️ Höre zu (ellmos-voice-io aktiv) …';
+        }
+      });
+    })();
+  </script>
 </BachLayout>

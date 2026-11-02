@@ -7,7 +7,7 @@ import {commonRoutePaths, legacyFallbackRoutes} from '../src/lib/navigation-rout
 const root = process.cwd();
 const pagesRoot = join(root, 'src', 'pages');
 const expectedFallbackPaths = [
-  '/persoenlich', '/chat', '/denkarium', '/financial', '/gesundheit', '/ati', '/steuer',
+  '/persoenlich', '/denkarium', '/financial', '/gesundheit', '/ati', '/steuer',
   '/inbox', '/help', '/tools', '/maintenance', '/kontakte', '/daemon',
 ];
 
@@ -17,7 +17,7 @@ function pageSource(routePath) {
 
 test('the measured legacy inventory has one visible fallback per unresolved route', () => {
   assert.deepEqual(legacyFallbackRoutes.map((route) => route.path), expectedFallbackPaths);
-  assert.deepEqual(commonRoutePaths, ['/routinen']);
+  assert.deepEqual(commonRoutePaths, ['/routinen', '/chat']);
   for (const route of legacyFallbackRoutes) {
     assert.ok(existsSync(join(pagesRoot, `${route.path.slice(1)}.astro`)), route.path);
     assert.match(pageSource(route.path), /BachLayout/);

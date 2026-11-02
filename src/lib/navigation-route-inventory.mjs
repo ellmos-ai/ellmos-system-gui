@@ -4,7 +4,7 @@ export const fallbackTask = Object.freeze({
   label: 'Aufgabe #2468 öffnen',
 });
 
-export const commonRoutePaths = Object.freeze(['/routinen']);
+export const commonRoutePaths = Object.freeze(['/routinen', '/chat']);
 
 export const legacyFallbackRoutes = Object.freeze([
   {
@@ -13,13 +13,6 @@ export const legacyFallbackRoutes = Object.freeze([
     reason: 'Der BACH-Consumer liefert hier noch eine alte Assistenten-Vorlage.',
     nextHref: '/life',
     nextLabel: 'Life-Zentrale öffnen',
-  },
-  {
-    path: '/chat',
-    label: 'Chat',
-    reason: 'Der alte Chat-Pfad ist noch nicht an die gemeinsame Chat-Oberfläche gebunden.',
-    nextHref: '/agenten/running',
-    nextLabel: 'Living & Running öffnen',
   },
   {
     path: '/denkarium',

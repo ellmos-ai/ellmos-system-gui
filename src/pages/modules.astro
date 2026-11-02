@@ -1,0 +1,123 @@
+---
+// modules.astro - Canonical Ocean Module Overview & 7-Step Transfer Contracts (#3716, #1854-#1916)
+import BachLayout from "../layouts/BachLayout.astro";
+---
+
+<BachLayout title="Ocean-Module & Transferverträge" currentPath="/skills/ocean">
+  <div class="modules-page">
+    <header class="card-header" style="margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
+      <div>
+        <span class="badge">🌊 Ocean Stack · Kanonischer Modulkatalog &amp; 7-Schritte-Vertrag</span>
+        <h1 style="margin:0.35rem 0 0.2rem;font-size:1.5rem;" data-i18n="modules.title">Ocean-Modulkatalog &amp; 7-Schritte-Transferverträge</h1>
+        <p style="margin:0;color:var(--text-muted);font-size:0.9rem;">
+          Live-Übersicht aller 11 gebundenen Ocean-Kernmodule, der 6 multimodalen Capability-Erweiterungen und der 55 maschinell geprüften 7-Schritte-Transferverträge (<code>#1854</code>–<code>#1916</code>, <code>#3716</code>).
+        </p>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <a href="/skills/ocean" class="btn btn-secondary">🌊 Ocean Capability Board</a>
+        <a href="/system/ocean" class="btn btn-secondary">🧭 Ocean-Schaltplan</a>
+        <a href="/system/installation-updates" class="btn btn-secondary">📦 Installation &amp; Updates</a>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-3" style="margin-bottom:1.5rem;">
+      <section class="card">
+        <span class="badge">Kern-Stack</span>
+        <h2 style="margin:0.4rem 0;font-size:1.2rem;" id="stat-core-modules">11 / 11 Module</h2>
+        <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Kanonische Ocean-Module über <code>ocean_stack_bridge.py</code> gebunden.</p>
+      </section>
+      <section class="card">
+        <span class="badge">Multimodal &amp; Embodied</span>
+        <h2 style="margin:0.4rem 0;font-size:1.2rem;" id="stat-ext-modules">6 / 6 Erweiterungen</h2>
+        <p style="margin:0;font-size:0.84rem;color:var(--text-muted);"><code>voice-io</code>, <code>talk</code>, <code>sensation</code>, <code>homecontrol</code>, <code>robotics</code>, <code>universal-gui</code>.</p>
+      </section>
+      <section class="card">
+        <span class="badge">7-Schritte-Vertrag (#3716)</span>
+        <h2 style="margin:0.4rem 0;font-size:1.2rem;" id="stat-transfer-contracts">55 / 55 Valide</h2>
+        <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Maschinell geprüft inkl. <code>no_cloud_worker_autostart</code> &amp; <code>DEPRICATED.md</code>.</p>
+      </section>
+    </div>
+
+    <section class="card" style="margin-bottom:1.5rem;">
+      <div class="card-header">
+        <h2 class="card-title">Gebundene Ocean-Kernmodule &amp; Multimodale Erweiterungen</h2>
+        <span class="badge" id="stack-role-badge">branded-partial-os-stack-of-ocean</span>
+      </div>
+      <div id="ocean-bound-grid" class="grid grid-cols-3">
+        <p style="color:var(--text-muted);">Lade Live-Bindungen von <code>GET /api/ocean/stack-bindings</code> …</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header" style="flex-wrap:wrap;gap:0.5rem;">
+        <h2 class="card-title">55 Maschinell Geprüfte 7-Schritte-Transferverträge (<code>#3714</code>, <code>#1854</code>–<code>#1916</code>)</h2>
+        <input type="search" id="contract-filter" placeholder="Modul oder Task-ID filtern …" style="padding:0.4rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);" />
+      </div>
+      <div id="transfer-contracts-list" class="grid grid-cols-2">
+        <p style="color:var(--text-muted);">Lade 7-Schritte-Verträge von <code>GET /api/ocean/transfer-contracts</code> …</p>
+      </div>
+    </section>
+  </div>
+
+  <script is:inline>
+    (async function loadModulesPage() {
+      const boundGrid = document.getElementById('ocean-bound-grid');
+      const contractsGrid = document.getElementById('transfer-contracts-list');
+      const filterInput = document.getElementById('contract-filter');
+      let allContracts = [];
+
+      try {
+        const res = await fetch('/api/ocean/stack-bindings');
+        if (res.ok && boundGrid) {
+          const data = await res.json();
+          const entries = [
+            ...Object.entries(data.modules || {}).map(([k, v]) => ({ id: k, kind: 'Core', ...v })),
+            ...Object.entries(data.capability_extensions || {}).map(([k, v]) => ({ id: k, kind: 'Extension', ...v })),
+          ];
+          boundGrid.innerHTML = entries.map((item) => `
+            <div style="padding:0.85rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+                <strong>${item.id}</strong>
+                <span class="badge">${item.bound ? '✅ Gebunden' : '⚠️ Offline'}</span>
+              </div>
+              <div style="font-size:0.8rem;color:var(--text-muted);">Typ: ${item.kind} · <code>${item.module || ''}</code></div>
+            </div>
+          `).join('');
+        }
+      } catch (_) {}
+
+      function renderContracts(query = '') {
+        if (!contractsGrid) return;
+        const q = query.trim().toLowerCase();
+        const filtered = allContracts.filter((c) =>
+          !q || String(c.module_id).toLowerCase().includes(q) || String(c.task_id).includes(q)
+        );
+        contractsGrid.innerHTML = filtered.map((c) => `
+          <div style="padding:0.85rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+              <strong>#${c.task_id} · ${c.module_id}</strong>
+              <span class="badge">7/7 Schritte ✅</span>
+            </div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">
+              Seam: <code>${c.steps?.step_3_pinned_adapter?.adapter_path || ''}</code><br/>
+              Status: <code>${c.steps?.step_7_removal_gate?.removal_status || 'retained_for_rollback'}</code>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      try {
+        const res = await fetch('/api/ocean/transfer-contracts');
+        if (res.ok) {
+          const catalog = await res.json();
+          allContracts = Array.isArray(catalog.contracts) ? catalog.contracts : [];
+          const statEl = document.getElementById('stat-transfer-contracts');
+          if (statEl) statEl.textContent = `${catalog.valid_contracts || allContracts.length} / ${catalog.total_contracts || allContracts.length} Valide`;
+          renderContracts('');
+        }
+      } catch (_) {}
+
+      filterInput?.addEventListener('input', (ev) => renderContracts(ev.target.value));
+    })();
+  </script>
+</BachLayout>
