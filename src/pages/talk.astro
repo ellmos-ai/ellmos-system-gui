@@ -57,6 +57,20 @@ import BachLayout from "../layouts/BachLayout.astro";
           <span>Aktivierungswort (Wake-Word):</span>
           <input type="text" id="talk-wakeword" value="Hey Ocean" style="padding:0.5rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);" />
         </label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;font-size:0.82rem;">
+          <label style="display:flex;flex-direction:column;gap:0.25rem;">
+            <span>🎤 Mikrofon-Gerät:</span>
+            <select id="talk-mic-device" class="lang-switcher">
+              <option value="default">Standard-Mikrofon</option>
+            </select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.25rem;">
+            <span>🔊 Lautsprecher-Gerät:</span>
+            <select id="talk-speaker-device" class="lang-switcher">
+              <option value="default">Standard-Ausgabe</option>
+            </select>
+          </label>
+        </div>
         <p id="talk-api-status" style="margin:0;font-size:0.8rem;color:var(--text-muted);" role="status">
           Prüfe <code>/api/talk/state</code> …
         </p>

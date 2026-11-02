@@ -159,7 +159,7 @@ function lineIconSvg(id: string): string {
               <span id="header-talk-mini-emoji">🧘</span>
             </div>
             <div>
-              <strong style="font-size:0.88rem;display:block;">ELLMOS Talk · Funkgerät</strong>
+              <strong style="font-size:0.88rem;display:flex;align-items:center;gap:0.4rem;">ELLMOS Talk · Funkgerät <span id="header-talk-runtime-badge" class="badge" style="font-size:0.65rem;padding:0.1rem 0.38rem;">🌐 Browser</span></strong>
               <small id="header-talk-state-text" style="font-size:0.74rem;color:var(--text-muted);">Bereit · Push-to-Talk aktiv</small>
             </div>
           </div>
@@ -229,6 +229,23 @@ function lineIconSvg(id: string): string {
             <option value="muted">🔕 Stumm (Kein Modell-Eigenstart)</option>
           </select>
         </label>
+
+        <!-- Multi-Device Audio Input / Output Selection (Browser, Mobil & Tauri) -->
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.4rem;align-items:end;font-size:0.74rem;">
+          <label style="display:flex;flex-direction:column;gap:0.18rem;">
+            <span style="color:var(--text-muted);">🎤 Mikrofon:</span>
+            <select id="header-talk-mic-select" class="lang-switcher" style="width:100%;">
+              <option value="default">Standard-Mikrofon</option>
+            </select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.18rem;">
+            <span style="color:var(--text-muted);">🔊 Lautsprecher:</span>
+            <select id="header-talk-speaker-select" class="lang-switcher" style="width:100%;">
+              <option value="default">Standard-Ausgabe</option>
+            </select>
+          </label>
+          <button type="button" id="header-talk-refresh-devices" class="btn btn-sm" title="Audio- & Kamerageräte neu erkennen" style="padding:0.35rem 0.5rem;">🔄</button>
+        </div>
 
         <!-- Actions: Detachable Companion Pop-out & Living & Running Slot Settings -->
         <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;padding-top:0.35rem;border-top:1px solid var(--border);">
@@ -734,8 +751,69 @@ function lineIconSvg(id: string): string {
 
     let liveActive = false;
 
+    function detectClientRuntime() {
+      if (window.__TAURI__ || window.__TAURI_INTERNALS__) return 'tauri';
+      if (new URLSearchParams(window.location.search).get('companion') === '1') return 'companion';
+      if (window.matchMedia && window.matchMedia('(max-width: 768px), (pointer: coarse)').matches) return 'mobile';
+      return 'browser';
+    }
+
     function openCompanionPopout() {
+      const tauriWv = window.__TAURI__?.webviewWindow?.WebviewWindow || window.__TAURI__?.window?.WebviewWindow;
+      if (typeof tauriWv === 'function') {
+        try {
+          new tauriWv('ellmos-talk-companion', {
+            url: '/talk?companion=1',
+            title: 'ELLMOS Talk · Funkgerät & Begleiter',
+            width: 430,
+            height: 680,
+            alwaysOnTop: true,
+            resizable: true,
+          });
+          return;
+        } catch (_) {}
+      }
       window.open('/talk?companion=1', 'ellmos-talk-companion', 'width=430,height=680,menubar=no,toolbar=no,location=no,status=no,resizable=yes');
+    }
+
+    async function enumerateTalkDevices(requestPermission = false) {
+      if (!navigator.mediaDevices || typeof navigator.mediaDevices.enumerateDevices !== 'function') return null;
+      try {
+        if (requestPermission && typeof navigator.mediaDevices.getUserMedia === 'function') {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          stream.getTracks().forEach((t) => t.stop());
+        }
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const mics = devices.filter((d) => d.kind === 'audioinput');
+        const speakers = devices.filter((d) => d.kind === 'audiooutput');
+        const cameras = devices.filter((d) => d.kind === 'videoinput');
+        const fillSelect = (ids, items, fallbackLabel) => {
+          ids.forEach((id) => {
+            const sel = document.getElementById(id);
+            if (!sel) return;
+            const prev = sel.value || 'default';
+            sel.innerHTML = '';
+            const defOpt = document.createElement('option');
+            defOpt.value = 'default';
+            defOpt.textContent = fallbackLabel;
+            sel.appendChild(defOpt);
+            items.forEach((d, idx) => {
+              if (!d.deviceId || d.deviceId === 'default') return;
+              const opt = document.createElement('option');
+              opt.value = d.deviceId;
+              opt.textContent = d.label || `${fallbackLabel} #${idx + 1}`;
+              sel.appendChild(opt);
+            });
+            if ([...sel.options].some((o) => o.value === prev)) sel.value = prev;
+          });
+        };
+        fillSelect(['header-talk-mic-select', 'running-talk-mic-device', 'talk-mic-device'], mics, 'Standard-Mikrofon');
+        fillSelect(['header-talk-speaker-select', 'running-talk-speaker-device', 'talk-speaker-device'], speakers, 'Standard-Ausgabe');
+        fillSelect(['running-talk-camera-device'], cameras, 'Standard-Kamera');
+        return { mics, speakers, cameras };
+      } catch (_) {
+        return null;
+      }
     }
 
     function applyTalkStateToHeader(cfg) {
@@ -861,6 +939,21 @@ function lineIconSvg(id: string): string {
     window.bachSendTalkTurn = sendHeaderTalkTurn;
     window.bachAckTalkSummon = ackHeaderTalkSummon;
     window.bachOpenTalkCompanion = openCompanionPopout;
+    window.bachEnumerateTalkDevices = enumerateTalkDevices;
+    window.bachDetectClientRuntime = detectClientRuntime;
+    const runtimeBadge = document.getElementById('header-talk-runtime-badge');
+    const rt = detectClientRuntime();
+    if (runtimeBadge) {
+      runtimeBadge.textContent = rt === 'tauri' ? '🖥️ Tauri' : (rt === 'mobile' ? '📱 Mobil' : '🌐 Browser');
+    }
+    const micSelect = document.getElementById('header-talk-mic-select');
+    const speakerSelect = document.getElementById('header-talk-speaker-select');
+    const refreshDevBtn = document.getElementById('header-talk-refresh-devices');
+    micSelect?.addEventListener('change', () => updateHeaderTalkConfig({ input_device_id: micSelect.value }));
+    speakerSelect?.addEventListener('change', () => updateHeaderTalkConfig({ output_device_id: speakerSelect.value }));
+    refreshDevBtn?.addEventListener('click', () => enumerateTalkDevices(true));
+    pttBtn?.addEventListener('touchstart', (e) => { e.preventDefault(); triggerSpeechCapture(); }, { passive: false });
+    enumerateTalkDevices(false);
 
     radioBtn?.addEventListener('click', () => {
       if (!popover) return;

@@ -207,6 +207,35 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           <strong>6. Aktivierungswort (`wake_word`)</strong>
           <input id="running-talk-wakeword" type="text" value="hey buddha" style="padding:0.45rem 0.65rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);" />
         </label>
+
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
+          <strong>7. Eingabegerät / Mikrofon (`input_device_id`)</strong>
+          <select id="running-talk-mic-device" class="lang-switcher">
+            <option value="default">🎤 Standard-Mikrofon</option>
+          </select>
+        </label>
+
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
+          <strong>8. Ausgabegerät / Lautsprecher (`output_device_id`)</strong>
+          <select id="running-talk-speaker-device" class="lang-switcher">
+            <option value="default">🔊 Standard-Ausgabe</option>
+          </select>
+        </label>
+
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
+          <strong>9. Kamera für Sensation (`camera_device_id`)</strong>
+          <select id="running-talk-camera-device" class="lang-switcher">
+            <option value="default">📷 Standard-Kamera</option>
+          </select>
+        </label>
+      </div>
+
+      <div style="padding:0.6rem 0.8rem;border-radius:var(--radius-sm);background:var(--bg-dark);border:1px solid var(--border);font-size:0.79rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.6rem;">
+        <div>
+          <strong>📦 ELLMOS Talk Modell-Stack (im Installer integriert):</strong>
+          <span class="text-muted"> Fast-Relay: <code>smollm2:360m</code> · STT: <code>faster-whisper-base</code> · TTS: <code>piper-de/en</code> &amp; <code>kokoro-82m</code> · VAD/Wake: <code>silero-vad-v5</code> · Unterstützt: Browser, Mobil &amp; Tauri Desktop</span>
+        </div>
+        <button type="button" class="btn btn-sm" onclick="window.bachEnumerateTalkDevices && window.bachEnumerateTalkDevices(true)">🔄 Audio-/Kamerageräte erkennen</button>
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border);">
@@ -1966,6 +1995,9 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           operating_mode: document.getElementById('running-talk-opmode')?.value || 'ptt',
           summon_policy: document.getElementById('running-talk-summon-policy')?.value || 'knock',
           wake_word: document.getElementById('running-talk-wakeword')?.value || 'hey buddha',
+          input_device_id: document.getElementById('running-talk-mic-device')?.value || 'default',
+          output_device_id: document.getElementById('running-talk-speaker-device')?.value || 'default',
+          camera_device_id: document.getElementById('running-talk-camera-device')?.value || 'default',
         };
         const note = document.getElementById('running-talk-status-note');
         const res = window.bachUpdateTalkConfig ? await window.bachUpdateTalkConfig(patch) : null;
