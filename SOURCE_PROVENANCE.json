@@ -17,11 +17,11 @@
     "docs/GUI-TASKS-ROUTINES.md": "53e7b8a74f4b630744629a328a0466cbfbf7f7186eaed605997bdc99e05812c4",
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
-    "ellmos-module.v2.json": "c883d1e76c7911d5f4377220f3a3e05ce68a4f7feffcdc5af9dbd2a77116c70d",
+    "ellmos-module.v2.json": "893b90f04b63a8cb95cd1e97ba4c6d2814d229d36abd2f688c643afcea4e26a8",
     "package-lock.json": "e1e1fd367e7b5948dcb06b91c833b00d5e2f494bb128ffbc27db784779b6848f",
-    "package.json": "ea89ae9d120aeeeb04599c9333c404a5de14bac63727f32c7712fed9854ba8a2",
+    "package.json": "a9888bfb9994fc4d41aebfeb50f5077cc35a409a123eb4dc05164d6f0ed84531",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "c5ad4340021880acda54159fccd9dc986a52a4987d8a787678cbbf5b1a5b5ac7",
+    "public/page-reads.v1.json": "94cd942b4783f44f895257909b15865b57c8983b6647a55f207acbd39b8c0824",
     "README.md": "84d38716588cb3d20f7ecaa3c139226afd76d030a3089a90d673c31a2897f3d1",
     "RELEASE_GATE.md": "b02a1d52cc76749313484ecd72e01fa9a4cf3965e724ac4c393d92659d53be73",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -234,7 +234,7 @@
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
-    "src/components/Header.astro": "56f14cb5d989ddb2d002a7c225b5bdc5deccc8c016885b49cf4229fad218d798",
+    "src/components/Header.astro": "1c71409da964552429e25df1dbc901bc6af435d6caeff7de9a8127106cd9388c",
     "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
@@ -282,7 +282,7 @@
     "src/pages/agenten/blueprints.astro": "229664baa1438b532a42da33f80ad6cf829b5a623ccdc41932739cde89e15b9a",
     "src/pages/agenten/fabrika.astro": "403d4a89bd5248a0467d36c50d8f4da1f8a0a62d3ce318a366438cebebdb5ade",
     "src/pages/agenten/marblerun.astro": "e78628301216ceb7175f861ec54962101e5ba5f79f84131d76d9b22aa00a2973",
-    "src/pages/agenten/running.astro": "40ee1945bdc06480f4319dc2ec790e7db79966357dc36afadd9a400d33910e45",
+    "src/pages/agenten/running.astro": "ec340ea7e63310d3d6efe23670feebb3ea4829dded5ac219626d7dd37a1a3b95",
     "src/pages/agenten/sessions.astro": "3322b3f23239c8a56af7968a5af226169f0c3df203e7a4e59e44c89173cb18cf",
     "src/pages/agenten/subscription-agents.astro": "6913198067d5130b5281509744f1cec6b148dd54de39bbe24e482b566b362b29",
     "src/pages/artefakte.astro": "155856d3bc6dda60ec2ff57173ddb8186c0d9f9b68e35d60bf100161fb2d5ab5",
@@ -318,7 +318,7 @@
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "6876c0537889cd9854dbbc05eaa8a5b0d16a45b4d282802d0c003a8abb4b397a",
-    "src/pages/talk.astro": "27d49d2f66828193dd002d23c0100b334e00875bdae30e37e53ccdc564967801",
+    "src/pages/talk.astro": "d6916c2dddc71956dc9db2088ca34f1d74ab1fbfc5667ffd7bcbe9c8b77c9f08",
     "src/pages/tasks.astro": "c5f9c6532f57005fd7b77ebbce2ba0e231175222f2679cb976ea9898a750f658",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
@@ -5090,6 +5090,16 @@
           "path": "src/pages/sessions.astro",
           "previous_sha256": null,
           "sha256": "bb515024c04451ca8b7e3b586350707a7da29db6dc5467c2172aca3ff87a8774"
+        }
+      ]
+    },
+    {
+      "scope": "ELLMOS Talk Funkgerät Header Pop-over, Living & Running Slot & Model Summon (0.2.32)",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "c5ad4340021880acda54159fccd9dc986a52a4987d8a787678cbbf5b1a5b5ac7",
+          "sha256": "94cd942b4783f44f895257909b15865b57c8983b6647a55f207acbd39b8c0824"
         }
       ]
     }

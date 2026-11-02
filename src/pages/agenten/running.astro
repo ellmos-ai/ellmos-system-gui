@@ -150,6 +150,78 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
   </div>
 
+  <!-- 5. ELLMOS TALK & FUNKGERÄT · MODELLBINDUNG & BETRIEBSSTEUERUNG (#talk-slot) -->
+  <details class="card collapsible-section" id="talk-slot" aria-labelledby="talk-slot-title" open style="margin-bottom:1.25rem;">
+    <summary class="card-header">
+      <span>
+        <span class="card-title" id="talk-slot-title">📻 ELLMOS Talk &amp; Funkgerät · Modellbindung &amp; Betriebssteuerung</span>
+        <span class="section-description">Steuert, welches Hauptmodell (Buddha / Claude / Gemini / Codex) und welches vorgeschaltete Schnellmodell an den Header-Funkgerät-Button, das Begleitfenster und den System-Tray angebunden sind.</span>
+      </span>
+    </summary>
+    <div style="padding:0.85rem 0 0.25rem;display:flex;flex-direction:column;gap:1rem;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:0.9rem;">
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
+          <strong>1. Angebundene Persona / System-Slot</strong>
+          <select id="running-talk-persona" class="lang-switcher">
+            <option value="buddha">🧘 Buddha (Lokaler System-Slot)</option>
+            <option value="claude">🟣 Claude (Opus / Sonnet)</option>
+            <option value="gemini">🔵 Gemini (Antigravity Pro / Flash)</option>
+            <option value="codex">🟢 Codex / GPT</option>
+          </select>
+        </label>
+
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
+          <strong>2. Konkretes Hauptmodell (`primary_model`)</strong>
+          <input id="running-talk-primary-model" type="text" value="buddha-default" placeholder="z. B. buddha-default, claude-sonnet-4-6" style="padding:0.45rem 0.65rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);" />
+        </label>
+
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
+          <strong>3. Vorgeschaltetes Schnellmodell (`fast_relay_model`)</strong>
+          <select id="running-talk-fast-model" class="lang-switcher">
+            <option value="smollm2:360m">⚡ smollm2:360m (Reflex &amp; Barge-In &lt;150ms)</option>
+            <option value="qwen3-0.6b-voice">⚡ qwen3-0.6b-voice (Lokal · Turn-Taking)</option>
+            <option value="gemma4-e2b">⚡ gemma4-e2b (Schnelles Dialog-Relay)</option>
+          </select>
+        </label>
+
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
+          <strong>4. Betriebsmodus (Header, Tray &amp; Fenster)</strong>
+          <select id="running-talk-opmode" class="lang-switcher">
+            <option value="ptt">📻 Funkgerät (Push-to-Talk im Header)</option>
+            <option value="duplex">🎙️ Live-Duplex (Freisprechen)</option>
+            <option value="wake_word">👂 Wake-Word („Hey Buddha“ / „Hey Ocean“)</option>
+            <option value="off">⏸️ Ausgeschaltet</option>
+          </select>
+        </label>
+
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
+          <strong>5. Modell-Eigenstart (`Agent Summon Policy`)</strong>
+          <select id="running-talk-summon-policy" class="lang-switcher">
+            <option value="knock">🔔 Funkgerät-Anklopfen (Signal im Header &amp; Tray)</option>
+            <option value="auto_popup">⚡ Auto-Popup (Sofort sprechen, wenn anwesend via Sensation)</option>
+            <option value="muted">🔕 Stumm (Kein eigenständiger Modell-Start)</option>
+          </select>
+        </label>
+
+        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
+          <strong>6. Aktivierungswort (`wake_word`)</strong>
+          <input id="running-talk-wakeword" type="text" value="hey buddha" style="padding:0.45rem 0.65rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);" />
+        </label>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border);">
+        <span id="running-talk-status-note" class="text-muted" style="font-size:0.82rem;" role="status">
+          Synchronisiert mit Header-Funkgerät, <code>/talk</code> und System-Tray.
+        </span>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+          <button type="button" class="btn btn-sm btn-primary" id="running-talk-save-btn">💾 Talk-Betrieb speichern</button>
+          <button type="button" class="btn btn-sm" id="running-talk-test-summon-btn">📡 Modell-Funkspruch testen (Summon)</button>
+          <button type="button" class="btn btn-sm" onclick="window.bachOpenTalkCompanion && window.bachOpenTalkCompanion()">↗ Begleitfenster öffnen</button>
+        </div>
+      </div>
+    </div>
+  </details>
+
   <div class="card models-relocated-banner" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:0.85rem 1.1rem;margin-bottom:1rem;">
     <div>
       <strong style="font-size:0.9rem;">🧠 Modelle & Ressourcen im System- und Einstellungsbereich</strong>
@@ -1866,6 +1938,65 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       setInterval(refreshActivity, 5000);
       setInterval(loadBackgroundWorkers, 6000);
       setInterval(loadCoreSlots, 6000);
+
+      // Bind ELLMOS Talk & Funkgerät Slot Configuration in Living & Running
+      function syncRunningTalkFields(cfg) {
+        if (!cfg || typeof cfg !== 'object') return;
+        const p = document.getElementById('running-talk-persona');
+        const pm = document.getElementById('running-talk-primary-model');
+        const fm = document.getElementById('running-talk-fast-model');
+        const op = document.getElementById('running-talk-opmode');
+        const sp = document.getElementById('running-talk-summon-policy');
+        const ww = document.getElementById('running-talk-wakeword');
+        if (p && cfg.persona) p.value = cfg.persona;
+        if (pm && cfg.primary_model) pm.value = cfg.primary_model;
+        if (fm && cfg.fast_relay_model) fm.value = cfg.fast_relay_model;
+        if (op && cfg.operating_mode) op.value = cfg.operating_mode;
+        if (sp && cfg.summon_policy) sp.value = cfg.summon_policy;
+        if (ww && cfg.wake_word) ww.value = cfg.wake_word;
+      }
+      if (window.__bachTalkConfig) syncRunningTalkFields(window.__bachTalkConfig);
+      window.addEventListener('bach:talk-config-updated', (ev) => syncRunningTalkFields(ev.detail));
+
+      document.getElementById('running-talk-save-btn')?.addEventListener('click', async () => {
+        const patch = {
+          persona: document.getElementById('running-talk-persona')?.value || 'buddha',
+          primary_model: document.getElementById('running-talk-primary-model')?.value || 'buddha-default',
+          fast_relay_model: document.getElementById('running-talk-fast-model')?.value || 'smollm2:360m',
+          operating_mode: document.getElementById('running-talk-opmode')?.value || 'ptt',
+          summon_policy: document.getElementById('running-talk-summon-policy')?.value || 'knock',
+          wake_word: document.getElementById('running-talk-wakeword')?.value || 'hey buddha',
+        };
+        const note = document.getElementById('running-talk-status-note');
+        const res = window.bachUpdateTalkConfig ? await window.bachUpdateTalkConfig(patch) : null;
+        if (note) {
+          note.textContent = res
+            ? `✅ Gespeichert: ${patch.persona.toUpperCase()} (${patch.primary_model}) · Modus: ${patch.operating_mode} · Fast-Relay: ${patch.fast_relay_model}`
+            : '⚠️ Speichern fehlgeschlagen.';
+        }
+      });
+
+      document.getElementById('running-talk-test-summon-btn')?.addEventListener('click', async () => {
+        const caller = document.getElementById('running-talk-persona')?.value || 'buddha';
+        const note = document.getElementById('running-talk-status-note');
+        try {
+          const r = await fetch('/api/talk/summon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              caller,
+              message: `Hallo Lukas! Hier spricht ${caller.toUpperCase()} über den Funkgerät-Kanal. Alle Systeme laufen grün.`,
+              emotion: 'joyful',
+              pattern: 'pulse',
+              emoji_overlay: '📻',
+            }),
+          });
+          if (r.ok) {
+            if (window.bachLoadTalkConfig) await window.bachLoadTalkConfig();
+            if (note) note.textContent = `📡 Modell-Funkspruch von ${caller.toUpperCase()} ausgelöst — siehe Funkgerät-Button oben rechts im Header!`;
+          }
+        } catch (_) {}
+      });
     });
   </script>
   <dialog id="template-agent-picker" class="core-slot-modal">

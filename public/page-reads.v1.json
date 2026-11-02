@@ -23,6 +23,26 @@
    "required": false,
    "dynamic": true,
    "found_in": "src/lib/domain-pins.mjs#setDomainPin"
+  },
+  {
+   "method": "GET",
+   "path": "/api/talk/config",
+   "required": false
+  },
+  {
+   "method": "POST",
+   "path": "/api/talk/config",
+   "required": false
+  },
+  {
+   "method": "POST",
+   "path": "/api/talk/turn",
+   "required": false
+  },
+  {
+   "method": "POST",
+   "path": "/api/talk/summon/ack",
+   "required": false
   }
  ],
  "pages": {
@@ -938,6 +958,11 @@
    }
   ],
   "/agenten/running": [
+   {
+    "method": "POST",
+    "path": "/api/talk/summon",
+    "required": false
+   },
    {
     "method": "GET",
     "path": "/api/system/core-agents",

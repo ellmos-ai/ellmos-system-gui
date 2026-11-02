@@ -130,6 +130,129 @@ function lineIconSvg(id: string): string {
       </a>
     </div>
 
+    <!-- ELLMOS Talk / Funkgerät Button + Pop-over (Push-to-Talk, Companion & Modell-Summon) -->
+    <div class="header-talk-radio-wrap" id="header-talk-radio-wrap" style="position:relative;display:inline-flex;align-items:center;">
+      <button
+        id="header-talk-radio-btn"
+        type="button"
+        class="quick-action-btn"
+        aria-expanded="false"
+        aria-controls="header-talk-popover"
+        title="ELLMOS Talk / Funkgerät — Klicken für Pop-over, Gedrückt halten für Push-to-Talk (Alt+Leertaste)"
+        style="display:inline-flex;align-items:center;gap:0.35rem;padding:0.3rem 0.6rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);font-size:0.8rem;font-weight:600;cursor:pointer;position:relative;"
+      >
+        <span id="header-talk-dot" style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;box-shadow:0 0 8px rgba(16,185,129,0.6);"></span>
+        <span id="header-talk-icon" aria-hidden="true">📻</span>
+        <span id="header-talk-btn-label">Funk / Talk</span>
+      </button>
+
+      <div
+        id="header-talk-popover"
+        role="dialog"
+        aria-label="ELLMOS Talk & Funkgerät Steuerung"
+        hidden
+        style="position:absolute;top:calc(100% + 0.5rem);right:0;width:340px;z-index:1200;background:var(--bg-card, #111827);border:1px solid var(--border, #334155);border-radius:var(--radius-md, 12px);box-shadow:0 16px 40px rgba(0,0,0,0.45);padding:0.9rem;display:flex;flex-direction:column;gap:0.75rem;"
+      >
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
+          <div style="display:flex;align-items:center;gap:0.45rem;">
+            <div id="header-talk-mini-orb" style="width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #00d4aa, #0f172a 75%);box-shadow:0 0 16px rgba(0,212,170,0.45);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">
+              <span id="header-talk-mini-emoji">🧘</span>
+            </div>
+            <div>
+              <strong style="font-size:0.88rem;display:block;">ELLMOS Talk · Funkgerät</strong>
+              <small id="header-talk-state-text" style="font-size:0.74rem;color:var(--text-muted);">Bereit · Push-to-Talk aktiv</small>
+            </div>
+          </div>
+          <button type="button" id="header-talk-close-btn" class="btn btn-sm" aria-label="Funkgerät-Pop-over schließen" style="padding:0.15rem 0.45rem;">×</button>
+        </div>
+
+        <!-- Incoming Model Summon Banner (shown when a model initiates a talk call) -->
+        <div id="header-talk-summon-banner" hidden style="padding:0.6rem;border-radius:8px;background:rgba(56,189,248,0.14);border:1px solid #38bdf8;display:flex;flex-direction:column;gap:0.45rem;">
+          <strong id="header-talk-summon-title" style="font-size:0.8rem;color:#38bdf8;">📻 Modell-Funkspruch eingehend</strong>
+          <p id="header-talk-summon-msg" style="margin:0;font-size:0.78rem;color:var(--text);">Ein Modell möchte mit dir sprechen.</p>
+          <div style="display:flex;gap:0.4rem;">
+            <button type="button" id="header-talk-summon-accept" class="btn btn-sm btn-primary" style="flex:1;">🎙️ Annehmen</button>
+            <button type="button" id="header-talk-summon-dismiss" class="btn btn-sm" style="flex:1;">Später</button>
+          </div>
+        </div>
+
+        <!-- Push-to-Talk & Live Duplex Controls -->
+        <div style="display:flex;gap:0.45rem;">
+          <button
+            type="button"
+            id="header-talk-ptt-btn"
+            class="btn btn-primary"
+            style="flex:1.3;font-size:0.8rem;padding:0.5rem;"
+            title="Gedrückt halten zum Einsprechen (oder Klicken für Kurzdiktat)"
+          >
+            📻 Halten zum Sprechen (PTT)
+          </button>
+          <button
+            type="button"
+            id="header-talk-live-btn"
+            class="btn btn-secondary"
+            style="flex:1;font-size:0.8rem;padding:0.5rem;"
+          >
+            🎙️ Freisprechen
+          </button>
+        </div>
+
+        <div id="header-talk-reply-box" hidden style="padding:0.5rem 0.65rem;border-radius:8px;background:var(--bg-dark, #0f172a);border:1px solid var(--border);font-size:0.78rem;color:var(--text);"></div>
+
+        <!-- Quick Switchers (synced with Living & Running & BACH Tray) -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.76rem;">
+          <label style="display:flex;flex-direction:column;gap:0.2rem;">
+            <span style="color:var(--text-muted);">Angebundenes Modell:</span>
+            <select id="header-talk-persona" class="lang-switcher" style="width:100%;">
+              <option value="buddha">🧘 Buddha (Lokal)</option>
+              <option value="claude">🟣 Claude</option>
+              <option value="gemini">🔵 Gemini</option>
+              <option value="codex">🟢 Codex / GPT</option>
+            </select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.2rem;">
+            <span style="color:var(--text-muted);">Betriebsmodus:</span>
+            <select id="header-talk-opmode" class="lang-switcher" style="width:100%;">
+              <option value="ptt">📻 Funkgerät (PTT)</option>
+              <option value="duplex">🎙️ Live-Duplex</option>
+              <option value="wake_word">👂 Wake-Word</option>
+              <option value="off">⏸️ Aus</option>
+            </select>
+          </label>
+        </div>
+
+        <label style="display:flex;flex-direction:column;gap:0.2rem;font-size:0.76rem;">
+          <span style="color:var(--text-muted);">Modell-Eigenstart (Agent Summon):</span>
+          <select id="header-talk-summon-policy" class="lang-switcher" style="width:100%;">
+            <option value="knock">🔔 Funkgerät-Anklopfen im Header</option>
+            <option value="auto_popup">⚡ Auto-Popup (bei Präsenz via Sensation)</option>
+            <option value="muted">🔕 Stumm (Kein Modell-Eigenstart)</option>
+          </select>
+        </label>
+
+        <!-- Actions: Detachable Companion Pop-out & Living & Running Slot Settings -->
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;padding-top:0.35rem;border-top:1px solid var(--border);">
+          <button
+            type="button"
+            id="header-talk-popout-btn"
+            class="btn btn-sm"
+            style="font-size:0.75rem;"
+            title="Öffnet ELLMOS Talk als eigenständiges, schwebendes Begleitfenster"
+          >
+            ↗ Eigenes Fenster
+          </button>
+          <a
+            href="/agenten/running#talk-slot"
+            class="btn btn-sm"
+            style="font-size:0.75rem;text-decoration:none;"
+            title="Modell-Slot, Fast-Relay-Modell & Betrieb in Living & Running umstellen"
+          >
+            ⚡ Living &amp; Running ↗
+          </a>
+        </div>
+      </div>
+    </div>
+
     <!-- World Language Pack Switcher -->
     <select id="lang-switcher" class="lang-switcher" aria-label="Sprache wählen / Select language" title="World Language Pack (10 Sprachen)">
       <option value="de">🇩🇪 DE</option>
@@ -585,6 +708,229 @@ function lineIconSvg(id: string): string {
   window.addEventListener('popstate', refreshActiveNavigation);
   const domainPinsMenu = document.getElementById('domain-pins-menu');
   if (domainPinsMenu) new MutationObserver(refreshActiveNavigation).observe(domainPinsMenu, { childList: true, subtree: true });
+
+  // ── ELLMOS Talk / Funkgerät Header Integration (Push-to-Talk, Pop-over, Pop-out & Modell-Summon) ──
+  (function initHeaderTalkRadio() {
+    const radioBtn = document.getElementById('header-talk-radio-btn');
+    const popover = document.getElementById('header-talk-popover');
+    const closeBtn = document.getElementById('header-talk-close-btn');
+    const dot = document.getElementById('header-talk-dot');
+    const btnLabel = document.getElementById('header-talk-btn-label');
+    const miniOrb = document.getElementById('header-talk-mini-orb');
+    const miniEmoji = document.getElementById('header-talk-mini-emoji');
+    const stateText = document.getElementById('header-talk-state-text');
+    const pttBtn = document.getElementById('header-talk-ptt-btn');
+    const liveBtn = document.getElementById('header-talk-live-btn');
+    const replyBox = document.getElementById('header-talk-reply-box');
+    const personaSelect = document.getElementById('header-talk-persona');
+    const opmodeSelect = document.getElementById('header-talk-opmode');
+    const summonSelect = document.getElementById('header-talk-summon-policy');
+    const popoutBtn = document.getElementById('header-talk-popout-btn');
+    const summonBanner = document.getElementById('header-talk-summon-banner');
+    const summonTitle = document.getElementById('header-talk-summon-title');
+    const summonMsg = document.getElementById('header-talk-summon-msg');
+    const summonAccept = document.getElementById('header-talk-summon-accept');
+    const summonDismiss = document.getElementById('header-talk-summon-dismiss');
+
+    let liveActive = false;
+
+    function openCompanionPopout() {
+      window.open('/talk?companion=1', 'ellmos-talk-companion', 'width=430,height=680,menubar=no,toolbar=no,location=no,status=no,resizable=yes');
+    }
+
+    function applyTalkStateToHeader(cfg) {
+      if (!cfg || typeof cfg !== 'object') return;
+      window.__bachTalkConfig = cfg;
+      const color = cfg.color_primary || '#00d4aa';
+      if (miniOrb) {
+        miniOrb.style.background = `radial-gradient(circle at 35% 35%, ${color}, #0f172a 75%)`;
+        miniOrb.style.boxShadow = `0 0 16px ${color}88`;
+      }
+      if (miniEmoji && cfg.emoji_overlay) miniEmoji.textContent = cfg.emoji_overlay;
+      if (personaSelect && cfg.persona) personaSelect.value = cfg.persona;
+      if (opmodeSelect && cfg.operating_mode) opmodeSelect.value = cfg.operating_mode;
+      if (summonSelect && cfg.summon_policy) summonSelect.value = cfg.summon_policy;
+
+      const modeLabels = { ptt: 'Funkgerät · PTT', duplex: 'Live-Duplex aktiv', wake_word: `Wake-Word („${cfg.wake_word || 'Hey Buddha'}“)`, off: 'Ausgeschaltet' };
+      if (stateText) {
+        stateText.textContent = `${(cfg.persona || 'buddha').toUpperCase()} (${cfg.primary_model || 'buddha-default'}) · ${modeLabels[cfg.operating_mode] || 'Funkgerät'}`;
+      }
+
+      if (cfg.pending_summon && cfg.pending_summon.message) {
+        const s = cfg.pending_summon;
+        if (summonBanner) summonBanner.hidden = false;
+        if (summonTitle) summonTitle.textContent = `📻 ${(s.caller || 'Modell').toUpperCase()} ruft über Funk`;
+        if (summonMsg) summonMsg.textContent = s.message;
+        if (dot) {
+          dot.style.background = '#38bdf8';
+          dot.style.boxShadow = '0 0 12px #38bdf8';
+        }
+        if (btnLabel) btnLabel.textContent = `Funk (${(s.caller || 'Anruf').toUpperCase()}!)`;
+        if (s.auto_open && popover && popover.hidden) {
+          popover.hidden = false;
+          radioBtn?.setAttribute('aria-expanded', 'true');
+        }
+      } else {
+        if (summonBanner) summonBanner.hidden = true;
+        if (dot) {
+          dot.style.background = cfg.operating_mode === 'off' ? '#64748b' : '#10b981';
+          dot.style.boxShadow = cfg.operating_mode === 'off' ? 'none' : '0 0 8px rgba(16,185,129,0.6)';
+        }
+        if (btnLabel) btnLabel.textContent = 'Funk / Talk';
+      }
+      window.dispatchEvent(new CustomEvent('bach:talk-config-updated', { detail: cfg }));
+    }
+
+    async function loadHeaderTalkConfig() {
+      try {
+        const res = await fetch('/api/talk/config');
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data && data.config) applyTalkStateToHeader(data.config);
+        return data;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    async function updateHeaderTalkConfig(patch) {
+      try {
+        const res = await fetch('/api/talk/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch),
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data && data.config) applyTalkStateToHeader(data.config);
+        return data;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    async function sendHeaderTalkTurn(utterance) {
+      if (!utterance) return null;
+      try {
+        const persona = personaSelect?.value || 'buddha';
+        const lang = document.documentElement.lang || 'de';
+        const res = await fetch('/api/talk/turn', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_utterance: utterance, persona, language: lang }),
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data && data.visual_state) applyTalkStateToHeader(data.visual_state);
+        if (replyBox && data?.spoken_text) {
+          replyBox.hidden = false;
+          replyBox.textContent = data.spoken_text;
+        }
+        if (data?.spoken_text && 'speechSynthesis' in window) {
+          try {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(data.spoken_text);
+            u.lang = lang === 'en' ? 'en-US' : 'de-DE';
+            window.speechSynthesis.speak(u);
+          } catch (_) {}
+        }
+        return data;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    async function ackHeaderTalkSummon(startListening) {
+      try {
+        const res = await fetch('/api/talk/summon/ack', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ start_listening: Boolean(startListening) }),
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data && data.visual_state) applyTalkStateToHeader(data.visual_state);
+        return data;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    window.bachLoadTalkConfig = loadHeaderTalkConfig;
+    window.bachUpdateTalkConfig = updateHeaderTalkConfig;
+    window.bachSendTalkTurn = sendHeaderTalkTurn;
+    window.bachAckTalkSummon = ackHeaderTalkSummon;
+    window.bachOpenTalkCompanion = openCompanionPopout;
+
+    radioBtn?.addEventListener('click', () => {
+      if (!popover) return;
+      const nextHidden = !popover.hidden;
+      popover.hidden = nextHidden;
+      radioBtn.setAttribute('aria-expanded', String(!nextHidden));
+      if (!nextHidden) loadHeaderTalkConfig();
+    });
+
+    closeBtn?.addEventListener('click', () => {
+      if (popover) popover.hidden = true;
+      radioBtn?.setAttribute('aria-expanded', 'false');
+    });
+
+    popoutBtn?.addEventListener('click', () => {
+      openCompanionPopout();
+    });
+
+    personaSelect?.addEventListener('change', () => {
+      updateHeaderTalkConfig({ persona: personaSelect.value });
+    });
+    opmodeSelect?.addEventListener('change', () => {
+      updateHeaderTalkConfig({ operating_mode: opmodeSelect.value });
+    });
+    summonSelect?.addEventListener('change', () => {
+      updateHeaderTalkConfig({ summon_policy: summonSelect.value });
+    });
+
+    summonAccept?.addEventListener('click', async () => {
+      const msg = summonMsg?.textContent || '';
+      await ackHeaderTalkSummon(true);
+      if (msg && 'speechSynthesis' in window) {
+        try {
+          const u = new SpeechSynthesisUtterance(msg);
+          window.speechSynthesis.speak(u);
+        } catch (_) {}
+      }
+    });
+    summonDismiss?.addEventListener('click', () => {
+      ackHeaderTalkSummon(false);
+    });
+
+    function triggerSpeechCapture() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SR) {
+        const rec = new SR();
+        rec.lang = (document.documentElement.lang || 'de') === 'en' ? 'en-US' : 'de-DE';
+        if (pttBtn) pttBtn.textContent = '🔴 Funkkanal offen — Sprich jetzt…';
+        rec.onresult = (ev) => {
+          const transcript = ev.results?.[0]?.[0]?.transcript || '';
+          if (transcript) sendHeaderTalkTurn(transcript);
+        };
+        rec.onend = () => {
+          if (pttBtn) pttBtn.textContent = '📻 Halten zum Sprechen (PTT)';
+        };
+        rec.start();
+      } else {
+        sendHeaderTalkTurn('Funkgerät-Statusabfrage: Bist du empfangsbereit?');
+      }
+    }
+
+    pttBtn?.addEventListener('click', triggerSpeechCapture);
+    liveBtn?.addEventListener('click', () => {
+      liveActive = !liveActive;
+      liveBtn.textContent = liveActive ? '⏹️ Duplex stoppen' : '🎙️ Freisprechen';
+      updateHeaderTalkConfig({ operating_mode: liveActive ? 'duplex' : 'ptt', mode: liveActive ? 'listening' : 'idle' });
+    });
+
+    loadHeaderTalkConfig();
+  })();
 </script>
 
 <script>

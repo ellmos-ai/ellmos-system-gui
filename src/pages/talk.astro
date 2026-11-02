@@ -14,6 +14,7 @@ import BachLayout from "../layouts/BachLayout.astro";
         </p>
       </div>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <a href="/agenten/running#talk-slot" class="btn btn-secondary">⚡ Modell-Bindung in Living &amp; Running</a>
         <a href="/chat" class="btn btn-secondary">💬 Zurück zum Chat</a>
         <a href="/sensation" class="btn btn-secondary">👁️ Sensation &amp; Mikrofon-Rechte</a>
       </div>
@@ -105,6 +106,38 @@ import BachLayout from "../layouts/BachLayout.astro";
         }
         toggleBtn.textContent = active ? '⏹️ Live-Gespräch beenden' : '🎙️ Live-Gespräch starten';
         applyMood(moods[active ? 3 : 0]);
+      });
+
+      const mainModelSelect = document.getElementById('talk-main-model');
+      const fastModelSelect = document.getElementById('talk-fast-model');
+      const wakewordInput = document.getElementById('talk-wakeword');
+
+      if (new URLSearchParams(window.location.search).get('companion') === '1') {
+        document.body.classList.add('talk-companion-window');
+        const sidebar = document.getElementById('app-sidebar');
+        if (sidebar) sidebar.style.display = 'none';
+      }
+
+      function syncFromGlobalConfig(cfg) {
+        if (!cfg || typeof cfg !== 'object') return;
+        if (mainModelSelect && cfg.persona) mainModelSelect.value = cfg.persona;
+        if (fastModelSelect && cfg.fast_relay_model) fastModelSelect.value = cfg.fast_relay_model;
+        if (wakewordInput && cfg.wake_word) wakewordInput.value = cfg.wake_word;
+        if (apiStatus) {
+          apiStatus.textContent = `Verbunden: ${cfg.persona || 'buddha'} (${cfg.primary_model || 'qwen3.8:27b-mlx'}) · Modus: ${cfg.operating_mode || 'ptt'}`;
+        }
+      }
+      if (window.__bachTalkConfig) syncFromGlobalConfig(window.__bachTalkConfig);
+      window.addEventListener('bach:talk-config-updated', (ev) => syncFromGlobalConfig(ev.detail));
+
+      mainModelSelect?.addEventListener('change', () => {
+        if (window.bachUpdateTalkConfig) window.bachUpdateTalkConfig({ persona: mainModelSelect.value });
+      });
+      fastModelSelect?.addEventListener('change', () => {
+        if (window.bachUpdateTalkConfig) window.bachUpdateTalkConfig({ fast_relay_model: fastModelSelect.value });
+      });
+      wakewordInput?.addEventListener('change', () => {
+        if (window.bachUpdateTalkConfig) window.bachUpdateTalkConfig({ wake_word: wakewordInput.value });
       });
 
       fetch('/api/talk/state')
