@@ -161,9 +161,9 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     <div style="padding:0.85rem 0 0.25rem;display:flex;flex-direction:column;gap:1rem;">
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:0.9rem;">
         <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
-          <strong>1. Angebundene Persona / System-Slot</strong>
+          <strong>1. Angebundene Persona / Agenten-Bindung (Klasse 1 · Interaktiv)</strong>
           <select id="running-talk-persona" class="lang-switcher">
-            <option value="buddha">🧘 Buddha (Lokaler System-Slot)</option>
+            <option value="buddha">🧘 Buddha (Lokale Modell-Bindung)</option>
             <option value="claude">🟣 Claude (Opus / Sonnet)</option>
             <option value="gemini">🔵 Gemini (Antigravity Pro / Flash)</option>
             <option value="codex">🟢 Codex / GPT</option>
@@ -253,11 +253,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
   <div class="card models-relocated-banner" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:0.85rem 1.1rem;margin-bottom:1rem;">
     <div>
-      <strong style="font-size:0.9rem;">🧠 Modelle & Ressourcen im System- und Einstellungsbereich</strong>
-      <p style="font-size:0.8rem;color:var(--text-muted);margin:0.15rem 0 0 0;">Hardware-Fackel, Compute-Vorrang, lokale Modellkapazität und OpenRouter Free Tier befinden sich unter Einstellungen & Betrieb.</p>
+      <strong style="font-size:0.9rem;">🔥 RAM-Distributor &amp; Modell-Runtime · Claiming (Klassen 1–4)</strong>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin:0.15rem 0 0 0;">Zweistufiger Ressourcen-Claim: <strong>RAMDistributor</strong> (Hauptfackel für physisches RAM/VRAM) &amp; <strong>Modell-Runtime</strong> (Klassen 1 Interaktiv → 2 Auftrag → 3 Termin → 4 Hintergrund). <span id="running-release-compute-note"></span></p>
     </div>
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-      <a href="/settings?tab=core" class="btn btn-sm btn-primary">Zu Modelle & Ressourcen →</a>
+      <button type="button" class="btn btn-sm" id="running-release-compute-btn" title="Setzt Fackel-Priorität auf Compute, pausiert Hintergrundworker (Klasse 4) und entlädt lokale Modelle für externe Prozesse">🔓 Modell &amp; RAM für andere Prozesse freigeben</button>
+      <a href="/help?topic=claiming" class="btn btn-sm">📖 Claim-Doku</a>
+      <a href="/settings?tab=core" class="btn btn-sm btn-primary">Zu Modelle &amp; Ressourcen →</a>
       <button type="button" class="btn btn-sm" onclick="const d=document.getElementById('running-models-resources-drawer');if(d)d.hidden=!d.hidden;">Hier ein-/ausblenden</button>
     </div>
   </div>
@@ -2028,6 +2030,26 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
             if (note) note.textContent = `📡 Modell-Funkspruch von ${caller.toUpperCase()} ausgelöst — siehe Funkgerät-Button oben rechts im Header!`;
           }
         } catch (_) {}
+      });
+
+      document.getElementById('running-release-compute-btn')?.addEventListener('click', async () => {
+        const note = document.getElementById('running-release-compute-note');
+        try {
+          await fetch('/api/fackel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ preference: 'compute' }),
+          });
+          await fetch('/api/slots', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slot_id: 'buddha_always_on', updates: { enabled: false } }),
+          });
+          if (note) note.textContent = ' ✅ Modell & RAM freigegeben (Fackel → Compute, Hintergrundworker pausiert).';
+          refreshAll();
+        } catch (_) {
+          if (note) note.textContent = ' ⚠️ Freigabe fehlgeschlagen.';
+        }
       });
     });
   </script>
