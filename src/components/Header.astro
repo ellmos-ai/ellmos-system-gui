@@ -130,139 +130,193 @@ function lineIconSvg(id: string): string {
       </a>
     </div>
 
-    <!-- ELLMOS Talk / Funkgerät Button + Pop-over (Push-to-Talk, Companion & Modell-Summon) -->
-    <div class="header-talk-radio-wrap" id="header-talk-radio-wrap" style="position:relative;display:inline-flex;align-items:center;">
+    <!-- ELLMOS Talk / Funkgerät Button + Pop-over (Instrument / Transceiver Console) -->
+    <div class="header-talk-radio-wrap" id="header-talk-radio-wrap">
       <button
         id="header-talk-radio-btn"
         type="button"
-        class="quick-action-btn"
+        class="quick-action-btn talk-trigger-btn"
         aria-expanded="false"
         aria-controls="header-talk-popover"
-        title="ELLMOS Talk / Funkgerät — Klicken für Pop-over, Gedrückt halten für Push-to-Talk (Alt+Leertaste)"
-        style="display:inline-flex;align-items:center;gap:0.35rem;padding:0.3rem 0.6rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);font-size:0.8rem;font-weight:600;cursor:pointer;position:relative;"
+        title="ELLMOS Talk / Funkgerät — Klicken für Konsole, Alt+Leertaste für Push-to-Talk"
       >
-        <span id="header-talk-dot" style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;box-shadow:0 0 8px rgba(16,185,129,0.6);"></span>
+        <span id="header-talk-dot" class="talk-trigger-dot"></span>
         <span id="header-talk-icon" aria-hidden="true">📻</span>
         <span id="header-talk-btn-label">Funk / Talk</span>
       </button>
 
       <div
         id="header-talk-popover"
+        class="talk-console-popover"
         role="dialog"
         aria-label="ELLMOS Talk & Funkgerät Steuerung"
         hidden
-        style="position:absolute;top:calc(100% + 0.5rem);right:0;width:340px;z-index:1200;background:var(--bg-card, #111827);border:1px solid var(--border, #334155);border-radius:var(--radius-md, 12px);box-shadow:0 16px 40px rgba(0,0,0,0.45);padding:0.9rem;display:flex;flex-direction:column;gap:0.75rem;"
       >
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
-          <div style="display:flex;align-items:center;gap:0.45rem;">
-            <div id="header-talk-mini-orb" style="width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #00d4aa, #0f172a 75%);box-shadow:0 0 16px rgba(0,212,170,0.45);display:flex;align-items:center;justify-content:center;font-size:1.1rem;">
+        <!-- 1. Instrument Console Top Bar -->
+        <div class="talk-console-header">
+          <div class="talk-console-identity">
+            <div id="header-talk-mini-orb" class="talk-console-orb">
               <span id="header-talk-mini-emoji">🧘</span>
             </div>
-            <div>
-              <strong style="font-size:0.88rem;display:flex;align-items:center;gap:0.4rem;">ELLMOS Talk · Funkgerät <span id="header-talk-runtime-badge" class="badge" style="font-size:0.65rem;padding:0.1rem 0.38rem;">🌐 Browser</span></strong>
-              <small id="header-talk-state-text" style="font-size:0.74rem;color:var(--text-muted);">Bereit · Push-to-Talk aktiv</small>
+            <div class="talk-console-titles">
+              <div class="talk-console-title-row">
+                <strong>ELLMOS Talk</strong>
+                <span class="talk-console-freq">CH-01 · KLASSE 1</span>
+                <span id="header-talk-runtime-badge" class="talk-console-badge">🌐 Browser</span>
+              </div>
+              <small id="header-talk-state-text" class="talk-console-subtitle">BUDDHA · Bereit für Funkspruch</small>
             </div>
           </div>
-          <button type="button" id="header-talk-close-btn" class="btn btn-sm" aria-label="Funkgerät-Pop-over schließen" style="padding:0.15rem 0.45rem;">×</button>
+          <button
+            type="button"
+            id="header-talk-close-btn"
+            class="talk-console-close"
+            aria-label="Funkgerät-Pop-over schließen"
+            title="Schließen (Esc)"
+          >✕</button>
         </div>
 
-        <!-- Incoming Model Summon Banner (shown when a model initiates a talk call) -->
-        <div id="header-talk-summon-banner" hidden style="padding:0.6rem;border-radius:8px;background:rgba(56,189,248,0.14);border:1px solid #38bdf8;display:flex;flex-direction:column;gap:0.45rem;">
-          <strong id="header-talk-summon-title" style="font-size:0.8rem;color:#38bdf8;">📻 Modell-Funkspruch eingehend</strong>
-          <p id="header-talk-summon-msg" style="margin:0;font-size:0.78rem;color:var(--text);">Ein Modell möchte mit dir sprechen.</p>
-          <div style="display:flex;gap:0.4rem;">
-            <button type="button" id="header-talk-summon-accept" class="btn btn-sm btn-primary" style="flex:1;">🎙️ Annehmen</button>
-            <button type="button" id="header-talk-summon-dismiss" class="btn btn-sm" style="flex:1;">Später</button>
+        <!-- 2. Incoming Model Summon Banner (strictly hidden unless active & unacknowledged) -->
+        <div id="header-talk-summon-banner" class="talk-summon-alert" hidden>
+          <div class="talk-summon-header">
+            <span class="talk-summon-pulse"></span>
+            <strong id="header-talk-summon-title">📻 Modell-Funkspruch eingehend</strong>
+          </div>
+          <p id="header-talk-summon-msg" class="talk-summon-body">Ein Modell möchte mit dir sprechen.</p>
+          <div class="talk-summon-actions">
+            <button type="button" id="header-talk-summon-accept" class="talk-btn talk-btn-accept">🎙️ Annehmen</button>
+            <button type="button" id="header-talk-summon-dismiss" class="talk-btn talk-btn-later">Später</button>
           </div>
         </div>
 
-        <!-- Push-to-Talk & Live Duplex Controls -->
-        <div style="display:flex;gap:0.45rem;">
+        <!-- 3. Segmented Persona / Agent Binding Bar -->
+        <div class="talk-section-block">
+          <div class="talk-section-label">
+            <span>Angebundener Agent (Modell-Bindung)</span>
+            <span id="header-talk-active-model-pill" class="talk-mono-pill">buddha-default</span>
+          </div>
+          <div class="talk-persona-grid" role="radiogroup" aria-label="Angebundenes Modell wählen">
+            <button type="button" class="talk-persona-pill is-active" data-talk-persona="buddha">🧘 Buddha</button>
+            <button type="button" class="talk-persona-pill" data-talk-persona="claude">🟣 Claude</button>
+            <button type="button" class="talk-persona-pill" data-talk-persona="gemini">🔵 Gemini</button>
+            <button type="button" class="talk-persona-pill" data-talk-persona="codex">🟢 Codex</button>
+          </div>
+          <select id="header-talk-persona" class="talk-sr-select" aria-hidden="true" tabindex="-1">
+            <option value="buddha">🧘 Buddha (Lokal)</option>
+            <option value="claude">🟣 Claude</option>
+            <option value="gemini">🔵 Gemini</option>
+            <option value="codex">🟢 Codex / GPT</option>
+          </select>
+        </div>
+
+        <!-- 4. Primary Transceiver Controls (PTT + Duplex + Quick Text Funk) -->
+        <div class="talk-transceiver-deck">
           <button
             type="button"
             id="header-talk-ptt-btn"
-            class="btn btn-primary"
-            style="flex:1.3;font-size:0.8rem;padding:0.5rem;"
-            title="Gedrückt halten zum Einsprechen (oder Klicken für Kurzdiktat)"
+            class="talk-ptt-hero"
+            title="Klicken oder gedrückt halten zum Einsprechen"
           >
-            📻 Halten zum Sprechen (PTT)
+            <span class="talk-ptt-led"></span>
+            <span id="header-talk-ptt-label">📻 Funkspruch senden (PTT)</span>
           </button>
           <button
             type="button"
             id="header-talk-live-btn"
-            class="btn btn-secondary"
-            style="flex:1;font-size:0.8rem;padding:0.5rem;"
+            class="talk-duplex-btn"
+            title="Dauerhaftes Freisprechen (Live-Duplex) umschalten"
           >
-            🎙️ Freisprechen
+            🎙️ Duplex
           </button>
         </div>
 
-        <div id="header-talk-reply-box" hidden style="padding:0.5rem 0.65rem;border-radius:8px;background:var(--bg-dark, #0f172a);border:1px solid var(--border);font-size:0.78rem;color:var(--text);"></div>
+        <form id="header-talk-quick-form" class="talk-quick-form">
+          <input
+            id="header-talk-quick-input"
+            type="text"
+            class="talk-quick-input"
+            placeholder="Kurzen Funkspruch tippen + Enter…"
+            autocomplete="off"
+          />
+          <button type="submit" class="talk-quick-send" title="Funkspruch senden">📡</button>
+        </form>
 
-        <!-- Quick Switchers (synced with Living & Running & BACH Tray) -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.76rem;">
-          <label style="display:flex;flex-direction:column;gap:0.2rem;">
-            <span style="color:var(--text-muted);">Angebundenes Modell:</span>
-            <select id="header-talk-persona" class="lang-switcher" style="width:100%;">
-              <option value="buddha">🧘 Buddha (Lokal)</option>
-              <option value="claude">🟣 Claude</option>
-              <option value="gemini">🔵 Gemini</option>
-              <option value="codex">🟢 Codex / GPT</option>
-            </select>
-          </label>
-          <label style="display:flex;flex-direction:column;gap:0.2rem;">
-            <span style="color:var(--text-muted);">Betriebsmodus:</span>
-            <select id="header-talk-opmode" class="lang-switcher" style="width:100%;">
-              <option value="ptt">📻 Funkgerät (PTT)</option>
-              <option value="duplex">🎙️ Live-Duplex</option>
-              <option value="wake_word">👂 Wake-Word</option>
-              <option value="off">⏸️ Aus</option>
-            </select>
-          </label>
-        </div>
+        <div id="header-talk-reply-box" class="talk-reply-card" hidden></div>
 
-        <label style="display:flex;flex-direction:column;gap:0.2rem;font-size:0.76rem;">
-          <span style="color:var(--text-muted);">Modell-Eigenstart (Agent Summon):</span>
-          <select id="header-talk-summon-policy" class="lang-switcher" style="width:100%;">
-            <option value="knock">🔔 Funkgerät-Anklopfen im Header</option>
-            <option value="auto_popup">⚡ Auto-Popup (bei Präsenz via Sensation)</option>
-            <option value="muted">🔕 Stumm (Kein Modell-Eigenstart)</option>
+        <!-- 5. Operating Mode Segmented Switcher -->
+        <div class="talk-section-block">
+          <div class="talk-section-label">
+            <span>Betriebsmodus</span>
+            <span class="talk-mono-pill">Fast-Relay aktiv</span>
+          </div>
+          <div class="talk-mode-strip" role="radiogroup" aria-label="Betriebsmodus">
+            <button type="button" class="talk-mode-pill is-active" data-talk-opmode="ptt">📻 PTT</button>
+            <button type="button" class="talk-mode-pill" data-talk-opmode="duplex">🎙️ Duplex</button>
+            <button type="button" class="talk-mode-pill" data-talk-opmode="wake_word">👂 Wake</button>
+            <button type="button" class="talk-mode-pill" data-talk-opmode="off">⏸️ Aus</button>
+          </div>
+          <select id="header-talk-opmode" class="talk-sr-select" aria-hidden="true" tabindex="-1">
+            <option value="ptt">📻 Funkgerät (PTT)</option>
+            <option value="duplex">🎙️ Live-Duplex</option>
+            <option value="wake_word">👂 Wake-Word</option>
+            <option value="off">⏸️ Aus</option>
           </select>
-        </label>
-
-        <!-- Multi-Device Audio Input / Output Selection (Browser, Mobil & Tauri) -->
-        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.4rem;align-items:end;font-size:0.74rem;">
-          <label style="display:flex;flex-direction:column;gap:0.18rem;">
-            <span style="color:var(--text-muted);">🎤 Mikrofon:</span>
-            <select id="header-talk-mic-select" class="lang-switcher" style="width:100%;">
-              <option value="default">Standard-Mikrofon</option>
-            </select>
-          </label>
-          <label style="display:flex;flex-direction:column;gap:0.18rem;">
-            <span style="color:var(--text-muted);">🔊 Lautsprecher:</span>
-            <select id="header-talk-speaker-select" class="lang-switcher" style="width:100%;">
-              <option value="default">Standard-Ausgabe</option>
-            </select>
-          </label>
-          <button type="button" id="header-talk-refresh-devices" class="btn btn-sm" title="Audio- & Kamerageräte neu erkennen" style="padding:0.35rem 0.5rem;">🔄</button>
         </div>
 
-        <!-- Actions: Detachable Companion Pop-out & Living & Running Slot Settings -->
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;padding-top:0.35rem;border-top:1px solid var(--border);">
+        <!-- 6. Collapsible Audio Devices & Summon Policy Drawer -->
+        <details class="talk-console-drawer">
+          <summary class="talk-drawer-summary">
+            <span>⚙️ Kanal- &amp; Audio-Geräte</span>
+            <span class="talk-drawer-chevron">▾</span>
+          </summary>
+          <div class="talk-drawer-body">
+            <label class="talk-field-label">
+              <span>Modell-Eigenstart (Agent Summon):</span>
+              <select id="header-talk-summon-policy" class="lang-switcher talk-full-select">
+                <option value="knock">🔔 Funkgerät-Anklopfen im Header</option>
+                <option value="auto_popup">⚡ Auto-Popup (bei Präsenz via Sensation)</option>
+                <option value="muted">🔕 Stumm (Kein Modell-Eigenstart)</option>
+              </select>
+            </label>
+            <div class="talk-device-row">
+              <label class="talk-field-label">
+                <span>🎤 Mikrofon:</span>
+                <select id="header-talk-mic-select" class="lang-switcher talk-full-select">
+                  <option value="default">Standard-Mikrofon</option>
+                </select>
+              </label>
+              <label class="talk-field-label">
+                <span>🔊 Lautsprecher:</span>
+                <select id="header-talk-speaker-select" class="lang-switcher talk-full-select">
+                  <option value="default">Standard-Ausgabe</option>
+                </select>
+              </label>
+              <button type="button" id="header-talk-refresh-devices" class="talk-icon-btn" title="Audio- & Kamerageräte neu erkennen">🔄</button>
+            </div>
+          </div>
+        </details>
+
+        <!-- 7. Footer Actions -->
+        <div class="talk-console-footer">
           <button
             type="button"
             id="header-talk-popout-btn"
-            class="btn btn-sm"
-            style="font-size:0.75rem;"
+            class="talk-footer-link"
             title="Öffnet ELLMOS Talk als eigenständiges, schwebendes Begleitfenster"
           >
-            ↗ Eigenes Fenster
+            ↗ Begleitfenster
           </button>
           <a
+            href="/talk"
+            class="talk-footer-link"
+            title="Vollbild-Konsole öffnen"
+          >
+            🎙️ Studio (/talk)
+          </a>
+          <a
             href="/agenten/running#talk-slot"
-            class="btn btn-sm"
-            style="font-size:0.75rem;text-decoration:none;"
-            title="Modell-Slot, Fast-Relay-Modell & Betrieb in Living & Running umstellen"
+            class="talk-footer-link talk-footer-link-primary"
+            title="Modell-Bindung, Fast-Relay-Modell & Betrieb in Living & Running umstellen"
           >
             ⚡ Living &amp; Running ↗
           </a>
@@ -726,8 +780,9 @@ function lineIconSvg(id: string): string {
   const domainPinsMenu = document.getElementById('domain-pins-menu');
   if (domainPinsMenu) new MutationObserver(refreshActiveNavigation).observe(domainPinsMenu, { childList: true, subtree: true });
 
-  // ── ELLMOS Talk / Funkgerät Header Integration (Push-to-Talk, Pop-over, Pop-out & Modell-Summon) ──
+  // ── ELLMOS Talk / Funkgerät Header Integration (Instrument Console, PTT, Pop-out & Modell-Summon) ──
   (function initHeaderTalkRadio() {
+    const wrap = document.getElementById('header-talk-radio-wrap');
     const radioBtn = document.getElementById('header-talk-radio-btn');
     const popover = document.getElementById('header-talk-popover');
     const closeBtn = document.getElementById('header-talk-close-btn');
@@ -736,8 +791,12 @@ function lineIconSvg(id: string): string {
     const miniOrb = document.getElementById('header-talk-mini-orb');
     const miniEmoji = document.getElementById('header-talk-mini-emoji');
     const stateText = document.getElementById('header-talk-state-text');
+    const activeModelPill = document.getElementById('header-talk-active-model-pill');
     const pttBtn = document.getElementById('header-talk-ptt-btn');
+    const pttLabel = document.getElementById('header-talk-ptt-label');
     const liveBtn = document.getElementById('header-talk-live-btn');
+    const quickForm = document.getElementById('header-talk-quick-form');
+    const quickInput = document.getElementById('header-talk-quick-input');
     const replyBox = document.getElementById('header-talk-reply-box');
     const personaSelect = document.getElementById('header-talk-persona');
     const opmodeSelect = document.getElementById('header-talk-opmode');
@@ -748,8 +807,30 @@ function lineIconSvg(id: string): string {
     const summonMsg = document.getElementById('header-talk-summon-msg');
     const summonAccept = document.getElementById('header-talk-summon-accept');
     const summonDismiss = document.getElementById('header-talk-summon-dismiss');
+    const personaPills = [...document.querySelectorAll('[data-talk-persona]')];
+    const modePills = [...document.querySelectorAll('[data-talk-opmode]')];
 
     let liveActive = false;
+    const DISMISSED_SUMMON_KEY = 'bach-talk-dismissed-summon-sig';
+
+    function getSummonSignature(s) {
+      if (!s || !s.message) return '';
+      return `${s.caller || ''}|${s.created_at || s.timestamp || ''}|${s.message}`;
+    }
+
+    function openTalkPopover() {
+      if (!popover) return;
+      popover.hidden = false;
+      radioBtn?.setAttribute('aria-expanded', 'true');
+      loadHeaderTalkConfig();
+    }
+
+    function closeTalkPopover(returnFocus = false) {
+      if (!popover) return;
+      popover.hidden = true;
+      radioBtn?.setAttribute('aria-expanded', 'false');
+      if (returnFocus) radioBtn?.focus({ preventScroll: true });
+    }
 
     function detectClientRuntime() {
       if (window.__TAURI__ || window.__TAURI_INTERNALS__) return 'tauri';
@@ -816,26 +897,52 @@ function lineIconSvg(id: string): string {
       }
     }
 
+    function syncSegmentedControls(persona, opmode) {
+      personaPills.forEach((pill) => {
+        const active = pill.getAttribute('data-talk-persona') === persona;
+        pill.classList.toggle('is-active', active);
+        pill.setAttribute('aria-checked', String(active));
+      });
+      modePills.forEach((pill) => {
+        const active = pill.getAttribute('data-talk-opmode') === opmode;
+        pill.classList.toggle('is-active', active);
+        pill.setAttribute('aria-checked', String(active));
+      });
+    }
+
     function applyTalkStateToHeader(cfg) {
       if (!cfg || typeof cfg !== 'object') return;
       window.__bachTalkConfig = cfg;
       const color = cfg.color_primary || '#00d4aa';
       if (miniOrb) {
-        miniOrb.style.background = `radial-gradient(circle at 35% 35%, ${color}, #0f172a 75%)`;
-        miniOrb.style.boxShadow = `0 0 16px ${color}88`;
+        miniOrb.style.background = `radial-gradient(circle at 35% 35%, ${color}, #0f172a 78%)`;
+        miniOrb.style.boxShadow = `0 0 18px ${color}66`;
       }
       if (miniEmoji && cfg.emoji_overlay) miniEmoji.textContent = cfg.emoji_overlay;
-      if (personaSelect && cfg.persona) personaSelect.value = cfg.persona;
-      if (opmodeSelect && cfg.operating_mode) opmodeSelect.value = cfg.operating_mode;
+      const persona = cfg.persona || 'buddha';
+      const opmode = cfg.operating_mode || 'ptt';
+      if (personaSelect) personaSelect.value = persona;
+      if (opmodeSelect) opmodeSelect.value = opmode;
       if (summonSelect && cfg.summon_policy) summonSelect.value = cfg.summon_policy;
+      if (activeModelPill) activeModelPill.textContent = cfg.primary_model || 'buddha-default';
+      syncSegmentedControls(persona, opmode);
 
-      const modeLabels = { ptt: 'Funkgerät · PTT', duplex: 'Live-Duplex aktiv', wake_word: `Wake-Word („${cfg.wake_word || 'Hey Buddha'}“)`, off: 'Ausgeschaltet' };
+      const modeLabels = {
+        ptt: 'Funkgerät · PTT bereit',
+        duplex: 'Live-Duplex aktiv',
+        wake_word: `Wake-Word („${cfg.wake_word || 'Hey Buddha'}“)`,
+        off: 'Funkkanal stumm',
+      };
       if (stateText) {
-        stateText.textContent = `${(cfg.persona || 'buddha').toUpperCase()} (${cfg.primary_model || 'buddha-default'}) · ${modeLabels[cfg.operating_mode] || 'Funkgerät'}`;
+        stateText.textContent = `${persona.toUpperCase()} · ${modeLabels[opmode] || 'Funkgerät'}`;
       }
 
-      if (cfg.pending_summon && cfg.pending_summon.message) {
-        const s = cfg.pending_summon;
+      const s = cfg.pending_summon;
+      const sig = getSummonSignature(s);
+      const dismissedSig = sessionStorage.getItem(DISMISSED_SUMMON_KEY) || '';
+      const hasActiveSummon = Boolean(s && s.message && sig !== dismissedSig);
+
+      if (hasActiveSummon) {
         if (summonBanner) summonBanner.hidden = false;
         if (summonTitle) summonTitle.textContent = `📻 ${(s.caller || 'Modell').toUpperCase()} ruft über Funk`;
         if (summonMsg) summonMsg.textContent = s.message;
@@ -845,14 +952,13 @@ function lineIconSvg(id: string): string {
         }
         if (btnLabel) btnLabel.textContent = `Funk (${(s.caller || 'Anruf').toUpperCase()}!)`;
         if (s.auto_open && popover && popover.hidden) {
-          popover.hidden = false;
-          radioBtn?.setAttribute('aria-expanded', 'true');
+          openTalkPopover();
         }
       } else {
         if (summonBanner) summonBanner.hidden = true;
         if (dot) {
-          dot.style.background = cfg.operating_mode === 'off' ? '#64748b' : '#10b981';
-          dot.style.boxShadow = cfg.operating_mode === 'off' ? 'none' : '0 0 8px rgba(16,185,129,0.6)';
+          dot.style.background = opmode === 'off' ? '#64748b' : '#10b981';
+          dot.style.boxShadow = opmode === 'off' ? 'none' : '0 0 8px rgba(16,185,129,0.6)';
         }
         if (btnLabel) btnLabel.textContent = 'Funk / Talk';
       }
@@ -892,6 +998,10 @@ function lineIconSvg(id: string): string {
       try {
         const persona = personaSelect?.value || 'buddha';
         const lang = document.documentElement.lang || 'de';
+        if (replyBox) {
+          replyBox.hidden = false;
+          replyBox.textContent = `📡 Sende an ${persona.toUpperCase()}…`;
+        }
         const res = await fetch('/api/talk/turn', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -919,6 +1029,19 @@ function lineIconSvg(id: string): string {
     }
 
     async function ackHeaderTalkSummon(startListening) {
+      const currentSummon = window.__bachTalkConfig?.pending_summon;
+      const sig = getSummonSignature(currentSummon);
+      if (sig) {
+        sessionStorage.setItem(DISMISSED_SUMMON_KEY, sig);
+      }
+      if (summonBanner) summonBanner.hidden = true;
+      if (window.__bachTalkConfig) {
+        window.__bachTalkConfig.pending_summon = null;
+        applyTalkStateToHeader(window.__bachTalkConfig);
+      }
+      if (!startListening) {
+        closeTalkPopover(false);
+      }
       try {
         const res = await fetch('/api/talk/summon/ack', {
           method: 'POST',
@@ -927,7 +1050,10 @@ function lineIconSvg(id: string): string {
         });
         if (!res.ok) return null;
         const data = await res.json();
-        if (data && data.visual_state) applyTalkStateToHeader(data.visual_state);
+        if (data && data.visual_state) {
+          data.visual_state.pending_summon = null;
+          applyTalkStateToHeader(data.visual_state);
+        }
         return data;
       } catch (_) {
         return null;
@@ -941,48 +1067,84 @@ function lineIconSvg(id: string): string {
     window.bachOpenTalkCompanion = openCompanionPopout;
     window.bachEnumerateTalkDevices = enumerateTalkDevices;
     window.bachDetectClientRuntime = detectClientRuntime;
+
     const runtimeBadge = document.getElementById('header-talk-runtime-badge');
     const rt = detectClientRuntime();
     if (runtimeBadge) {
       runtimeBadge.textContent = rt === 'tauri' ? '🖥️ Tauri' : (rt === 'mobile' ? '📱 Mobil' : '🌐 Browser');
     }
+
     const micSelect = document.getElementById('header-talk-mic-select');
     const speakerSelect = document.getElementById('header-talk-speaker-select');
     const refreshDevBtn = document.getElementById('header-talk-refresh-devices');
     micSelect?.addEventListener('change', () => updateHeaderTalkConfig({ input_device_id: micSelect.value }));
     speakerSelect?.addEventListener('change', () => updateHeaderTalkConfig({ output_device_id: speakerSelect.value }));
     refreshDevBtn?.addEventListener('click', () => enumerateTalkDevices(true));
-    pttBtn?.addEventListener('touchstart', (e) => { e.preventDefault(); triggerSpeechCapture(); }, { passive: false });
     enumerateTalkDevices(false);
 
-    radioBtn?.addEventListener('click', () => {
+    radioBtn?.addEventListener('click', (ev) => {
+      ev.stopPropagation();
       if (!popover) return;
-      const nextHidden = !popover.hidden;
-      popover.hidden = nextHidden;
-      radioBtn.setAttribute('aria-expanded', String(!nextHidden));
-      if (!nextHidden) loadHeaderTalkConfig();
+      if (popover.hidden) openTalkPopover();
+      else closeTalkPopover(false);
     });
 
-    closeBtn?.addEventListener('click', () => {
-      if (popover) popover.hidden = true;
-      radioBtn?.setAttribute('aria-expanded', 'false');
+    closeBtn?.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      closeTalkPopover(true);
+    });
+
+    document.addEventListener('click', (ev) => {
+      if (!popover || popover.hidden) return;
+      if (wrap && !wrap.contains(ev.target)) {
+        closeTalkPopover(false);
+      }
+    });
+
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' && popover && !popover.hidden) {
+        ev.stopPropagation();
+        closeTalkPopover(true);
+      }
     });
 
     popoutBtn?.addEventListener('click', () => {
+      closeTalkPopover(false);
       openCompanionPopout();
     });
 
+    personaPills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        const val = pill.getAttribute('data-talk-persona') || 'buddha';
+        if (personaSelect) personaSelect.value = val;
+        syncSegmentedControls(val, opmodeSelect?.value || 'ptt');
+        updateHeaderTalkConfig({ persona: val });
+      });
+    });
+
+    modePills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        const val = pill.getAttribute('data-talk-opmode') || 'ptt';
+        if (opmodeSelect) opmodeSelect.value = val;
+        syncSegmentedControls(personaSelect?.value || 'buddha', val);
+        updateHeaderTalkConfig({ operating_mode: val });
+      });
+    });
+
     personaSelect?.addEventListener('change', () => {
+      syncSegmentedControls(personaSelect.value, opmodeSelect?.value || 'ptt');
       updateHeaderTalkConfig({ persona: personaSelect.value });
     });
     opmodeSelect?.addEventListener('change', () => {
+      syncSegmentedControls(personaSelect?.value || 'buddha', opmodeSelect.value);
       updateHeaderTalkConfig({ operating_mode: opmodeSelect.value });
     });
     summonSelect?.addEventListener('change', () => {
       updateHeaderTalkConfig({ summon_policy: summonSelect.value });
     });
 
-    summonAccept?.addEventListener('click', async () => {
+    summonAccept?.addEventListener('click', async (ev) => {
+      ev.stopPropagation();
       const msg = summonMsg?.textContent || '';
       await ackHeaderTalkSummon(true);
       if (msg && 'speechSynthesis' in window) {
@@ -992,8 +1154,18 @@ function lineIconSvg(id: string): string {
         } catch (_) {}
       }
     });
-    summonDismiss?.addEventListener('click', () => {
-      ackHeaderTalkSummon(false);
+
+    summonDismiss?.addEventListener('click', async (ev) => {
+      ev.stopPropagation();
+      await ackHeaderTalkSummon(false);
+    });
+
+    quickForm?.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const val = quickInput?.value?.trim() || '';
+      if (!val) return;
+      if (quickInput) quickInput.value = '';
+      await sendHeaderTalkTurn(val);
     });
 
     function triggerSpeechCapture() {
@@ -1001,13 +1173,19 @@ function lineIconSvg(id: string): string {
       if (SR) {
         const rec = new SR();
         rec.lang = (document.documentElement.lang || 'de') === 'en' ? 'en-US' : 'de-DE';
-        if (pttBtn) pttBtn.textContent = '🔴 Funkkanal offen — Sprich jetzt…';
+        pttBtn?.classList.add('is-recording');
+        if (pttLabel) pttLabel.textContent = '🔴 Kanal offen — Sprich jetzt…';
         rec.onresult = (ev) => {
           const transcript = ev.results?.[0]?.[0]?.transcript || '';
           if (transcript) sendHeaderTalkTurn(transcript);
         };
         rec.onend = () => {
-          if (pttBtn) pttBtn.textContent = '📻 Halten zum Sprechen (PTT)';
+          pttBtn?.classList.remove('is-recording');
+          if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+        };
+        rec.onerror = () => {
+          pttBtn?.classList.remove('is-recording');
+          if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
         };
         rec.start();
       } else {
@@ -1016,9 +1194,11 @@ function lineIconSvg(id: string): string {
     }
 
     pttBtn?.addEventListener('click', triggerSpeechCapture);
+    pttBtn?.addEventListener('touchstart', (e) => { e.preventDefault(); triggerSpeechCapture(); }, { passive: false });
     liveBtn?.addEventListener('click', () => {
       liveActive = !liveActive;
-      liveBtn.textContent = liveActive ? '⏹️ Duplex stoppen' : '🎙️ Freisprechen';
+      liveBtn.classList.toggle('is-active', liveActive);
+      liveBtn.textContent = liveActive ? '⏹️ Stopp' : '🎙️ Duplex';
       updateHeaderTalkConfig({ operating_mode: liveActive ? 'duplex' : 'ptt', mode: liveActive ? 'listening' : 'idle' });
     });
 
@@ -1032,3 +1212,428 @@ function lineIconSvg(id: string): string {
   initializeDomainMenu();
   initializeWorldI18n();
 </script>
+
+<style>
+  /* ── ELLMOS Talk / Funkgerät Instrument Console (evidence-interface-design) ── */
+  .header-talk-radio-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .talk-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.32rem 0.68rem;
+    border-radius: var(--radius-sm, 8px);
+    border: 1px solid var(--border, #334155);
+    background: var(--bg-card, #111827);
+    color: var(--text, #f8fafc);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  }
+  .talk-trigger-btn:hover,
+  .talk-trigger-btn[aria-expanded="true"] {
+    border-color: var(--accent, #00d4aa);
+    box-shadow: 0 0 0 1px rgba(0, 212, 170, 0.25);
+  }
+  .talk-trigger-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    display: inline-block;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  }
+  .talk-console-popover {
+    position: absolute;
+    top: calc(100% + 0.55rem);
+    right: 0;
+    width: 368px;
+    max-width: calc(100vw - 1.5rem);
+    z-index: 1400;
+    background: linear-gradient(180deg, var(--bg-card, #0f172a) 0%, var(--bg-panel, #090e1a) 100%);
+    border: 1px solid var(--border, #334155);
+    border-radius: 14px;
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    padding: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.72rem;
+    color: var(--text, #f8fafc);
+  }
+  .talk-console-popover[hidden],
+  .talk-summon-alert[hidden],
+  .talk-reply-card[hidden],
+  .talk-sr-select {
+    display: none !important;
+  }
+  .talk-console-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  }
+  .talk-console-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+  .talk-console-orb {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #00d4aa, #0f172a 78%);
+    box-shadow: 0 0 16px rgba(0, 212, 170, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.12rem;
+  }
+  .talk-console-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+    min-width: 0;
+  }
+  .talk-console-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.38rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+  }
+  .talk-console-freq {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.63rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 0.1rem 0.36rem;
+    border-radius: 4px;
+    background: rgba(16, 185, 129, 0.14);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+  .talk-console-badge {
+    font-size: 0.64rem;
+    padding: 0.08rem 0.36rem;
+    border-radius: 4px;
+    background: rgba(148, 163, 184, 0.14);
+    color: var(--text-muted, #94a3b8);
+  }
+  .talk-console-subtitle {
+    font-size: 0.72rem;
+    color: var(--text-muted, #94a3b8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .talk-console-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    border: 1px solid var(--border, #334155);
+    background: rgba(15, 23, 42, 0.65);
+    color: var(--text-muted, #94a3b8);
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .talk-console-close:hover {
+    background: rgba(239, 68, 68, 0.16);
+    border-color: rgba(239, 68, 68, 0.45);
+    color: #fca5a5;
+  }
+  .talk-summon-alert {
+    padding: 0.65rem 0.75rem;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(15, 23, 42, 0.92));
+    border: 1px solid rgba(56, 189, 248, 0.55);
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .talk-summon-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: #38bdf8;
+  }
+  .talk-summon-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 10px #38bdf8;
+  }
+  .talk-summon-body {
+    margin: 0;
+    font-size: 0.77rem;
+    line-height: 1.38;
+    color: var(--text, #f8fafc);
+  }
+  .talk-summon-actions {
+    display: flex;
+    gap: 0.45rem;
+  }
+  .talk-btn {
+    flex: 1;
+    padding: 0.36rem 0.6rem;
+    border-radius: 7px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border, #334155);
+  }
+  .talk-btn-accept {
+    background: #0284c7;
+    border-color: #38bdf8;
+    color: #fff;
+  }
+  .talk-btn-later {
+    background: rgba(15, 23, 42, 0.75);
+    color: var(--text-muted, #cbd5e1);
+  }
+  .talk-btn-later:hover {
+    background: rgba(51, 65, 85, 0.55);
+    color: #fff;
+  }
+  .talk-section-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.32rem;
+  }
+  .talk-section-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted, #94a3b8);
+  }
+  .talk-mono-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: none;
+    letter-spacing: 0;
+    padding: 0.08rem 0.38rem;
+    border-radius: 4px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: var(--text, #e2e8f0);
+  }
+  .talk-persona-grid,
+  .talk-mode-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.3rem;
+    background: rgba(15, 23, 42, 0.68);
+    padding: 0.22rem;
+    border-radius: 9px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+  }
+  .talk-persona-pill,
+  .talk-mode-pill {
+    padding: 0.34rem 0.25rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted, #94a3b8);
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
+    transition: all 0.14s ease;
+  }
+  .talk-persona-pill:hover,
+  .talk-mode-pill:hover {
+    color: var(--text, #f8fafc);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .talk-persona-pill.is-active,
+  .talk-mode-pill.is-active {
+    background: var(--bg-card, #1e293b);
+    color: var(--text, #fff);
+    border-color: rgba(0, 212, 170, 0.45);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
+  }
+  .talk-transceiver-deck {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.42rem;
+  }
+  .talk-ptt-hero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.56rem 0.75rem;
+    border-radius: 9px;
+    border: 1px solid rgba(0, 212, 170, 0.5);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.24), rgba(6, 95, 70, 0.42));
+    color: #ecfdf5;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .talk-ptt-hero:hover {
+    border-color: #34d399;
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.28);
+  }
+  .talk-ptt-hero.is-recording {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.35), rgba(153, 27, 27, 0.55));
+    border-color: #f87171;
+    color: #fef2f2;
+  }
+  .talk-ptt-led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 6px #34d399;
+  }
+  .talk-duplex-btn {
+    padding: 0.56rem 0.7rem;
+    border-radius: 9px;
+    border: 1px solid var(--border, #334155);
+    background: rgba(15, 23, 42, 0.75);
+    color: var(--text, #e2e8f0);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .talk-duplex-btn.is-active {
+    border-color: #38bdf8;
+    background: rgba(14, 165, 233, 0.22);
+    color: #e0f2fe;
+  }
+  .talk-quick-form {
+    display: flex;
+    gap: 0.35rem;
+  }
+  .talk-quick-input {
+    flex: 1;
+    padding: 0.38rem 0.6rem;
+    border-radius: 7px;
+    border: 1px solid var(--border, #334155);
+    background: rgba(15, 23, 42, 0.75);
+    color: var(--text, #f8fafc);
+    font-size: 0.76rem;
+  }
+  .talk-quick-send {
+    padding: 0.38rem 0.58rem;
+    border-radius: 7px;
+    border: 1px solid var(--border, #334155);
+    background: rgba(15, 23, 42, 0.85);
+    color: var(--text, #f8fafc);
+    cursor: pointer;
+    font-size: 0.78rem;
+  }
+  .talk-reply-card {
+    padding: 0.5rem 0.65rem;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.9);
+    border-left: 3px solid #00d4aa;
+    font-size: 0.76rem;
+    line-height: 1.38;
+    color: var(--text, #f8fafc);
+  }
+  .talk-console-drawer {
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 9px;
+    background: rgba(15, 23, 42, 0.45);
+    padding: 0.38rem 0.55rem;
+  }
+  .talk-drawer-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.73rem;
+    font-weight: 600;
+    color: var(--text-muted, #94a3b8);
+    cursor: pointer;
+    list-style: none;
+  }
+  .talk-drawer-summary::-webkit-details-marker {
+    display: none;
+  }
+  .talk-drawer-body {
+    margin-top: 0.5rem;
+    padding-top: 0.45rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .talk-field-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+    font-size: 0.71rem;
+    color: var(--text-muted, #94a3b8);
+    min-width: 0;
+  }
+  .talk-full-select {
+    width: 100%;
+    font-size: 0.73rem;
+  }
+  .talk-device-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.35rem;
+    align-items: end;
+  }
+  .talk-icon-btn {
+    padding: 0.34rem 0.48rem;
+    border-radius: 6px;
+    border: 1px solid var(--border, #334155);
+    background: rgba(15, 23, 42, 0.8);
+    color: var(--text, #f8fafc);
+    cursor: pointer;
+    font-size: 0.74rem;
+  }
+  .talk-console-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.35rem;
+    padding-top: 0.48rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.14);
+  }
+  .talk-footer-link {
+    padding: 0.28rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 23, 42, 0.6);
+    color: var(--text-muted, #cbd5e1);
+    font-size: 0.71rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.14s ease;
+  }
+  .talk-footer-link:hover {
+    color: #fff;
+    border-color: rgba(148, 163, 184, 0.45);
+  }
+  .talk-footer-link-primary {
+    border-color: rgba(0, 212, 170, 0.38);
+    color: #34d399;
+  }
+</style>
