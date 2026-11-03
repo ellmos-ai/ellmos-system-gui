@@ -282,7 +282,7 @@
     "src/pages/agenten/blueprints.astro": "229664baa1438b532a42da33f80ad6cf829b5a623ccdc41932739cde89e15b9a",
     "src/pages/agenten/fabrika.astro": "403d4a89bd5248a0467d36c50d8f4da1f8a0a62d3ce318a366438cebebdb5ade",
     "src/pages/agenten/marblerun.astro": "e78628301216ceb7175f861ec54962101e5ba5f79f84131d76d9b22aa00a2973",
-    "src/pages/agenten/running.astro": "7bd10991eabc158c10b4464c038470e42959a63e4482c243950244a6fed11010",
+    "src/pages/agenten/running.astro": "cf0c3333e8cee88c1445e1d6955438cacd94cc32765f2c886ce92dcfd21a357a",
     "src/pages/agenten/sessions.astro": "3322b3f23239c8a56af7968a5af226169f0c3df203e7a4e59e44c89173cb18cf",
     "src/pages/agenten/subscription-agents.astro": "6913198067d5130b5281509744f1cec6b148dd54de39bbe24e482b566b362b29",
     "src/pages/artefakte.astro": "155856d3bc6dda60ec2ff57173ddb8186c0d9f9b68e35d60bf100161fb2d5ab5",
@@ -1115,7 +1115,7 @@
         "src/pages/agenten/running.astro": {
           "source_path": "system/gui/web/src/pages/agenten/running.astro",
           "source_sha256": "c4700fb05438cdd20df993894f7b649be9f53a1a56b5dea80fa140164b943728",
-          "imported_sha256": "ca343f07d31ae30ff03561d5df816226d7a8939a1a8e0f2803dc8b6bda977cc7",
+          "imported_sha256": "cf0c3333e8cee88c1445e1d6955438cacd94cc32765f2c886ce92dcfd21a357a",
           "adapted": true
         },
         "src/pages/agenten/sessions.astro": {

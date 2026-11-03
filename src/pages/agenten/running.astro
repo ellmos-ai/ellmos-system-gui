@@ -89,21 +89,26 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <button class="btn btn-sm" type="button" onclick="loadBackgroundWorkers(); loadCoreSlots();">🔄 Neu prüfen</button>
     </div>
     <section class="local-agent-ready" aria-labelledby="local-agent-ready-title" style="margin-top:0.5rem;">
-      <h3 id="local-agent-ready-title">🤖 Lokale Agenten</h3>
-      <p class="section-description">Deine lokal konfigurierten Agentenprofile, Vorlagen-Instanzen und Hintergrundworker in einheitlicher Agentenkachel-Darstellung.</p>
+      <h3 id="local-agent-ready-title">🤖 Deine Agenten · Rollen mit Modellbindung (Living)</h3>
+      <p class="section-description">Konfigurierte Agentenprofile, vorangelegte BACH-Expertenrollen (<code>Boss · Koordination</code>, <code>Experte · Entwicklung</code>, <code>Experte · Recherche</code>) und aus Modul-<code>roles[]</code> angelegte <code>Living</code>-Agenten. Die Modellbindung steht direkt beim Agentenprofil (inklusive Fallbacks). Besetzt ein aktiver <code>Living</code>-Agent eine Rolle (<strong>Stufe 2</strong>), hat er beim <code>persona-routing</code> automatisch Vorrang vor dem dynamischen Schnittstellen-Routing (<strong>Stufe 1</strong>).</p>
       <p id="worker-status-summary" role="status" aria-live="polite" style="font-size:0.8rem;color:var(--text-muted);margin:0.35rem 0 0.75rem 0;">Workerstatus wird geprüft…</p>
+      <div id="role-pinning-catalog-bar" style="display:flex;flex-wrap:wrap;gap:0.45rem;margin:0.4rem 0 0.85rem;padding:0.6rem 0.75rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark);align-items:center;">
+        <small style="color:var(--text-muted);font-weight:600;margin-right:0.35rem;">🧩 Modul- &amp; Expertenrollen (<code>roles[]</code> · 2-Stufen-Modell):</small>
+        <small class="text-muted">Wird mit Agentenprofilen abgeglichen…</small>
+      </div>
       <div id="local-core-agent-cards" class="core-grid agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:1rem;margin-bottom:0.85rem;"></div>
       <div id="ready-agents-grid" class="core-grid agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:1rem;">
         <p class="loading-state" style="grid-column:1/-1;text-align:center;padding:2rem;">Prüfe einsatzbereite Agenten…</p>
       </div>
     </section>
     <section class="core-agent-ready" aria-labelledby="core-agent-ready-title">
-      <h3 id="core-agent-ready-title">🏛️ Systemagenten · Systemrollen (besetzt von …)</h3>
-      <p class="section-description">Kanonische Systemrollen der BACH/OCEAN-Architektur — jeweils besetzt von einem zugewiesenen Agenten oder Modell. Systemprofile nutzen dieselben Zugangs-, Funktions-, Startart- und Darstellungsfilter. Die Modellbindung steht direkt beim Agentenprofil; sie bestätigt keine Modellresidenz oder laufende Nutzung. Laufende Profile erscheinen im Running-Bereich.</p>
+      <h3 id="core-agent-ready-title">🏛️ Systemagenten · Systemrollen (Systemplätze · Hardwareschnittstellen, besetzt von …)</h3>
+      <p class="section-description">System- und Hardwareschnittstellen (<code>💬 Chat</code>, <code>📱 Connectoren</code>, <code>🎙️ ELLMOS-Talk</code>, <code>⚡ Always-On</code> sowie optionale Modul-Schnittstellen <code>interface_slots[]</code>), die ohne betreuenden Agenten nicht betrieben werden können. Die primären Schnittstellen tragen standardmäßig das kombinierte Rollenpaket <strong>Persönlicher Assistent · Ticket-Master · Boss-Koordinator</strong>. Systemplätze müssen <strong>nicht</strong> durch lokale Agenten besetzt werden (jedes lokale, Cloud- oder Subscription-Modell <strong>inklusive Fallback-Kette</strong> ist möglich). Optionale Hardwareschnittstellen müssen nicht besetzt sein — wenn unbesetzt, ruht dieser Schnittstellenbereich.</p>
       <div id="core-agent-feedback" role="status" aria-live="polite"></div>
       <div id="core-agent-cards" class="core-grid agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:1rem;">
         <p class="loading-state">System-Agenten werden geprüft…</p>
       </div>
+      <div id="optional-interface-slot-cards" class="core-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:0.85rem;margin-top:0.85rem;"></div>
     </section>
   </details>
 
@@ -748,30 +753,39 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     }
 
     const SYSTEM_ROLE_DESCRIPTIONS = {
-      buddha_chat: 'Systemrolle: Persönlicher Assistent (Hauptdialog)',
-      buddha_always_on: 'Systemrolle: Hintergrund-Wächter (Always-On)',
-      buddha_connector: 'Systemrolle: Nachrichten-Empfänger (Connectoren)',
-      buddha_talk: 'Systemrolle: ELLMOS Talk & Funkgerät (Live-Voice)',
-      buddha_boss: 'Systemrolle: Aufgaben-Verteiler (Koordinator)',
-      buddha_developer: 'Systemrolle: System-Entwickler (Code & Fixes)',
-      buddha_research: 'Systemrolle: Tiefen-Recherche (Forschung)',
+      buddha_chat: 'Systemplatz · Chat: Persönlicher Assistent (Ticket-Master · Boss-Koordinator)',
+      buddha_always_on: 'Systemplatz · Always-On: Hintergrund-Wächter',
+      buddha_connector: 'Systemplatz · Connectoren: Telegram / WhatsApp / Signal (Ticket-Master · Boss-Koordinator)',
+      buddha_talk: 'Systemplatz · ELLMOS-Talk: Live-Funkgerät (Ticket-Master · Boss-Koordinator)',
+      interface_sensation: 'Systemplatz · Sensation & Open-Compute (Hardwareschnittstelle)',
+      interface_homecontrol: 'Systemplatz · SmartHome / HomeControl (Hardwareschnittstelle)',
+      interface_robotics: 'Systemplatz · ELLMOS Robotics (Hardwareschnittstelle)',
     };
 
     function isCanonicalSystemRole(agent) {
       const id = String(agent?.id || '');
-      return Boolean(SYSTEM_ROLE_DESCRIPTIONS[id]) || (id.startsWith('buddha_') && agent?.deletable !== true);
+      if (agent?.slot_category === 'preconfigured_role_agent') return false;
+      if (agent?.slot_category === 'interface_system_slot') return true;
+      return Boolean(SYSTEM_ROLE_DESCRIPTIONS[id]);
+    }
+
+    function formatModelFallbacksSummary(agent) {
+      const chain = Array.isArray(agent?.model_fallbacks) ? agent.model_fallbacks : [];
+      if (!chain.length) return '';
+      return ' · Fallbacks: ' + chain.map(f => `${f.model || '?'}${f.backend ? ' (' + f.backend + ')' : ''}`).join(' → ');
     }
 
     function resolveSystemRoleOccupiedBy(agent) {
+      if (agent?.enabled === false) return 'Nicht besetzt · Schnittstelle inaktiv';
       const model = String(agent?.model || '').trim();
       const backend = String(agent?.backend || '').trim();
-      if (!model) return 'Nicht besetzt (Modell fehlt)';
+      if (!model) return 'Nicht besetzt · Schnittstelle inaktiv';
       const list = Array.isArray(coreAgents) ? coreAgents : [];
       const matchingLocal = list.find(other => !isCanonicalSystemRole(other) && other.model === model && other.backend === backend);
       if (matchingLocal && matchingLocal.name) {
-        return `${matchingLocal.name} · ${model}${backend ? ' (' + backend + ')' : ''}`;
+        return `${matchingLocal.name} · ${model}${backend ? ' (' + backend + ')' : ''}${formatModelFallbacksSummary(agent)}`;
       }
-      return `${model}${backend ? ' (' + backend + ')' : ''}`;
+      return `${model}${backend ? ' (' + backend + ')' : ''}${formatModelFallbacksSummary(agent)}`;
     }
 
     function renderAgentOverviewCardContent(card, agent, source, statusLabel) {
@@ -803,13 +817,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       const kicker = document.createElement('span');
       kicker.className = 'occupancy-kicker';
       kicker.textContent = sysRole
-        ? `🏛️ ${SYSTEM_ROLE_DESCRIPTIONS[agent.id] || 'Systemrolle'}`
-        : `🤖 Lokaler Agent · ${source === 'worker' ? 'Worker-Profil' : (agent.role_id || 'Eigenes Profil')}`;
+        ? `🏛️ ${SYSTEM_ROLE_DESCRIPTIONS[agent.id] || 'Systemplatz (Hardwareschnittstelle)'}`
+        : `📌 Rolle mit Modellbindung (Living) · ${source === 'worker' ? 'Worker-Profil' : (agent.role_id || 'Eigenes Profil')}`;
       const main = document.createElement('span');
       main.className = 'occupancy-main';
       main.textContent = sysRole
         ? `Besetzt von: ${resolveSystemRoleOccupiedBy(agent)}`
-        : `Modellbindung: ${(agent.model || 'Modell fehlt')}${agent.backend ? ' (' + agent.backend + ')' : ''}`;
+        : `Modellbindung: ${(agent.model || 'Modell fehlt')}${agent.backend ? ' (' + agent.backend + ')' : ''}${formatModelFallbacksSummary(agent)}`;
       banner.append(kicker, main);
       const metaNode = content.querySelector('.agent-overview-runtime-meta');
       if (metaNode) content.insertBefore(banner, metaNode);
@@ -1069,6 +1083,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         const data = await coreRequest('');
         if (epoch !== coreRefreshEpoch) return;
         renderCoreAgents(data);
+        renderRolePinningAndInterfaceExtensions(data);
       } catch (error) {
         if (epoch !== coreRefreshEpoch) return;
         coreConfigVersion = null;
@@ -1079,6 +1094,101 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         document.getElementById('core-agent-cards').replaceChildren(
           coreElement('p', 'System-Agenten nicht verfügbar: ' + error.message));
         applyAgentOverviewControls();
+      }
+    }
+
+    function renderRolePinningAndInterfaceExtensions(data) {
+      const roleBar = document.getElementById('role-pinning-catalog-bar');
+      if (roleBar && Array.isArray(data?.agents)) {
+        roleBar.replaceChildren();
+        const title = coreElement('small', '🧩 Modul- & Expertenrollen (roles[] · 2-Stufen-Modell): ');
+        title.style.fontWeight = '700';
+        title.style.color = 'var(--text-muted)';
+        roleBar.append(title);
+        const catalogRoles = [
+          {role_id: 'ticket-master', label: '🎫 Ticket-Master (Modul: ticket-master)', preset: 'ticket_master'},
+          {role_id: 'boss_routing', label: '🧭 Boss-Koordinator (BACH/Ocean)', preset: 'boss'},
+          {role_id: 'entwickler', label: '🛠️ Experte · Entwicklung', preset: 'developer'},
+          {role_id: 'recherche', label: '🔎 Experte · Recherche', preset: 'research'},
+          {role_id: 'foerderplaner', label: '📋 Experte · Förderplaner', preset: 'foerderplaner'},
+        ];
+        for (const item of catalogRoles) {
+          const pinned = data.agents.find(a => !isCanonicalSystemRole(a) && a.enabled === true && a.role_id === item.role_id && String(a.model || '').trim());
+          const pill = coreElement('button',
+            pinned
+              ? `${item.label} · 📌 Living (${pinned.model})`
+              : `${item.label} · ⚡ Dynamisch (persona-routing)`,
+            'btn btn-sm');
+          pill.type = 'button';
+          pill.style.fontSize = '0.73rem';
+          pill.style.padding = '0.22rem 0.5rem';
+          if (pinned) {
+            pill.style.borderColor = '#10b981';
+            pill.title = `Stufe 2 aktiv: Gepinnter Living-Agent '${pinned.name}' (${pinned.model}) hat Vorrang vor dynamischem persona-routing. Klicken zum Bearbeiten.`;
+            pill.addEventListener('click', () => openCoreEditor(pinned.id));
+          } else {
+            pill.title = 'Stufe 1 aktiv: Läuft dynamisch über persona-routing auf dem Schnittstellen-Systemplatz (0 Ruhe-RAM). Klicken, um als eigenen Living-Agenten mit Modellbindung anzulegen.';
+            pill.addEventListener('click', () => {
+              const existing = data.agents.find(a => !isCanonicalSystemRole(a) && a.role_id === item.role_id);
+              if (existing) openCoreEditor(existing.id);
+              else openCoreEditor(null);
+            });
+          }
+          roleBar.append(pill);
+        }
+      }
+
+      const ifaceGrid = document.getElementById('optional-interface-slot-cards');
+      if (ifaceGrid && Array.isArray(data?.agents)) {
+        ifaceGrid.replaceChildren();
+        const talkModelEl = document.getElementById('running-talk-primary-model');
+        const talkPersonaEl = document.getElementById('running-talk-persona');
+        const talkOpModeEl = document.getElementById('running-talk-opmode');
+        const talkActive = (talkOpModeEl?.value || 'ptt') !== 'off';
+        const talkModel = (talkModelEl?.value || 'buddha-default').trim();
+        const talkPersona = (talkPersonaEl?.value || 'buddha').trim();
+        const talkCard = coreElement('article', undefined, 'core-agent-card');
+        const talkHeader = coreElement('div', undefined, 'core-slot-header');
+        talkHeader.append(coreElement('span', talkActive ? '● BESETZT' : '○ UNBESETZT', 'badge'));
+        talkHeader.append(coreElement('span', 'Systemplatz · Hardwareschnittstelle', 'badge'));
+        talkCard.append(talkHeader);
+        talkCard.append(coreElement('h3', '🎙️ ELLMOS-Talk · Funkgerät (buddha_talk)'));
+        talkCard.append(coreElement('small', 'Integrierte Spezialrollen: Persönlicher Assistent · Ticket-Master · Boss-Koordinator'));
+        talkCard.append(coreElement('div', talkActive
+          ? `Besetzt von: ${talkModel} (${talkPersona}) · inkl. Fast-Reflex & Fallbacks`
+          : 'Nicht besetzt · Schnittstelle inaktiv (Funkgerät ausgeschaltet)', 'core-slot-model'));
+        const talkActions = coreElement('div', undefined, 'core-actions');
+        const talkCfgBtn = coreElement('a', 'Talk-Besetzung & Geräte öffnen ↓', 'btn btn-sm');
+        talkCfgBtn.href = '#talk-slot';
+        talkActions.append(talkCfgBtn);
+        const talkPopBtn = coreElement('button', '📻 Funkgerät öffnen', 'btn btn-sm');
+        talkPopBtn.type = 'button';
+        talkPopBtn.addEventListener('click', () => window.bachOpenTalkCompanion && window.bachOpenTalkCompanion());
+        talkActions.append(talkPopBtn);
+        talkCard.append(talkActions);
+        ifaceGrid.append(talkCard);
+
+        const optionalIfaces = Array.isArray(data.optional_hardware_interface_slots) ? data.optional_hardware_interface_slots : [];
+        for (const opt of optionalIfaces) {
+          const occupiedAgent = data.agents.find(a => a.id === opt.id && a.enabled === true && String(a.model || '').trim());
+          const icard = coreElement('article', undefined, 'core-agent-card');
+          const iheader = coreElement('div', undefined, 'core-slot-header');
+          iheader.append(coreElement('span', occupiedAgent ? '● BESETZT' : '○ UNBESETZT (INAKTIV)', 'badge'));
+          iheader.append(coreElement('span', `Modul: ${opt.module_id}`, 'badge'));
+          icard.append(iheader);
+          icard.append(coreElement('h3', `${opt.icon || '🔌'} ${opt.name}`));
+          icard.append(coreElement('small', opt.description || 'Optionale Hardwareschnittstelle'));
+          icard.append(coreElement('div', occupiedAgent
+            ? `Besetzt von: ${resolveSystemRoleOccupiedBy(occupiedAgent)}`
+            : 'Nicht besetzt · Schnittstelle ruht (wird aktuell nicht genutzt)', 'core-slot-model'));
+          const iactions = coreElement('div', undefined, 'core-actions');
+          const ibtn = coreElement('button', occupiedAgent ? 'Besetzung ändern' : 'Bei Bedarf besetzen', 'btn btn-sm');
+          ibtn.type = 'button';
+          ibtn.addEventListener('click', () => openCoreEditor(occupiedAgent ? occupiedAgent.id : null));
+          iactions.append(ibtn);
+          icard.append(iactions);
+          ifaceGrid.append(icard);
+        }
       }
     }
 
@@ -1103,6 +1213,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       }
       coreField(form, 'backend', 'Anbieter', source.backend, 'select', coreCatalog.supported_backend_ids || []);
       coreField(form, 'model', 'Modell', source.model, 'text', [], source.backend);
+      const fallbackStr = Array.isArray(source.model_fallbacks)
+        ? source.model_fallbacks.map(item => `${item.backend}:${item.model}`).join(', ')
+        : '';
+      coreField(form, 'model_fallbacks_text', 'Fallback-Modelle (optional, Komma-Liste anbieter:modell)', fallbackStr, 'text');
       coreField(form, 'mode', 'Arbeitsmodus', source.mode, 'select', ['safe', 'full']);
       coreField(form, 'role_id', 'Rolle', source.role_id || 'personal-assistant', 'select', coreCatalog.role_ids || []);
       coreField(form, 'sub_mode', 'Rollenmodus', source.sub_mode || 'expert_role', 'select',
@@ -1228,6 +1342,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         if (field === 'color_override') {
           value = value === '' ? null : value.toLowerCase();
           if (!coreEditorAgent || value !== (coreEditorAgent.color_override ?? null)) changes[field] = value;
+        } else if (field === 'model_fallbacks_text') {
+          const parsed = String(value || '').split(',').map(s => s.trim()).filter(Boolean).map(entry => {
+            const idx = entry.indexOf(':');
+            return idx > 0 ? {backend: entry.slice(0, idx).trim(), model: entry.slice(idx + 1).trim()} : null;
+          }).filter(Boolean);
+          const prev = JSON.stringify(coreEditorAgent?.model_fallbacks || []);
+          if (JSON.stringify(parsed) !== prev) changes.model_fallbacks = parsed;
         } else if (!coreEditorAgent || value !== coreEditorAgent[field]) changes[field] = value;
       }
       if (form.querySelector('[data-core-field="pause_basis"]')?.value === 'none') {
