@@ -43,6 +43,31 @@
    "method": "POST",
    "path": "/api/talk/summon/ack",
    "required": false
+  },
+  {
+   "method": "GET",
+   "path": "/api/system/cluster-cockpit",
+   "required": false
+  },
+  {
+   "method": "POST",
+   "path": "/api/fackel",
+   "required": false
+  },
+  {
+   "method": "POST",
+   "path": "/api/slots",
+   "required": false
+  },
+  {
+   "method": "POST",
+   "path": "/api/voice/tts",
+   "required": false
+  },
+  {
+   "method": "POST",
+   "path": "/api/voice/stt",
+   "required": false
   }
  ],
  "pages": {
@@ -104,6 +129,31 @@
    {
     "method": "GET",
     "path": "/api/talk/state",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/voice/tts",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/talk/turn",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/talk/directive",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/voice/stt",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/voice/status",
     "required": false
    }
   ],
@@ -1123,6 +1173,16 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/worker-selection-policy.mjs#loadPolicy"
+   },
+   {
+    "method": "POST",
+    "path": "/api/fackel",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/slots",
+    "required": false
    }
   ],
   "/agenten/sessions": [
@@ -1776,6 +1836,36 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/scripts/installation-updates.mjs#loadSource"
+   },
+   {
+    "method": "POST",
+    "path": "/api/fackel",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/slots",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/talk/config",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/core-agents",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/permissions",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/talk/config",
+    "required": false
    }
   ]
  }

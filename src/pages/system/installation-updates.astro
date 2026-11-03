@@ -36,6 +36,78 @@ import BachLayout from "../../layouts/BachLayout.astro";
       </article>
     </section>
 
+    <!-- SET-02: 4-Stufen-Out-of-the-Box-Onboarding & Ausdehnung (Rinnsal ↔ BACH ↔ Meer) -->
+    <section class="onboarding-wizard-panel" id="set02-onboarding-wizard" aria-labelledby="onboarding-wizard-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">OUT-OF-THE-BOX EINRICHTUNG · SET-02</p>
+          <h2 id="onboarding-wizard-title">🧭 4-Stufen-Onboarding: Vom Rinnsal über den BACH bis ins Meer</h2>
+          <p class="section-copy">Schrittweise Inbetriebnahme deines Systems — von den Modell-Zugängen über Kern-MCPs und Connectoren bis zur gewünschten Ausdehnungsstufe.</p>
+        </div>
+        <span class="status-pill" id="onboarding-scale-badge" style="border-color:#38bdf8;color:#38bdf8;">🌊 Aktive Ausdehnung: BACH / Meer</span>
+      </div>
+
+      <div class="onboarding-stages-grid">
+        <!-- Stufe 1 -->
+        <article class="onboarding-stage-card" data-onboarding-stage="1">
+          <div class="stage-card-top">
+            <span class="step-number">STUFE 01</span>
+            <span class="stage-status-chip" id="onb-stage1-status">Prüfe…</span>
+          </div>
+          <h3>🧠 1. Modelle, Subscriptions &amp; API-Keys</h3>
+          <p>Lokale Modelle (Ollama / MLX), Cloud-Abos (Claude, Codex, Gemini) und kostenlose Router (OpenRouter Free Tier) verbinden.</p>
+          <div class="stage-actions">
+            <a href="/settings?tab=connections" class="btn btn-sm btn-primary">🔑 Zugänge &amp; Keys</a>
+            <a href="/agenten/running" class="btn btn-sm">🤖 Systemrollen besetzen</a>
+          </div>
+        </article>
+
+        <!-- Stufe 2 -->
+        <article class="onboarding-stage-card" data-onboarding-stage="2">
+          <div class="stage-card-top">
+            <span class="step-number">STUFE 02</span>
+            <span class="stage-status-chip" id="onb-stage2-status">Prüfe…</span>
+          </div>
+          <h3>🛠️ 2. Wichtige System-MCPs &amp; Rechte</h3>
+          <p>Kern-MCP-Server (FileCommander, CodeCommander, ControlCenter, Homebase) sowie Mikrofon-, Kamera- und Voice-Freigaben prüfen.</p>
+          <div class="stage-actions">
+            <a href="/skills/mcp" class="btn btn-sm btn-primary">🔌 MCP-Server</a>
+            <a href="/sensation" class="btn btn-sm">🛡️ Hardware-Rechte</a>
+          </div>
+        </article>
+
+        <!-- Stufe 3 -->
+        <article class="onboarding-stage-card" data-onboarding-stage="3">
+          <div class="stage-card-top">
+            <span class="step-number">STUFE 03</span>
+            <span class="stage-status-chip" id="onb-stage3-status">Bereit</span>
+          </div>
+          <h3>📡 3. Connectoren &amp; Funkgerät</h3>
+          <p>Nachrichtenkanäle (Telegram, Signal, Discord, Mail) sowie das Header-Funkgerät (ELLMOS Talk) für Rückfragen einrichten.</p>
+          <div class="stage-actions">
+            <a href="/connectoren" class="btn btn-sm btn-primary">💬 Connectoren</a>
+            <a href="/talk" class="btn btn-sm">📻 ELLMOS Talk</a>
+          </div>
+        </article>
+
+        <!-- Stufe 4 -->
+        <article class="onboarding-stage-card onboarding-stage-scale" data-onboarding-stage="4">
+          <div class="stage-card-top">
+            <span class="step-number">STUFE 04</span>
+            <span class="stage-status-chip" id="onb-stage4-status">Wählbar</span>
+          </div>
+          <h3>🌊 4. Ausdehnung: Rinnsal ↔ BACH ↔ Meer</h3>
+          <p>Bestimme, wie weit sich das System auf diesem Host ausdehnt (Ressourcen-Claiming &amp; aktive Hintergrunddienste):</p>
+          <div class="scale-selector-row" role="radiogroup" aria-label="System-Ausdehnung wählen">
+            <button type="button" class="scale-pill" data-scale-mode="rinnsal" title="Minimal: Nur Hauptdialog & Compute-Vorrang, keine Hintergrundworker">💧 Rinnsal</button>
+            <button type="button" class="scale-pill is-active" data-scale-mode="bach" title="Standard: Persönlicher Assistent, Kern-MCPs & gesteuerte Task-Worker">🏞️ BACH</button>
+            <button type="button" class="scale-pill" data-scale-mode="meer" title="Vollausbau: Alle Ocean-Module, Live-Voice-Funkgerät, Schwarm-Teams & Always-On">🌊 Meer (OCEAN)</button>
+          </div>
+          <small id="onb-scale-feedback" class="summary-detail">Aktuell: BACH — Ausgewogene Balance aus Assistenz und Ressourcenschonung.</small>
+        </article>
+      </div>
+    </section>
+
     <section class="lifecycle-panel" aria-labelledby="lifecycle-title">
       <div class="section-heading">
         <div>
@@ -100,7 +172,111 @@ import BachLayout from "../../layouts/BachLayout.astro";
   import "../../scripts/installation-updates.mjs";
 </script>
 
+<script is:inline>
+  (function initSet02OnboardingWizard() {
+    const scaleBadge = document.getElementById("onboarding-scale-badge");
+    const scaleFeedback = document.getElementById("onb-scale-feedback");
+    const s1 = document.getElementById("onb-stage1-status");
+    const s2 = document.getElementById("onb-stage2-status");
+    const s3 = document.getElementById("onb-stage3-status");
+    const s4 = document.getElementById("onb-stage4-status");
+    const pills = [...document.querySelectorAll("[data-scale-mode]")];
+    const SCALE_KEY = "ellmos-onboarding-scale-mode";
+
+    const scaleDescriptions = {
+      rinnsal: {
+        badge: "💧 Aktive Ausdehnung: Rinnsal (Leichtgewicht)",
+        note: "💧 Rinnsal aktiv: Nur direkter Chat bei Bedarf, Hintergrund-Wächter pausiert, RAM-Vorrang auf Compute.",
+      },
+      bach: {
+        badge: "🏞️ Aktive Ausdehnung: BACH (Standard)",
+        note: "🏞️ BACH aktiv: Persönlicher Assistent, Kern-MCPs, Funkgerät auf Push-to-Talk & kontrollierte Task-Läufe.",
+      },
+      meer: {
+        badge: "🌊 Aktive Ausdehnung: Meer / OCEAN (Vollausbau)",
+        note: "🌊 Meer (OCEAN) aktiv: Voller Multi-Agenten-Schwarm, Always-On-Wächter, ELLMOS Talk & alle 19 Ocean-Module.",
+      },
+    };
+
+    async function applyScaleMode(mode, persistRemote = true) {
+      const norm = scaleDescriptions[mode] ? mode : "bach";
+      try { localStorage.setItem(SCALE_KEY, norm); } catch (_) {}
+      pills.forEach((p) => {
+        const active = p.getAttribute("data-scale-mode") === norm;
+        p.classList.toggle("is-active", active);
+        p.setAttribute("aria-checked", String(active));
+      });
+      if (scaleBadge) scaleBadge.textContent = scaleDescriptions[norm].badge;
+      if (scaleFeedback) scaleFeedback.textContent = scaleDescriptions[norm].note;
+      if (s4) s4.textContent = norm.toUpperCase();
+      if (!persistRemote) return;
+      try {
+        if (norm === "rinnsal") {
+          await fetch("/api/fackel", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ preference: "compute" }) });
+          await fetch("/api/slots", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slot_id: "buddha_always_on", updates: { enabled: false } }) });
+        } else if (norm === "bach") {
+          await fetch("/api/fackel", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ preference: "ollama" }) });
+          await fetch("/api/talk/config", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ operating_mode: "ptt" }) });
+        } else if (norm === "meer") {
+          await fetch("/api/fackel", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ preference: "ollama" }) });
+          await fetch("/api/slots", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slot_id: "buddha_always_on", updates: { enabled: true } }) });
+        }
+      } catch (_) {}
+    }
+
+    pills.forEach((p) => {
+      p.addEventListener("click", () => applyScaleMode(p.getAttribute("data-scale-mode") || "bach", true));
+    });
+
+    let savedScale = "bach";
+    try { savedScale = localStorage.getItem(SCALE_KEY) || "bach"; } catch (_) {}
+    applyScaleMode(savedScale, false);
+
+    // Live-Prüfung für Stufe 1, 2 und 3
+    fetch("/api/system/core-agents")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d && Array.isArray(d.agents) && s1) {
+          const configured = d.agents.filter((a) => a.model && a.backend).length;
+          s1.textContent = `${configured}/${d.agents.length} besetzt`;
+        }
+      })
+      .catch(() => { if (s1) s1.textContent = "Bereit"; });
+
+    fetch("/api/permissions")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d && d.permissions && s2) {
+          const activeCount = Object.values(d.permissions).filter(Boolean).length;
+          s2.textContent = `${activeCount} Rechte aktiv`;
+        }
+      })
+      .catch(() => { if (s2) s2.textContent = "Geprüft"; });
+
+    fetch("/api/talk/config")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d && d.config && s3) {
+          s3.textContent = `Funk: ${(d.config.operating_mode || "ptt").toUpperCase()}`;
+        }
+      })
+      .catch(() => {});
+  })();
+</script>
+
 <style>
+  .onboarding-wizard-panel {padding:1.25rem;border:1px solid color-mix(in srgb,#38bdf8 35%,var(--border));border-radius:var(--radius-lg, 18px);background:radial-gradient(circle at 12% 0%,rgba(56,189,248,0.10),transparent 42%),var(--bg-panel)}
+  .onboarding-stages-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,255px),1fr));gap:.85rem;margin-top:1rem}
+  .onboarding-stage-card {display:flex;flex-direction:column;justify-content:space-between;gap:.65rem;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-card)}
+  .stage-card-top {display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+  .stage-status-chip {font-size:.68rem;font-weight:700;padding:.18rem .5rem;border-radius:999px;border:1px solid var(--border);background:var(--bg-panel);color:var(--accent-text)}
+  .onboarding-stage-card h3 {margin:0;font-size:.96rem}
+  .onboarding-stage-card p {margin:0;color:var(--text-muted);font-size:.78rem;line-height:1.48}
+  .stage-actions {display:flex;gap:.45rem;flex-wrap:wrap;margin-top:auto;padding-top:.35rem}
+  .scale-selector-row {display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem;background:var(--bg-dark);padding:.25rem;border-radius:8px;border:1px solid var(--border)}
+  .scale-pill {padding:.42rem .35rem;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-muted);font-size:.73rem;font-weight:700;cursor:pointer;transition:all .15s ease}
+  .scale-pill:hover {color:var(--text);background:rgba(255,255,255,.04)}
+  .scale-pill.is-active {background:var(--bg-card);color:#38bdf8;border-color:rgba(56,189,248,.5);box-shadow:0 2px 8px rgba(0,0,0,.25)}
   .install-page {display:flex;flex-direction:column;gap:1.25rem;padding:1rem 0 2rem;color:var(--text)}
   .install-hero {display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;padding:1.5rem;border:1px solid var(--border);border-radius:var(--radius-lg, 18px);background:radial-gradient(circle at 88% 0%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 34%),var(--bg-panel);box-shadow:var(--shadow-sm)}
   .install-hero h1 {font-size:clamp(1.8rem,3vw,2.6rem);margin:.2rem 0 .5rem;letter-spacing:-.035em}

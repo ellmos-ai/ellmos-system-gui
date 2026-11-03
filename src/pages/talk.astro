@@ -1,17 +1,24 @@
 ---
-// talk.astro - Unified ELLMOS Talk Live Voice & Emotion Visualizer inside BachLayout
+// talk.astro - Unified ELLMOS Talk & Funkgerät Studio (Live Voice, Canvas Visualizer & Local STT/TTS)
 import BachLayout from "../layouts/BachLayout.astro";
 ---
 
-<BachLayout title="ELLMOS Talk · Live Voice & Visualizer" currentPath="/chat">
+<BachLayout title="ELLMOS Talk · Funkgerät & Live-Sprachstudio" currentPath="/chat">
   <div class="talk-page">
-    <header class="card-header" style="margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
-      <div>
-        <span class="badge">🎙️ ellmos-talk · Dual-Model Live Voice &amp; Emotion Visualizer</span>
-        <h1 style="margin:0.35rem 0 0.2rem;font-size:1.5rem;">ELLMOS Talk — Live-Sprachdialog</h1>
-        <p style="margin:0;color:var(--text-muted);font-size:0.9rem;">
-          Abwechselndes Live-Sprechen über ein schnelles vorgeschaltetes Sprachmodell neben dem Hauptmodell (Buddha / Claude / Gemini / Codex) mit emotionsgesteuerter Muster- und Farbvisualisierung.
-        </p>
+    <header class="card-header talk-studio-header" style="margin-bottom:1.25rem;flex-wrap:wrap;gap:0.85rem;">
+      <div style="display:flex;align-items:center;gap:0.9rem;">
+        <img
+          src="/assets/icons/talk-handmic-comic.jpg"
+          alt="ELLMOS Talk Funkgerät-Sprechhandgerät"
+          style="width:56px;height:56px;border-radius:12px;object-fit:cover;border:2px solid rgba(56,189,248,0.55);box-shadow:0 4px 16px rgba(0,0,0,0.4);"
+        />
+        <div>
+          <span class="badge">🎙️ ellmos-talk · Dual-Model Live Voice, Funkgerät &amp; Emotion Visualizer</span>
+          <h1 style="margin:0.3rem 0 0.15rem;font-size:1.5rem;">ELLMOS Talk — Funkgerät &amp; Live-Sprachstudio</h1>
+          <p style="margin:0;color:var(--text-muted);font-size:0.88rem;">
+            Echtzeit-Funkspruch (PTT) &amp; Freisprechen (Duplex) über FastReflexLoop + DeepCortexLoop (Buddha / Claude / Gemini / Codex) mit lokalem STT (<code>/api/voice/stt</code>) &amp; TTS (<code>/api/voice/tts</code>).
+          </p>
+        </div>
       </div>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
         <a href="/agenten/running#talk-slot" class="btn btn-secondary">⚡ Modell-Bindung in Living &amp; Running</a>
@@ -20,42 +27,93 @@ import BachLayout from "../layouts/BachLayout.astro";
       </div>
     </header>
 
-    <div class="grid grid-cols-2">
-      <section class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:360px;text-align:center;gap:1rem;">
-        <div id="talk-orb" style="width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #38bdf8, #1d4ed8 65%, #0f172a);box-shadow:0 0 48px rgba(56,189,248,0.45);display:flex;align-items:center;justify-content:center;font-size:3rem;transition:all 0.35s ease;">
-          <span id="talk-emoji">🧘</span>
+    <div class="grid grid-cols-2" style="gap:1.15rem;align-items:start;">
+      <!-- LEFT COLUMN: Live Visualizer Stage + Transceiver Deck + Transcript -->
+      <section class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-height:460px;text-align:center;gap:1rem;">
+        <div style="width:100%;display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;color:var(--text-muted);">
+          <span id="reflexStatus">⚡ FastReflexLoop (&lt;250ms): bereit</span>
+          <span id="talk-voice-engine-pill" class="badge">🔊 Prüfe lokale Voice-Engine…</span>
         </div>
+
+        <div id="talk-orb" style="position:relative;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle at 35% 35%, rgba(56,189,248,0.28), #0f172a 76%);box-shadow:0 0 48px rgba(56,189,248,0.38);display:flex;align-items:center;justify-content:center;transition:all 0.35s ease;">
+          <canvas id="vizCanvas" width="240" height="240" style="width:240px;height:240px;border-radius:50%;"></canvas>
+          <span id="talk-emoji" style="position:absolute;font-size:2.75rem;pointer-events:none;filter:drop-shadow(0 0 14px rgba(56,189,248,0.8));">🧘</span>
+        </div>
+
         <div>
-          <strong id="talk-state-title" style="font-size:1.15rem;display:block;">Modus: Bereit (Wake-Word: „Hey Ocean“ / „Hey Buddha“)</strong>
+          <strong id="talk-state-title" style="font-size:1.08rem;display:block;">Modus: Bereit (Wake-Word: „Hey Buddha“ / „Hey Ocean“)</strong>
           <span id="talk-emotion-badge" class="badge" style="margin-top:0.35rem;display:inline-block;">Emotion: Ruhig · Muster: Harmonische Welle</span>
         </div>
-        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;">
-          <button type="button" class="btn btn-primary" id="talk-toggle-btn">🎙️ Live-Gespräch starten</button>
+
+        <div style="display:flex;gap:0.55rem;flex-wrap:wrap;justify-content:center;width:100%;">
+          <button type="button" class="btn btn-primary" id="micBtn" title="Spracheingabe über Browser-SR oder lokales faster-whisper (/api/voice/stt)">📻 Push-to-Talk (Sprechen)</button>
+          <button type="button" class="btn btn-secondary" id="talk-toggle-btn">🎙️ Live-Duplex starten</button>
           <button type="button" class="btn btn-secondary" id="talk-emotion-cycle-btn">🎨 Emotion / Muster testen</button>
+        </div>
+
+        <form id="talk-studio-form" style="width:100%;display:flex;gap:0.45rem;margin-top:0.25rem;">
+          <input
+            type="text"
+            id="utteranceInput"
+            placeholder="Funkspruch an Buddha, Claude, Gemini oder Codex tippen + Enter…"
+            style="flex:1;padding:0.55rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-dark);color:var(--text);font-size:0.86rem;"
+          />
+          <button type="submit" class="btn btn-primary" id="sendBtn">📡 Senden</button>
+        </form>
+
+        <div id="talk-transcript-log" style="width:100%;text-align:left;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem;max-height:190px;overflow-y:auto;font-size:0.83rem;line-height:1.45;display:flex;flex-direction:column;gap:0.45rem;">
+          <div id="transcriptBox" style="color:var(--text-muted);">
+            Sprich über Push-to-Talk oder tippe einen Funkspruch – das Modell antwortet live über den angebundenen Cortex-Slot und steuert Farben, Muster und Emotionen via <code>&lt;talk_control /&gt;</code>.
+          </div>
         </div>
       </section>
 
-      <section class="card" style="display:flex;flex-direction:column;gap:0.9rem;">
-        <h2 class="card-title">Dual-Model &amp; Stimmen-Konfiguration</h2>
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.85rem;">
+      <!-- RIGHT COLUMN: Dual-Model, Visualizer Directive & Audio Hardware Configuration -->
+      <section class="card" style="display:flex;flex-direction:column;gap:0.85rem;">
+        <h2 class="card-title">Dual-Model, Visualizer &amp; Stimmen-Konfiguration</h2>
+        <label style="display:flex;flex-direction:column;gap:0.28rem;font-size:0.84rem;">
           <span>Hauptmodell (Deep Reasoning / Persona):</span>
           <select id="talk-main-model" class="lang-switcher">
-            <option value="buddha">🧘 Buddha (qwen3.8:27b-mlx)</option>
+            <option value="buddha">🧘 Buddha (Lokaler / Cloud-Cortex-Slot)</option>
             <option value="claude">🟣 Claude Opus / Sonnet</option>
             <option value="gemini">🔵 Gemini Pro / Flash</option>
             <option value="codex">🟢 GPT / Codex</option>
           </select>
         </label>
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.85rem;">
+        <label style="display:flex;flex-direction:column;gap:0.28rem;font-size:0.84rem;">
           <span>Vorgeschaltetes Fast-Voice-Modell (Turn-Taking &amp; Rückmeldung):</span>
           <select id="talk-fast-model" class="lang-switcher">
-            <option value="qwen-fast">⚡ qwen3-0.6b-voice (Lokal · &lt;120ms Latenz)</option>
-            <option value="piper-de-en">🗣️ Piper / Kokoro TTS (Deutsch &amp; Englisch + World)</option>
+            <option value="smollm2:360m">⚡ smollm2:360m (Lokal · &lt;150ms Reflex)</option>
+            <option value="qwen3-0.6b-voice">⚡ qwen3-0.6b-voice (Lokal · Turn-Taking)</option>
+            <option value="gemma4-e2b">⚡ gemma4-e2b (Schnelles Dialog-Relay)</option>
           </select>
         </label>
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.85rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;font-size:0.82rem;">
+          <label style="display:flex;flex-direction:column;gap:0.25rem;">
+            <span>Visualizer-Muster:</span>
+            <select id="patternSelect" class="lang-switcher">
+              <option value="orb">🔵 Orb (Sphäre)</option>
+              <option value="wave">🌊 Wave (Harmonische Welle)</option>
+              <option value="rings">⭕ Rings (Konzentrische Ringe)</option>
+              <option value="constellation">✨ Constellation (Sternbild)</option>
+              <option value="pulse">💓 Pulse (Radar-Puls)</option>
+            </select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.25rem;">
+            <span>Emotion / Farbstimmung:</span>
+            <select id="emotionSelect" class="lang-switcher">
+              <option value="calm">🧘 Ruhig (Calm)</option>
+              <option value="curious">🔮 Neugierig (Curious)</option>
+              <option value="joyful">😊 Freudig (Joyful)</option>
+              <option value="focused">🧠 Fokussiert (Focused)</option>
+              <option value="empathetic">💚 Empathisch (Empathetic)</option>
+              <option value="alert">📡 Aufmerksam (Alert)</option>
+            </select>
+          </label>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:0.28rem;font-size:0.84rem;">
           <span>Aktivierungswort (Wake-Word):</span>
-          <input type="text" id="talk-wakeword" value="Hey Ocean" style="padding:0.5rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);" />
+          <input type="text" id="talk-wakeword" value="Hey Buddha" style="padding:0.48rem 0.7rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);" />
         </label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;font-size:0.82rem;">
           <label style="display:flex;flex-direction:column;gap:0.25rem;">
@@ -71,6 +129,10 @@ import BachLayout from "../layouts/BachLayout.astro";
             </select>
           </label>
         </div>
+        <div style="padding:0.6rem 0.75rem;border-radius:var(--radius-sm);background:var(--bg-dark);border:1px solid var(--border);font-size:0.78rem;color:var(--text-muted);">
+          <strong>Lokale Sprach-Pipeline (<code>ellmos-voice-io</code>):</strong>
+          <div id="talk-voice-pipeline-detail" style="margin-top:0.2rem;">STT: <code>/api/voice/stt</code> (faster-whisper) · TTS: <code>/api/voice/tts</code> (Piper / Kokoro WAV)</div>
+        </div>
         <p id="talk-api-status" style="margin:0;font-size:0.8rem;color:var(--text-muted);" role="status">
           Prüfe <code>/api/talk/state</code> …
         </p>
@@ -80,85 +142,364 @@ import BachLayout from "../layouts/BachLayout.astro";
 
   <script is:inline>
     (function initTalkPage() {
-      const orb = document.getElementById('talk-orb');
-      const emojiEl = document.getElementById('talk-emoji');
-      const stateTitle = document.getElementById('talk-state-title');
-      const emotionBadge = document.getElementById('talk-emotion-badge');
-      const toggleBtn = document.getElementById('talk-toggle-btn');
-      const cycleBtn = document.getElementById('talk-emotion-cycle-btn');
-      const apiStatus = document.getElementById('talk-api-status');
+      const orb = document.getElementById("talk-orb");
+      const canvas = document.getElementById("vizCanvas");
+      const ctx = canvas ? canvas.getContext("2d") : null;
+      const emojiEl = document.getElementById("talk-emoji");
+      const stateTitle = document.getElementById("talk-state-title");
+      const emotionBadge = document.getElementById("talk-emotion-badge");
+      const toggleBtn = document.getElementById("talk-toggle-btn");
+      const cycleBtn = document.getElementById("talk-emotion-cycle-btn");
+      const micBtn = document.getElementById("micBtn");
+      const form = document.getElementById("talk-studio-form");
+      const utteranceInput = document.getElementById("utteranceInput");
+      const transcriptLog = document.getElementById("talk-transcript-log");
+      const transcriptBox = document.getElementById("transcriptBox");
+      const reflexStatus = document.getElementById("reflexStatus");
+      const voicePill = document.getElementById("talk-voice-engine-pill");
+      const voiceDetail = document.getElementById("talk-voice-pipeline-detail");
+      const apiStatus = document.getElementById("talk-api-status");
+      const mainModelSelect = document.getElementById("talk-main-model");
+      const fastModelSelect = document.getElementById("talk-fast-model");
+      const patternSelect = document.getElementById("patternSelect");
+      const emotionSelect = document.getElementById("emotionSelect");
+      const wakewordInput = document.getElementById("talk-wakeword");
 
-      const moods = [
-        { name: 'Ruhig', pattern: 'Harmonische Welle', emoji: '🧘', color: '#38bdf8' },
-        { name: 'Fokussiert', pattern: 'Konzentrischer Puls', emoji: '🧠', color: '#818cf8' },
-        { name: 'Freudig', pattern: 'Goldene Resonanz', emoji: '😊', color: '#f59e0b' },
-        { name: 'Aufmerksam', pattern: 'Smaragd-Radar', emoji: '👂', color: '#10b981' },
-      ];
-      let moodIdx = 0;
+      let vizState = {
+        pattern: "orb",
+        emotion: "calm",
+        color_primary: "#38bdf8",
+        color_secondary: "#0f172a",
+        emoji_overlay: "🧘",
+        pulse_hz: 1.2,
+        mode: "idle",
+        persona: "buddha",
+      };
+      let tick = 0;
       let active = false;
 
-      function applyMood(m) {
+      const moods = [
+        { emotion: "calm", name: "Ruhig", pattern: "wave", emoji: "🧘", color: "#38bdf8" },
+        { emotion: "focused", name: "Fokussiert", pattern: "rings", emoji: "🧠", color: "#818cf8" },
+        { emotion: "joyful", name: "Freudig", pattern: "pulse", emoji: "😊", color: "#f59e0b" },
+        { emotion: "curious", name: "Neugierig", pattern: "constellation", emoji: "🔮", color: "#a855f7" },
+        { emotion: "alert", name: "Aufmerksam", pattern: "orb", emoji: "📡", color: "#10b981" },
+      ];
+      let moodIdx = 0;
+
+      function applyVisualState(vs) {
+        if (!vs || typeof vs !== "object") return;
+        vizState = Object.assign({}, vizState, vs);
+        const primary = vs.color_primary || vs.palette?.primary || vizState.color_primary || "#38bdf8";
+        vizState.color_primary = primary;
+        const emoji = vs.emoji_overlay || vs.emoji || vizState.emoji_overlay || "🧘";
         if (orb) {
-          orb.style.background = `radial-gradient(circle at 35% 35%, ${m.color}, #0f172a 75%)`;
-          orb.style.boxShadow = `0 0 56px ${m.color}88`;
+          orb.style.background = `radial-gradient(circle at 35% 35%, ${primary}44, #0f172a 76%)`;
+          orb.style.boxShadow = `0 0 52px ${primary}66`;
         }
-        if (emojiEl) emojiEl.textContent = m.emoji;
-        if (emotionBadge) emotionBadge.textContent = `Emotion: ${m.name} · Muster: ${m.pattern}`;
+        if (emojiEl) emojiEl.textContent = emoji;
+        if (emotionBadge) {
+          emotionBadge.textContent = `Emotion: ${vizState.emotion || "calm"} · Muster: ${vizState.pattern || "orb"}`;
+        }
+        if (patternSelect && vizState.pattern) patternSelect.value = vizState.pattern;
+        if (emotionSelect && vizState.emotion) emotionSelect.value = vizState.emotion;
+        if (mainModelSelect && vizState.persona) mainModelSelect.value = vizState.persona;
       }
 
-      cycleBtn?.addEventListener('click', () => {
-        moodIdx = (moodIdx + 1) % moods.length;
-        applyMood(moods[moodIdx]);
+      function drawVisualizer() {
+        if (ctx && canvas) {
+          tick += 0.035 * (Number(vizState.pulse_hz) || 1.2);
+          const w = canvas.width;
+          const h = canvas.height;
+          const cx = w / 2;
+          const cy = h / 2;
+          ctx.clearRect(0, 0, w, h);
+          const primary = vizState.color_primary || "#38bdf8";
+          ctx.strokeStyle = primary;
+          ctx.fillStyle = primary;
+          ctx.shadowColor = primary;
+          ctx.shadowBlur = 18;
+
+          if (vizState.pattern === "wave") {
+            ctx.beginPath();
+            for (let x = 18; x <= w - 18; x += 4) {
+              const y = cy + Math.sin(x * 0.045 + tick * 2.1) * 28 * Math.sin(tick);
+              if (x === 18) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+          } else if (vizState.pattern === "rings") {
+            for (let i = 1; i <= 4; i++) {
+              ctx.beginPath();
+              const r = 20 * i + Math.sin(tick + i) * 6;
+              ctx.arc(cx, cy, r, 0, Math.PI * 2);
+              ctx.lineWidth = 2.5;
+              ctx.stroke();
+            }
+          } else if (vizState.pattern === "constellation") {
+            const pts = [];
+            for (let i = 0; i < 8; i++) {
+              const ang = (i / 8) * Math.PI * 2 + tick * 0.28;
+              const rad = 64 + Math.sin(tick + i * 1.7) * 16;
+              pts.push([cx + Math.cos(ang) * rad, cy + Math.sin(ang) * rad]);
+            }
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < pts.length; i++) {
+              const [x1, y1] = pts[i];
+              const [x2, y2] = pts[(i + 1) % pts.length];
+              ctx.beginPath();
+              ctx.moveTo(x1, y1);
+              ctx.lineTo(x2, y2);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.arc(x1, y1, 4, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          } else {
+            const r = 58 + Math.sin(tick * 2) * (vizState.pattern === "pulse" ? 20 : 10);
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.globalAlpha = 0.22;
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+          }
+        }
+        requestAnimationFrame(drawVisualizer);
+      }
+      requestAnimationFrame(drawVisualizer);
+
+      async function playSpokenResponse(text, lang) {
+        if (!text) return;
+        try {
+          const ttsRes = await fetch("/api/voice/tts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text, language: lang || "de" }),
+          });
+          if (ttsRes.ok) {
+            const ttsData = await ttsRes.json();
+            if (ttsData?.audio_b64) {
+              const audio = new Audio(`data:${ttsData.mime_type || "audio/wav"};base64,${ttsData.audio_b64}`);
+              await audio.play();
+              return;
+            }
+          }
+        } catch (_) {}
+        if ("speechSynthesis" in window) {
+          try {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = lang === "en" ? "en-US" : "de-DE";
+            window.speechSynthesis.speak(u);
+          } catch (_) {}
+        }
+      }
+
+      function appendTranscriptEntry(roleLabel, text, color) {
+        if (!transcriptLog) return;
+        const row = document.createElement("div");
+        row.style.padding = "0.4rem 0.55rem";
+        row.style.borderRadius = "6px";
+        row.style.background = "rgba(15, 23, 42, 0.7)";
+        row.style.borderLeft = `3px solid ${color || "#38bdf8"}`;
+        const strong = document.createElement("strong");
+        strong.textContent = roleLabel + ": ";
+        strong.style.color = color || "#38bdf8";
+        const span = document.createElement("span");
+        span.textContent = text;
+        row.append(strong, span);
+        transcriptLog.append(row);
+        transcriptLog.scrollTop = transcriptLog.scrollHeight;
+      }
+
+      async function sendStudioTurn(utterance) {
+        const text = String(utterance || "").trim();
+        if (!text) return;
+        const persona = mainModelSelect?.value || "buddha";
+        const lang = document.documentElement.lang || "de";
+        appendTranscriptEntry("Du", text, "#94a3b8");
+        if (transcriptBox) transcriptBox.textContent = `📡 Sende Funkspruch an ${persona.toUpperCase()}…`;
+        try {
+          const res = await fetch("/api/talk/turn", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_utterance: text, persona, language: lang }),
+          });
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data.visual_state) applyVisualState(data.visual_state);
+          if (data.reflex && reflexStatus) {
+            reflexStatus.textContent = `⚡ FastReflexLoop (${data.reflex.latency_target_ms || 180}ms): ${data.reflex.ack_text || "bereit"}`;
+          }
+          const reply = data.spoken_text || (data.sentences || []).join(" ") || "";
+          if (transcriptBox && reply) transcriptBox.textContent = reply;
+          if (reply) {
+            appendTranscriptEntry(persona.toUpperCase(), reply, data.visual_state?.color_primary || "#00d4aa");
+            await playSpokenResponse(reply, lang);
+          }
+        } catch (_) {}
+      }
+
+      form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const val = utteranceInput?.value?.trim() || "";
+        if (!val) return;
+        if (utteranceInput) utteranceInput.value = "";
+        await sendStudioTurn(val);
       });
 
-      toggleBtn?.addEventListener('click', () => {
+      cycleBtn?.addEventListener("click", async () => {
+        moodIdx = (moodIdx + 1) % moods.length;
+        const m = moods[moodIdx];
+        applyVisualState({ emotion: m.emotion, pattern: m.pattern, emoji_overlay: m.emoji, color_primary: m.color });
+        try {
+          await fetch("/api/talk/directive", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ emotion: m.emotion, pattern: m.pattern, emoji_overlay: m.emoji }),
+          });
+        } catch (_) {}
+      });
+
+      async function pushDirectiveFromSelects() {
+        const payload = {
+          pattern: patternSelect?.value || "orb",
+          emotion: emotionSelect?.value || "calm",
+          persona: mainModelSelect?.value || "buddha",
+        };
+        try {
+          const r = await fetch("/api/talk/directive", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (r.ok) {
+            const d = await r.json();
+            if (d.visual_state) applyVisualState(d.visual_state);
+          }
+        } catch (_) {}
+      }
+      patternSelect?.addEventListener("change", pushDirectiveFromSelects);
+      emotionSelect?.addEventListener("change", pushDirectiveFromSelects);
+
+      toggleBtn?.addEventListener("click", () => {
         active = !active;
         if (stateTitle) {
           stateTitle.textContent = active
-            ? 'Modus: Zuhören aktiv (Mikrofon-Stream verbunden)'
-            : 'Modus: Bereit (Wake-Word: „Hey Ocean“ / „Hey Buddha“)';
+            ? "Modus: Live-Duplex aktiv (Mikrofon-Stream verbunden)"
+            : "Modus: Bereit (Wake-Word: „Hey Buddha“ / „Hey Ocean“)";
         }
-        toggleBtn.textContent = active ? '⏹️ Live-Gespräch beenden' : '🎙️ Live-Gespräch starten';
-        applyMood(moods[active ? 3 : 0]);
+        toggleBtn.textContent = active ? "⏹️ Live-Duplex beenden" : "🎙️ Live-Duplex starten";
+        if (window.bachUpdateTalkConfig) {
+          window.bachUpdateTalkConfig({ operating_mode: active ? "duplex" : "ptt", mode: active ? "listening" : "idle" });
+        }
       });
 
-      const mainModelSelect = document.getElementById('talk-main-model');
-      const fastModelSelect = document.getElementById('talk-fast-model');
-      const wakewordInput = document.getElementById('talk-wakeword');
+      micBtn?.addEventListener("click", async () => {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const lang = document.documentElement.lang || "de";
+        if (SR) {
+          const rec = new SR();
+          rec.lang = lang === "en" ? "en-US" : "de-DE";
+          micBtn.textContent = "🔴 Sprich jetzt…";
+          rec.onresult = (ev) => {
+            const t = ev.results?.[0]?.[0]?.transcript || "";
+            if (t) sendStudioTurn(t);
+          };
+          rec.onend = () => { micBtn.textContent = "📻 Push-to-Talk (Sprechen)"; };
+          rec.onerror = () => { micBtn.textContent = "📻 Push-to-Talk (Sprechen)"; };
+          rec.start();
+          return;
+        }
+        if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === "function" && typeof window.MediaRecorder === "function") {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const chunks = [];
+            const recorder = new MediaRecorder(stream);
+            micBtn.textContent = "🔴 Lokal STT (3.5s)…";
+            recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+            recorder.onstop = async () => {
+              stream.getTracks().forEach((t) => t.stop());
+              micBtn.textContent = "📻 Push-to-Talk (Sprechen)";
+              const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+              const b64 = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(String(reader.result || "").split(",")[1] || "");
+                reader.readAsDataURL(blob);
+              });
+              if (!b64) return;
+              const r = await fetch("/api/voice/stt", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ audio_b64: b64, suffix: ".webm", language: lang }),
+              });
+              if (r.ok) {
+                const d = await r.json();
+                if (d?.text?.trim()) await sendStudioTurn(d.text.trim());
+              }
+            };
+            recorder.start();
+            setTimeout(() => { if (recorder.state === "recording") recorder.stop(); }, 3500);
+          } catch (_) {
+            micBtn.textContent = "📻 Push-to-Talk (Sprechen)";
+          }
+        }
+      });
 
-      if (new URLSearchParams(window.location.search).get('companion') === '1') {
-        document.body.classList.add('talk-companion-window');
-        const sidebar = document.getElementById('app-sidebar');
-        if (sidebar) sidebar.style.display = 'none';
+      if (new URLSearchParams(window.location.search).get("companion") === "1") {
+        document.body.classList.add("talk-companion-window");
+        const sidebar = document.getElementById("app-sidebar");
+        if (sidebar) sidebar.style.display = "none";
       }
 
       function syncFromGlobalConfig(cfg) {
-        if (!cfg || typeof cfg !== 'object') return;
+        if (!cfg || typeof cfg !== "object") return;
+        applyVisualState(cfg);
         if (mainModelSelect && cfg.persona) mainModelSelect.value = cfg.persona;
         if (fastModelSelect && cfg.fast_relay_model) fastModelSelect.value = cfg.fast_relay_model;
         if (wakewordInput && cfg.wake_word) wakewordInput.value = cfg.wake_word;
         if (apiStatus) {
-          apiStatus.textContent = `Verbunden: ${cfg.persona || 'buddha'} (${cfg.primary_model || 'qwen3.8:27b-mlx'}) · Modus: ${cfg.operating_mode || 'ptt'}`;
+          apiStatus.textContent = `Verbunden: ${cfg.persona || "buddha"} (${cfg.primary_model || "buddha-default"}) · Modus: ${cfg.operating_mode || "ptt"}`;
         }
       }
       if (window.__bachTalkConfig) syncFromGlobalConfig(window.__bachTalkConfig);
-      window.addEventListener('bach:talk-config-updated', (ev) => syncFromGlobalConfig(ev.detail));
+      window.addEventListener("bach:talk-config-updated", (ev) => syncFromGlobalConfig(ev.detail));
 
-      mainModelSelect?.addEventListener('change', () => {
+      mainModelSelect?.addEventListener("change", () => {
         if (window.bachUpdateTalkConfig) window.bachUpdateTalkConfig({ persona: mainModelSelect.value });
       });
-      fastModelSelect?.addEventListener('change', () => {
+      fastModelSelect?.addEventListener("change", () => {
         if (window.bachUpdateTalkConfig) window.bachUpdateTalkConfig({ fast_relay_model: fastModelSelect.value });
       });
-      wakewordInput?.addEventListener('change', () => {
+      wakewordInput?.addEventListener("change", () => {
         if (window.bachUpdateTalkConfig) window.bachUpdateTalkConfig({ wake_word: wakewordInput.value });
       });
 
-      fetch('/api/talk/state')
+      fetch("/api/talk/state")
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
-          if (data && apiStatus) {
-            apiStatus.textContent = `Verbunden mit ellmos-talk Engine (Status: ${data.mode || 'idle'}).`;
+          if (data) {
+            applyVisualState(data);
+            if (apiStatus) {
+              apiStatus.textContent = `Verbunden mit ellmos-talk Engine (Persona: ${data.persona || "buddha"}, Status: ${data.mode || "idle"}).`;
+            }
+          }
+        })
+        .catch(() => {});
+
+      fetch("/api/voice/status")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((v) => {
+          if (!v || !v.status) return;
+          const st = v.status;
+          if (voicePill) {
+            voicePill.textContent = `🔊 STT: ${st.stt_backend || "faster-whisper"} · TTS: ${st.tts_backend || "piper/wave"}`;
+          }
+          if (voiceDetail) {
+            voiceDetail.textContent = `STT (${st.stt_backend || "whisper"}): ${v.stt_permission ? "Freigegeben" : "Gesperrt"} · TTS (${st.tts_backend || "piper"}): ${v.tts_permission ? "Freigegeben" : "Gesperrt"}`;
           }
         })
         .catch(() => {});

@@ -111,6 +111,61 @@ function lineIconSvg(id: string): string {
       <span class="logo-text" id="gui-brand-label">System GUI</span>
     </a>
     <span id="backend-origin-badge" class="backend-origin-badge" role="status" aria-live="polite">Backend unbekannt</span>
+    <button
+      type="button"
+      id="header-ram-claim-btn"
+      class="backend-origin-badge header-ram-claim-pill"
+      title="RAM-Distributor & Modell-Claiming — Klicken, um geladene Modelle & RAM für andere Prozesse freizugeben"
+      aria-label="Modell- und RAM-Belegung prüfen oder freigeben"
+    >
+      <span id="header-ram-claim-dot" class="ram-claim-dot"></span>
+      <span id="header-ram-claim-label">🧠 RAM: Prüfe…</span>
+    </button>
+  </div>
+
+  <!-- Animiertes Origami-Papierboot im freien Bereich auf der Trennlinie zum Body (Meeresoberfläche) -->
+  <div class="header-ocean-waterline" aria-hidden="true" title="OCEAN · Vom Rinnsal über den BACH bis ins Meer">
+    <div class="header-waterline-surface"></div>
+    <div class="header-paper-boat-track">
+      <div class="header-paper-boat-hull">
+        <span class="header-boat-wake"></span>
+        <svg class="header-paper-boat-svg" viewBox="0 0 84 44" width="54" height="29" focusable="false" aria-hidden="true">
+          <defs>
+            <linearGradient id="paper-boat-hull-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="65%" stop-color="#e0f2fe" />
+              <stop offset="100%" stop-color="#bae6fd" />
+            </linearGradient>
+            <linearGradient id="paper-boat-sail-left" x1="20%" y1="0%" x2="90%" y2="100%">
+              <stop offset="0%" stop-color="#f8fafc" />
+              <stop offset="100%" stop-color="#cbd5e1" />
+            </linearGradient>
+            <linearGradient id="paper-boat-sail-right" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="100%" stop-color="#93c5fd" />
+            </linearGradient>
+            <linearGradient id="paper-boat-shadow" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#64748b" stop-opacity="0.45" />
+              <stop offset="100%" stop-color="#1e293b" stop-opacity="0.7" />
+            </linearGradient>
+          </defs>
+          <!-- Origami Mittelspitze (Hauptsegel) -->
+          <polygon points="42,3 27,25 42,23" fill="url(#paper-boat-sail-left)" stroke="#475569" stroke-width="1.15" stroke-linejoin="round" />
+          <polygon points="42,3 57,25 42,23" fill="url(#paper-boat-sail-right)" stroke="#475569" stroke-width="1.15" stroke-linejoin="round" />
+          <!-- Innere Papierfalz-Schattierung -->
+          <polygon points="27,25 42,16 57,25 42,27" fill="url(#paper-boat-shadow)" />
+          <!-- Bug- und Heck-Papierflügel -->
+          <polygon points="4,20 42,25 18,35" fill="#e2e8f0" stroke="#475569" stroke-width="1.15" stroke-linejoin="round" />
+          <polygon points="80,20 42,25 66,35" fill="#f1f5f9" stroke="#475569" stroke-width="1.15" stroke-linejoin="round" />
+          <!-- Vorderer Origami-Rumpf direkt auf der Wasserlinie -->
+          <polygon points="4,20 80,20 66,35 18,35" fill="url(#paper-boat-hull-grad)" stroke="#334155" stroke-width="1.25" stroke-linejoin="round" />
+          <!-- Mittlere Faltkante & Wasserlinien-Glanz -->
+          <line x1="42" y1="3" x2="42" y2="35" stroke="#64748b" stroke-width="0.95" stroke-opacity="0.65" />
+          <line x1="16" y1="35.5" x2="68" y2="35.5" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        <span class="header-boat-reflection"></span>
+      </div>
+    </div>
   </div>
 
   <div class="header-right">
@@ -130,19 +185,26 @@ function lineIconSvg(id: string): string {
       </a>
     </div>
 
-    <!-- ELLMOS Talk / Funkgerät Button + Pop-over (Instrument / Transceiver Console) -->
+    <!-- ELLMOS Talk / Funkgerät-Sprechhandgerät Bildlink + Pop-over (Instrument / Transceiver Console) -->
     <div class="header-talk-radio-wrap" id="header-talk-radio-wrap">
       <button
         id="header-talk-radio-btn"
         type="button"
-        class="quick-action-btn talk-trigger-btn"
+        class="quick-action-btn talk-trigger-btn talk-handmic-img-btn"
         aria-expanded="false"
         aria-controls="header-talk-popover"
-        title="ELLMOS Talk / Funkgerät — Klicken für Konsole, Alt+Leertaste für Push-to-Talk"
+        aria-label="ELLMOS Talk / Funkgerät-Sprechhandgerät öffnen"
+        title="ELLMOS Talk / Funkgerät-Sprechhandgerät — Klicken für Konsole, Alt+Leertaste für Push-to-Talk"
       >
-        <span id="header-talk-dot" class="talk-trigger-dot"></span>
-        <span id="header-talk-icon" aria-hidden="true">📻</span>
-        <span id="header-talk-btn-label">Funk / Talk</span>
+        <img
+          src="/assets/icons/talk-handmic-comic.jpg"
+          alt="ELLMOS Talk Funkgerät-Sprechhandgerät"
+          class="talk-handmic-thumb"
+          width="36"
+          height="36"
+        />
+        <span id="header-talk-dot" class="talk-trigger-dot" title="Funkkanal-Status"></span>
+        <span id="header-talk-btn-label" class="talk-sr-label">Funk / Talk</span>
       </button>
 
       <div
@@ -156,7 +218,8 @@ function lineIconSvg(id: string): string {
         <div class="talk-console-header">
           <div class="talk-console-identity">
             <div id="header-talk-mini-orb" class="talk-console-orb">
-              <span id="header-talk-mini-emoji">🧘</span>
+              <img src="/assets/icons/talk-handmic-comic.jpg" alt="" class="talk-console-orb-img" width="36" height="36" />
+              <span id="header-talk-mini-emoji" class="talk-console-orb-emoji">🧘</span>
             </div>
             <div class="talk-console-titles">
               <div class="talk-console-title-row">
@@ -505,6 +568,58 @@ function lineIconSvg(id: string): string {
   }
   refreshBackendOriginBadge();
   setInterval(refreshBackendOriginBadge, 30000);
+
+  // Live RAM-Distributor & Model Claiming Status in Header + 1-Click Release
+  async function refreshHeaderRamClaim() {
+    const btn = document.getElementById("header-ram-claim-btn");
+    const dot = document.getElementById("header-ram-claim-dot");
+    const label = document.getElementById("header-ram-claim-label");
+    if (!btn || !label) return;
+    try {
+      const res = await fetch("/api/system/cluster-cockpit", { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      const f = data?.fackel || {};
+      const cap = f.capacity || {};
+      const prio = f.priority?.value || "ollama";
+      const turn = f.compute_turn || {};
+      const count = Number.isSafeInteger(cap.loaded_model_count) ? cap.loaded_model_count : 0;
+      const usedGib = Number.isFinite(cap.used_gib) ? cap.used_gib.toFixed(1) : null;
+      const models = Array.isArray(cap.loaded_models) && cap.loaded_models.length ? cap.loaded_models.join(", ") : "keine";
+      if (turn.active) {
+        label.textContent = `🔥 Aktiv (${models})`;
+        if (dot) { dot.style.background = "#f97316"; dot.style.boxShadow = "0 0 8px #f97316"; }
+      } else if (count > 0) {
+        label.textContent = `🧠 ${count} Modell${count === 1 ? "" : "e"}${usedGib ? " (" + usedGib + " GiB)" : ""} · Freigeben`;
+        if (dot) { dot.style.background = "#38bdf8"; dot.style.boxShadow = "0 0 8px #38bdf8"; }
+      } else {
+        label.textContent = prio === "compute" ? "🔓 RAM frei (Compute)" : "🧠 0 Modelle im RAM";
+        if (dot) { dot.style.background = "#10b981"; dot.style.boxShadow = "none"; }
+      }
+      btn.title = `RAM-Distributor (${prio.toUpperCase()}) · Geladene Modelle: ${models}. Klicken zum sofortigen Freigeben von Modell & RAM.`;
+    } catch (_) {
+      label.textContent = "🧠 RAM / Fackel";
+    }
+  }
+  refreshHeaderRamClaim();
+  setInterval(refreshHeaderRamClaim, 18000);
+  document.getElementById("header-ram-claim-btn")?.addEventListener("click", async () => {
+    const label = document.getElementById("header-ram-claim-label");
+    if (label) label.textContent = "⏳ Gebe RAM frei…";
+    try {
+      await fetch("/api/fackel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preference: "compute" }),
+      });
+      await fetch("/api/slots", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slot_id: "buddha_always_on", updates: { enabled: false } }),
+      });
+    } catch (_) {}
+    await refreshHeaderRamClaim();
+  });
 
   // Theme Manager
   function applyTheme(theme, persist = true) {
@@ -1014,13 +1129,31 @@ function lineIconSvg(id: string): string {
           replyBox.hidden = false;
           replyBox.textContent = data.spoken_text;
         }
-        if (data?.spoken_text && 'speechSynthesis' in window) {
+        if (data?.spoken_text) {
+          let playedLocalTts = false;
           try {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(data.spoken_text);
-            u.lang = lang === 'en' ? 'en-US' : 'de-DE';
-            window.speechSynthesis.speak(u);
+            const ttsRes = await fetch('/api/voice/tts', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: data.spoken_text, language: lang }),
+            });
+            if (ttsRes.ok) {
+              const ttsData = await ttsRes.json();
+              if (ttsData?.audio_b64) {
+                const audio = new Audio(`data:${ttsData.mime_type || 'audio/wav'};base64,${ttsData.audio_b64}`);
+                await audio.play();
+                playedLocalTts = true;
+              }
+            }
           } catch (_) {}
+          if (!playedLocalTts && 'speechSynthesis' in window) {
+            try {
+              window.speechSynthesis.cancel();
+              const u = new SpeechSynthesisUtterance(data.spoken_text);
+              u.lang = lang === 'en' ? 'en-US' : 'de-DE';
+              window.speechSynthesis.speak(u);
+            } catch (_) {}
+          }
         }
         return data;
       } catch (_) {
@@ -1168,6 +1301,49 @@ function lineIconSvg(id: string): string {
       await sendHeaderTalkTurn(val);
     });
 
+    async function captureViaLocalStt() {
+      if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function' || typeof window.MediaRecorder !== 'function') {
+        return sendHeaderTalkTurn('Funkgerät-Statusabfrage: Bist du empfangsbereit?');
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const chunks = [];
+        const recorder = new MediaRecorder(stream);
+        pttBtn?.classList.add('is-recording');
+        if (pttLabel) pttLabel.textContent = '🔴 Lokal STT — Sprich jetzt (3.5s)…';
+        recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+        recorder.onstop = async () => {
+          stream.getTracks().forEach((t) => t.stop());
+          pttBtn?.classList.remove('is-recording');
+          if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+          const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+          const b64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(String(reader.result || '').split(',')[1] || '');
+            reader.readAsDataURL(blob);
+          });
+          if (!b64) return;
+          const lang = document.documentElement.lang || 'de';
+          const sttRes = await fetch('/api/voice/stt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ audio_b64: b64, suffix: '.webm', language: lang }),
+          });
+          if (sttRes.ok) {
+            const sttData = await sttRes.json();
+            if (sttData?.text?.trim()) {
+              await sendHeaderTalkTurn(sttData.text.trim());
+            }
+          }
+        };
+        recorder.start();
+        setTimeout(() => { if (recorder.state === 'recording') recorder.stop(); }, 3500);
+      } catch (_) {
+        pttBtn?.classList.remove('is-recording');
+        if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+      }
+    }
+
     function triggerSpeechCapture() {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SR) {
@@ -1186,10 +1362,11 @@ function lineIconSvg(id: string): string {
         rec.onerror = () => {
           pttBtn?.classList.remove('is-recording');
           if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+          captureViaLocalStt();
         };
         rec.start();
       } else {
-        sendHeaderTalkTurn('Funkgerät-Statusabfrage: Bist du empfangsbereit?');
+        captureViaLocalStt();
       }
     }
 
@@ -1220,32 +1397,189 @@ function lineIconSvg(id: string): string {
     display: inline-flex;
     align-items: center;
   }
-  .talk-trigger-btn {
+  /* ── RAM Claim Pill in Header ── */
+  .header-ram-claim-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.32rem 0.68rem;
-    border-radius: var(--radius-sm, 8px);
-    border: 1px solid var(--border, #334155);
-    background: var(--bg-card, #111827);
-    color: var(--text, #f8fafc);
-    font-size: 0.8rem;
-    font-weight: 600;
+    gap: 0.35rem;
     cursor: pointer;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid var(--shell-border, #274259);
+    color: var(--shell-text, #eef6fb);
+    padding: 0.24rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    transition: border-color 0.15s ease, background 0.15s ease;
   }
-  .talk-trigger-btn:hover,
-  .talk-trigger-btn[aria-expanded="true"] {
-    border-color: var(--accent, #00d4aa);
-    box-shadow: 0 0 0 1px rgba(0, 212, 170, 0.25);
+  .header-ram-claim-pill:hover {
+    border-color: #38bdf8;
+    background: rgba(14, 165, 233, 0.18);
   }
-  .talk-trigger-dot {
-    width: 8px;
-    height: 8px;
+  .ram-claim-dot {
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: #10b981;
+    flex-shrink: 0;
+  }
+
+  /* ── Animiertes Origami-Papierboot auf der Header-Body-Trennlinie (Meeresoberfläche) ── */
+  .header-ocean-waterline {
+    position: absolute;
+    left: clamp(290px, 30vw, 460px);
+    right: clamp(275px, 27vw, 410px);
+    bottom: -1px;
+    height: 34px;
+    pointer-events: none;
+    z-index: 4;
+    overflow: visible;
+  }
+  .header-waterline-surface {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.45) 18%, rgba(34, 211, 238, 0.85) 50%, rgba(56, 189, 248, 0.45) 82%, transparent 100%);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.42);
+  }
+  .header-paper-boat-track {
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 58px;
+    height: 32px;
+    animation: paperBoatVoyage 32s ease-in-out infinite;
+  }
+  .header-paper-boat-hull {
+    position: relative;
+    width: 54px;
+    height: 29px;
+    transform-origin: 50% 85%;
+    animation: paperBoatBobbing 3.2s ease-in-out infinite;
+    filter: drop-shadow(0 3px 6px rgba(2, 132, 199, 0.38));
+  }
+  .header-paper-boat-svg {
+    display: block;
+    width: 54px;
+    height: 29px;
+  }
+  .header-boat-wake {
+    position: absolute;
+    left: -20px;
+    bottom: 3px;
+    width: 24px;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.75));
+    opacity: 0.85;
+  }
+  .header-boat-reflection {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: -4px;
+    height: 4px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.55) 0%, transparent 75%);
+  }
+  @keyframes paperBoatVoyage {
+    0% {
+      left: 2%;
+      transform: scaleX(1);
+    }
+    48% {
+      left: calc(96% - 56px);
+      transform: scaleX(1);
+    }
+    50% {
+      left: calc(98% - 56px);
+      transform: scaleX(-1);
+    }
+    98% {
+      left: 2%;
+      transform: scaleX(-1);
+    }
+    100% {
+      left: 2%;
+      transform: scaleX(1);
+    }
+  }
+  @keyframes paperBoatBobbing {
+    0%, 100% {
+      transform: translateY(0px) rotate(-1.6deg);
+    }
+    50% {
+      transform: translateY(-2.4px) rotate(1.8deg);
+    }
+  }
+  @media (max-width: 1120px) {
+    .header-ocean-waterline {
+      left: clamp(230px, 26vw, 330px);
+      right: clamp(230px, 25vw, 310px);
+    }
+  }
+  @media (max-width: 860px) {
+    .header-ocean-waterline {
+      display: none;
+    }
+  }
+
+  /* ── Comic Funkgerät-Sprechhandgerät Bildlink im Header ── */
+  :global(.main-header) .talk-trigger-btn.talk-handmic-img-btn,
+  .talk-trigger-btn.talk-handmic-img-btn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    padding: 2px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(56, 189, 248, 0.5);
+    background: #0f172a;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+    overflow: visible;
+  }
+  :global(.main-header) .talk-trigger-btn.talk-handmic-img-btn:hover,
+  .talk-trigger-btn.talk-handmic-img-btn:hover,
+  .talk-trigger-btn.talk-handmic-img-btn[aria-expanded="true"] {
+    border-color: #00d4aa;
+    box-shadow: 0 0 0 2px rgba(0, 212, 170, 0.32), 0 4px 14px rgba(0, 212, 170, 0.25);
+    transform: translateY(-1px);
+  }
+  .talk-handmic-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 7px;
+    display: block;
+  }
+  .talk-trigger-dot {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #10b981;
+    border: 2px solid #0b1b2a;
     display: inline-block;
-    box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+  }
+  .talk-sr-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
   .talk-console-popover {
     position: absolute;
@@ -1285,17 +1619,40 @@ function lineIconSvg(id: string): string {
     min-width: 0;
   }
   .talk-console-orb {
-    width: 38px;
-    height: 38px;
+    position: relative;
+    width: 40px;
+    height: 40px;
     flex-shrink: 0;
-    border-radius: 50%;
+    border-radius: 10px;
     background: radial-gradient(circle at 35% 35%, #00d4aa, #0f172a 78%);
     box-shadow: 0 0 16px rgba(0, 212, 170, 0.42);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.12rem;
+    overflow: visible;
+  }
+  .talk-console-orb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 9px;
+    display: block;
+  }
+  .talk-console-orb-emoji {
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    background: #0f172a;
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
   }
   .talk-console-titles {
     display: flex;
