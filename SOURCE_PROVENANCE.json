@@ -24,7 +24,7 @@
     "package-lock.json": "e1e1fd367e7b5948dcb06b91c833b00d5e2f494bb128ffbc27db784779b6848f",
     "package.json": "91ce195e6431ba7daac537594313b05a59bd402530651fec7da517d52d6ec550",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "4262265d13b39f5e573edee42411c1fdd13b650291a1b9820cf1892d3b1fb975",
+    "public/page-reads.v1.json": "6cccd17ceb0ca2183ace3ba2eadc58a621df1c23637c9530606272f4787388f2",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
     "scripts/page-reads-bindings.mjs": "18e302f68f10c41b38de566297a5f166ed0be156692740f502c1c2fb58331c48",
@@ -5126,6 +5126,17 @@
         "src/pages/chat.astro": "cf4a712a61880792f953accd7733449b1cb2675427ca98ad0c723c41fc142748",
         "tests/voice-and-talk-contract.test.mjs": "4029b20acea02ea7ddd4e03b89acfff77f878b66c087771b9a8064311e3eaf09"
       }
+    },
+    {
+      "date": "2026-11-04",
+      "summary": "Declare optional POST /api/talk/reflex for the shared Header and Talk page; verified against both call sites.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "4262265d13b39f5e573edee42411c1fdd13b650291a1b9820cf1892d3b1fb975",
+          "sha256": "6cccd17ceb0ca2183ace3ba2eadc58a621df1c23637c9530606272f4787388f2"
+        }
+      ]
     }
   ],
   "readme_banner": {
