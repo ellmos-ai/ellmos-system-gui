@@ -3,6 +3,8 @@
 // explicit "METHOD path" alternatives it may produce. Every alternative needs a dynamic manifest entry whose found_in is
 // "file#function". A new unresolved call site, a changed alternative or a stale binding fails scripts/page-reads-check.mjs.
 export const BINDINGS = {
+  'src/lib/agent-triggers.mjs#get@1': ['GET /api/agent-triggers/{id}'],
+  'src/lib/agent-triggers.mjs#write@1': ['POST /api/agent-triggers', 'PUT /api/agent-triggers/{id}', 'DELETE /api/agent-triggers/{id}'],
   // Runtime-whitelisted read-only transport shared by the Governance views.
   'src/lib/governance-request.mjs#createGovernanceRequest@1': [
     'GET /api/governance/locks', 'GET /api/governance/policy-registry', 'GET /api/governance/decisions',

@@ -1,0 +1,33 @@
+<section class="card agent-trigger-panel" data-agent-triggers aria-label="Automations-Agenten">
+  <h2>Automations-Agenten · Auslöser</h2>
+  <p>Gemeinsame Definitionen für deine Agenten und Routinen. Speichern startet keinen Lauf.</p>
+  <p data-trigger-status role="status" aria-live="polite">Quelle wird geprüft…</p>
+  <button type="button" data-trigger-refresh>Aktualisieren</button>
+  <button type="button" data-trigger-new disabled>Auslöser anlegen</button>
+  <div data-trigger-list></div>
+  <form data-trigger-form hidden>
+    <label>Stabile ID <input name="id" required maxlength="128" /></label>
+    <label>Agenten-ID <input name="agent_id" required maxlength="128" /></label>
+    <label>Auslöser
+      <select name="kind"><option value="once">Termin</option><option value="daily">Täglich</option><option value="interval">Intervall</option><option value="cron">Cron</option><option value="event">Ereignis</option></select>
+    </label>
+    <label>Zeitplan als JSON <textarea name="schedule" required rows="3">{'{"kind":"once","at":""}'}</textarea></label>
+    <label>Registrierte Ausführung <input name="executor" required maxlength="128" /></label>
+    <label>Auftragsparameter als JSON <textarea name="payload" rows="3">{'{}'}</textarea></label>
+    <label>Autoritätsvorgaben als JSON <textarea name="authorities" rows="3">[]</textarea></label>
+    <label><input name="enabled" type="checkbox" /> Aktiviert</label>
+    <p>Ein Termin braucht eine Zeitzone, zum Beispiel <code>2026-12-01T09:00:00+01:00</code>. Ereignisdefinitionen werden über bestätigte Quellen bedient.</p>
+    <button type="submit">Definition speichern</button>
+    <button type="button" data-trigger-cancel>Entwurf schließen</button>
+  </form>
+</section>
+<script>
+  import {mountAgentTriggers} from '../lib/agent-triggers-ui.mjs';
+  document.querySelectorAll('[data-agent-triggers]').forEach(panel => mountAgentTriggers(panel));
+</script>
+<style>
+  .agent-trigger-panel{padding:1rem;margin:1rem 0}.agent-trigger-panel form{display:grid;gap:.7rem;margin-top:1rem}
+  .agent-trigger-panel form[hidden]{display:none}.agent-trigger-panel label{display:grid;gap:.3rem}
+  .agent-trigger-panel input,.agent-trigger-panel select,.agent-trigger-panel textarea{max-width:100%;box-sizing:border-box;background:var(--bg-dark);color:var(--text);border:1px solid var(--border);padding:.5rem}
+  .agent-trigger-panel article{padding:.7rem 0;border-bottom:1px solid var(--border);overflow-wrap:anywhere}
+</style>
