@@ -59,37 +59,9 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <div id="ocean-role-socket-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.65rem;font-size:0.8rem;"></div>
     </div>
   </section>
-  <script is:inline>
-    (async function initOceanRoleSockets() {
-      const container = document.getElementById("ocean-role-socket-list");
-      const select = document.getElementById("ocean-socket-provider-select");
-      if (!container || !select) return;
-      let catalogData = null;
-      function render(provider) {
-        if (!catalogData) return;
-        const sockets = catalogData?.role_socket_catalog?.provider_sockets || {};
-        const templates = Array.isArray(catalogData?.templates) ? catalogData.templates : [];
-        container.innerHTML = templates.slice(0, 12).map((tpl) => {
-          const sockId = tpl.socket_id || "domain_specialist";
-          const resolvedModel = sockets[sockId]?.providers?.[provider] || provider;
-          const badge = tpl.source === "module_manifest_role" ? `📦 ${tpl.module_id}` : `🧭 ${tpl.tier || "role"}`;
-          const routeInfo = tpl.semantic_route ? `Umbrella: <code>${tpl.semantic_route}</code>` : `Prompt: <code>${tpl.prompt || "SKILL.md"}</code>`;
-          return `<div style="padding:0.65rem;border:1px solid var(--border);border-radius:8px;background:var(--bg-dark);">
-            <div style="display:flex;justify-content:space-between;gap:0.4rem;"><strong>${tpl.label || tpl.role_id}</strong><span class="studio-state">${badge}</span></div>
-            <div style="margin-top:0.25rem;color:var(--text-muted);">${routeInfo}</div>
-            <div style="margin-top:0.25rem;color:var(--text-muted);">Sockel <code>${sockId}</code> &rarr; <strong>${resolvedModel}</strong></div>
-          </div>`;
-        }).join("");
-      }
-      select.addEventListener("change", () => render(select.value));
-      try {
-        const res = await fetch("/api/agenten/library");
-        if (res.ok) {
-          catalogData = await res.json();
-          render(select.value);
-        }
-      } catch (_e) {}
-    })();
+  <script>
+    import {mountRoleSocketPreview} from "../../lib/role-socket-preview.mjs";
+    mountRoleSocketPreview(document);
   </script>
   <section id="studio-grid" class="studio-grid" aria-label="Blueprints"></section>
   <section id="studio-teams" hidden>

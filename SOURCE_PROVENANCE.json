@@ -280,7 +280,7 @@
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
-    "src/pages/agenten/blueprints.astro": "229664baa1438b532a42da33f80ad6cf829b5a623ccdc41932739cde89e15b9a",
+    "src/pages/agenten/blueprints.astro": "d96da2481a0315f54d621851350d494d45375dd1a24046ec2229e9e7856e27bb",
     "src/pages/agenten/fabrika.astro": "403d4a89bd5248a0467d36c50d8f4da1f8a0a62d3ce318a366438cebebdb5ade",
     "src/pages/agenten/marblerun.astro": "e78628301216ceb7175f861ec54962101e5ba5f79f84131d76d9b22aa00a2973",
     "src/pages/agenten/running.astro": "5ac1449b692d6c00ba1b1b930655e0efaa8cee8e811a7e48293a570d175549f0",
@@ -382,7 +382,10 @@
     "src/lib/agent-triggers-ui.mjs": "fac0b90abcc3fe9ca9a0260839b5c7ced68fcd5c9f7fe6f812b80b84bfde71c0",
     "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
     "scripts/page-reads-helpers.mjs": "8d83ee599959dca3722a1277d6b3be771a315b693aebbafda82d3300dbb53712",
-    "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d"
+    "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
+    "src/lib/role-socket-preview.mjs": "f42924576d1fc8b4ac9fae4fc26596d5083707ab6e743be16f14e8bbb730e8fd",
+    "tests/role-socket-preview.test.mjs": "bf680843c7c1b3afa31a9290f85c7034f4a04d36fe117d0843d2b5441b6a224a",
+    "src/pages/agenten/bibliothek.astro": "bf191b0d20b056b73b99c9c4e6f769f980f1ab7d025a2010a80dc253840af84c"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -5301,6 +5304,30 @@
           "path": "tests/agent-triggers.test.mjs",
           "previous_sha256": "1e8ee15021248efa8f02a109639a7535a99133836312687ee22424b465b3b11d",
           "sha256": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-04",
+      "summary": "Render untrusted role/socket preview metadata as literal DOM text through one shared renderer on both library pages; preserve provider switching without HTML parsing.",
+      "files": [
+        {
+          "path": "src/lib/role-socket-preview.mjs",
+          "sha256": "f42924576d1fc8b4ac9fae4fc26596d5083707ab6e743be16f14e8bbb730e8fd"
+        },
+        {
+          "path": "tests/role-socket-preview.test.mjs",
+          "sha256": "bf680843c7c1b3afa31a9290f85c7034f4a04d36fe117d0843d2b5441b6a224a"
+        },
+        {
+          "path": "src/pages/agenten/bibliothek.astro",
+          "sha256": "bf191b0d20b056b73b99c9c4e6f769f980f1ab7d025a2010a80dc253840af84c",
+          "previous_sha256": "5d0eee2229c5c128b812b74059e2119fdab0c4e63cdfab40461f8cf425b6b729"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "229664baa1438b532a42da33f80ad6cf829b5a623ccdc41932739cde89e15b9a",
+          "sha256": "d96da2481a0315f54d621851350d494d45375dd1a24046ec2229e9e7856e27bb"
         }
       ]
     }
