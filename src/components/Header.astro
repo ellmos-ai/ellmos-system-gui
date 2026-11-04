@@ -1,6 +1,7 @@
 ---
 // Header.astro - Shared shell and route navigation for BACH & OCEAN
 import navConfig from "../config/nav_config.json";
+import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
 
 interface Props {
   currentPath?: string;
@@ -197,7 +198,7 @@ function lineIconSvg(id: string): string {
         title="ELLMOS Talk / Funkgerät-Sprechhandgerät — Klicken für Konsole, Alt+Leertaste für Push-to-Talk"
       >
         <img
-          src="/assets/icons/talk-handmic-comic.jpg"
+          src={talkHandmicImg.src} onerror="this.onerror=null;this.src='/assets/icons/talk-handmic-comic.jpg';"
           alt="ELLMOS Talk Funkgerät-Sprechhandgerät"
           class="talk-handmic-thumb"
           width="36"
@@ -218,7 +219,7 @@ function lineIconSvg(id: string): string {
         <div class="talk-console-header">
           <div class="talk-console-identity">
             <div id="header-talk-mini-orb" class="talk-console-orb">
-              <img src="/assets/icons/talk-handmic-comic.jpg" alt="" class="talk-console-orb-img" width="36" height="36" />
+              <img src={talkHandmicImg.src} onerror="this.onerror=null;this.src='/assets/icons/talk-handmic-comic.jpg';" alt="" class="talk-console-orb-img" width="36" height="36" />
               <span id="header-talk-mini-emoji" class="talk-console-orb-emoji">🧘</span>
             </div>
             <div class="talk-console-titles">

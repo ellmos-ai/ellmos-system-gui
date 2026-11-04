@@ -1,6 +1,7 @@
 ---
 // talk.astro - Unified ELLMOS Talk & Funkgerät Studio (Live Voice, Canvas Visualizer & Local STT/TTS)
 import BachLayout from "../layouts/BachLayout.astro";
+import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
 ---
 
 <BachLayout title="ELLMOS Talk · Funkgerät & Live-Sprachstudio" currentPath="/chat">
@@ -8,7 +9,7 @@ import BachLayout from "../layouts/BachLayout.astro";
     <header class="card-header talk-studio-header" style="margin-bottom:1.25rem;flex-wrap:wrap;gap:0.85rem;">
       <div style="display:flex;align-items:center;gap:0.9rem;">
         <img
-          src="/assets/icons/talk-handmic-comic.jpg"
+          src={talkHandmicImg.src} onerror="this.onerror=null;this.src='/assets/icons/talk-handmic-comic.jpg';"
           alt="ELLMOS Talk Funkgerät-Sprechhandgerät"
           style="width:56px;height:56px;border-radius:12px;object-fit:cover;border:2px solid rgba(56,189,248,0.55);box-shadow:0 4px 16px rgba(0,0,0,0.4);"
         />

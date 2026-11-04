@@ -525,8 +525,11 @@ body {
 
 .btn {
     padding: 0.625rem 1.25rem;
-    border: none;
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    color: var(--text);
+    text-decoration: none;
     font-family: inherit;
     font-size: 0.8125rem;
     font-weight: 600;
@@ -538,6 +541,13 @@ body {
     gap: 0.5rem;
     letter-spacing: 0;
     line-height: 1.4;
+    box-sizing: border-box;
+}
+
+.btn:hover {
+    background: var(--bg-elevated);
+    border-color: var(--border-hover);
+    color: var(--text);
 }
 
 .btn:active {
