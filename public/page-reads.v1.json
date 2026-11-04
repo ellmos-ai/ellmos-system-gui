@@ -691,6 +691,39 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/pages/routinen.astro#completePersonalRoutine"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-triggers",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-triggers/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/agent-triggers.mjs#get"
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-triggers",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/agent-triggers.mjs#write"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/agent-triggers/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/agent-triggers.mjs#write"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/agent-triggers/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/agent-triggers.mjs#write"
    }
   ],
   "/settings": [
@@ -1193,6 +1226,39 @@
     "method": "POST",
     "path": "/api/slots",
     "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-triggers",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-triggers/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/agent-triggers.mjs#get"
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-triggers",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/agent-triggers.mjs#write"
+   },
+   {
+    "method": "PUT",
+    "path": "/api/agent-triggers/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/agent-triggers.mjs#write"
+   },
+   {
+    "method": "DELETE",
+    "path": "/api/agent-triggers/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/agent-triggers.mjs#write"
    }
   ],
   "/agenten/sessions": [

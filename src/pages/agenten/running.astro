@@ -1,6 +1,7 @@
 ---
 // running.astro - Deine Agenten · Living & Running
 import BachLayout from "../../layouts/BachLayout.astro";
+import AgentTriggers from '../../components/AgentTriggers.astro';
 import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
@@ -8,6 +9,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 ---
 
 <BachLayout title="Deine Agenten · Living & Running" currentPath="/agenten/running">
+  <AgentTriggers />
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
     <div>
       <h1 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;">

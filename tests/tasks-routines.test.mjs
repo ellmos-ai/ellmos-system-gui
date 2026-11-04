@@ -39,6 +39,11 @@ test('Routinen page reads are declared and the old personal Life route stays ava
   assert.deepEqual(reads.pages['/routinen'].map(item => `${item.method} ${item.path}`), [
     'GET /api/routines',
     'POST /api/routines/{id}/complete',
+    'GET /api/agent-triggers',
+    'GET /api/agent-triggers/{id}',
+    'POST /api/agent-triggers',
+    'PUT /api/agent-triggers/{id}',
+    'DELETE /api/agent-triggers/{id}',
   ]);
   assert.ok(read('src/pages/life.astro').includes('/api/routines'));
 });
