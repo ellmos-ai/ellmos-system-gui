@@ -21,7 +21,7 @@
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
     "ellmos-module.v2.json": "54b52ae2ed7107cdf936f3e0700ee6fcbbf1e78e70f99b98d98e4611b32bf9d7",
-    "package-lock.json": "e1e1fd367e7b5948dcb06b91c833b00d5e2f494bb128ffbc27db784779b6848f",
+    "package-lock.json": "6b0862286fbd6633472a5d350ccdf5ebf3c1587ac362b6dd76889e4efcfcee92",
     "package.json": "064e3c02e4d4f0361bd68b26bd45f6a0b224eb490d63d528958fba757586e643",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "9ccb8167e734fbb1363f2c4bf1e000569a84cc89c85b479b2e8abb2b662ddae9",
@@ -5180,6 +5180,17 @@
           "path": "src/styles/main.css",
           "previous_sha256": "fa60f58d377f8e33eaefdb3a2b2c3632e514fec94173b1fb95281c13223e45cf",
           "sha256": "c3b88fc20fbf443e315b6f2e8fd4deff3323e9659c1262a3fa82718f601bf2b0"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-04",
+      "summary": "Refresh only transitive undici to 8.12.2 and zod to 4.6.6 from npm registry to address current advisories; retain all direct pins and historical records.",
+      "files": [
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "e1e1fd367e7b5948dcb06b91c833b00d5e2f494bb128ffbc27db784779b6848f",
+          "sha256": "6b0862286fbd6633472a5d350ccdf5ebf3c1587ac362b6dd76889e4efcfcee92"
         }
       ]
     }
