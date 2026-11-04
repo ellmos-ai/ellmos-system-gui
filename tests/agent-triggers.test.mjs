@@ -41,3 +41,10 @@ test('missing device authorization stays distinct from an empty confirmed collec
   await assert.rejects(createTriggerClient(async () => reply({}, 401)).list(), error => error.state === 'auth');
   assert.deepEqual(await createTriggerClient(async () => reply(envelope({triggers: []}))).list(), []);
 });
+test('rejected input remains distinct from an unavailable provider without echoing server data', async () => {
+  for (const status of [400, 422]) {
+    await assert.rejects(createTriggerClient(async () => reply({detail: 'private-server-data'}, status)).list(),
+      error => error.state === 'invalid' && !error.message.includes('private-server-data'));
+  }
+  await assert.rejects(createTriggerClient(async () => reply({}, 503)).list(), error => error.state === 'unavailable');
+});

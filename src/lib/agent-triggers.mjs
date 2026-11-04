@@ -32,6 +32,8 @@ export function createTriggerClient(fetcher = globalThis.fetch) {
         ...(body === undefined ? {} : {headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})});
     } catch { throw new TriggerError('unavailable', 'Triggerverwaltung ist nicht erreichbar'); }
     if (!response.ok) {
+      if (response.status === 400 || response.status === 422)
+        throw new TriggerError('invalid', 'Eingaben wurden abgelehnt. Bitte Zeitplan und Parameter prüfen.');
       const state = response.status === 409 ? 'conflict' : response.status === 401 || response.status === 403 ? 'auth' : 'unavailable';
       throw new TriggerError(state, state === 'conflict' ? 'Definition geändert. Entwurf bleibt erhalten; bitte neu laden.'
         : state === 'auth' ? 'Geräteanmeldung erforderlich' : 'Triggerverwaltung ist nicht verfügbar');
