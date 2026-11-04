@@ -321,19 +321,45 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
         if (!text) return;
         const persona = mainModelSelect?.value || "buddha";
         const lang = document.documentElement.lang || "de";
+        let turnResolved = false;
         appendTranscriptEntry("Du", text, "#94a3b8");
-        if (transcriptBox) transcriptBox.textContent = `📡 Sende Funkspruch an ${persona.toUpperCase()}…`;
+        if (transcriptBox) transcriptBox.textContent = `⚡ Fast-Reflex (${persona.toUpperCase()}) prüft Kanal…`;
+        // Stage 1: Fast-Reflex (<200ms Vorlauf-Backchanneling vor der Hauptmodell-Antwort)
+        fetch("/api/talk/reflex", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_utterance: text, persona, language: lang }),
+        })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((rData) => {
+            if (turnResolved || !rData) return;
+            if (rData.visual_state) applyVisualState(rData.visual_state);
+            const ack = rData.reflex?.ack_text || "Einen Moment, ich prüfe das…";
+            const fastModel = rData.reflex?.fast_model || "fast-reflex";
+            const targetMs = rData.reflex?.latency_target_ms || 180;
+            if (reflexStatus) {
+              reflexStatus.textContent = `⚡ FastReflexLoop (${targetMs}ms · ${fastModel}): „${ack}“`;
+            }
+            if (transcriptBox) {
+              transcriptBox.textContent = `⚡ ${ack} (${persona.toUpperCase()} formuliert Hauptantwort…)`;
+            }
+            appendTranscriptEntry(`⚡ FAST-REFLEX (${fastModel})`, ack, "#facc15");
+          })
+          .catch(() => {});
+
+        // Stage 2: Deep-Cortex Hauptmodell-Antwort
         try {
           const res = await fetch("/api/talk/turn", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user_utterance: text, persona, language: lang }),
           });
+          turnResolved = true;
           if (!res.ok) return;
           const data = await res.json();
           if (data.visual_state) applyVisualState(data.visual_state);
           if (data.reflex && reflexStatus) {
-            reflexStatus.textContent = `⚡ FastReflexLoop (${data.reflex.latency_target_ms || 180}ms): ${data.reflex.ack_text || "bereit"}`;
+            reflexStatus.textContent = `⚡ FastReflexLoop (${data.reflex.latency_target_ms || 180}ms · ${data.reflex.fast_model || "fast-reflex"}): „${data.reflex.ack_text || "bereit"}“`;
           }
           const reply = data.spoken_text || (data.sentences || []).join(" ") || "";
           if (transcriptBox && reply) transcriptBox.textContent = reply;

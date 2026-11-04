@@ -132,6 +132,10 @@ import BachLayout from "../layouts/BachLayout.astro";
       }
 
       voiceBtn?.addEventListener('click', () => {
+        if (typeof window.bachDictateIntoElement === 'function') {
+          window.bachDictateIntoElement(input, voiceBtn, statusEl);
+          return;
+        }
         if (!recognition) {
           if (statusEl) statusEl.textContent = 'ellmos-voice-io: Lokaler Browser-Audio-Stream wird vorbereitet …';
           return;

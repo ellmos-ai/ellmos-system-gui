@@ -49,5 +49,11 @@ test("describeVoiceMicBinding exposes canonical endpoints for universal chat tra
   assert.equal(binding.schema, VOICE_MIC_CONTRACT_SCHEMA);
   assert.equal(binding.stt_endpoint, "/api/voice/stt");
   assert.equal(binding.tts_endpoint, "/api/voice/tts");
+  assert.equal(binding.reflex_endpoint, "/api/talk/reflex");
+  assert.equal(binding.turn_endpoint, "/api/talk/turn");
   assert.equal(binding.talk_companion_url, "/talk");
+  assert.ok(binding.selector.includes("#chat-input"));
+  assert.ok(binding.selector.includes("#tasks-search"));
+  assert.ok(binding.selector.includes("#note-title-input"));
+  assert.ok(binding.selector.includes("#prompt-library"));
 });

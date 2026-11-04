@@ -96,13 +96,18 @@ export function buildPermissionsMatrixViewModel(overrides = {}) {
   };
 }
 
-export function describeVoiceMicBinding(targetSelector = "textarea, [data-chat-input], .prompt-input") {
+export const UNIVERSAL_VOICE_MIC_SELECTOR =
+  "textarea:not([data-no-voice-mic]), input[data-chat-input], #chat-input, #utteranceInput, #header-talk-quick-input, #tasks-search, .task-create-dialog input[name='title'], #notes-search-input, #note-title-input, #note-tag-input, #prompt-library input[data-part='search'], #prompt-library input[name='name'], .chat-input, .prompt-input";
+
+export function describeVoiceMicBinding(targetSelector = UNIVERSAL_VOICE_MIC_SELECTOR) {
   return {
     schema: VOICE_MIC_CONTRACT_SCHEMA,
     selector: targetSelector,
     stt_endpoint: "/api/voice/stt",
     tts_endpoint: "/api/voice/tts",
     status_endpoint: "/api/voice/status",
+    reflex_endpoint: "/api/talk/reflex",
+    turn_endpoint: "/api/talk/turn",
     talk_companion_url: "/talk",
   };
 }

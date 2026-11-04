@@ -1114,21 +1114,44 @@ function lineIconSvg(id: string): string {
       try {
         const persona = personaSelect?.value || 'buddha';
         const lang = document.documentElement.lang || 'de';
+        let turnResolved = false;
         if (replyBox) {
           replyBox.hidden = false;
-          replyBox.textContent = `📡 Sende an ${persona.toUpperCase()}…`;
+          replyBox.textContent = `⚡ Fast-Reflex (${persona.toUpperCase()}) prüft Kanal…`;
         }
+        // Stage 1: Fast-Reflex (<200ms Vorlauf-Backchanneling vor der Hauptmodell-Antwort)
+        fetch('/api/talk/reflex', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_utterance: utterance, persona, language: lang }),
+        })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((rData) => {
+            if (turnResolved || !rData) return;
+            if (rData.visual_state) applyTalkStateToHeader(rData.visual_state);
+            const ack = rData.reflex?.ack_text || '';
+            const fastModel = rData.reflex?.fast_model || 'fast-reflex';
+            if (replyBox && ack) {
+              replyBox.hidden = false;
+              replyBox.textContent = `⚡ ${ack} (${fastModel} · ${persona.toUpperCase()} denkt nach…)`;
+            }
+          })
+          .catch(() => {});
+
+        // Stage 2: Deep-Cortex Hauptmodell-Antwort
         const res = await fetch('/api/talk/turn', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user_utterance: utterance, persona, language: lang }),
         });
+        turnResolved = true;
         if (!res.ok) return null;
         const data = await res.json();
         if (data && data.visual_state) applyTalkStateToHeader(data.visual_state);
         if (replyBox && data?.spoken_text) {
           replyBox.hidden = false;
-          replyBox.textContent = data.spoken_text;
+          const reflexPrefix = data.reflex?.ack_text ? `⚡ ${data.reflex.ack_text} — ` : '';
+          replyBox.textContent = `${reflexPrefix}${data.spoken_text}`;
         }
         if (data?.spoken_text) {
           let playedLocalTts = false;
@@ -1381,6 +1404,218 @@ function lineIconSvg(id: string): string {
     });
 
     loadHeaderTalkConfig();
+  })();
+
+  // ── Universeller <VoiceMicButton /> (ellmos-voice-io Direkt-Diktat via /api/voice/stt) ──
+  (function initUniversalVoiceMicButtons() {
+    if (window.__ellmosVoiceMicInstalled) return;
+    window.__ellmosVoiceMicInstalled = true;
+
+    const TARGET_SELECTOR = [
+      "textarea:not([data-no-voice-mic])",
+      "input[data-chat-input]",
+      "#chat-input",
+      "#utteranceInput",
+      "#header-talk-quick-input",
+      "#tasks-search",
+      ".task-create-dialog input[name='title']",
+      "#notes-search-input",
+      "#note-title-input",
+      "#note-tag-input",
+      "#prompt-library input[data-part='search']",
+      "#prompt-library input[name='name']",
+      ".chat-input",
+      ".prompt-input",
+    ].join(", ");
+
+    function appendTranscriptToElement(el, transcript) {
+      const clean = String(transcript || "").trim();
+      if (!el || !clean) return;
+      const cur = String(el.value || "");
+      el.value = cur && !cur.endsWith(" ") ? `${cur} ${clean}` : `${cur}${clean}`;
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+      el.dispatchEvent(new Event("change", { bubbles: true }));
+      try { el.focus(); } catch (_) {}
+    }
+
+    async function dictateViaBackendStt(el, btn, statusEl) {
+      const lang = (document.documentElement.lang || "de") === "en" ? "en" : "de";
+      if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function" || typeof window.MediaRecorder !== "function") {
+        if (statusEl) statusEl.textContent = "Kein Audio-Eingabegerät verfügbar — öffne ELLMOS Talk (/talk)…";
+        window.open("/talk?companion=1", "ellmos-talk-companion", "width=430,height=680");
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const chunks = [];
+        const recorder = new MediaRecorder(stream);
+        const origText = btn ? btn.textContent : "🎤";
+        if (btn) {
+          btn.dataset.recording = "1";
+          btn.textContent = "🔴 3s…";
+          btn.setAttribute("aria-pressed", "true");
+        }
+        if (statusEl) statusEl.textContent = "🎙️ Aufnahme läuft (lokales STT /api/voice/stt)…";
+        recorder.ondataavailable = (ev) => {
+          if (ev.data && ev.data.size > 0) chunks.push(ev.data);
+        };
+        recorder.onstop = async () => {
+          stream.getTracks().forEach((t) => t.stop());
+          if (btn) {
+            delete btn.dataset.recording;
+            btn.textContent = "⏳";
+            btn.setAttribute("aria-pressed", "false");
+          }
+          try {
+            const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+            const b64 = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(String(reader.result || "").split(",")[1] || "");
+              reader.readAsDataURL(blob);
+            });
+            if (b64) {
+              const res = await fetch("/api/voice/stt", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ audio_b64: b64, suffix: ".webm", language: lang }),
+              });
+              if (res.ok) {
+                const data = await res.json();
+                if (data?.text?.trim()) {
+                  appendTranscriptToElement(el, data.text.trim());
+                  if (statusEl) statusEl.textContent = `✅ Diktat übernommen (${data.backend || "ellmos-voice-io"}).`;
+                } else if (statusEl) {
+                  statusEl.textContent = "ℹ️ Keine Sprache erkannt.";
+                }
+              }
+            }
+          } catch (_) {
+            if (statusEl) statusEl.textContent = "⚠️ STT-Übertragung fehlgeschlagen.";
+          } finally {
+            if (btn) btn.textContent = origText;
+          }
+        };
+        recorder.start();
+        setTimeout(() => {
+          if (recorder.state === "recording") recorder.stop();
+        }, 3500);
+      } catch (_) {
+        if (btn) {
+          delete btn.dataset.recording;
+          btn.setAttribute("aria-pressed", "false");
+        }
+        if (statusEl) statusEl.textContent = "⚠️ Mikrofonzugriff verweigert oder nicht verfügbar.";
+      }
+    }
+
+    function dictateIntoElement(el, btn, statusEl) {
+      if (!el) return;
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SR) {
+        try {
+          const rec = new SR();
+          rec.lang = (document.documentElement.lang || "de") === "en" ? "en-US" : "de-DE";
+          rec.continuous = false;
+          rec.interimResults = false;
+          const origText = btn ? btn.textContent : "🎤";
+          if (btn) {
+            btn.dataset.recording = "1";
+            btn.textContent = "🔴";
+            btn.setAttribute("aria-pressed", "true");
+          }
+          if (statusEl) statusEl.textContent = "🎙️ Höre zu (Diktat aktiv)…";
+          rec.onresult = (ev) => {
+            const t = ev.results?.[0]?.[0]?.transcript || "";
+            if (t) {
+              appendTranscriptToElement(el, t);
+              if (statusEl) statusEl.textContent = "✅ Diktat übernommen.";
+            }
+          };
+          rec.onend = () => {
+            if (btn) {
+              delete btn.dataset.recording;
+              btn.textContent = origText;
+              btn.setAttribute("aria-pressed", "false");
+            }
+          };
+          rec.onerror = () => {
+            if (btn) {
+              delete btn.dataset.recording;
+              btn.textContent = origText;
+              btn.setAttribute("aria-pressed", "false");
+            }
+            dictateViaBackendStt(el, btn, statusEl);
+          };
+          rec.start();
+          return;
+        } catch (_) {}
+      }
+      dictateViaBackendStt(el, btn, statusEl);
+    }
+
+    function enhanceVoiceMicInputs(root = document) {
+      if (!root || typeof root.querySelectorAll !== "function") return 0;
+      let count = 0;
+      const nodes = root.querySelectorAll(TARGET_SELECTOR);
+      nodes.forEach((el) => {
+        if (el.dataset.ellmosVoiceEnhanced === "1") return;
+        el.dataset.ellmosVoiceEnhanced = "1";
+        if (el.id === "chat-input" && document.getElementById("voice-dictate-btn")) {
+          const existingChatBtn = document.getElementById("voice-dictate-btn");
+          existingChatBtn.classList.add("ellmos-voice-mic-btn");
+          existingChatBtn.dataset.voiceMicTarget = "chat-input";
+          count++;
+          return;
+        }
+        const parent = el.parentElement;
+        if (!parent) return;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "ellmos-voice-mic-btn";
+        btn.dataset.voiceMicBtn = "true";
+        btn.setAttribute("aria-label", "Spracheingabe / Direkt-Diktat (/api/voice/stt)");
+        btn.setAttribute("aria-pressed", "false");
+        btn.title = "Direkt-Diktat per Mikrofon (/api/voice/stt · ellmos-voice-io)";
+        btn.textContent = "🎤";
+        btn.style.cssText =
+          "display:inline-flex;align-items:center;justify-content:center;min-height:30px;min-width:32px;padding:0.2rem 0.5rem;margin-left:0.35rem;border-radius:8px;cursor:pointer;border:1px solid rgba(56,189,248,0.35);background:rgba(15,23,42,0.78);color:#e2e8f0;font-size:0.82rem;line-height:1;vertical-align:middle;flex-shrink:0;";
+        btn.addEventListener("click", (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          dictateIntoElement(el, btn, null);
+        });
+        if (el.nextSibling) {
+          parent.insertBefore(btn, el.nextSibling);
+        } else {
+          parent.appendChild(btn);
+        }
+        count++;
+      });
+      return count;
+    }
+
+    window.bachDictateIntoElement = dictateIntoElement;
+    window.bachDictateViaBackendStt = dictateViaBackendStt;
+    window.bachEnhanceVoiceMicInputs = enhanceVoiceMicInputs;
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => enhanceVoiceMicInputs(document));
+    } else {
+      enhanceVoiceMicInputs(document);
+    }
+
+    if (typeof MutationObserver === "function" && document.body) {
+      let scheduled = false;
+      const obs = new MutationObserver(() => {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(() => {
+          scheduled = false;
+          enhanceVoiceMicInputs(document);
+        });
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+    }
   })();
 </script>
 

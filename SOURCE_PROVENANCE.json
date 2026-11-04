@@ -235,7 +235,7 @@
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
-    "src/components/Header.astro": "9c4879475f062639f2d10e624f3b742fc68dcd9f1ac65ea2ab3b6fcfdd93ad05",
+    "src/components/Header.astro": "6c6896d6746a6306249626fdcab6980f91534d17c1fa5bad3bd95da817ac291b",
     "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
@@ -288,7 +288,7 @@
     "src/pages/agenten/subscription-agents.astro": "6913198067d5130b5281509744f1cec6b148dd54de39bbe24e482b566b362b29",
     "src/pages/artefakte.astro": "155856d3bc6dda60ec2ff57173ddb8186c0d9f9b68e35d60bf100161fb2d5ab5",
     "src/pages/ati.astro": "9654c6490c123e02a4f2e6028d1b22ce8740b2e0e0de2a2448f13c3ec4fd1f84",
-    "src/pages/chat.astro": "ca664ed260a538be9afa1403c24da48288d0f6b965360586e146bdfa003df41c",
+    "src/pages/chat.astro": "cf4a712a61880792f953accd7733449b1cb2675427ca98ad0c723c41fc142748",
     "src/pages/connectors.astro": "8bbf1117573a7019b9a4bc6016930000fe9b01affab9a29e2cf8b627235b4b4d",
     "src/pages/daemon.astro": "9843948aaa9cd0962e92a4e082bdb5fbd10096ca89842c7bbc1690d14db8ffa8",
     "src/pages/denkarium.astro": "4ccb31a635bf1559382f23fd2e714d3d01d360c096fa02d0b863679c6bd4e4b7",
@@ -319,7 +319,7 @@
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "9c3905cf5dc0aee269196f279d9c1af376db1cae25ce4d1cf5b18a10aad31952",
-    "src/pages/talk.astro": "535369bb8b68759e1c95fdc98493788588eccf977a0b6c95282aa149ec669837",
+    "src/pages/talk.astro": "3768f204707201a477a41de54c9dae54b70b36c56d2ed782f2174c90ee4e86b2",
     "src/pages/tasks.astro": "c5f9c6532f57005fd7b77ebbce2ba0e231175222f2679cb976ea9898a750f658",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
@@ -374,7 +374,9 @@
     "tests/usecase-source.test.mjs": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/worker-policy-settings.test.mjs": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
-    "tests/worker-queue.test.mjs": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14"
+    "tests/worker-queue.test.mjs": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
+    "src/lib/voice-and-talk-contract.mjs": "ae0b57f627bc47143784b10160ccfb51883530fc9869f9e31b602c5f33055980",
+    "tests/voice-and-talk-contract.test.mjs": "4029b20acea02ea7ddd4e03b89acfff77f878b66c087771b9a8064311e3eaf09"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -5113,6 +5115,17 @@
           "sha256": "4262265d13b39f5e573edee42411c1fdd13b650291a1b9820cf1892d3b1fb975"
         }
       ]
+    },
+    {
+      "date": "2026-11-04",
+      "summary": "Add Fast-Reflex Stage-1 (/api/talk/reflex) backchanneling and universal VoiceMicButton (/api/voice/stt) enhancer across Chat, Tasks, Notizen and Prompt-Library",
+      "files": {
+        "src/lib/voice-and-talk-contract.mjs": "ae0b57f627bc47143784b10160ccfb51883530fc9869f9e31b602c5f33055980",
+        "src/components/Header.astro": "6c6896d6746a6306249626fdcab6980f91534d17c1fa5bad3bd95da817ac291b",
+        "src/pages/talk.astro": "3768f204707201a477a41de54c9dae54b70b36c56d2ed782f2174c90ee4e86b2",
+        "src/pages/chat.astro": "cf4a712a61880792f953accd7733449b1cb2675427ca98ad0c723c41fc142748",
+        "tests/voice-and-talk-contract.test.mjs": "4029b20acea02ea7ddd4e03b89acfff77f878b66c087771b9a8064311e3eaf09"
+      }
     }
   ],
   "readme_banner": {
