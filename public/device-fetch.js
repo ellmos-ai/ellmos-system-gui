@@ -16,15 +16,17 @@
             } catch (_) { /* Storage may be disabled; the API still fails closed. */ }
         }
         const response = await originalFetch(input, {...options, headers});
-        if ((response.status === 401 || response.status === 403 && !headers.has('X-BACH-Result-Operator')) &&
+        const sessionAuth = response.headers?.get?.('X-GUI-Auth-Mode') === 'session';
+        if ((response.status === 401 || response.status === 403 && !sessionAuth && !headers.has('X-BACH-Result-Operator')) &&
                 document.body && !document.getElementById('bach-device-login-needed')) {
             const notice = document.createElement('p');
             notice.id = 'bach-device-login-needed';
             notice.setAttribute('role', 'alert');
             const link = document.createElement('a');
-            link.href = '/token-dashboard';
-            link.textContent = 'Geräteanmeldung prüfen';
-            notice.append('Für diesen Zugriff ist eine gültige Geräteanmeldung erforderlich. ', link);
+            link.href = sessionAuth ? '/login' : '/token-dashboard';
+            link.textContent = sessionAuth ? 'Anmelden' : 'Geräteanmeldung prüfen';
+            notice.append(sessionAuth ? 'Für diesen Zugriff ist eine gültige Anmeldung erforderlich. '
+                : 'Für diesen Zugriff ist eine gültige Geräteanmeldung erforderlich. ', link);
             document.body.prepend(notice);
         }
         return response;

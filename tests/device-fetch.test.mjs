@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 const script=readFileSync(new URL('../public/device-fetch.js',import.meta.url),'utf8');
-function harness({credential='synthetic-device-fixture',blocked=false,status=200}={}) {
+function harness({credential='synthetic-device-fixture',blocked=false,status=200,authMode=null}={}) {
   const calls=[], notices=[];
   const location={origin:'https://gui.example.test',href:'https://gui.example.test/tasks'};
   const document={body:{prepend(node){notices.push(node);}},getElementById(){return notices[0]||null;},
     createElement(tag){return {tag,children:[],setAttribute(){},append(...items){this.children.push(...items);}};}};
-  const window={fetch:async(input,options)=>{calls.push({input,options});return {status};}};
+  const window={fetch:async(input,options)=>{calls.push({input,options});return {status,
+    headers:new Headers(authMode ? {'X-GUI-Auth-Mode':authMode} : {})};}};
   const context=vm.createContext({window,location,document,URL,Request,Headers,
     localStorage:{getItem(){if(blocked)throw Error('Storage unavailable');return credential;}}});
   vm.runInContext(script,context);
@@ -43,4 +44,17 @@ test('authentication failures create one local login notice without disclosing c
 });
 test('reloading the script keeps one fetch wrapper',()=>{
   const h=harness(),original=h.window.fetch;vm.runInContext(script,h.context);assert.equal(h.window.fetch,original);
+});
+
+test('session authentication uses the native login rather than a device-token dashboard',async()=>{
+  const h=harness({status:401,authMode:'session'});await h.window.fetch('/api/agent-triggers');
+  assert.equal(h.notices.length,1);
+  assert.equal(h.notices[0].children[1].href,'/login');
+  assert.equal(h.notices[0].children[1].textContent,'Anmelden');
+  assert.doesNotMatch(JSON.stringify(h.notices),/synthetic-device-fixture|Geräteanmeldung/);
+});
+
+test('a session permission denial does not falsely request a device login',async()=>{
+  const h=harness({status:403,authMode:'session'});await h.window.fetch('/api/agent-triggers');
+  assert.equal(h.notices.length,0);
 });

@@ -17,10 +17,28 @@ keinen Schreibzugriff und erhält den Entwurf. Neue Definitionen sind zunächst
 deaktiviert. Speichern startet keinen Worker; Ereignisse werden hier nicht
 manuell als bestätigte Aufgabenabschlüsse ausgegeben.
 
-Fehlende Provider und Geräteanmeldung bleiben sichtbar. Die Formulare verwenden
+Fehlende Provider und Anmeldung bleiben sichtbar. Die Formulare verwenden
 aktuell technische Agenten- und Executor-IDs sowie JSON-Zeitpläne und Parameter.
 Die komfortable Auswahl bestätigter Agenten und Ausführungen, Kalenderanbindung,
 produktiver Dispatch und Endabnahme bleiben offen.
+
+## Session- und Gerätetransport
+
+Vor dem ersten Schreibzugriff bestätigt der Client eine gültige lesende Sammlung.
+Ein Session-Host kündigt seinen CSRF-Schutz über `X-GUI-CSRF-Required: 1` an und
+liefert den Token im Header `X-CSRF-Token`. Er bleibt nur im Speicher des Clients
+und wird ausschließlich im Header der Schreibanfrage gesendet, niemals im
+Auftragsparameter, URL oder lokalen Speicher. Fehlende oder ungültige Metadaten
+verhindern den Schreibzugriff; ein angekündigter CSRF-Schutz wird nicht still
+herabgestuft. Es gibt keinen automatischen Schreib-Retry.
+
+Bestehende BACH-Geräte- und Origin-Prüfungen bleiben beim Host. Ein Session-Host
+kennzeichnet Antworten mit `X-GUI-Auth-Mode: session`, sodass eine nötige Anmeldung
+zu `/login` führt statt zur BACH-Geräteverwaltung. Ein berechtigter Schreibzugriff
+wird ausschließlich durch den jeweiligen Host entschieden; Header sind keine
+Freigabe. Die verifizierte `device-fetch.js` bleibt Teil des gemeinsamen Kits und
+wird nicht vom Host überschrieben. Der Ocean-Backendadapter und dessen
+Session-/CSRF-Endabnahme bleiben ein separater, noch offener Anschluss.
 
 Vertragstests und statischer Build wurden ausgeführt. Der geplante synthetische
 Browser-Verhaltenstest wurde vor Ausführung durch die automatische
