@@ -6,7 +6,13 @@ export function mountAgentTriggers(panel, client = createTriggerClient()) {
   const field = name => form.elements.namedItem(name);
   let snapshot = null, available = false, busy = false, epoch = 0;
   const message = text => { status.textContent = text; };
+  function setBusy(value) {
+    busy = value;
+    panel.querySelectorAll('button, input, select, textarea').forEach(control => { control.disabled = value; });
+    find('new').disabled = value || !available;
+  }
   function edit(value) {
+    if (busy || !available) return;
     snapshot = value ? structuredClone(value) : null;
     form.reset();
     field('id').value = value?.id || '';
@@ -32,10 +38,10 @@ export function mountAgentTriggers(panel, client = createTriggerClient()) {
         row.append(text);
         for (const [label, action] of [['Bearbeiten', () => edit(value)], ['Löschen', async () => {
           if (!available || busy) return;
-          busy = true;
+          setBusy(true);
           try { await client.remove(value); await refresh(); message('Definition gelöscht. Laufhistorie bleibt erhalten.'); }
           catch (error) { message(error.message); }
-          finally { busy = false; }
+          finally { setBusy(false); }
         }]]) {
           const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
           button.addEventListener('click', action); row.append(button);
@@ -48,14 +54,14 @@ export function mountAgentTriggers(panel, client = createTriggerClient()) {
   }
   find('new').addEventListener('click', () => { if (available && !busy) edit(null); });
   find('refresh').addEventListener('click', refresh);
-  find('cancel').addEventListener('click', () => { form.hidden = true; snapshot = null; });
+  find('cancel').addEventListener('click', () => { if (!busy) { form.hidden = true; snapshot = null; } });
   field('kind').addEventListener('change', () => {
     const examples = {once: {kind: 'once', at: ''}, daily: {kind: 'daily', time: '09:00', timezone: 'Europe/Berlin'}, interval: {kind: 'interval', seconds: 3600}, cron: {kind: 'cron', expression: '0 9 * * 1', timezone: 'Europe/Berlin'}, event: {kind: 'event', event_type: 'task.accepted'}};
     field('schedule').value = JSON.stringify(examples[field('kind').value], null, 2);
   });
   form.addEventListener('submit', async event => {
     event.preventDefault(); if (!available || busy) return;
-    busy = true;
+    setBusy(true);
     try {
       const changes = {agent_id: field('agent_id').value.trim(), executor: field('executor').value.trim(), schedule: JSON.parse(field('schedule').value), payload: JSON.parse(field('payload').value), authorities: JSON.parse(field('authorities').value), enabled: field('enabled').checked};
       if (changes.schedule.kind !== field('kind').value) throw new Error('Auslöser und Zeitplan stimmen nicht überein.');
@@ -63,7 +69,7 @@ export function mountAgentTriggers(panel, client = createTriggerClient()) {
       else await client.create({id: field('id').value.trim(), ...changes});
       form.hidden = true; snapshot = null; await refresh(); message('Definition unabhängig bestätigt. Kein Worker gestartet.');
     } catch (error) { message(error.message); }
-    finally { busy = false; }
+    finally { setBusy(false); }
   });
   refresh();
   return {refresh};

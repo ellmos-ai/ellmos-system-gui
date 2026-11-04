@@ -379,7 +379,7 @@
     "tests/voice-and-talk-contract.test.mjs": "4029b20acea02ea7ddd4e03b89acfff77f878b66c087771b9a8064311e3eaf09",
     "src/components/AgentTriggers.astro": "0ca2a3ffb8868fdb9cae3544b5eb3118dc207e2774ba700ff2f05d7978a529af",
     "src/lib/agent-triggers.mjs": "8ab1f6f38f59a5b87299b505e10b8ca7ab16c20b1f4e275ec4b588cbeea6dcad",
-    "src/lib/agent-triggers-ui.mjs": "66cefb762e218559ffdd0b20a925a61cce468bb0faaa0498bc32ba2581aba80b",
+    "src/lib/agent-triggers-ui.mjs": "fac0b90abcc3fe9ca9a0260839b5c7ced68fcd5c9f7fe6f812b80b84bfde71c0",
     "tests/agent-triggers.test.mjs": "dfee299da71e58eb5fb74a1af30efada66e6bd0e4b1a115c20801ec39e29c681",
     "scripts/page-reads-helpers.mjs": "8d83ee599959dca3722a1277d6b3be771a315b693aebbafda82d3300dbb53712",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d"
@@ -5258,6 +5258,17 @@
           "path": "docs/agent-triggers.md",
           "previous_sha256": null,
           "sha256": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-04",
+      "summary": "Lock trigger editor controls during pending mutations to prevent late responses from discarding a newer draft.",
+      "files": [
+        {
+          "path": "src/lib/agent-triggers-ui.mjs",
+          "previous_sha256": "66cefb762e218559ffdd0b20a925a61cce468bb0faaa0498bc32ba2581aba80b",
+          "sha256": "fac0b90abcc3fe9ca9a0260839b5c7ced68fcd5c9f7fe6f812b80b84bfde71c0"
         }
       ]
     }
