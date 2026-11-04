@@ -36,6 +36,11 @@
   },
   {
    "method": "POST",
+   "path": "/api/talk/reflex",
+   "required": false
+  },
+  {
+   "method": "POST",
    "path": "/api/talk/turn",
    "required": false
   },
@@ -134,6 +139,11 @@
    {
     "method": "POST",
     "path": "/api/voice/tts",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/talk/reflex",
     "required": false
    },
    {

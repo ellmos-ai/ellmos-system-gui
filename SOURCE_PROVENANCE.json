@@ -7,8 +7,8 @@
   "files_sha256": {
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
     ".github/workflows/tests.yml": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
-    "README.md": "84d38716588cb3d20f7ecaa3c139226afd76d030a3089a90d673c31a2897f3d1",
-    "RELEASE_GATE.md": "b02a1d52cc76749313484ecd72e01fa9a4cf3965e724ac4c393d92659d53be73",
+    "README.md": "9039b1f0a3ee4300fbf9b846e19b8db4aa5a2e278c3cfee5ae3619f17ad47687",
+    "RELEASE_GATE.md": "534b11e2ef28e4256088c44d8e5f46fdfc5162c217cc9b8ce8ce384ac5d338d2",
     "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
@@ -20,11 +20,11 @@
     "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
-    "ellmos-module.v2.json": "17c52379f7981b5ade379a6e5c6d384a723fb1fd9e85fbeb09fc40aba1619959",
+    "ellmos-module.v2.json": "54b52ae2ed7107cdf936f3e0700ee6fcbbf1e78e70f99b98d98e4611b32bf9d7",
     "package-lock.json": "e1e1fd367e7b5948dcb06b91c833b00d5e2f494bb128ffbc27db784779b6848f",
-    "package.json": "91ce195e6431ba7daac537594313b05a59bd402530651fec7da517d52d6ec550",
+    "package.json": "064e3c02e4d4f0361bd68b26bd45f6a0b224eb490d63d528958fba757586e643",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "4262265d13b39f5e573edee42411c1fdd13b650291a1b9820cf1892d3b1fb975",
+    "public/page-reads.v1.json": "9ccb8167e734fbb1363f2c4bf1e000569a84cc89c85b479b2e8abb2b662ddae9",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
     "scripts/page-reads-bindings.mjs": "18e302f68f10c41b38de566297a5f166ed0be156692740f502c1c2fb58331c48",
@@ -235,7 +235,7 @@
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
-    "src/components/Header.astro": "6c6896d6746a6306249626fdcab6980f91534d17c1fa5bad3bd95da817ac291b",
+    "src/components/Header.astro": "7e1da2cc4cce5f6f999da3e52d34f6f0c82fa75aabc723ad60acceef71638f49",
     "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
@@ -283,7 +283,7 @@
     "src/pages/agenten/blueprints.astro": "229664baa1438b532a42da33f80ad6cf829b5a623ccdc41932739cde89e15b9a",
     "src/pages/agenten/fabrika.astro": "403d4a89bd5248a0467d36c50d8f4da1f8a0a62d3ce318a366438cebebdb5ade",
     "src/pages/agenten/marblerun.astro": "e78628301216ceb7175f861ec54962101e5ba5f79f84131d76d9b22aa00a2973",
-    "src/pages/agenten/running.astro": "5a44176e50de7beef67ebff2d8428aa9c53f6defe7873a9a48fdcc7ba3c1afeb",
+    "src/pages/agenten/running.astro": "e1758ecc1611fe6c4e8d0d5fc9b22a562d8710936d3366e60d4c729089ab1d61",
     "src/pages/agenten/sessions.astro": "3322b3f23239c8a56af7968a5af226169f0c3df203e7a4e59e44c89173cb18cf",
     "src/pages/agenten/subscription-agents.astro": "6913198067d5130b5281509744f1cec6b148dd54de39bbe24e482b566b362b29",
     "src/pages/artefakte.astro": "155856d3bc6dda60ec2ff57173ddb8186c0d9f9b68e35d60bf100161fb2d5ab5",
@@ -318,8 +318,8 @@
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
-    "src/pages/system/installation-updates.astro": "9c3905cf5dc0aee269196f279d9c1af376db1cae25ce4d1cf5b18a10aad31952",
-    "src/pages/talk.astro": "3768f204707201a477a41de54c9dae54b70b36c56d2ed782f2174c90ee4e86b2",
+    "src/pages/system/installation-updates.astro": "7a7680adc436d79a838368cd65237f5390b285e6f2b1a4780a1c71f20f132968",
+    "src/pages/talk.astro": "509daed13689c056fea3036c9c9bcb434319dde15eaa832f6bd827fd1016cdcb",
     "src/pages/tasks.astro": "c5f9c6532f57005fd7b77ebbce2ba0e231175222f2679cb976ea9898a750f658",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
@@ -331,7 +331,7 @@
     "src/scripts/installation-updates.mjs": "c6fcc4aaee0cb0056246cb870008e27e6a538cb18037ca4fe6793f68cbbbcb6c",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
-    "src/styles/main.css": "fa60f58d377f8e33eaefdb3a2b2c3632e514fec94173b1fb95281c13223e45cf",
+    "src/styles/main.css": "c3b88fc20fbf443e315b6f2e8fd4deff3323e9659c1262a3fa82718f601bf2b0",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
     "tests/agent-color.test.mjs": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
@@ -5126,6 +5126,62 @@
         "src/pages/chat.astro": "cf4a712a61880792f953accd7733449b1cb2675427ca98ad0c723c41fc142748",
         "tests/voice-and-talk-contract.test.mjs": "4029b20acea02ea7ddd4e03b89acfff77f878b66c087771b9a8064311e3eaf09"
       }
+    },
+    {
+      "date": "2026-11-04",
+      "summary": "Declare optional Talk reflex POST requests, correct installer connector navigation, and bind current text hashes to canonical LF bytes. Historical records preserved from 399e35c using explicit UTF-8.",
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "84d38716588cb3d20f7ecaa3c139226afd76d030a3089a90d673c31a2897f3d1",
+          "sha256": "9039b1f0a3ee4300fbf9b846e19b8db4aa5a2e278c3cfee5ae3619f17ad47687"
+        },
+        {
+          "path": "RELEASE_GATE.md",
+          "previous_sha256": "b02a1d52cc76749313484ecd72e01fa9a4cf3965e724ac4c393d92659d53be73",
+          "sha256": "534b11e2ef28e4256088c44d8e5f46fdfc5162c217cc9b8ce8ce384ac5d338d2"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "17c52379f7981b5ade379a6e5c6d384a723fb1fd9e85fbeb09fc40aba1619959",
+          "sha256": "54b52ae2ed7107cdf936f3e0700ee6fcbbf1e78e70f99b98d98e4611b32bf9d7"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "91ce195e6431ba7daac537594313b05a59bd402530651fec7da517d52d6ec550",
+          "sha256": "064e3c02e4d4f0361bd68b26bd45f6a0b224eb490d63d528958fba757586e643"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "4262265d13b39f5e573edee42411c1fdd13b650291a1b9820cf1892d3b1fb975",
+          "sha256": "9ccb8167e734fbb1363f2c4bf1e000569a84cc89c85b479b2e8abb2b662ddae9"
+        },
+        {
+          "path": "src/components/Header.astro",
+          "previous_sha256": "6c6896d6746a6306249626fdcab6980f91534d17c1fa5bad3bd95da817ac291b",
+          "sha256": "7e1da2cc4cce5f6f999da3e52d34f6f0c82fa75aabc723ad60acceef71638f49"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "5a44176e50de7beef67ebff2d8428aa9c53f6defe7873a9a48fdcc7ba3c1afeb",
+          "sha256": "e1758ecc1611fe6c4e8d0d5fc9b22a562d8710936d3366e60d4c729089ab1d61"
+        },
+        {
+          "path": "src/pages/system/installation-updates.astro",
+          "previous_sha256": "9c3905cf5dc0aee269196f279d9c1af376db1cae25ce4d1cf5b18a10aad31952",
+          "sha256": "7a7680adc436d79a838368cd65237f5390b285e6f2b1a4780a1c71f20f132968"
+        },
+        {
+          "path": "src/pages/talk.astro",
+          "previous_sha256": "3768f204707201a477a41de54c9dae54b70b36c56d2ed782f2174c90ee4e86b2",
+          "sha256": "509daed13689c056fea3036c9c9bcb434319dde15eaa832f6bd827fd1016cdcb"
+        },
+        {
+          "path": "src/styles/main.css",
+          "previous_sha256": "fa60f58d377f8e33eaefdb3a2b2c3632e514fec94173b1fb95281c13223e45cf",
+          "sha256": "c3b88fc20fbf443e315b6f2e8fd4deff3323e9659c1262a3fa82718f601bf2b0"
+        }
+      ]
     }
   ],
   "readme_banner": {
