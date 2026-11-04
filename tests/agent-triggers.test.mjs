@@ -48,3 +48,11 @@ test('rejected input remains distinct from an unavailable provider without echoi
   }
   await assert.rejects(createTriggerClient(async () => reply({}, 503)).list(), error => error.state === 'unavailable');
 });
+test('native slash identifiers are encoded as one object identifier and independently matched', async () => {
+  for (const id of ['team/weekly', 'team/deliver']) {
+    let called;
+    const client = createTriggerClient(async (url) => { called = url; return reply(envelope({trigger: trigger({id})})); });
+    assert.equal((await client.get(id)).id, id);
+    assert.equal(called, '/api/agent-triggers/' + encodeURIComponent(id));
+  }
+});

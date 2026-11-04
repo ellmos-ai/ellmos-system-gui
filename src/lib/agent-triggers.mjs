@@ -1,5 +1,5 @@
 const BASE = '/api/agent-triggers';
-const ID = /^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$/;
+const ID = /^[A-Za-z0-9][A-Za-z0-9_.:@/-]{0,127}$/;
 export class TriggerError extends Error {
   constructor(state, message) { super(message); this.state = state; }
 }

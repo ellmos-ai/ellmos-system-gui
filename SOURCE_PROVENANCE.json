@@ -378,9 +378,9 @@
     "src/lib/voice-and-talk-contract.mjs": "ae0b57f627bc47143784b10160ccfb51883530fc9869f9e31b602c5f33055980",
     "tests/voice-and-talk-contract.test.mjs": "4029b20acea02ea7ddd4e03b89acfff77f878b66c087771b9a8064311e3eaf09",
     "src/components/AgentTriggers.astro": "0ca2a3ffb8868fdb9cae3544b5eb3118dc207e2774ba700ff2f05d7978a529af",
-    "src/lib/agent-triggers.mjs": "e79c985d670fb85cbbca4b52cb5b01bb35c111a199205519fdc4cd7fbc46ce7a",
+    "src/lib/agent-triggers.mjs": "289e00f21c89f9521296e64f384fd580737578f7626b6ed3ca05d2941822141b",
     "src/lib/agent-triggers-ui.mjs": "fac0b90abcc3fe9ca9a0260839b5c7ced68fcd5c9f7fe6f812b80b84bfde71c0",
-    "tests/agent-triggers.test.mjs": "1e8ee15021248efa8f02a109639a7535a99133836312687ee22424b465b3b11d",
+    "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
     "scripts/page-reads-helpers.mjs": "8d83ee599959dca3722a1277d6b3be771a315b693aebbafda82d3300dbb53712",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d"
   },
@@ -5285,6 +5285,22 @@
           "path": "tests/agent-triggers.test.mjs",
           "previous_sha256": "dfee299da71e58eb5fb74a1af30efada66e6bd0e4b1a115c20801ec39e29c681",
           "sha256": "1e8ee15021248efa8f02a109639a7535a99133836312687ee22424b465b3b11d"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-04",
+      "summary": "Preserve native scheduler slash identifiers with encoded object routes and exact readback identity.",
+      "files": [
+        {
+          "path": "src/lib/agent-triggers.mjs",
+          "previous_sha256": "e79c985d670fb85cbbca4b52cb5b01bb35c111a199205519fdc4cd7fbc46ce7a",
+          "sha256": "289e00f21c89f9521296e64f384fd580737578f7626b6ed3ca05d2941822141b"
+        },
+        {
+          "path": "tests/agent-triggers.test.mjs",
+          "previous_sha256": "1e8ee15021248efa8f02a109639a7535a99133836312687ee22424b465b3b11d",
+          "sha256": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df"
         }
       ]
     }
