@@ -274,6 +274,8 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
 
       async function playSpokenResponse(text, lang) {
         if (!text) return;
+        let playedLocalTts = false;
+        window.__ellmosTtsSpeaking = true;
         try {
           const ttsRes = await fetch("/api/voice/tts", {
             method: "POST",
@@ -285,18 +287,29 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
             if (ttsData?.audio_b64) {
               const audio = new Audio(`data:${ttsData.mime_type || "audio/wav"};base64,${ttsData.audio_b64}`);
               await audio.play();
-              return;
+              playedLocalTts = true;
+              await new Promise((resolve) => {
+                audio.onended = resolve;
+                audio.onerror = resolve;
+                setTimeout(resolve, 18000);
+              });
             }
           }
         } catch (_) {}
-        if ("speechSynthesis" in window) {
+        if (!playedLocalTts && "speechSynthesis" in window) {
           try {
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
             u.lang = lang === "en" ? "en-US" : "de-DE";
-            window.speechSynthesis.speak(u);
+            await new Promise((resolve) => {
+              u.onend = resolve;
+              u.onerror = resolve;
+              setTimeout(resolve, 12000);
+              window.speechSynthesis.speak(u);
+            });
           } catch (_) {}
         }
+        window.__ellmosTtsSpeaking = false;
       }
 
       function appendTranscriptEntry(roleLabel, text, color) {
@@ -412,68 +425,218 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
       patternSelect?.addEventListener("change", pushDirectiveFromSelects);
       emotionSelect?.addEventListener("change", pushDirectiveFromSelects);
 
-      toggleBtn?.addEventListener("click", () => {
-        active = !active;
+      let studioPttRecorder = null;
+      let studioDuplexStream = null;
+      let studioDuplexRecorder = null;
+
+      function isMeaningfulStudioTranscript(text) {
+        const cleaned = String(text || "").trim();
+        if (cleaned.length < 2) return false;
+        const lower = cleaned.toLowerCase();
+        const hallucinations = [
+          "untertitel",
+          "amara.org",
+          "vielen dank für's zuschauen",
+          "vielen dank fürs zuschauen",
+          "thank you for watching",
+          "subtitles by",
+          "copyright",
+        ];
+        return !hallucinations.some((h) => lower.includes(h));
+      }
+
+      async function transcribeStudioAudioBlob(blob) {
+        const lang = document.documentElement.lang || "de";
+        const b64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(String(reader.result || "").split(",")[1] || "");
+          reader.readAsDataURL(blob);
+        });
+        if (!b64) return "";
+        const r = await fetch("/api/voice/stt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ audio_b64: b64, suffix: ".webm", language: lang }),
+        });
+        if (!r.ok) return "";
+        const d = await r.json();
+        return String(d?.text || "").trim();
+      }
+
+      function stopStudioDuplexLoop() {
+        active = false;
         if (stateTitle) {
-          stateTitle.textContent = active
-            ? "Modus: Live-Duplex aktiv (Mikrofon-Stream verbunden)"
-            : "Modus: Bereit (Wake-Word: „Hey Buddha“ / „Hey Ocean“)";
+          stateTitle.textContent = "Modus: Bereit (Wake-Word: „Hey Buddha“ / „Hey Ocean“)";
         }
-        toggleBtn.textContent = active ? "⏹️ Live-Duplex beenden" : "🎙️ Live-Duplex starten";
-        if (window.bachUpdateTalkConfig) {
-          window.bachUpdateTalkConfig({ operating_mode: active ? "duplex" : "ptt", mode: active ? "listening" : "idle" });
+        if (toggleBtn) {
+          toggleBtn.textContent = "🎙️ Live-Duplex starten";
+        }
+        try {
+          if (studioDuplexRecorder && studioDuplexRecorder.state === "recording") {
+            studioDuplexRecorder.stop();
+          }
+        } catch (_) {}
+        studioDuplexRecorder = null;
+        if (studioDuplexStream) {
+          try {
+            studioDuplexStream.getTracks().forEach((t) => t.stop());
+          } catch (_) {}
+          studioDuplexStream = null;
+        }
+      }
+
+      async function runStudioDuplexLoop() {
+        if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function" || typeof window.MediaRecorder !== "function") {
+          if (transcriptBox) {
+            transcriptBox.textContent = "⚠️ Live-Duplex benötigt Mikrofon-Freigabe im Browser.";
+          }
+          stopStudioDuplexLoop();
+          return;
+        }
+        try {
+          studioDuplexStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          if (transcriptBox) {
+            transcriptBox.textContent = "🎙️ Live-Duplex aktiv — sprich einfach drauflos…";
+          }
+          while (active && studioDuplexStream) {
+            if (window.__ellmosTtsSpeaking) {
+              await new Promise((r) => setTimeout(r, 350));
+              continue;
+            }
+            const chunkBlob = await new Promise((resolve) => {
+              if (!active || !studioDuplexStream) return resolve(null);
+              const chunks = [];
+              let rec;
+              try {
+                rec = new MediaRecorder(studioDuplexStream);
+              } catch (_) {
+                return resolve(null);
+              }
+              studioDuplexRecorder = rec;
+              rec.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+              rec.onstop = () => resolve(new Blob(chunks, { type: rec.mimeType || "audio/webm" }));
+              rec.onerror = () => resolve(null);
+              rec.start();
+              setTimeout(() => {
+                if (rec.state === "recording") rec.stop();
+              }, 4000);
+            });
+            if (!active || !chunkBlob || chunkBlob.size < 800) continue;
+            const text = await transcribeStudioAudioBlob(chunkBlob);
+            if (active && isMeaningfulStudioTranscript(text)) {
+              await sendStudioTurn(text);
+            }
+          }
+        } catch (_) {
+          if (transcriptBox) {
+            transcriptBox.textContent = "⚠️ Mikrofon-Zugriff für Live-Duplex nicht möglich — bitte Berechtigung prüfen.";
+          }
+        } finally {
+          stopStudioDuplexLoop();
+        }
+      }
+
+      toggleBtn?.addEventListener("click", () => {
+        if (active) {
+          stopStudioDuplexLoop();
+          if (window.bachUpdateTalkConfig) {
+            window.bachUpdateTalkConfig({ operating_mode: "ptt", mode: "idle" });
+          }
+        } else {
+          active = true;
+          if (stateTitle) {
+            stateTitle.textContent = "Modus: Live-Duplex aktiv (Mikrofon-Stream verbunden)";
+          }
+          toggleBtn.textContent = "⏹️ Live-Duplex beenden";
+          if (window.bachUpdateTalkConfig) {
+            window.bachUpdateTalkConfig({ operating_mode: "duplex", mode: "listening" });
+          }
+          runStudioDuplexLoop();
         }
       });
 
       micBtn?.addEventListener("click", async () => {
-        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const lang = document.documentElement.lang || "de";
-        if (SR) {
-          const rec = new SR();
-          rec.lang = lang === "en" ? "en-US" : "de-DE";
-          micBtn.textContent = "🔴 Sprich jetzt…";
-          rec.onresult = (ev) => {
-            const t = ev.results?.[0]?.[0]?.transcript || "";
-            if (t) sendStudioTurn(t);
-          };
-          rec.onend = () => { micBtn.textContent = "📻 Push-to-Talk (Sprechen)"; };
-          rec.onerror = () => { micBtn.textContent = "📻 Push-to-Talk (Sprechen)"; };
-          rec.start();
+        if (studioPttRecorder && studioPttRecorder.state === "recording") {
+          studioPttRecorder.stop();
           return;
         }
+        const lang = document.documentElement.lang || "de";
         if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === "function" && typeof window.MediaRecorder === "function") {
           try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const chunks = [];
             const recorder = new MediaRecorder(stream);
-            micBtn.textContent = "🔴 Lokal STT (3.5s)…";
+            studioPttRecorder = recorder;
+            micBtn.textContent = "🔴 Sprich jetzt (Klick = Senden)…";
+            if (transcriptBox) {
+              transcriptBox.textContent = "🎙️ Mikrofon offen — sprich jetzt deinen Funkspruch (Klick auf PTT sendet sofort)…";
+            }
             recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
             recorder.onstop = async () => {
+              studioPttRecorder = null;
               stream.getTracks().forEach((t) => t.stop());
               micBtn.textContent = "📻 Push-to-Talk (Sprechen)";
-              const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
-              const b64 = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(String(reader.result || "").split(",")[1] || "");
-                reader.readAsDataURL(blob);
-              });
-              if (!b64) return;
-              const r = await fetch("/api/voice/stt", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ audio_b64: b64, suffix: ".webm", language: lang }),
-              });
-              if (r.ok) {
-                const d = await r.json();
-                if (d?.text?.trim()) await sendStudioTurn(d.text.trim());
+              if (transcriptBox) {
+                transcriptBox.textContent = "⏳ Transkribiere Funkspruch (Whisper)…";
+              }
+              try {
+                const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+                const text = await transcribeStudioAudioBlob(blob);
+                if (isMeaningfulStudioTranscript(text)) {
+                  await sendStudioTurn(text);
+                } else if (transcriptBox) {
+                  transcriptBox.textContent = "ℹ️ Keine deutliche Sprache erkannt — bitte noch einmal sprechen oder Text unten eingeben.";
+                }
+              } catch (_) {
+                if (transcriptBox) {
+                  transcriptBox.textContent = "⚠️ STT-Übertragung fehlgeschlagen — bitte erneut versuchen.";
+                }
               }
             };
             recorder.start();
-            setTimeout(() => { if (recorder.state === "recording") recorder.stop(); }, 3500);
+            setTimeout(() => { if (recorder.state === "recording") recorder.stop(); }, 5000);
+            return;
+          } catch (_) {
+            studioPttRecorder = null;
+            micBtn.textContent = "📻 Push-to-Talk (Sprechen)";
+          }
+        }
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SR) {
+          try {
+            const rec = new SR();
+            rec.lang = lang === "en" ? "en-US" : "de-DE";
+            micBtn.textContent = "🔴 Sprich jetzt…";
+            let gotResult = false;
+            rec.onresult = (ev) => {
+              const t = ev.results?.[0]?.[0]?.transcript || "";
+              if (t.trim()) {
+                gotResult = true;
+                sendStudioTurn(t.trim());
+              }
+            };
+            rec.onend = () => {
+              micBtn.textContent = "📻 Push-to-Talk (Sprechen)";
+              if (!gotResult && transcriptBox) {
+                transcriptBox.textContent = "ℹ️ Keine Sprache erkannt — bitte noch einmal sprechen oder Text unten eingeben.";
+              }
+            };
+            rec.onerror = () => {
+              micBtn.textContent = "📻 Push-to-Talk (Sprechen)";
+              if (transcriptBox) {
+                transcriptBox.textContent = "⚠️ Mikrofon-Zugriff nicht verfügbar — bitte Berechtigung prüfen oder Textfeld nutzen.";
+              }
+            };
+            rec.start();
+            return;
           } catch (_) {
             micBtn.textContent = "📻 Push-to-Talk (Sprechen)";
           }
         }
+        if (transcriptBox) {
+          transcriptBox.textContent = "⚠️ Kein Mikrofon gefunden — bitte Mikrofon-Zugriff erlauben oder das Textfeld unten nutzen.";
+        }
+        utteranceInput?.focus();
       });
 
       if (new URLSearchParams(window.location.search).get("companion") === "1") {

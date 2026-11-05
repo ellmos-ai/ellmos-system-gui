@@ -235,7 +235,7 @@
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
-    "src/components/Header.astro": "7e1da2cc4cce5f6f999da3e52d34f6f0c82fa75aabc723ad60acceef71638f49",
+    "src/components/Header.astro": "e9ce216454e4bcb405e4ec371bb9249e28e4e7f8aa43304e8c67c4b9c2daba52",
     "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
@@ -319,7 +319,7 @@
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "7a7680adc436d79a838368cd65237f5390b285e6f2b1a4780a1c71f20f132968",
-    "src/pages/talk.astro": "509daed13689c056fea3036c9c9bcb434319dde15eaa832f6bd827fd1016cdcb",
+    "src/pages/talk.astro": "526187087eb60977ed0a7506e2eb58d967f0dd2cc901e3c9c1613339f55229b6",
     "src/pages/tasks.astro": "c5f9c6532f57005fd7b77ebbce2ba0e231175222f2679cb976ea9898a750f658",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
@@ -5159,7 +5159,7 @@
         {
           "path": "src/components/Header.astro",
           "previous_sha256": "6c6896d6746a6306249626fdcab6980f91534d17c1fa5bad3bd95da817ac291b",
-          "sha256": "7e1da2cc4cce5f6f999da3e52d34f6f0c82fa75aabc723ad60acceef71638f49"
+          "sha256": "e9ce216454e4bcb405e4ec371bb9249e28e4e7f8aa43304e8c67c4b9c2daba52"
         },
         {
           "path": "src/pages/agenten/running.astro",
@@ -5174,7 +5174,7 @@
         {
           "path": "src/pages/talk.astro",
           "previous_sha256": "3768f204707201a477a41de54c9dae54b70b36c56d2ed782f2174c90ee4e86b2",
-          "sha256": "509daed13689c056fea3036c9c9bcb434319dde15eaa832f6bd827fd1016cdcb"
+          "sha256": "526187087eb60977ed0a7506e2eb58d967f0dd2cc901e3c9c1613339f55229b6"
         },
         {
           "path": "src/styles/main.css",

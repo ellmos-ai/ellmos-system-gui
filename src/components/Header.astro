@@ -1155,6 +1155,7 @@ function lineIconSvg(id: string): string {
         }
         if (data?.spoken_text) {
           let playedLocalTts = false;
+          window.__ellmosTtsSpeaking = true;
           try {
             const ttsRes = await fetch('/api/voice/tts', {
               method: 'POST',
@@ -1167,6 +1168,11 @@ function lineIconSvg(id: string): string {
                 const audio = new Audio(`data:${ttsData.mime_type || 'audio/wav'};base64,${ttsData.audio_b64}`);
                 await audio.play();
                 playedLocalTts = true;
+                await new Promise((resolve) => {
+                  audio.onended = resolve;
+                  audio.onerror = resolve;
+                  setTimeout(resolve, 18000);
+                });
               }
             }
           } catch (_) {}
@@ -1175,9 +1181,15 @@ function lineIconSvg(id: string): string {
               window.speechSynthesis.cancel();
               const u = new SpeechSynthesisUtterance(data.spoken_text);
               u.lang = lang === 'en' ? 'en-US' : 'de-DE';
-              window.speechSynthesis.speak(u);
+              await new Promise((resolve) => {
+                u.onend = resolve;
+                u.onerror = resolve;
+                setTimeout(resolve, 12000);
+                window.speechSynthesis.speak(u);
+              });
             } catch (_) {}
           }
+          window.__ellmosTtsSpeaking = false;
         }
         return data;
       } catch (_) {
@@ -1325,82 +1337,236 @@ function lineIconSvg(id: string): string {
       await sendHeaderTalkTurn(val);
     });
 
-    async function captureViaLocalStt() {
-      if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function' || typeof window.MediaRecorder !== 'function') {
-        return sendHeaderTalkTurn('Funkgerät-Statusabfrage: Bist du empfangsbereit?');
+    let activePttRecorder = null;
+    let activeDuplexStream = null;
+    let activeDuplexRecorder = null;
+
+    function isMeaningfulTranscript(text) {
+      const cleaned = String(text || '').trim();
+      if (cleaned.length < 2) return false;
+      const lower = cleaned.toLowerCase();
+      const hallucinations = [
+        'untertitel',
+        'amara.org',
+        'vielen dank für\'s zuschauen',
+        'vielen dank fürs zuschauen',
+        'thank you for watching',
+        'subtitles by',
+        'copyright',
+      ];
+      return !hallucinations.some((h) => lower.includes(h));
+    }
+
+    async function transcribeAudioBlob(blob) {
+      const b64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(String(reader.result || '').split(',')[1] || '');
+        reader.readAsDataURL(blob);
+      });
+      if (!b64) return '';
+      const lang = document.documentElement.lang || 'de';
+      const sttRes = await fetch('/api/voice/stt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ audio_b64: b64, suffix: '.webm', language: lang }),
+      });
+      if (!sttRes.ok) return '';
+      const sttData = await sttRes.json();
+      return String(sttData?.text || '').trim();
+    }
+
+    function fallbackWebSpeechCapture() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) {
+        if (replyBox) {
+          replyBox.hidden = false;
+          replyBox.textContent = '⚠️ Kein Mikrofon gefunden — bitte Mikrofon-Zugriff erlauben oder unten Text eingeben.';
+        }
+        quickInput?.focus();
+        return;
       }
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const chunks = [];
-        const recorder = new MediaRecorder(stream);
+        const rec = new SR();
+        rec.lang = (document.documentElement.lang || 'de') === 'en' ? 'en-US' : 'de-DE';
         pttBtn?.classList.add('is-recording');
-        if (pttLabel) pttLabel.textContent = '🔴 Lokal STT — Sprich jetzt (3.5s)…';
-        recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
-        recorder.onstop = async () => {
-          stream.getTracks().forEach((t) => t.stop());
-          pttBtn?.classList.remove('is-recording');
-          if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
-          const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
-          const b64 = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(String(reader.result || '').split(',')[1] || '');
-            reader.readAsDataURL(blob);
-          });
-          if (!b64) return;
-          const lang = document.documentElement.lang || 'de';
-          const sttRes = await fetch('/api/voice/stt', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ audio_b64: b64, suffix: '.webm', language: lang }),
-          });
-          if (sttRes.ok) {
-            const sttData = await sttRes.json();
-            if (sttData?.text?.trim()) {
-              await sendHeaderTalkTurn(sttData.text.trim());
-            }
+        if (pttLabel) pttLabel.textContent = '🔴 Kanal offen — Sprich jetzt…';
+        let gotResult = false;
+        rec.onresult = (ev) => {
+          const transcript = ev.results?.[0]?.[0]?.transcript || '';
+          if (transcript.trim()) {
+            gotResult = true;
+            sendHeaderTalkTurn(transcript.trim());
           }
         };
-        recorder.start();
-        setTimeout(() => { if (recorder.state === 'recording') recorder.stop(); }, 3500);
+        rec.onend = () => {
+          pttBtn?.classList.remove('is-recording');
+          if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+          if (!gotResult && replyBox) {
+            replyBox.hidden = false;
+            replyBox.textContent = 'ℹ️ Keine Sprache erkannt — bitte noch einmal sprechen oder Text unten eingeben.';
+          }
+        };
+        rec.onerror = () => {
+          pttBtn?.classList.remove('is-recording');
+          if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+          if (replyBox) {
+            replyBox.hidden = false;
+            replyBox.textContent = '⚠️ Browser-Spracherkennung nicht verfügbar — bitte Mikrofon erlauben oder Textfeld nutzen.';
+          }
+        };
+        rec.start();
       } catch (_) {
         pttBtn?.classList.remove('is-recording');
         if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
       }
     }
 
-    function triggerSpeechCapture() {
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SR) {
-        const rec = new SR();
-        rec.lang = (document.documentElement.lang || 'de') === 'en' ? 'en-US' : 'de-DE';
+    async function triggerSpeechCapture() {
+      if (activePttRecorder && activePttRecorder.state === 'recording') {
+        activePttRecorder.stop();
+        return;
+      }
+      if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function' || typeof window.MediaRecorder !== 'function') {
+        return fallbackWebSpeechCapture();
+      }
+      try {
+        const micId = micSelect?.value;
+        const audioConstraint = micId ? { deviceId: { exact: micId } } : true;
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraint });
+        const chunks = [];
+        const recorder = new MediaRecorder(stream);
+        activePttRecorder = recorder;
         pttBtn?.classList.add('is-recording');
-        if (pttLabel) pttLabel.textContent = '🔴 Kanal offen — Sprich jetzt…';
-        rec.onresult = (ev) => {
-          const transcript = ev.results?.[0]?.[0]?.transcript || '';
-          if (transcript) sendHeaderTalkTurn(transcript);
-        };
-        rec.onend = () => {
+        if (pttLabel) pttLabel.textContent = '🔴 Sprich jetzt (Klick = Senden)…';
+        if (replyBox) {
+          replyBox.hidden = false;
+          replyBox.textContent = '🎙️ Mikrofon offen — sprich jetzt deinen Funkspruch (Klick auf PTT sendet sofort)…';
+        }
+        recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+        recorder.onstop = async () => {
+          activePttRecorder = null;
+          stream.getTracks().forEach((t) => t.stop());
           pttBtn?.classList.remove('is-recording');
           if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+          if (replyBox) {
+            replyBox.hidden = false;
+            replyBox.textContent = '⏳ Transkribiere Funkspruch (Whisper)…';
+          }
+          try {
+            const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+            const transcript = await transcribeAudioBlob(blob);
+            if (isMeaningfulTranscript(transcript)) {
+              await sendHeaderTalkTurn(transcript);
+            } else if (replyBox) {
+              replyBox.hidden = false;
+              replyBox.textContent = 'ℹ️ Keine deutliche Sprache erkannt — bitte noch einmal sprechen oder Text unten eingeben.';
+            }
+          } catch (_) {
+            if (replyBox) {
+              replyBox.hidden = false;
+              replyBox.textContent = '⚠️ STT-Übertragung fehlgeschlagen — bitte erneut versuchen.';
+            }
+          }
         };
-        rec.onerror = () => {
-          pttBtn?.classList.remove('is-recording');
-          if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
-          captureViaLocalStt();
-        };
-        rec.start();
-      } else {
-        captureViaLocalStt();
+        recorder.start();
+        setTimeout(() => { if (recorder.state === 'recording') recorder.stop(); }, 5000);
+      } catch (_) {
+        activePttRecorder = null;
+        pttBtn?.classList.remove('is-recording');
+        if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+        fallbackWebSpeechCapture();
+      }
+    }
+
+    function stopHeaderDuplexLoop() {
+      liveActive = false;
+      if (liveBtn) {
+        liveBtn.classList.remove('is-active');
+        liveBtn.textContent = '🎙️ Duplex';
+      }
+      try {
+        if (activeDuplexRecorder && activeDuplexRecorder.state === 'recording') {
+          activeDuplexRecorder.stop();
+        }
+      } catch (_) {}
+      activeDuplexRecorder = null;
+      if (activeDuplexStream) {
+        try {
+          activeDuplexStream.getTracks().forEach((t) => t.stop());
+        } catch (_) {}
+        activeDuplexStream = null;
+      }
+    }
+
+    async function runHeaderDuplexLoop() {
+      if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function' || typeof window.MediaRecorder !== 'function') {
+        if (replyBox) {
+          replyBox.hidden = false;
+          replyBox.textContent = '⚠️ Live-Duplex benötigt Mikrofon-Freigabe im Browser.';
+        }
+        stopHeaderDuplexLoop();
+        return;
+      }
+      try {
+        const micId = micSelect?.value;
+        const audioConstraint = micId ? { deviceId: { exact: micId } } : true;
+        activeDuplexStream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraint });
+        if (replyBox) {
+          replyBox.hidden = false;
+          replyBox.textContent = '🎙️ Live-Duplex aktiv — ich höre kontinuierlich zu…';
+        }
+        while (liveActive && activeDuplexStream) {
+          if (window.__ellmosTtsSpeaking) {
+            await new Promise((r) => setTimeout(r, 350));
+            continue;
+          }
+          const chunkBlob = await new Promise((resolve) => {
+            if (!liveActive || !activeDuplexStream) return resolve(null);
+            const chunks = [];
+            let rec;
+            try {
+              rec = new MediaRecorder(activeDuplexStream);
+            } catch (_) {
+              return resolve(null);
+            }
+            activeDuplexRecorder = rec;
+            rec.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+            rec.onstop = () => resolve(new Blob(chunks, { type: rec.mimeType || 'audio/webm' }));
+            rec.onerror = () => resolve(null);
+            rec.start();
+            setTimeout(() => {
+              if (rec.state === 'recording') rec.stop();
+            }, 4000);
+          });
+          if (!liveActive || !chunkBlob || chunkBlob.size < 800) continue;
+          const text = await transcribeAudioBlob(chunkBlob);
+          if (liveActive && isMeaningfulTranscript(text)) {
+            await sendHeaderTalkTurn(text);
+          }
+        }
+      } catch (_) {
+        if (replyBox) {
+          replyBox.hidden = false;
+          replyBox.textContent = '⚠️ Mikrofon-Zugriff für Live-Duplex nicht möglich — bitte Berechtigung prüfen.';
+        }
+      } finally {
+        stopHeaderDuplexLoop();
       }
     }
 
     pttBtn?.addEventListener('click', triggerSpeechCapture);
     pttBtn?.addEventListener('touchstart', (e) => { e.preventDefault(); triggerSpeechCapture(); }, { passive: false });
     liveBtn?.addEventListener('click', () => {
-      liveActive = !liveActive;
-      liveBtn.classList.toggle('is-active', liveActive);
-      liveBtn.textContent = liveActive ? '⏹️ Stopp' : '🎙️ Duplex';
-      updateHeaderTalkConfig({ operating_mode: liveActive ? 'duplex' : 'ptt', mode: liveActive ? 'listening' : 'idle' });
+      if (liveActive) {
+        stopHeaderDuplexLoop();
+        updateHeaderTalkConfig({ operating_mode: 'ptt', mode: 'idle' });
+      } else {
+        liveActive = true;
+        liveBtn.classList.add('is-active');
+        liveBtn.textContent = '⏹️ Stopp';
+        updateHeaderTalkConfig({ operating_mode: 'duplex', mode: 'listening' });
+        runHeaderDuplexLoop();
+      }
     });
 
     loadHeaderTalkConfig();
