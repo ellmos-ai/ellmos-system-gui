@@ -45,6 +45,7 @@ export function checkManifest(manifest, found, read, bindings = BINDINGS) {
       if (typeof entry?.path !== 'string' || !entry.path.startsWith('/api/')) problems.push(`${id}: path must start with /api/`);
       if (typeof entry?.required !== 'boolean') problems.push(`${id}: required must be boolean`);
       if (where === 'layout' && entry?.required === true) problems.push(`${id}: layout reads must be optional`);
+      if (entry?.required === true && entry?.method !== 'GET') problems.push(`${id}: only GET reads may be required (consumers reject the whole manifest otherwise)`);
       const key = `${id}#${entry?.dynamic === true ? entry.found_in : ''}`; // the same read may be made by several functions
       if (seen.has(key)) problems.push(`${id}: duplicate`);
       seen.add(key);

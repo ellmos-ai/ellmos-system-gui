@@ -97,6 +97,7 @@ test('negative control: dynamic entries need the function of their call site', (
 
 test('negative control: shape rules (layout required, page lists, methods, duplicates)', () => {
   const layout = fresh(); layout.layout[0].required = true; has(run(layout), 'layout reads must be optional');
+  const requiredWrite = fresh(); requiredWrite.pages['/chat'].find(e => e.method === 'POST').required = true; has(run(requiredWrite), 'only GET reads may be required');
   const missingPage = fresh(); delete missingPage.pages['/life']; has(run(missingPage), 'page /life: no manifest entry');
   const extraPage = fresh(); extraPage.pages['/nonexistent'] = []; has(run(extraPage), 'no such page');
   const method = fresh(); method.pages['/'][0].method = 'GRAB'; has(run(method), 'invalid method');
