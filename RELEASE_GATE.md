@@ -4,7 +4,7 @@
 
 | Item | SOLL | IST (this commit) |
 |---|---|---|
-| Content | 0.2.33 plus the reviewed PB-3 (#120) and PB-2 (#121) fixes; no further source change | Version metadata only (`package.json`, `package-lock.json`, `ellmos-module.v2.json`, `src-tauri/tauri.conf.json` aligned to 0.2.34; the Tauri file had stayed at 0.2.30) and the matching `SOURCE_PROVENANCE.json` hashes |
+| Content | 0.2.33 plus the reviewed PB-3 (#120) and PB-2 (#121) fixes; no further source change | Pre-release check against the BACH consumer parser found `POST /api/chat-control/chat` declared `required: true` in `page-reads.v1.json` (#121); the consumer rejects the whole manifest for a required non-GET entry and answers every shared page with 503. Corrected to optional and `page-reads-check` now rejects that shape. Otherwise version metadata only (`package.json`, `package-lock.json`, `ellmos-module.v2.json`, `src-tauri/tauri.conf.json` aligned to 0.2.34; the Tauri file had stayed at 0.2.30) and the matching `SOURCE_PROVENANCE.json` hashes |
 | Source tests | `npm ci` and `npm test` green | `npm ci` exit 0; `npm test` 702 cases, 702 passed after the provenance hashes were updated (before the update 701/702: the imported-file hash check named the three changed metadata files) |
 | Release build | Clean checkout of the merge commit, `npm ci`, `npm run build:release`, `scripts/package_release.py` | Recorded in the GitHub release `v0.2.34` and in the consumer pin, because archive name and SHA-256 depend on the merge commit |
 | Independent archive check | Commit in `dist-manifest.json` equals the tag commit; every file hash matches; archive SHA-256 re-computed; root `LICENSE` bytes equal the repository MIT license | Same place as the build row |

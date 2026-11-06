@@ -94,7 +94,7 @@
    {
     "method": "POST",
     "path": "/api/chat-control/chat",
-    "required": true
+    "required": false
    },
    {
     "method": "POST",
