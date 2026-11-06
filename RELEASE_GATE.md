@@ -1,5 +1,17 @@
 # Release gate: ellmos-system-gui
 
+## Release evidence 0.2.34 — 2026-11-06
+
+| Item | SOLL | IST (this commit) |
+|---|---|---|
+| Content | 0.2.33 plus the reviewed PB-3 (#120) and PB-2 (#121) fixes; no further source change | Version metadata only (`package.json`, `package-lock.json`, `ellmos-module.v2.json`, `src-tauri/tauri.conf.json` aligned to 0.2.34; the Tauri file had stayed at 0.2.30) and the matching `SOURCE_PROVENANCE.json` hashes |
+| Source tests | `npm ci` and `npm test` green | `npm ci` exit 0; `npm test` 702 cases, 702 passed after the provenance hashes were updated (before the update 701/702: the imported-file hash check named the three changed metadata files) |
+| Release build | Clean checkout of the merge commit, `npm ci`, `npm run build:release`, `scripts/package_release.py` | Recorded in the GitHub release `v0.2.34` and in the consumer pin, because archive name and SHA-256 depend on the merge commit |
+| Independent archive check | Commit in `dist-manifest.json` equals the tag commit; every file hash matches; archive SHA-256 re-computed; root `LICENSE` bytes equal the repository MIT license | Same place as the build row |
+| Consumers | Pins and installation are separate gates | Not claimed here |
+
+The 2026-11-01 snapshot below describes the then-current 0.2.30 state and is kept as history.
+
 ## Current evidence snapshot — 2026-11-01
 
 | State | Evidence and limit |
