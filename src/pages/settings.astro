@@ -733,7 +733,7 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
       status.textContent = data.configured
         ? 'Gespeichertes Theme: ' + activeTheme
         : 'Backend-Standard: ' + data.theme + ' · noch keine eigene Auswahl';
-      save.disabled = !localStorage.getItem('bach_device_token');
+      save.disabled = false;
     } catch (error) {
       if (['dark', 'light', 'ocean', 'warm', 'custom'].includes(storedLocal)) {
         document.getElementById('theme-select').value = storedLocal;
@@ -746,17 +746,12 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     const status = document.getElementById('theme-status');
     const save = document.getElementById('theme-save');
     const theme = document.getElementById('theme-select').value;
-    const token = localStorage.getItem('bach_device_token');
-    if (!token) {
-      status.textContent = 'Geräteanmeldung erforderlich. Bitte /token-dashboard öffnen.';
-      return;
-    }
     save.disabled = true;
     status.textContent = 'Speichere Theme…';
     try {
       const response = await fetch('/api/settings/theme', {
         method: 'PUT', cache: 'no-store',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ theme })
       });
       if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -1273,9 +1268,7 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     }
 
     async function persistUiSettings(payload, confirmationLabel) {
-      const token = localStorage.getItem('bach_device_token');
       const headers = { 'Content-Type': 'application/json' };
-      if (token) headers.Authorization = 'Bearer ' + token;
       if (uiSaveBtn) uiSaveBtn.disabled = true;
       if (uiResetBtn) uiResetBtn.disabled = true;
       if (uiSettingsStatus) uiSettingsStatus.textContent = 'Speichere Darstellung…';
