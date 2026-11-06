@@ -1,6 +1,20 @@
 # Release gate: ellmos-system-gui
 
-## Release evidence 0.2.34 — 2026-11-06
+## Release evidence 0.2.35 — 2026-11-06
+
+| Item | SOLL | IST (this commit) |
+|---|---|---|
+| Why 0.2.35 | 0.2.34 was published (tag `v0.2.34`, commit `86693d9a0dff`) before it was served through the BACH consumer gate | **v0.2.34 is defective: do not use it.** Its `page-reads.v1.json` declares `POST /api/chat-control/chat` as `required: true`; BACH rejects the whole manifest for a required non-GET entry and answers every shared page with 503. Fixed in #123 (manifest and `page-reads-check`); this commit only moves the version to 0.2.35 and adds the consumer smoke below |
+| Content | 0.2.33 plus PB-3 (#120), PB-2 (#121) and the #123 manifest fix | Version metadata (`package.json`, `package-lock.json`, `ellmos-module.v2.json`, `src-tauri/tauri.conf.json`), `scripts/consumer_smoke.py`, this section, matching `SOURCE_PROVENANCE.json` hashes |
+| Source tests | `npm ci` and `npm test` green | See the pull request description |
+| Release build | Clean checkout of the merge commit, `npm ci`, `npm run build:release`, `scripts/package_release.py` | Recorded with the archive hand-over, because archive name and SHA-256 depend on the merge commit |
+| Independent archive check | Commit in `dist-manifest.json` equals the tag commit; every file hash matches; archive SHA-256 re-computed; root `LICENSE` bytes equal the repository MIT license | Same place as the build row |
+| **Consumer smoke (mandatory)** | `python scripts/consumer_smoke.py --bach <BACH checkout> --dist <extracted release dist>` exits 0 and reports all pages passing BACH's own page gate (`verify_installed_dist` with `requested_page`) | Recorded with the archive hand-over. Negative control: the defective 0.2.34 dist gives 0/47 and exit 1 |
+| Consumers | Pins and installation are separate gates | Not claimed here |
+
+**Mandatory step for every release:** run the consumer smoke against the extracted archive, not only the repository tests. Neither this repository's checks nor BACH's default CI would have caught the 0.2.34 defect.
+
+## Release evidence 0.2.34 — 2026-11-06 (published, defective, superseded by 0.2.35)
 
 | Item | SOLL | IST (this commit) |
 |---|---|---|
