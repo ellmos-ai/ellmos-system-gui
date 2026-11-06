@@ -24,7 +24,7 @@
     "package-lock.json": "6b0862286fbd6633472a5d350ccdf5ebf3c1587ac362b6dd76889e4efcfcee92",
     "package.json": "064e3c02e4d4f0361bd68b26bd45f6a0b224eb490d63d528958fba757586e643",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "72216a17c0ee78271acc84e580e5115d753ee3bd9883543bb1b3348bdaf7314f",
+    "public/page-reads.v1.json": "e6441bb0842844ff63e17b32552aa1e0a96954d80ac6816855eefbd2d65a36ef",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
     "scripts/page-reads-bindings.mjs": "962b76b290c07ba985df49302d26e6a89ebcb28147a44c4a5838174c57acec73",
@@ -250,7 +250,7 @@
     "src/lib/agent-avatar-browser.mjs": "02b51e85852532af3549dbecd1b4c1b1bf7bf48eda7340f23523c7597ec44abf",
     "src/lib/agent-avatar-catalog.mjs": "6da91323ab28c22ddbe8555a3f59497c61c1d406bcd692fcd5bfb26643a82fc0",
     "src/lib/agent-avatar.mjs": "963908968e71a4a05f01836dedbe153d1cd62c78f513ce25c4d7dc0f0e72a383",
-    "src/lib/agent-history.mjs": "fbeed039bd7d562a56a09f8d5be66067a1df3b9c7476b212fd9adab576023468",
+    "src/lib/agent-history.mjs": "959884f2e66b5d4a230aef12805cb4e62f94c311d323cf6197959047f7710389",
     "src/lib/agent-overview.mjs": "725afad772bd605c5599e6ceb78d71304ae2d8f2706b9deb5fd19433b0a18f12",
     "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236",
     "src/lib/capability-board-client.mjs": "7a80423bc472ade80f05065c57ef9b732493b40cd2900f0705b2c3af8f72d831",
@@ -284,11 +284,11 @@
     "src/pages/agenten/fabrika.astro": "403d4a89bd5248a0467d36c50d8f4da1f8a0a62d3ce318a366438cebebdb5ade",
     "src/pages/agenten/marblerun.astro": "e78628301216ceb7175f861ec54962101e5ba5f79f84131d76d9b22aa00a2973",
     "src/pages/agenten/running.astro": "5ac1449b692d6c00ba1b1b930655e0efaa8cee8e811a7e48293a570d175549f0",
-    "src/pages/agenten/sessions.astro": "3322b3f23239c8a56af7968a5af226169f0c3df203e7a4e59e44c89173cb18cf",
+    "src/pages/agenten/sessions.astro": "7688d22971e8433c0309f27328967c127b16f9c8afcf326151afafb8f954a8ca",
     "src/pages/agenten/subscription-agents.astro": "6913198067d5130b5281509744f1cec6b148dd54de39bbe24e482b566b362b29",
     "src/pages/artefakte.astro": "155856d3bc6dda60ec2ff57173ddb8186c0d9f9b68e35d60bf100161fb2d5ab5",
     "src/pages/ati.astro": "9654c6490c123e02a4f2e6028d1b22ce8740b2e0e0de2a2448f13c3ec4fd1f84",
-    "src/pages/chat.astro": "cf4a712a61880792f953accd7733449b1cb2675427ca98ad0c723c41fc142748",
+    "src/pages/chat.astro": "e2515fb08824a85f361e3b76ed904a701e7b3ed8a512faa30149b82affa0de05",
     "src/pages/connectors.astro": "8bbf1117573a7019b9a4bc6016930000fe9b01affab9a29e2cf8b627235b4b4d",
     "src/pages/daemon.astro": "9843948aaa9cd0962e92a4e082bdb5fbd10096ca89842c7bbc1690d14db8ffa8",
     "src/pages/denkarium.astro": "4ccb31a635bf1559382f23fd2e714d3d01d360c096fa02d0b863679c6bd4e4b7",
@@ -324,7 +324,7 @@
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
-    "src/scripts/agent-history.mjs": "5ffacf726a27202cd1a2231ecd7440800e8dc79611949be7609d3472deab4fc4",
+    "src/scripts/agent-history.mjs": "1e3eb5d648a5e0fe60fac83fb9176821857407c092a1a63d4d611296bd825ccd",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
     "src/scripts/blueprint-studio.mjs": "e5ec034d151be478b3598f932e15f2afaa8f1895e7cdbb24252d9af9cd93e749",
     "src/scripts/domain-studio.mjs": "d883c4a608b1fd087a9c021eb6b8d496fb420a5d0412388e14c65d11cdd6d2ca",
@@ -381,11 +381,16 @@
     "src/lib/agent-triggers.mjs": "289e00f21c89f9521296e64f384fd580737578f7626b6ed3ca05d2941822141b",
     "src/lib/agent-triggers-ui.mjs": "fac0b90abcc3fe9ca9a0260839b5c7ced68fcd5c9f7fe6f812b80b84bfde71c0",
     "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
-    "scripts/page-reads-helpers.mjs": "8d83ee599959dca3722a1277d6b3be771a315b693aebbafda82d3300dbb53712",
+    "scripts/page-reads-helpers.mjs": "61e2f5412189f6e0aa9bfecb62d94a831d95817fc7f4ce0e2a7b521b773fc1f5",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
     "src/lib/role-socket-preview.mjs": "f42924576d1fc8b4ac9fae4fc26596d5083707ab6e743be16f14e8bbb730e8fd",
     "tests/role-socket-preview.test.mjs": "bf680843c7c1b3afa31a9290f85c7034f4a04d36fe117d0843d2b5441b6a224a",
-    "src/pages/agenten/bibliothek.astro": "bf191b0d20b056b73b99c9c4e6f769f980f1ab7d025a2010a80dc253840af84c"
+    "src/pages/agenten/bibliothek.astro": "bf191b0d20b056b73b99c9c4e6f769f980f1ab7d025a2010a80dc253840af84c",
+    "src/lib/chat-client.mjs": "455ad4ec3b81be29af49f7bd2020a72739bdac2cda28fcc4ab929cce1d0de396",
+    "src/lib/transcript-history.mjs": "cc740d8cab7269271ad3f5cb5d66c9f19816cf81049c53de3d10fa637c4d774d",
+    "src/scripts/chat-page.mjs": "75824fe0bb4567718ad39d6a1234b960da0e24a1c9a87cacde19ae20628a9f66",
+    "tests/chat-client.test.mjs": "50a40ff895ff3ef95189f9f94d6ec8a9fcfe8e0cd008600a3f9d0fa41d62ae69",
+    "tests/route-contract.test.mjs": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -5132,7 +5137,7 @@
         "src/lib/voice-and-talk-contract.mjs": "ae0b57f627bc47143784b10160ccfb51883530fc9869f9e31b602c5f33055980",
         "src/components/Header.astro": "6c6896d6746a6306249626fdcab6980f91534d17c1fa5bad3bd95da817ac291b",
         "src/pages/talk.astro": "3768f204707201a477a41de54c9dae54b70b36c56d2ed782f2174c90ee4e86b2",
-        "src/pages/chat.astro": "cf4a712a61880792f953accd7733449b1cb2675427ca98ad0c723c41fc142748",
+        "src/pages/chat.astro": "e2515fb08824a85f361e3b76ed904a701e7b3ed8a512faa30149b82affa0de05",
         "tests/voice-and-talk-contract.test.mjs": "4029b20acea02ea7ddd4e03b89acfff77f878b66c087771b9a8064311e3eaf09"
       }
     },
@@ -5328,6 +5333,62 @@
           "path": "src/pages/agenten/blueprints.astro",
           "previous_sha256": "229664baa1438b532a42da33f80ad6cf829b5a623ccdc41932739cde89e15b9a",
           "sha256": "d96da2481a0315f54d621851350d494d45375dd1a24046ec2229e9e7856e27bb"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-06",
+      "summary": "PB-2 (#3986): /chat sends through the chat-control route, lists stored sessions by source (Ich/Buddha/Worker/System) with problem marker and filter, opens and continues them, deep links; split session loaders into transcript-history.mjs; route-contract test against a backend route snapshot.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "72216a17c0ee78271acc84e580e5115d753ee3bd9883543bb1b3348bdaf7314f",
+          "sha256": "e6441bb0842844ff63e17b32552aa1e0a96954d80ac6816855eefbd2d65a36ef"
+        },
+        {
+          "path": "src/lib/agent-history.mjs",
+          "previous_sha256": "fbeed039bd7d562a56a09f8d5be66067a1df3b9c7476b212fd9adab576023468",
+          "sha256": "959884f2e66b5d4a230aef12805cb4e62f94c311d323cf6197959047f7710389"
+        },
+        {
+          "path": "src/pages/agenten/sessions.astro",
+          "previous_sha256": "3322b3f23239c8a56af7968a5af226169f0c3df203e7a4e59e44c89173cb18cf",
+          "sha256": "7688d22971e8433c0309f27328967c127b16f9c8afcf326151afafb8f954a8ca"
+        },
+        {
+          "path": "src/pages/chat.astro",
+          "previous_sha256": "cf4a712a61880792f953accd7733449b1cb2675427ca98ad0c723c41fc142748",
+          "sha256": "e2515fb08824a85f361e3b76ed904a701e7b3ed8a512faa30149b82affa0de05"
+        },
+        {
+          "path": "src/scripts/agent-history.mjs",
+          "previous_sha256": "5ffacf726a27202cd1a2231ecd7440800e8dc79611949be7609d3472deab4fc4",
+          "sha256": "1e3eb5d648a5e0fe60fac83fb9176821857407c092a1a63d4d611296bd825ccd"
+        },
+        {
+          "path": "scripts/page-reads-helpers.mjs",
+          "previous_sha256": "8d83ee599959dca3722a1277d6b3be771a315b693aebbafda82d3300dbb53712",
+          "sha256": "61e2f5412189f6e0aa9bfecb62d94a831d95817fc7f4ce0e2a7b521b773fc1f5"
+        },
+        {
+          "path": "src/lib/chat-client.mjs",
+          "sha256": "455ad4ec3b81be29af49f7bd2020a72739bdac2cda28fcc4ab929cce1d0de396"
+        },
+        {
+          "path": "src/lib/transcript-history.mjs",
+          "sha256": "cc740d8cab7269271ad3f5cb5d66c9f19816cf81049c53de3d10fa637c4d774d"
+        },
+        {
+          "path": "src/scripts/chat-page.mjs",
+          "sha256": "75824fe0bb4567718ad39d6a1234b960da0e24a1c9a87cacde19ae20628a9f66"
+        },
+        {
+          "path": "tests/chat-client.test.mjs",
+          "sha256": "50a40ff895ff3ef95189f9f94d6ec8a9fcfe8e0cd008600a3f9d0fa41d62ae69"
+        },
+        {
+          "path": "tests/route-contract.test.mjs",
+          "sha256": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1"
         }
       ]
     }
