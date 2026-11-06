@@ -20,6 +20,8 @@ import TaskCreateForm from "../../components/TaskCreateForm.astro";
     <section id="history-session-filters" class="history-filters" aria-label="Dialogfilter">
       <label>Dialogkontext<select id="history-profile"><option value="">Systemslots & globale Dialoge</option></select></label>
       <label>Speicherstand<select id="history-archive"><option value="all">Alle gespeicherten Ausschnitte</option><option value="current">Aktuell gespeichert</option><option value="archived">Archiviert</option></select></label>
+      <label>Quelle<select id="history-source"><option value="user">Ich</option><option value="buddha">Buddha</option><option value="worker">Worker</option><option value="system">System</option><option value="all">Alle Quellen</option></select></label>
+      <label><input id="history-problems" type="checkbox"> Nur Probleme</label>
       <span id="history-profile-state" role="status"></span>
     </section>
     <section id="history-task-filters" hidden>

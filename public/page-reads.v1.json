@@ -79,9 +79,34 @@
   "/ati": [],
   "/chat": [
    {
+    "method": "GET",
+    "path": "/api/agent-history/sessions",
+    "required": false,
+    "query": "source,problems,archive,limit,offset"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-history/sessions/{snapshot_id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/transcript-history.mjs#loadSession"
+   },
+   {
     "method": "POST",
-    "path": "/api/chat/send",
+    "path": "/api/chat-control/chat",
+    "required": true
+   },
+   {
+    "method": "POST",
+    "path": "/api/chat-control/fork",
     "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-history/sessions/{snapshot_id}/resume",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/chat-client.mjs#resumeWorker"
    }
   ],
   "/connectors": [],
@@ -1273,7 +1298,7 @@
     "path": "/api/agent-history/sessions/{snapshot_id}",
     "required": true,
     "dynamic": true,
-    "found_in": "src/lib/agent-history.mjs#loadSession"
+    "found_in": "src/lib/transcript-history.mjs#loadSession"
    },
    {
     "method": "GET",

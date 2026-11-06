@@ -7,7 +7,7 @@ const eventLabels={lease_acquire:'Aufgabe übernommen',lease_renew:'Lease verlä
 function initialize(){
   const root=document.getElementById('native-history');if(!root)return;
   let tab='sessions',sessionOffset=0,taskOffset=0,epoch=0,detailEpoch=0,currentRequest=null;
-  const profile=document.getElementById('history-profile'),archive=document.getElementById('history-archive'),
+  const profile=document.getElementById('history-profile'),archive=document.getElementById('history-archive'),sourceFilter=document.getElementById('history-source'),problemsOnly=document.getElementById('history-problems'),
     taskInput=document.getElementById('history-task'),taskStatus=document.getElementById('history-task-status'),
     content=document.getElementById('history-content'),status=document.getElementById('history-status'),
     count=document.getElementById('history-count'),prev=document.getElementById('history-prev'),next=document.getElementById('history-next'),
@@ -52,7 +52,7 @@ function initialize(){
     count.textContent='Wird geprüft…';status.textContent='Lade Verlauf…';status.dataset.error='false';content.replaceChildren();
     try{
       if(tab==='sessions'){
-        const data=await loadSessionPage({offset:sessionOffset,agent_id:selectedProfile(),archive:archive.value,signal});
+        const data=await loadSessionPage({offset:sessionOffset,agent_id:selectedProfile(),archive:archive.value,source:sourceFilter.value,problems:problemsOnly.checked,signal});
         if(request!==epoch)return;
         status.textContent='Gespeicherte Ausschnitte · regulär höchstens '+data.save_limits.max_messages+' Nachrichten pro Transkript und '+data.save_limits.max_content_chars.toLocaleString('de-DE')+' Zeichen pro Nachricht.';
         if(!data.sessions.length)content.append(node('p','Keine gespeicherten Dialoge in dieser Auswahl.','text-muted'));
@@ -60,6 +60,7 @@ function initialize(){
           const card=node('article',undefined,'history-card');
           card.append(node('h2',row.name||'Gespeicherter Dialog'));
           card.append(node('p',stamp(row.created_at)+' · '+(row.archived?'Archiviert':'Aktuell gespeichert')+' · '+row.stored_message_count+' gespeicherte Nachrichten','text-muted'));
+          if(row.failed_count>0||row.return_count>=3||row.flapping===true)card.append(node('p','Problem: '+[row.failed_count>0?row.failed_count+' fehlgeschlagene Antwort(en)':'',row.return_count>=3?row.return_count+'x zurückgegeben':'',row.flapping===true?'wechselt hin und her':''].filter(Boolean).join(', '),'history-error'));
           const button=node('button','Dialog lesen','btn btn-secondary');button.type='button';button.dataset.snapshotId=String(row.id);
           button.addEventListener('click',()=>openDialog(row));card.append(button);content.append(card);
         }
@@ -107,7 +108,7 @@ function initialize(){
     document.getElementById('history-pager').hidden=tab==='notes'||tab==='lessons';
     if(inbox)document.dispatchEvent(new CustomEvent('bach:inbox-show'));else if(!funk)refresh();
   });
-  for(const input of [profile,archive,taskStatus])input.addEventListener('change',()=>{clearDetail();refresh(true);});
+  for(const input of [profile,archive,sourceFilter,problemsOnly,taskStatus])input.addEventListener('change',()=>{clearDetail();refresh(true);});
   document.getElementById('history-task-form').addEventListener('submit',event=>{event.preventDefault();if(taskInput.checkValidity())refresh(true);});
   document.getElementById('history-refresh').addEventListener('click',()=>{if(tab==='inbox')document.dispatchEvent(new CustomEvent('bach:inbox-refresh'));else if(tab!=='funk')refresh();});
   prev.addEventListener('click',()=>{if(tab==='sessions')sessionOffset=Math.max(0,sessionOffset-25);else taskOffset=Math.max(0,taskOffset-25);refresh();});
