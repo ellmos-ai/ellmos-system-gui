@@ -2,6 +2,7 @@
 // Header.astro - Shared shell and route navigation for BACH & OCEAN
 import navConfig from "../config/nav_config.json";
 import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
+import { resolveSidebarActive } from "../lib/area-nav.mjs";
 
 interface Props {
   currentPath?: string;
@@ -12,33 +13,27 @@ const { currentPath = "/", currentSearch = "" } = Astro.props;
 const defaultPreset = navConfig.default_preset || "standard";
 const presetEntries = Object.entries(navConfig.presets || {});
 
-function matchesNavigationHref(href: string, pathname: string, search: string) {
-  if (!href || href === "#") return false;
-  const origin = "https://gui.invalid";
-  const target = new URL(href, origin);
-  const current = new URL(pathname || "/", origin);
-  if (search && !current.search) current.search = search;
-  const normalizePath = (value: string) => value.replace(/\/+$/, "") || "/";
-  const querySignature = (value: string) => [...new URLSearchParams(value).entries()]
-    .sort(([leftKey, leftValue], [rightKey, rightValue]) => leftKey.localeCompare(rightKey) || leftValue.localeCompare(rightValue))
-    .map(([key, entry]) => `${encodeURIComponent(key)}=${encodeURIComponent(entry)}`)
-    .join("&");
-  return target.origin === origin
-    && normalizePath(target.pathname) === normalizePath(current.pathname)
-    && querySignature(target.search) === querySignature(current.search);
+function flattenNavLinks(items: any[]): any[] {
+  return items.flatMap((item: any) => item.children ? flattenNavLinks(item.children) : item.href ? [{ id: item.id, href: item.href }] : []);
 }
 
-function isActive(href: string) {
-  return matchesNavigationHref(href, currentPath, currentSearch);
+// One marked entry per preset: the best match by path and query, not only the exact URL (B-11).
+const activeIds: Record<string, string | null> = Object.fromEntries(presetEntries.map(([presetId, preset]: [string, any]) => [
+  presetId,
+  resolveSidebarActive(
+    [{ id: preset.home.id, href: preset.home.href }, ...preset.sections.flatMap((section: any) => flattenNavLinks(section.items))],
+    (navConfig as any).area_navs,
+    currentPath,
+    currentSearch,
+  ),
+]));
+
+function isActive(presetId: string, item: any) {
+  return Boolean(item.id) && activeIds[presetId] === item.id;
 }
 
-function hasActiveItem(item: any): boolean {
-  return Boolean(item.href && isActive(item.href))
-    || Boolean(item.children?.some((child: any) => hasActiveItem(child)));
-}
-
-function hasActiveSection(section: any): boolean {
-  return Boolean(section.items?.some((item: any) => hasActiveItem(item)));
+function hasActiveItem(presetId: string, item: any): boolean {
+  return isActive(presetId, item) || Boolean(item.children?.some((child: any) => hasActiveItem(presetId, child)));
 }
 
 const LINE_ICON_SVGS: Record<string, string> = {
@@ -433,10 +428,10 @@ function lineIconSvg(id: string): string {
     >
       <a
         href={preset.home.href}
-        class={`nav-item sidebar-link sidebar-home${isActive(preset.home.href) ? " active" : ""}`}
+        class={`nav-item sidebar-link sidebar-home${isActive(presetId, preset.home) ? " active" : ""}`}
         data-nav-link
         data-nav-id={preset.home.id}
-        aria-current={isActive(preset.home.href) ? "page" : undefined}
+        aria-current={isActive(presetId, preset.home) ? "page" : undefined}
         title={preset.home.description || undefined}
       >
         <span class="nav-icon" aria-hidden="true"><span class="icon-glyph icon-glyph-line" set:html={lineIconSvg(preset.home.id)} /><span class="icon-glyph icon-glyph-emoji">{preset.home.icon}</span></span>
@@ -449,7 +444,7 @@ function lineIconSvg(id: string): string {
             <div class="nav-section-links">
               {section.items.map((item: any) => (
                 item.children ? (
-                  <details class="sidebar-group sidebar-nested" data-nav-group={item.id} open={hasActiveItem(item) ? true : undefined}>
+                  <details class="sidebar-group sidebar-nested" data-nav-group={item.id} open={hasActiveItem(presetId, item) ? true : undefined}>
                     <summary class="sidebar-group-title">
                       <span class="sidebar-group-icon" aria-hidden="true"><span class="icon-glyph icon-glyph-line" set:html={lineIconSvg(item.id)} /><span class="icon-glyph icon-glyph-emoji">{item.icon}</span></span>
                       <span>{item.label}</span>
@@ -461,10 +456,10 @@ function lineIconSvg(id: string): string {
                           href={child.href}
                           target={child.target || undefined}
                           rel={child.target === "_blank" ? "noopener noreferrer" : undefined}
-                          class={`nav-item sidebar-link${isActive(child.href) ? " active" : ""}`}
+                          class={`nav-item sidebar-link${isActive(presetId, child) ? " active" : ""}`}
                           data-nav-link
                           data-nav-id={child.id}
-                          aria-current={isActive(child.href) ? "page" : undefined}
+                          aria-current={isActive(presetId, child) ? "page" : undefined}
                           title={child.description || undefined}
                         >
                           <span class="nav-icon" aria-hidden="true"><span class="icon-glyph icon-glyph-line" set:html={lineIconSvg(child.id)} /><span class="icon-glyph icon-glyph-emoji">{child.icon}</span></span>
@@ -478,10 +473,10 @@ function lineIconSvg(id: string): string {
                     href={item.href}
                     target={item.target || undefined}
                     rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
-                    class={`nav-item sidebar-link${isActive(item.href) ? " active" : ""}`}
+                    class={`nav-item sidebar-link${isActive(presetId, item) ? " active" : ""}`}
                     data-nav-link
                     data-nav-id={item.id}
-                    aria-current={isActive(item.href) ? "page" : undefined}
+                    aria-current={isActive(presetId, item) ? "page" : undefined}
                     title={item.description || undefined}
                   >
                     <span class="nav-icon" aria-hidden="true"><span class="icon-glyph icon-glyph-line" set:html={lineIconSvg(item.id)} /><span class="icon-glyph icon-glyph-emoji">{item.icon}</span></span>
@@ -857,41 +852,11 @@ function lineIconSvg(id: string): string {
   mobileNavigation.addEventListener('change', syncSidebarMode);
   syncSidebarMode();
 
-  function matchesCurrentNavigationRoute(href) {
-    if (!href || href === '#') return false;
-    const origin = window.location.origin;
-    const target = new URL(href, origin);
-    const current = new URL(window.location.href);
-    const normalizePath = (value) => value.replace(/\/+$/, '') || '/';
-    const querySignature = (value) => [...new URLSearchParams(value).entries()]
-      .sort(([leftKey, leftValue], [rightKey, rightValue]) => leftKey.localeCompare(rightKey) || leftValue.localeCompare(rightValue))
-      .map(([key, entry]) => `${encodeURIComponent(key)}=${encodeURIComponent(entry)}`)
-      .join('&');
-    if (normalizePath(target.pathname) === '/user-inbox'
-        && normalizePath(current.pathname) === '/agenten/sessions'
-        && current.searchParams.get('tab') === 'inbox') {
-      return true;
-    }
-    return target.origin === origin
-      && normalizePath(target.pathname) === normalizePath(current.pathname)
-      && querySignature(target.search) === querySignature(current.search);
-  }
-
+  // The marking itself lives in the bundled script below (shared with the server rendering, src/lib/area-nav.mjs).
   function refreshActiveNavigation() {
-    document.querySelectorAll('.app-sidebar a[href]').forEach((link) => {
-      const active = matchesCurrentNavigationRoute(link.getAttribute('href'));
-      link.classList.toggle('active', active);
-      if (active) link.setAttribute('aria-current', 'page');
-      else link.removeAttribute('aria-current');
-    });
-    document.querySelectorAll('[data-nav-group]').forEach((group) => {
-      const active = Boolean(group.querySelector('a.active'));
-      group.classList.toggle('active', active);
-      if (active) group.open = true;
-    });
+    document.dispatchEvent(new CustomEvent('bach:nav-refresh'));
   }
 
-  refreshActiveNavigation();
   window.addEventListener('popstate', refreshActiveNavigation);
   const domainPinsMenu = document.getElementById('domain-pins-menu');
   if (domainPinsMenu) new MutationObserver(refreshActiveNavigation).observe(domainPinsMenu, { childList: true, subtree: true });
@@ -1625,6 +1590,31 @@ function lineIconSvg(id: string): string {
 
 <script>
   import {initializeDomainMenu} from "../lib/domain-pins.mjs";
+  import {resolveSidebarActive, matchesExact} from "../lib/area-nav.mjs";
+  import navConfig from "../config/nav_config.json";
+
+  // One marked entry per preset (best match by path and query); pinned domains are marked on an exact match only.
+  function refreshActiveNavigation() {
+    const mark = (link: Element, active: boolean) => {
+      link.classList.toggle('active', active);
+      if (active) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    };
+    document.querySelectorAll('.nav-preset').forEach((preset) => {
+      const links = [...preset.querySelectorAll('a[data-nav-id]')];
+      const items = links.map((link) => ({id: (link as HTMLElement).dataset.navId, href: link.getAttribute('href')}));
+      const activeId = resolveSidebarActive(items as any, navConfig.area_navs, location.pathname, location.search);
+      links.forEach((link) => mark(link, (link as HTMLElement).dataset.navId === activeId));
+    });
+    document.querySelectorAll('.sidebar-domain-pins a[href]').forEach((link) => mark(link, matchesExact(link.getAttribute('href') || '', location.pathname, location.search)));
+    document.querySelectorAll('[data-nav-group]').forEach((group) => {
+      const active = Boolean(group.querySelector('a.active'));
+      group.classList.toggle('active', active);
+      if (active) (group as HTMLDetailsElement).open = true;
+    });
+  }
+  document.addEventListener('bach:nav-refresh', refreshActiveNavigation);
+  refreshActiveNavigation();
   import {initializeWorldI18n} from "../lib/i18n.mjs";
   initializeDomainMenu();
   initializeWorldI18n();

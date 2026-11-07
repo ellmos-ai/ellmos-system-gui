@@ -1,6 +1,9 @@
 ---
 // BachLayout.astro - Master Layout fuer die vereinigte BACH / OCEAN GUI
 import Header from "../components/Header.astro";
+import AreaNav from "../components/AreaNav.astro";
+import navConfig from "../config/nav_config.json";
+import { areaForPath } from "../lib/area-nav.mjs";
 import "../styles/main.css";
 
 interface Props {
@@ -9,6 +12,7 @@ interface Props {
 }
 
 const { title, currentPath = "/" } = Astro.props;
+const area = areaForPath(navConfig.area_navs, currentPath);
 const pageTitle = title ? `${title} | System GUI` : "System GUI";
 ---
 
@@ -56,6 +60,8 @@ const pageTitle = title ? `${title} | System GUI` : "System GUI";
     <Header currentPath={currentPath} currentSearch={Astro.url.search} />
 
     <main class="container" id="main-content" tabindex="-1">
+      <nav class="origin-crumb" data-breadcrumb data-areas={JSON.stringify(navConfig.area_navs.map((entry) => ({ id: entry.id, label: entry.label, home: entry.home })))} aria-label="Herkunft" hidden><a href="/">← zurück</a></nav>
+      {area && <AreaNav area={area} currentPath={currentPath} currentSearch={Astro.url.search} />}
       <slot />
     </main>
 
@@ -65,5 +71,17 @@ const pageTitle = title ? `${title} | System GUI` : "System GUI";
         <span>Modulare Oberfläche · Backendstatus nach Live-Prüfung</span>
       </div>
     </footer>
+    <script>
+      // B-11: a link into another area may carry ?from=<area>; the way back is built from the configured area home only.
+      import { breadcrumbFor } from "../lib/area-nav.mjs";
+      const crumb = document.querySelector<HTMLElement>("[data-breadcrumb]");
+      const back = crumb ? breadcrumbFor(JSON.parse(crumb.dataset.areas || "[]"), new URLSearchParams(location.search).get("from")) : null;
+      if (crumb && back) {
+        const link = crumb.querySelector("a")!;
+        link.setAttribute("href", back.href);
+        link.textContent = "← zurück zu " + back.label;
+        crumb.hidden = false;
+      }
+    </script>
   </body>
 </html>

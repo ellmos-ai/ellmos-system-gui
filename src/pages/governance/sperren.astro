@@ -1,0 +1,63 @@
+---
+// src/pages/governance/sperren.astro - Sperren: Lock-Scan-Cache lesen, Fail-Closed (B-12)
+import BachLayout from "../../layouts/BachLayout.astro";
+import "../../styles/governance.css";
+---
+
+<BachLayout title="Sperren | Governance" currentPath="/governance/sperren">
+  <div data-source="lock-scan-cache">
+  <header class="gov-head">
+    <div>
+      <h1>🔒 Sperren</h1>
+      <p>Aktive Locks aus dem Lock-Scan-Cache. Gesperrte Bereiche (<code>LOCK.user.*</code>, <code>LOCK.condition.*</code>) sind für alle KI-Agenten fail-closed.</p>
+    </div>
+    <span class="badge" id="locks-count-badge">Lock-Feed nicht geprüft</span>
+  </header>
+
+  <div class="card" id="lock-master-card" style="margin-bottom:1.25rem;">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+      <h2 class="card-title">Lock-Master</h2>
+      <a href="http://127.0.0.1:8095" target="_blank" rel="noopener noreferrer" class="btn btn-sm" title="Eigenständige Lock-Master Vollansicht öffnen">↗ Vollansicht (:8095)</a>
+    </div>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
+      Sperren setzen, aufheben und abgelaufene prüfen geschieht im Lock-Master, nicht in dieser Ansicht.
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+      <a href="http://127.0.0.1:8095/#user-lock" target="_blank" rel="noopener noreferrer" class="btn btn-sm">🔒 Nutzersperre setzen / aufheben</a>
+      <a href="http://127.0.0.1:8095/#condition-release" target="_blank" rel="noopener noreferrer" class="btn btn-sm">🔓 Bedingungssperre aufheben</a>
+      <a href="http://127.0.0.1:8095/#prune-stale" target="_blank" rel="noopener noreferrer" class="btn btn-sm">🧹 Abgelaufene Sperren prüfen (Probelauf)</a>
+    </div>
+  </div>
+
+  <section id="gov-panel-reader" role="tabpanel" tabindex="-1" hidden aria-labelledby="gov-reader-title">
+    <h2 id="gov-reader-title" class="card-title"></h2>
+    <p class="gov-banner" id="gov-banner">
+      <strong>Diese Ansicht schreibt nicht.</strong> Lock-Vorbehalt: Locks stammen aus einem Scan-Cache; ein leerer,
+      veralteter oder fehlender Scan ist keine Schreibfreigabe. Gesperrte Bereiche bleiben fail-closed.
+    </p>
+    <form id="gov-filters" class="gov-filters" hidden>
+      <label>scope <input name="scope" maxlength="256" autocomplete="off" /></label>
+      <label>consumer <input name="consumer" maxlength="256" autocomplete="off" /></label>
+      <label>query <input name="query" maxlength="512" autocomplete="off" /></label>
+      <label id="gov-kind-label">kind
+        <select name="kind">
+          <option value="">alle</option><option>policy</option><option>rule</option>
+          <option>decision</option><option>evidence</option><option>decision-candidate</option>
+        </select>
+      </label>
+      <button type="submit" class="btn btn-sm">Laden</button>
+      <button type="button" class="btn btn-sm" id="gov-reload">Neu laden</button>
+    </form>
+    <p id="gov-state" role="status" aria-live="polite" class="gov-state"></p>
+    <dl id="gov-meta" class="gov-meta"></dl>
+    <ul id="gov-notices" class="gov-notices"></ul>
+    <div id="gov-rows"></div>
+    <details id="gov-response" hidden><summary>Vollständige öffentliche Antwort (einschließlich zusätzlicher Felder)</summary><pre id="gov-response-json"></pre></details>
+  </section>
+  </div>
+
+  <script>
+    import {mountReader} from "../../scripts/governance-reader.mjs";
+    mountReader("locks");
+  </script>
+</BachLayout>

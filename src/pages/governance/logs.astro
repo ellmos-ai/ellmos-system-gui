@@ -4,7 +4,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
 ---
 
 <BachLayout title="Audit | Governance" currentPath="/governance/logs">
-  <div class="audit-header">
+  <div class="audit-header" data-source="task-history-audit">
     <div>
       <h1>📜 Audit &amp; Systemlogs</h1>
       <p>Aufgabenänderungen aus der BACH-Datenbank. Inhalte und Akteursidentitäten werden hier nicht ausgegeben.</p>
@@ -12,12 +12,6 @@ import BachLayout from "../../layouts/BachLayout.astro";
     <button id="audit-refresh" class="btn btn-sm btn-primary" type="button">Aktualisieren</button>
   </div>
 
-  <nav class="audit-nav" aria-label="Governance">
-    <a href="/governance" class="btn btn-sm">🏛️ Control Room</a>
-    <a href="/governance/funk" class="btn btn-sm">📻 Agentenfunk</a>
-    <a href="/governance/usecases" class="btn btn-sm">📑 Use Cases</a>
-    <a href="/governance/logs" class="btn btn-sm btn-primary" aria-current="page">📜 Audit</a>
-  </nav>
 
   <div class="audit-layout">
     <aside class="card">

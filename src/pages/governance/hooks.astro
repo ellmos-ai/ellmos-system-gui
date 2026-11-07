@@ -1,0 +1,81 @@
+---
+// src/pages/governance/hooks.astro - Hooks & Guards: was das Backend tatsächlich vorfindet (B-12)
+import BachLayout from "../../layouts/BachLayout.astro";
+import "../../styles/governance.css";
+---
+
+<BachLayout title="Hooks & Guards | Governance" currentPath="/governance/hooks">
+  <div data-source="hooks-dir">
+    <header class="gov-head">
+      <div>
+        <h1>🪝 Hooks &amp; Guards</h1>
+        <p>Schutzskripte, die das Backend im Hook-Ordner tatsächlich findet. Ein Fund belegt, dass die Datei da ist, nicht dass sie bei jedem Aufruf greift.</p>
+      </div>
+      <button type="button" class="btn btn-sm" id="hooks-reload">Neu lesen</button>
+    </header>
+
+    <p id="hooks-state" role="status" aria-live="polite" class="gov-state">Hooks werden gelesen …</p>
+    <p id="hooks-concept" class="gov-note" hidden></p>
+    <dl id="hooks-meta" class="gov-meta"></dl>
+    <section aria-labelledby="hooks-list-title">
+      <h2 id="hooks-list-title" class="card-title">Gefundene Guard-Dateien</h2>
+      <ul id="hooks-list" class="gov-list"></ul>
+    </section>
+
+    <section class="card" style="margin-top:1.5rem;" aria-labelledby="hooks-kinds-title">
+      <h2 id="hooks-kinds-title" class="card-title">Wirkprinzip (Beschreibung, nicht gemessen)</h2>
+      <p class="gov-note">Diese Beschreibung stammt nicht aus dem Backend. Sie erklärt, wofür die drei Arten von Schutz gedacht sind; ob sie auf einem Host laufen, zeigt nur der Nachweis oben.</p>
+      <ul>
+        <li><strong>Skript-Guards vor Werkzeugaufrufen:</strong> prüfen Push-Schutz, Pfad-Locks und Geheimnisfilter, bevor ein Werkzeug läuft.</li>
+        <li><strong>Modellgestützte Aufsicht:</strong> Zielprüfung, Rückfragen bei Mehrdeutigkeit und Abschluss-Gates.</li>
+        <li><strong>Hooker-Anschlüsse:</strong> Zustellung von Erinnerungen und Abschluss-Gates je Agenten-Host.</li>
+      </ul>
+      <p><a href="/help?tab=architecture&from=governance" class="btn btn-sm">Kognitiver Schaltplan in der Hilfe</a></p>
+    </section>
+  </div>
+
+  <script>
+    import {parseHooks, ageLabel} from "../../lib/governance-readers.mjs";
+    import {createGovernanceRequest} from "../../lib/governance-request.mjs";
+
+    const $ = (id: string) => document.getElementById(id)!;
+    const unknown = (value: unknown) => value === null || value === undefined || value === "" ? "unbekannt" : String(value);
+
+    const request = createGovernanceRequest(result => {
+      const state = $("hooks-state"), meta = $("hooks-meta"), list = $("hooks-list"), concept = $("hooks-concept");
+      state.dataset.state = result.state;
+      meta.replaceChildren(); list.replaceChildren(); concept.hidden = true;
+      if (result.state === "loading") { state.textContent = "Hooks werden gelesen …"; return; }
+      if (!result.model) {
+        state.textContent = (result.failure?.label || result.label || "Zustand unbekannt") + ". Es werden keine Ersatzdaten angezeigt.";
+        return;
+      }
+      const model = result.model;
+      state.textContent = model.hooks.length
+        ? model.hooks.length + " Guard-Dateien gefunden."
+        : "Keine Guard-Dateien gefunden. Das ist keine Aussage über Schutz an anderer Stelle.";
+      if (model.detail) { concept.textContent = model.detail; concept.hidden = false; }
+      const rows: [string, string][] = [
+        ["Konzept", unknown(model.concept)],
+        ["Datenbank-Guard (bach-db-guard.sh)", model.dbGuardPresent === null ? "unbekannt" : model.dbGuardPresent ? "vorhanden" : "nicht vorhanden"],
+        ["Geprüft", unknown(model.checkedAt) + " (" + ageLabel(model.checkedAt) + ")"],
+      ];
+      for (const [name, value] of rows) {
+        const dt = document.createElement("dt"); dt.textContent = name;
+        const dd = document.createElement("dd"); dd.textContent = value;
+        meta.append(dt, dd);
+      }
+      for (const hook of model.hooks) {
+        const item = document.createElement("li");
+        const label = document.createElement("strong"); label.textContent = hook.name;
+        const badge = document.createElement("span"); badge.className = "badge"; badge.textContent = hook.present ? "vorhanden" : "nicht vorhanden";
+        item.append(label, badge);
+        list.append(item);
+      }
+    });
+    const load = () => request.load("/api/governance/hooks", parseHooks,
+      (_url, {signal}) => fetch("/api/governance/hooks", {method: "GET", cache: "no-store", signal}), () => "ok");
+    $("hooks-reload").addEventListener("click", load);
+    load();
+  </script>
+</BachLayout>

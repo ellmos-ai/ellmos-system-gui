@@ -75,8 +75,8 @@ test('absolute paths in displayed inventory fields are omitted', () => {
 
 test('target links use validated stable IDs and never infer an ID from a label', () => {
   const source = INVENTORY_SOURCES.find((entry) => entry.kind === 'skills');
-  assert.equal(managementHref(source, {id: 'research-helper'}), '/skills?component_id=research-helper');
-  assert.equal(managementHref(source, {id: 'team:reviewer.v2'}), '/skills?component_id=team%3Areviewer.v2');
+  assert.equal(managementHref(source, {id: 'research-helper'}), '/skills?component_id=research-helper&from=betrieb');
+  assert.equal(managementHref(source, {id: 'team:reviewer.v2'}), '/skills?component_id=team%3Areviewer.v2&from=betrieb');
   assert.equal(managementHref(source, {id: 'C:\\Users\\User\\skill.md'}), null);
   assert.equal(managementHref(source, {id: 'skill/folder'}), null);
   assert.equal(managementHref(source, {name: 'Research Helper'}), null);

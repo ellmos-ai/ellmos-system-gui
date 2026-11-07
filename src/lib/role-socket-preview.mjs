@@ -18,6 +18,13 @@ function detail(document) {
   return node;
 }
 
+// Module roles = catalogue entries that come from a module manifest. No list, no number.
+export function countModuleRoles(catalogue) {
+  const templates = catalogue?.templates;
+  if (!Array.isArray(templates)) return null;
+  return templates.filter(template => template && typeof template === 'object' && template.source === 'module_manifest_role').length;
+}
+
 export function renderRoleSocketPreview(document, container, catalogue, provider) {
   const sockets = catalogue?.role_socket_catalog?.provider_sockets;
   const templates = Array.isArray(catalogue?.templates) ? catalogue.templates : [];
@@ -57,11 +64,15 @@ export async function mountRoleSocketPreview(document, fetcher = globalThis.fetc
   const render = () => {
     if (catalogue) renderRoleSocketPreview(document, container, catalogue, select.value);
   };
+  const count = document.getElementById('ocean-module-role-count');
+  if (count) count.textContent = '';
   select.addEventListener('change', render);
   try {
     const response = await fetcher('/api/agenten/library');
     if (response.ok) {
       catalogue = await response.json();
+      const roles = countModuleRoles(catalogue);
+      if (count && roles !== null) count.textContent = roles + ' ';
       render();
     }
   } catch {

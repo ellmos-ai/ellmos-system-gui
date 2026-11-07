@@ -2,7 +2,7 @@
 import BachLayout from '../../layouts/BachLayout.astro';
 import OceanSystem from '../../components/OceanSystem.astro';
 ---
-<BachLayout title="Betrieb › Systeme & Sync-Netzbild" currentPath="/system">
+<BachLayout title="Betrieb › Systeme & Sync-Netzbild" currentPath="/system/ocean">
   <section style="margin-bottom:1.5rem;padding:1.25rem;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
       <div>
@@ -14,8 +14,6 @@ import OceanSystem from '../../components/OceanSystem.astro';
       </div>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
         <a href="/settings?tab=connections#operating-mode-card" class="btn btn-sm">🧭 Betriebsart einstellen</a>
-        <a href="/daemon" class="btn btn-sm">⚙️ Dienste</a>
-        <a href="/maintenance" class="btn btn-sm">🛠️ Wartung</a>
       </div>
     </div>
 
@@ -58,7 +56,7 @@ import OceanSystem from '../../components/OceanSystem.astro';
         <strong>🕸️ system-gap-master · Sync-Netzbild:</strong>
         <span style="color:var(--text-muted);"> OneDrive <code>.SYNC</code> (Regeln, Skills, Manifeste) &harr; Tailscale/SSH (Credentials &amp; Live-Backend) &middot; Soll-Takt: alle aktiven Systeme innerhalb von 48 Stunden synchron.</span>
       </div>
-      <a href="/routinen" class="btn btn-sm">⏱️ Sync-Routinen öffnen →</a>
+      <a href="/routinen?from=betrieb" class="btn btn-sm">⏱️ Sync-Routinen öffnen →</a>
     </div>
   </section>
   <OceanSystem />

@@ -7,18 +7,12 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 ---
 <BachLayout title="Agenten-Bibliothek · Vorlagen" currentPath="/agenten/blueprints">
   <div class="workshop-scene">
-  <nav class="studio-tabs" role="tablist" aria-label="Agenten-Bibliothek Hauptreiter" style="margin-bottom:1rem;">
-    <a class="btn btn-primary" role="tab" aria-selected="true" href="/agenten/blueprints">🤖 Vorlagen</a>
-    <a class="btn" role="tab" aria-selected="false" href="/agenten/subscription-agents">✍️ Prompt-Agenten</a>
-    <a class="btn" role="tab" aria-selected="false" href="/agenten/marblerun">⛓️ Ketten (MarbleRun &amp; Toolchains)</a>
-  </nav>
   <header class="studio-header" data-portrait-atlas={portraitAtlas.src} data-ticket-symbols={JSON.stringify(TICKET_SYMBOL_URLS)} id="studio-portrait-source">
     <div class="workshop-intro"><p class="studio-eyebrow">Agenten-Bibliothek · Reiter 1</p><h1><span aria-hidden="true">🤖</span> Agenten-Bibliothek · Vorlagen</h1><p class="studio-lead">Hier kannst du Vorlagen für Agenten und Rollen erstellen und versionieren.</p><p class="studio-note">Agenten zusammenstellen und aktivieren: <a href="/agenten/running">Living & Running</a>. Standard-Systemagenten auf Werkzustand zurücksetzen: <a href="/settings?tab=core#system-agent-restore">Systemeinstellungen</a>.</p></div>
     <div class="studio-actions">
       <button class="btn" id="studio-refresh">Aktualisieren</button>
       <button class="btn btn-primary" id="studio-new">Neue Vorlage</button>
       <a class="btn" href="/agenten/running">Deine Agenten</a>
-      <a class="btn" href="/agenten/marblerun">Ketten</a>
     </div>
   </header>
   <p id="studio-status" class="studio-message" role="status" aria-live="polite">Vorlagen werden geladen…</p>
@@ -37,7 +31,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.5rem;">
         <div>
           <p class="studio-eyebrow" style="margin:0;">Ocean-Rollen · Dual-Routing &amp; Flexible Anbieter-Sockel (<code>ellmos.role-socket-catalog.v1</code>)</p>
-          <h2 style="font-size:1.15rem;margin:0.15rem 0 0;">🔌 6 Koordinatoren (ehem. Bosse), Domänen-Experten &amp; 19 Modul-Rollen (<code>roles[]</code>)</h2>
+          <h2 style="font-size:1.15rem;margin:0.15rem 0 0;">🔌 6 Koordinatoren (ehem. Bosse), Domänen-Experten &amp; <span id="ocean-module-role-count"></span>Modul-Rollen (<code>roles[]</code>)</h2>
         </div>
         <label style="flex-direction:row;align-items:center;gap:0.45rem;margin:0;">
           <span>Aktiver Anbieter-Sockel:</span>

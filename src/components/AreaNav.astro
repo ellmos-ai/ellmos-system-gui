@@ -1,0 +1,62 @@
+---
+// AreaNav.astro - the one area navigation of the GUI (B-08, B-10, B-11, B-12).
+// Every page of an area renders this component through BachLayout; entries come from nav_config.json "area_navs".
+import { areaNavModel } from "../lib/area-nav.mjs";
+
+interface Props {
+  area: any;
+  currentPath?: string;
+  currentSearch?: string;
+}
+
+const { area, currentPath = "/", currentSearch = "" } = Astro.props;
+const model = areaNavModel(area, currentPath, currentSearch);
+---
+<nav class="area-nav" data-area-nav={model.id} aria-label={model.ariaLabel}>
+  <ul class="area-nav-list">
+    {model.entries.map((entry: any) => (
+      <li>
+        <a
+          class={`btn${entry.current ? " btn-primary" : ""}`}
+          href={entry.href}
+          data-area-entry={entry.id}
+          data-area-default={entry.default ? "true" : undefined}
+          aria-current={entry.current ? "page" : undefined}
+        ><span class="area-nav-icon" aria-hidden="true">{entry.icon}</span> {entry.label}</a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  // The static page cannot see the query string; the browser refines the server's path-based marking.
+  import { areaNavModel } from "../lib/area-nav.mjs";
+
+  function refreshAreaNav() {
+    document.querySelectorAll<HTMLElement>("[data-area-nav]").forEach((nav) => {
+      const links = [...nav.querySelectorAll<HTMLAnchorElement>("a[data-area-entry]")];
+      const entries = links.map((link) => ({ id: link.dataset.areaEntry, href: link.getAttribute("href"), default: link.dataset.areaDefault === "true" }));
+      const model = areaNavModel({ id: nav.dataset.areaNav, label: "", entries }, location.pathname, location.search);
+      for (const link of links) {
+        const current = model.entries.find((entry: any) => entry.id === link.dataset.areaEntry)?.current === true;
+        link.classList.toggle("btn-primary", current);
+        if (current) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      }
+    });
+  }
+  refreshAreaNav();
+  window.addEventListener("popstate", refreshAreaNav);
+  window.addEventListener("bach:tab-change", refreshAreaNav);
+</script>
+
+<style>
+  .area-nav { margin: 0 0 1rem; }
+  .area-nav-list { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; margin: 0; padding: 0; }
+  .area-nav-list li { display: contents; }
+  .area-nav-icon { margin-right: 0.15rem; }
+  @media (max-width: 640px) {
+    .area-nav-list { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.35rem; scroll-snap-type: x proximity; }
+    .area-nav-list :global(a) { flex: 0 0 auto; scroll-snap-align: start; }
+  }
+</style>

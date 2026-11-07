@@ -55,7 +55,7 @@ export function normalizeInventory(source, payload) {
 
 export function managementHref(source, item) {
   if (!source?.href || !safeComponentId(item?.id)) return null;
-  return `${source.href}?component_id=${encodeURIComponent(item.id)}`;
+  return `${source.href}?component_id=${encodeURIComponent(item.id)}&from=betrieb`;
 }
 
 export function triState(value) {
