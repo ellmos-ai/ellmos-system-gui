@@ -22,12 +22,12 @@
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
     "ellmos-module.v2.json": "b993a660963693d210ce7684ba841542d7e321d80f8ee9739645ca311edf7d98",
     "package-lock.json": "16a0246cefb6a1b79b9c45f034f3351635042bcb54481828084446a7ac147af9",
-    "package.json": "9d08ce681b2a07e135592a4a51e09ed406b5651b1e62583ff3b51f83163835f0",
+    "package.json": "99f255db92e9672de07a81fb91dd851bf4ffc6f346a8c5da0a610b599eac8441",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "a075737bf2a916f63efe01a0265fa92331332386749b6d9481a574c0288ced4e",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
-    "scripts/page-reads-bindings.mjs": "bd738db3762a6f0281c418a8d150a89c603a5e73ca9076aff48bae57c7d2a5c4",
+    "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
     "scripts/verify-navigation-routes.mjs": "efbfb0d8fb6338515ebb8db0038946ebe0cd8e2f4368f2b0e852a9612f44ece0",
@@ -381,7 +381,7 @@
     "src/lib/agent-triggers.mjs": "289e00f21c89f9521296e64f384fd580737578f7626b6ed3ca05d2941822141b",
     "src/lib/agent-triggers-ui.mjs": "fac0b90abcc3fe9ca9a0260839b5c7ced68fcd5c9f7fe6f812b80b84bfde71c0",
     "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
-    "scripts/page-reads-helpers.mjs": "4532ce990afde9d8f502f9f75a39004028ff2e41c8ed3cb5000b44ba85e2145a",
+    "scripts/page-reads-helpers.mjs": "621c99d968601dcdea44ee4130db8e8a00c9ce8c228cb9bd90a8b4a65bc6088d",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
     "src/lib/role-socket-preview.mjs": "95145d84fc33c4dffb1a3517f9255061aa7a69a4fac63dae5ed80412e7234baf",
     "tests/role-socket-preview.test.mjs": "caffb4c42832e5a29aa1e9136b648cb70bd0a9c23aaec2a23cd13d321d84b89f",
@@ -5523,7 +5523,7 @@
         {
           "path": "package.json",
           "previous_sha256": "e7239ce33de4ce6e5aaffe875e06b8a94e9d845a372445a7993bf2e08b752f43",
-          "sha256": "9d08ce681b2a07e135592a4a51e09ed406b5651b1e62583ff3b51f83163835f0"
+          "sha256": "99f255db92e9672de07a81fb91dd851bf4ffc6f346a8c5da0a610b599eac8441"
         },
         {
           "path": "public/page-reads.v1.json",
@@ -5533,7 +5533,7 @@
         {
           "path": "scripts/page-reads-bindings.mjs",
           "previous_sha256": "962b76b290c07ba985df49302d26e6a89ebcb28147a44c4a5838174c57acec73",
-          "sha256": "bd738db3762a6f0281c418a8d150a89c603a5e73ca9076aff48bae57c7d2a5c4"
+          "sha256": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21"
         },
         {
           "path": "src/components/Header.astro",
@@ -5725,7 +5725,7 @@
         {
           "path": "scripts/page-reads-helpers.mjs",
           "previous_sha256": "61e2f5412189f6e0aa9bfecb62d94a831d95817fc7f4ce0e2a7b521b773fc1f5",
-          "sha256": "4532ce990afde9d8f502f9f75a39004028ff2e41c8ed3cb5000b44ba85e2145a"
+          "sha256": "621c99d968601dcdea44ee4130db8e8a00c9ce8c228cb9bd90a8b4a65bc6088d"
         },
         {
           "path": "src/pages/agenten/running.astro",
