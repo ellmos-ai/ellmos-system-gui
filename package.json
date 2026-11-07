@@ -10,7 +10,8 @@
     "build:release": "node scripts/verify-navigation-routes.mjs && node scripts/release-manifest.mjs --prepare-source && astro build && node scripts/release-manifest.mjs",
     "assets:agent-thumbnails": "node scripts/generate-agent-avatar-thumbnails.mjs",
     "preview": "astro preview",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "test:dist": "node --test tests/dist/*.test.mjs"
   },
   "dependencies": {
     "astro": "7.3.7",

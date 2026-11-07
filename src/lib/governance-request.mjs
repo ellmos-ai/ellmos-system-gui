@@ -2,7 +2,8 @@
 // One in-flight read generation, no cached snapshots and no mutation/retry path.
 import {classifyBody, describeFailure, BODY_PROBLEM, viewState} from './governance-readers.mjs';
 const PATHS = new Set(['/api/governance/locks', '/api/governance/decisions',
-  '/api/governance/policies', '/api/governance/policy-registry', '/api/governance/effective-policy', '/api/gui/capabilities']);
+  '/api/governance/policies', '/api/governance/policy-registry', '/api/governance/effective-policy', '/api/gui/capabilities',
+  '/api/governance/hooks', '/api/governance/permission-matrix']);
 export function createGovernanceRequest(onState) {
   let generation = 0, active = null;
   const publish = value => onState({model:null, payload:null, failure:null, ...value});
