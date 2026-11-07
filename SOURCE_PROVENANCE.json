@@ -235,7 +235,7 @@
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
-    "src/components/Header.astro": "9539af3085023707e8b6ad8f2f3247fd7545fa74b0dc2b5e302b2625b3cd82d4",
+    "src/components/Header.astro": "317e9ef6e0943e212a3feffa9b46a82c745876f7d505c8995fa06660b495b813",
     "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
