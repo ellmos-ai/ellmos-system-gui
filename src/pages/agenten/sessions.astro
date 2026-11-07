@@ -1,6 +1,7 @@
 ---
 import BachLayout from "../../layouts/BachLayout.astro";
 import TaskCreateForm from "../../components/TaskCreateForm.astro";
+import ReturnTimeline from "../../components/ReturnTimeline.astro";
 ---
 <BachLayout title="Nachrichten · Benachrichtigungen, Verlauf & Agentenfunk" currentPath="/agenten/sessions">
   <section id="native-history" aria-label="Nachrichten, Verlauf und Agentenfunk" class="history-container">
@@ -12,6 +13,7 @@ import TaskCreateForm from "../../components/TaskCreateForm.astro";
       <button class="btn btn-secondary" type="button" data-history-tab="inbox" aria-pressed="false">✉️ Benachrichtigungen</button>
       <button class="btn btn-secondary" type="button" data-history-tab="sessions" aria-pressed="true">💬 Verlauf · Chats &amp; Läufe</button>
       <button class="btn btn-secondary" type="button" data-history-tab="tasks" aria-pressed="false">📋 Taskereignisse</button>
+      <button class="btn btn-secondary" type="button" data-history-tab="returns" aria-pressed="false">↩️ Rückgaben</button>
       <button class="btn btn-secondary" type="button" data-history-tab="notes" aria-pressed="false">📝 Gedächtnisnotizen</button>
       <button class="btn btn-secondary" type="button" data-history-tab="lessons" aria-pressed="false">💡 Lessons &amp; Best-Practices</button>
       <button class="btn btn-secondary" type="button" data-history-tab="funk" aria-pressed="false">📻 Agentenfunk</button>
@@ -39,6 +41,9 @@ import TaskCreateForm from "../../components/TaskCreateForm.astro";
     </div>
     <div id="history-content" class="history-list"></div>
     </div>
+    <section id="returns-panel" aria-label="Rückgaben und Abbrüche" hidden>
+      <ReturnTimeline id="rt-sessions" heading="Rückgaben und Abbrüche aller Aufgaben" lazy />
+    </section>
     <section id="inbox-panel" aria-label="Nutzer-Inbox" hidden>
       <div class="history-filters">
         <label>Status<select id="inbox-status"><option value="all">Alle · ohne Archiv</option><option value="unread">Ungelesen</option><option value="read">Gelesen</option><option value="archived">Archiv</option></select></label>

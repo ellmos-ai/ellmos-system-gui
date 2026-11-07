@@ -3,7 +3,8 @@ import {readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import test from 'node:test';
 import {
-  archiveNote, createBody, createNote, describeFailure, listQuery, loadNotes, readNotes, unarchiveNote,
+  LEGACY_STORAGE_KEY, archiveNote, createBody, createNote, describeFailure, findBrowserNotes, importBrowserNotes,
+  listQuery, loadNotes, pendingNotice, readNotes, unarchiveNote,
 } from '../src/lib/notes-client.mjs';
 
 const root = process.cwd();
@@ -95,4 +96,76 @@ test('denkarium is a redirect to the single /notizen route', () => {
   assert.match(denkarium, /\/notizen/);
   assert.match(denkarium, /http-equiv="refresh"/);
   assert.doesNotMatch(denkarium, /LegacyRouteFallback/);
+});
+
+const memoryStorage = (initial = {}) => {
+  const data = new Map(Object.entries(initial));
+  return {
+    getItem: key => (data.has(key) ? data.get(key) : null),
+    setItem: (key, value) => data.set(key, String(value)),
+    removeItem: key => data.delete(key),
+    has: key => data.has(key),
+  };
+};
+const demo = [
+  {id: 'n-1', kind: 'gedanken', tag: 'Fokus & ADHS', title: 'Demo 1', body: 'demo', createdAt: '2026-10-31 09:00'},
+  {id: 'n-2', kind: 'logbuch', tag: 'Ocean & BACH', title: 'Demo 2', body: 'demo', createdAt: '2026-10-31 12:30'},
+];
+const own = [
+  {id: 'n-1762500000000', kind: 'logbuch', tag: 'Alltag', title: 'Eigene Notiz', body: 'Text A', createdAt: '2026-11-01 10:00'},
+  {id: 'n-1762500000001', kind: 'gedanken', tag: '', title: 'Zweite', body: 'Text B', createdAt: '2026-11-02 11:00'},
+];
+
+test('readNotes carries the pending-migration flags from the backend', () => {
+  const data = readNotes({...sample, backend: 'denkarium-legacy', pending_migration: true, pending_count: 14});
+  assert.deepEqual([data.backend, data.pendingMigration, data.pendingCount], ['denkarium-legacy', true, 14]);
+  assert.equal(readNotes(sample).pendingMigration, false);
+});
+
+test('pendingNotice explains the migration instead of showing a silent empty list', () => {
+  assert.match(pendingNotice({backend: 'denkarium-legacy', pendingMigration: true, pendingCount: 14}), /werden übernommen.*noch im Denkarium/);
+  assert.match(pendingNotice({backend: 'llm-note', pendingMigration: true, pendingCount: 2}), /2 Einträge.*Denkarium/);
+  assert.equal(pendingNotice({backend: 'llm-note', pendingMigration: false, pendingCount: 0}), '');
+});
+
+test('findBrowserNotes ignores the two old demo notes and invalid entries', () => {
+  assert.deepEqual(findBrowserNotes(memoryStorage()), []);
+  assert.deepEqual(findBrowserNotes(memoryStorage({[LEGACY_STORAGE_KEY]: JSON.stringify(demo)})), []);
+  assert.deepEqual(findBrowserNotes(memoryStorage({[LEGACY_STORAGE_KEY]: 'kaputt{'})), []);
+  const found = findBrowserNotes(memoryStorage({[LEGACY_STORAGE_KEY]: JSON.stringify([...demo, ...own, {id: 'x', title: '', body: ''}])}));
+  assert.deepEqual(found.map(n => n.title), ['Eigene Notiz', 'Zweite']);
+});
+
+test('importBrowserNotes posts each note once, then removes the browser key', async () => {
+  const storage = memoryStorage({[LEGACY_STORAGE_KEY]: JSON.stringify([...demo, ...own])});
+  const stub = stubFetch(() => json(200, {ok: true, entry: {id: 1}}));
+  try {
+    const result = await importBrowserNotes(storage);
+    assert.deepEqual(result, {imported: 2, failed: 0});
+  } finally { stub.restore(); }
+  assert.deepEqual(stub.calls.map(c => `${c.method} ${c.url}`), ['POST /api/notes', 'POST /api/notes']);
+  const bodies = stub.calls.map(c => JSON.parse(c.body));
+  assert.deepEqual(bodies.map(b => [b.entry_type, b.category, b.title]), [['logbook', 'Alltag', 'Eigene Notiz'], ['note', 'note', 'Zweite']]);
+  assert.equal(storage.has(LEGACY_STORAGE_KEY), false);
+});
+
+test('a failed import keeps the key and only the notes that were not imported yet', async () => {
+  const storage = memoryStorage({[LEGACY_STORAGE_KEY]: JSON.stringify(own)});
+  let n = 0;
+  const stub = stubFetch(() => (++n === 1 ? json(200, {ok: true}) : json(503, {detail: 'weg'})));
+  try {
+    const result = await importBrowserNotes(storage);
+    assert.deepEqual(result, {imported: 1, failed: 1});
+  } finally { stub.restore(); }
+  const left = JSON.parse(storage.getItem(LEGACY_STORAGE_KEY));
+  assert.deepEqual(left.map(note => note.title), ['Zweite']);
+});
+
+test('the page offers the import by click and never imports on its own', () => {
+  const notizen = page('notizen.astro');
+  assert.match(notizen, /id="notes-import"/);
+  assert.match(notizen, /id="notes-import-button"/);
+  assert.match(notizen, /id="notes-notice"/);
+  const script = readFileSync(join(root, 'src', 'scripts', 'notizen-page.mjs'), 'utf8');
+  assert.match(script, /notes-import-button'\)\?\.addEventListener\('click'/);
 });

@@ -29,7 +29,52 @@ export function createBody({kind, tag, title, body}) {
 export function readNotes(data) {
   if (!data || !Array.isArray(data.entries) || !data.stats || typeof data.stats !== 'object')
     throw new Error('Die Notizen-Antwort ist ungültig.');
-  return {entries: data.entries, stats: data.stats, categories: Array.isArray(data.categories) ? data.categories : []};
+  return {
+    entries: data.entries,
+    stats: data.stats,
+    categories: Array.isArray(data.categories) ? data.categories : [],
+    backend: typeof data.backend === 'string' ? data.backend : 'llm-note',
+    pendingMigration: data.pending_migration === true,
+    pendingCount: Number.isSafeInteger(data.pending_count) ? data.pending_count : 0,
+  };
+}
+
+// Vor der Migration liefert das Backend den Altbestand (`denkarium-legacy`); danach können Nachzügler im Denkarium liegen.
+export function pendingNotice(data) {
+  if (!data.pendingMigration) return '';
+  const n = data.pendingCount;
+  if (data.backend === 'denkarium-legacy')
+    return `Notizen werden übernommen – noch im Denkarium${n ? ` (${n} Einträge)` : ''}. Neue Einträge werden mit übernommen.`;
+  return `${n} Einträge liegen noch im Denkarium und werden mit dem nächsten Migrationslauf übernommen.`;
+}
+
+// Einmalige Übernahme früherer Browser-Notizen (die alte Seite hielt sie nur in localStorage, samt zwei Demo-Notizen n-1/n-2).
+export const LEGACY_STORAGE_KEY = 'bach.notizen.items.v1';
+const DEMO_IDS = new Set(['n-1', 'n-2']);
+
+export function findBrowserNotes(storage = globalThis.localStorage) {
+  let parsed;
+  try { parsed = JSON.parse(storage?.getItem(LEGACY_STORAGE_KEY) ?? 'null'); } catch (_error) { return []; }
+  if (!Array.isArray(parsed)) return [];
+  return parsed.filter(note => note && typeof note === 'object' && !DEMO_IDS.has(note.id)
+    && String(note.title || '').trim() && String(note.body || '').trim());
+}
+
+// Legt jede Notiz einmal an; entfernt Übernommenes sofort aus dem Speicher (kein Duplikat bei erneutem Versuch).
+export async function importBrowserNotes(storage = globalThis.localStorage) {
+  const notes = findBrowserNotes(storage);
+  let imported = 0, failed = 0;
+  const remaining = [...notes];
+  for (const note of notes) {
+    try {
+      await createNote({kind: note.kind, tag: note.tag, title: note.title, body: note.body});
+    } catch (_error) { failed += 1; continue; }
+    imported += 1;
+    remaining.splice(remaining.indexOf(note), 1);
+    storage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(remaining));
+  }
+  if (!remaining.length) storage.removeItem(LEGACY_STORAGE_KEY);
+  return {imported, failed};
 }
 
 // Ehrlicher Fehlertext: nie eine leere Liste vortäuschen.

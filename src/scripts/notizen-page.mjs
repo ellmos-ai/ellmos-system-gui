@@ -1,5 +1,5 @@
 // /notizen: Anzeige und Bedienung der llm-note-Notizen (PB-11, #3994). Logik und Backend-Vertrag: src/lib/notes-client.mjs.
-import {archiveNote, createNote, loadNotes, unarchiveNote} from '../lib/notes-client.mjs';
+import {archiveNote, createNote, findBrowserNotes, importBrowserNotes, loadNotes, pendingNotice, unarchiveNote} from '../lib/notes-client.mjs';
 
 const state = {kind: new URLSearchParams(location.search).get('kind') || 'all', search: '', includeArchived: false};
 const $ = id => document.getElementById(id);
@@ -13,6 +13,13 @@ function setStatus(text, isError = false) {
   el.textContent = text;
   el.hidden = !text;
   el.style.color = isError ? 'var(--danger, #c0392b)' : 'var(--text-muted)';
+}
+
+function setNotice(text) {
+  const node = $('notes-notice');
+  if (!node) return;
+  node.textContent = text;
+  node.hidden = !text;
 }
 
 function el(tag, text, style) {
@@ -66,6 +73,7 @@ async function refresh() {
     const data = await loadNotes(state);
     if (mine !== requestId) return;
     setStatus('');
+    setNotice(pendingNotice(data));
     count.textContent = `${data.entries.length} Einträge${data.stats.archived ? ` · ${data.stats.archived} archiviert` : ''}`;
     list.replaceChildren(...(data.entries.length ? data.entries.map(renderEntry)
       : [el('p', 'Keine Notizen für diesen Filter.', 'margin:0;color:var(--text-muted);font-size:0.85rem;')]));
@@ -114,4 +122,26 @@ $('note-create-form')?.addEventListener('submit', async event => {
   }
 });
 
+// Früher lagen Notizen nur im Browser (localStorage). Einmaliges, vom Nutzer bestätigtes Übernehmen.
+function offerBrowserNotes() {
+  const found = findBrowserNotes();
+  const box = $('notes-import');
+  if (!found.length || !box) return;
+  $('notes-import-text').textContent = `${found.length} Notizen aus früheren Browser-Sitzungen gefunden (ohne die zwei Beispielnotizen). `
+    + 'Übernehmen legt sie in den Notizen an; das ursprüngliche Datum wird nicht übernommen. Danach werden sie aus dem Browser entfernt.';
+  box.hidden = false;
+  $('notes-import-later')?.addEventListener('click', () => { box.hidden = true; });
+  $('notes-import-button')?.addEventListener('click', async event => {
+    event.target.disabled = true;
+    const {imported, failed} = await importBrowserNotes();
+    $('notes-import-text').textContent = failed
+      ? `${imported} übernommen, ${failed} nicht übernommen (sie bleiben im Browser). Bitte später erneut versuchen.`
+      : `${imported} Notizen übernommen.`;
+    event.target.hidden = !failed;
+    event.target.disabled = false;
+    await refresh();
+  });
+}
+
+offerBrowserNotes();
 refresh();

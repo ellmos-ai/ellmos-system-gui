@@ -332,6 +332,18 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/task-hindrances.mjs#readNativeTaskPolicy"
+   },
+   {
+    "method": "GET",
+    "path": "/api/task-returns",
+    "required": false,
+    "query": "ids"
+   },
+   {
+    "method": "GET",
+    "path": "/api/task-returns/timeline",
+    "required": false,
+    "query": "hours,limit,task_id"
    }
   ],
   "/life": [
@@ -1350,6 +1362,18 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/agent-triggers.mjs#write"
+   },
+   {
+    "method": "GET",
+    "path": "/api/task-returns",
+    "required": false,
+    "query": "ids"
+   },
+   {
+    "method": "GET",
+    "path": "/api/task-returns/timeline",
+    "required": false,
+    "query": "hours,limit,task_id"
    }
   ],
   "/agenten/sessions": [
@@ -1420,6 +1444,18 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/components/TaskCreateForm.astro#(module)"
+   },
+   {
+    "method": "GET",
+    "path": "/api/task-returns",
+    "required": false,
+    "query": "ids"
+   },
+   {
+    "method": "GET",
+    "path": "/api/task-returns/timeline",
+    "required": false,
+    "query": "hours,limit,task_id"
    }
   ],
   "/user-inbox": [],

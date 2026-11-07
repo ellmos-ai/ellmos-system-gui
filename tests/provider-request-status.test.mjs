@@ -89,8 +89,20 @@ test("renders a terminal request as the last call, never as active inference", (
   });
   assert.equal(
     providerRequestStatusText(worker),
-    "Letzter Provideraufruf · Aufruf beendet · Providerdetails nicht verfügbar",
+    "Letzter Provideraufruf · Aufruf beendet · Providerdetails nicht verfügbar · Backend hat die Aufgabe zurückgegeben",
   );
+});
+
+test("a terminal request names why it ended; a completed answer adds nothing (PB-4)", () => {
+  const ended = reason => workerWithRequest({
+    request: {state: "terminal", phase: "runtime_call_complete", terminal_reason: reason, task_fence_available: false,
+      task_fence: null, details_available: true, lease_version_bound: false},
+    execution: {state: "terminal", terminal: true, active_task_id: undefined, lease_worker_id: undefined},
+    worker: {running: false, status: "completed", active_task_lease: undefined},
+  });
+  assert.equal(providerRequestStatusText(ended("total_deadline")),
+    "Letzter Provideraufruf · Aufruf beendet · Zeitlimit für den Lauf erreicht");
+  assert.equal(providerRequestStatusText(ended("response_completed")), "Letzter Provideraufruf · Aufruf beendet");
 });
 
 test("an uninstrumented running backend gets an unavailable fallback", () => {

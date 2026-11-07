@@ -33,6 +33,12 @@ const routePath = '/notizen';
   </section>
 
   <p id="notes-status" role="status" hidden style="margin:0 0 1rem 0;padding:0.6rem 0.9rem;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;"></p>
+  <p id="notes-notice" role="status" hidden style="margin:0 0 1rem 0;padding:0.6rem 0.9rem;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;color:var(--text-muted);"></p>
+  <section id="notes-import" hidden style="margin:0 0 1rem 0;padding:0.75rem 1rem;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+    <span id="notes-import-text" style="flex:1;min-width:220px;"></span>
+    <button type="button" id="notes-import-button" class="btn btn-primary btn-sm">Übernehmen</button>
+    <button type="button" id="notes-import-later" class="btn btn-secondary btn-sm">Später</button>
+  </section>
 
   <!-- Neue Notiz anlegen + Notizen-Liste -->
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.25rem;align-items:start;">

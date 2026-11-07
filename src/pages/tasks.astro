@@ -4,6 +4,7 @@ import BachLayout from "../layouts/BachLayout.astro";
 import TaskCreateForm from "../components/TaskCreateForm.astro";
 import TaskWorkerPolicySettings from "../components/TaskWorkerPolicySettings.astro";
 import TaskLeasePanel from "../components/TaskLeasePanel.astro";
+import ReturnTimeline from "../components/ReturnTimeline.astro";
 import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
 ---
 
@@ -30,6 +31,11 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
   <details class="task-overview-technical" hidden>
     <summary>Übernahmen und Laufdetails</summary>
     <TaskLeasePanel />
+  </details>
+
+  <details class="task-returns-overview" id="task-returns-overview">
+    <summary>Rückgaben und Abbrüche <span id="tasks-returns-alert" class="return-alert" role="status"></span></summary>
+    <ReturnTimeline id="rt-global" />
   </details>
 
   <!-- Filter Bar -->
@@ -98,6 +104,12 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
         <p id="task-view-description" class="task-description"></p>
         <h4>Nächste Handlung &amp; Begründung</h4>
         <p id="task-view-rationale" class="task-rationale">Noch nicht berechnet.</p>
+        <h4>Rückgaben</h4>
+        <div id="task-view-returns" aria-live="polite"><p class="muted">Wird geladen …</p></div>
+        <details id="task-returns-detail">
+          <summary>Verlauf der Rückgaben dieser Aufgabe</summary>
+          <ReturnTimeline id="rt-task" heading="Rückgaben dieser Aufgabe" lazy />
+        </details>
       </article>
       <section class="task-worker-result" aria-live="polite">
         <h3>Ergebnis und Verlauf</h3>
@@ -254,6 +266,13 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
     .task-split-resizer:hover::before,.task-split-resizer:focus-visible::before,.task-split-resizer.is-dragging::before {background:var(--accent);height:5.5rem;}
     .task-board-layout.is-open .task-split-resizer {display:flex;}
     .task-overview-technical {margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:.75rem;}
+    .task-returns-overview {margin-bottom:1rem}
+    .task-returns-overview>summary {cursor:pointer;color:var(--text-muted);font-size:.85rem;font-weight:500;}
+    .task-returns-overview[open]>summary {margin-bottom:.75rem;}
+    .task-returns-overview>summary:focus-visible {outline:2px solid var(--accent-blue-text);outline-offset:3px;}
+    .return-alert {margin-left:.5rem;font-weight:700}
+    .return-alert[data-level="warn"] {color:var(--warning-text)}
+    .return-alert[data-level="unavailable"] {color:var(--text-muted)}
     .task-overview-technical>summary,.task-technical-details>summary {cursor:pointer;color:var(--text-muted);font-size:.85rem;font-weight:500;}
     .task-overview-technical[open]>summary {margin-bottom:.75rem;}
     .task-detail {padding:1.25rem;scroll-margin-top:5rem;}
@@ -285,6 +304,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
 
   <script>
     import {readTaskHindrances, renderTaskHindrances} from '../lib/task-hindrances.mjs';
+    import {loadTaskReturns, returnBadge, renderBadge, renderReasonBlock} from '../lib/task-returns.mjs';
     import {taskRationale} from '../lib/task-rationale.mjs';
     import {createAssignmentController, taskResponseError, assignmentCatalogue, isGateReopenBlocked} from '../lib/task-assignment.mjs';
     import {readTaskFilters, taskFilterQuery, writeTaskFilters, readTaskPage, taskCountLabel} from '../lib/task-filters.mjs';
@@ -346,6 +366,39 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
       document.getElementById('tasks-page-label').textContent = `Seite ${Math.floor(currentOffset / pageSize) + 1}`;
     }
 
+    let returnBadgeGeneration = 0;
+    // PB-4: warning shield "n× zurückgegeben" per open task, filled in after the list is drawn.
+    async function applyReturnBadges() {
+      const generation = ++returnBadgeGeneration;
+      const slots = [...document.querySelectorAll('[data-task-return]')]
+        .filter(slot => !['done', 'completed', 'closed', 'cancelled', 'canceled', 'duplicate', 'archived'].includes(slot.dataset.taskStatus));
+      const alert = document.getElementById('tasks-returns-alert');
+      const {byId, error} = await loadTaskReturns(slots.map(slot => Number(slot.dataset.taskReturn)));
+      if (generation !== returnBadgeGeneration) return;
+      let flagged = 0;
+      for (const slot of slots) {
+        const badge = returnBadge(byId.get(Number(slot.dataset.taskReturn)), {status: slot.dataset.taskStatus});
+        if (!badge) continue;
+        flagged++;
+        slot.replaceChildren(renderBadge(document, badge));
+      }
+      alert.textContent = error ? 'Rückgabezähler nicht verfügbar' : flagged ? `⚠ ${flagged} ${flagged === 1 ? 'Aufgabe' : 'Aufgaben'} auf dieser Seite mehrfach zurückgegeben` : '';
+      alert.dataset.level = error ? 'unavailable' : flagged ? 'warn' : 'none';
+    }
+
+    async function loadTaskReturnDetail(task, revision) {
+      const container = document.getElementById('task-view-returns');
+      const timeline = document.querySelector('#task-returns-detail [data-return-timeline]');
+      container.textContent = 'Wird geladen …';
+      timeline?.dispatchEvent(new CustomEvent('return-timeline:set', {detail: {taskId: Number(task.id)}}));
+      const {byId, error} = await loadTaskReturns([Number(task.id)]);
+      if (revision !== taskDetailRevision || selectedTask !== task) return;
+      if (error) { container.textContent = error; return; }
+      const summary = byId.get(Number(task.id));
+      if (!summary) { container.textContent = 'Für diese Aufgabe liegen keine Rückgabedaten vor.'; return; }
+      renderReasonBlock(document, container, returnBadge(summary, task), summary);
+    }
+
     function renderTasks() {
       const container = document.getElementById('tasks-table-container');
       const tasksById = new Map(allTasks.map(x => [Number(x.id), x]));
@@ -403,6 +456,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
                   <td style="padding:0.75rem 0.5rem;">
                      <div style="display:flex;flex-direction:column;gap:0.25rem;align-items:flex-start;">
                        <span class="badge ${isDone ? 'badge-success' : 'badge-warning'}" data-task-status="${escapeHtml(normalizedStatus(t.status) || 'unknown')}">${escapeHtml(statusLabel(t.status))}</span>
+                       <span data-task-return="${Number(t.id)}" data-task-status="${escapeHtml(normalizedStatus(t.status))}"></span>
                        ${normalizedStatus(t.status) === 'in_progress' || normalizedStatus(t.status) === 'progress' ? `<span class="badge badge-accent task-inline-lease-badge" data-task-lease-badge="${Number(t.id)}" style="font-size:0.7rem;">⚡ läuft · ${escapeHtml(rawAssignee)}${t.lease_expires_in_minutes ? ` · noch ${escapeHtml(t.lease_expires_in_minutes)} Min.` : ''}</span>` : ''}
                      </div>
                   </td>
@@ -420,6 +474,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
           </tbody>
         </table>
       `;
+      void applyReturnBadges();
     }
 
     function syncTaskFilterControls() {
@@ -947,6 +1002,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
         document.getElementById('task-edit-form').hidden = true;
         panel.scrollIntoView({ behavior:'smooth', block:'start' });
         void loadTaskHindrances(task, revision);
+        void loadTaskReturnDetail(task, revision);
         const resultLoaded = await loadTaskResult(id, revision);
         if (revision !== taskDetailRevision) return null;
         const historyLoaded = await loadTaskResultHistory(id, revision);

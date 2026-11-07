@@ -1,4 +1,5 @@
 import {loadSessionPage,loadSession,loadTaskPage,loadMemoryNotes} from '../lib/agent-history.mjs';
+import {loadReturnTimeline,sessionReturnMarker} from '../lib/task-returns.mjs';
 const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=String(text??'');if(cls)n.className=cls;return n;};
 const stamp=value=>{const date=new Date(value??'');return Number.isFinite(date.getTime())?date.toLocaleString('de-DE'):'Zeit nicht erfasst';};
 const labels={pending:'Offen',in_progress:'In Bearbeitung',done:'Erledigt',blocked:'Blockiert',cancelled:'Abgebrochen',review:'Im Review'};
@@ -14,6 +15,10 @@ function initialize(){
     modal=document.getElementById('history-dialog'),detail=document.getElementById('history-dialog-content');
   const selectedProfile=()=>profile.value?Number(profile.value):null;
   function taskLink(id,title='Aufgabe #'+id){const a=node('a',title,'btn btn-secondary btn-sm');a.href='/tasks?task='+id;return a;}
+  function showReturns(worker){
+    root.querySelector('[data-history-tab="returns"]').click();
+    document.querySelector('#returns-panel [data-return-timeline]').dispatchEvent(new CustomEvent('return-timeline:set',{detail:{worker}}));
+  }
   function clearDetail(){detailEpoch++;if(modal.open)modal.close();detail.replaceChildren();}
   modal.querySelector('[data-close]').addEventListener('click',()=>modal.close());
   modal.addEventListener('close',()=>{detailEpoch++;detail.replaceChildren();});
@@ -56,11 +61,21 @@ function initialize(){
         if(request!==epoch)return;
         status.textContent='Gespeicherte Ausschnitte · regulär höchstens '+data.save_limits.max_messages+' Nachrichten pro Transkript und '+data.save_limits.max_content_chars.toLocaleString('de-DE')+' Zeichen pro Nachricht.';
         if(!data.sessions.length)content.append(node('p','Keine gespeicherten Dialoge in dieser Auswahl.','text-muted'));
+        // PB-4: a worker session is a problem when its worker gave tasks back, not only when an answer failed.
+        const returns=data.sessions.some(row=>row.source==='worker')?await loadReturnTimeline({hours:24}).then(r=>r.events,()=>[]):[];
+        if(request!==epoch)return;
         for(const row of data.sessions){
           const card=node('article',undefined,'history-card');
           card.append(node('h2',row.name||'Gespeicherter Dialog'));
           card.append(node('p',stamp(row.created_at)+' · '+(row.archived?'Archiviert':'Aktuell gespeichert')+' · '+row.stored_message_count+' gespeicherte Nachrichten','text-muted'));
-          if(row.failed_count>0||row.return_count>=3||row.flapping===true)card.append(node('p','Problem: '+[row.failed_count>0?row.failed_count+' fehlgeschlagene Antwort(en)':'',row.return_count>=3?row.return_count+'x zurückgegeben':'',row.flapping===true?'wechselt hin und her':''].filter(Boolean).join(', '),'history-error'));
+          const marker=sessionReturnMarker(row,returns,24);
+          if(row.failed_count>0||marker){
+            const problem=node('p','Problem: '+[row.failed_count>0?row.failed_count+' fehlgeschlagene Antwort(en)':'',marker?marker.label+' · '+marker.reason.title:''].filter(Boolean).join(' · '),'history-error');
+            problem.dataset.sessionProblem=marker?'returns':'failed';
+            if(marker){problem.title=marker.reason.hint;const open=node('button','Rückgaben ansehen','btn btn-secondary btn-sm');open.type='button';
+              open.addEventListener('click',()=>showReturns(marker.worker));problem.append(' ',open);}
+            card.append(problem);
+          }
           const button=node('button','Dialog lesen','btn btn-secondary');button.type='button';button.dataset.snapshotId=String(row.id);
           button.addEventListener('click',()=>openDialog(row));card.append(button);content.append(card);
         }
@@ -99,18 +114,20 @@ function initialize(){
   for(const button of root.querySelectorAll('[data-history-tab]'))button.addEventListener('click',()=>{
     clearDetail();tab=button.dataset.historyTab;
     for(const b of root.querySelectorAll('[data-history-tab]'))b.setAttribute('aria-pressed',String(b===button));
-    const inbox=tab==='inbox',funk=tab==='funk';
-    document.getElementById('history-panel').hidden=inbox||funk;document.getElementById('inbox-panel').hidden=!inbox;
+    const inbox=tab==='inbox',funk=tab==='funk',returnsTab=tab==='returns';
+    document.getElementById('history-panel').hidden=inbox||funk||returnsTab;document.getElementById('inbox-panel').hidden=!inbox;
+    document.getElementById('returns-panel').hidden=!returnsTab;
+    if(returnsTab)document.querySelector('#returns-panel [data-return-timeline]').dispatchEvent(new CustomEvent('return-timeline:set',{detail:{}}));
     const funkPanel=document.getElementById('funk-panel');if(funkPanel)funkPanel.hidden=!funk;
-    const url=new URL(location.href);if(inbox)url.searchParams.set('tab','inbox');else if(funk)url.searchParams.set('tab','funk');else url.searchParams.delete('tab');history.replaceState(null,'',url);
+    const url=new URL(location.href);if(inbox)url.searchParams.set('tab','inbox');else if(funk)url.searchParams.set('tab','funk');else if(returnsTab)url.searchParams.set('tab','returns');else url.searchParams.delete('tab');history.replaceState(null,'',url);
     document.getElementById('history-session-filters').hidden=tab!=='sessions';
     document.getElementById('history-task-filters').hidden=tab!=='tasks';
     document.getElementById('history-pager').hidden=tab==='notes'||tab==='lessons';
-    if(inbox)document.dispatchEvent(new CustomEvent('bach:inbox-show'));else if(!funk)refresh();
+    if(inbox)document.dispatchEvent(new CustomEvent('bach:inbox-show'));else if(!funk&&!returnsTab)refresh();
   });
   for(const input of [profile,archive,sourceFilter,problemsOnly,taskStatus])input.addEventListener('change',()=>{clearDetail();refresh(true);});
   document.getElementById('history-task-form').addEventListener('submit',event=>{event.preventDefault();if(taskInput.checkValidity())refresh(true);});
-  document.getElementById('history-refresh').addEventListener('click',()=>{if(tab==='inbox')document.dispatchEvent(new CustomEvent('bach:inbox-refresh'));else if(tab!=='funk')refresh();});
+  document.getElementById('history-refresh').addEventListener('click',()=>{if(tab==='inbox')document.dispatchEvent(new CustomEvent('bach:inbox-refresh'));else if(tab==='returns')document.querySelector('#returns-panel [data-rt-refresh]').click();else if(tab!=='funk')refresh();});
   prev.addEventListener('click',()=>{if(tab==='sessions')sessionOffset=Math.max(0,sessionOffset-25);else taskOffset=Math.max(0,taskOffset-25);refresh();});
   next.addEventListener('click',()=>{if(tab==='sessions')sessionOffset+=25;else taskOffset+=25;refresh();});
   async function profiles(){
@@ -127,6 +144,7 @@ function initialize(){
     const params=new URLSearchParams(location.search),task=Number(params.get('task'));
     if(Number.isSafeInteger(task)&&task>0&&task<=2147483647){taskInput.value=String(task);root.querySelector('[data-history-tab="tasks"]').click();}
     else if(params.get('tab')==='inbox')root.querySelector('[data-history-tab="inbox"]').click();
+    else if(params.get('tab')==='returns')root.querySelector('[data-history-tab="returns"]').click();
     else if(params.get('tab')==='funk')root.querySelector('[data-history-tab="funk"]')?.click();
     else await refresh();
   }
