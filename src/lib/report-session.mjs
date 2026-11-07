@@ -9,8 +9,13 @@ export const PRIVACY_REASONS = Object.freeze({
   },
   document_scan_missing: {
     title: 'Akte nicht durchsucht',
-    text: 'Das Profil wurde ohne Durchsuchen der Akte angelegt. Telefonnummern, Mail-Adressen, Adressen und Namen anderer Personen wären nicht ersetzt. Es wurde nichts gesendet.',
-    next: 'Erst die Akte importieren (oder in Berichte/data_roh ablegen), dann das Profil neu anlegen.',
+    text: 'Das Profil wurde ohne Durchsuchen der Akte angelegt, oder danach kamen weitere Dateien dazu. Telefonnummern, Mail-Adressen, Adressen und Namen anderer Personen wären nicht ersetzt. Es wurde nichts gesendet.',
+    next: 'Erst alle Dateien der Akte importieren (oder in Berichte/data_roh ablegen), dann das Profil neu anlegen.',
+  },
+  birth_date_invalid: {
+    title: 'Geburtsdatum fehlt',
+    text: 'Ohne lesbares Geburtsdatum bliebe das echte Datum aus der Akte im Prompt stehen. Es wurde nichts gesendet.',
+    next: 'Das Geburtsdatum im Format TT.MM.JJJJ eintragen und das Profil neu anlegen.',
   },
   profile_missing: {
     title: 'Kein Pseudonymisierungsprofil',
@@ -39,12 +44,24 @@ export function reasonView(data) {
 
 const lines = value => String(value || '').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
 
+// Echtes Kalenderdatum TT.MM.JJJJ (Tag und Monat auch einstellig), sonst null. Muster wie im Formularfeld.
+const BIRTH_DATE_RE = /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/;
+function birthDate(value) {
+  const text = String(value || '').trim();
+  const [, day, month, year] = (BIRTH_DATE_RE.exec(text) || []).map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return year && date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day ? text : null;
+}
+
 // Listen: ein Eintrag pro Zeile (Namen wie "Nachname, Vorname" enthalten Kommas).
+// Geburtsdatum ist Pflicht, ohne Ersatzwert: Fehlte es, setzte BACH früher 01.01.2010 ein, und das echte Datum
+// der Akte blieb im Cloud-Prompt (bach#683, R7-F1).
 export function profileBody({clientName, geburtsdatum, parents, address, terms} = {}) {
   const name = String(clientName || '').trim();
   if (!name) throw new Error('Name des Kindes bzw. der Person wird benötigt.');
-  const body = {client_name: name, additional_terms: lines(terms)};
-  if (String(geburtsdatum || '').trim()) body.geburtsdatum = String(geburtsdatum).trim();
+  const birth = birthDate(geburtsdatum);
+  if (!birth) throw new Error('Geburtsdatum im Format TT.MM.JJJJ wird benötigt.');
+  const body = {client_name: name, geburtsdatum: birth, additional_terms: lines(terms)};
   if (lines(parents).length) body.parent_names = lines(parents);
   if (String(address || '').trim()) body.client_address = String(address).trim();
   return body;

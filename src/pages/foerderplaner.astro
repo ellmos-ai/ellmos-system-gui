@@ -63,7 +63,7 @@ const status = 'font-size:0.8rem;color:var(--text-muted);';
         <h2 style="margin:0 0 0.75rem 0;font-size:1.05rem;">2. Profil anlegen</h2>
         <form id="report-profile-form" style="display:grid;gap:0.65rem;">
           <label style={label}>Name <input id="report-client-name" type="text" required autocomplete="off" style={field} /></label>
-          <label style={label}>Geburtsdatum (TT.MM.JJJJ) <input id="report-birthdate" type="text" autocomplete="off" style={field} /></label>
+          <label style={label}>Geburtsdatum (TT.MM.JJJJ, Pflicht) <input id="report-birthdate" type="text" required pattern="\d{1,2}\.\d{1,2}\.\d{4}" placeholder="TT.MM.JJJJ" title="Geburtsdatum im Format TT.MM.JJJJ, z. B. 03.07.2014" autocomplete="off" style={field} /></label>
           <label style={label}>Eltern (ein Name pro Zeile) <textarea id="report-parents" rows="2" style={field}></textarea></label>
           <label style={label}>Adresse (Straße Nr, PLZ Ort) <input id="report-address" type="text" autocomplete="off" style={field} /></label>
           <label style={label}>Begriffsliste: weitere Namen und Schreibweisen (einer pro Zeile) <textarea id="report-terms" rows="3" style={field}></textarea></label>
