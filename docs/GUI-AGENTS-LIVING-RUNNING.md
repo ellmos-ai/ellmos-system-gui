@@ -32,7 +32,7 @@ Jede Kachel auf `/agenten/running` entsteht in `src/lib/agent-tile.mjs` (PB-5b).
 - **Keine Emoji in der Kachel.** Die Evidenz aus PB-4 (Rückgabe-Schild, Klartext-Grund des letzten Providerlaufs, Wartezustand) steht im Fehlerslot.
 - Die Evidenzliste (ID, Zugang, Startart, Werkzeug, Runde) liegt hinter dem Eintrag Details. Das Dashboard nutzt dieselbe Liste über `createAgentOverviewMeta`.
 
-Steuerelemente, die bisher Emoji trugen, verwenden Symbolpaare aus `src/lib/ui-icons.mjs` (Linienform im Standard, Emoji nur im Symbolstil Emoji). Herkunft: von agy erzeugt, das gelaufene Modell ist nicht belegt; die Pfade folgen zum Teil Feather (MIT) und Lucide (ISC), teils mit identischer Geometrie. Die Quelle je Icon steht in `ICON_SOURCES`, die Lizenztexte in `THIRD_PARTY_LICENSES.md`.
+Steuerelemente, die bisher Emoji trugen, verwenden Symbolpaare aus `src/lib/ui-icons.mjs` (Linienform im Standard, Emoji nur im Symbolstil Emoji). Herkunft: von agy erzeugt, das gelaufene Modell ist nicht belegt; die Pfade folgen zum Teil Feather (MIT) und Lucide (ISC), teils mit identischer Geometrie. Die Quelle je Icon steht in `ICON_SOURCES` (neue Steuer-Icons) und `SHELL_ICON_SOURCES` (Icons von Kopfzeile und Domänen-Pins, deren Herkunft zuvor nicht festgehalten war), die Lizenztexte in `THIRD_PARTY_LICENSES.md`.
 
 ## Modellquellen
 

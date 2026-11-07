@@ -16,7 +16,7 @@
  *  - derived (re-drawn or modified): all other feather:/lucide: entries
  */
 export const ICON_SOURCES = Object.freeze({
-  "bell": "feather:bell (identical first path, second path rounded)",
+  "bell": "feather:bell (identical geometry, second path rounded)",
   "bell-off": "feather:bell-off (derived)",
   "camera": "feather:camera (derived)",
   "ear": "own (agy; no match in Feather 4.29.2 or Lucide 1.70.0)",
