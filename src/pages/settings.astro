@@ -542,26 +542,26 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: 1rem;
   }
-  .ocean-card {
+  :global(.ocean-card) {
     background: rgba(255,255,255,0.02);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 1.25rem;
   }
-  .ocean-card-header {
+  :global(.ocean-card-header) {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
   }
-  .ocean-card-icon {
+  :global(.ocean-card-icon) {
     font-size: 1.5rem;
   }
-  .ocean-card-title {
+  :global(.ocean-card-title) {
     font-weight: 600;
     font-size: 1rem;
   }
-  .ocean-card-role {
+  :global(.ocean-card-role) {
     font-size: 0.8rem;
     color: var(--text-muted);
     margin: 0 0 0.75rem 0;

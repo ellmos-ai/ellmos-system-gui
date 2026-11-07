@@ -43,7 +43,7 @@ export function mountAgentTriggers(panel, client = createTriggerClient()) {
           catch (error) { message(error.message); }
           finally { setBusy(false); }
         }]]) {
-          const button = document.createElement('button'); button.type = 'button'; button.textContent = label;
+          const button = document.createElement('button'); button.type = 'button'; button.className = 'btn btn-sm'; button.textContent = label;
           button.addEventListener('click', action); row.append(button);
         }
         list.append(row);

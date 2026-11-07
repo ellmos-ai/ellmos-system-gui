@@ -96,7 +96,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
   <style>
     .uc-page-head,.uc-detail-head { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
     .uc-page-head h1 { margin:0 0 .25rem; font-size:1.75rem; }
-    .uc-page-head p,.uc-muted,.uc-hint p { color:var(--text-muted); }
+    .uc-page-head p,:global(.uc-muted),.uc-hint p { color:var(--text-muted); }
     .uc-actions,.uc-nav { display:flex; flex-wrap:wrap; gap:.55rem; }
     .uc-nav { margin:1.25rem 0; }
     .uc-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.75rem; margin-bottom:1rem; }
