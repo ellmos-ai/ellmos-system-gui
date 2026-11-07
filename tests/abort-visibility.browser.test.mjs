@@ -10,7 +10,7 @@ import {tmpdir} from 'node:os';
 import {extname, join, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
-import {backend} from './fixtures/abort-visibility-backend.mjs';
+import {NOW, backend} from './fixtures/abort-visibility-backend.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const TYPES = {'.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
@@ -68,6 +68,7 @@ async function open(path, {theme = 'dark', width = 1440} = {}) {
   const requests = [];
   await context.route('**/api/**', backend(requests));
   const page = await context.newPage();
+  await page.clock.setFixedTime(NOW);
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(baseUrl + path);
@@ -146,7 +147,7 @@ test('running: the card of a running worker shows the shield of its task; a wait
     await wait.waitFor();
     assert.match(await wait.innerText(), /Wartet auf Voraussetzung: Sperrstatus des BACH-Zwillings unbekannt/);
     assert.match(await wait.innerText(), /Versuch 3/);
-    assert.match(await wait.innerText(), /nächste Prüfung in [34] min/);
+    assert.match(await wait.innerText(), /nächste Prüfung in 4 min/);
     const ended = page.locator('[data-appearance-worker="worker-ended"] .provider-request-status').first();
     await ended.waitFor();
     assert.match(await ended.innerText(), /Letzter Provideraufruf · Aufruf beendet · Zeitlimit für den Lauf erreicht/);
