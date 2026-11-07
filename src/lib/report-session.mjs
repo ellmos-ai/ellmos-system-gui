@@ -80,6 +80,20 @@ async function call(url, options) {
 
 const JSON_HEADERS = {'Content-Type': 'application/json'};
 
+const READINESS_UNKNOWN = {blocked: true, code: 'readiness_unknown', title: 'Bereitschaft nicht prüfbar',
+  text: 'BACH hat nicht bestätigt, dass die Namenserkennung bereit ist. Der Cloud-Weg bleibt deshalb gesperrt. Es wurde nichts gesendet.',
+  next: 'BACH-Verbindung und Version prüfen (Route /api/report/readiness) oder den Modus lokal nutzen.', detail: ''};
+
+// Cloud nur, wenn BACH es ausdrücklich erlaubt; jede andere Antwort gilt als nicht bereit (fail-closed).
+export async function loadReadiness() {
+  let data;
+  try { data = await call('/api/report/readiness', {method: 'GET'}); } catch (_error) { return {cloudReady: false, reason: READINESS_UNKNOWN}; }
+  if (data?.success === true && data.cloud_ready === true) return {cloudReady: true, reason: null};
+  if (data?.success === true && data.cloud_ready === false)
+    return {cloudReady: false, reason: reasonView({success: false, privacy_block: true, error_code: data.error_code, error: data.error})};
+  return {cloudReady: false, reason: READINESS_UNKNOWN};
+}
+
 export async function startSession() {
   return call('/api/report/session/start', {method: 'POST', headers: JSON_HEADERS, body: '{}'});
 }

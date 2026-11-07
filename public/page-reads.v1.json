@@ -1911,6 +1911,11 @@
   ],
   "/foerderplaner": [
    {
+    "method": "GET",
+    "path": "/api/report/readiness",
+    "required": true
+   },
+   {
     "method": "POST",
     "path": "/api/report/session/start",
     "required": false

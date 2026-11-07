@@ -1,9 +1,19 @@
 // /foerderplaner: Förderbericht über den Cloud-Weg mit Pseudonymisierung (T-20261107-347299705).
 // Logik und Backend-Vertrag: src/lib/report-session.mjs. Gründe werden nur per textContent gezeigt.
-import {buildPrompt, createProfile, generateReport, importFolder, reasonView, startSession} from '../lib/report-session.mjs';
+import {
+  buildPrompt, createProfile, generateReport, importFolder, loadReadiness, reasonView, startSession,
+} from '../lib/report-session.mjs';
 
 const $ = id => document.getElementById(id);
 let sessionId = '';
+
+// Cloud-Schritte nur, wenn BACH die Namenserkennung bestätigt (fail-closed: Fieldset ist im HTML gesperrt).
+function setCloudEnabled(ready) {
+  $('report-cloud-steps').disabled = !ready;
+  setStatus('report-mode-cloud-state', ready
+    ? 'Bereit: Namenserkennung vorhanden, Datenschutz-Sperre aktiv.'
+    : 'Gesperrt: Der Cloud-Weg ist auf diesem Rechner nicht bereit (Grund unten).');
+}
 
 function showReason(view) {
   const box = $('report-reason');
@@ -112,4 +122,13 @@ $('report-new-case')?.addEventListener('click', () => {
   showReason(null);
   for (const id of ['report-import-status', 'report-profile-status', 'report-prompt-status', 'report-generate-status'])
     setStatus(id, '');
+  checkReadiness();
 });
+
+async function checkReadiness() {
+  const state = await loadReadiness();
+  setCloudEnabled(state.cloudReady);
+  if (state.reason) showReason(state.reason);
+}
+
+checkReadiness();

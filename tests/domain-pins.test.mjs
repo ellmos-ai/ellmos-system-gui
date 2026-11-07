@@ -13,7 +13,8 @@ test('schema, unique stable IDs and version are required',()=>{
 });
 test('menu resolves only actual handlers and catalog selections',()=>{
   assert.equal(pinMenuRoute({...pin('ati'),workbench_url:'/ati'}),'/ati');
-  for(const url of ['/domains/ai-media-editor','/foerderplaner','javascript:alert(1)','https://foreign.test/ati','/ati?redirect=evil'])
+  assert.equal(pinMenuRoute({...pin('foerderplaner'),workbench_url:'/foerderplaner'}),'/foerderplaner');
+  for(const url of ['/domains/ai-media-editor','/foerderplaner/','javascript:alert(1)','https://foreign.test/ati','/ati?redirect=evil'])
     assert.equal(pinMenuRoute({...pin('ai-media-editor'),workbench_url:url}),'/domains?domain=ai-media-editor');
   assert.throws(()=>pinMenuRoute(pin('../escape')));
 });
