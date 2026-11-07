@@ -164,6 +164,12 @@ export function createAgentOverviewContent(document, agent = {}, {
   identity.append(status);
   content.append(identity);
 
+  content.append(createAgentOverviewMeta(document, agent, {source}));
+  return content;
+}
+
+// The evidence list shared by the Dashboard card and the Running tile (PB-5b: the tile keeps it behind "Details").
+export function createAgentOverviewMeta(document, agent = {}, {source = 'worker'} = {}) {
   const functionFacet = classifyAgentFunction(agent, source);
   const accessLabel = ACCESS_LABELS[classifyAgentAccess(agent)];
   const model = displayedAgentModel(agent) || 'unbekannt';
@@ -190,8 +196,7 @@ export function createAgentOverviewContent(document, agent = {}, {
     item.textContent = `${label}: ${value}`;
     details.append(item);
   }
-  content.append(details);
-  return content;
+  return details;
 }
 
 function compareOverviewItems(left, right, sort) {

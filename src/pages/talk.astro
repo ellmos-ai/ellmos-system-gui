@@ -2,6 +2,7 @@
 // talk.astro - Unified ELLMOS Talk & Funkgerät Studio (Live Voice, Canvas Visualizer & Local STT/TTS)
 import BachLayout from "../layouts/BachLayout.astro";
 import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
+import UiIcon from "../components/UiIcon.astro";
 ---
 
 <BachLayout title="ELLMOS Talk · Funkgerät & Live-Sprachstudio" currentPath="/chat">
@@ -14,7 +15,6 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
           style="width:56px;height:56px;border-radius:12px;object-fit:cover;border:2px solid rgba(56,189,248,0.55);box-shadow:0 4px 16px rgba(0,0,0,0.4);"
         />
         <div>
-          <span class="badge">🎙️ ellmos-talk · Dual-Model Live Voice, Funkgerät &amp; Emotion Visualizer</span>
           <h1 style="margin:0.3rem 0 0.15rem;font-size:1.5rem;">ELLMOS Talk — Funkgerät &amp; Live-Sprachstudio</h1>
           <p style="margin:0;color:var(--text-muted);font-size:0.88rem;">
             Echtzeit-Funkspruch (PTT) &amp; Freisprechen (Duplex) über FastReflexLoop + DeepCortexLoop (Buddha / Claude / Gemini / Codex) mit lokalem STT (<code>/api/voice/stt</code>) &amp; TTS (<code>/api/voice/tts</code>).
@@ -22,9 +22,9 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
         </div>
       </div>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-        <a href="/agenten/running#talk-slot" class="btn btn-secondary">⚡ Modell-Bindung in Living &amp; Running</a>
-        <a href="/chat" class="btn btn-secondary">💬 Zurück zum Chat</a>
-        <a href="/sensation" class="btn btn-secondary">👁️ Sensation &amp; Mikrofon-Rechte</a>
+        <a href="/agenten/running#talk-slot" class="btn btn-secondary">Modell-Bindung in Living &amp; Running</a>
+        <a href="/chat" class="btn btn-secondary">Zurück zum Chat</a>
+        <a href="/sensation" class="btn btn-secondary">Sensation &amp; Mikrofon-Rechte</a>
       </div>
     </header>
 
@@ -32,8 +32,8 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
       <!-- LEFT COLUMN: Live Visualizer Stage + Transceiver Deck + Transcript -->
       <section class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-height:460px;text-align:center;gap:1rem;">
         <div style="width:100%;display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;color:var(--text-muted);">
-          <span id="reflexStatus">⚡ FastReflexLoop (&lt;250ms): bereit</span>
-          <span id="talk-voice-engine-pill" class="badge">🔊 Prüfe lokale Voice-Engine…</span>
+          <span id="reflexStatus">FastReflexLoop (&lt;250 ms): bereit</span>
+          <span id="talk-voice-engine-pill" class="badge">Prüfe lokale Voice-Engine …</span>
         </div>
 
         <div id="talk-orb" style="position:relative;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle at 35% 35%, rgba(56,189,248,0.28), #0f172a 76%);box-shadow:0 0 48px rgba(56,189,248,0.38);display:flex;align-items:center;justify-content:center;transition:all 0.35s ease;">
@@ -47,9 +47,9 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
         </div>
 
         <div style="display:flex;gap:0.55rem;flex-wrap:wrap;justify-content:center;width:100%;">
-          <button type="button" class="btn btn-primary" id="micBtn" title="Spracheingabe über Browser-SR oder lokales faster-whisper (/api/voice/stt)">📻 Push-to-Talk (Sprechen)</button>
-          <button type="button" class="btn btn-secondary" id="talk-toggle-btn">🎙️ Live-Duplex starten</button>
-          <button type="button" class="btn btn-secondary" id="talk-emotion-cycle-btn">🎨 Emotion / Muster testen</button>
+          <button type="button" class="btn btn-primary" id="micBtn" title="Spracheingabe über Browser-SR oder lokales faster-whisper (/api/voice/stt)">Push-to-Talk (Sprechen)</button>
+          <button type="button" class="btn btn-secondary" id="talk-toggle-btn">Live-Duplex starten</button>
+          <button type="button" class="btn btn-secondary" id="talk-emotion-cycle-btn"><UiIcon name="sparkles" /> Emotion und Muster testen</button>
         </div>
 
         <form id="talk-studio-form" style="width:100%;display:flex;gap:0.45rem;margin-top:0.25rem;">
@@ -59,7 +59,7 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
             placeholder="Funkspruch an Buddha, Claude, Gemini oder Codex tippen + Enter…"
             style="flex:1;padding:0.55rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-dark);color:var(--text);font-size:0.86rem;"
           />
-          <button type="submit" class="btn btn-primary" id="sendBtn">📡 Senden</button>
+          <button type="submit" class="btn btn-primary" id="sendBtn"><UiIcon name="send" /> Senden</button>
         </form>
 
         <div id="talk-transcript-log" style="width:100%;text-align:left;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem;max-height:190px;overflow-y:auto;font-size:0.83rem;line-height:1.45;display:flex;flex-direction:column;gap:0.45rem;">
@@ -75,40 +75,40 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
         <label style="display:flex;flex-direction:column;gap:0.28rem;font-size:0.84rem;">
           <span>Hauptmodell (Deep Reasoning / Persona):</span>
           <select id="talk-main-model" class="lang-switcher">
-            <option value="buddha">🧘 Buddha (Lokaler / Cloud-Cortex-Slot)</option>
-            <option value="claude">🟣 Claude Opus / Sonnet</option>
-            <option value="gemini">🔵 Gemini Pro / Flash</option>
-            <option value="codex">🟢 GPT / Codex</option>
+            <option value="buddha">Buddha (Lokaler / Cloud-Cortex-Slot)</option>
+            <option value="claude">Claude Opus / Sonnet</option>
+            <option value="gemini">Gemini Pro / Flash</option>
+            <option value="codex">GPT / Codex</option>
           </select>
         </label>
         <label style="display:flex;flex-direction:column;gap:0.28rem;font-size:0.84rem;">
           <span>Vorgeschaltetes Fast-Voice-Modell (Turn-Taking &amp; Rückmeldung):</span>
           <select id="talk-fast-model" class="lang-switcher">
-            <option value="smollm2:360m">⚡ smollm2:360m (Lokal · &lt;150ms Reflex)</option>
-            <option value="qwen3-0.6b-voice">⚡ qwen3-0.6b-voice (Lokal · Turn-Taking)</option>
-            <option value="gemma4-e2b">⚡ gemma4-e2b (Schnelles Dialog-Relay)</option>
+            <option value="smollm2:360m">smollm2:360m (Lokal · &lt;150ms Reflex)</option>
+            <option value="qwen3-0.6b-voice">qwen3-0.6b-voice (Lokal · Turn-Taking)</option>
+            <option value="gemma4-e2b">gemma4-e2b (Schnelles Dialog-Relay)</option>
           </select>
         </label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;font-size:0.82rem;">
           <label style="display:flex;flex-direction:column;gap:0.25rem;">
             <span>Visualizer-Muster:</span>
             <select id="patternSelect" class="lang-switcher">
-              <option value="orb">🔵 Orb (Sphäre)</option>
-              <option value="wave">🌊 Wave (Harmonische Welle)</option>
-              <option value="rings">⭕ Rings (Konzentrische Ringe)</option>
-              <option value="constellation">✨ Constellation (Sternbild)</option>
-              <option value="pulse">💓 Pulse (Radar-Puls)</option>
+              <option value="orb">Orb (Sphäre)</option>
+              <option value="wave">Wave (Harmonische Welle)</option>
+              <option value="rings">Rings (Konzentrische Ringe)</option>
+              <option value="constellation">Constellation (Sternbild)</option>
+              <option value="pulse">Pulse (Radar-Puls)</option>
             </select>
           </label>
           <label style="display:flex;flex-direction:column;gap:0.25rem;">
             <span>Emotion / Farbstimmung:</span>
             <select id="emotionSelect" class="lang-switcher">
-              <option value="calm">🧘 Ruhig (Calm)</option>
-              <option value="curious">🔮 Neugierig (Curious)</option>
-              <option value="joyful">😊 Freudig (Joyful)</option>
-              <option value="focused">🧠 Fokussiert (Focused)</option>
-              <option value="empathetic">💚 Empathisch (Empathetic)</option>
-              <option value="alert">📡 Aufmerksam (Alert)</option>
+              <option value="calm">Ruhig (Calm)</option>
+              <option value="curious">Neugierig (Curious)</option>
+              <option value="joyful">Freudig (Joyful)</option>
+              <option value="focused">Fokussiert (Focused)</option>
+              <option value="empathetic">Empathisch (Empathetic)</option>
+              <option value="alert">Aufmerksam (Alert)</option>
             </select>
           </label>
         </div>
@@ -118,13 +118,13 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
         </label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;font-size:0.82rem;">
           <label style="display:flex;flex-direction:column;gap:0.25rem;">
-            <span>🎤 Mikrofon-Gerät:</span>
+            <span>Mikrofon</span>
             <select id="talk-mic-device" class="lang-switcher">
               <option value="default">Standard-Mikrofon</option>
             </select>
           </label>
           <label style="display:flex;flex-direction:column;gap:0.25rem;">
-            <span>🔊 Lautsprecher-Gerät:</span>
+            <span>Lautsprecher</span>
             <select id="talk-speaker-device" class="lang-switcher">
               <option value="default">Standard-Ausgabe</option>
             </select>
@@ -299,16 +299,16 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
         }
       }
 
-      function appendTranscriptEntry(roleLabel, text, color) {
+      // Rows take their colors from the theme tokens (CSS .talk-transcript-row). A color sent by the model only
+      // tints the left edge, never the text, so the text keeps its contrast in every theme.
+      function appendTranscriptEntry(roleLabel, text, kind, accent) {
         if (!transcriptLog) return;
         const row = document.createElement("div");
-        row.style.padding = "0.4rem 0.55rem";
-        row.style.borderRadius = "6px";
-        row.style.background = "rgba(15, 23, 42, 0.7)";
-        row.style.borderLeft = `3px solid ${color || "#38bdf8"}`;
+        row.className = "talk-transcript-row talk-transcript-" + (["user", "reflex", "model"].includes(kind) ? kind : "model");
+        if (typeof accent === "string" && /^#[0-9a-f]{6}$/i.test(accent)) row.style.setProperty("--row-accent", accent);
         const strong = document.createElement("strong");
+        strong.className = "talk-transcript-role";
         strong.textContent = roleLabel + ": ";
-        strong.style.color = color || "#38bdf8";
         const span = document.createElement("span");
         span.textContent = text;
         row.append(strong, span);
@@ -322,8 +322,8 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
         const persona = mainModelSelect?.value || "buddha";
         const lang = document.documentElement.lang || "de";
         let turnResolved = false;
-        appendTranscriptEntry("Du", text, "#94a3b8");
-        if (transcriptBox) transcriptBox.textContent = `⚡ Fast-Reflex (${persona.toUpperCase()}) prüft Kanal…`;
+        appendTranscriptEntry("Du", text, "user");
+        if (transcriptBox) transcriptBox.textContent = `Fast-Reflex (${persona.toUpperCase()}) prüft den Kanal …`;
         // Stage 1: Fast-Reflex (<200ms Vorlauf-Backchanneling vor der Hauptmodell-Antwort)
         fetch("/api/talk/reflex", {
           method: "POST",
@@ -338,12 +338,12 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
             const fastModel = rData.reflex?.fast_model || "fast-reflex";
             const targetMs = rData.reflex?.latency_target_ms || 180;
             if (reflexStatus) {
-              reflexStatus.textContent = `⚡ FastReflexLoop (${targetMs}ms · ${fastModel}): „${ack}“`;
+              reflexStatus.textContent = `FastReflexLoop (${targetMs} ms · ${fastModel}): „${ack}“`;
             }
             if (transcriptBox) {
-              transcriptBox.textContent = `⚡ ${ack} (${persona.toUpperCase()} formuliert Hauptantwort…)`;
+              transcriptBox.textContent = `${ack} (${persona.toUpperCase()} formuliert die Hauptantwort …)`;
             }
-            appendTranscriptEntry(`⚡ FAST-REFLEX (${fastModel})`, ack, "#facc15");
+            appendTranscriptEntry(`Fast-Reflex (${fastModel})`, ack, "reflex");
           })
           .catch(() => {});
 
@@ -359,12 +359,12 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
           const data = await res.json();
           if (data.visual_state) applyVisualState(data.visual_state);
           if (data.reflex && reflexStatus) {
-            reflexStatus.textContent = `⚡ FastReflexLoop (${data.reflex.latency_target_ms || 180}ms · ${data.reflex.fast_model || "fast-reflex"}): „${data.reflex.ack_text || "bereit"}“`;
+            reflexStatus.textContent = `FastReflexLoop (${data.reflex.latency_target_ms || 180} ms · ${data.reflex.fast_model || "fast-reflex"}): „${data.reflex.ack_text || "bereit"}“`;
           }
           const reply = data.spoken_text || (data.sentences || []).join(" ") || "";
           if (transcriptBox && reply) transcriptBox.textContent = reply;
           if (reply) {
-            appendTranscriptEntry(persona.toUpperCase(), reply, data.visual_state?.color_primary || "#00d4aa");
+            appendTranscriptEntry(persona.toUpperCase(), reply, "model", data.visual_state?.color_primary);
             await playSpokenResponse(reply, lang);
           }
         } catch (_) {}
@@ -419,7 +419,7 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
             ? "Modus: Live-Duplex aktiv (Mikrofon-Stream verbunden)"
             : "Modus: Bereit (Wake-Word: „Hey Buddha“ / „Hey Ocean“)";
         }
-        toggleBtn.textContent = active ? "⏹️ Live-Duplex beenden" : "🎙️ Live-Duplex starten";
+        toggleBtn.textContent = active ? "Live-Duplex beenden" : "Live-Duplex starten";
         if (window.bachUpdateTalkConfig) {
           window.bachUpdateTalkConfig({ operating_mode: active ? "duplex" : "ptt", mode: active ? "listening" : "idle" });
         }
@@ -431,13 +431,13 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
         if (SR) {
           const rec = new SR();
           rec.lang = lang === "en" ? "en-US" : "de-DE";
-          micBtn.textContent = "🔴 Sprich jetzt…";
+          micBtn.textContent = "Sprich jetzt …";
           rec.onresult = (ev) => {
             const t = ev.results?.[0]?.[0]?.transcript || "";
             if (t) sendStudioTurn(t);
           };
-          rec.onend = () => { micBtn.textContent = "📻 Push-to-Talk (Sprechen)"; };
-          rec.onerror = () => { micBtn.textContent = "📻 Push-to-Talk (Sprechen)"; };
+          rec.onend = () => { micBtn.textContent = "Push-to-Talk (Sprechen)"; };
+          rec.onerror = () => { micBtn.textContent = "Push-to-Talk (Sprechen)"; };
           rec.start();
           return;
         }
@@ -446,11 +446,11 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const chunks = [];
             const recorder = new MediaRecorder(stream);
-            micBtn.textContent = "🔴 Lokal STT (3.5s)…";
+            micBtn.textContent = "Lokales STT (3,5 s) …";
             recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
             recorder.onstop = async () => {
               stream.getTracks().forEach((t) => t.stop());
-              micBtn.textContent = "📻 Push-to-Talk (Sprechen)";
+              micBtn.textContent = "Push-to-Talk (Sprechen)";
               const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
               const b64 = await new Promise((resolve) => {
                 const reader = new FileReader();
@@ -471,7 +471,7 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
             recorder.start();
             setTimeout(() => { if (recorder.state === "recording") recorder.stop(); }, 3500);
           } catch (_) {
-            micBtn.textContent = "📻 Push-to-Talk (Sprechen)";
+            micBtn.textContent = "Push-to-Talk (Sprechen)";
           }
         }
       });
@@ -523,7 +523,7 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
           if (!v || !v.status) return;
           const st = v.status;
           if (voicePill) {
-            voicePill.textContent = `🔊 STT: ${st.stt_backend || "faster-whisper"} · TTS: ${st.tts_backend || "piper/wave"}`;
+            voicePill.textContent = `STT: ${st.stt_backend || "faster-whisper"} · TTS: ${st.tts_backend || "piper/wave"}`;
           }
           if (voiceDetail) {
             voiceDetail.textContent = `STT (${st.stt_backend || "whisper"}): ${v.stt_permission ? "Freigegeben" : "Gesperrt"} · TTS (${st.tts_backend || "piper"}): ${v.tts_permission ? "Freigegeben" : "Gesperrt"}`;
@@ -533,3 +533,17 @@ import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
     })();
   </script>
 </BachLayout>
+
+<style is:global>
+  .talk-transcript-row {
+    padding: 0.45rem 0.65rem;
+    border-radius: 6px;
+    border-left: 3px solid var(--row-accent, var(--border-hover));
+    background: var(--bg-elevated);
+    color: var(--text);
+  }
+  .talk-transcript-role { color: var(--text); }
+  .talk-transcript-user { --row-accent: var(--text-dim); }
+  .talk-transcript-reflex { --row-accent: var(--warning-text); }
+  .talk-transcript-model { --row-accent: var(--accent-blue-text); }
+</style>

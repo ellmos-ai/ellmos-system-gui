@@ -3,6 +3,7 @@
 import navConfig from "../config/nav_config.json";
 import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
 import { resolveSidebarActive } from "../lib/area-nav.mjs";
+import UiIcon from "./UiIcon.astro";
 
 interface Props {
   currentPath?: string;
@@ -106,16 +107,16 @@ function lineIconSvg(id: string): string {
       <img id="gui-brand-image" alt="" hidden width="28" height="28" />
       <span class="logo-text" id="gui-brand-label">System GUI</span>
     </a>
-    <span id="backend-origin-badge" class="backend-origin-badge" role="status" aria-live="polite">Backend unbekannt</span>
+    <span id="backend-origin-badge" class="backend-origin-badge" data-tone="unknown" role="status" aria-live="polite">Backend unbekannt</span>
     <button
       type="button"
       id="header-ram-claim-btn"
-      class="backend-origin-badge header-ram-claim-pill"
+      class="backend-origin-badge header-ram-claim-pill" data-tone="unknown"
       title="RAM-Distributor & Modell-Claiming — Klicken, um geladene Modelle & RAM für andere Prozesse freizugeben"
       aria-label="Modell- und RAM-Belegung prüfen oder freigeben"
     >
       <span id="header-ram-claim-dot" class="ram-claim-dot"></span>
-      <span id="header-ram-claim-label">🧠 RAM: Prüfe…</span>
+      <span id="header-ram-claim-label">RAM wird geprüft …</span>
     </button>
   </div>
 
@@ -221,7 +222,7 @@ function lineIconSvg(id: string): string {
               <div class="talk-console-title-row">
                 <strong>ELLMOS Talk</strong>
                 <span class="talk-console-freq">CH-01 · KLASSE 1</span>
-                <span id="header-talk-runtime-badge" class="talk-console-badge">🌐 Browser</span>
+                <span id="header-talk-runtime-badge" class="talk-console-badge">Browser</span>
               </div>
               <small id="header-talk-state-text" class="talk-console-subtitle">BUDDHA · Bereit für Funkspruch</small>
             </div>
@@ -239,11 +240,11 @@ function lineIconSvg(id: string): string {
         <div id="header-talk-summon-banner" class="talk-summon-alert" hidden>
           <div class="talk-summon-header">
             <span class="talk-summon-pulse"></span>
-            <strong id="header-talk-summon-title">📻 Modell-Funkspruch eingehend</strong>
+            <strong id="header-talk-summon-title">Modell-Funkspruch eingehend</strong>
           </div>
           <p id="header-talk-summon-msg" class="talk-summon-body">Ein Modell möchte mit dir sprechen.</p>
           <div class="talk-summon-actions">
-            <button type="button" id="header-talk-summon-accept" class="talk-btn talk-btn-accept">🎙️ Annehmen</button>
+            <button type="button" id="header-talk-summon-accept" class="talk-btn talk-btn-accept">Annehmen</button>
             <button type="button" id="header-talk-summon-dismiss" class="talk-btn talk-btn-later">Später</button>
           </div>
         </div>
@@ -255,16 +256,16 @@ function lineIconSvg(id: string): string {
             <span id="header-talk-active-model-pill" class="talk-mono-pill">buddha-default</span>
           </div>
           <div class="talk-persona-grid" role="radiogroup" aria-label="Angebundenes Modell wählen">
-            <button type="button" class="talk-persona-pill is-active" data-talk-persona="buddha">🧘 Buddha</button>
-            <button type="button" class="talk-persona-pill" data-talk-persona="claude">🟣 Claude</button>
-            <button type="button" class="talk-persona-pill" data-talk-persona="gemini">🔵 Gemini</button>
-            <button type="button" class="talk-persona-pill" data-talk-persona="codex">🟢 Codex</button>
+            <button type="button" class="talk-persona-pill is-active" data-talk-persona="buddha">Buddha</button>
+            <button type="button" class="talk-persona-pill" data-talk-persona="claude">Claude</button>
+            <button type="button" class="talk-persona-pill" data-talk-persona="gemini">Gemini</button>
+            <button type="button" class="talk-persona-pill" data-talk-persona="codex">Codex</button>
           </div>
           <select id="header-talk-persona" class="talk-sr-select" aria-hidden="true" tabindex="-1">
-            <option value="buddha">🧘 Buddha (Lokal)</option>
-            <option value="claude">🟣 Claude</option>
-            <option value="gemini">🔵 Gemini</option>
-            <option value="codex">🟢 Codex / GPT</option>
+            <option value="buddha">Buddha (Lokal)</option>
+            <option value="claude">Claude</option>
+            <option value="gemini">Gemini</option>
+            <option value="codex">Codex / GPT</option>
           </select>
         </div>
 
@@ -277,7 +278,7 @@ function lineIconSvg(id: string): string {
             title="Klicken oder gedrückt halten zum Einsprechen"
           >
             <span class="talk-ptt-led"></span>
-            <span id="header-talk-ptt-label">📻 Funkspruch senden (PTT)</span>
+            <span id="header-talk-ptt-label">Funkspruch senden (PTT)</span>
           </button>
           <button
             type="button"
@@ -285,7 +286,7 @@ function lineIconSvg(id: string): string {
             class="talk-duplex-btn"
             title="Dauerhaftes Freisprechen (Live-Duplex) umschalten"
           >
-            🎙️ Duplex
+            Duplex
           </button>
         </div>
 
@@ -297,7 +298,7 @@ function lineIconSvg(id: string): string {
             placeholder="Kurzen Funkspruch tippen + Enter…"
             autocomplete="off"
           />
-          <button type="submit" class="talk-quick-send" title="Funkspruch senden">📡</button>
+          <button type="submit" class="talk-quick-send" title="Funkspruch senden" aria-label="Funkspruch senden"><UiIcon name="send" /></button>
         </form>
 
         <div id="header-talk-reply-box" class="talk-reply-card" hidden></div>
@@ -309,48 +310,48 @@ function lineIconSvg(id: string): string {
             <span class="talk-mono-pill">Fast-Relay aktiv</span>
           </div>
           <div class="talk-mode-strip" role="radiogroup" aria-label="Betriebsmodus">
-            <button type="button" class="talk-mode-pill is-active" data-talk-opmode="ptt">📻 PTT</button>
-            <button type="button" class="talk-mode-pill" data-talk-opmode="duplex">🎙️ Duplex</button>
-            <button type="button" class="talk-mode-pill" data-talk-opmode="wake_word">👂 Wake</button>
-            <button type="button" class="talk-mode-pill" data-talk-opmode="off">⏸️ Aus</button>
+            <button type="button" class="talk-mode-pill is-active" data-talk-opmode="ptt">PTT</button>
+            <button type="button" class="talk-mode-pill" data-talk-opmode="duplex">Duplex</button>
+            <button type="button" class="talk-mode-pill" data-talk-opmode="wake_word">Wake-Word</button>
+            <button type="button" class="talk-mode-pill" data-talk-opmode="off">Aus</button>
           </div>
           <select id="header-talk-opmode" class="talk-sr-select" aria-hidden="true" tabindex="-1">
-            <option value="ptt">📻 Funkgerät (PTT)</option>
-            <option value="duplex">🎙️ Live-Duplex</option>
-            <option value="wake_word">👂 Wake-Word</option>
-            <option value="off">⏸️ Aus</option>
+            <option value="ptt">Funkgerät (PTT)</option>
+            <option value="duplex">Live-Duplex</option>
+            <option value="wake_word">Wake-Word</option>
+            <option value="off">Aus</option>
           </select>
         </div>
 
         <!-- 6. Collapsible Audio Devices & Summon Policy Drawer -->
         <details class="talk-console-drawer">
           <summary class="talk-drawer-summary">
-            <span>⚙️ Kanal- &amp; Audio-Geräte</span>
+            <span>Kanal und Audio-Geräte</span>
             <span class="talk-drawer-chevron">▾</span>
           </summary>
           <div class="talk-drawer-body">
             <label class="talk-field-label">
-              <span>Modell-Eigenstart (Agent Summon):</span>
+              <span>Eigenstart des Modells</span>
               <select id="header-talk-summon-policy" class="lang-switcher talk-full-select">
-                <option value="knock">🔔 Funkgerät-Anklopfen im Header</option>
-                <option value="auto_popup">⚡ Auto-Popup (bei Präsenz via Sensation)</option>
-                <option value="muted">🔕 Stumm (Kein Modell-Eigenstart)</option>
+                <option value="knock">Anklopfen in der Kopfzeile</option>
+                <option value="auto_popup">Auto-Popup bei Anwesenheit</option>
+                <option value="muted">Stumm</option>
               </select>
             </label>
             <div class="talk-device-row">
               <label class="talk-field-label">
-                <span>🎤 Mikrofon:</span>
+                <span>Mikrofon</span>
                 <select id="header-talk-mic-select" class="lang-switcher talk-full-select">
                   <option value="default">Standard-Mikrofon</option>
                 </select>
               </label>
               <label class="talk-field-label">
-                <span>🔊 Lautsprecher:</span>
+                <span>Lautsprecher</span>
                 <select id="header-talk-speaker-select" class="lang-switcher talk-full-select">
                   <option value="default">Standard-Ausgabe</option>
                 </select>
               </label>
-              <button type="button" id="header-talk-refresh-devices" class="talk-icon-btn" title="Audio- & Kamerageräte neu erkennen">🔄</button>
+              <button type="button" id="header-talk-refresh-devices" class="talk-icon-btn" title="Audio- &amp; Kamerageräte neu erkennen" aria-label="Geräte neu erkennen"><UiIcon name="refresh" /></button>
             </div>
           </div>
         </details>
@@ -363,21 +364,21 @@ function lineIconSvg(id: string): string {
             class="talk-footer-link"
             title="Öffnet ELLMOS Talk als eigenständiges, schwebendes Begleitfenster"
           >
-            ↗ Begleitfenster
+            <UiIcon name="external" /> Begleitfenster
           </button>
           <a
             href="/talk"
             class="talk-footer-link"
             title="Vollbild-Konsole öffnen"
           >
-            🎙️ Studio (/talk)
+            Studio (/talk)
           </a>
           <a
             href="/agenten/running#talk-slot"
             class="talk-footer-link talk-footer-link-primary"
             title="Modell-Bindung, Fast-Relay-Modell & Betrieb in Living & Running umstellen"
           >
-            ⚡ Living &amp; Running ↗
+            Living &amp; Running
           </a>
         </div>
       </div>
@@ -533,6 +534,12 @@ function lineIconSvg(id: string): string {
   }
   refreshGuiBrand();
 
+  // The module script below publishes the pill models (src/lib/header-status.mjs) as window.BachHeaderStatus.
+  const headerStatusReady = new Promise((resolve) => {
+    if (window.BachHeaderStatus) resolve(window.BachHeaderStatus);
+    else document.addEventListener('bach:header-status-ready', () => resolve(window.BachHeaderStatus), { once: true });
+  });
+
   async function refreshBackendOriginBadge() {
     const badge = document.getElementById('backend-origin-badge');
     if (!badge) return;
@@ -542,22 +549,14 @@ function lineIconSvg(id: string): string {
       const response = await fetch('/api/gui/backend-origin', { cache: 'no-store', signal: controller.signal });
       if (!response.ok) throw new Error('Backend-Metadaten nicht erreichbar');
       const state = await response.json();
-      const verified = state.connection_verified === true && state.schema_verified === true
-        && state.instance_verified === true && state.adapter_binding_verified === true;
-      if (verified && state.mode === 'server') {
-        badge.textContent = 'Backend: Server';
-      } else if (verified && state.mode === 'local') {
-        badge.textContent = 'Backend: Lokal';
-      } else {
-        badge.textContent = 'Backend unbekannt';
-      }
-      badge.dataset.verified = String(verified && (state.mode === 'server' || state.mode === 'local'));
-      badge.title = badge.dataset.verified === 'true' && state.instance_label
-        ? `${state.instance_label} · geprüft ${state.observed_at || ''}` : 'Backendquelle nicht verifiziert';
+      const status = await headerStatusReady;
+      const model = status.backendPillModel(state);
+      status.applyPill(badge, model);
+      badge.dataset.verified = String(model.tone === 'ok');
     } catch (_) {
-      badge.textContent = 'Offline · Backend unbekannt';
+      const status = await headerStatusReady;
+      status.applyPill(badge, status.backendPillError());
       badge.dataset.verified = 'false';
-      badge.title = 'Backend-Metadaten nicht erreichbar; kein Cache belegt';
     } finally {
       clearTimeout(timeout);
     }
@@ -568,40 +567,30 @@ function lineIconSvg(id: string): string {
   // Live RAM-Distributor & Model Claiming Status in Header + 1-Click Release
   async function refreshHeaderRamClaim() {
     const btn = document.getElementById("header-ram-claim-btn");
-    const dot = document.getElementById("header-ram-claim-dot");
     const label = document.getElementById("header-ram-claim-label");
     if (!btn || !label) return;
+    const show = (status, model) => {
+      status.applyPill(label, model);
+      btn.dataset.tone = model.tone;
+      btn.title = model.title;
+    };
     try {
       const res = await fetch("/api/system/cluster-cockpit", { cache: "no-store" });
       if (!res.ok) throw new Error("HTTP " + res.status);
       const data = await res.json();
-      const f = data?.fackel || {};
-      const cap = f.capacity || {};
-      const prio = f.priority?.value || "ollama";
-      const turn = f.compute_turn || {};
-      const count = Number.isSafeInteger(cap.loaded_model_count) ? cap.loaded_model_count : 0;
-      const usedGib = Number.isFinite(cap.used_gib) ? cap.used_gib.toFixed(1) : null;
-      const models = Array.isArray(cap.loaded_models) && cap.loaded_models.length ? cap.loaded_models.join(", ") : "keine";
-      if (turn.active) {
-        label.textContent = `🔥 Aktiv (${models})`;
-        if (dot) { dot.style.background = "#f97316"; dot.style.boxShadow = "0 0 8px #f97316"; }
-      } else if (count > 0) {
-        label.textContent = `🧠 ${count} Modell${count === 1 ? "" : "e"}${usedGib ? " (" + usedGib + " GiB)" : ""} · Freigeben`;
-        if (dot) { dot.style.background = "#38bdf8"; dot.style.boxShadow = "0 0 8px #38bdf8"; }
-      } else {
-        label.textContent = prio === "compute" ? "🔓 RAM frei (Compute)" : "🧠 0 Modelle im RAM";
-        if (dot) { dot.style.background = "#10b981"; dot.style.boxShadow = "none"; }
-      }
-      btn.title = `RAM-Distributor (${prio.toUpperCase()}) · Geladene Modelle: ${models}. Klicken zum sofortigen Freigeben von Modell & RAM.`;
+      const status = await headerStatusReady;
+      show(status, status.computePillModel(data));
     } catch (_) {
-      label.textContent = "🧠 RAM / Fackel";
+      const status = await headerStatusReady;
+      show(status, status.computePillError());
     }
   }
   refreshHeaderRamClaim();
   setInterval(refreshHeaderRamClaim, 18000);
   document.getElementById("header-ram-claim-btn")?.addEventListener("click", async () => {
     const label = document.getElementById("header-ram-claim-label");
-    if (label) label.textContent = "⏳ Gebe RAM frei…";
+    if (label) label.textContent = "Gebe RAM frei …";
+    document.getElementById("header-ram-claim-btn").dataset.tone = "busy";
     try {
       await fetch("/api/fackel", {
         method: "POST",
@@ -1025,7 +1014,7 @@ function lineIconSvg(id: string): string {
 
       if (hasActiveSummon) {
         if (summonBanner) summonBanner.hidden = false;
-        if (summonTitle) summonTitle.textContent = `📻 ${(s.caller || 'Modell').toUpperCase()} ruft über Funk`;
+        if (summonTitle) summonTitle.textContent = `${(s.caller || 'Modell').toUpperCase()} ruft über Funk`;
         if (summonMsg) summonMsg.textContent = s.message;
         if (dot) {
           dot.style.background = '#38bdf8';
@@ -1082,7 +1071,7 @@ function lineIconSvg(id: string): string {
         let turnResolved = false;
         if (replyBox) {
           replyBox.hidden = false;
-          replyBox.textContent = `⚡ Fast-Reflex (${persona.toUpperCase()}) prüft Kanal…`;
+          replyBox.textContent = `Fast-Reflex (${persona.toUpperCase()}) prüft den Kanal …`;
         }
         // Stage 1: Fast-Reflex (<200ms Vorlauf-Backchanneling vor der Hauptmodell-Antwort)
         fetch('/api/talk/reflex', {
@@ -1098,7 +1087,7 @@ function lineIconSvg(id: string): string {
             const fastModel = rData.reflex?.fast_model || 'fast-reflex';
             if (replyBox && ack) {
               replyBox.hidden = false;
-              replyBox.textContent = `⚡ ${ack} (${fastModel} · ${persona.toUpperCase()} denkt nach…)`;
+              replyBox.textContent = `${ack} (${fastModel} · ${persona.toUpperCase()} denkt nach …)`;
             }
           })
           .catch(() => {});
@@ -1115,7 +1104,7 @@ function lineIconSvg(id: string): string {
         if (data && data.visual_state) applyTalkStateToHeader(data.visual_state);
         if (replyBox && data?.spoken_text) {
           replyBox.hidden = false;
-          const reflexPrefix = data.reflex?.ack_text ? `⚡ ${data.reflex.ack_text} — ` : '';
+          const reflexPrefix = data.reflex?.ack_text ? `${data.reflex.ack_text} · ` : '';
           replyBox.textContent = `${reflexPrefix}${data.spoken_text}`;
         }
         if (data?.spoken_text) {
@@ -1193,7 +1182,7 @@ function lineIconSvg(id: string): string {
     const runtimeBadge = document.getElementById('header-talk-runtime-badge');
     const rt = detectClientRuntime();
     if (runtimeBadge) {
-      runtimeBadge.textContent = rt === 'tauri' ? '🖥️ Tauri' : (rt === 'mobile' ? '📱 Mobil' : '🌐 Browser');
+      runtimeBadge.textContent = rt === 'tauri' ? 'Tauri' : (rt === 'mobile' ? 'Mobil' : 'Browser');
     }
 
     const micSelect = document.getElementById('header-talk-mic-select');
@@ -1299,12 +1288,12 @@ function lineIconSvg(id: string): string {
         const chunks = [];
         const recorder = new MediaRecorder(stream);
         pttBtn?.classList.add('is-recording');
-        if (pttLabel) pttLabel.textContent = '🔴 Lokal STT — Sprich jetzt (3.5s)…';
+        if (pttLabel) pttLabel.textContent = 'Lokales STT · jetzt sprechen (3,5 s) …';
         recorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
         recorder.onstop = async () => {
           stream.getTracks().forEach((t) => t.stop());
           pttBtn?.classList.remove('is-recording');
-          if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+          if (pttLabel) pttLabel.textContent = 'Funkspruch senden (PTT)';
           const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
           const b64 = await new Promise((resolve) => {
             const reader = new FileReader();
@@ -1329,7 +1318,7 @@ function lineIconSvg(id: string): string {
         setTimeout(() => { if (recorder.state === 'recording') recorder.stop(); }, 3500);
       } catch (_) {
         pttBtn?.classList.remove('is-recording');
-        if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+        if (pttLabel) pttLabel.textContent = 'Funkspruch senden (PTT)';
       }
     }
 
@@ -1339,18 +1328,18 @@ function lineIconSvg(id: string): string {
         const rec = new SR();
         rec.lang = (document.documentElement.lang || 'de') === 'en' ? 'en-US' : 'de-DE';
         pttBtn?.classList.add('is-recording');
-        if (pttLabel) pttLabel.textContent = '🔴 Kanal offen — Sprich jetzt…';
+        if (pttLabel) pttLabel.textContent = 'Kanal offen · jetzt sprechen …';
         rec.onresult = (ev) => {
           const transcript = ev.results?.[0]?.[0]?.transcript || '';
           if (transcript) sendHeaderTalkTurn(transcript);
         };
         rec.onend = () => {
           pttBtn?.classList.remove('is-recording');
-          if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+          if (pttLabel) pttLabel.textContent = 'Funkspruch senden (PTT)';
         };
         rec.onerror = () => {
           pttBtn?.classList.remove('is-recording');
-          if (pttLabel) pttLabel.textContent = '📻 Funkspruch senden (PTT)';
+          if (pttLabel) pttLabel.textContent = 'Funkspruch senden (PTT)';
           captureViaLocalStt();
         };
         rec.start();
@@ -1364,7 +1353,7 @@ function lineIconSvg(id: string): string {
     liveBtn?.addEventListener('click', () => {
       liveActive = !liveActive;
       liveBtn.classList.toggle('is-active', liveActive);
-      liveBtn.textContent = liveActive ? '⏹️ Stopp' : '🎙️ Duplex';
+      liveBtn.textContent = liveActive ? 'Stopp' : 'Duplex';
       updateHeaderTalkConfig({ operating_mode: liveActive ? 'duplex' : 'ptt', mode: liveActive ? 'listening' : 'idle' });
     });
 
@@ -1616,6 +1605,9 @@ function lineIconSvg(id: string): string {
   document.addEventListener('bach:nav-refresh', refreshActiveNavigation);
   refreshActiveNavigation();
   import {initializeWorldI18n} from "../lib/i18n.mjs";
+  import * as HeaderStatus from "../lib/header-status.mjs";
+  (window as any).BachHeaderStatus = HeaderStatus;
+  document.dispatchEvent(new Event('bach:header-status-ready'));
   initializeDomainMenu();
   initializeWorldI18n();
 </script>
@@ -1627,32 +1619,38 @@ function lineIconSvg(id: string): string {
     display: inline-flex;
     align-items: center;
   }
-  /* ── RAM Claim Pill in Header ── */
+  /* ── RAM Claim Pill in Header: one statement, a quiet indicator, the action only on hover/focus ── */
   .header-ram-claim-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
     cursor: pointer;
-    background: rgba(15, 23, 42, 0.65);
-    border: 1px solid var(--shell-border, #274259);
-    color: var(--shell-text, #eef6fb);
-    padding: 0.24rem 0.55rem;
-    border-radius: 999px;
-    font-size: 0.72rem;
+    font: inherit;
+    font-size: 0.74rem;
     font-weight: 600;
     transition: border-color 0.15s ease, background 0.15s ease;
   }
-  .header-ram-claim-pill:hover {
-    border-color: #38bdf8;
-    background: rgba(14, 165, 233, 0.18);
+  .header-ram-claim-pill:hover,
+  .header-ram-claim-pill:focus-visible {
+    border-color: var(--shell-accent);
+    background: var(--shell-sidebar-hover);
+  }
+  .header-ram-claim-pill:focus-visible { outline: 2px solid var(--shell-accent); outline-offset: 2px; }
+  .header-ram-claim-pill:hover #header-ram-claim-label::after,
+  .header-ram-claim-pill:focus-visible #header-ram-claim-label::after {
+    content: " · freigeben";
+    color: var(--shell-muted);
+    font-weight: 500;
   }
   .ram-claim-dot {
-    width: 7px;
-    height: 7px;
+    width: 0.5rem;
+    height: 0.5rem;
     border-radius: 50%;
-    background: #10b981;
+    background: var(--pill-tone, #8aa3b8);
     flex-shrink: 0;
   }
+  .header-ram-claim-pill[data-tone="ok"] { --pill-tone: #5fd08f; }
+  .header-ram-claim-pill[data-tone="busy"] { --pill-tone: #7cb6ff; }
+  .header-ram-claim-pill[data-tone="idle"] { --pill-tone: #aec3d4; }
+  .header-ram-claim-pill[data-tone="error"] { --pill-tone: #ff8f8c; }
+  .header-ram-claim-pill[data-tone="unknown"] { --pill-tone: #8aa3b8; }
 
   /* ── Animiertes Origami-Papierboot auf der Header-Body-Trennlinie (Meeresoberfläche) ── */
   .header-ocean-waterline {
@@ -1818,10 +1816,10 @@ function lineIconSvg(id: string): string {
     width: 368px;
     max-width: calc(100vw - 1.5rem);
     z-index: 1400;
-    background: linear-gradient(180deg, var(--bg-card, #0f172a) 0%, var(--bg-panel, #090e1a) 100%);
+    background: var(--bg-card);
     border: 1px solid var(--border, #334155);
     border-radius: 14px;
-    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.62), inset 0 1px 0 color-mix(in srgb, var(--text) 8%, transparent);
     padding: 0.95rem;
     display: flex;
     flex-direction: column;
@@ -1840,7 +1838,7 @@ function lineIconSvg(id: string): string {
     align-items: center;
     gap: 0.5rem;
     padding-bottom: 0.55rem;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    border-bottom: 1px solid var(--border);
   }
   .talk-console-identity {
     display: flex;
@@ -1904,15 +1902,15 @@ function lineIconSvg(id: string): string {
     letter-spacing: 0.04em;
     padding: 0.1rem 0.36rem;
     border-radius: 4px;
-    background: rgba(16, 185, 129, 0.14);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: color-mix(in srgb, var(--success) 14%, transparent);
+    color: var(--success-text);
+    border: 1px solid color-mix(in srgb, var(--success) 40%, transparent);
   }
   .talk-console-badge {
     font-size: 0.64rem;
     padding: 0.08rem 0.36rem;
     border-radius: 4px;
-    background: rgba(148, 163, 184, 0.14);
+    background: var(--border);
     color: var(--text-muted, #94a3b8);
   }
   .talk-console-subtitle {
@@ -1927,7 +1925,7 @@ function lineIconSvg(id: string): string {
     height: 28px;
     border-radius: 7px;
     border: 1px solid var(--border, #334155);
-    background: rgba(15, 23, 42, 0.65);
+    background: var(--bg-dark);
     color: var(--text-muted, #94a3b8);
     font-size: 0.85rem;
     line-height: 1;
@@ -1938,15 +1936,15 @@ function lineIconSvg(id: string): string {
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   }
   .talk-console-close:hover {
-    background: rgba(239, 68, 68, 0.16);
-    border-color: rgba(239, 68, 68, 0.45);
-    color: #fca5a5;
+    background: color-mix(in srgb, var(--error) 14%, transparent);
+    border-color: var(--error-text);
+    color: var(--error-text);
   }
   .talk-summon-alert {
     padding: 0.65rem 0.75rem;
     border-radius: 10px;
-    background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(15, 23, 42, 0.92));
-    border: 1px solid rgba(56, 189, 248, 0.55);
+    background: color-mix(in srgb, var(--accent-blue) 14%, var(--bg-card));
+    border: 1px solid var(--accent-blue-text);
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
@@ -1956,14 +1954,14 @@ function lineIconSvg(id: string): string {
     align-items: center;
     gap: 0.4rem;
     font-size: 0.78rem;
-    color: #38bdf8;
+    color: var(--accent-blue-text);
   }
   .talk-summon-pulse {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #38bdf8;
-    box-shadow: 0 0 10px #38bdf8;
+    background: var(--accent-blue-text);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-blue) 30%, transparent);
   }
   .talk-summon-body {
     margin: 0;
@@ -1985,17 +1983,17 @@ function lineIconSvg(id: string): string {
     border: 1px solid var(--border, #334155);
   }
   .talk-btn-accept {
-    background: #0284c7;
-    border-color: #38bdf8;
-    color: #fff;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
   }
   .talk-btn-later {
-    background: rgba(15, 23, 42, 0.75);
-    color: var(--text-muted, #cbd5e1);
+    background: var(--bg-dark);
+    color: var(--text-muted);
   }
   .talk-btn-later:hover {
-    background: rgba(51, 65, 85, 0.55);
-    color: #fff;
+    background: var(--bg-elevated);
+    color: var(--text);
   }
   .talk-section-block {
     display: flex;
@@ -2006,11 +2004,9 @@ function lineIconSvg(id: string): string {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.7rem;
+    font-size: 0.74rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-muted, #94a3b8);
+    color: var(--text-muted);
   }
   .talk-mono-pill {
     font-family: 'JetBrains Mono', monospace;
@@ -2019,8 +2015,8 @@ function lineIconSvg(id: string): string {
     letter-spacing: 0;
     padding: 0.08rem 0.38rem;
     border-radius: 4px;
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
     color: var(--text, #e2e8f0);
   }
   .talk-persona-grid,
@@ -2028,10 +2024,10 @@ function lineIconSvg(id: string): string {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.3rem;
-    background: rgba(15, 23, 42, 0.68);
+    background: var(--bg-dark);
     padding: 0.22rem;
     border-radius: 9px;
-    border: 1px solid rgba(148, 163, 184, 0.16);
+    border: 1px solid var(--border);
   }
   .talk-persona-pill,
   .talk-mode-pill {
@@ -2050,13 +2046,13 @@ function lineIconSvg(id: string): string {
   .talk-persona-pill:hover,
   .talk-mode-pill:hover {
     color: var(--text, #f8fafc);
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-elevated);
   }
   .talk-persona-pill.is-active,
   .talk-mode-pill.is-active {
     background: var(--bg-card, #1e293b);
     color: var(--text, #fff);
-    border-color: rgba(0, 212, 170, 0.45);
+    border-color: var(--success-text);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.28);
   }
   .talk-transceiver-deck {
@@ -2071,44 +2067,43 @@ function lineIconSvg(id: string): string {
     gap: 0.45rem;
     padding: 0.56rem 0.75rem;
     border-radius: 9px;
-    border: 1px solid rgba(0, 212, 170, 0.5);
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.24), rgba(6, 95, 70, 0.42));
-    color: #ecfdf5;
+    border: 1px solid var(--success-text);
+    background: color-mix(in srgb, var(--success) 16%, var(--bg-card));
+    color: var(--text);
     font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
   }
   .talk-ptt-hero:hover {
-    border-color: #34d399;
-    box-shadow: 0 0 14px rgba(16, 185, 129, 0.28);
+    border-color: var(--success-text);
+    background: color-mix(in srgb, var(--success) 24%, var(--bg-card));
   }
   .talk-ptt-hero.is-recording {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.35), rgba(153, 27, 27, 0.55));
-    border-color: #f87171;
-    color: #fef2f2;
+    background: color-mix(in srgb, var(--error) 24%, var(--bg-card));
+    border-color: var(--error-text);
+    color: var(--text);
   }
   .talk-ptt-led {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #34d399;
-    box-shadow: 0 0 6px #34d399;
+    background: var(--success-text);
   }
   .talk-duplex-btn {
     padding: 0.56rem 0.7rem;
     border-radius: 9px;
     border: 1px solid var(--border, #334155);
-    background: rgba(15, 23, 42, 0.75);
+    background: var(--bg-dark);
     color: var(--text, #e2e8f0);
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
   }
   .talk-duplex-btn.is-active {
-    border-color: #38bdf8;
-    background: rgba(14, 165, 233, 0.22);
-    color: #e0f2fe;
+    border-color: var(--accent-blue-text);
+    background: color-mix(in srgb, var(--accent-blue) 18%, var(--bg-card));
+    color: var(--text);
   }
   .talk-quick-form {
     display: flex;
@@ -2119,7 +2114,7 @@ function lineIconSvg(id: string): string {
     padding: 0.38rem 0.6rem;
     border-radius: 7px;
     border: 1px solid var(--border, #334155);
-    background: rgba(15, 23, 42, 0.75);
+    background: var(--bg-dark);
     color: var(--text, #f8fafc);
     font-size: 0.76rem;
   }
@@ -2127,7 +2122,7 @@ function lineIconSvg(id: string): string {
     padding: 0.38rem 0.58rem;
     border-radius: 7px;
     border: 1px solid var(--border, #334155);
-    background: rgba(15, 23, 42, 0.85);
+    background: var(--bg-dark);
     color: var(--text, #f8fafc);
     cursor: pointer;
     font-size: 0.78rem;
@@ -2135,16 +2130,16 @@ function lineIconSvg(id: string): string {
   .talk-reply-card {
     padding: 0.5rem 0.65rem;
     border-radius: 8px;
-    background: rgba(15, 23, 42, 0.9);
-    border-left: 3px solid #00d4aa;
+    background: var(--bg-dark);
+    border-left: 3px solid var(--success-text);
     font-size: 0.76rem;
     line-height: 1.38;
     color: var(--text, #f8fafc);
   }
   .talk-console-drawer {
-    border: 1px solid rgba(148, 163, 184, 0.16);
+    border: 1px solid var(--border);
     border-radius: 9px;
-    background: rgba(15, 23, 42, 0.45);
+    background: var(--bg-dark);
     padding: 0.38rem 0.55rem;
   }
   .talk-drawer-summary {
@@ -2163,7 +2158,7 @@ function lineIconSvg(id: string): string {
   .talk-drawer-body {
     margin-top: 0.5rem;
     padding-top: 0.45rem;
-    border-top: 1px solid rgba(148, 163, 184, 0.12);
+    border-top: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
@@ -2190,7 +2185,7 @@ function lineIconSvg(id: string): string {
     padding: 0.34rem 0.48rem;
     border-radius: 6px;
     border: 1px solid var(--border, #334155);
-    background: rgba(15, 23, 42, 0.8);
+    background: var(--bg-dark);
     color: var(--text, #f8fafc);
     cursor: pointer;
     font-size: 0.74rem;
@@ -2201,14 +2196,14 @@ function lineIconSvg(id: string): string {
     align-items: center;
     gap: 0.35rem;
     padding-top: 0.48rem;
-    border-top: 1px solid rgba(148, 163, 184, 0.14);
+    border-top: 1px solid var(--border);
   }
   .talk-footer-link {
     padding: 0.28rem 0.5rem;
     border-radius: 6px;
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    background: rgba(15, 23, 42, 0.6);
-    color: var(--text-muted, #cbd5e1);
+    border: 1px solid var(--border);
+    background: var(--bg-dark);
+    color: var(--text-muted);
     font-size: 0.71rem;
     font-weight: 600;
     text-decoration: none;
@@ -2216,11 +2211,18 @@ function lineIconSvg(id: string): string {
     transition: all 0.14s ease;
   }
   .talk-footer-link:hover {
-    color: #fff;
-    border-color: rgba(148, 163, 184, 0.45);
+    color: var(--text);
+    border-color: var(--border-hover);
   }
   .talk-footer-link-primary {
-    border-color: rgba(0, 212, 170, 0.38);
-    color: #34d399;
+    border-color: var(--success-text);
+    color: var(--success-text);
   }
+  .talk-quick-send .icon-glyph-line svg,
+  .talk-icon-btn .icon-glyph-line svg { width: 0.95rem; height: 0.95rem; }
+  .talk-persona-pill:focus-visible,
+  .talk-mode-pill:focus-visible,
+  .talk-ptt-hero:focus-visible,
+  .talk-footer-link:focus-visible,
+  .talk-drawer-summary:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
 </style>

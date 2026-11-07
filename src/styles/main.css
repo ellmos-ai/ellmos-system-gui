@@ -1621,17 +1621,34 @@ body {
 }
 
 .main-header .backend-origin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
     max-width: min(34vw, 260px);
+    padding: 0.24rem 0.7rem 0.24rem 0.6rem;
     overflow: hidden;
     text-overflow: ellipsis;
-    border-color: var(--shell-border);
-    color: var(--shell-muted);
+    white-space: nowrap;
+    border: 1px solid var(--shell-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--shell-text);
+    font-size: 0.74rem;
+    font-weight: 600;
 }
 
-.main-header .backend-origin-badge[data-verified="true"] {
-    border-color: #63b990;
-    color: #c9f2dc;
+.main-header span.backend-origin-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    flex: none;
+    border-radius: 50%;
+    background: var(--pill-tone, #8aa3b8);
 }
+
+.main-header span.backend-origin-badge[data-tone="ok"] { --pill-tone: #5fd08f; }
+.main-header span.backend-origin-badge[data-tone="busy"] { --pill-tone: #7cb6ff; }
+.main-header span.backend-origin-badge[data-tone="error"] { --pill-tone: #ff8f8c; }
 
 .main-header .quick-action-btn {
     width: 36px;
@@ -2013,6 +2030,20 @@ html[data-ui-nav-scope="custom"] .sidebar-domain-pins {
 .app-sidebar .dropdown-item.active {
     color: var(--shell-text);
     background: var(--shell-sidebar-active);
+}
+
+/* PB-5b (B-15): the sidebar surface is the fixed shell navy in every theme, so its text must come from the shell
+   tokens. The generic .dropdown-item-title/-desc use the theme text colors and vanished on it in the light themes. */
+.app-sidebar .dropdown-item-title {
+    color: var(--shell-text);
+}
+
+.app-sidebar .dropdown-item-desc {
+    color: var(--shell-muted);
+}
+
+.app-sidebar .dropdown-item-icon {
+    color: var(--shell-accent);
 }
 
 .container {

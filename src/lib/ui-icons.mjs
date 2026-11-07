@@ -1,0 +1,81 @@
+// PB-5b (#3989): small calm line icons for controls that used emoji. Drawn by agy (see PR), checked and built in by hand.
+// Style matches the shell: 24x24, currentColor stroke 1.9, round caps. The shell already switches line/emoji through
+// html[data-ui-icon-style], so each icon is a pair: the line glyph (default) and the emoji (only in emoji mode).
+
+const LINE_PATHS = Object.freeze({
+  "bell-off": "<path d=\"M13.7 21a2 2 0 0 1-3.4 0M18 13c-.5-1.5-.5-3-.5-5A5.5 5.5 0 0 0 8.8 3.6M6.3 6.3C6.1 6.8 6 7.4 6 8c0 7-3 9-3 9h14M3 3l18 18\"/>",
+  bell: "<path d=\"M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0\"/>",
+  camera: "<path d=\"M21 19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l2-2h4l2 2h3a2 2 0 0 1 2 2z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/>",
+  ear: "<path d=\"M6 10a6 6 0 1 1 12 0c0 3.5-2.5 5-3 7.5A2.5 2.5 0 0 1 10 19\"/><path d=\"M9.5 10a2.5 2.5 0 0 1 5 0c0 1.5-1.5 2.2-2 3.5\"/>",
+  edit: "<path d=\"M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 3 21l.5-4.5L17 3z\"/>",
+  external: "<path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3\"/>",
+  mic: "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8\"/>",
+  more: "<circle cx=\"5\" cy=\"12\" r=\"1\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/><circle cx=\"19\" cy=\"12\" r=\"1\"/>",
+  package: "<path d=\"M12 3 20 7.5v9L12 21 4 16.5v-9L12 3zM4 7.5 12 12l8-4.5M12 12v9M8 5.25l8 4.5\"/>",
+  pause: "<rect x=\"6\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\"/><rect x=\"14\" y=\"4\" width=\"4\" height=\"16\" rx=\"1\"/>",
+  play: "<polygon points=\"6 4 20 12 6 20 6 4\"/>",
+  plus: "<path d=\"M12 5v14M5 12h14\"/>",
+  power: "<path d=\"M18.4 6.6a9 9 0 1 1-12.8 0M12 3v9\"/>",
+  radio: "<rect x=\"6\" y=\"7\" width=\"12\" height=\"14\" rx=\"2\"/><path d=\"M9 7V3M9 11h6M9 14h6\"/><circle cx=\"12\" cy=\"18\" r=\"1\"/>",
+  refresh: "<path d=\"M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5\"/>",
+  save: "<path d=\"M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z\"/><path d=\"M17 21v-8H7v8M7 3v5h8\"/>",
+  send: "<path d=\"M21 3 10 14M21 3l-6.5 18-4.5-7-7-4.5L21 3z\"/>",
+  sparkles: "<path d=\"M10 3 12 8.5 17.5 10.5 12 12.5 10 18 8 12.5 2.5 10.5 8 8.5zM19 14l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z\"/>",
+  speaker: "<polygon points=\"11 5 6 9 3 9 3 15 6 15 11 19 11 5\"/><path d=\"M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13\"/>",
+  stop: "<rect x=\"5\" y=\"5\" width=\"14\" height=\"14\" rx=\"2\"/>",
+  trash: "<path d=\"M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6\"/>",
+  "user-assign": "<rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2\"/><path d=\"M9 4V2h6v2M9 13l2 2 4-4\"/>",
+});
+
+const EMOJI = Object.freeze({
+  "refresh": "🔄",
+  "save": "💾",
+  "radio": "📻",
+  "mic": "🎤",
+  "speaker": "🔊",
+  "camera": "📷",
+  "send": "📡",
+  "external": "↗",
+  "plus": "＋",
+  "sparkles": "✨",
+  "play": "▶",
+  "pause": "⏸",
+  "stop": "⏹",
+  "ear": "👂",
+  "bell": "🔔",
+  "bell-off": "🔕",
+  "package": "📦",
+  "power": "⏻",
+  "trash": "🗑",
+  "more": "⋯",
+  "edit": "✎",
+  "user-assign": "📋"
+});
+
+export const ICON_NAMES = Object.freeze(Object.keys(LINE_PATHS));
+
+export function iconSvgMarkup(name, size = 16) {
+  const inner = LINE_PATHS[name];
+  if (!inner) return '';
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${inner}</svg>`;
+}
+
+export function iconEmoji(name) {
+  return EMOJI[name] || '';
+}
+
+/** Both glyphs in one wrapper; the shell CSS shows exactly one of them. */
+export function createIconGlyph(document, name, size = 16) {
+  if (!LINE_PATHS[name]) return null;
+  const wrap = document.createElement('span');
+  wrap.className = 'icon-glyph-pair';
+  wrap.setAttribute('aria-hidden', 'true');
+  const line = document.createElement('span');
+  line.className = 'icon-glyph icon-glyph-line';
+  line.innerHTML = iconSvgMarkup(name, size);
+  const emoji = document.createElement('span');
+  emoji.className = 'icon-glyph icon-glyph-emoji';
+  emoji.textContent = EMOJI[name];
+  wrap.append(line, emoji);
+  return wrap;
+}

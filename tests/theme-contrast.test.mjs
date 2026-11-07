@@ -116,3 +116,77 @@ test('colorful/custom primary rules use the gradient tokens (not accent) and kee
   assert.match(hover, /var\(--primary-grad-hover-from\),\s*var\(--primary-grad-hover-to\)/);
   assert.match(css, /\[data-theme="custom"\] \.btn-primary:hover \{ color: #fff; \}/);
 });
+
+// ---- PB-5b (#3989, B-15): shell surfaces, the talk popover and the new tile/pill components in all five themes ----
+const header = readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf8');
+const talkPage = readFileSync(new URL('../src/pages/talk.astro', import.meta.url), 'utf8');
+const tileCss = readFileSync(new URL('../src/styles/agent-tile.css', import.meta.url), 'utf8');
+const hex = value => { assert.match(value, /^#[0-9a-f]{6}$/i, value); return rgb(value); };
+
+// The color a selector ends up with: the first rule in cascade priority that sets `color: var(--token)`.
+function ruleColorToken(source, selectors) {
+  for (const selector of selectors) {
+    const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const pattern = new RegExp('(?:^|\\n|,)\\s*' + escaped + '\\s*(?:,[^{]*)?\\{([^}]*)\\}', 'g');
+    for (const rule of source.matchAll(pattern)) {
+      const color = /(?<![-\w])color:\s*var\((--[\w-]+)/.exec(rule[1]);
+      if (color) return color[1];
+    }
+  }
+  return null;
+}
+
+test('sidebar items (pinned domains) keep 4.5:1 on the shell navy in every theme', () => {
+  const title = ruleColorToken(css, ['.app-sidebar .dropdown-item-title', '.dropdown-item-title']);
+  const desc = ruleColorToken(css, ['.app-sidebar .dropdown-item-desc', '.dropdown-item-desc']);
+  const label = ruleColorToken(css, ['.sidebar-domain-pins-label']);
+  assert.ok(title && desc && label, `tokens ${title} ${desc} ${label}`);
+  for (const [name, theme] of Object.entries(themes)) {
+    for (const [what, token] of [['title', title], ['description', desc], ['label', label]]) {
+      for (const surface of ['--shell-sidebar', '--shell-sidebar-hover', '--shell-sidebar-active']) {
+        const value = ratio(resolve(theme, token), resolve(theme, surface));
+        assert.ok(value >= 4.5, `${name}: pinned domain ${what} (${token}) on ${surface}: ${value.toFixed(2)}`);
+      }
+    }
+  }
+});
+
+test('the talk popover and the talk page rows use theme tokens, no fixed dark surface or fixed light text', () => {
+  const start = header.indexOf('.talk-console-popover {');
+  const popover = header.slice(start, header.indexOf('</style>', start));
+  assert.ok(start > 0 && popover.length > 2000);
+  assert.deepEqual([...popover.matchAll(/rgba\(15,\s*23,\s*42/g)].map(m => m[0]), [], 'fixed dark slate surface');
+  assert.deepEqual([...popover.matchAll(/(?<![-\w])color:\s*(#[0-9a-f]{3,6})/gi)].map(m => m[0]), [], 'fixed text color');
+  assert.doesNotMatch(talkPage, /row\.style\.background|rgba\(15, 23, 42, 0\.7\)/, 'transcript rows are styled by class');
+  assert.match(talkPage, /\.talk-transcript-row\s*\{[^}]*background:\s*var\(--bg-elevated\)[^}]*color:\s*var\(--text\)/s);
+});
+
+test('agent tile: text, indicators and the error panel are readable in every theme', () => {
+  for (const [name, theme] of Object.entries(themes)) {
+    const card = resolve(theme, '--bg-card');
+    for (const token of ['--text', '--text-muted']) assert.ok(ratio(resolve(theme, token), card) >= 4.5, `${name} ${token} on tile`);
+    for (const token of ['--success-text', '--accent-blue-text', '--text-muted', '--error-text', '--text-dim']) {
+      const value = ratio(resolve(theme, token), card);
+      assert.ok(value >= 3, `${name} status dot ${token} on tile: ${value.toFixed(2)} (needs 3:1 as a graphic)`);
+    }
+    const errorPanel = blend(TINT.error, card, 0.09);
+    for (const token of ['--text', '--error-text']) {
+      const value = ratio(resolve(theme, token), errorPanel);
+      assert.ok(value >= 4.5, `${name} ${token} on the tile error panel: ${value.toFixed(2)}`);
+    }
+  }
+  assert.match(tileCss, /\.agent-tile-status\[data-tone="ok"\]\s*\{\s*--tile-tone:\s*var\(--success-text\)/);
+  assert.deepEqual([...tileCss.matchAll(/(?<![-\w])color:\s*#[0-9a-f]{3,6}/gi)].map(m => m[0]), [], 'tile text never uses a fixed color');
+});
+
+test('header pills: text and indicator dots are readable on the shell topbar', () => {
+  const shell = themes.dark;
+  const bar = hex(shell['--shell-topbar']);
+  const hover = hex(shell['--shell-sidebar-hover']);
+  for (const surface of [bar, hover]) assert.ok(ratio(hex(shell['--shell-text']), surface) >= 4.5);
+  for (const tone of ['#5fd08f', '#7cb6ff', '#aec3d4', '#ff8f8c', '#8aa3b8']) {
+    const value = ratio(hex(tone), bar);
+    assert.ok(value >= 3, `pill dot ${tone} on the topbar: ${value.toFixed(2)}`);
+  }
+  assert.ok(header.includes('--pill-tone: #5fd08f') && css.includes('--pill-tone: #5fd08f'));
+});

@@ -23,6 +23,17 @@ Die Seite trennt aktive Läufe, einsatzbereite Profile, Verlauf und Ressourcenme
 
 Die Bibliothek ist keine Laufzeitübersicht. Nach der Auswahl führt der Weg für bestätigte Zustände zurück zu Living & Running.
 
+## Agentenkacheln
+
+Jede Kachel auf `/agenten/running` entsteht in `src/lib/agent-tile.mjs` (PB-5b). Systemplätze, Systemprofile, Hintergrundworker (bereit und laufend), die Funkgerät-Karte und die optionalen Schnittstellen haben denselben Aufbau.
+
+- **Slots in fester Reihenfolge:** `head` (Bild, Name, Art), `status` (Text plus Punkt, Ton über `data-tone`), `model`, `task`, `error`, `actions`. Der Fehlerslot ist leer und verborgen, bis es etwas zu sagen gibt. Bei Status Fehler ohne gemeldete Ursache steht dort, dass das Backend keine Ursache gemeldet hat.
+- **Aktionen in fester Reihenfolge:** Start/Fortsetzen/Pausieren (bei Systemplätzen der Ein/Aus-Schalter), Bearbeiten, Chat, Zuweisen und das Menü Mehr (Pausieren, Stoppen, Kontext übergeben, Task zerlegen, Löschen). Eine nicht verfügbare Aktion bleibt sichtbar, ist mit `aria-disabled` gesperrt und nennt den Grund im Tooltip und für Screenreader.
+- **Keine Emoji in der Kachel.** Die Evidenz aus PB-4 (Rückgabe-Schild, Klartext-Grund des letzten Providerlaufs, Wartezustand) steht im Fehlerslot.
+- Die Evidenzliste (ID, Zugang, Startart, Werkzeug, Runde) liegt hinter dem Eintrag Details. Das Dashboard nutzt dieselbe Liste über `createAgentOverviewMeta`.
+
+Steuerelemente, die bisher Emoji trugen, verwenden Symbolpaare aus `src/lib/ui-icons.mjs` (Linienform im Standard, Emoji nur im Symbolstil Emoji).
+
 ## Modellquellen
 
 Die Oberfläche enthält keine feste Modellliste und keinen erfundenen Fallback. Modelle werden aus dem jeweiligen Adapterkatalog oder aus einer bereits gespeicherten, vom Adapter gelieferten Bindung angezeigt. Ist der Katalog nicht verfügbar, bleibt die Auswahl gesperrt oder als nicht verfügbar gekennzeichnet.

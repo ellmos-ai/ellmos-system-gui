@@ -5,6 +5,8 @@ import AgentTriggers from '../../components/AgentTriggers.astro';
 import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
+import '../../styles/agent-tile.css';
+import UiIcon from '../../components/UiIcon.astro';
 import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 import ReturnTimeline from '../../components/ReturnTimeline.astro';
 ---
@@ -23,13 +25,13 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
 
     <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
       <a href="/agenten/blueprints?new=1" class="btn">
-        <span>＋</span> Vorlage anlegen
+        <UiIcon name="plus" /> Vorlage anlegen
       </a>
       <a href="/agenten/blueprints" class="btn">
         <span>🤖</span> Agenten-Bibliothek
       </a>
       <button class="btn btn-primary" onclick="refreshAll(true)">
-        <span>🔄</span> Aktualisieren
+        <UiIcon name="refresh" /> Aktualisieren
       </button>
     </div>
   </div>
@@ -91,11 +93,11 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     <summary class="card-header"><span><span class="card-title" id="ready-agents-title">✨ Deine Agenten</span><span class="section-description">Konfigurierte Agentenprofile und Systemplätze verwalten.</span></span></summary>
     <div class="section-action-bar">
       <div class="creation-actions">
-        <button class="btn btn-sm btn-primary" type="button" onclick="openOneOffModal()">✨ Agenten erstellen</button>
-        <button class="btn btn-sm" type="button" onclick="openPickupWerkstattModal()">🏭 Vorlage auswählen</button>
-        <button class="btn btn-sm" type="button" onclick="openCoreEditor()">＋ Systemprofil</button>
+        <button class="btn btn-sm btn-primary" type="button" onclick="openOneOffModal()"><UiIcon name="sparkles" /> Agenten erstellen</button>
+        <button class="btn btn-sm" type="button" onclick="openPickupWerkstattModal()"><UiIcon name="package" /> Vorlage auswählen</button>
+        <button class="btn btn-sm" type="button" onclick="openCoreEditor()"><UiIcon name="plus" /> Systemprofil</button>
       </div>
-      <button class="btn btn-sm" type="button" onclick="loadBackgroundWorkers(); loadCoreSlots();">🔄 Neu prüfen</button>
+      <button class="btn btn-sm" type="button" onclick="loadBackgroundWorkers(); loadCoreSlots();"><UiIcon name="refresh" /> Neu prüfen</button>
     </div>
     <section class="local-agent-ready" aria-labelledby="local-agent-ready-title" style="margin-top:0.5rem;">
       <h3 id="local-agent-ready-title">🤖 Deine Agenten</h3>
@@ -125,10 +127,10 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     <summary class="card-header"><span><span class="card-title" id="ready-teams-title">👥 Teams und Staffeln</span><span class="section-description">Teamkonfigurationen und sequenzielle Agenten- oder Skillfolgen erstellen und ausstatten.</span></span></summary>
     <div class="section-action-bar">
       <div class="creation-actions">
-        <button class="btn btn-sm btn-primary" type="button" onclick="openPickupTeamModal()">👥 Team erstellen</button>
-        <a class="btn btn-sm" href="/agenten/marblerun?new=1">⛓️ Staffel erstellen</a>
+        <button class="btn btn-sm btn-primary" type="button" onclick="openPickupTeamModal()"><UiIcon name="plus" /> Team erstellen</button>
+        <a class="btn btn-sm" href="/agenten/marblerun?new=1"><UiIcon name="plus" /> Staffel erstellen</a>
       </div>
-      <button class="btn btn-sm" type="button" onclick="loadTeamsBeseelen(); loadStaffelnBeseelen();">🔄 Aktualisieren</button>
+      <button class="btn btn-sm" type="button" onclick="loadTeamsBeseelen(); loadStaffelnBeseelen();"><UiIcon name="refresh" /> Aktualisieren</button>
     </div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:1.5rem;margin-top:1rem;align-items:start;">
@@ -168,102 +170,89 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
 
   </div>
 
-  <!-- 5. ELLMOS TALK & FUNKGERÄT · MODELLBINDUNG & BETRIEBSSTEUERUNG (#talk-slot) -->
-  <details class="card collapsible-section" id="talk-slot" aria-labelledby="talk-slot-title" open style="margin-bottom:1.25rem;">
+  <!-- 5. ELLMOS TALK & FUNKGERÄT: Modellbindung und Betriebssteuerung (#talk-slot) -->
+  <details class="card collapsible-section talk-slot-section" id="talk-slot" aria-labelledby="talk-slot-title" open>
     <summary class="card-header">
       <span>
-        <span class="card-title" id="talk-slot-title">📻 ELLMOS Talk &amp; Funkgerät · Modellbindung &amp; Betriebssteuerung</span>
-        <span class="section-description">Steuert, welches Hauptmodell (Buddha / Claude / Gemini / Codex) und welches vorgeschaltete Schnellmodell an den Header-Funkgerät-Button, das Begleitfenster und den System-Tray angebunden sind.</span>
+        <span class="card-title" id="talk-slot-title"><UiIcon name="radio" /> ELLMOS Talk und Funkgerät</span>
+        <span class="section-description">Legt fest, welches Modell am Funkgerät in der Kopfzeile, im Begleitfenster und im Tray antwortet.</span>
       </span>
     </summary>
-    <div style="padding:0.85rem 0 0.25rem;display:flex;flex-direction:column;gap:1rem;">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:0.9rem;">
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
-          <strong>1. Angebundene Persona / Agenten-Bindung (Klasse 1 · Interaktiv)</strong>
-          <select id="running-talk-persona" class="lang-switcher">
-            <option value="buddha">🧘 Buddha (Lokale Modell-Bindung)</option>
-            <option value="claude">🟣 Claude (Opus / Sonnet)</option>
-            <option value="gemini">🔵 Gemini (Antigravity Pro / Flash)</option>
-            <option value="codex">🟢 Codex / GPT</option>
-          </select>
-        </label>
-
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
-          <strong>2. Konkretes Hauptmodell (`primary_model`)</strong>
-          <input id="running-talk-primary-model" type="text" value="buddha-default" placeholder="z. B. buddha-default, claude-sonnet-4-6" style="padding:0.45rem 0.65rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);" />
-        </label>
-
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
-          <strong>3. Vorgeschaltetes Schnellmodell (`fast_relay_model`)</strong>
-          <select id="running-talk-fast-model" class="lang-switcher">
-            <option value="smollm2:360m">⚡ smollm2:360m (Reflex &amp; Barge-In &lt;150ms)</option>
-            <option value="qwen3-0.6b-voice">⚡ qwen3-0.6b-voice (Lokal · Turn-Taking)</option>
-            <option value="gemma4-e2b">⚡ gemma4-e2b (Schnelles Dialog-Relay)</option>
-          </select>
-        </label>
-
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
-          <strong>4. Betriebsmodus (Header, Tray &amp; Fenster)</strong>
-          <select id="running-talk-opmode" class="lang-switcher">
-            <option value="ptt">📻 Funkgerät (Push-to-Talk im Header)</option>
-            <option value="duplex">🎙️ Live-Duplex (Freisprechen)</option>
-            <option value="wake_word">👂 Wake-Word („Hey Buddha“ / „Hey Ocean“)</option>
-            <option value="off">⏸️ Ausgeschaltet</option>
-          </select>
-        </label>
-
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
-          <strong>5. Modell-Eigenstart (`Agent Summon Policy`)</strong>
-          <select id="running-talk-summon-policy" class="lang-switcher">
-            <option value="knock">🔔 Funkgerät-Anklopfen (Signal im Header &amp; Tray)</option>
-            <option value="auto_popup">⚡ Auto-Popup (Sofort sprechen, wenn anwesend via Sensation)</option>
-            <option value="muted">🔕 Stumm (Kein eigenständiger Modell-Start)</option>
-          </select>
-        </label>
-
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
-          <strong>6. Aktivierungswort (`wake_word`)</strong>
-          <input id="running-talk-wakeword" type="text" value="hey buddha" style="padding:0.45rem 0.65rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-card);color:var(--text);" />
-        </label>
-
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
-          <strong>7. Eingabegerät / Mikrofon (`input_device_id`)</strong>
-          <select id="running-talk-mic-device" class="lang-switcher">
-            <option value="default">🎤 Standard-Mikrofon</option>
-          </select>
-        </label>
-
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
-          <strong>8. Ausgabegerät / Lautsprecher (`output_device_id`)</strong>
-          <select id="running-talk-speaker-device" class="lang-switcher">
-            <option value="default">🔊 Standard-Ausgabe</option>
-          </select>
-        </label>
-
-        <label style="display:flex;flex-direction:column;gap:0.3rem;font-size:0.84rem;">
-          <strong>9. Kamera für Sensation (`camera_device_id`)</strong>
-          <select id="running-talk-camera-device" class="lang-switcher">
-            <option value="default">📷 Standard-Kamera</option>
-          </select>
-        </label>
-      </div>
-
-      <div style="padding:0.6rem 0.8rem;border-radius:var(--radius-sm);background:var(--bg-dark);border:1px solid var(--border);font-size:0.79rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.6rem;">
-        <div>
-          <strong>📦 ELLMOS Talk Modell-Stack (im Installer integriert):</strong>
-          <span class="text-muted"> Fast-Relay: <code>smollm2:360m</code> · STT: <code>faster-whisper-base</code> · TTS: <code>piper-de/en</code> &amp; <code>kokoro-82m</code> · VAD/Wake: <code>silero-vad-v5</code> · Unterstützt: Browser, Mobil &amp; Tauri Desktop</span>
+    <div class="talk-groups">
+      <fieldset class="talk-group">
+        <legend>Modelle</legend>
+        <div class="talk-fields">
+          <label class="talk-field"><span>Persona</span>
+            <select id="running-talk-persona" class="talk-control">
+              <option value="buddha">Buddha (lokales Modell)</option>
+              <option value="claude">Claude (Opus, Sonnet)</option>
+              <option value="gemini">Gemini (Pro, Flash)</option>
+              <option value="codex">Codex / GPT</option>
+            </select>
+          </label>
+          <label class="talk-field"><span>Hauptmodell</span>
+            <input id="running-talk-primary-model" class="talk-control" type="text" value="buddha-default" placeholder="z. B. buddha-default" />
+          </label>
+          <label class="talk-field"><span>Schnellmodell für den Reflex</span>
+            <select id="running-talk-fast-model" class="talk-control">
+              <option value="smollm2:360m">smollm2:360m · Reflex und Barge-in</option>
+              <option value="qwen3-0.6b-voice">qwen3-0.6b-voice · Turn-Taking</option>
+              <option value="gemma4-e2b">gemma4-e2b · Dialog-Relay</option>
+            </select>
+          </label>
         </div>
-        <button type="button" class="btn btn-sm" onclick="window.bachEnumerateTalkDevices && window.bachEnumerateTalkDevices(true)">🔄 Audio-/Kamerageräte erkennen</button>
-      </div>
+      </fieldset>
 
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border);">
-        <span id="running-talk-status-note" class="text-muted" style="font-size:0.82rem;" role="status">
-          Synchronisiert mit Header-Funkgerät, <code>/talk</code> und System-Tray.
-        </span>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-          <button type="button" class="btn btn-sm btn-primary" id="running-talk-save-btn">💾 Talk-Betrieb speichern</button>
-          <button type="button" class="btn btn-sm" id="running-talk-test-summon-btn">📡 Modell-Funkspruch testen (Summon)</button>
-          <button type="button" class="btn btn-sm" onclick="window.bachOpenTalkCompanion && window.bachOpenTalkCompanion()">↗ Begleitfenster öffnen</button>
+      <fieldset class="talk-group">
+        <legend>Verhalten</legend>
+        <div class="talk-fields">
+          <label class="talk-field"><span>Betriebsmodus</span>
+            <select id="running-talk-opmode" class="talk-control">
+              <option value="ptt">Funkgerät (Push-to-Talk)</option>
+              <option value="duplex">Live-Duplex (Freisprechen)</option>
+              <option value="wake_word">Wake-Word</option>
+              <option value="off">Aus</option>
+            </select>
+          </label>
+          <label class="talk-field"><span>Eigenstart des Modells</span>
+            <select id="running-talk-summon-policy" class="talk-control">
+              <option value="knock">Anklopfen</option>
+              <option value="auto_popup">Auto-Popup</option>
+              <option value="muted">Stumm</option>
+            </select>
+          </label>
+          <label class="talk-field"><span>Aktivierungswort</span>
+            <input id="running-talk-wakeword" class="talk-control" type="text" value="hey buddha" />
+          </label>
+        </div>
+        <p class="talk-hint">Anklopfen zeigt ein Signal in Kopfzeile und Tray. Auto-Popup spricht sofort, wenn Sensation Anwesenheit meldet. Stumm hält das Modell zurück.</p>
+      </fieldset>
+
+      <details class="talk-group talk-group-advanced">
+        <summary>Audio und Kamera</summary>
+        <div class="talk-fields">
+          <label class="talk-field"><span>Mikrofon</span>
+            <select id="running-talk-mic-device" class="talk-control"><option value="default">Standard-Mikrofon</option></select>
+          </label>
+          <label class="talk-field"><span>Lautsprecher</span>
+            <select id="running-talk-speaker-device" class="talk-control"><option value="default">Standard-Ausgabe</option></select>
+          </label>
+          <label class="talk-field"><span>Kamera für Sensation</span>
+            <select id="running-talk-camera-device" class="talk-control"><option value="default">Standard-Kamera</option></select>
+          </label>
+        </div>
+        <div class="talk-stack">
+          <p>Modell-Stack aus dem Installer: Fast-Relay <code>smollm2:360m</code>, STT <code>faster-whisper-base</code>, TTS <code>piper-de/en</code> und <code>kokoro-82m</code>, VAD und Wake <code>silero-vad-v5</code>. Läuft im Browser, mobil und in Tauri Desktop.</p>
+          <button type="button" class="btn btn-sm" onclick="window.bachEnumerateTalkDevices && window.bachEnumerateTalkDevices(true)"><UiIcon name="refresh" /> Geräte erkennen</button>
+        </div>
+      </details>
+
+      <div class="talk-footer">
+        <span id="running-talk-status-note" class="talk-status" role="status">Synchron mit Funkgerät in der Kopfzeile, <code>/talk</code> und System-Tray.</span>
+        <div class="talk-actions">
+          <button type="button" class="btn btn-sm btn-primary" id="running-talk-save-btn"><UiIcon name="save" /> Speichern</button>
+          <button type="button" class="btn btn-sm" id="running-talk-test-summon-btn"><UiIcon name="send" /> Funkspruch testen</button>
+          <button type="button" class="btn btn-sm" onclick="window.bachOpenTalkCompanion && window.bachOpenTalkCompanion()"><UiIcon name="external" /> Begleitfenster öffnen</button>
         </div>
       </div>
     </div>
@@ -275,8 +264,8 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       <p style="font-size:0.8rem;color:var(--text-muted);margin:0.15rem 0 0 0;">Zweistufiger Ressourcen-Claim: <strong>RAMDistributor</strong> (Hauptfackel für physisches RAM/VRAM) &amp; <strong>Modell-Runtime</strong> (Klassen 1 Interaktiv → 2 Auftrag → 3 Termin → 4 Hintergrund). <span id="running-release-compute-note"></span></p>
     </div>
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-      <button type="button" class="btn btn-sm" id="running-release-compute-btn" title="Setzt Fackel-Priorität auf Compute, pausiert Hintergrundworker (Klasse 4) und entlädt lokale Modelle für externe Prozesse">🔓 Modell &amp; RAM für andere Prozesse freigeben</button>
-      <a href="/help?topic=claiming" class="btn btn-sm">📖 Claim-Doku</a>
+      <button type="button" class="btn btn-sm" id="running-release-compute-btn" title="Setzt Fackel-Priorität auf Compute, pausiert Hintergrundworker (Klasse 4) und entlädt lokale Modelle für externe Prozesse"><UiIcon name="power" /> Modell &amp; RAM für andere Prozesse freigeben</button>
+      <a href="/help?topic=claiming" class="btn btn-sm">Claim-Doku</a>
       <a href="/settings?tab=core" class="btn btn-sm btn-primary">Zu Modelle &amp; Ressourcen →</a>
       <button type="button" class="btn btn-sm" onclick="const d=document.getElementById('running-models-resources-drawer');if(d)d.hidden=!d.hidden;">Hier ein-/ausblenden</button>
     </div>
@@ -450,6 +439,25 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     :global(.worker-selection-policy p), :global(.worker-selection-policy li) {margin:.3rem 0}
     :global(.worker-selection-policy ul), :global(.worker-selection-policy ol) {padding-left:1.25rem}
     :global(.worker-selection-policy small) {display:block;color:var(--text-muted);margin-top:.4rem}
+    .talk-slot-section {margin-bottom:1.25rem}
+    .talk-groups {display:grid;gap:1.15rem;padding:.9rem 0 .25rem}
+    .talk-group {min-width:0;margin:0;padding:0;border:0}
+    .talk-group > legend, .talk-group-advanced > summary {margin:0 0 .6rem;padding:0;font-size:.92rem;font-weight:700;color:var(--text)}
+    .talk-group-advanced {padding:.7rem .9rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
+    .talk-group-advanced > summary {margin:0;cursor:pointer}
+    .talk-group-advanced[open] > summary {margin-bottom:.7rem}
+    .talk-fields {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:.8rem 1rem}
+    .talk-field {display:grid;gap:.3rem;min-width:0;font-size:.82rem;color:var(--text-muted)}
+    .talk-control {min-width:0;width:100%;padding:.5rem .65rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark);color:var(--text);font:inherit;font-size:.86rem;text-overflow:ellipsis}
+    .talk-control:focus-visible {outline:2px solid var(--accent-text);outline-offset:1px}
+    .talk-hint {margin:.6rem 0 0;max-width:70ch;color:var(--text-muted);font-size:.78rem;line-height:1.5}
+    .talk-stack {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.6rem 1rem;margin-top:.8rem;color:var(--text-muted);font-size:.78rem}
+    .talk-stack p {margin:0;max-width:70ch;line-height:1.5}
+    .talk-footer {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding-top:.8rem;border-top:1px solid var(--border)}
+    .talk-status {color:var(--text-muted);font-size:.82rem;overflow-wrap:anywhere}
+    .talk-actions {display:flex;gap:.5rem;flex-wrap:wrap}
+    :global(.icon-glyph-pair) {display:inline-flex;align-items:center;vertical-align:middle}
+    :global(.agent-creation-group .btn .icon-glyph-line), :global(.running-history-group .btn .icon-glyph-line), :global(#talk-slot .btn .icon-glyph-line), :global(.section-action-bar .btn .icon-glyph-line) {margin-right:.1rem}
     .collapsible-section>summary{cursor:pointer}.section-description{display:block;margin-top:.25rem;font-size:.8rem;color:var(--text-muted)}.collapsible-section>summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px}.active-runs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1rem;margin:.6rem 0}.staffel-card{padding:.85rem;border:1px solid var(--border);border-radius:8px;background:var(--bg-card)}.staffel-card>summary{cursor:pointer;font-weight:600}.staffel-card p,.staffel-card ol{font-size:.82rem;margin:.6rem 0}.staffel-card ol{padding-left:1.2rem}.creation-actions{display:flex;gap:.5rem;flex-wrap:wrap}.hardware-torch .card-header{margin-bottom:.6rem}.hardware-torch .card-title{font-size:1rem}.hardware-torch .torch-intro{font-size:.76rem}.hardware-torch .torch-panel strong{font-size:.82rem}.hardware-torch .torch-panel p{font-size:.8rem;margin:.3rem 0}.hardware-torch .torch-panel small{font-size:.72rem}
 
     .agent-overview-controls {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:.6rem;align-items:end;margin:.75rem 0 1rem;padding:.8rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
@@ -487,25 +495,14 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     :global([data-theme="light"]) .running-history-group {background:color-mix(in srgb, #0ea5e9 6%, #fff)}
     :global([data-theme="light"]) .running-history-group > .card {background:#fff}
 
-    :global(.core-agent-card) {display:flex;flex-direction:column;gap:.65rem;min-width:0;padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
-    :global(.core-agent-card .core-slot-header), :global(.core-agent-card .core-slot-identity) {display:flex;align-items:center;gap:.65rem;justify-content:space-between}
-    :global(.core-agent-card .core-slot-identity) {justify-content:flex-start}
-    :global(.core-agent-card .core-avatar) {width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none}
-    :global(.core-agent-card .core-avatar-default) {display:grid;place-items:center;font-size:1.6rem;background:var(--bg-card)}
-    :global(.core-agent-card h3) {margin:0;font-size:1rem}
-    :global(.core-agent-card small) {color:var(--text-muted);overflow-wrap:anywhere}
-    :global(.core-agent-card .core-slot-model) {overflow-wrap:anywhere;font-size:.85rem}
     :global(.agent-creation-group .btn), :global(.running-history-group .btn), :global(#talk-slot .btn), :global(.models-relocated-banner .btn), :global(.core-agent-card .btn), :global(.section-action-bar .btn) {display:inline-flex;align-items:center;justify-content:center;gap:.35rem;height:30px;padding:0 .68rem;font-family:inherit;font-size:.76rem;font-weight:600;line-height:1;border-radius:6px;border:1px solid var(--border);background:var(--bg-card);color:var(--text);text-decoration:none;white-space:nowrap;cursor:pointer;box-sizing:border-box}
     :global(.agent-creation-group .btn:hover), :global(.running-history-group .btn:hover), :global(#talk-slot .btn:hover), :global(.models-relocated-banner .btn:hover), :global(.core-agent-card .btn:hover), :global(.section-action-bar .btn:hover) {background:var(--bg-elevated,rgba(255,255,255,.06));border-color:var(--border-hover,#475569);color:var(--text)}
     :global(.agent-creation-group .btn-primary), :global(.running-history-group .btn-primary), :global(#talk-slot .btn-primary), :global(.models-relocated-banner .btn-primary), :global(.core-agent-card .btn-primary), :global(.section-action-bar .btn-primary) {background:var(--accent);border-color:var(--accent);color:var(--on-accent,#fff)}
-    :global(.core-agent-card .core-slot-toggle[data-enabled="true"]) {background:rgba(16,185,129,.14);color:#34d399;border-color:rgba(16,185,129,.4)}
-    :global(.core-agent-card .core-slot-toggle[data-enabled="false"]) {background:rgba(239,68,68,.12);color:#f87171;border-color:rgba(239,68,68,.35)}
-    :global(.core-agent-card .core-actions), :global(.core-agent-card .agent-overview-actions), #core-slot-editor .core-actions {display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:auto;padding-top:.65rem;border-top:1px solid var(--border)}
+    #core-slot-editor .core-actions {display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-top:auto;padding-top:.65rem;border-top:1px solid var(--border)}
     #core-agent-cards :global(.core-slot-add), #local-core-agent-cards :global(.core-slot-add) {display:none!important}
     .local-agent-ready {margin-top:.5rem;margin-bottom:1.15rem}
     .local-agent-ready>h3, .core-agent-ready>h3 {margin:.2rem 0;font-size:1rem;font-weight:700}
-    .local-agent-ready :global(.agent-overview-runtime-meta), .core-agent-ready :global(.agent-overview-runtime-meta), .local-agent-ready :global(details.worker-queue-details), .local-agent-ready :global(details.worker-selection-policy), .core-agent-ready :global(details.worker-queue-details), .core-agent-ready :global(details.worker-selection-policy) {display:none}
-    :global(.agent-role-occupancy-banner) {display:flex;align-items:center;gap:.35rem;padding:.1rem 0;font-size:.8rem;line-height:1.35;border:0;background:transparent;color:var(--text-muted)}
+    .local-agent-ready :global(details.worker-queue-details), .local-agent-ready :global(details.worker-selection-policy), .core-agent-ready :global(details.worker-queue-details), .core-agent-ready :global(details.worker-selection-policy) {display:none}
     :global(.agent-role-occupancy-banner .occupancy-kicker) {display:none}
     :global(.agent-role-occupancy-banner .occupancy-main) {font-weight:500;color:var(--text-muted);overflow-wrap:anywhere}
     .optional-interfaces-drawer {margin-top:.85rem;padding:.55rem .75rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark);font-size:.82rem;color:var(--text-muted)}
@@ -538,23 +535,14 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     .agent-model-evidence p { margin: 0; padding: .75rem; border: 1px solid var(--border); border-left: 3px solid var(--accent-blue); border-radius: var(--radius-sm); background: var(--bg-dark); color: var(--text-muted); font-size: .8rem; line-height: 1.45; }
     .agent-model-evidence strong { color: var(--text); }
     .core-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr)); gap: .85rem; }
-    .core-agent-card { min-width: 0; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-dark); }
     .torch-panel p { margin: .2rem 0; overflow-wrap: anywhere; }
-    .torch-panel small, .core-agent-card small { display: block; color: var(--text-muted); line-height: 1.4; overflow-wrap: anywhere; }
+    .torch-panel small { display: block; color: var(--text-muted); line-height: 1.4; overflow-wrap: anywhere; }
     .torch-owner { display: flex; align-items: center; gap: .6rem; }
     .torch-svg { width: 24px; height: 30px; flex: none; fill: none; stroke: var(--text-muted); stroke-width: 2px; opacity: .65; }
     .torch-svg .torch-flame-inner { display: none; }
     .torch-svg.is-owned { opacity: 1; stroke: #f97316; fill: #fbbf24; }
     .torch-svg.is-owned .torch-flame-inner { display: block; fill: #fef08a; stroke: #f97316; }
     .torch-feedback { min-height: 1.4em; color: var(--text-muted); font-size: .8rem; margin: .8rem 0 0; }
-    .core-agent-card { display: flex; flex-direction: column; gap: .7rem; }
-    .core-agent-card h3 { margin: 0; overflow-wrap: anywhere; }
-    .core-agent-card label { display: flex; flex-direction: column; gap: .25rem; font-size: .78rem; color: var(--text-muted); }
-    .core-agent-card input, .core-agent-card select { min-width: 0; width: 100%; padding: .4rem; color: var(--text); background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; }
-    .core-agent-card .core-check { flex-direction: row; align-items: center; }
-    .core-agent-card .core-check input { width: auto; }
-    .core-agent-card .core-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
-    .core-agent-card .core-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: auto; }
     .openrouter-model-list { display: flex; flex-wrap: wrap; gap: .45rem; }
     .openrouter-model-list code { border: 1px solid var(--border); border-radius: 4px; padding: .25rem .45rem; overflow-wrap: anywhere; }
     .worker-state { display: inline-block; border: 1px solid var(--border); border-radius: 999px; padding: .12rem .5rem; margin-bottom: .45rem; font-size: .78rem; }
@@ -569,7 +557,6 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     .worker-blueprint-check input { width: auto !important; }
     .worker-blueprint-prompt, .worker-blueprint-extra > label:last-child { grid-column: 1 / -1; }
     .worker-blueprint-submit { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; grid-column: 1 / -1; }
-    @media (max-width: 520px) { .core-agent-card .core-fields { grid-template-columns: 1fr; } }
     @media (prefers-reduced-motion: no-preference) {
       .torch-svg.is-owned { animation: torch-glow 1.8s ease-in-out infinite alternate; }
       @keyframes torch-glow { from { filter: drop-shadow(0 0 2px #f97316); } to { filter: drop-shadow(0 0 12px #f97316); } }
@@ -581,7 +568,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     #template-agent-picker pre { max-height:15rem; overflow:auto; font-size:.8rem; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachProviderRequestStatus=providerRequestStatusText;</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';import * as AgentTile from '../../lib/agent-tile.mjs';import * as UiIcons from '../../lib/ui-icons.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachAgentTile=AgentTile;window.BachUiIcons=UiIcons;window.BachProviderRequestStatus=providerRequestStatusText;</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -801,21 +788,22 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
 
     let workerReturnSummaries = new Map();
     // PB-4: what the overview content does not carry: why the last provider call ended, which host precondition
-    // the worker waits for, and the return shield of the task it holds.
-    function appendAbortDetails(content, agent, source) {
-      if (source !== 'worker') return;
+    // the worker waits for, and the return shield of the task it holds. PB-5b: these go into the tile's error slot.
+    function abortNodes(agent, source) {
+      const nodes = [];
+      if (source !== 'worker') return nodes;
       const providerStatus = window.BachProviderRequestStatus?.(agent) || '';
       if (providerStatus) {
         const line = document.createElement('p');
         line.className = 'provider-request-status';
         line.setAttribute('aria-label', 'Status der Provideranfrage');
         line.textContent = providerStatus;
-        content.append(line);
+        nodes.push(line);
       }
       const TR = window.BachTaskReturns;
-      if (!TR) return;
+      if (!TR) return nodes;
       const wait = TR.waitingModel(agent);
-      if (wait) content.append(TR.renderWaiting(document, wait));
+      if (wait) nodes.push(TR.renderWaiting(document, wait));
       const taskId = Number(agent.active_task_id ?? agent.task_id);
       const badge = TR.returnBadge(workerReturnSummaries.get(taskId), {status: 'in_progress'});
       if (badge) {
@@ -825,52 +813,144 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         link.append(TR.renderBadge(document, badge));
         const row = document.createElement('p');
         row.append(link);
-        content.append(row);
+        nodes.push(row);
       }
+      return nodes;
     }
 
-    function renderAgentOverviewCardContent(card, agent, source, statusLabel) {
-      const overview = window.BachAgentOverview;
-      if (!card || typeof card.querySelector !== 'function' || typeof card.replaceChildren !== 'function'
-          || typeof overview?.createAgentOverviewContent !== 'function') return;
-      const editorEl = document.getElementById('core-slot-editor');
-      let avatarNode = card.querySelector('.agent-avatar-preview, .core-avatar');
-      if (!avatarNode && window.BachAvatars?.createAvatar && editorEl?.dataset?.portraitAtlas) {
-        avatarNode = window.BachAvatars.createAvatar(document, agent.avatar, agent, editorEl.dataset.portraitAtlas, 'core-avatar');
-      }
-      let symbolNode = card.querySelector('.core-slot-identity .ticket-symbol, .ticket-symbol');
-      if (!symbolNode && window.BachSymbols?.createSymbol && editorEl?.dataset?.ticketSymbols) {
-        try {
-          symbolNode = window.BachSymbols.createSymbol(document, agent.symbol, JSON.parse(editorEl.dataset.ticketSymbols));
-        } catch (_) {}
-      }
-      const preserved = [...card.children].filter(node => node.matches?.('.agent-overview-actions, .core-actions, details'));
+    // PB-5b: the one place that turns an agent record into a tile. Every render site calls renderAgentTile, nobody
+    // builds a card by hand. source: 'core' (system slot or profile), 'worker', 'talk' or 'interface'.
+    function tileActionsFor(agent, source, ctx) {
+      const id = agent.id;
+      const noPowerReason = 'Systemplätze und Profile werden mit An und Aus gesteuert';
+      const workerOnly = 'Nur für laufende Hintergrundworker verfügbar';
+      const viaOccupancy = 'Schnittstellen werden über die Besetzung gesteuert';
       if (source === 'core') {
-        const toggle = card.querySelector(':scope > .core-slot-header .core-slot-toggle');
-        const actions = preserved.find(node => node.matches?.('.core-actions'));
-        if (toggle && actions) actions.prepend(toggle);
+        const enabled = agent.enabled === true;
+        return {
+          run: {label: enabled ? 'An' : 'Aus', role: 'switch', checked: enabled, ariaLabel: (agent.name || agent.id) + ' ein- oder ausschalten',
+            onClick: () => toggleCoreSlot(id, !enabled)},
+          edit: {label: ctx.sysRole ? 'Besetzung ändern' : 'Bearbeiten', onClick: () => openCoreEditor(id)},
+          chat: {href: '/chat?slot_id=' + encodeURIComponent(id)},
+          assign: {href: '/tasks?create=1&assign_slot=' + encodeURIComponent(id)},
+          pause: {reason: noPowerReason}, stop: {reason: noPowerReason},
+          handoff: {reason: workerOnly}, decompose: {reason: workerOnly},
+          delete: {reason: 'Agentenprofile werden im Bearbeiten-Dialog gelöscht'},
+        };
       }
-      const content = overview.createAgentOverviewContent(document, agent, {source, statusLabel, avatarNode, symbolNode});
-      labelReportedModelName(content);
-      appendAbortDetails(content, agent, source);
-      const banner = document.createElement('div');
+      if (source === 'talk') {
+        return {
+          run: {reason: 'Der Betriebsmodus wird im Abschnitt Talk-Betrieb eingestellt'},
+          edit: {label: 'Besetzung ändern', href: '#talk-slot'},
+          chat: {label: 'Funkgerät öffnen', onClick: () => window.bachOpenTalkCompanion && window.bachOpenTalkCompanion()},
+          assign: {reason: 'An Schnittstellen werden keine Aufgaben zugewiesen'},
+          pause: {reason: viaOccupancy}, stop: {reason: viaOccupancy},
+          handoff: {reason: workerOnly}, decompose: {reason: workerOnly},
+          delete: {reason: 'Systemschnittstellen können nicht gelöscht werden'},
+        };
+      }
+      if (source === 'interface') {
+        return {
+          run: {reason: viaOccupancy},
+          edit: {label: ctx.occupied ? 'Besetzung ändern' : 'Besetzen', onClick: () => openCoreEditor(ctx.occupied ? id : null)},
+          chat: {reason: 'Für Hardwareschnittstellen ist kein Chat angebunden'},
+          assign: {reason: 'An Schnittstellen werden keine Aufgaben zugewiesen'},
+          pause: {reason: viaOccupancy}, stop: {reason: viaOccupancy},
+          handoff: {reason: workerOnly}, decompose: {reason: workerOnly},
+          delete: {reason: 'Systemschnittstellen können nicht gelöscht werden'},
+        };
+      }
+      const state = ctx.state;
+      const status = String(agent.status || '').toLowerCase();
+      const paused = status === 'paused';
+      const live = ctx.running === true || state.waiting;
+      const act = {};
+      if (live) act.run = {label: 'Pausieren', onClick: () => runWorkerAction(id, 'pause')};
+      else if (!state.canStart) act.run = {label: 'Starten', reason: 'Start nicht bestätigt: ' + state.label};
+      else act.run = {label: paused ? 'Fortsetzen' : 'Starten', tone: 'primary', onClick: () => runWorkerAction(id, 'start')};
+      act.edit = state.canEdit ? {onClick: () => editWorkerConfiguration(id)}
+        : {reason: 'Bearbeiten geht nur, wenn der Worker bereit, pausiert, abgeschlossen oder fehlerhaft ist'};
+      act.chat = {reason: 'Für Hintergrundworker ist kein Chat angebunden'};
+      act.assign = agent.runtime_verified === true && ['idle', 'completed', 'running'].includes(status)
+        ? {href: '/tasks?create=1&assign_slot=' + encodeURIComponent(id)}
+        : {reason: 'Zuweisen setzt einen bestätigten Laufstatus voraus'};
+      act.pause = !live && !paused && state.canStart ? {onClick: () => runWorkerAction(id, 'pause')}
+        : {reason: live ? 'Läuft: Pausieren steht oben auf der Kachel' : paused ? 'Der Worker ist bereits pausiert' : 'Pausieren setzt einen startbereiten Worker voraus'};
+      act.stop = live ? {tone: 'danger', onClick: () => runWorkerAction(id, 'stop')} : {reason: 'Nur laufende Worker können gestoppt werden'};
+      for (const [action, label] of [['handoff', 'Kontext übergeben'], ['decompose', 'Task zerlegen']]) {
+        const offered = ctx.running === true && typeof agent.generation === 'string' && agent.action_capabilities?.[action] === true
+          && (action !== 'decompose' || agent.task_action_binding);
+        act[action] = offered
+          ? {label, onClick: () => runWorkerAction(id, action, agent.generation, agent.task_action_binding)}
+          : {label, reason: ctx.running === true ? 'Die Laufzeit bietet diese Aktion für den aktuellen Lauf nicht an' : workerOnly};
+      }
+      act.delete = live ? {reason: 'Laufende Worker zuerst stoppen, dann löschen'} : {tone: 'danger', onClick: () => deleteWorker(id)};
+      return act;
+    }
+
+    function renderAgentTile(agent, source, ctx = {}) {
+      const overview = window.BachAgentOverview;
+      const tileTools = window.BachAgentTile;
+      const editorEl = document.getElementById('core-slot-editor');
+      const atlas = editorEl?.dataset?.portraitAtlas;
       const sysRole = source === 'core' && isCanonicalSystemRole(agent);
-      banner.className = 'agent-role-occupancy-banner ' + (sysRole ? 'is-system-role' : 'is-local-agent');
-      const kicker = document.createElement('span');
-      kicker.className = 'occupancy-kicker';
-      kicker.textContent = sysRole
-        ? `🏛️ ${SYSTEM_ROLE_DESCRIPTIONS[agent.id] || 'Systemplatz (Hardwareschnittstelle)'}`
-        : `📌 Rolle mit Modellbindung (Living) · ${source === 'worker' ? 'Worker-Profil' : (agent.role_id || 'Eigenes Profil')}`;
-      const main = document.createElement('span');
-      main.className = 'occupancy-main';
-      main.textContent = sysRole
-        ? `Besetzt von: ${resolveSystemRoleOccupiedBy(agent)}`
-        : `Modell: ${(agent.model || 'Modell fehlt')}${agent.backend ? ' · ' + agent.backend : ''}${formatModelFallbacksSummary(agent)}`;
-      banner.append(kicker, main);
-      const metaNode = content.querySelector('.agent-overview-runtime-meta');
-      if (metaNode) content.insertBefore(banner, metaNode);
-      else content.append(banner);
-      card.replaceChildren(content, ...preserved);
+      const running = ctx.running === true;
+      const kind = source === 'core' ? (sysRole ? 'system-slot' : 'system-profile')
+        : source === 'worker' ? (running ? 'worker-running' : 'worker') : source;
+      const lift = node => { if (node) node.className = ((node.className || '') + ' agent-overview-runtime-avatar').trim(); return node; };
+      let avatarNode = null;
+      if (source === 'talk' || source === 'interface') {
+        avatarNode = lift(coreElement('span', undefined, 'core-avatar core-avatar-default'));
+        const glyph = window.BachUiIcons?.createIconGlyph(document, source === 'talk' ? 'radio' : 'package');
+        if (glyph) avatarNode.append(glyph);
+      } else if (window.BachAvatars?.createAvatar && atlas) {
+        avatarNode = lift(window.BachAvatars.createAvatar(document, agent.avatar, agent, atlas, source === 'core' ? 'core-avatar' : 'agent-avatar-preview'));
+      }
+      let symbolNode = null;
+      if ((source === 'core' || source === 'worker') && window.BachSymbols?.createSymbol && editorEl?.dataset?.ticketSymbols) {
+        try { symbolNode = window.BachSymbols.createSymbol(document, agent.symbol, JSON.parse(editorEl.dataset.ticketSymbols)); } catch (_) {}
+      }
+      const lines = ctx.modelLines || [...tileTools.tileModelLines(agent)];
+      if (!ctx.modelLines) lines.splice(1, 0, coreAgentAccessLabel(agent) + ' · ' + (agent.backend || 'Anbieter unbekannt'));
+      if (sysRole) lines.push('Besetzt von: ' + resolveSystemRoleOccupiedBy(agent));
+      const taskParts = [];
+      if (source === 'core' && agent.runtime_verified !== true) taskParts.push('Laufstatus nicht bestätigt');
+      else if (source === 'core' || source === 'worker') {
+        if (source === 'core' && (agent.current_tool || agent.tool_round)) taskParts.push('Werkzeug ' + (agent.current_tool || '–') + ' · Runde ' + (agent.tool_round ?? 0));
+        if (Number.isSafeInteger(agent.task_id) && agent.task_id > 0) taskParts.push('Task #' + agent.task_id);
+        if (source === 'worker' && agent.current_activity) taskParts.push(String(agent.current_activity));
+      }
+      let statusMeta = '';
+      if (source === 'worker' && running) {
+        const max = Number(agent.max_tool_rounds ?? 25) === 0 ? 'unbegrenzt' : Number(agent.max_tool_rounds ?? 25);
+        statusMeta = 'Runde ' + (Number(agent.tool_round) || 0) + '/' + max;
+      }
+      const extraNodes = [];
+      if (overview?.createAgentOverviewMeta && (source === 'core' || source === 'worker')) {
+        const meta = overview.createAgentOverviewMeta(document, agent, {source: source === 'worker' ? 'worker' : 'core'});
+        if (typeof meta.querySelectorAll === 'function') labelReportedModelName(meta);
+        const details = coreElement('details', undefined, 'agent-tile-details');
+        details.append(coreElement('summary', 'Details'), meta);
+        extraNodes.push(details);
+      }
+      if (source === 'worker' && running && agent.task_action_receipt) {
+        const receipt = agent.task_action_receipt;
+        extraNodes.push(coreElement('small', 'Zerlegung: ' + receipt.state +
+          (receipt.state === 'confirmed' ? ' · ' + receipt.created_ids.map(id => '#' + id).join(', ') : '')));
+      }
+      const tone = source === 'core' && agent.enabled === false ? 'idle' : tileTools.tileStatusTone(agent);
+      return tileTools.createAgentTile(document, {
+        kind, name: agent.name || agent.id,
+        kindLabel: sysRole ? (SYSTEM_ROLE_DESCRIPTIONS[agent.id] || 'Systemplatz (Hardwareschnittstelle)')
+          : source === 'worker' ? 'Hintergrundworker' : source === 'core' ? (agent.role_id || 'Eigenes Profil') : undefined,
+        avatarNode, symbolNode,
+        status: {label: ctx.statusLabel, tone: ctx.tone || tone}, statusMeta,
+        model: lines, task: taskParts.join(' · '),
+        errorNodes: abortNodes(agent, source), extraNodes,
+        actions: tileActionsFor(agent, source, {...ctx, sysRole, running}),
+        data: ctx.data || (source === 'worker'
+          ? {appearanceWorker: agent.id, workerId: running ? agent.id : undefined} : {coreAgentId: agent.id}),
+      });
     }
 
     function updateAgentOverviewSummary(result) {
@@ -1038,62 +1118,18 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       target.replaceChildren();
       if (localTarget) localTarget.replaceChildren();
       for (const agent of coreAgents) {
-        const card = coreElement('article', undefined, 'core-agent-card');
-        card.dataset.coreAgentId = agent.id;
-        const header = coreElement('div', undefined, 'core-slot-header');
-        const enabled = agent.enabled === true;
-        const toggle = coreElement('button', enabled ? '● AN' : '○ AUS', 'btn btn-sm core-slot-toggle');
-        toggle.type = 'button';
-        toggle.setAttribute('role', 'switch');
-        toggle.setAttribute('aria-checked', String(enabled));
-        toggle.setAttribute('aria-label', agent.name + ' ein- oder ausschalten');
-        toggle.dataset.enabled = String(enabled);
-        toggle.addEventListener('click', () => toggleCoreSlot(agent.id, !enabled));
-        header.append(toggle);
-        const badge = coreElement('span', coreAgentLabel(agent), 'badge');
-        header.append(badge);
-        card.append(header);
-        const identity = coreElement('div', undefined, 'core-slot-identity');
-        identity.append(window.BachAvatars.createAvatar(document, agent.avatar, agent,
-          document.getElementById('core-slot-editor').dataset.portraitAtlas, 'core-avatar'));
-        identity.append(coreElement('h3', agent.name || agent.id));
-        identity.append(window.BachSymbols.createSymbol(document,agent.symbol,
-          JSON.parse(document.getElementById('core-slot-editor').dataset.ticketSymbols)));
-        card.append(identity);
-        card.append(coreElement('small', agent.id, 'core-slot-id'));
-        card.append(coreElement('small', coreAgentAccessLabel(agent) + ' · ' + (agent.backend || 'Anbieter unbekannt')));
-        card.append(coreElement('div', 'Modellbindung: ' + (agent.model || 'Modell fehlt'), 'core-slot-model'));
-        if (agent.runtime_verified === true && agent.running === true && agent.resolved_model && agent.resolved_model !== agent.model)
-          card.append(coreElement('small', 'Gemeldetes Laufzeitmodell: ' + agent.resolved_model));
-        card.append(coreElement('small', agent.runtime_verified === true
-          ? 'Tool: ' + (agent.current_tool || '—') + ' · Runde: ' + (agent.tool_round ?? 0) +
-            (agent.task_id ? ' · Task #' + agent.task_id : '')
-          : 'Tool / Runde: nicht bestätigt'));
         const isSysRole = isCanonicalSystemRole(agent);
-        const actions = coreElement('div', undefined, 'core-actions');
-        const edit = coreElement('button', isSysRole ? 'Besetzung ändern' : 'Bearbeiten', 'btn btn-sm');
-        edit.addEventListener('click', () => openCoreEditor(agent.id));
-        actions.append(edit);
-        const chat = coreElement('a', 'Chat öffnen', 'btn btn-sm');
-        chat.href = '/chat?slot_id=' + encodeURIComponent(agent.id);
-        actions.append(chat);
-        const assign = coreElement('a','Aufgabe zuweisen','btn btn-sm');
-        assign.href = '/tasks?create=1&assign_slot=' + encodeURIComponent(agent.id);
-        actions.append(assign);
-        card.append(actions);
-        if (activeCoreIds.has(String(agent.id))) {
+        const isRunning = activeCoreIds.has(String(agent.id));
+        const card = renderAgentTile(agent, 'core', {statusLabel: coreAgentLabel(agent), running: isRunning});
+        if (isRunning) {
           card.dataset.runningSlot = agent.id;
-          card.dataset.coreAgentId = agent.id;
           appendWorkerSelectionEvidence(card, agent);
-          renderAgentOverviewCardContent(card, agent, 'core', coreAgentLabel(agent));
           runningTarget.append(card);
           if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(runningTarget, card, agent, 'core', 'running');
         } else if (!isSysRole && localTarget) {
-          renderAgentOverviewCardContent(card, agent, 'core', coreAgentLabel(agent));
           localTarget.append(card);
           if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(localTarget, card, agent, 'core', 'ready');
         } else {
-          renderAgentOverviewCardContent(card, agent, 'core', coreAgentLabel(agent));
           target.append(card);
           if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(target, card, agent, 'core', 'ready');
         }
@@ -1149,31 +1185,10 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const talkActive = (talkOpModeEl?.value || 'ptt') !== 'off';
         const talkModel = (talkModelEl?.value || 'buddha-default').trim();
         const talkPersona = (talkPersonaEl?.value || 'buddha').trim();
-        const talkCard = coreElement('article', undefined, 'core-agent-card');
-        talkCard.dataset.coreAgentId = 'buddha_talk';
-        const talkContent = coreElement('div', undefined, 'agent-overview-runtime-content');
-        const talkIdentity = coreElement('div', undefined, 'agent-overview-runtime-identity');
-        const talkAvatar = coreElement('span', '🎙️', 'core-avatar core-avatar-default agent-overview-runtime-avatar');
-        talkIdentity.append(talkAvatar);
-        talkIdentity.append(coreElement('h3', 'ELLMOS-Talk · Funkgerät', 'agent-overview-runtime-title'));
-        talkIdentity.append(coreElement('span', talkActive ? 'Ready · Living' : 'Pausiert', 'badge agent-overview-runtime-status'));
-        talkContent.append(talkIdentity);
-        const talkBanner = coreElement('div', undefined, 'agent-role-occupancy-banner is-system-role');
-        const talkMain = coreElement('span', talkActive
-          ? `Besetzt von: ${talkModel} (${talkPersona})`
-          : 'Nicht besetzt · Schnittstelle inaktiv', 'occupancy-main');
-        talkBanner.append(talkMain);
-        talkContent.append(talkBanner);
-        talkCard.append(talkContent);
-        const talkActions = coreElement('div', undefined, 'core-actions');
-        const talkCfgBtn = coreElement('a', 'Besetzung ändern', 'btn btn-sm');
-        talkCfgBtn.href = '#talk-slot';
-        talkActions.append(talkCfgBtn);
-        const talkPopBtn = coreElement('button', 'Funkgerät öffnen', 'btn btn-sm');
-        talkPopBtn.type = 'button';
-        talkPopBtn.addEventListener('click', () => window.bachOpenTalkCompanion && window.bachOpenTalkCompanion());
-        talkActions.append(talkPopBtn);
-        talkCard.append(talkActions);
+        const talkCard = renderAgentTile({id: 'buddha_talk', name: 'ELLMOS-Talk · Funkgerät'}, 'talk', {
+          statusLabel: talkActive ? 'Ready · Living' : 'Pausiert', tone: talkActive ? 'ok' : 'idle',
+          modelLines: [talkActive ? `Besetzt von: ${talkModel} (${talkPersona})` : 'Nicht besetzt · Schnittstelle inaktiv'],
+        });
         coreGrid.append(talkCard);
       }
 
@@ -1183,20 +1198,12 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const optionalIfaces = Array.isArray(data.optional_hardware_interface_slots) ? data.optional_hardware_interface_slots : [];
         for (const opt of optionalIfaces) {
           const occupiedAgent = data.agents.find(a => a.id === opt.id && a.enabled === true && String(a.model || '').trim());
-          const icard = coreElement('article', undefined, 'core-agent-card');
-          const iheader = coreElement('div', undefined, 'core-slot-header');
-          iheader.append(coreElement('h3', `${opt.icon || '🔌'} ${opt.name}`));
-          iheader.append(coreElement('span', occupiedAgent ? 'Besetzt' : 'Inaktiv', 'badge'));
-          icard.append(iheader);
-          icard.append(coreElement('small', occupiedAgent
-            ? `Besetzt von: ${resolveSystemRoleOccupiedBy(occupiedAgent)}`
-            : 'Nicht besetzt · Schnittstelle ruht'));
-          const iactions = coreElement('div', undefined, 'core-actions');
-          const ibtn = coreElement('button', occupiedAgent ? 'Besetzung ändern' : 'Besetzen', 'btn btn-sm');
-          ibtn.type = 'button';
-          ibtn.addEventListener('click', () => openCoreEditor(occupiedAgent ? occupiedAgent.id : null));
-          iactions.append(ibtn);
-          icard.append(iactions);
+          const icard = renderAgentTile({id: opt.id, name: opt.name}, 'interface', {
+            statusLabel: occupiedAgent ? 'Besetzt' : 'Inaktiv', tone: occupiedAgent ? 'ok' : 'idle', occupied: Boolean(occupiedAgent),
+            data: {interfaceSlot: opt.id},
+            modelLines: [occupiedAgent ? `Besetzt von: ${resolveSystemRoleOccupiedBy(occupiedAgent)}` : 'Nicht besetzt · Schnittstelle ruht'],
+          });
+          if (occupiedAgent) icard.dataset.occupiedBy = occupiedAgent.id;
           ifaceGrid.append(icard);
         }
       }
@@ -1547,142 +1554,32 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
           }
         } else {
           readyGrid.style.display = 'grid';
-          readyGrid.innerHTML = profileWorkers.map(w => {
-            const isPaused = w.status === 'paused';
-            const state = workerReadiness(w);
-            const providerStatus = window.BachProviderRequestStatus?.(w) || '';
-            return `
-              <div class="core-agent-card" data-appearance-worker="${escapeHtml(w.id)}" style="display:flex;flex-direction:column;justify-content:space-between;">
-                <div>
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
-                    <span class="badge" style="background:${state.ready ? '#059669' : isPaused ? '#92400e' : '#475569'};color:#fff;font-size:0.75rem;">
-                      ${escapeHtml(state.label)}
-                    </span>
-                    <small style="color:var(--text-muted);font-family:monospace;">${escapeHtml(w.backend || 'Anbieter fehlt')}</small>
-                  </div>
-                  <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem;">${escapeHtml(w.name || w.id)}</h3>
-                  <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;">
-                    Modellbindung: <code style="color:var(--accent-text);">${escapeHtml(w.model || 'Modell fehlt')}</code>
-                  </p>
-                  <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">
-                    ${escapeHtml(w.has_task_prompt === true ? 'Eigener Zusatzauftrag gespeichert' : w.has_task_prompt === false ? 'Kein eigener Zusatzauftrag gespeichert' : 'Zusatzauftrag hier nicht bestätigt')}
-                  </p>
-                  <p style="font-size:0.8rem;color:var(--text);line-height:1.4;">
-                    ${escapeHtml(w.current_activity || '')}
-                  </p>
-                  ${providerStatus ? '<p class="provider-request-status" aria-label="Status der Provideranfrage" style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">' + escapeHtml(providerStatus) + '</p>' : ''}
-                </div>
-
-                <div class="agent-overview-actions">
-                  ${state.waiting ? `
-                    <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
-                    <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'stop')">⏹ Stoppen</button>
-                  ` : !state.canStart ? `<span class="text-muted" style="font-size:0.75rem;">Start nicht bestätigt</span>` : isPaused ? `
-                    <button class="btn btn-sm btn-primary" onclick="runWorkerAction('${escapeHtml(w.id)}', 'start')">▶ Fortsetzen</button>
-                  ` : `
-                    <button class="btn btn-sm btn-primary" onclick="runWorkerAction('${escapeHtml(w.id)}', 'start')">▶ Start</button>
-                    <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
-                  `}
-                  <button class="btn btn-sm" ${state.canEdit ? '' : 'disabled'} onclick="editWorkerConfiguration('${escapeHtml(w.id)}')">Bearbeiten</button>
-                  <button class="btn btn-sm" style="color:var(--error-text);margin-left:auto;" title="Workerprofil löschen" onclick="deleteWorker('${escapeHtml(w.id)}')">🗑️</button>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-        for (const card of readyGrid.querySelectorAll('[data-appearance-worker]')) {
-          const worker = profileWorkers.find(item => item.id === card.dataset.appearanceWorker);
-          if (worker) {
+          readyGrid.replaceChildren(...profileWorkers.map(worker => {
+            const state = workerReadiness(worker);
+            const card = renderAgentTile(worker, 'worker', {statusLabel: state.label, state, running: false, tone: state.ready ? 'ok' : undefined});
             registerAgentOverviewCard(readyGrid, card, worker, 'worker', 'ready');
             window.BachAgentColor?.applyAgentColor(card, worker);
-          }
+            return card;
+          }));
         }
 
         // 2. Render Running Workers
         if (runningWorkers.length === 0) {
           runningList.replaceChildren();
         } else {
-          runningList.innerHTML = runningWorkers.map(w => {
-            const toolRound = Number(w.tool_round) || 0;
-            const maxRounds = Number(w.max_tool_rounds ?? 25) === 0 ? 'unbegrenzt' : Number(w.max_tool_rounds ?? 25);
-            const providerStatus = window.BachProviderRequestStatus?.(w) || '';
-            return `
-              <div class="core-agent-card" data-appearance-worker="${escapeHtml(w.id)}" data-worker-id="${escapeHtml(w.id)}" style="border-color:#38bdf8;background:rgba(56,189,248,0.04);">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
-                  <span class="badge" style="background:#0284c7;color:#fff;font-size:0.75rem;">⚡ RUNNING</span>
-                  <small style="color:var(--accent-text);">Runde ${toolRound}/${maxRounds}</small>
-                </div>
-                <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.25rem;">${escapeHtml(w.name || w.id)}</h3>
-                <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;">
-                  Modell: <code>${escapeHtml(w.model)}</code>
-                  ${w.resolved_model && w.resolved_model !== w.model ? `<span style="font-size:0.75rem;color:var(--accent-text);display:block;margin-top:0.2rem;">↳ Aufgelöst: <code>${escapeHtml(w.resolved_model)}</code></span>` : ''}
-                </p>
-                <p style="font-size:0.8rem;color:var(--text);margin-bottom:0.75rem;">
-                  ${escapeHtml(w.current_activity || 'Verarbeitet Aufgabe…')}
-                </p>
-                ${providerStatus ? '<p class="provider-request-status" aria-label="Status der Provideranfrage" style="font-size:0.75rem;color:var(--text-muted);line-height:1.4;">' + escapeHtml(providerStatus) + '</p>' : ''}
-
-                <div class="agent-overview-actions">
-                  <button class="btn btn-sm" onclick="runWorkerAction('${escapeHtml(w.id)}', 'pause')">⏸ Pause</button>
-                  <button class="btn btn-sm" style="color:var(--error-text);" onclick="runWorkerAction('${escapeHtml(w.id)}', 'stop')">⏹ Stoppen</button>
-                </div>
-              </div>
-            `;
-          }).join('');
-        }
-        for (const card of runningList.querySelectorAll('[data-worker-id]')) {
-          const worker = runningWorkers.find(item => item.id === card.dataset.workerId);
-          if (worker) {
+          runningList.replaceChildren(...runningWorkers.map(worker => {
+            const card = renderAgentTile(worker, 'worker', {statusLabel: 'Running · bestätigt', state: workerReadiness(worker), running: true});
             registerAgentOverviewCard(runningList, card, worker, 'worker', 'running');
             window.BachAgentColor?.applyAgentColor(card, worker);
-          }
+            appendWorkerSelectionEvidence(card, worker);
+            return card;
+          }));
         }
-        for(const card of document.querySelectorAll('[data-appearance-worker]')) {
-          const worker=workers.find(item=>item.id===card.dataset.appearanceWorker);
-          if (window.BachWorkerQueue) window.BachWorkerQueue.appendQueueDetails(document,card,
-            worker?.runtime_verified === true ? worker.queue_status : null,
-            {key:worker?.id,available:true});
-          const heading=card.querySelector('h3');
-          if(worker&&heading)heading.prepend(window.BachAvatars.createAvatar(document,worker.avatar,worker,
-            document.getElementById('core-slot-editor').dataset.portraitAtlas,'agent-avatar-preview'));
-          if (worker?.runtime_verified === true && ['idle', 'completed', 'running'].includes(worker.status)) {
-            const actions = card.querySelector('.agent-overview-actions') || coreElement('div', undefined, 'core-actions');
-            const assign = coreElement('a', 'Aufgabe zuweisen', 'btn btn-sm');
-            assign.href = '/tasks?create=1&assign_slot=' + encodeURIComponent(worker.id);
-            const deleteBtn = actions.querySelector('button[title="Workerprofil löschen"]');
-            if (deleteBtn) actions.insertBefore(assign, deleteBtn);
-            else actions.append(assign);
-            if (!actions.parentNode) card.append(actions);
-          }
-        }
-        runningList.querySelectorAll('[data-worker-id]').forEach(card => {
-          const worker = runningWorkers.find(item => item.id === card.dataset.workerId);
-          if (!worker) return;
-          appendWorkerSelectionEvidence(card, worker);
-          if (typeof worker.generation !== 'string') return;
-          const actions = document.createElement('div');
-          actions.className = 'core-actions';
-          for (const [action, label] of [['handoff', 'Kontext übergeben'], ['decompose', 'Task zerlegen']]) {
-            if (worker.action_capabilities?.[action] !== true) continue;
-            if (action === 'decompose' && !worker.task_action_binding) continue;
-            const button = coreElement('button', label, 'btn btn-sm');
-            button.type = 'button';
-            button.addEventListener('click', () => runWorkerAction(worker.id, action,
-              worker.generation, worker.task_action_binding));
-            actions.append(button);
-          }
-          if (worker.task_action_receipt) {
-            const receipt = worker.task_action_receipt;
-            actions.append(coreElement('small', 'Zerlegung: ' + receipt.state +
-              (receipt.state === 'confirmed' ? ' · ' + receipt.created_ids.map(id => '#' + id).join(', ') : '')));
-          }
-          card.append(actions);
-        });
-        for (const card of [...readyGrid.querySelectorAll('[data-appearance-worker]'), ...runningList.querySelectorAll('[data-worker-id]')]) {
+        for (const card of document.querySelectorAll('[data-appearance-worker]')) {
           const worker = workers.find(item => item.id === card.dataset.appearanceWorker);
-          if (!worker) continue;
-          const statusLabel = card.dataset.workerId ? 'Running · bestätigt' : workerReadiness(worker).label;
-          renderAgentOverviewCardContent(card, worker, 'worker', statusLabel);
+          if (window.BachWorkerQueue) window.BachWorkerQueue.appendQueueDetails(document, card,
+            worker?.runtime_verified === true ? worker.queue_status : null,
+            {key: worker?.id, available: true});
         }
         renderWorkerSelectionPolicies();
         applyAgentOverviewControls();
@@ -2235,8 +2132,8 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const res = window.bachUpdateTalkConfig ? await window.bachUpdateTalkConfig(patch) : null;
         if (note) {
           note.textContent = res
-            ? `✅ Gespeichert: ${patch.persona.toUpperCase()} (${patch.primary_model}) · Modus: ${patch.operating_mode} · Fast-Relay: ${patch.fast_relay_model}`
-            : '⚠️ Speichern fehlgeschlagen.';
+            ? `Gespeichert: ${patch.persona.toUpperCase()} (${patch.primary_model}) · Modus: ${patch.operating_mode} · Fast-Relay: ${patch.fast_relay_model}`
+            : 'Speichern fehlgeschlagen. Die Konfiguration wurde nicht übernommen.';
         }
       });
 
@@ -2257,7 +2154,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
           });
           if (r.ok) {
             if (window.bachLoadTalkConfig) await window.bachLoadTalkConfig();
-            if (note) note.textContent = `📡 Modell-Funkspruch von ${caller.toUpperCase()} ausgelöst — siehe Funkgerät-Button oben rechts im Header!`;
+            if (note) note.textContent = `Funkspruch von ${caller.toUpperCase()} ausgelöst. Das Signal erscheint am Funkgerät in der Kopfzeile.`;
           }
         } catch (_) {}
       });

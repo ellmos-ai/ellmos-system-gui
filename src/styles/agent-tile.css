@@ -1,0 +1,310 @@
+/* PB-5b (#3989): the one agent tile (src/lib/agent-tile.mjs). Tokens only, so every theme keeps its contrast.
+   Structure: head, status, model, task, error, actions. State is text plus a quiet dot; there is no emoji. */
+
+.agent-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  min-width: 0;
+  padding: 1.05rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 14px);
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.agent-tile-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.agent-tile-title {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.agent-tile-name {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.agent-tile-kind {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.agent-tile-head .core-avatar,
+.agent-tile-head .agent-avatar-preview {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.agent-tile-head .core-avatar-default {
+  display: grid;
+  place-items: center;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+}
+
+.agent-tile-head .core-avatar-default svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.agent-tile-statusline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+}
+
+.agent-tile-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.18rem 0.6rem 0.18rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.agent-tile-status::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--tile-tone, var(--text-dim));
+}
+
+.agent-tile-status[data-tone="ok"] { --tile-tone: var(--success-text); }
+.agent-tile-status[data-tone="busy"] { --tile-tone: var(--accent-blue-text); }
+.agent-tile-status[data-tone="idle"] { --tile-tone: var(--text-muted); }
+.agent-tile-status[data-tone="error"] { --tile-tone: var(--error-text); border-color: var(--error-text); }
+.agent-tile-status[data-tone="unknown"] { --tile-tone: var(--text-dim); }
+
+.agent-tile-statusmeta {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
+.agent-tile-model {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.agent-tile-model-main {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.agent-tile-model-note,
+.agent-tile-model .agent-tile-model-note {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.agent-tile-task {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.agent-tile-error {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.35rem;
+  padding: 0.5rem 0.7rem;
+  border-left: 3px solid var(--error-text);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--error) 9%, transparent);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.agent-tile-error[hidden] { display: none; }
+.agent-tile-error p { margin: 0; overflow-wrap: anywhere; }
+
+.agent-tile-extra { display: grid; gap: 0.4rem; }
+
+.agent-tile-details > summary {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.agent-tile-details[open] > summary { margin-bottom: 0.4rem; }
+
+/* Whatever the page appends later (queue evidence, selection policy) stays above the action row. */
+.agent-tile > details { order: 50; }
+.agent-tile > [data-slot="actions"] { order: 99; }
+
+/* Equal columns: five controls fill one row when the tile is wide and break into 3 + 2 when it is narrow. */
+.agent-tile-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(5.6rem, 1fr));
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.agent-tile-actions .btn,
+.agent-tile-more > summary {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding: 0 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.agent-tile-actions .btn:hover,
+.agent-tile-more > summary:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+
+.agent-tile-actions .btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.agent-tile-actions .btn-primary:hover { background: var(--accent-light); color: var(--on-accent); }
+
+.agent-tile-actions .tile-danger { color: var(--error-text); }
+
+.agent-tile-actions .btn.is-disabled {
+  border-style: dashed;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.agent-tile-actions .btn.is-disabled:hover { background: transparent; border-color: var(--border); color: var(--text-muted); }
+
+.agent-tile-actions [role="switch"] { min-width: 3.4rem; }
+.agent-tile-actions [role="switch"][data-checked="true"] {
+  border-color: var(--success-text);
+  color: var(--success-text);
+  background: color-mix(in srgb, var(--success) 10%, transparent);
+}
+.agent-tile-actions [role="switch"][data-checked="false"] { color: var(--text-muted); }
+
+.agent-tile-actions :focus-visible,
+.agent-tile-more > summary:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+.agent-tile-reason {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.agent-tile-more { position: relative; min-width: 0; }
+.agent-tile-more > summary { list-style: none; }
+.agent-tile-more > summary::-webkit-details-marker { display: none; }
+.agent-tile-more[open] > summary { background: var(--bg-elevated); border-color: var(--border-hover); }
+
+.agent-tile-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  z-index: 20;
+  display: grid;
+  gap: 0.15rem;
+  min-width: 13rem;
+  padding: 0.35rem;
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
+
+.agent-tile-menu .btn {
+  justify-content: flex-start;
+  width: 100%;
+  border-color: transparent;
+}
+
+.agent-tile-menu .btn.is-disabled { border-color: transparent; }
+
+/* Compact list view (Darstellung: Kompakte Liste) keeps one calm row per tile. */
+.agent-overview-list .agent-tile { padding: 0.45rem 0.7rem; gap: 0.4rem 0.8rem; }
+.agent-overview-list .agent-tile-head { flex: 1 1 12rem; }
+.agent-overview-list .agent-tile-kind,
+.agent-overview-list .agent-tile-model-note,
+.agent-overview-list .agent-tile-extra,
+.agent-overview-list .agent-tile-task,
+.agent-overview-list .agent-tile-error:empty { display: none; }
+.agent-overview-list .agent-tile-actions { display: flex; flex-wrap: wrap; margin-top: 0; padding-top: 0; border-top: 0; }
+.agent-overview-list .agent-tile-actions .btn,
+.agent-overview-list .agent-tile-more > summary { width: auto; }
+.agent-overview-list .agent-tile-menu { bottom: auto; top: calc(100% + 6px); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .agent-tile-status::before { transition: background 150ms ease; }
+}
+
+@media (max-width: 520px) {
+  .agent-tile-menu { right: auto; left: 0; }
+}
+
+/* Badges and notes from the abort evidence (PB-4) may wrap inside a narrow tile. */
+.agent-tile .agent-tile-error .badge,
+.agent-tile .agent-tile-error .return-badge {
+  display: inline-block;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.agent-tile .agent-tile-error a { display: block; max-width: 100%; }
+
+.agent-tile > * { min-width: 0; max-width: 100%; box-sizing: border-box; }
