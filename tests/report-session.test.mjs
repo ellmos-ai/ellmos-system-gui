@@ -28,6 +28,7 @@ const BLOCKS = {
   document_scan_missing: 'Datenschutz-Sperre: Die Akte wurde nicht auf Namen Dritter, Telefonnummern, Mail-Adressen und Adressen gescannt. Profil nach dem Import der Akte anlegen. Es wurde nichts gesendet.',
   profile_missing: 'Datenschutz-Sperre: Fuer diesen Fall gibt es kein Pseudonymisierungsprofil. Zuerst das Profil anlegen. Es wurde nichts gesendet.',
   identity_terms_in_prompt: 'Datenschutz-Sperre: 2 Kennung(en) des Falls stuenden noch im Cloud-Prompt (z. B. andere Schreibweise oder unerkannte Mail-Adresse). Es wurde nichts gesendet. Begriffsliste ergaenzen oder Modus \'lokal\' nutzen.',
+  birth_date_invalid: 'Datenschutz-Sperre: Das Geburtsdatum fehlt oder ist nicht lesbar (z. B. TT.MM.JJJJ). Ohne es bliebe das echte Datum der Akte im Cloud-Prompt stehen. Geburtsdatum angeben oder Modus \'lokal\' nutzen. Es wurde nichts gesendet.',
 };
 const block = code => ({success: false, privacy_block: true, error_code: code, error: BLOCKS[code]});
 
@@ -69,10 +70,34 @@ test('profileBody reads one entry per line, never splits names at commas, and ne
     client_name: 'Leonhardt, Jonas', geburtsdatum: '14.05.2017', parent_names: ['Sabine Leonhardt', 'Markus Leonhardt'],
     client_address: 'Gartenstraße 18, 79102 Freiburg', additional_terms: ['Gartenstraße', 'Frau Dr. Probe'],
   });
-  assert.throws(() => profileBody({clientName: '  '}), /Name/);
-  const minimal = profileBody({clientName: 'Max Probe'});
-  assert.equal('geburtsdatum' in minimal, false);
+  assert.throws(() => profileBody({clientName: '  ', geburtsdatum: '14.05.2017'}), /Name/);
+  const minimal = profileBody({clientName: 'Max Probe', geburtsdatum: '3.7.2014'});
+  assert.equal(minimal.geburtsdatum, '3.7.2014');
   assert.deepEqual(minimal.additional_terms, []);
+});
+
+// bach#683 R7-F1: ohne Geburtsdatum nahm BACH früher 01.01.2010, das echte Datum blieb im Cloud-Prompt.
+test('profileBody needs a real birth date as TT.MM.JJJJ and never sends a default', () => {
+  for (const geburtsdatum of [undefined, '', '   ', 'unbekannt', '2014-07-03', '3.7.14', '31.02.2014', '00.07.2014', '03.13.2014'])
+    assert.throws(() => profileBody({clientName: 'Max Probe', geburtsdatum}), /Geburtsdatum/, String(geburtsdatum));
+  assert.equal(profileBody({clientName: 'Max Probe', geburtsdatum: ' 29.02.2016 '}).geburtsdatum, '29.02.2016');
+  assert.throws(() => profileBody({clientName: 'Max Probe', geburtsdatum: '29.02.2015'}), /Geburtsdatum/);
+});
+
+test('a missing birth date sends no profile request', async () => {
+  const stub = stubFetch(() => json(200, {success: true}));
+  try { await assert.rejects(createProfile('WF_1', {clientName: 'Max Probe'}), /Geburtsdatum/); } finally { stub.restore(); }
+  assert.deepEqual(stub.calls, []);
+});
+
+test('birth_date_invalid is explained with its next step', () => {
+  const view = reasonView(block('birth_date_invalid'));
+  assert.match(view.title, /Geburtsdatum/);
+  assert.match(view.next, /TT\.MM\.JJJJ/);
+});
+
+test('document_scan_missing also names a later import as cause', () => {
+  assert.match(reasonView(block('document_scan_missing')).text, /später|danach/);
 });
 
 test('promptBody keeps period, knowledge-base switch and instructions', () => {
@@ -86,7 +111,7 @@ test('the client posts each step to the session routes and returns the block ins
   try {
     assert.equal((await startSession()).session_id, 'WF_1');
     await importFolder('WF 1', 'user/akte');
-    await createProfile('WF 1', {clientName: 'Max Probe'});
+    await createProfile('WF 1', {clientName: 'Max Probe', geburtsdatum: '03.07.2014'});
     const blocked = await buildPrompt('WF 1', {});
     assert.equal(reasonView(blocked).code, 'profile_missing');
     await generateReport('WF 1', '{"stammdaten":{}}');

@@ -103,6 +103,7 @@ test('when ready, a blocked prompt shows the reason and never the prompt', async
     await page.waitForFunction(() => document.querySelector('#report-cloud-steps').disabled === false);
     assert.match(await page.locator('#report-mode-cloud-state').innerText(), /bereit/i);
     await page.locator('#report-client-name').fill('Synthetisch Probe');
+    await page.locator('#report-birthdate').fill('03.07.2014');
     await page.locator('#report-profile-form button[type="submit"]').click();
     await page.waitForFunction(() => /Profil angelegt/.test(document.querySelector('#report-profile-status').textContent));
     await page.locator('#report-prompt-form button[type="submit"]').click();
@@ -111,6 +112,28 @@ test('when ready, a blocked prompt shows the reason and never the prompt', async
     assert.match(await page.locator('#report-reason-code').innerText(), /identity_terms_in_prompt/);
     assert.equal(await page.locator('#report-prompt-box').isHidden(), true);
     assert.ok(requests.includes('POST /api/report/session/WF_synth/prompt'), requests.join('\n'));
+  } finally { await context.close(); }
+});
+
+// bach#683 R7-F1: ohne Geburtsdatum setzte BACH 01.01.2010 ein, das echte Datum blieb im Cloud-Prompt.
+test('the birth date is required as TT.MM.JJJJ: empty or other forms send no profile request', async t => {
+  if (!browser) return t.skip('kein Playwright-Browser installiert');
+  const {page, context, requests} = await open({readiness: {success: true, cloud_ready: true, error_code: null, error: null}});
+  try {
+    await page.waitForFunction(() => document.querySelector('#report-cloud-steps').disabled === false);
+    const field = page.locator('#report-birthdate');
+    assert.equal(await field.evaluate(node => node.required), true);
+    assert.equal(await field.inputValue(), '');
+    await page.locator('#report-client-name').fill('Synthetisch Probe');
+    for (const value of ['', '2014-07-03', '3.7.14']) {
+      await field.fill(value);
+      await page.locator('#report-profile-form button[type="submit"]').click();
+      assert.equal(await field.evaluate(node => node.validity.valid), false, value);
+    }
+    assert.equal(requests.some(r => r.endsWith('/profile')), false, requests.join('\n'));
+    await field.fill('03.07.2014');
+    await page.locator('#report-profile-form button[type="submit"]').click();
+    await page.waitForFunction(() => /Profil angelegt/.test(document.querySelector('#report-profile-status').textContent));
   } finally { await context.close(); }
 });
 
