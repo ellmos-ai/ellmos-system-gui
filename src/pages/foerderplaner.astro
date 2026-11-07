@@ -1,0 +1,96 @@
+---
+import BachLayout from '../layouts/BachLayout.astro';
+const routePath = '/foerderplaner';
+const field = 'padding:0.45rem;border-radius:6px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);';
+const label = 'font-size:0.8rem;color:var(--text-muted);display:grid;gap:0.25rem;';
+const card = 'padding:1.25rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);';
+---
+<BachLayout title="Förderplaner · Förderbericht" currentPath={routePath}>
+  <div class="page-head" style="margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+    <div>
+      <p class="eyebrow" style="margin:0 0 0.25rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Förderplaner · Förderbericht (Cloud-Weg)</p>
+      <h1 style="margin:0 0 0.35rem 0;font-size:1.65rem;">📄 Förderbericht vorbereiten</h1>
+      <p style="margin:0;opacity:0.85;font-size:0.9rem;max-width:62rem;">
+        Die Akte wird vor dem Kopieren pseudonymisiert: Namen, Daten, Adressen und Namen anderer Personen werden durch Tarnwerte ersetzt,
+        eine Datenschutz-Sperre prüft den ganzen Prompt. Die Tarnwerte werden nach der Antwort lokal zurückersetzt.
+        Der Modus lokal (ohne Pseudonymisierung, nur mit lokalem Modell) läuft über die Förderbericht-Pipeline, nicht über diese Seite.
+      </p>
+    </div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+      <span style="font-size:0.8rem;color:var(--text-muted);">Sitzung: <code id="report-session-id">noch keine</code></span>
+      <button type="button" id="report-new-case" class="btn btn-secondary btn-sm">Neuer Fall</button>
+    </div>
+  </div>
+
+  <section id="report-reason" role="alert" hidden style="margin:0 0 1.25rem 0;padding:0.9rem 1.1rem;border:1px solid var(--danger, #c0392b);border-radius:var(--radius-md);background:var(--bg-card);">
+    <h2 id="report-reason-title" style="margin:0 0 0.35rem 0;font-size:1rem;"></h2>
+    <p id="report-reason-text" style="margin:0 0 0.35rem 0;font-size:0.88rem;"></p>
+    <p id="report-reason-next" style="margin:0 0 0.35rem 0;font-size:0.88rem;font-weight:600;"></p>
+    <small id="report-reason-code" style="color:var(--text-muted);"></small>
+  </section>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.25rem;align-items:start;">
+    <section class="card" style={card}>
+      <h2 style="margin:0 0 0.75rem 0;font-size:1.05rem;">1. Akte übernehmen (optional)</h2>
+      <form id="report-import-form" style="display:grid;gap:0.65rem;">
+        <label style={label}>
+          Ordner der Akte, relativ zum BACH-Verzeichnis
+          <input id="report-folder" type="text" required placeholder="z. B. user/documents/foerderplaner/Eingang/Fall-A" style={field} />
+        </label>
+        <p style="margin:0;font-size:0.78rem;color:var(--text-muted);">Liegt die Akte schon in Berichte/data_roh, diesen Schritt überspringen.</p>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <button type="submit" class="btn btn-secondary btn-sm">Übernehmen</button>
+          <span id="report-import-status" role="status" style="font-size:0.8rem;color:var(--text-muted);"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="card" style={card}>
+      <h2 style="margin:0 0 0.75rem 0;font-size:1.05rem;">2. Profil anlegen</h2>
+      <form id="report-profile-form" style="display:grid;gap:0.65rem;">
+        <label style={label}>Name <input id="report-client-name" type="text" required autocomplete="off" style={field} /></label>
+        <label style={label}>Geburtsdatum (TT.MM.JJJJ) <input id="report-birthdate" type="text" autocomplete="off" style={field} /></label>
+        <label style={label}>Eltern (ein Name pro Zeile) <textarea id="report-parents" rows="2" style={field}></textarea></label>
+        <label style={label}>Adresse (Straße Nr, PLZ Ort) <input id="report-address" type="text" autocomplete="off" style={field} /></label>
+        <label style={label}>Begriffsliste: weitere Namen und Schreibweisen (einer pro Zeile) <textarea id="report-terms" rows="3" style={field}></textarea></label>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <button type="submit" class="btn btn-primary btn-sm">Profil anlegen</button>
+          <span id="report-profile-status" role="status" style="font-size:0.8rem;color:var(--text-muted);"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="card" style={card}>
+      <h2 style="margin:0 0 0.75rem 0;font-size:1.05rem;">3. Prompt erzeugen</h2>
+      <form id="report-prompt-form" style="display:grid;gap:0.65rem;">
+        <label style={label}>Berichtszeitraum <input id="report-period" type="text" placeholder="01.01.2025 - 31.12.2025" style={field} /></label>
+        <label style={label}>Zusätzliche Anweisungen (werden mit pseudonymisiert) <textarea id="report-instructions" rows="2" style={field}></textarea></label>
+        <label style="font-size:0.8rem;color:var(--text-muted);display:flex;gap:0.4rem;align-items:center;"><input id="report-kb" type="checkbox" checked /> Wissensdatenbank einbeziehen</label>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <button type="submit" class="btn btn-primary btn-sm">Prompt erzeugen</button>
+          <span id="report-prompt-status" role="status" style="font-size:0.8rem;color:var(--text-muted);"></span>
+        </div>
+      </form>
+      <div id="report-prompt-box" hidden style="display:grid;gap:0.5rem;margin-top:0.75rem;">
+        <textarea id="report-prompt" rows="8" readonly style={field + 'font-family:var(--font-mono, monospace);font-size:0.78rem;'}></textarea>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <button type="button" id="report-copy" class="btn btn-secondary btn-sm">Prompt kopieren</button>
+          <span id="report-copy-status" role="status" style="font-size:0.8rem;color:var(--text-muted);"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style={card}>
+      <h2 style="margin:0 0 0.75rem 0;font-size:1.05rem;">4. Antwort einfügen, Bericht erstellen</h2>
+      <form id="report-generate-form" style="display:grid;gap:0.65rem;">
+        <label style={label}>Antwort des Modells (JSON) <textarea id="report-response" rows="6" required style={field}></textarea></label>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <button type="submit" class="btn btn-primary btn-sm">Bericht erstellen</button>
+          <span id="report-generate-status" role="status" style="font-size:0.8rem;color:var(--text-muted);"></span>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script>import '../scripts/foerderplaner-page.mjs';</script>
+</BachLayout>
