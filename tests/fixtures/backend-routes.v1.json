@@ -231,6 +231,7 @@
   "GET /api/prompt-library/{}",
   "GET /api/recurring",
   "GET /api/report/pending",
+  "GET /api/report/readiness",
   "GET /api/report/session/{}",
   "GET /api/reports/capabilities",
   "GET /api/reports/sources",

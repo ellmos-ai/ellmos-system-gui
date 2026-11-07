@@ -1909,6 +1909,46 @@
     "found_in": "src/lib/notes-client.mjs#unarchiveNote"
    }
   ],
+  "/foerderplaner": [
+   {
+    "method": "GET",
+    "path": "/api/report/readiness",
+    "required": true
+   },
+   {
+    "method": "POST",
+    "path": "/api/report/session/start",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/report/session/{session_id}/import",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/report-session.mjs#importFolder"
+   },
+   {
+    "method": "POST",
+    "path": "/api/report/session/{session_id}/profile",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/report-session.mjs#createProfile"
+   },
+   {
+    "method": "POST",
+    "path": "/api/report/session/{session_id}/prompt",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/report-session.mjs#buildPrompt"
+   },
+   {
+    "method": "POST",
+    "path": "/api/report/session/{session_id}/generate",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/report-session.mjs#generateReport"
+   }
+  ],
   "/system/installation-updates": [
    {
     "method": "GET",

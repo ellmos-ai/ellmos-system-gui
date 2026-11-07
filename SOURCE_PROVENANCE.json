@@ -24,7 +24,7 @@
     "package-lock.json": "a7ca6b4d17126984acdbd7b97f1b9649c24ec43004e641764d5dd22357b749fd",
     "package.json": "b0e0ee0e02caaa41fa2dceae3542d58cd2f8e6e3beb8501cc42bf327d4c1aec4",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "b2ab990a780b7395f8869b2a709e2253daaa6b5d7becd0c63c75b78a8e54ef80",
+    "public/page-reads.v1.json": "83ab3ecaa5f0cbb3d7b66396443defd15269d1fa07363190009f12b1f606ec69",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -257,7 +257,7 @@
     "src/lib/capability-board-ui.mjs": "ae4d73808cb1b95c904c02d5996cb2ba5e3ac6cc9eba249e6801619b9a9cb123",
     "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
     "src/lib/domain-pins.mjs": "e6c4fd1700f0cfc0995c17c0ec3cb66d3ac12f7457eff13b96421d314999a813",
-    "src/lib/domain-routes.mjs": "2dd127d08b0f53110306e09ca256b75c138ca56fcc444f0f4e62f59f75403dd3",
+    "src/lib/domain-routes.mjs": "854117bebf6b0324edadf3a212ba4d0a692603b3f95ff4569f1e61f91e802a00",
     "src/lib/gemini-avatar-assets.mjs": "72f30b9af1c0374ab30aef6cdb5f5a662af8d4f9448ff86596e0b6fd607e115a",
     "src/lib/i18n.mjs": "726aded8be4e35e10363ad7fccb85f5e4b041db2639884d67a65c4f9ef76e5ab",
     "src/lib/installation-updates-model.mjs": "cf48d1d068e69c4c441dd19910e232d8604082a55221ad7bb312292612227794",
@@ -300,7 +300,7 @@
     "src/pages/governance/logs.astro": "1227c2cb3cb5306990090b2adf9b7d6384f3e4a118db0c309011004a26e73a1d",
     "src/pages/governance/usecases.astro": "fabb09df9521dc2d8ada7c3e6864753939b14547faecd8fc10818b8dfc6d2685",
     "src/pages/help.astro": "5bf12452ea86c99a01f41b0b21ac9c27b47a28778abcce70848008c451c2893e",
-    "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
+    "src/pages/inbox.astro": "bbf7ea46658020ff9c3a876a7d5cef373f5f74e602de6c05b35900047bb76d06",
     "src/pages/index.astro": "6bc4d682340263c20c84894966941cfb9f7270a918c9a0c1b018ec501c44dba2",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
     "src/pages/life.astro": "cda4b01d98b1af8b1781db159c1b198b7f2662db7887e988fafcb2fd6ce118c7",
@@ -340,12 +340,12 @@
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
-    "tests/domain-routes.test.mjs": "eb151b9752db41b5c22c441df8ca6c403b105ada24d4edf5bd90763d08277d6e",
+    "tests/domain-pins.test.mjs": "f082e8231d3445f3eb40de7a8563285e16168f81f85c5ba4c3374105a381a925",
+    "tests/domain-routes.test.mjs": "1608708300425eb6ddb1fb13f4c5cf21f3d9cfdcbe671b0ac37df313c8a24ab3",
     "tests/dompurify-compatibility.test.mjs": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
     "tests/fabrika.test.mjs": "a82d8c4fcde441ac2c430aea93a0b38019233860cfe753a9ecf1c9fb0bde25fc",
     "tests/fixtures/dompurify-regressions.html": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
-    "tests/frontend-parity.test.mjs": "419cc003835917e4be438c229ccddbe3689c133fc74056e52e1d8f2e48a90fa1",
+    "tests/frontend-parity.test.mjs": "bf07df534aec5700416568d1361b328d15217146a70c645dcb7e5b75eee2a99f",
     "tests/gui-shell-navigation.test.mjs": "10746987973e2b7ce7927b7c5c8810601a114d721af151ed7452f7a80e00ed7b",
     "tests/gui100-regressions.test.mjs": "c35ffdbc229a13da85b57619a3a225ddb821c6cebe05f01fcbe16eb401259d2b",
     "tests/installation-updates-model.test.mjs": "c8509643c399b7a8f4006983383963f8027d35050362e59bba5ac0b7262a34dd",
@@ -381,7 +381,7 @@
     "src/lib/agent-triggers.mjs": "289e00f21c89f9521296e64f384fd580737578f7626b6ed3ca05d2941822141b",
     "src/lib/agent-triggers-ui.mjs": "9e9191a853668a2ea2c9ea50cf7392436d13ebcbdd1631535de6e92507ffa913",
     "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
-    "scripts/page-reads-helpers.mjs": "2c09229565e98b75010bbca31679589fade600e6e4cc8cbc850063ba7ab3285b",
+    "scripts/page-reads-helpers.mjs": "aa501f6bd9ad8cedb3353f0df44623ed6cdc9f7a27244690d8ee66bf9f04778d",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
     "src/lib/role-socket-preview.mjs": "95145d84fc33c4dffb1a3517f9255061aa7a69a4fac63dae5ed80412e7234baf",
     "tests/role-socket-preview.test.mjs": "caffb4c42832e5a29aa1e9136b648cb70bd0a9c23aaec2a23cd13d321d84b89f",
@@ -5813,6 +5813,58 @@
           "path": "scripts/page-reads-helpers.mjs",
           "previous_sha256": "621c99d968601dcdea44ee4130db8e8a00c9ce8c228cb9bd90a8b4a65bc6088d",
           "sha256": "2c09229565e98b75010bbca31679589fade600e6e4cc8cbc850063ba7ab3285b"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-07",
+      "summary": "PB-15 Folgearbeit (T-20261107-347299705): new Foerderplaner page /foerderplaner runs the BACH report workflow /api/report/session/... in cloud mode (start, optional import of the case folder, profile with name recognition and case scan, prompt behind the privacy gate, model answer -> report with local back-replacement). A privacy block from BACH (privacy_block, error_code ner_unavailable | document_scan_missing | profile_missing | identity_terms_in_prompt, message without case values) is shown as plain-language reason with the next step via textContent, the prompt stays hidden; /inbox links the page. BACH already serves /foerderplaner from dist/foerderplaner.html. page-reads manifest, helper registration and the page count (52) follow. New files (not recorded as imports): src/lib/report-session.mjs, src/scripts/foerderplaner-page.mjs, src/pages/foerderplaner.astro, tests/report-session.test.mjs.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "b2ab990a780b7395f8869b2a709e2253daaa6b5d7becd0c63c75b78a8e54ef80",
+          "sha256": "ecd2b2176c008d47ac631383f981252474434af3fdc34fc1857a42571a39e9cf"
+        },
+        {
+          "path": "scripts/page-reads-helpers.mjs",
+          "previous_sha256": "2c09229565e98b75010bbca31679589fade600e6e4cc8cbc850063ba7ab3285b",
+          "sha256": "aa501f6bd9ad8cedb3353f0df44623ed6cdc9f7a27244690d8ee66bf9f04778d"
+        },
+        {
+          "path": "src/pages/inbox.astro",
+          "previous_sha256": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
+          "sha256": "bbf7ea46658020ff9c3a876a7d5cef373f5f74e602de6c05b35900047bb76d06"
+        },
+        {
+          "path": "tests/frontend-parity.test.mjs",
+          "previous_sha256": "419cc003835917e4be438c229ccddbe3689c133fc74056e52e1d8f2e48a90fa1",
+          "sha256": "bf07df534aec5700416568d1361b328d15217146a70c645dcb7e5b75eee2a99f"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-07",
+      "summary": "PB-15 Folgearbeit (T-20261107-347299705), second step: /foerderplaner reads GET /api/report/readiness (required page read) and keeps the cloud steps in a disabled fieldset until BACH confirms name recognition; any other answer counts as not ready (fail-closed, reason readiness_unknown). Both modes are shown: cloud (this page, pseudonymised) and local (pipeline only, bach bericht pipeline --modus lokal). The reason panel uses only theme tokens; a browser test checks 4.5:1 in all five themes and no overflow at 390 px. /foerderplaner joins DOMAIN_WORKBENCH_ROUTES, so the Foerderplaner domain card and its sidebar pin open it (BACH domain catalog already declares workbench_url /foerderplaner). The prompt box no longer shows while hidden (inline display overrode the hidden attribute). Route snapshot gains GET /api/report/readiness. New file (not recorded as import): tests/foerderplaner.browser.test.mjs.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "ecd2b2176c008d47ac631383f981252474434af3fdc34fc1857a42571a39e9cf",
+          "sha256": "83ab3ecaa5f0cbb3d7b66396443defd15269d1fa07363190009f12b1f606ec69"
+        },
+        {
+          "path": "src/lib/domain-routes.mjs",
+          "previous_sha256": "2dd127d08b0f53110306e09ca256b75c138ca56fcc444f0f4e62f59f75403dd3",
+          "sha256": "854117bebf6b0324edadf3a212ba4d0a692603b3f95ff4569f1e61f91e802a00"
+        },
+        {
+          "path": "tests/domain-routes.test.mjs",
+          "previous_sha256": "eb151b9752db41b5c22c441df8ca6c403b105ada24d4edf5bd90763d08277d6e",
+          "sha256": "1608708300425eb6ddb1fb13f4c5cf21f3d9cfdcbe671b0ac37df313c8a24ab3"
+        },
+        {
+          "path": "tests/domain-pins.test.mjs",
+          "previous_sha256": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
+          "sha256": "f082e8231d3445f3eb40de7a8563285e16168f81f85c5ba4c3374105a381a925"
         }
       ]
     }

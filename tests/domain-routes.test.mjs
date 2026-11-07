@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {domainWorkbenchRoute,domainAnonymizationRoute,DOMAIN_WORKBENCH_ROUTES} from '../src/lib/domain-routes.mjs';
 test('only implemented exact workbench routes can be active links',()=>{
   for(const route of DOMAIN_WORKBENCH_ROUTES)assert.equal(domainWorkbenchRoute(route),route);
-  for(const route of ['/domains/law-checker','/domains/report-forge','/foerderplaner','/unknown',
+  for(const route of ['/domains/law-checker','/domains/report-forge','/foerderplaner/','/agents/foerderplaner','/unknown',
     'javascript:alert(1)','https://foreign.example/financial','//foreign.example/financial',
     '/financial?redirect=https://foreign.example','/financial#stub','/financial/',' /financial',null,{}])
     assert.equal(domainWorkbenchRoute(route),null);
