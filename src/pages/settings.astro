@@ -21,7 +21,7 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
       <button class="tab-btn" data-tab="worker-policy" id="settings-tab-worker-policy" type="button" role="tab" aria-controls="pane-worker-policy" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🧭</span> Worker & Aufgaben</button>
       <button class="tab-btn" data-tab="ocean-map" id="settings-tab-ocean-map" type="button" role="tab" aria-controls="pane-ocean-map" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🌊</span> Ocean Modulschaltplan</button>
       <button class="tab-btn" data-tab="installer" id="settings-tab-installer" type="button" role="tab" aria-controls="pane-installer" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">📦</span> Installer & Erweiterungen</button>
-      <button class="tab-btn" data-tab="learning" id="settings-tab-learning" type="button" role="tab" aria-controls="pane-learning" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🧠</span> NemoFold & Hermes (Lernen)</button>
+      <button class="tab-btn" data-tab="learning" id="settings-tab-learning" type="button" role="tab" aria-controls="pane-learning" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🧠</span> NemoFold & Skill-Gärtner (Lernen)</button>
       <button class="tab-btn" data-tab="core" id="settings-tab-core" type="button" role="tab" aria-controls="pane-core" aria-selected="false" tabindex="-1"><span class="icon" aria-hidden="true">🧠</span> Modelle, Ressourcen & Core</button>
     </div>
 
@@ -140,7 +140,7 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
       </div>
     </div>
 
-    <!-- TAB 3: NEMOFOLD & HERMES (LERNEN) -->
+    <!-- TAB 3: NEMOFOLD & SKILL-GÄRTNER (LERNEN) -->
     <div class="tab-pane" id="pane-learning" role="tabpanel" aria-labelledby="settings-tab-learning" tabindex="0" hidden>
       <div class="card-grid">
         <div class="glass-card">
@@ -180,7 +180,7 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
           <div class="learning-header">
             <span class="learning-icon">📜</span>
             <div>
-              <h3>Hermes: Skill-Lernen aus Chat-Sessions</h3>
+              <h3>Skill-Gärtner: Skill-Lernen aus Chat-Sessions</h3>
               <p class="card-desc">Autonome Skill-Destillation aus Dialogen mit Rauschfilterung & Human-in-the-Loop Freigabe</p>
             </div>
           </div>
@@ -290,6 +290,17 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
           </div>
           <p id="theme-status" role="status" aria-live="polite">Theme noch nicht geprüft</p>
           <p class="card-desc">Benutzerfarben werden im Backend gespeichert. Die benutzerdefinierte Palette wird derzeit nicht auf jeder Seite vollständig angewendet.</p>
+          <hr style="border:0;border-top:1px solid var(--border);margin:1rem 0;" />
+          <label for="boat-mode-select">Papierboot in der Kopfzeile</label>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
+            <select id="boat-mode-select" aria-label="Papierboot in der Kopfzeile" style="padding:0.5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);">
+              <option value="on" selected>An</option>
+              <option value="off">Aus</option>
+              <option value="logo">Logo</option>
+            </select>
+            <span id="boat-mode-status" class="badge" role="status" aria-live="polite">An (animiert)</span>
+          </div>
+          <p class="card-desc" style="margin-top:0.5rem;margin-bottom:0;">Steuert das Papierboot auf der Wasserlinie („An“ = animiert, „Aus“ = ausgeblendet, „Logo“ = stehend am Logo). Ein versunkenes Boot wird beim Umschalten wieder sichtbar.</p>
         </div>
         <div class="glass-card">
           <h3><span class="icon" aria-hidden="true">🧭</span> Navigationsstil &amp; Darstellung</h3>
@@ -1224,6 +1235,34 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
     });
     window.addEventListener('bach-ui-density-change', syncUiDensityControls);
     syncUiDensityControls();
+
+    const boatModeSelect = document.getElementById('boat-mode-select');
+    const boatModeStatus = document.getElementById('boat-mode-status');
+    function currentBoatMode() {
+      const raw = window.bachBoatMode?.get?.()
+        || localStorage.getItem('bach-boat-mode')
+        || document.documentElement.dataset.boatMode;
+      return ['on', 'off', 'logo'].includes(raw) ? raw : 'on';
+    }
+    function syncBoatModeControls(event) {
+      const mode = ['on', 'off', 'logo'].includes(event?.detail?.mode) ? event.detail.mode : currentBoatMode();
+      if (boatModeSelect) boatModeSelect.value = mode;
+      if (boatModeStatus) {
+        boatModeStatus.textContent = mode === 'off' ? 'Aus (ausgeblendet)' : mode === 'logo' ? 'Logo (stehend am Logo)' : 'An (animiert)';
+      }
+    }
+    boatModeSelect?.addEventListener('change', () => {
+      const mode = ['on', 'off', 'logo'].includes(boatModeSelect.value) ? boatModeSelect.value : 'on';
+      if (typeof window.applyBoatMode === 'function') window.applyBoatMode(mode, true);
+      else if (window.bachBoatMode?.set) window.bachBoatMode.set(mode, true);
+      else {
+        localStorage.setItem('bach-boat-mode', mode);
+        document.documentElement.dataset.boatMode = mode;
+      }
+      syncBoatModeControls({ detail: { mode } });
+    });
+    window.addEventListener('bach-boat-mode-change', syncBoatModeControls);
+    syncBoatModeControls();
 
     function applyBackendUiState(data) {
       const preset = data.preset === 'ocean-bach-classic' || data.preset === 'classic' ? 'classic' : 'standard';

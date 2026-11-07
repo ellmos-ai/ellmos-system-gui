@@ -91,20 +91,34 @@ if (board) {
       if (kind === 'skills') {
         meta.append(badge(item.category || 'Allgemein'));
         if (item._groupedLangs?.length) meta.append(badge('🌐 ' + item._groupedLangs.join(', ')));
-        card.append(meta, node('p', item.id, 'card-caption'), button('Anleitung bearbeiten', () => openSkill(item.id), 'btn card-action'));
+        card.append(meta, node('p', item.id, 'card-caption'));
+        const hashValue = item.source_version || item.sha256 || item.content_hash || item.digest || item.hash;
+        if (hashValue) {
+          const hashDetails = node('details', null, 'skill-hash-details');
+          hashDetails.append(
+            node('summary', 'Technische Details'),
+            node('p', 'Hash (SHA-256): ' + hashValue, 'skill-hash-value')
+          );
+          card.append(hashDetails);
+        }
+        card.append(button('Anleitung bearbeiten', () => openSkill(item.id), 'btn card-action'));
       } else {
         if (item.consumer) meta.append(badge(item.consumer));
         if (isControlCenterMcp) meta.append(badge('⭐ Bündelt alle MCP-Werkzeuge'));
         if (isDeprecatedBachMcp) meta.append(badge('⚠️ veraltet · ersetzt durch ellmos-*commander'));
         card.append(meta);
+        const detail = node('details'), summary = node('summary', 'Quelle');
+        detail.append(summary, node('p', item.path || item.source || 'Quelle nicht angegeben'));
         if (kind === 'plugins') {
           card.append(node('p', item.code_present ? 'Plugin-Dateien vorhanden' : 'Installationsverweis ohne erreichbare Dateien'));
+          card.append(detail);
           card.append(plugCableElement(item, fetchedAt));
         } else if (kind === 'mcp') {
           card.append(node('p', 'Im Client konfiguriert · ' + item.transport));
           if (isDeprecatedBachMcp) card.append(node('p', 'Veralteter BACH-Servername — bitte auf den entsprechenden ellmos-*commander umstellen.', 'card-caption'));
           if (item.command_name || item.hostname) card.append(node('p', item.command_name || item.hostname, 'card-caption'));
           card.append(node('p', flag(item.enabled_in_client), 'card-caption'));
+          card.append(detail);
         } else if (kind === 'software') {
           if (item.category) meta.append(badge(item.category));
           card.append(node('p', 'Im Anwendungskatalog erfasst'));
@@ -118,10 +132,11 @@ if (board) {
               card.append(link);
             } else card.append(node('p', label, 'card-caption'));
           }
-        } else card.append(node('p', 'Modul- oder Repository-Quellen vorhanden'));
-        const detail = node('details'), summary = node('summary', 'Quelle');
-        detail.append(summary, node('p', item.path || item.source || 'Quelle nicht angegeben'));
-        card.append(detail);
+          card.append(detail);
+        } else {
+          card.append(node('p', 'Modul- oder Repository-Quellen vorhanden'));
+          card.append(detail);
+        }
       }
       byId('board-items').append(card);
     }
@@ -210,8 +225,25 @@ if (board) {
     },'wissen');
   }
   function describeSource() {
-    byId('skill-source-info').textContent = currentSource?.source_version === '0' ? 'Neue lokale Anleitung. Eine bestehende Kennung wird nicht überschrieben.'
-      : currentSource ? (currentSource.version || 'Ohne Versionsnummer') + ' · Quelle ' + currentSource.source_version.slice(0, 12) : 'Aktuelle Quelle wird geladen …';
+    const info = byId('skill-source-info');
+    info.replaceChildren();
+    if (currentSource?.source_version === '0') {
+      info.textContent = 'Neue lokale Anleitung. Eine bestehende Kennung wird nicht überschrieben.';
+      return;
+    }
+    if (!currentSource) {
+      info.textContent = 'Aktuelle Quelle wird geladen …';
+      return;
+    }
+    info.append(node('span', currentSource.version || 'Ohne Versionsnummer'));
+    if (currentSource.source_version) {
+      const hashDetails = node('details', null, 'skill-hash-details');
+      hashDetails.append(
+        node('summary', 'Technische Details (Hash)'),
+        node('p', 'Quelle: ' + currentSource.source_version.slice(0, 12) + ' · SHA-256: ' + currentSource.source_version, 'skill-hash-value')
+      );
+      info.append(hashDetails);
+    }
   }
   async function loadHistory() {
     const select = byId('skill-history');

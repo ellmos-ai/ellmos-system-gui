@@ -121,11 +121,17 @@ function lineIconSvg(id: string): string {
   </div>
 
   <!-- Animiertes Origami-Papierboot im freien Bereich auf der Trennlinie zum Body (Meeresoberfläche) -->
-  <div class="header-ocean-waterline" aria-hidden="true" title="OCEAN · Vom Rinnsal über den BACH bis ins Meer">
-    <div class="header-waterline-surface"></div>
-    <div class="header-paper-boat-track">
-      <div class="header-paper-boat-hull">
-        <span class="header-boat-wake"></span>
+  <div class="header-ocean-waterline" id="header-ocean-waterline" data-boat-mode="on" title="OCEAN · Vom Rinnsal über den BACH bis ins Meer">
+    <div class="header-waterline-surface" aria-hidden="true"></div>
+    <div class="header-paper-boat-track" id="header-paper-boat-track">
+      <button
+        type="button"
+        id="header-paper-boat-btn"
+        class="header-paper-boat-hull"
+        aria-label="Origami-Papierboot auf der Wasserlinie (3× schnell klicken zum Versenken)"
+        title="Origami-Papierboot (3× innerhalb von 2 Sekunden klicken zum Versenken)"
+      >
+        <span class="header-boat-wake" aria-hidden="true"></span>
         <svg class="header-paper-boat-svg" viewBox="0 0 84 44" width="54" height="29" focusable="false" aria-hidden="true">
           <defs>
             <linearGradient id="paper-boat-hull-grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -160,9 +166,17 @@ function lineIconSvg(id: string): string {
           <line x1="42" y1="3" x2="42" y2="35" stroke="#64748b" stroke-width="0.95" stroke-opacity="0.65" />
           <line x1="16" y1="35.5" x2="68" y2="35.5" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" />
         </svg>
-        <span class="header-boat-reflection"></span>
-      </div>
+        <span class="header-boat-reflection" aria-hidden="true"></span>
+      </button>
     </div>
+    <button
+      type="button"
+      id="header-boat-restore-btn"
+      class="header-boat-restore-btn"
+      aria-label="Boot zurückholen"
+      title="Versunkenes Papierboot wieder an die Wasseroberfläche holen"
+      hidden
+    >⛵ Boot zurückholen</button>
   </div>
 
   <div class="header-right">
@@ -735,6 +749,141 @@ function lineIconSvg(id: string): string {
     set: (value, persist = true) => applyUiDensity(value, persist),
   };
   applyUiDensity(window.bachUiDensity.get(), false);
+
+  // Header paper boat mode ('on' | 'off' | 'logo') in localStorage key 'bach-boat-mode' + 3-click sink Easter egg
+  const validBoatModes = new Set(['on', 'off', 'logo']);
+  const boatModeKey = 'bach-boat-mode';
+  const boatSunkSessionKey = 'bach-boat-sunk-session';
+  function normalizeHeaderBoatMode(value) {
+    if (typeof value !== 'string') return 'on';
+    const cleaned = value.trim().toLowerCase();
+    return validBoatModes.has(cleaned) ? cleaned : 'on';
+  }
+  let boatClickTimestamps = [];
+  let boatSinkTimer = null;
+
+  function applyBoatMode(value, persist = true, clearSunk = false) {
+    const mode = normalizeHeaderBoatMode(value);
+    document.documentElement.dataset.boatMode = mode;
+    const waterline = document.getElementById('header-ocean-waterline');
+    const track = document.getElementById('header-paper-boat-track');
+    const boatBtn = document.getElementById('header-paper-boat-btn');
+    const restoreBtn = document.getElementById('header-boat-restore-btn');
+    if (clearSunk) {
+      try { sessionStorage.removeItem(boatSunkSessionKey); } catch (_) {}
+      if (waterline) {
+        delete waterline.dataset.boatSunk;
+        delete waterline.dataset.boatSinking;
+      }
+    }
+    const isSunk = Boolean(waterline?.dataset.boatSunk === 'true');
+    if (waterline) {
+      waterline.dataset.boatMode = mode;
+    }
+    if (track) {
+      track.hidden = mode === 'off' || isSunk;
+    }
+    if (boatBtn) {
+      boatBtn.hidden = mode === 'off' || isSunk;
+    }
+    if (restoreBtn) {
+      restoreBtn.hidden = !(mode !== 'off' && isSunk);
+    }
+    if (persist) {
+      try { localStorage.setItem(boatModeKey, mode); } catch (_) {}
+    }
+    const boatSelect = document.getElementById('boat-mode-select');
+    if (boatSelect && validBoatModes.has(mode)) {
+      boatSelect.value = mode;
+    }
+    window.dispatchEvent(new CustomEvent('bach-boat-mode-change', { detail: { mode, sunk: isSunk } }));
+    return mode;
+  }
+
+  function restoreHeaderBoat() {
+    if (boatSinkTimer) {
+      clearTimeout(boatSinkTimer);
+      boatSinkTimer = null;
+    }
+    boatClickTimestamps = [];
+    const current = normalizeHeaderBoatMode(localStorage.getItem(boatModeKey));
+    const targetMode = current === 'off' ? 'on' : current;
+    applyBoatMode(targetMode, true, true);
+  }
+
+  function sinkHeaderBoat() {
+    const waterline = document.getElementById('header-ocean-waterline');
+    const track = document.getElementById('header-paper-boat-track');
+    const boatBtn = document.getElementById('header-paper-boat-btn');
+    const restoreBtn = document.getElementById('header-boat-restore-btn');
+    if (!waterline) return;
+    try { sessionStorage.setItem(boatSunkSessionKey, '1'); } catch (_) {}
+    const reducedMotion = Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const trackerRecord = window.BachHeaderBoat?.recordBoatClick;
+    void trackerRecord;
+    if (reducedMotion) {
+      delete waterline.dataset.boatSinking;
+      waterline.dataset.boatSunk = 'true';
+      if (track) track.hidden = true;
+      if (boatBtn) boatBtn.hidden = true;
+      if (restoreBtn) restoreBtn.hidden = false;
+      window.dispatchEvent(new CustomEvent('bach-boat-mode-change', { detail: { mode: waterline.dataset.boatMode || 'on', sunk: true } }));
+      return;
+    }
+    waterline.dataset.boatSinking = 'true';
+    if (boatSinkTimer) clearTimeout(boatSinkTimer);
+    boatSinkTimer = setTimeout(() => {
+      delete waterline.dataset.boatSinking;
+      waterline.dataset.boatSunk = 'true';
+      if (track) track.hidden = true;
+      if (boatBtn) boatBtn.hidden = true;
+      if (restoreBtn) restoreBtn.hidden = false;
+      window.dispatchEvent(new CustomEvent('bach-boat-mode-change', { detail: { mode: waterline.dataset.boatMode || 'on', sunk: true } }));
+    }, 650);
+  }
+
+  window.applyBoatMode = (value, persist = true) => applyBoatMode(value, persist, true);
+  window.restoreHeaderBoat = restoreHeaderBoat;
+  window.bachBoatMode = {
+    get: () => normalizeHeaderBoatMode(localStorage.getItem(boatModeKey) || document.documentElement.dataset.boatMode),
+    set: (value, persist = true) => applyBoatMode(value, persist, true),
+    restore: () => restoreHeaderBoat(),
+  };
+
+  (function initHeaderPaperBoat() {
+    const waterline = document.getElementById('header-ocean-waterline');
+    const boatBtn = document.getElementById('header-paper-boat-btn');
+    const restoreBtn = document.getElementById('header-boat-restore-btn');
+    let sunkInSession = false;
+    try { sunkInSession = sessionStorage.getItem(boatSunkSessionKey) === '1'; } catch (_) {}
+    if (waterline && sunkInSession) {
+      waterline.dataset.boatSunk = 'true';
+    }
+    applyBoatMode(window.bachBoatMode.get(), false, false);
+
+    boatBtn?.addEventListener('click', () => {
+      if (waterline?.dataset.boatSunk === 'true' || waterline?.dataset.boatSinking === 'true') return;
+      const now = Date.now();
+      const recordFn = window.BachHeaderBoat?.recordBoatClick;
+      if (typeof recordFn === 'function') {
+        const res = recordFn(boatClickTimestamps, now);
+        boatClickTimestamps = res.timestamps;
+        if (res.sunk) sinkHeaderBoat();
+      } else {
+        boatClickTimestamps = boatClickTimestamps.filter(t => now - t <= 2000);
+        boatClickTimestamps.push(now);
+        if (boatClickTimestamps.length >= 3) {
+          boatClickTimestamps = [];
+          sinkHeaderBoat();
+        }
+      }
+    });
+
+    restoreBtn?.addEventListener('click', () => {
+      restoreHeaderBoat();
+      document.getElementById('header-paper-boat-btn')?.focus({ preventScroll: true });
+    });
+  })();
 
   // Keep the mobile navigation reachable without changing desktop navigation state.
   const navToggle = document.getElementById('nav-toggle');
@@ -1606,7 +1755,9 @@ function lineIconSvg(id: string): string {
   refreshActiveNavigation();
   import {initializeWorldI18n} from "../lib/i18n.mjs";
   import * as HeaderStatus from "../lib/header-status.mjs";
+  import * as HeaderBoat from "../lib/header-boat.mjs";
   (window as any).BachHeaderStatus = HeaderStatus;
+  (window as any).BachHeaderBoat = HeaderBoat;
   document.dispatchEvent(new Event('bach:header-status-ready'));
   initializeDomainMenu();
   initializeWorldI18n();
@@ -1663,6 +1814,29 @@ function lineIconSvg(id: string): string {
     z-index: 4;
     overflow: visible;
   }
+  .header-ocean-waterline[data-boat-mode="off"] {
+    display: none !important;
+  }
+  .header-ocean-waterline[data-boat-mode="logo"] {
+    left: 118px;
+    right: auto;
+    width: 72px;
+  }
+  .header-ocean-waterline[data-boat-mode="logo"] .header-waterline-surface {
+    opacity: 0.55;
+  }
+  .header-ocean-waterline[data-boat-mode="logo"] .header-paper-boat-track {
+    animation: none !important;
+    left: 4px;
+    transform: none !important;
+  }
+  .header-ocean-waterline[data-boat-mode="logo"] .header-paper-boat-hull {
+    animation: none !important;
+    transform: none !important;
+  }
+  .header-ocean-waterline[data-boat-mode="logo"] .header-boat-wake {
+    display: none;
+  }
   .header-waterline-surface {
     position: absolute;
     left: 0;
@@ -1679,14 +1853,61 @@ function lineIconSvg(id: string): string {
     width: 58px;
     height: 32px;
     animation: paperBoatVoyage 32s ease-in-out infinite;
+    pointer-events: auto;
   }
   .header-paper-boat-hull {
     position: relative;
     width: 54px;
     height: 29px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
     transform-origin: 50% 85%;
     animation: paperBoatBobbing 3.2s ease-in-out infinite;
     filter: drop-shadow(0 3px 6px rgba(2, 132, 199, 0.38));
+  }
+  .header-paper-boat-hull:focus-visible {
+    outline: 2px solid var(--shell-accent, #38bdf8);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .header-ocean-waterline[data-boat-sinking="true"] .header-paper-boat-hull {
+    animation: paperBoatSink 0.65s ease-in forwards !important;
+    pointer-events: none;
+  }
+  .header-ocean-waterline[data-boat-sunk="true"] .header-paper-boat-track {
+    display: none !important;
+  }
+  .header-boat-restore-btn {
+    position: absolute;
+    left: 8px;
+    bottom: 3px;
+    pointer-events: auto;
+    padding: 0.1rem 0.45rem;
+    font: inherit;
+    font-size: 0.68rem;
+    color: var(--shell-muted, #94a3b8);
+    background: rgba(15, 23, 42, 0.78);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 999px;
+    cursor: pointer;
+    line-height: 1.3;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .header-boat-restore-btn[hidden] {
+    display: none !important;
+  }
+  .header-boat-restore-btn:hover,
+  .header-boat-restore-btn:focus-visible {
+    color: var(--text, #f8fafc);
+    border-color: var(--shell-accent, #38bdf8);
+  }
+  .header-boat-restore-btn:focus-visible {
+    outline: 2px solid var(--shell-accent, #38bdf8);
+    outline-offset: 2px;
   }
   .header-paper-boat-svg {
     display: block;
@@ -1740,6 +1961,27 @@ function lineIconSvg(id: string): string {
     }
     50% {
       transform: translateY(-2.4px) rotate(1.8deg);
+    }
+  }
+  @keyframes paperBoatSink {
+    0% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 1;
+    }
+    45% {
+      transform: translateY(6px) rotate(16deg);
+      opacity: 0.85;
+    }
+    100% {
+      transform: translateY(24px) rotate(32deg) scale(0.82);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .header-paper-boat-track,
+    .header-paper-boat-hull,
+    .header-ocean-waterline[data-boat-sinking="true"] .header-paper-boat-hull {
+      animation: none !important;
     }
   }
   @media (max-width: 1120px) {
