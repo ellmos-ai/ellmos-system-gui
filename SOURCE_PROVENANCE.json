@@ -22,7 +22,7 @@
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
     "ellmos-module.v2.json": "b993a660963693d210ce7684ba841542d7e321d80f8ee9739645ca311edf7d98",
     "package-lock.json": "16a0246cefb6a1b79b9c45f034f3351635042bcb54481828084446a7ac147af9",
-    "package.json": "99f255db92e9672de07a81fb91dd851bf4ffc6f346a8c5da0a610b599eac8441",
+    "package.json": "a73fa303d1c73dc6e501fa75e5db885083b038a930d73c1d3d2b50059f4b8595",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "a075737bf2a916f63efe01a0265fa92331332386749b6d9481a574c0288ced4e",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -30,7 +30,7 @@
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
     "scripts/release-manifest.mjs": "7dccd793be667056f137d4f44f9c7068c512bcb3160162a8549e97916bfe6b28",
     "scripts/release-source.mjs": "f3d0f6e9d5904d0f04b43122d60e8c531dd6db90ba5ca7488988cc4b9ce9b747",
-    "scripts/verify-navigation-routes.mjs": "efbfb0d8fb6338515ebb8db0038946ebe0cd8e2f4368f2b0e852a9612f44ece0",
+    "scripts/verify-navigation-routes.mjs": "d56d3191c946f52409e82b2335b30aa01f031409b65ef0309c5bb7db75aba621",
     "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik-data.png": "37d97cd458b18adb58e2f277c2f09c4954908a3ad7f57820edf162aa4aa28366",
     "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik-large.webp": "5dfa5ddaafb16949f58f8c2cdf1e88e4050817f34e7a35e43375c2bcbf37578b",
     "src/assets/agent-avatar-thumbnails-v1/comic-01-ati-technik.webp": "791fbd92f3c5be2096d0454f38cdd87272a5ded5e10371e49bd977cf3f344d35",
@@ -5523,7 +5523,7 @@
         {
           "path": "package.json",
           "previous_sha256": "e7239ce33de4ce6e5aaffe875e06b8a94e9d845a372445a7993bf2e08b752f43",
-          "sha256": "99f255db92e9672de07a81fb91dd851bf4ffc6f346a8c5da0a610b599eac8441"
+          "sha256": "a73fa303d1c73dc6e501fa75e5db885083b038a930d73c1d3d2b50059f4b8595"
         },
         {
           "path": "public/page-reads.v1.json",

@@ -32,9 +32,10 @@ test('generic main.css classes are not findings', () => {
   assert.deepEqual(findScopedStyleTraps(page('<style>.btn{color:red}</style>', `<script>b.className = 'btn';</script>`)), []);
 });
 
-test('the build runs the guard', async () => {
+test('the build runs the guard inside the navigation guard, so the pinned build scripts stay as they are', async () => {
   const {readFileSync} = await import('node:fs');
   const scripts = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')).scripts;
-  assert.match(scripts.build, /verify-scoped-styles\.mjs/);
-  assert.match(scripts['build:release'], /verify-scoped-styles\.mjs/);
+  assert.match(scripts.build, /verify-navigation-routes\.mjs/);
+  assert.match(scripts['build:release'], /verify-navigation-routes\.mjs/);
+  assert.match(readFileSync(resolve(root, 'scripts/verify-navigation-routes.mjs'), 'utf8'), /checkTree\(root\)/);
 });
