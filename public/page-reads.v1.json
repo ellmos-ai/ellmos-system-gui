@@ -785,15 +785,51 @@
   "/routinen": [
    {
     "method": "GET",
+    "path": "/api/daemon/jobs",
+    "required": true
+   },
+   {
+    "method": "GET",
+    "path": "/api/recurring",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/daemon/status",
+    "required": false
+   },
+   {
+    "method": "GET",
     "path": "/api/routines",
     "required": true
+   },
+   {
+    "method": "PUT",
+    "path": "/api/daemon/jobs/{id}/toggle",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/routines.mjs#run"
+   },
+   {
+    "method": "POST",
+    "path": "/api/daemon/jobs/{id}/run",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/routines.mjs#run"
+   },
+   {
+    "method": "POST",
+    "path": "/api/recurring/trigger/{id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/routines.mjs#run"
    },
    {
     "method": "POST",
     "path": "/api/routines/{id}/complete",
     "required": false,
     "dynamic": true,
-    "found_in": "src/pages/routinen.astro#completePersonalRoutine"
+    "found_in": "src/lib/routines.mjs#run"
    },
    {
     "method": "GET",

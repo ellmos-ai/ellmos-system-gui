@@ -5,6 +5,7 @@
 // A fetch/fetcher call that forwards a parameter of a function missing here fails the guard.
 export const HELPERS = [
   {file: 'src/lib/agent-triggers.mjs', name: 'request', url: 0, method: 1},
+  {file: 'src/lib/routines.mjs', name: 'read', url: 0, method: 'GET'},
   {file: 'src/lib/capability-board-client.mjs', name: 'requestJson', url: 0, options: 1, scope: 'global'},
   {file: 'src/pages/life.astro', name: 'lifeApiFetch', url: 0, options: 1},
   {file: 'src/pages/life.astro', name: 'changeRoutine', url: 0, method: 1},

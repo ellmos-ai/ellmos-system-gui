@@ -23,21 +23,27 @@ test('task details use a responsive side-panel layout', () => {
 });
 
 test('Routinen & Jobs presents one filtered list with explicit source boundaries', () => {
-  for (const label of ['BACH', 'Ocean', 'Modul', 'Life · persönlich', 'Planung', 'Nächster Lauf', 'Letzter Lauf', 'Run-Schalter', 'Wartungsherkunft'])
-    assert.match(routines, new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  const ui = read('src/lib/routines-ui.mjs'), lib = read('src/lib/routines.mjs');
+  for (const label of ['BACH', 'Ocean', 'Modul', 'Life · persönlich', 'Planung', 'Nächster Lauf', 'Letzter Lauf', 'Run-Schalter'])
+    assert.ok(routines.includes(label), label);
   assert.match(routines, /id="routine-source-filter"/);
   assert.match(routines, /id="routine-kind-filter"/);
-  assert.match(routines, /Adapter nicht verfügbar/);
-  assert.match(routines, /Keine Jobs aus einer bestätigten Quelle verfügbar/);
-  assert.match(routines, /fetch\('\/api\/routines'/);
-  assert.match(routines, /\/api\/routines\/\$\{encodeURIComponent\(id\)\}\/complete/);
-  assert.match(routines, /button\.disabled = true/);
+  assert.match(ui, /nicht erreichbar: /);
+  assert.match(ui, /Keine Einträge für diese Auswahl/);
+  assert.ok(lib.includes("read('/api/routines'"));
+  assert.ok(lib.includes('/api/routines/${item.id}/complete'));
 });
 
 test('Routinen page reads are declared and the old personal Life route stays available', () => {
   assert.ok(reads.pages['/routinen']);
   assert.deepEqual(reads.pages['/routinen'].map(item => `${item.method} ${item.path}`), [
+    'GET /api/daemon/jobs',
+    'GET /api/recurring',
+    'GET /api/daemon/status',
     'GET /api/routines',
+    'PUT /api/daemon/jobs/{id}/toggle',
+    'POST /api/daemon/jobs/{id}/run',
+    'POST /api/recurring/trigger/{id}',
     'POST /api/routines/{id}/complete',
     'GET /api/agent-triggers',
     'GET /api/agent-triggers/{id}',

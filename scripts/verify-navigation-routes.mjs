@@ -2,6 +2,7 @@ import {existsSync, readFileSync} from 'node:fs';
 import {join, relative, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {commonRoutePaths, legacyFallbackRoutes, pathFromHref} from '../src/lib/navigation-route-inventory.mjs';
+import {checkTree} from './verify-scoped-styles.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const pagesRoot = join(root, 'src', 'pages');
@@ -51,3 +52,9 @@ if (missing.length || undocumentedFallbacks.length || unresolvedCommonRoutes.len
 const fallbackCount = routePaths.filter((routePath) => fallbackPaths.has(routePath)).length;
 console.log(`Navigation route guard: ${configuredHrefs.length + headerOnlyHrefs.length} Einträge, ${routePaths.length} eindeutige Pfade, ${fallbackCount} sichtbare Fallback-Pfade, ${commonPaths.size} gemeinsame Kernroute(n).`);
 console.log(`Geprüfte Quellen: ${routePaths.map((routePath) => relative(root, hasPage(routePath) ? (existsSync(flatPagePath(routePath)) ? flatPagePath(routePath) : pagePath(routePath)) : '')).filter(Boolean).join(', ')}`);
+
+// PB-6: the same build step also fails on scoped <style> rules for script-made classes (see verify-scoped-styles.mjs).
+const scoped = checkTree(root);
+if (Object.keys(scoped.unexpected).length || scoped.stale.length) {
+  throw new Error(`Scoped-style guard fehlgeschlagen: ${JSON.stringify(scoped)}`);
+}

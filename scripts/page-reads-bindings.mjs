@@ -11,6 +11,10 @@ export const BINDINGS = {
     'GET /api/governance/policies', 'GET /api/governance/effective-policy', 'GET /api/gui/capabilities',
     'GET /api/governance/hooks', 'GET /api/governance/permission-matrix',
   ],
+  // control.url / control.method of a routine item (routines.mjs builds them from backend ids): one entry per control kind
+  'src/lib/routines.mjs#run@1': [
+    'PUT /api/daemon/jobs/{id}/toggle', 'POST /api/daemon/jobs/{id}/run', 'POST /api/recurring/trigger/{id}', 'POST /api/routines/{id}/complete',
+  ],
   // INVENTORIES[kind] in capability-board-client.mjs: one inventory per board
   'src/lib/capability-board-ui.mjs#refresh@1': [
     'GET /api/capabilities/skills/library', 'GET /api/capabilities/plugins/inventory', 'GET /api/capabilities/mcp/connections',
