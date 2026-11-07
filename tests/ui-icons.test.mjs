@@ -1,7 +1,8 @@
 // PB-5b (#3989): the control icons are plain, safe SVG and come as line/emoji pairs.
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {ICON_NAMES, iconSvgMarkup, iconEmoji, createIconGlyph} from '../src/lib/ui-icons.mjs';
+import {readFileSync} from 'node:fs';
+import {ICON_NAMES, ICON_SOURCES, iconSvgMarkup, iconEmoji, createIconGlyph} from '../src/lib/ui-icons.mjs';
 
 test('every icon is outline-only SVG made of plain shapes and has an emoji twin', () => {
   assert.ok(ICON_NAMES.length >= 20);
@@ -26,4 +27,39 @@ test('the glyph pair holds the line icon and the emoji, the shell CSS shows one 
   assert.match(pair.children[0].innerHTML, /<svg/);
   assert.equal(pair.children[1].textContent, '🔄');
   assert.equal(createIconGlyph(document, 'nope'), null);
+});
+
+// ---- Origin and license: every icon names its source, every foreign source has a license entry ----
+const licenses = readFileSync(new URL('../THIRD_PARTY_LICENSES.md', import.meta.url), 'utf8');
+const LIBRARIES = {
+  feather: {heading: '### Feather (MIT)', text: /The MIT License \(MIT\)[\s\S]*Copyright \(c\) 2013-2023 Cole Bemis/},
+  lucide: {heading: '### Lucide (ISC)', text: /ISC License[\s\S]*Copyright \(c\) 2026 Lucide Icons and Contributors/},
+};
+
+test('every icon has a source note, and no icon lacks or invents one', () => {
+  assert.deepEqual(Object.keys(ICON_SOURCES).sort(), [...ICON_NAMES].sort());
+  for (const [name, source] of Object.entries(ICON_SOURCES))
+    assert.match(source, /^(own \(agy; |feather:[a-z0-9-]+ \(|lucide:[a-z0-9-]+ \()/, `${name}: ${source}`);
+});
+
+test('every foreign source has a license entry with its notice, and the icon is listed under it', () => {
+  for (const [name, source] of Object.entries(ICON_SOURCES)) {
+    const library = /^(feather|lucide):/.exec(source)?.[1];
+    if (!library) continue;
+    const {heading, text} = LIBRARIES[library];
+    const start = licenses.indexOf(heading);
+    assert.ok(start >= 0, `${library}: no heading in THIRD_PARTY_LICENSES.md`);
+    const section = licenses.slice(start, licenses.indexOf('\n### ', start + 1) < 0 ? undefined : licenses.indexOf('\n### ', start + 1));
+    assert.match(section, text, `${library}: license notice missing`);
+    const listed = /Icons here that (?:are|are identical to or derived from)[^:]*:([^.]*)\./s.exec(section)?.[1] ?? '';
+    assert.ok(listed.split(/[,\s]+/).includes(name), `${name} (${source}) is not listed under ${library}`);
+  }
+  assert.match(licenses, /### Own icons[\s\S]*ear, radio, sparkles/);
+});
+
+test('the origin statement does not claim more than is known', () => {
+  const module = readFileSync(new URL('../src/lib/ui-icons.mjs', import.meta.url), 'utf8');
+  assert.match(module, /model that ran is not recorded/);
+  assert.match(module, /THIRD_PARTY_LICENSES\.md/);
+  assert.doesNotMatch(module, /Drawn by agy \(see PR\)/);
 });

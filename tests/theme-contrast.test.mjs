@@ -190,3 +190,18 @@ test('header pills: text and indicator dots are readable on the shell topbar', (
   }
   assert.ok(header.includes('--pill-tone: #5fd08f') && css.includes('--pill-tone: #5fd08f'));
 });
+
+test('the waiting box inside a tile error panel reaches 4.5:1 for headline and hint in every theme', () => {
+  const timeline = readFileSync(new URL('../src/components/ReturnTimeline.astro', import.meta.url), 'utf8');
+  const token = selector => new RegExp(selector.replace(/[.]/g, '\\.') + '\\s*\\{[^}]*?(?<![-\\w])color:\\s*var\\((--[\\w-]+)\\)').exec(timeline)?.[1];
+  const hint = token('.worker-wait .wait-hint');
+  const headline = token('.worker-wait .wait-headline');
+  assert.ok(hint && headline, `tokens ${hint} ${headline}`);
+  for (const [name, theme] of Object.entries(themes)) {
+    const panel = blend(TINT.error, resolve(theme, '--bg-card'), 0.09);
+    for (const [what, tokenName] of [['hint', hint], ['headline', headline]]) {
+      const value = ratio(resolve(theme, tokenName), panel);
+      assert.ok(value >= 4.5, `${name}: waiting box ${what} (${tokenName}) on the error panel: ${value.toFixed(2)}`);
+    }
+  }
+});

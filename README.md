@@ -136,4 +136,4 @@ The separate **Universal GUI** is developed from `ellmos-unified-gui`; its Jinja
 
 German end-user labels intentionally use real umlauts. This technical README is in English.
 
-License: MIT.
+License: MIT. Third-party notices (the control icons derive from Feather and Lucide): [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).

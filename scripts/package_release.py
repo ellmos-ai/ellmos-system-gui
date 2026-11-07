@@ -49,6 +49,9 @@ def package_release(root: Path) -> Path:
             raise SystemExit('Build hash mismatch')
         entries['dist/' + name] = content
     entries['LICENSE'] = (root / 'LICENSE').read_bytes()
+    third_party = root / 'THIRD_PARTY_LICENSES.md'  # notices the bundled third-party icons require
+    if third_party.is_file():
+        entries['THIRD_PARTY_LICENSES.md'] = third_party.read_bytes()
     package = json.loads((root / 'package.json').read_text(encoding='utf-8'))
     if require_clean_source(root) != head:
         raise SystemExit('Source changed while reading release inputs')
