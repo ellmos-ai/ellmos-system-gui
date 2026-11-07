@@ -1,5 +1,16 @@
 # Release gate: ellmos-system-gui
 
+## Release evidence 0.2.36 — 2026-11-07
+
+| Item | SOLL | IST (this commit) |
+|---|---|---|
+| Content | 0.2.35 plus PB-5a navigation (#125), PB-4 abort visibility (#126) and committed dist tests (#128); no further source change | Version metadata (`package.json`, `package-lock.json`, `ellmos-module.v2.json`, `src-tauri/tauri.conf.json`), README, this section, matching `SOURCE_PROVENANCE.json` hashes |
+| Source tests | `npm ci` and `npm test` green | See the pull request description |
+| Release build | Clean checkout of the merge commit, `npm ci`, `npm run build:release`, `scripts/package_release.py` | Recorded with the archive hand-over, because archive name and SHA-256 depend on the merge commit |
+| Independent archive check | Commit in `dist-manifest.json` equals the tag commit; every file hash matches; archive SHA-256 re-computed; root `LICENSE` bytes equal the repository MIT license | Same place as the build row |
+| **Consumer smoke (mandatory)** | `python scripts/consumer_smoke.py --bach <BACH checkout> --dist <extracted release dist>` exits 0 and reports all pages passing BACH's own page gate | Recorded with the archive hand-over; run against the BACH revision that will carry the pin |
+| Consumers | Pins and installation are separate gates | Not claimed here |
+
 ## Release evidence 0.2.35 — 2026-11-06
 
 | Item | SOLL | IST (this commit) |
