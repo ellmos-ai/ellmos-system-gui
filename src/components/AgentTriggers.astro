@@ -2,8 +2,10 @@
   <h2>Automations-Agenten · Auslöser</h2>
   <p>Gemeinsame Definitionen für deine Agenten und Routinen. Speichern startet keinen Lauf.</p>
   <p data-trigger-status role="status" aria-live="polite">Quelle wird geprüft…</p>
-  <button type="button" data-trigger-refresh>Aktualisieren</button>
-  <button type="button" data-trigger-new disabled>Auslöser anlegen</button>
+  <div class="agent-trigger-actions">
+    <button type="button" class="btn btn-sm" data-trigger-refresh>Aktualisieren</button>
+    <button type="button" class="btn btn-sm" data-trigger-new disabled>Auslöser anlegen</button>
+  </div>
   <div data-trigger-list></div>
   <form data-trigger-form hidden>
     <label>Stabile ID <input name="id" required maxlength="128" /></label>
@@ -17,17 +19,22 @@
     <label>Autoritätsvorgaben als JSON <textarea name="authorities" rows="3">[]</textarea></label>
     <label><input name="enabled" type="checkbox" /> Aktiviert</label>
     <p>Ein Termin braucht eine Zeitzone, zum Beispiel <code>2026-12-01T09:00:00+01:00</code>. Ereignisdefinitionen werden über bestätigte Quellen bedient.</p>
-    <button type="submit">Definition speichern</button>
-    <button type="button" data-trigger-cancel>Entwurf schließen</button>
+    <div class="agent-trigger-actions">
+      <button type="submit" class="btn btn-sm btn-primary">Definition speichern</button>
+      <button type="button" class="btn btn-sm" data-trigger-cancel>Entwurf schließen</button>
+    </div>
   </form>
 </section>
 <script>
   import {mountAgentTriggers} from '../lib/agent-triggers-ui.mjs';
   document.querySelectorAll('[data-agent-triggers]').forEach(panel => mountAgentTriggers(panel));
 </script>
-<style>
+<style is:global>
   .agent-trigger-panel{padding:1rem;margin:1rem 0}.agent-trigger-panel form{display:grid;gap:.7rem;margin-top:1rem}
   .agent-trigger-panel form[hidden]{display:none}.agent-trigger-panel label{display:grid;gap:.3rem}
   .agent-trigger-panel input,.agent-trigger-panel select,.agent-trigger-panel textarea{max-width:100%;box-sizing:border-box;background:var(--bg-dark);color:var(--text);border:1px solid var(--border);padding:.5rem}
-  .agent-trigger-panel article{padding:.7rem 0;border-bottom:1px solid var(--border);overflow-wrap:anywhere}
+  .agent-trigger-panel .agent-trigger-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+  .agent-trigger-panel .btn:disabled{opacity:.55;cursor:not-allowed}
+  .agent-trigger-panel article{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .5rem;padding:.7rem 0;border-bottom:1px solid var(--border);overflow-wrap:anywhere}
+  .agent-trigger-panel article p{flex:1 1 18rem;margin:0}
 </style>

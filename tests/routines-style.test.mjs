@@ -36,3 +36,10 @@ test('page text avoids template chrome: no all-caps header row, no eyebrow label
   assert.doesNotMatch(style[2], /text-transform:\s*uppercase/);
   assert.doesNotMatch(page, /routine-eyebrow/);
 });
+
+test('the trigger panel under the list is styled too: global style, buttons with the shared button classes', () => {
+  const panel = read('src/components/AgentTriggers.astro');
+  assert.match(panel, /<style is:global>/);
+  for (const button of panel.match(/<button[^>]*>/g)) assert.match(button, /class="btn btn-sm/, button);
+  assert.match(read('src/lib/agent-triggers-ui.mjs'), /button\.className = 'btn btn-sm'/);
+});

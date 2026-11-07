@@ -377,9 +377,9 @@
     "tests/worker-queue.test.mjs": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
     "src/lib/voice-and-talk-contract.mjs": "ae0b57f627bc47143784b10160ccfb51883530fc9869f9e31b602c5f33055980",
     "tests/voice-and-talk-contract.test.mjs": "4029b20acea02ea7ddd4e03b89acfff77f878b66c087771b9a8064311e3eaf09",
-    "src/components/AgentTriggers.astro": "0ca2a3ffb8868fdb9cae3544b5eb3118dc207e2774ba700ff2f05d7978a529af",
+    "src/components/AgentTriggers.astro": "2a69dc3e3e6c223cc53ae2d0b8a6e02b6164ac27bb78d29ac85fd5d107f2c9fe",
     "src/lib/agent-triggers.mjs": "289e00f21c89f9521296e64f384fd580737578f7626b6ed3ca05d2941822141b",
-    "src/lib/agent-triggers-ui.mjs": "fac0b90abcc3fe9ca9a0260839b5c7ced68fcd5c9f7fe6f812b80b84bfde71c0",
+    "src/lib/agent-triggers-ui.mjs": "9e9191a853668a2ea2c9ea50cf7392436d13ebcbdd1631535de6e92507ffa913",
     "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
     "scripts/page-reads-helpers.mjs": "621c99d968601dcdea44ee4130db8e8a00c9ce8c228cb9bd90a8b4a65bc6088d",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
@@ -5266,7 +5266,7 @@
         {
           "path": "src/components/AgentTriggers.astro",
           "previous_sha256": null,
-          "sha256": "0ca2a3ffb8868fdb9cae3544b5eb3118dc207e2774ba700ff2f05d7978a529af"
+          "sha256": "2a69dc3e3e6c223cc53ae2d0b8a6e02b6164ac27bb78d29ac85fd5d107f2c9fe"
         },
         {
           "path": "src/lib/agent-triggers.mjs",
@@ -5317,7 +5317,7 @@
         {
           "path": "src/lib/agent-triggers-ui.mjs",
           "previous_sha256": "66cefb762e218559ffdd0b20a925a61cce468bb0faaa0498bc32ba2581aba80b",
-          "sha256": "fac0b90abcc3fe9ca9a0260839b5c7ced68fcd5c9f7fe6f812b80b84bfde71c0"
+          "sha256": "9e9191a853668a2ea2c9ea50cf7392436d13ebcbdd1631535de6e92507ffa913"
         }
       ]
     },
