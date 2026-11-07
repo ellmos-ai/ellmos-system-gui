@@ -15,13 +15,6 @@ export const legacyFallbackRoutes = Object.freeze([
     nextLabel: 'Life-Zentrale öffnen',
   },
   {
-    path: '/denkarium',
-    label: 'Denkarium',
-    reason: 'Das frühere Gedankenlabor liefert noch die alte BACH-Vorlage.',
-    nextHref: '/memory',
-    nextLabel: 'Memory öffnen',
-  },
-  {
     path: '/financial',
     label: 'Finanzen',
     reason: 'Der Finanzpfad ist noch nicht in die gemeinsame Life-Oberfläche umgestellt.',
