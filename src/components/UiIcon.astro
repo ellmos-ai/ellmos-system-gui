@@ -1,0 +1,16 @@
+---
+// UiIcon.astro - a control icon that follows the shell's Symbolstil: a calm line glyph by default, the emoji in emoji mode.
+import { iconSvgMarkup, iconEmoji } from "../lib/ui-icons.mjs";
+
+interface Props {
+  name: string;
+  size?: number;
+}
+const { name, size = 16 } = Astro.props;
+const svg = iconSvgMarkup(name, size);
+const emoji = iconEmoji(name);
+---
+
+{svg && (
+  <span class="icon-glyph-pair" aria-hidden="true"><span class="icon-glyph icon-glyph-line" set:html={svg} /><span class="icon-glyph icon-glyph-emoji">{emoji}</span></span>
+)}

@@ -66,6 +66,8 @@ def main():
     require(binary.is_file() and binary.stat().st_size > 0, 'Compiled desktop binary is missing')
     shutil.copy2(binary, PACKAGE / binary_name)
     shutil.copy2(ROOT / 'LICENSE', PACKAGE / 'LICENSE')
+    if (ROOT / 'THIRD_PARTY_LICENSES.md').is_file():
+        shutil.copy2(ROOT / 'THIRD_PARTY_LICENSES.md', PACKAGE / 'THIRD_PARTY_LICENSES.md')
     bundles = {}
     patterns = {
         'nsis': 'nsis/*-setup.exe',

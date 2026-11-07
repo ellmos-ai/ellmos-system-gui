@@ -14,7 +14,6 @@ const GENERIC = new Set(['btn', 'badge', 'muted', 'active', 'hidden', 'empty']);
 // Findings that predate PB-6 (T-20261106-101728788). They may only shrink: a fixed entry must be removed (checkTree reports it as stale).
 // running.astro is left to the open agent-tile PR (gui#129), the other two to a follow-up so this change stays on /routinen.
 export const KNOWN_TRAPS = {
-  'src/pages/agenten/running.astro': ['core-actions', 'core-agent-card', 'core-check'],
   'src/pages/tasks.astro': ['task-description', 'task-result-gate-state', 'task-result-gate-detail'],
   'src/components/WorkerPolicySettings.astro': ['worker-reviewer-row', 'card-desc', 'worker-reviewer-availability-card'],
 };

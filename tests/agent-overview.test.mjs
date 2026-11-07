@@ -18,6 +18,7 @@ import {
   workerActivityLabel,
   writeAgentOverviewPreferences,
 } from '../src/lib/agent-overview.mjs';
+import {tileModelLines} from '../src/lib/agent-tile.mjs';
 
 const runningPage = readFileSync(new URL('../src/pages/agenten/running.astro', import.meta.url), 'utf8');
 const dashboardPage = readFileSync(new URL('../src/pages/index.astro', import.meta.url), 'utf8');
@@ -304,7 +305,7 @@ test('Dashboard and Running share the same complete read-only card content', () 
   const unknownText = collectText(noRuntimeDetails);
   assert.ok(!unknownText.includes('Runde: 0'));
   assert.ok(!unknownText.includes('Task: #0'));
-  assert.match(runningPage, /createAgentOverviewContent\(document, agent/);
+  assert.match(runningPage, /createAgentOverviewMeta\(document, agent/);
   assert.match(dashboardPage, /createAgentOverviewContent\(document, agent/);
 });
 
@@ -327,7 +328,10 @@ test('Running and history lead, model bindings stay on agents, and shared resour
   assert.ok(historyPosition < readyPosition && readyPosition < resourcesPosition);
   assert.doesNotMatch(runningPage, /import ModelSockets|<ModelSockets\s*\/>/);
   assert.doesNotMatch(runningPage, /BachModelSockets|bach:model-sockets-changed|Systemslot\(s\)|Systemslot-Laufstatus nicht verfügbar/);
-  assert.match(runningPage, /Modellbindung: ' \+ \(agent\.model \|\| 'Modell fehlt'\)/);
+  // PB-5b: the binding line comes from the one tile component (tileModelLines), not from per-card templates.
+  assert.match(runningPage, /tileModelLines\(agent\)/);
+  assert.deepEqual(tileModelLines({model: 'qwen'}), ['Modellbindung: qwen']);
+  assert.deepEqual(tileModelLines({}), ['Modellbindung: Modell fehlt']);
   assert.match(runningPage, /Die Modellbindung steht direkt beim Agentenprofil/);
   const resourceView = runningPage.match(/<details class="card hardware-torch" id="models-resources"[\s\S]*?<\/details>/)?.[0];
   assert.ok(resourceView, 'measured resources must have a distinct Models & Resources section');
@@ -342,32 +346,26 @@ test('Running and history lead, model bindings stay on agents, and shared resour
   assert.doesNotMatch(runningPage, /Number\(cap\.loaded_model_count\) \|\| 0/);
 });
 
-test('Ready worker profiles do not show persisted model resolution as current', () => {
-  const readyStart = runningPage.indexOf('readyGrid.innerHTML = profileWorkers.map(w => {');
-  const runningStart = runningPage.indexOf('// 2. Render Running Workers', readyStart);
-  assert.ok(readyStart >= 0 && runningStart > readyStart);
-  const readyLane = runningPage.slice(readyStart, runningStart);
-  assert.match(readyLane, /Modellbindung:.*w\.model/);
-  assert.doesNotMatch(readyLane, /resolved_model|Aufgel\u00f6st/);
-  const runningLane = runningPage.slice(runningStart);
-  assert.match(runningLane, /runningWorkers\.map\(w => \{/);
-  assert.match(runningLane, /w\.resolved_model && w\.resolved_model !== w\.model/);
+test('Ready worker profiles do not show persisted model resolution as current, Running ones do', () => {
+  // PB-5b: both lanes use the same tile and the same model lines; only a confirmed run reports "Läuft mit".
+  const stored = {model: 'A', backend: 'ollama', resolved_model: 'B', runtime_verified: true, running: false, status: 'idle'};
+  const ready = tileModelLines(stored);
+  assert.match(ready[0], /^Modellbindung: A/);
+  assert.ok(!ready.some(line => /Läuft mit|B$/.test(line)), 'a stored resolution is not current');
+  const live = tileModelLines({...stored, running: true, status: 'running'});
+  assert.ok(live.includes('Läuft mit: B'));
+  assert.doesNotMatch(runningPage, /innerHTML\s*=\s*(profileWorkers|runningWorkers)\.map|Aufgelöst: <code>/, 'no per-lane card template is left');
+  assert.match(runningPage, /readyGrid\.replaceChildren\(\.\.\.profileWorkers\.map\(worker =>/);
+  assert.match(runningPage, /runningList\.replaceChildren\(\.\.\.runningWorkers\.map\(worker =>/);
 });
 
 test('Core Ready cards suppress stale resolved models until the agent is confirmed running', () => {
-  const guard = /if \(agent\.runtime_verified === true && agent\.running === true && agent\.resolved_model && agent\.resolved_model !== agent\.model\)/;
-  assert.match(runningPage, guard);
-  assert.match(runningPage, /if \(activeCoreIds\.has\(String\(agent\.id\)\)\)/);
-
-  const reportsResolvedModel = agent => agent.runtime_verified === true
-    && agent.running === true
-    && agent.resolved_model
-    && agent.resolved_model !== agent.model;
+  // PB-5b: the guard lives in the one tile component; the page only places running core cards in the running lane.
+  assert.match(runningPage, /if \(activeCoreIds\.has\(String\(agent\.id\)\)\)|const isRunning = activeCoreIds\.has\(String\(agent\.id\)\)/);
   const staleReadyCore = {
     runtime_verified: true, running: false, model: 'Model-A', resolved_model: 'Model-B',
   };
   const confirmedRunningCore = { ...staleReadyCore, running: true };
-
-  assert.equal(Boolean(reportsResolvedModel(staleReadyCore)), false);
-  assert.equal(Boolean(reportsResolvedModel(confirmedRunningCore)), true);
+  assert.deepEqual(tileModelLines(staleReadyCore), ['Modellbindung: Model-A']);
+  assert.deepEqual(tileModelLines(confirmedRunningCore), ['Modellbindung: Model-A', 'Läuft mit: Model-B']);
 });

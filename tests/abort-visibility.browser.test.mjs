@@ -3,14 +3,13 @@
 // Without an installed browser the test is skipped (CI installs none); locally `npx playwright-core install chromium` once.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {execFileSync} from 'node:child_process';
 import {createServer} from 'node:http';
-import {existsSync, mkdtempSync, readFileSync, rmSync} from 'node:fs';
-import {tmpdir} from 'node:os';
+import {existsSync, readFileSync} from 'node:fs';
 import {extname, join, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 import {NOW, backend} from './fixtures/abort-visibility-backend.mjs';
+import {sharedDist} from './fixtures/shared-dist.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const TYPES = {'.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
@@ -43,8 +42,7 @@ test.before(async () => {
     const {chromium} = await import('playwright-core');
     browser = await chromium.launch();
   } catch { return; }
-  dist = mkdtempSync(join(tmpdir(), 'pb4-dist-'));
-  execFileSync(process.execPath, [join(root, 'node_modules', 'astro', 'bin', 'astro.mjs'), 'build', '--outDir', dist], {cwd: root, stdio: 'pipe'});
+  dist = await sharedDist(root);
   server = createServer((req, res) => {
     let path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
     if (path === '/' || path === '') path = '/index';
@@ -59,7 +57,6 @@ test.before(async () => {
 test.after(async () => {
   await browser?.close();
   server?.close();
-  if (dist) rmSync(dist, {recursive: true, force: true});
 });
 
 async function open(path, {theme = 'dark', width = 1440} = {}) {

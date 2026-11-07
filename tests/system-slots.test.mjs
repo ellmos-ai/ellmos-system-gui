@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import {createAvatar} from '../src/lib/agent-avatar.mjs';
 import {createSymbol} from '../src/lib/ticket-symbol.mjs';
 import * as AgentOverview from '../src/lib/agent-overview.mjs';
+import * as AgentTile from '../src/lib/agent-tile.mjs';
 
 const page = readFileSync(new URL('../src/pages/agenten/running.astro', import.meta.url), 'utf8');
 const snippet = (start, end) => page.slice(page.indexOf(start), page.indexOf(end, page.indexOf(start))).trim();
@@ -45,7 +46,7 @@ function renderer() {
   };
   const switches = [];
   const context = vm.createContext({document, coreRefreshEpoch:0, coreConfigVersion:null, coreAgents:[], coreCatalog:{},
-    window:{BachAvatars:{createAvatar},BachSymbols:{createSymbol},BachAgentOverview:AgentOverview},
+    window:{BachAvatars:{createAvatar},BachSymbols:{createSymbol},BachAgentOverview:AgentOverview,BachAgentTile:AgentTile},
     openCoreEditor(){}, toggleCoreSlot(...args){switches.push(args);}});
   vm.runInContext(snippet('function coreAgentAccessLabel(', 'const runningGroupStates'), context);
   vm.runInContext(snippet('function coreElement(', 'function coreField('), context);
