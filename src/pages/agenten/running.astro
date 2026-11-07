@@ -6,6 +6,7 @@ import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
 import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
+import ReturnTimeline from '../../components/ReturnTimeline.astro';
 ---
 
 <BachLayout title="Deine Agenten · Living & Running" currentPath="/agenten/running">
@@ -75,6 +76,12 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         </tbody>
       </table>
     </div>
+  </details>
+
+  <!-- PB-4: zurückgegebene Aufgaben und Abbrüche sichtbar machen -->
+  <details class="card" id="return-timeline-section">
+    <summary class="card-header" style="cursor:pointer;">↩️ Rückgaben und Abbrüche <span id="running-returns-alert" class="badge" style="text-transform:none;letter-spacing:0" hidden></span></summary>
+    <ReturnTimeline id="rt-running" />
   </details>
   </div>
 
@@ -574,7 +581,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     #template-agent-picker pre { max-height:15rem; overflow:auto; font-size:.8rem; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';window.BachAgentOverview=AgentOverview;window.BachProviderRequestStatus=providerRequestStatusText;</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachProviderRequestStatus=providerRequestStatusText;</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -792,6 +799,36 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       return `${model}${backend ? ' (' + backend + ')' : ''}${formatModelFallbacksSummary(agent)}`;
     }
 
+    let workerReturnSummaries = new Map();
+    // PB-4: what the overview content does not carry: why the last provider call ended, which host precondition
+    // the worker waits for, and the return shield of the task it holds.
+    function appendAbortDetails(content, agent, source) {
+      if (source !== 'worker') return;
+      const providerStatus = window.BachProviderRequestStatus?.(agent) || '';
+      if (providerStatus) {
+        const line = document.createElement('p');
+        line.className = 'provider-request-status';
+        line.setAttribute('aria-label', 'Status der Provideranfrage');
+        line.textContent = providerStatus;
+        content.append(line);
+      }
+      const TR = window.BachTaskReturns;
+      if (!TR) return;
+      const wait = TR.waitingModel(agent);
+      if (wait) content.append(TR.renderWaiting(document, wait));
+      const taskId = Number(agent.active_task_id ?? agent.task_id);
+      const badge = TR.returnBadge(workerReturnSummaries.get(taskId), {status: 'in_progress'});
+      if (badge) {
+        const link = document.createElement('a');
+        link.href = '/tasks?task=' + taskId;
+        link.style.textDecoration = 'none';
+        link.append(TR.renderBadge(document, badge));
+        const row = document.createElement('p');
+        row.append(link);
+        content.append(row);
+      }
+    }
+
     function renderAgentOverviewCardContent(card, agent, source, statusLabel) {
       const overview = window.BachAgentOverview;
       if (!card || typeof card.querySelector !== 'function' || typeof card.replaceChildren !== 'function'
@@ -815,6 +852,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       }
       const content = overview.createAgentOverviewContent(document, agent, {source, statusLabel, avatarNode, symbolNode});
       labelReportedModelName(content);
+      appendAbortDetails(content, agent, source);
       const banner = document.createElement('div');
       const sysRole = source === 'core' && isCanonicalSystemRole(agent);
       banner.className = 'agent-role-occupancy-banner ' + (sysRole ? 'is-system-role' : 'is-local-agent');
@@ -1475,6 +1513,11 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         const runningWorkers = workers.filter(w => window.BachAgentOverview?.isConfirmedAgentRunning(w) === true);
         const workerStatusUnknown = workers.some(w => w.runtime_verified !== true || typeof w.running !== 'boolean' || ['starting','stopping'].includes(w.status));
         updateRunningGroupState('workers', runningWorkers.length, workerStatusUnknown ? 'unconfirmed' : 'available');
+        const TR = window.BachTaskReturns;
+        // PB-4: returns of the tasks the running workers hold, and workers waiting for a host precondition.
+        const returnData = TR ? await TR.loadTaskReturns(runningWorkers.map(w => Number(w.active_task_id ?? w.task_id))) : {byId: new Map(), error: null};
+        if (epoch !== workerRefreshEpoch) return;
+        workerReturnSummaries = returnData.byId;
         const waitingWorkers = workers.filter(w => workerReadiness(w).waiting);
         const profileWorkers = workers.filter(w => !runningWorkers.includes(w));
         const readyWorkers = profileWorkers.filter(w => workerReadiness(w).ready);
@@ -1855,6 +1898,16 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         cell.colSpan = 5; row.append(cell); tbody.replaceChildren(row);
       }
     }
+
+    // PB-4: the header of the returns section shows the 24 h count without opening it.
+    document.addEventListener('return-timeline:loaded', event => {
+      const {total, hours, taskId} = event.detail;
+      const badge = document.getElementById('running-returns-alert');
+      if (!badge || taskId || hours !== 24 || !event.target.closest('#return-timeline-section')) return;
+      badge.hidden = total === 0;
+      badge.textContent = total + (total === 1 ? ' Rückgabe' : ' Rückgaben') + ' in 24 Stunden';
+      badge.className = 'badge ' + (total >= 20 ? 'badge-error' : 'badge-warning');
+    });
 
     function openPickupWerkstattModal() { window.BachTemplatePicker.open(); }
     function openPickupTeamModal() { location.assign('/agenten/blueprints?tab=teams&create=team'); }

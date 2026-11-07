@@ -1,0 +1,74 @@
+---
+// PB-4 (#3988): timeline of task returns (a worker gave a task back without a result). Logic in ../lib/task-returns.mjs.
+const {id = 'return-timeline', taskId = null, heading = 'Rückgaben und Abbrüche', lazy = false} = Astro.props;
+---
+<section class="card return-timeline" data-return-timeline data-task-id={taskId ?? undefined} data-lazy={lazy ? '' : undefined} aria-labelledby={`${id}-title`}>
+  <div class="rt-head">
+    <h2 id={`${id}-title`}>{heading}</h2>
+    <button class="btn" data-rt-refresh type="button">Aktualisieren</button>
+  </div>
+  <p class="muted rt-intro">Aufgaben, die ein Worker zurückgegeben hat, ohne ein Ergebnis abzugeben. Neueste zuerst.</p>
+  <div class="rt-filters">
+    <label>Zeitraum<select data-rt-window></select></label>
+    <label>Worker<select data-rt-worker><option value="">Alle Worker</option></select></label>
+    <label>Grund<select data-rt-reason><option value="">Alle Gründe</option></select></label>
+  </div>
+  <p class="rt-summary" data-rt-summary role="status"></p>
+  <p class="muted rt-status" data-rt-status role="status">Zeitleiste wird geladen …</p>
+  <div class="rt-scroll">
+    <table class="rt-table">
+      <thead><tr><th scope="col">Zeit</th><th scope="col">Aufgabe</th><th scope="col">Worker</th><th scope="col">Grund</th></tr></thead>
+      <tbody data-rt-body></tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  import {mountReturnTimeline} from '../lib/task-returns.mjs';
+  for (const root of document.querySelectorAll('[data-return-timeline]')) mountReturnTimeline(root);
+</script>
+
+<style is:global>
+  .return-timeline {padding:1rem 1.25rem;margin-bottom:1.5rem}
+  .rt-head {display:flex;align-items:center;justify-content:space-between;gap:.6rem 1rem;flex-wrap:wrap}
+  .rt-head h2 {font-size:1.05rem;margin:0}
+  .rt-intro {margin:.25rem 0 .7rem;font-size:.85rem}
+  .rt-filters {display:flex;gap:.6rem 1rem;flex-wrap:wrap;margin-bottom:.6rem}
+  .rt-filters label {display:grid;gap:.25rem;font-size:.8rem;color:var(--text-muted)}
+  .rt-filters select {padding:.45rem .6rem;background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:6px;max-width:100%}
+  .rt-summary {font-weight:600;margin:.2rem 0}
+  .rt-status {font-size:.8rem;margin:0 0 .5rem}
+  .rt-status[data-error="true"] {color:var(--error-text)}
+  .rt-scroll {max-height:22rem;overflow:auto}
+  .rt-table {width:100%;border-collapse:collapse;font-size:.85rem}
+  .rt-table th {text-align:left;color:var(--text-muted);font-weight:600;padding:.5rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-card)}
+  .rt-table td {padding:.5rem;border-top:1px solid var(--border);vertical-align:top;overflow-wrap:anywhere}
+  .rt-table td a {color:var(--text);font-weight:600}
+  .rt-table .return-code {display:block;font-size:.75rem;color:var(--text-muted);margin-top:.15rem}
+  .rt-table tr[data-scope="host"] td:last-child {border-left:3px solid var(--warning-text)}
+  @media (max-width:640px) {
+    .rt-table thead {position:absolute;left:-9999px}
+    .rt-table, .rt-table tbody, .rt-table tr, .rt-table td {display:block;width:100%}
+    .rt-table tr {border-top:1px solid var(--border);padding:.4rem 0}
+    .rt-table td {border:0;padding:.15rem .25rem}
+    .rt-table td::before {content:attr(data-label) ": ";color:var(--text-muted);font-size:.75rem}
+  }
+  /* badge, reason block (tasks list and detail, running cards) */
+  .return-badge {margin-top:.15rem;font-size:.7rem;white-space:normal;text-align:left;text-transform:none;letter-spacing:0}
+  .return-block {border:1px solid var(--border);border-left-width:4px;border-radius:8px;padding:.7rem .9rem;margin:.6rem 0;background:var(--bg-card)}
+  .return-block.return-warn {border-left-color:var(--warning-text)}
+  .return-block.return-critical {border-left-color:var(--error-text)}
+  .return-block p {margin:.15rem 0;line-height:1.5}
+  .return-headline {font-weight:700}
+  .return-warn .return-headline {color:var(--warning-text)}
+  .return-critical .return-headline {color:var(--error-text)}
+  .return-hint {color:var(--text-muted);font-size:.85rem}
+  .return-facts {display:grid;grid-template-columns:max-content 1fr;gap:.2rem .8rem;font-size:.8rem;margin:.4rem 0 0}
+  .return-facts dt {color:var(--text-muted)}
+  .return-facts dd {margin:0;overflow-wrap:anywhere}
+  .agent-overview-runtime-content .provider-request-status {font-size:.75rem;color:var(--text-muted);line-height:1.4;margin:.25rem 0}
+  .worker-wait {border:1px dashed var(--warning-text);border-radius:8px;padding:.5rem .7rem;margin:.4rem 0;font-size:.8rem}
+  .worker-wait p {margin:.1rem 0}
+  .worker-wait .wait-headline {font-weight:700;color:var(--warning-text)}
+  .worker-wait .wait-hint {color:var(--text-muted)}
+</style>

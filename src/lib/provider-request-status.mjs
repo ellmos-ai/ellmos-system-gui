@@ -1,3 +1,5 @@
+import { terminalReasonText } from "./task-returns.mjs";
+
 const phaseLabels = Object.freeze({
   registered: "Anfrage registriert",
   request_starting: "Anfrage startet",
@@ -88,9 +90,11 @@ export function providerRequestStatusText(worker) {
   const { execution, request } = projected;
   const phase = phaseLabels[request.phase];
   if (request.state === "terminal") {
-    return request.details_available
+    const base = request.details_available
       ? `Letzter Provideraufruf · ${phase}`
       : `Letzter Provideraufruf · ${phase} · Providerdetails nicht verfügbar`;
+    const why = terminalReasonText(request.terminal_reason);
+    return why ? `${base} · ${why}` : base;
   }
 
   const lease = worker.active_task_lease;
