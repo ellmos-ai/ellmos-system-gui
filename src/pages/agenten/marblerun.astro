@@ -2,13 +2,8 @@
 import BachLayout from "../../layouts/BachLayout.astro";
 ---
 <BachLayout title="Agenten-Bibliothek · Ketten" currentPath="/agenten/marblerun">
-  <nav class="chain-actions" role="tablist" aria-label="Agenten-Bibliothek Hauptreiter" style="margin-bottom:1rem;">
-    <a class="btn" role="tab" aria-selected="false" href="/agenten/blueprints">🤖 Vorlagen</a>
-    <a class="btn" role="tab" aria-selected="false" href="/agenten/subscription-agents">✍️ Prompt-Agenten</a>
-    <a class="btn btn-primary" role="tab" aria-selected="true" href="/agenten/marblerun">⛓️ Ketten (MarbleRun &amp; Toolchains)</a>
-  </nav>
   <header class="chain-header"><div><p class="chain-eyebrow">Agenten-Bibliothek · Reiter 3</p><h1>Ketten · MarbleRun &amp; Toolchains</h1><p>Definitionen für Agentenketten (MarbleRun) und Befehlsketten (Toolchains) mit Art-Schild.</p></div>
-    <div class="chain-actions"><button class="btn" id="chain-refresh">Aktualisieren</button><button class="btn btn-primary" id="chain-new">Neue Kette</button><a class="btn" href="/daemon?tab=chains">Befehlsketten · Toolchains</a><a class="btn" href="/agenten/running">Living & Running</a></div>
+    <div class="chain-actions"><button class="btn" id="chain-refresh">Aktualisieren</button><button class="btn btn-primary" id="chain-new">Neue Kette</button><a class="btn" href="/daemon?tab=chains&from=agent-library">Befehlsketten · Toolchains</a><a class="btn" href="/agenten/running">Living & Running</a></div>
   </header>
   <p id="chain-status" role="status" aria-live="polite">Ketten und verfügbare Agenten werden geladen…</p>
   <section>
@@ -21,7 +16,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
         <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;"><h2 style="margin:0;font-size:1.1rem;">Befehlsketten · Toolchains</h2><span class="badge">Art: Befehlskette · Toolchain</span></div>
         <p style="margin:.35rem 0 0;color:var(--text-muted);font-size:.85rem;">Deterministische CLI- und Skript-Abfolgen ohne Modell-Inferenz. Zeitpläne stehen unter <a href="/routinen">Routinen &amp; Jobs</a>.</p>
       </div>
-      <a class="btn" href="/daemon?tab=chains">Befehlsketten öffnen →</a>
+      <a class="btn" href="/daemon?tab=chains&from=agent-library">Befehlsketten öffnen →</a>
     </div>
   </section>
   <section><h2>Läufe</h2><p>Der nächste Schritt beginnt nach dem bestätigten Taskabschluss mit fachlichem Ergebnis und tatsächlichem Laufende.</p><div id="chain-runs" class="chain-grid"></div></section>

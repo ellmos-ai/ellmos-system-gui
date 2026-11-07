@@ -60,7 +60,7 @@
                   "id": "agent-library",
                   "label": "Agenten-Bibliothek",
                   "icon": "🤖",
-                  "href": "/agenten/fabrika",
+                  "href": "/agenten/blueprints",
                   "description": "Vorlagen und Agenten zusammenstellen"
                 },
                 {
@@ -194,8 +194,8 @@
               "id": "quality",
               "label": "Qualität & Tests",
               "icon": "✅",
-              "href": "/governance/logs",
-              "description": "Prüfungen, Nachweise und Auditspuren"
+              "href": "/governance/usecases",
+              "description": "Use Cases, Prüfungen und Testnachweise"
             },
             {
               "id": "governance",
@@ -203,31 +203,38 @@
               "icon": "🛡️",
               "children": [
                 {
+                  "id": "overview",
+                  "label": "Control Room",
+                  "icon": "🏛️",
+                  "href": "/governance",
+                  "description": "Kennzahlen und Verweise auf alle Governance-Bereiche"
+                },
+                {
                   "id": "rules-decisions",
                   "label": "Regeln & Entscheidungen",
                   "icon": "📜",
-                  "href": "/governance",
+                  "href": "/governance/regeln",
                   "description": "Regeln, Entscheidungen und Freigaben"
                 },
                 {
                   "id": "locks",
                   "label": "Locks",
                   "icon": "🔒",
-                  "href": "/governance?tab=locks",
+                  "href": "/governance/sperren",
                   "description": "Fail-closed Sperren und Lockstatus"
                 },
                 {
                   "id": "hooks-guards",
                   "label": "Hooks & Guards",
                   "icon": "🪝",
-                  "href": "/governance?tab=hooks",
+                  "href": "/governance/hooks",
                   "description": "Schutzmechanismen und Hook-Nachweise"
                 },
                 {
                   "id": "authority",
                   "label": "Authority / Permissions",
                   "icon": "🗝️",
-                  "href": "/governance?tab=authority",
+                  "href": "/governance/rechte",
                   "description": "Berechtigungen und Autoritätsgrenzen"
                 },
                 {
@@ -334,7 +341,7 @@
                   "id": "agent-library",
                   "label": "Agenten-Bibliothek",
                   "icon": "📚",
-                  "href": "/agenten/fabrika",
+                  "href": "/agenten/blueprints",
                   "description": "Vorlagen und Agentenbibliothek"
                 },
                 {
@@ -451,8 +458,8 @@
                   "id": "quality",
                   "label": "Qualität & Tests",
                   "icon": "✅",
-                  "href": "/governance/logs",
-                  "description": "Qualitäts- und Auditnachweise"
+                  "href": "/governance/usecases",
+                  "description": "Use Cases, Prüfungen und Testnachweise"
                 },
                 {
                   "id": "help",
@@ -467,5 +474,145 @@
         }
       ]
     }
-  }
+  },
+  "redirects": {
+    "/agenten/fabrika": "/agenten/blueprints",
+    "/agenten/bibliothek": "/agenten/blueprints"
+  },
+  "area_navs": [
+    {
+      "id": "agent-library",
+      "label": "Agenten-Bibliothek",
+      "aria_label": "Agenten-Bibliothek Hauptreiter",
+      "home": "/agenten/blueprints",
+      "entries": [
+        {
+          "id": "templates",
+          "label": "Vorlagen",
+          "icon": "🤖",
+          "href": "/agenten/blueprints"
+        },
+        {
+          "id": "prompt-agents",
+          "label": "Prompt-Agenten",
+          "icon": "✍️",
+          "href": "/agenten/subscription-agents"
+        },
+        {
+          "id": "chains",
+          "label": "Ketten (MarbleRun & Toolchains)",
+          "icon": "⛓️",
+          "href": "/agenten/marblerun"
+        }
+      ]
+    },
+    {
+      "id": "betrieb",
+      "label": "Betrieb",
+      "aria_label": "Betrieb Bereichsnavigation",
+      "home": "/settings?tab=connections",
+      "paths": [
+        "/settings",
+        "/system"
+      ],
+      "entries": [
+        {
+          "id": "connections",
+          "label": "Verbindungen",
+          "icon": "🔗",
+          "href": "/settings?tab=connections",
+          "default": true
+        },
+        {
+          "id": "models-resources",
+          "label": "Modelle & Ressourcen",
+          "icon": "🧠",
+          "href": "/settings?tab=core"
+        },
+        {
+          "id": "systems",
+          "label": "Systeme",
+          "icon": "🖥️",
+          "href": "/system/ocean"
+        },
+        {
+          "id": "installation-updates",
+          "label": "Installation & Updates",
+          "icon": "📦",
+          "href": "/system/installation-updates"
+        },
+        {
+          "id": "services",
+          "label": "Dienste",
+          "icon": "⚙️",
+          "href": "/daemon"
+        },
+        {
+          "id": "maintenance",
+          "label": "Wartung",
+          "icon": "🛠️",
+          "href": "/maintenance"
+        },
+        {
+          "id": "quality",
+          "label": "Qualität & Tests",
+          "icon": "✅",
+          "href": "/governance/usecases"
+        }
+      ]
+    },
+    {
+      "id": "governance",
+      "label": "Governance",
+      "aria_label": "Governance Bereichsnavigation",
+      "home": "/governance",
+      "paths": [
+        "/governance"
+      ],
+      "entries": [
+        {
+          "id": "overview",
+          "label": "Control Room",
+          "icon": "🏛️",
+          "href": "/governance"
+        },
+        {
+          "id": "rules-decisions",
+          "label": "Regeln & Entscheidungen",
+          "icon": "📜",
+          "href": "/governance/regeln"
+        },
+        {
+          "id": "locks",
+          "label": "Sperren",
+          "icon": "🔒",
+          "href": "/governance/sperren"
+        },
+        {
+          "id": "hooks-guards",
+          "label": "Hooks & Guards",
+          "icon": "🪝",
+          "href": "/governance/hooks"
+        },
+        {
+          "id": "authority",
+          "label": "Autorität & Erlaubnisse",
+          "icon": "🗝️",
+          "href": "/governance/rechte"
+        },
+        {
+          "id": "agentenfunk",
+          "label": "Agentenfunk",
+          "icon": "📻",
+          "href": "/governance/funk"
+        },
+        {
+          "id": "audit",
+          "label": "Logs & Audit",
+          "icon": "📜",
+          "href": "/governance/logs"
+        }
+      ]
+    }
+  ]
 }

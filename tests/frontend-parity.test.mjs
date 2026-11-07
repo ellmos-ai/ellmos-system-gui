@@ -9,8 +9,8 @@ const page=read('src/pages/agenten/running.astro');
 const start=page.indexOf('function workerReadiness('),end=page.indexOf('async function loadBackgroundWorkers(',start);
 const readiness=vm.runInNewContext('('+page.slice(start,end).trim()+')');
 function paths(directory){return readdirSync(directory,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?paths(new URL(entry.name+'/',directory)):[new URL(entry.name,directory)]);}
-test('all forty-seven productive pages, including fallback routes and Routinen & Jobs, are present',()=>{
-  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,47);
+test('all fifty-one productive pages, including fallback routes, redirects, governance sub routes and Routinen & Jobs, are present',()=>{
+  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,51);
   for(const path of ['user-inbox','agenten/blueprints','agenten/subscription-agents','routinen','notizen','skills/plugins','skills/mcp','skills/software','skills/ocean','daemon','system/ocean','system/installation-updates','prompt-library','chat','modules','talk','sensation','connectors','sessions'])assert.ok(read('src/pages/'+path+'.astro'));
 });
 test('the shared branding contract and bundled same-origin authentication stay intact',()=>{
@@ -57,11 +57,10 @@ test('the Agenten-Werkstatt icon is consistent across navigation, heading, and s
   const robot=String.fromCodePoint(0x1f916);
   const navigation=JSON.parse(read('src/config/nav_config.json'));
   const links=Object.values(navigation.presets).flatMap(preset=>preset.sections.flatMap(section=>section.items.flatMap(item=>item.children||[item])));
-  const workshop=links.find(item=>item.href==='/agenten/fabrika');
+  const workshop=links.find(item=>item.href==='/agenten/blueprints');
   assert.equal(workshop?.label,'Agenten-Bibliothek');
   assert.equal(workshop?.icon,robot);
-  const libraryPage=read('src/pages/agenten/fabrika.astro');
-  assert.ok(libraryPage.includes('/agenten/blueprints'));
+  assert.ok(read('src/pages/agenten/fabrika.astro').includes('/agenten/blueprints'));
   const dashboard=read('src/pages/index.astro');
   assert.doesNotMatch(dashboard,/Schnellstart &amp; Arbeitsbereiche/);
 });
@@ -72,7 +71,7 @@ test('the deprecated Agents-Board is absent from navigation',()=>{
     preset.home.href,
     ...preset.sections.flatMap(section=>section.items.flatMap(item=>[item.href,...(item.children||[]).map(child=>child.href)].filter(Boolean))),
   ]);
-  assert.ok(hrefs.includes('/agenten/fabrika'));
+  assert.ok(hrefs.includes('/agenten/blueprints'));
   assert.ok(hrefs.includes('/agenten/marblerun'));
   assert.ok(hrefs.includes('/tasks'));
   assert.ok(hrefs.includes('/skills'));

@@ -14,14 +14,12 @@ if (!route) throw new Error('Fallback-Konfiguration für /daemon fehlt.');
         <p style="margin:0 0 0.25rem;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Betrieb › Dienste (#2485, #2488)</p>
         <h1 style="margin:0 0 0.3rem;font-size:1.55rem;">⚙️ Dienste &amp; Hintergrund-Dauerläufer</h1>
         <p style="margin:0;font-size:0.86rem;color:var(--text-muted);">
-          Dauerhaft laufende Systemdienste (GUI-Server, Telegram-Bridge, Scheduler, Doku-Pflegedienst). Zeitgesteuerte Einzeljobs liegen unter <a href="/routinen">Routinen &amp; Jobs</a>, Befehlsketten unter <a href="/agenten/marblerun">Agenten-Bibliothek › Ketten</a>.
+          Dauerhaft laufende Systemdienste (GUI-Server, Telegram-Bridge, Scheduler, Doku-Pflegedienst). Zeitgesteuerte Einzeljobs liegen unter <a href="/routinen?from=betrieb">Routinen &amp; Jobs</a>, Befehlsketten unter <a href="/agenten/marblerun?from=betrieb">Agenten-Bibliothek › Ketten</a>.
         </p>
       </div>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
         <a href="/daemon" class="btn btn-sm btn-primary">⚙️ Dauerläufer-Dienste</a>
         <a href="/daemon?tab=chains" class="btn btn-sm">⛓️ Befehlsketten (Toolchains)</a>
-        <a href="/routinen" class="btn btn-sm">⏱️ Routinen &amp; Jobs</a>
-        <a href="/maintenance" class="btn btn-sm">🛠️ Wartung</a>
       </div>
     </div>
 

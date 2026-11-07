@@ -9,6 +9,7 @@ export const BINDINGS = {
   'src/lib/governance-request.mjs#createGovernanceRequest@1': [
     'GET /api/governance/locks', 'GET /api/governance/policy-registry', 'GET /api/governance/decisions',
     'GET /api/governance/policies', 'GET /api/governance/effective-policy', 'GET /api/gui/capabilities',
+    'GET /api/governance/hooks', 'GET /api/governance/permission-matrix',
   ],
   // INVENTORIES[kind] in capability-board-client.mjs: one inventory per board
   'src/lib/capability-board-ui.mjs#refresh@1': [
@@ -16,7 +17,7 @@ export const BINDINGS = {
     'GET /api/capabilities/software', 'GET /api/capabilities/ocean',
   ],
   // reader.url(filters) in governance-readers.mjs: one URL per tab
-  'src/pages/governance/index.astro#load@1': [
+  'src/scripts/governance-reader.mjs#load@1': [
     'GET /api/governance/locks', 'GET /api/governance/policy-registry', 'GET /api/governance/decisions',
     'GET /api/governance/policies', 'GET /api/governance/effective-policy',
   ],

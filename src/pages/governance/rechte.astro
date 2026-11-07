@@ -1,0 +1,77 @@
+---
+// src/pages/governance/rechte.astro - Autorität & Erlaubnisse: Raster aus dem Berechtigungsmodul (B-12)
+import BachLayout from "../../layouts/BachLayout.astro";
+import "../../styles/governance.css";
+---
+
+<BachLayout title="Autorität & Erlaubnisse | Governance" currentPath="/governance/rechte">
+  <div data-source="permission-matrix">
+    <header class="gov-head">
+      <div>
+        <h1>🗝️ Autorität &amp; Erlaubnisse</h1>
+        <p>Pro Handlung mit Außenwirkung und Akteur: erlaubt, nur nach Rückfrage oder nie. Die Werte kommen aus dem Berechtigungsmodul des Backends, nicht aus dieser Seite.</p>
+      </div>
+      <button type="button" class="btn btn-sm" id="matrix-reload">Neu lesen</button>
+    </header>
+
+    <p id="matrix-state" role="status" aria-live="polite" class="gov-state">Erlaubnis-Raster wird gelesen …</p>
+    <p id="matrix-notice" class="gov-note" hidden></p>
+    <div style="overflow-x:auto;"><table class="gov-matrix" id="matrix-table" hidden></table></div>
+    <dl id="matrix-meta" class="gov-meta"></dl>
+  </div>
+
+  <script>
+    import {parsePermissionMatrix} from "../../lib/governance-readers.mjs";
+    import {createGovernanceRequest} from "../../lib/governance-request.mjs";
+
+    const $ = (id: string) => document.getElementById(id)!;
+    const unknown = (value: unknown) => value === null || value === undefined || value === "" ? "unbekannt" : String(value);
+    const DECISION_TEXT: Record<string, string> = {erlaubt: "erlaubt", rueckfrage: "Rückfrage", nie: "nie"};
+    const label = (decision: string | null) => decision === null ? "unbekannt" : DECISION_TEXT[decision] ?? decision;
+
+    const request = createGovernanceRequest(result => {
+      const state = $("matrix-state"), table = $("matrix-table") as HTMLTableElement, meta = $("matrix-meta"), notice = $("matrix-notice");
+      state.dataset.state = result.state;
+      table.replaceChildren(); meta.replaceChildren(); table.hidden = true; notice.hidden = true;
+      if (result.state === "loading") { state.textContent = "Erlaubnis-Raster wird gelesen …"; return; }
+      if (!result.model) {
+        state.textContent = (result.failure?.label || result.label || "Zustand unbekannt") + ". Es werden keine Ersatzdaten angezeigt.";
+        return;
+      }
+      const model = result.model;
+      state.textContent = model.actions.length + " Handlungen × " + model.actors.length + " Akteure.";
+      if (model.notice) { notice.textContent = model.notice; notice.hidden = false; }
+      const head = table.createTHead().insertRow();
+      const corner = document.createElement("th"); corner.scope = "col"; corner.textContent = "Handlung mit Außenwirkung"; head.append(corner);
+      for (const actor of model.actors) { const th = document.createElement("th"); th.scope = "col"; th.textContent = actor; head.append(th); }
+      const body = table.createTBody();
+      for (const row of model.rows) {
+        const tr = body.insertRow();
+        const th = document.createElement("th"); th.scope = "row"; th.textContent = row.action; tr.append(th);
+        for (const cell of row.cells) {
+          const td = tr.insertCell(); td.className = "gov-cell";
+          const badge = document.createElement("span"); badge.className = "badge"; badge.textContent = label(cell.decision);
+          td.append(badge);
+          const detail = [cell.explicit ? "ausdrücklich gesetzt" : cell.source ? "aus " + cell.source : "", cell.needsTicket ? "Ticket nötig" : ""].filter(Boolean).join(" · ");
+          if (detail) { const small = document.createElement("small"); small.textContent = detail; td.append(small); }
+          if (cell.escalationHint) td.title = cell.escalationHint;
+        }
+      }
+      table.hidden = false;
+      const rows: [string, string][] = [
+        ["Raster-Version", unknown(model.revision)],
+        ["Rückfall ohne Regel", label(model.fallback)],
+        ["Eskalationsleiter", model.ladder.length ? model.ladder.join(" → ") : "unbekannt"],
+      ];
+      for (const [name, value] of rows) {
+        const dt = document.createElement("dt"); dt.textContent = name;
+        const dd = document.createElement("dd"); dd.textContent = value;
+        meta.append(dt, dd);
+      }
+    });
+    const load = () => request.load("/api/governance/permission-matrix", parsePermissionMatrix,
+      (_url, {signal}) => fetch("/api/governance/permission-matrix", {method: "GET", cache: "no-store", signal}), () => "ok");
+    $("matrix-reload").addEventListener("click", load);
+    load();
+  </script>
+</BachLayout>

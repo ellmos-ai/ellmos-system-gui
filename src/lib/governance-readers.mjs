@@ -228,6 +228,53 @@ export function parseCapabilities(body) {
   return {raw:body, observedAt:text(body.observed_at), kit:body.kit, policy:policy ?? null};
 }
 
+// GET /api/governance/hooks (governance_registry.py, hooks_and_guards): real existence check of the guard files.
+// The local file path of a guard is deliberately not carried over; only name and presence are shown.
+export function parseHooks(body) {
+  if (!isObject(body) || typeof body.available !== 'boolean' || !Array.isArray(body.hooks)) fail('/hooks');
+  return {
+    kind: 'hooks', available: body.available, concept: text(body.concept), detail: text(body.detail),
+    dbGuardPresent: typeof body.db_guard_present === 'boolean' ? body.db_guard_present : null,
+    hooks: body.hooks.map(hook => {
+      if (!isObject(hook) || !text(hook.name)) fail('Hook ohne name');
+      return {name: hook.name, present: hook.present === true};
+    }),
+    checkedAt: text(body.checked_at),
+  };
+}
+
+// GET /api/governance/permission-matrix (governance_registry.py, permission_matrix): action x actor.
+// A cell is answered by the backend's effective evaluation; without it by the declared cell, then the row and
+// column defaults. Nothing is filled in beyond that: no answer stays null ("unbekannt").
+export function parsePermissionMatrix(body) {
+  const names = value => Array.isArray(value) && value.every(item => typeof item === 'string' && item);
+  if (!isObject(body) || !names(body.actions) || !names(body.actors)) fail('/permission-matrix');
+  const effective = isObject(body.effective_cells) ? body.effective_cells : {};
+  const declared = isObject(body.cells) ? body.cells : {};
+  const rowDefaults = isObject(body.row_defaults) ? body.row_defaults : {};
+  const columnDefaults = isObject(body.column_defaults) ? body.column_defaults : {};
+  const fallback = text(body.fallback);
+  return {
+    kind: 'permission-matrix', actions: body.actions, actors: body.actors,
+    decisions: names(body.decisions) ? body.decisions : [],
+    revision: text(body.revision), notice: text(body.notice), fallback,
+    ladder: names(body.escalation_ladder) ? body.escalation_ladder : [],
+    rows: body.actions.map(action => ({
+      action,
+      cells: body.actors.map(actor => {
+        const answer = effective[action + '|' + actor];
+        const own = isObject(declared[action]) ? text(declared[action][actor]) : null;
+        const decision = text(answer?.decision) || own || text(rowDefaults[action]) || text(columnDefaults[actor]) || fallback;
+        return {
+          actor, decision, explicit: own !== null,
+          source: text(answer?.source), reason: text(answer?.reason),
+          needsTicket: answer?.needs_ticket === true, escalationHint: text(answer?.escalation_hint),
+        };
+      }),
+    })),
+  };
+}
+
 // Task #2134: Polaris star lease status for the decision panel (holder, fence, held, journal_open, last_rebaseline).
 export function parsePolarisStatus(body) {
   if (!isObject(body)) fail('/polaris');

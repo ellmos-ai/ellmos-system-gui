@@ -1,0 +1,35 @@
+/* Governance pages: shared styles (reader panels, tabs, tables) */
+#gov-panel-reader pre,.gov-pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:32rem;overflow:auto;font-size:.78rem}
+.gov-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.gov-tabs [role="tab"]{padding:.4rem .8rem;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-muted);text-decoration:none;font-size:.85rem}
+.gov-tabs [role="tab"][aria-selected="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.gov-tabs [role="tab"]:focus-visible,#gov-filters :focus-visible{outline:2px solid var(--accent-blue);outline-offset:2px}
+.gov-banner{padding:.6rem .8rem;border:1px solid var(--border);border-left:4px solid var(--warning);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text);font-size:.82rem;margin:.5rem 0 1rem}
+.gov-filters{display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;margin-bottom:1rem}
+.gov-filters label{display:flex;flex-direction:column;font-size:.75rem;color:var(--text-muted);gap:.2rem}
+.gov-filters input,.gov-filters select{padding:.4rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:4px;color:var(--text)}
+.gov-state{font-size:.9rem;color:var(--text);min-height:1.4rem}
+.gov-state[data-state="auth"],.gov-state[data-state="unavailable"],.gov-state[data-state="route"],.gov-state[data-state="error"],.gov-state[data-state="network"],.gov-state[data-state="changed"],.gov-state[data-state="conflict"],.gov-state[data-state="stale"],.gov-state[data-state="contract"]{color:var(--warning-text)}
+.gov-meta{display:grid;grid-template-columns:max-content 1fr;gap:.2rem 1rem;font-size:.8rem;margin:.75rem 0}
+.gov-meta dt{color:var(--text-muted)} .gov-meta dd{margin:0;color:var(--text);overflow-wrap:anywhere}
+.gov-notices{list-style:none;padding:0;margin:0 0 1rem;display:flex;flex-direction:column;gap:.4rem;font-size:.8rem}
+.gov-notices li{padding:.5rem .7rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text)}
+.gov-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.gov-table th,.gov-table td{text-align:left;padding:.4rem .5rem;border-bottom:1px solid var(--border);vertical-align:top;overflow-wrap:anywhere}
+.gov-table th{color:var(--text-muted);font-weight:600}
+.gov-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.gov-head h1{font-size:1.75rem;font-weight:800;letter-spacing:-.02em;margin:0 0 .25rem}
+.gov-head p{color:var(--text-muted);font-size:.875rem;margin:0;max-width:60rem;line-height:1.5}
+.gov-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-bottom:1.5rem}
+.gov-card{display:grid;gap:.5rem;align-content:start;padding:1rem 1.1rem;border:1px solid var(--border);border-radius:var(--radius-md,10px);background:var(--bg-card);color:inherit;text-decoration:none}
+.gov-card:hover,.gov-card:focus-visible{border-color:var(--accent)}
+.gov-card h2{font-size:1.05rem;margin:0}
+.gov-card p{margin:0;font-size:.82rem;color:var(--text-muted);line-height:1.5}
+.gov-card .badge{justify-self:start}
+.gov-note{padding:.7rem .9rem;border:1px solid var(--border);border-left:4px solid var(--accent-blue);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text-muted);font-size:.82rem;line-height:1.5;margin:0 0 1rem}
+.gov-matrix{width:100%;border-collapse:collapse;font-size:.83rem}
+.gov-matrix th,.gov-matrix td{padding:.55rem;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+.gov-matrix thead th{color:var(--text-muted);font-weight:600}
+.gov-matrix .gov-cell small{display:block;color:var(--text-muted);font-size:.72rem;margin-top:.2rem;overflow-wrap:anywhere}
+.gov-list{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
+.gov-list li{display:flex;justify-content:space-between;gap:.75rem;align-items:center;padding:.65rem .8rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark);overflow-wrap:anywhere}
