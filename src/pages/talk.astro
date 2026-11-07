@@ -3,6 +3,7 @@
 import BachLayout from "../layouts/BachLayout.astro";
 import talkHandmicImg from "../assets/talk-handmic-comic.jpg";
 import UiIcon from "../components/UiIcon.astro";
+import BackButton from "../components/BackButton.astro";
 ---
 
 <BachLayout title="ELLMOS Talk · Funkgerät & Live-Sprachstudio" currentPath="/chat">
@@ -21,7 +22,8 @@ import UiIcon from "../components/UiIcon.astro";
           </p>
         </div>
       </div>
-      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+        <BackButton fallback="/" />
         <a href="/agenten/running#talk-slot" class="btn btn-secondary">Modell-Bindung in Living &amp; Running</a>
         <a href="/chat" class="btn btn-secondary">Zurück zum Chat</a>
         <a href="/sensation" class="btn btn-secondary">Sensation &amp; Mikrofon-Rechte</a>

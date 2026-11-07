@@ -1,6 +1,7 @@
 ---
 // sensation.astro - Unified ELLMOS Sensation Camera, Mic, Presence & Consent Panel
 import BachLayout from "../layouts/BachLayout.astro";
+import BackButton from "../components/BackButton.astro";
 ---
 
 <BachLayout title="ELLMOS Sensation · Sensorik & Präsenz" currentPath="/sensation">
@@ -13,7 +14,8 @@ import BachLayout from "../layouts/BachLayout.astro";
           Berechtigungsgesteuerter Zugriff auf Kamera, Mikrofone und Klangerzeugung. Erkennt Nutzer-Präsenz am PC und pausiert bei Anwesenheit automatisch störende Desktop-Automationen (<code>open-compute</code>).
         </p>
       </div>
-      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+        <BackButton fallback="/" />
         <a href="/governance" class="btn btn-secondary">🛡️ Governance &amp; Control</a>
         <a href="/talk" class="btn btn-secondary">🎙️ ELLMOS Talk</a>
       </div>
