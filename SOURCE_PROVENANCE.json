@@ -280,7 +280,7 @@
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
-    "src/pages/agenten/blueprints.astro": "76d4c8d4ad36a22a99a35661fb6f69d3d4ec4866a0f209bbae620f427c934c77",
+    "src/pages/agenten/blueprints.astro": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
     "src/pages/agenten/running.astro": "7deee3356cd86bc0a8788996be44c0f48c322a356a9f85408a16e028d630060d",
@@ -383,8 +383,8 @@
     "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
     "scripts/page-reads-helpers.mjs": "61e2f5412189f6e0aa9bfecb62d94a831d95817fc7f4ce0e2a7b521b773fc1f5",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
-    "src/lib/role-socket-preview.mjs": "f42924576d1fc8b4ac9fae4fc26596d5083707ab6e743be16f14e8bbb730e8fd",
-    "tests/role-socket-preview.test.mjs": "bd032244c1737c17cd5d91972e3ef8fa747af614cf0493b9cba7aab4f24ed39a",
+    "src/lib/role-socket-preview.mjs": "95145d84fc33c4dffb1a3517f9255061aa7a69a4fac63dae5ed80412e7234baf",
+    "tests/role-socket-preview.test.mjs": "caffb4c42832e5a29aa1e9136b648cb70bd0a9c23aaec2a23cd13d321d84b89f",
     "src/pages/agenten/bibliothek.astro": "4d388a99fd18fe7d8cb119ad2b3da7c41e1dfbe130b73ef8c323f7629a99186b",
     "tests/voice-mic-layout.test.mjs": "3f89ea7ff49ff62cb4e454a732af9eb67efafbc109582a2aa8e4656fa75d9780",
     "tests/no-legacy-device-token.test.mjs": "60d51e2891e6f7386eb54baec000b54105d8cf6aeefa51fcc3186512a1b52255",
@@ -5689,6 +5689,27 @@
           "path": "tests/usecase-source.test.mjs",
           "previous_sha256": "2277bd25f64ea7950bc16411799fa84fe19409f1f1de4aad539e9f275ef879c2",
           "sha256": "cb3808c5825654fc41225305111906891ef7f5556ec1ee848055b803cfccc870"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-07",
+      "summary": "PB-5a follow-up: the module role count in the Vorlagen heading is counted from GET /api/agenten/library (source module_manifest_role) instead of the fixed number 19; without catalogue no number is shown.",
+      "files": [
+        {
+          "path": "src/lib/role-socket-preview.mjs",
+          "previous_sha256": "f42924576d1fc8b4ac9fae4fc26596d5083707ab6e743be16f14e8bbb730e8fd",
+          "sha256": "95145d84fc33c4dffb1a3517f9255061aa7a69a4fac63dae5ed80412e7234baf"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "76d4c8d4ad36a22a99a35661fb6f69d3d4ec4866a0f209bbae620f427c934c77",
+          "sha256": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3"
+        },
+        {
+          "path": "tests/role-socket-preview.test.mjs",
+          "previous_sha256": "bd032244c1737c17cd5d91972e3ef8fa747af614cf0493b9cba7aab4f24ed39a",
+          "sha256": "caffb4c42832e5a29aa1e9136b648cb70bd0a9c23aaec2a23cd13d321d84b89f"
         }
       ]
     }

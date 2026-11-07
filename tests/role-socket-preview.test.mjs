@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {mountRoleSocketPreview, renderRoleSocketPreview} from '../src/lib/role-socket-preview.mjs';
+import {countModuleRoles, mountRoleSocketPreview, renderRoleSocketPreview} from '../src/lib/role-socket-preview.mjs';
 
 // Intentionally no HTML parser: using an HTML sink fails instead of hiding injection.
 class Text {
@@ -147,4 +147,30 @@ test('the template page uses the bundled text renderer and removes the inline si
     assert.match(source, /mountRoleSocketPreview\(document\)/);
     assert.doesNotMatch(source, /initOceanRoleSockets|container\.innerHTML\s*=\s*templates/);
   }
+});
+
+test('the module role count is counted from the catalogue, never a fixed number', () => {
+  const role = source => ({role_id: 'r', source});
+  assert.equal(countModuleRoles({templates: [role('module_manifest_role'), role('module_manifest_role'), role('system'), null]}), 2);
+  assert.equal(countModuleRoles({templates: []}), 0);
+  assert.equal(countModuleRoles({}), null);
+  assert.equal(countModuleRoles(null), null);
+  assert.equal(countModuleRoles({templates: 'x'}), null);
+});
+
+test('the heading shows the counted number, and no number when the catalogue is unavailable', async () => {
+  const f = fixture();
+  const count = new Element('span');
+  f.document.getElementById = id => ({'ocean-role-socket-list': f.container, 'ocean-socket-provider-select': f.select, 'ocean-module-role-count': count})[id];
+  await mountRoleSocketPreview(f.document, async () => ({ok: true, json: async () => ({templates: [{source: 'module_manifest_role'}, {source: 'module_manifest_role'}, {source: 'module_manifest_role'}]})}));
+  assert.equal(count.textContent, '3 ');
+  const none = new Element('span'); none.textContent = 'x';
+  f.document.getElementById = id => ({'ocean-role-socket-list': f.container, 'ocean-socket-provider-select': f.select, 'ocean-module-role-count': none})[id];
+  await mountRoleSocketPreview(f.document, async () => ({ok: true, json: async () => ({})}));
+  assert.equal(none.textContent, '');
+  await mountRoleSocketPreview(f.document, async () => { throw Error('offline'); });
+  assert.equal(none.textContent, '');
+  const page = readFileSync(new URL('../src/pages/agenten/blueprints.astro', import.meta.url), 'utf8');
+  assert.doesNotMatch(page, /19 Modul-Rollen/);
+  assert.match(page, /id="ocean-module-role-count"/);
 });
