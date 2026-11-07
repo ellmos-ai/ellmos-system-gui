@@ -3,9 +3,10 @@ import {readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import test from 'node:test';
 import {
-  PRIVACY_REASONS, buildPrompt, createProfile, generateReport, importFolder, profileBody, promptBody, reasonView,
-  startSession,
+  PRIVACY_REASONS, buildPrompt, createProfile, generateReport, importFolder, loadReadiness, profileBody, promptBody,
+  reasonView, startSession,
 } from '../src/lib/report-session.mjs';
+import {DOMAIN_WORKBENCH_ROUTES, domainWorkbenchRoute} from '../src/lib/domain-routes.mjs';
 
 const root = process.cwd();
 const read = path => readFileSync(join(root, path), 'utf8');
@@ -120,4 +121,45 @@ test('the Förderplaner page shows the reason as text, keeps the prompt hidden o
   assert.match(script, /textContent = view\.title/);
   assert.match(script, /hidePrompt\(\)/);
   assert.match(read('src/pages/inbox.astro'), /href="\/foerderplaner"/);
+});
+
+test('readiness: cloud only when BACH says ready, otherwise the reason; an unreadable answer counts as not ready', async () => {
+  const blocked = stubFetch(() => json(200, {success: true, cloud_ready: false, error_code: 'ner_unavailable', error: BLOCKS.ner_unavailable}));
+  try {
+    const state = await loadReadiness();
+    assert.equal(state.cloudReady, false);
+    assert.equal(state.reason.code, 'ner_unavailable');
+    assert.equal(state.reason.title, PRIVACY_REASONS.ner_unavailable.title);
+    assert.deepEqual(blocked.calls.map(c => [c.method, c.url]), [['GET', '/api/report/readiness']]);
+  } finally { blocked.restore(); }
+  const ready = stubFetch(() => json(200, {success: true, cloud_ready: true, error_code: null, error: null}));
+  try { assert.deepEqual(await loadReadiness(), {cloudReady: true, reason: null}); } finally { ready.restore(); }
+  for (const answer of [() => json(404, {detail: 'Not Found'}), () => { throw new TypeError('network'); }, () => json(200, {success: false})]) {
+    const stub = stubFetch(answer);
+    try {
+      const state = await loadReadiness();
+      assert.equal(state.cloudReady, false);
+      assert.equal(state.reason.blocked, true);
+      assert.equal(state.reason.code, 'readiness_unknown');
+    } finally { stub.restore(); }
+  }
+});
+
+test('the page shows both modes and keeps the cloud steps disabled until readiness allows them', () => {
+  const page = read('src/pages/foerderplaner.astro');
+  const script = read('src/scripts/foerderplaner-page.mjs');
+  for (const id of ['report-mode-cloud', 'report-mode-cloud-state', 'report-mode-local'])
+    assert.match(page, new RegExp(`id="${id}"`), id);
+  assert.match(page, /Modus lokal/);
+  assert.match(page, /Modus Cloud/);
+  assert.match(script, /loadReadiness\(\)/);
+  assert.match(script, /setCloudEnabled\(state\.cloudReady\)/);
+  assert.match(page, /<fieldset id="report-cloud-steps" disabled/);
+  assert.doesNotMatch(page + script, /#[0-9a-f]{3,6}\b|rgba?\(/i, 'nur Farb-Tokens (Kontrast in allen Themes)');
+});
+
+test('the Förderplaner domain card and its sidebar pin open the page', () => {
+  assert.ok(DOMAIN_WORKBENCH_ROUTES.includes('/foerderplaner'));
+  assert.equal(domainWorkbenchRoute('/foerderplaner'), '/foerderplaner');
+  assert.doesNotMatch(read('src/lib/domain-routes.mjs'), /foerderplaner currently falls back/);
 });
