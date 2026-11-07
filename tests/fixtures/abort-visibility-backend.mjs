@@ -17,13 +17,16 @@ export const EVENTS = [
   {task_id: 102, task_title: 'Zweimal zurückgegeben', at: ago(30), worker: 'worker-45dc@MAC', reason: 'task_scope_unavailable', outcome: 'return'},
   {task_id: 101, task_title: 'Schleife mit Flattern', at: ago(31), worker: 'worker-9e4c@MAC', reason: 'host_precondition:twin_status_unknown', outcome: 'return'},
 ];
+// Fixed instants: the browser test pins the page clock to NOW so text like "in 4 min" does not depend on the wall clock.
+export const NOW = '2026-11-07T10:11:00Z';
+const NEXT_CHECK = '2026-11-07T10:15:00+00:00';
 export const WORKERS = {
   schema: 'bach.workers.status.v1', availability: 'available', workers: [
     {id: 'worker-run', name: 'Läufer', backend: 'ollama', model: 'qwen', status: 'running', runtime_verified: true, running: true,
       worker_active: true, active_task_id: 101, current_activity: 'Arbeitet', tool_round: 1},
     {id: 'worker-wait', name: 'Wartender', backend: 'ollama', model: 'qwen', status: 'running', runtime_verified: true, running: false,
       worker_active: true, current_activity: 'Host-Voraussetzung fehlt (twin_status_unknown); Versuch 3, nächster in 240 s',
-      precondition_wait: {state: 'waiting_precondition', code: 'twin_status_unknown', attempt: 3, next_check_at: new Date(Date.now() + 240000).toISOString()}},
+      precondition_wait: {state: 'waiting_precondition', code: 'twin_status_unknown', attempt: 3, next_check_at: NEXT_CHECK}},
     {id: 'worker-ended', name: 'Abgebrochener', backend: 'ollama', model: 'qwen', status: 'completed', runtime_verified: true, running: false,
       worker_active: false, generation: 'a'.repeat(32), current_activity: '',
       execution: {schema: 'bach.worker-execution.v1', state: 'terminal', terminal: true, generation: 'a'.repeat(32),
