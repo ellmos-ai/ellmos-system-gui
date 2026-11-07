@@ -11,6 +11,7 @@ export const HELPERS = [
   {file: 'src/pages/artefakte.astro', name: 'artifactFetch', url: 0, method: 'GET'},
   {file: 'src/lib/transcript-history.mjs', name: 'read', url: 0, method: 'GET', scope: 'global'},
   {file: 'src/lib/chat-client.mjs', name: 'post', url: 0, method: 'POST'},
+  {file: 'src/lib/task-returns.mjs', name: 'readJson', url: 1, method: 'GET'},
   {file: 'src/lib/domain-pins.mjs', name: 'request', url: 0, options: 1},
   {file: 'src/lib/hierarchy-assignment.mjs', name: 'request', method: 0, url: 1},
   {file: 'src/lib/model-sockets.mjs', name: 'request', url: 0, options: 1, prefix: '/api/system/model-sockets'},

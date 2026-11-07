@@ -24,7 +24,7 @@
     "package-lock.json": "16a0246cefb6a1b79b9c45f034f3351635042bcb54481828084446a7ac147af9",
     "package.json": "a73fa303d1c73dc6e501fa75e5db885083b038a930d73c1d3d2b50059f4b8595",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "3859147ab2bcfc2e2767a80e483b61914c86af68fcbaca15abe87f1d0ed6dc78",
+    "public/page-reads.v1.json": "5ace67b6030bc3d0f9a536dd25023ba75f16ec666eb2776dd293a51734b57206",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "198e4e0c5bd02a2953c5b0b88a1c96ee4d79a1b9278721ff1c83ad34d4f8c7c5",
     "scripts/page-reads-bindings.mjs": "0a380beacc28523e9bbd628a88f30c70fe7d4ea74916da9eaf8bc45342ccaba4",
@@ -283,8 +283,8 @@
     "src/pages/agenten/blueprints.astro": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
-    "src/pages/agenten/running.astro": "7deee3356cd86bc0a8788996be44c0f48c322a356a9f85408a16e028d630060d",
-    "src/pages/agenten/sessions.astro": "7688d22971e8433c0309f27328967c127b16f9c8afcf326151afafb8f954a8ca",
+    "src/pages/agenten/running.astro": "87363d5b0bee0ea7d942cd1a0bf20455030cc33339bcf0146c524bf351ba5676",
+    "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
     "src/pages/agenten/subscription-agents.astro": "5e1eca8ee6ef5e97a018c104f1e4f342975897bcd9ff656b7ca2a2636b5cb4b5",
     "src/pages/artefakte.astro": "8eab24e535b00990f2626a472def43d2dedd260eb2dc3d4048adb794e404ec8a",
     "src/pages/ati.astro": "9654c6490c123e02a4f2e6028d1b22ce8740b2e0e0de2a2448f13c3ec4fd1f84",
@@ -320,11 +320,11 @@
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
     "src/pages/talk.astro": "509daed13689c056fea3036c9c9bcb434319dde15eaa832f6bd827fd1016cdcb",
-    "src/pages/tasks.astro": "c5f9c6532f57005fd7b77ebbce2ba0e231175222f2679cb976ea9898a750f658",
+    "src/pages/tasks.astro": "c35b28003cbafcb037d7685bb79d653cb319814f8b585df97ec7906451f01eb0",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
-    "src/scripts/agent-history.mjs": "1e3eb5d648a5e0fe60fac83fb9176821857407c092a1a63d4d611296bd825ccd",
+    "src/scripts/agent-history.mjs": "3b5080126d5653be9931211c3c6f9cc05ad085a97fc3026117868262e08de26f",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
     "src/scripts/blueprint-studio.mjs": "e5ec034d151be478b3598f932e15f2afaa8f1895e7cdbb24252d9af9cd93e749",
     "src/scripts/domain-studio.mjs": "d883c4a608b1fd087a9c021eb6b8d496fb420a5d0412388e14c65d11cdd6d2ca",
@@ -381,7 +381,7 @@
     "src/lib/agent-triggers.mjs": "289e00f21c89f9521296e64f384fd580737578f7626b6ed3ca05d2941822141b",
     "src/lib/agent-triggers-ui.mjs": "fac0b90abcc3fe9ca9a0260839b5c7ced68fcd5c9f7fe6f812b80b84bfde71c0",
     "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
-    "scripts/page-reads-helpers.mjs": "61e2f5412189f6e0aa9bfecb62d94a831d95817fc7f4ce0e2a7b521b773fc1f5",
+    "scripts/page-reads-helpers.mjs": "dd8303f6016fbb3ba98fc30d61d0543b6bf267ceeed72ad3085793dadb4ce78f",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
     "src/lib/role-socket-preview.mjs": "95145d84fc33c4dffb1a3517f9255061aa7a69a4fac63dae5ed80412e7234baf",
     "tests/role-socket-preview.test.mjs": "caffb4c42832e5a29aa1e9136b648cb70bd0a9c23aaec2a23cd13d321d84b89f",
@@ -5710,6 +5710,42 @@
           "path": "tests/role-socket-preview.test.mjs",
           "previous_sha256": "bd032244c1737c17cd5d91972e3ef8fa747af614cf0493b9cba7aab4f24ed39a",
           "sha256": "caffb4c42832e5a29aa1e9136b648cb70bd0a9c23aaec2a23cd13d321d84b89f"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-07",
+      "summary": "PB-4 (#3988): aborts become visible. Return shield per task, plain-language reasons, return timeline (24 h/7 d/30 d, worker and reason filters), waiting_precondition and terminal_reason on agent cards, problem marker for worker sessions that gave tasks back; page reads for /api/task-returns and /api/task-returns/timeline are optional.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "3859147ab2bcfc2e2767a80e483b61914c86af68fcbaca15abe87f1d0ed6dc78",
+          "sha256": "5ace67b6030bc3d0f9a536dd25023ba75f16ec666eb2776dd293a51734b57206"
+        },
+        {
+          "path": "scripts/page-reads-helpers.mjs",
+          "previous_sha256": "61e2f5412189f6e0aa9bfecb62d94a831d95817fc7f4ce0e2a7b521b773fc1f5",
+          "sha256": "dd8303f6016fbb3ba98fc30d61d0543b6bf267ceeed72ad3085793dadb4ce78f"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "7deee3356cd86bc0a8788996be44c0f48c322a356a9f85408a16e028d630060d",
+          "sha256": "87363d5b0bee0ea7d942cd1a0bf20455030cc33339bcf0146c524bf351ba5676"
+        },
+        {
+          "path": "src/pages/agenten/sessions.astro",
+          "previous_sha256": "7688d22971e8433c0309f27328967c127b16f9c8afcf326151afafb8f954a8ca",
+          "sha256": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "c5f9c6532f57005fd7b77ebbce2ba0e231175222f2679cb976ea9898a750f658",
+          "sha256": "c35b28003cbafcb037d7685bb79d653cb319814f8b585df97ec7906451f01eb0"
+        },
+        {
+          "path": "src/scripts/agent-history.mjs",
+          "previous_sha256": "1e3eb5d648a5e0fe60fac83fb9176821857407c092a1a63d4d611296bd825ccd",
+          "sha256": "3b5080126d5653be9931211c3c6f9cc05ad085a97fc3026117868262e08de26f"
         }
       ]
     }
