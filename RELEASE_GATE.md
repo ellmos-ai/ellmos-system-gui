@@ -1,5 +1,17 @@
 # Release gate: ellmos-system-gui
 
+## Release evidence 0.2.36 — 2026-11-07
+
+| Item | SOLL | IST (this commit) |
+|---|---|---|
+| Content | 0.2.35 plus PB-5a navigation (#125), PB-4 abort visibility (#126) and committed dist tests (#128); no further source change | Version metadata (`package.json`, `package-lock.json`, `ellmos-module.v2.json`, `src-tauri/tauri.conf.json`), README, this section, matching `SOURCE_PROVENANCE.json` hashes |
+| Source tests | `npm ci` and `npm test` green | See the pull request description |
+| Release build | Clean checkout of the merge commit, `npm ci`, `npm run build:release`, `scripts/package_release.py` | Recorded with the archive hand-over, because archive name and SHA-256 depend on the merge commit |
+| Independent archive check | Commit in `dist-manifest.json` equals the tag commit; every file hash matches; archive SHA-256 re-computed; root `LICENSE` bytes equal the repository MIT license | Same place as the build row |
+| **Consumer smoke (mandatory)** | `python scripts/consumer_smoke.py --bach <BACH checkout> --dist <extracted release dist>` exits 0 and reports all pages passing BACH's own page gate | Recorded with the archive hand-over; run against the BACH revision that will carry the pin |
+| **Dist serving test (mandatory)** | In the BACH pin branch with `GUI_RELEASE_TEST_DIST` and `ELLMOS_SYSTEM_GUI_DIST` set to the extracted release dist: `python -m pytest system/tests/test_gui_gux_shared_contract.py system/tests/test_gui_release_integrity.py` passes, in particular `test_all_pinned_release_pages_use_exact_shared_bytes` (every page served with HTTP 200 and the exact release bytes) | Recorded with the archive hand-over. Found for 0.2.36: the four PB-5a governance sub-pages answered 401 until BACH listed them as public `shared-gui` routes (bach#678); the consumer smoke checks the page gate only and cannot see this |
+| Consumers | Pins and installation are separate gates | Not claimed here |
+
 ## Release evidence 0.2.35 — 2026-11-06
 
 | Item | SOLL | IST (this commit) |
@@ -12,7 +24,7 @@
 | **Consumer smoke (mandatory)** | `python scripts/consumer_smoke.py --bach <BACH checkout> --dist <extracted release dist>` exits 0 and reports all pages passing BACH's own page gate (`verify_installed_dist` with `requested_page`) | Recorded with the archive hand-over. Negative control: the defective 0.2.34 dist gives 0/47 and exit 1 |
 | Consumers | Pins and installation are separate gates | Not claimed here |
 
-**Mandatory step for every release:** run the consumer smoke against the extracted archive, not only the repository tests. Neither this repository's checks nor BACH's default CI would have caught the 0.2.34 defect.
+**Mandatory step for every release:** run the consumer smoke against the extracted archive, not only the repository tests. Neither this repository's checks nor BACH's default CI would have caught the 0.2.34 defect. **Since 0.2.36 also mandatory:** the dist serving test above; it catches pages the consumer does not serve (401/404), which the page gate cannot.
 
 ## Release evidence 0.2.34 — 2026-11-06 (published, defective, superseded by 0.2.35)
 

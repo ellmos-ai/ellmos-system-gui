@@ -41,8 +41,8 @@ import BachLayout from "../../layouts/BachLayout.astro";
   .audit-tools { display:flex; justify-content:space-between; gap:1rem; align-items:center; flex-wrap:wrap; }
   .audit-tools input { max-width:12rem; padding:0.4rem; background:var(--bg-dark); border:1px solid var(--border); border-radius:4px; color:var(--text); }
   .audit-list { display:grid; gap:0.5rem; max-height:65vh; overflow:auto; }
-  .audit-row { padding:0.7rem; background:var(--bg-dark); border:1px solid var(--border); border-radius:5px; overflow-wrap:anywhere; }
-  .audit-row small { display:block; color:var(--text-muted); margin-top:0.25rem; }
+  :global(.audit-row) { padding:0.7rem; background:var(--bg-dark); border:1px solid var(--border); border-radius:5px; overflow-wrap:anywhere; }
+  :global(.audit-row small) { display:block; color:var(--text-muted); margin-top:0.25rem; }
   @media(max-width:760px) { .audit-layout { grid-template-columns:minmax(0,1fr); } }
 </style>
 

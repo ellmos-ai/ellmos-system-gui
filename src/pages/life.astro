@@ -390,15 +390,15 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       border-radius: var(--radius-md);
       padding: 1.5rem;
     }
-    .card-header-action, .routine-actions, .routine-adapters { display:flex; justify-content:space-between; align-items:center; gap:.6rem; flex-wrap:wrap; }
-    .routine-actions, .routine-adapters { justify-content:flex-start; }
+    .card-header-action, :global(.routine-actions), .routine-adapters { display:flex; justify-content:space-between; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    :global(.routine-actions), .routine-adapters { justify-content:flex-start; }
     .routine-stats { display:flex; flex-wrap:wrap; gap:.65rem 1.25rem; padding:.75rem; background:var(--bg-dark); border:1px solid var(--border); border-radius:var(--radius-sm); }
     .routine-filter { display:flex; align-items:center; gap:.5rem; margin:1rem 0; }
     .routine-filter select, .routine-form input, .routine-form textarea, .routine-form select { min-width:0; max-width:100%; padding:.5rem; background:var(--bg-dark); color:var(--text); border:1px solid var(--border); border-radius:var(--radius-sm); font:inherit; }
     .routine-list { display:grid; gap:.65rem; }
-    .routine-row { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.65rem; padding:.85rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-dark); }
-    .routine-row strong { overflow-wrap:anywhere; }
-    .routine-meta { display:block; color:var(--text-muted); font-size:.82rem; margin-top:.2rem; overflow-wrap:anywhere; }
+    :global(.routine-row) { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.65rem; padding:.85rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-dark); }
+    :global(.routine-row strong) { overflow-wrap:anywhere; }
+    :global(.routine-meta) { display:block; color:var(--text-muted); font-size:.82rem; margin-top:.2rem; overflow-wrap:anywhere; }
     .routine-form { margin-top:1.25rem; padding:1rem; border:1px solid var(--accent); border-radius:var(--radius-sm); }
     .routine-form label { display:flex; flex-direction:column; gap:.3rem; margin:.5rem 0; }
     .routine-form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:.5rem 1rem; }
@@ -407,10 +407,10 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     .life-task-actions { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:.5rem; }
     .life-task-actions label { display:flex; align-items:center; gap:.4rem; font-size:.82rem; }
     .life-task-actions select { min-width:0; max-width:100%; padding:.4rem .6rem; color:var(--text); background:var(--bg-dark); border:1px solid var(--border); border-radius:var(--radius-sm); }
-    .life-task-list { display:grid; gap:.5rem; }
-    .life-task-row { min-width:0; padding:.75rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-dark); overflow-wrap:anywhere; }
-    .life-task-row p { margin:.2rem 0; color:var(--text-muted); }
-    .life-task-meta { display:block; color:var(--text-muted); font-size:.78rem; }
+    :global(.life-task-list) { display:grid; gap:.5rem; }
+    :global(.life-task-row) { min-width:0; padding:.75rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-dark); overflow-wrap:anywhere; }
+    :global(.life-task-row p) { margin:.2rem 0; color:var(--text-muted); }
+    :global(.life-task-meta) { display:block; color:var(--text-muted); font-size:.78rem; }
 
     /* Calendar Controls Bar */
     .calendar-controls-bar {
@@ -457,7 +457,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     .calendar-source-filters { display:flex; flex-wrap:wrap; gap:.65rem 1.25rem; margin:0 0 .75rem; }
     .calendar-source-filters label { display:inline-flex; align-items:center; gap:.4rem; font-size:.84rem; color:var(--text); }
     .calendar-source-filters input { accent-color:var(--accent); }
-    .load-status { min-height:1.25rem; margin:.35rem 0 .75rem; color:var(--text-muted); font-size:.82rem; }
+    :global(.load-status) { min-height:1.25rem; margin:.35rem 0 .75rem; color:var(--text-muted); font-size:.82rem; }
 
     /* Day View Timeline */
     .day-timeline-container {
@@ -477,14 +477,14 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       padding: 4px 8px;
     }
     .day-slot:hover, .day-slot.current-hour { background:rgba(56,189,248,.16); border-color:var(--accent); }
-    .day-slot-time {
+    :global(.day-slot-time) {
       width: 65px;
       font-size: 0.75rem;
       color: var(--text-muted);
       font-family: monospace;
       padding-top: 4px;
     }
-    .day-slot-content {
+    :global(.day-slot-content) {
       flex: 1;
       display: flex;
       flex-wrap: wrap;
@@ -501,8 +501,8 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       border-radius:var(--radius-sm);
     }
     #view-week .glass-card { overflow-x:auto; }
-    .week-time, .week-hour-cell, .week-day-heading { border-right:1px solid var(--border); border-bottom:1px solid var(--border); padding:.3rem; }
-    .week-time { color:var(--text-muted); font-size:.73rem; font-variant-numeric:tabular-nums; }
+    :global(.week-time), .week-hour-cell, .week-day-heading { border-right:1px solid var(--border); border-bottom:1px solid var(--border); padding:.3rem; }
+    :global(.week-time) { color:var(--text-muted); font-size:.73rem; font-variant-numeric:tabular-nums; }
     .week-day-heading { background:var(--bg-card); text-align:center; font-weight:700; font-size:.8rem; }
     .week-hour-cell { min-height:54px; background:var(--bg-dark); min-width:0; }
     .week-hour-cell:hover, .week-hour-cell.current-hour { background:rgba(56,189,248,.1); }
@@ -554,7 +554,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       grid-template-rows: repeat(6, minmax(100px, 1fr));
       gap: 4px;
     }
-    .month-day-cell {
+    :global(.month-day-cell) {
       background: var(--bg-dark);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
@@ -568,23 +568,23 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       color:var(--text);
       font:inherit;
     }
-    .month-day-cell:hover {
+    :global(.month-day-cell:hover) {
       background: rgba(255,255,255,0.03);
     }
-    .month-day-cell.today {
+    :global(.month-day-cell.today) {
       border-color: var(--accent);
       box-shadow: 0 0 8px rgba(56, 189, 248, 0.25);
     }
-    .month-day-cell.other-month {
+    :global(.month-day-cell.other-month) {
       opacity: 0.35;
     }
-    .month-day-num {
+    :global(.month-day-num) {
       font-size: 0.75rem;
       font-weight: 700;
       color: var(--text-muted);
       margin-bottom: 2px;
     }
-    .cal-event-chip {
+    :global(.cal-event-chip) {
       display: block;
       font-size: 0.7rem;
       padding: 2px 5px;
@@ -595,7 +595,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       text-overflow: ellipsis;
       cursor: pointer;
     }
-    .chip-termin { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+    :global(.chip-termin) { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
     .chip-fokus { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
     .chip-routine { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
 
@@ -605,13 +605,13 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 1.25rem;
     }
-    .mini-month-card {
+    :global(.mini-month-card) {
       background: var(--bg-dark);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 0.75rem;
     }
-    .mini-month-title {
+    :global(.mini-month-title) {
       font-size: 0.85rem;
       font-weight: 700;
       margin-bottom: 0.5rem;
@@ -619,14 +619,14 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       display: flex;
       justify-content: space-between;
     }
-    .mini-month-grid {
+    :global(.mini-month-grid) {
       display: grid;
       grid-template-columns: repeat(7, minmax(0, 1fr));
       gap: 2px;
       text-align: center;
       font-size: 0.65rem;
     }
-    .mini-day {
+    :global(.mini-day) {
       aspect-ratio: 1;
       display:grid;
       place-items:center;
@@ -634,8 +634,8 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       color: var(--text-muted);
       border:1px solid var(--border);
     }
-    .mini-day.empty { border-color:transparent; }
-    .mini-day.has-event {
+    :global(.mini-day.empty) { border-color:transparent; }
+    :global(.mini-day.has-event) {
       background: var(--accent);
       color: #0b0d14;
       font-weight: 700;
@@ -644,9 +644,9 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       .cal-views-segmented { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; max-width:100%; box-sizing:border-box; }
       .cal-view-btn { min-width:0; white-space:normal; }
       .month-days-matrix { grid-template-rows:repeat(6, minmax(72px, 1fr)); }
-      .month-day-cell { min-height:72px; }
+      :global(.month-day-cell) { min-height:72px; }
       .year-quarters-grid { grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); }
-      .cal-event-chip { overflow-wrap:anywhere; }
+      :global(.cal-event-chip) { overflow-wrap:anywhere; }
     }
 
     /* Common */
