@@ -1,41 +1,34 @@
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
 import test from "node:test";
-import {Script} from "node:vm";
+import {libraryRedirectTarget} from "../src/lib/library-redirect.mjs";
 
 const read = path => readFileSync(new URL(`../src/pages/agenten/${path}.astro`, import.meta.url), "utf8");
-const library = read("fabrika");
-const source = library.match(/<script is:inline>([\s\S]*?)<\/script>/)[1];
-function redirect(search) {
-  let destination;
-  new Script(source).runInNewContext({URL, URLSearchParams, location: {origin: "https://gui.example.test", search, replace(value) { destination = value; }}});
-  return destination;
-}
 
-test("the bare library URL stays on the library", () => {
-  assert.equal(redirect(""), undefined);
-  assert.equal(redirect("?tab=other"), undefined);
+test("the bare old library URLs land on the template page (B-08)", () => {
+  assert.equal(libraryRedirectTarget(""), "/agenten/blueprints");
+  assert.equal(libraryRedirectTarget("?tab=other"), "/agenten/blueprints");
 });
 test("legacy blueprint and team links keep their destination", () => {
-  assert.equal(redirect("?load=entwickler"), "/agenten/blueprints?blueprint=entwickler");
-  assert.equal(redirect("?blueprint=entwickler"), "/agenten/blueprints?blueprint=entwickler");
-  assert.equal(redirect("?tab=teambuilding"), "/agenten/blueprints?tab=teams");
-  assert.equal(redirect("?tab=teams"), "/agenten/blueprints?tab=teams");
+  assert.equal(libraryRedirectTarget("?load=entwickler"), "/agenten/blueprints?blueprint=entwickler");
+  assert.equal(libraryRedirectTarget("?blueprint=entwickler"), "/agenten/blueprints?blueprint=entwickler");
+  assert.equal(libraryRedirectTarget("?tab=teambuilding"), "/agenten/blueprints?tab=teams");
+  assert.equal(libraryRedirectTarget("?tab=teams"), "/agenten/blueprints?tab=teams");
 });
 test("legacy links cannot redirect to external sites", () => {
-  assert.equal(redirect("?load=https://external.example"), "/agenten/blueprints?blueprint=https%3A%2F%2Fexternal.example");
+  assert.equal(libraryRedirectTarget("?load=https://external.example"), "/agenten/blueprints?blueprint=https%3A%2F%2Fexternal.example");
+  assert.equal(libraryRedirectTarget("?load=//external.example"), "/agenten/blueprints?blueprint=%2F%2Fexternal.example");
+});
+test("both redirect pages use the shared target function and a no-script fallback", () => {
+  for (const name of ["fabrika", "bibliothek"]) {
+    const page = read(name);
+    assert.match(page, /import \{ libraryRedirectTarget \} from "\.\.\/\.\.\/lib\/library-redirect\.mjs"/);
+    assert.match(page, /location\.replace\(libraryRedirectTarget\(location\.search\)\)/);
+    assert.match(page, /http-equiv="refresh" content="0;url=\/agenten\/blueprints"/);
+  }
 });
 const promptAgents = read("subscription-agents");
 const running = read("running");
-
-test("the Agenten-Bibliothek exposes the three library areas", () => {
-  for (const label of ["Vorlagen", "Prompt-Agenten", "Ketten"])
-    assert.match(library, new RegExp(label));
-  assert.match(library, /Living &amp; Running/);
-  for (const href of ["/agenten/blueprints", "/agenten/subscription-agents", "/agenten/marblerun"])
-    assert.match(library, new RegExp(href.replaceAll("/", "\\/")));
-  assert.match(library, /Nur dort werden bestätigte Living- oder Running-Zustände/);
-});
 
 test("Prompt-Agenten are explicitly external and not controlled by this GUI", () => {
   assert.match(promptAgents, /Prompt-Agenten/);

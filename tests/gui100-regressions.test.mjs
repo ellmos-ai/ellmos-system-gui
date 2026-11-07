@@ -98,7 +98,7 @@ function drawerHarness() {
   const context = {document, window:{matchMedia:() => media},
     requestAnimationFrame:fn => frames.push(fn)};
   const start = header.indexOf("  const navToggle = document.getElementById('nav-toggle');");
-  const end = header.indexOf('\n  function matchesCurrentNavigationRoute', start);
+  const end = header.indexOf('\n  // The marking itself lives in the bundled script below', start);
   assert.ok(start >= 0 && end > start);
   vm.runInNewContext(header.slice(start,end), context);
   // Header's inline script precedes these nodes in the actual built document.

@@ -229,11 +229,12 @@ test('age labels never invent a time', () => {
   assert.equal(ageLabel(new Date(now - 1).toISOString(), now), 'vor weniger als 1 Min.');
 });
 
-test('the governance page wires tabs, keeps the old view and offers no approval control', () => {
-  const page = readFileSync(new URL('../src/pages/governance/index.astro', import.meta.url), 'utf8');
+test('the governance rules page wires tabs, keeps the old view and offers no approval control', () => {
+  const page = readFileSync(new URL('../src/pages/governance/regeln.astro', import.meta.url), 'utf8') +
+    readFileSync(new URL('../src/scripts/governance-reader.mjs', import.meta.url), 'utf8');
   assert.match(page, /role="tablist"/);
-  for (const tab of ['status', 'locks', 'decisions', 'policies', 'registry', 'effective'])
-    assert.match(page, new RegExp('href="/governance\\?tab=' + tab + '"'));
+  for (const tab of ['status', 'decisions', 'policies', 'registry', 'effective'])
+    assert.match(page, new RegExp('href="/governance/regeln\\?tab=' + tab + '"'));
   assert.match(page, /governance-readers\.mjs/);
   assert.match(page, /\/api\/governance\/status/);
   assert.match(page, /parseStatus/);
@@ -245,5 +246,5 @@ test('the governance page wires tabs, keeps the old view and offers no approval 
   assert.doesNotMatch(page, /method:\s*['"](POST|PUT|PATCH|DELETE)/);
   assert.doesNotMatch(page, /Freigeben|Approve/i);
   const nav = JSON.parse(readFileSync(new URL('../src/config/nav_config.json', import.meta.url), 'utf8'));
-  assert.ok(JSON.stringify(nav).includes('/governance?tab=locks'));
+  assert.ok(JSON.stringify(nav).includes('/governance/sperren'));
 });

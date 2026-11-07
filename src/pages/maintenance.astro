@@ -16,10 +16,8 @@ if (!route) throw new Error('Fallback-Konfiguration für /maintenance fehlt.');
       </p>
     </div>
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-      <a href="/daemon" class="btn btn-secondary btn-sm">⚙️ Dienste</a>
-      <a href="/routinen" class="btn btn-secondary btn-sm">⏱️ Routinen &amp; Jobs</a>
-      <a href="/governance/usecases" class="btn btn-secondary btn-sm">✅ Qualität &amp; Tests</a>
-      <a href="/governance/logs" class="btn btn-secondary btn-sm">📜 Logs &amp; Audit</a>
+      <a href="/routinen?from=betrieb" class="btn btn-secondary btn-sm">⏱️ Routinen &amp; Jobs</a>
+      <a href="/governance/logs?from=betrieb" class="btn btn-secondary btn-sm">📜 Logs &amp; Audit</a>
     </div>
   </div>
 
@@ -39,7 +37,7 @@ if (!route) throw new Error('Fallback-Konfiguration für /maintenance fehlt.');
         <span class="badge">SQLite</span>
       </div>
       <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Tabellenbestände (<code>memory_facts</code>, <code>memory_lessons</code>, <code>tasks</code>), Integritätsprüfung und Backup-Stand.</p>
-      <a href="/memory" class="btn btn-secondary btn-sm" style="justify-self:start;">Datenbank-Inspektor öffnen →</a>
+      <a href="/memory?from=betrieb" class="btn btn-secondary btn-sm" style="justify-self:start;">Datenbank-Inspektor öffnen →</a>
     </article>
 
     <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
@@ -48,7 +46,7 @@ if (!route) throw new Error('Fallback-Konfiguration für /maintenance fehlt.');
         <span class="badge">Fail-Closed</span>
       </div>
       <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Prüfung abgelaufener Arbeits-Locks (<code>prune_stale_locks.py</code>) bei striktem Schutz aller <code>LOCK.user.*</code>-Sperren.</p>
-      <a href="/governance?tab=locks" class="btn btn-secondary btn-sm" style="justify-self:start;">Lock-Monitor öffnen →</a>
+      <a href="/governance/sperren?from=betrieb" class="btn btn-secondary btn-sm" style="justify-self:start;">Lock-Monitor öffnen →</a>
     </article>
 
     <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">

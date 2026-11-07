@@ -7,26 +7,14 @@ const layout = readFileSync(new URL('../src/layouts/BachLayout.astro', import.me
 const settings = readFileSync(new URL('../src/pages/settings.astro', import.meta.url), 'utf8');
 const dashboard = readFileSync(new URL('../src/pages/index.astro', import.meta.url), 'utf8');
 const navConfig = JSON.parse(readFileSync(new URL('../src/config/nav_config.json', import.meta.url), 'utf8'));
-const frontmatter = header.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-assert.ok(frontmatter, 'Header.astro has frontmatter');
+import { matchesExact, resolveActiveItem } from '../src/lib/area-nav.mjs';
 
-const serverMatcherSource = frontmatter[1].match(/function matchesNavigationHref\(href: string, pathname: string, search: string\) \{[\s\S]*?\n\}/);
-assert.ok(serverMatcherSource, 'the server route matcher is present');
-const matchesNavigationHref = new Function(`${serverMatcherSource[0].replaceAll(': string', '')}\nreturn matchesNavigationHref;`)();
-
-const clientMatcherSource = header.match(/function matchesCurrentNavigationRoute\(href\) \{[\s\S]*?\n  \}/);
-assert.ok(clientMatcherSource, 'the client route matcher is present');
 const sidebarSyncSource = header.match(/function syncSidebarMode\(\) \{[\s\S]*?\n  \}/);
 assert.ok(sidebarSyncSource, 'the sidebar mode synchronizer is present');
 const sidebarTabTrapSource = header.match(/function trapMobileNavigationTab\(event\) \{[\s\S]*?\n  \}/);
 assert.ok(sidebarTabTrapSource, 'the mobile navigation Tab trap is present');
 const brandRefreshSource = header.match(/async function refreshGuiBrand\(\) \{[\s\S]*?\n  \}/);
 assert.ok(brandRefreshSource, 'the runtime brand refresh is present');
-function matchesClientRoute(href, url) {
-  const matcher = new Function('window', `${clientMatcherSource[0]}\nreturn matchesCurrentNavigationRoute;`)({ location: new URL(url) });
-  return matcher(href);
-}
-
 const routeCases = [
   ['/agenten/running', '/agenten/running', '', true],
   ['/agenten/running', '/agentenschaft', '', false],
@@ -40,13 +28,20 @@ const routeCases = [
   ['/', '/governance/funk', '', false],
 ];
 
-test('server and browser active states use exact paths and exact query selections', () => {
+test('the shared matcher keeps exact path and exact query selections for pinned links', () => {
   for (const [href, pathname, search, expected] of routeCases) {
-    assert.equal(matchesNavigationHref(href, pathname, search), expected, `server: ${href} at ${pathname}${search}`);
-    const current = new URL(pathname, 'https://gui.test');
-    current.search = search;
-    assert.equal(matchesClientRoute(href, current.href), expected, `browser: ${href} at ${current.href}`);
+    assert.equal(matchesExact(href, pathname, search), expected, `${href} at ${pathname}${search}`);
   }
+});
+
+test('the sidebar marks one entry per preset through the shared resolver, on the server and in the browser', () => {
+  assert.match(header, /resolveSidebarActive\(/);
+  assert.match(header, /activeIds\[presetId\] === item\.id/);
+  assert.match(header, /document\.addEventListener\('bach:nav-refresh', refreshActiveNavigation\)/);
+  assert.doesNotMatch(header, /matchesCurrentNavigationRoute|matchesNavigationHref/);
+  const items = [{id: 'tasks', href: '/tasks'}, {id: 'assigned', href: '/tasks?assigned_to=user'}];
+  assert.equal(resolveActiveItem(items, '/tasks', '?assigned_to=user'), 'assigned');
+  assert.equal(resolveActiveItem(items, '/tasks', '?create=1'), 'tasks');
 });
 
 function flattenLinks(items) {
@@ -90,7 +85,7 @@ test('mobile navigation exposes keyboard controls and returns focus when dismiss
   assert.match(header, /id="sidebar-close"/);
   assert.match(header, /sidebar-backdrop/);
   assert.match(header, /<summary class="sidebar-group-title">/);
-  assert.match(header, /aria-current=\{isActive\(child\.href\) \? "page" : undefined\}/);
+  assert.match(header, /aria-current=\{isActive\(presetId, child\) \? "page" : undefined\}/);
 });
 
 test('mobile drawer makes background controls inert and restores them on close', () => {

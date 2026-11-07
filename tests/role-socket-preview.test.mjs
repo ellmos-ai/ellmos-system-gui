@@ -140,8 +140,8 @@ test('malformed metadata cannot supply conversion hooks, tags or provider attrib
   assertStaticElements(f.container);
 });
 
-test('both Astro pages use the same bundled text renderer and remove the inline sink', () => {
-  for (const name of ['bibliothek','blueprints']) {
+test('the template page uses the bundled text renderer and removes the inline sink (bibliothek is a redirect since PB-5a)', () => {
+  for (const name of ['blueprints']) {
     const source = readFileSync(new URL('../src/pages/agenten/' + name + '.astro', import.meta.url), 'utf8');
     assert.match(source, /import \{mountRoleSocketPreview\} from "\.\.\/\.\.\/lib\/role-socket-preview\.mjs"/);
     assert.match(source, /mountRoleSocketPreview\(document\)/);

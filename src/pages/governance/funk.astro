@@ -4,20 +4,14 @@ import BachLayout from "../../layouts/BachLayout.astro";
 ---
 
 <BachLayout title="Agentenfunk | Governance" currentPath="/governance/funk">
-  <header class="funk-header">
+  <header class="funk-header" data-source="agentenfunk-contract">
     <div>
       <h1>📻 Agentenfunk</h1>
-      <p>Nachrichten und Signale zwischen Agenten.</p>
+      <p>Nachrichten und Signale zwischen Agenten. Benachrichtigungen und Verläufe stehen unter <a href="/agenten/sessions?tab=inbox&from=governance">Nachrichten</a>.</p>
     </div>
     <span class="badge">Transportstatus unbekannt</span>
   </header>
 
-  <nav class="funk-nav" aria-label="Governance">
-    <a href="/agenten/sessions?tab=inbox" class="btn btn-sm">✉️ Benachrichtigungen</a> <a href="/agenten/sessions" class="btn btn-sm">💬 Verlauf · Chats &amp; Läufe</a> <a href="/governance" class="btn btn-sm">🏛️ Control Room</a>
-    <a href="/governance/funk" class="btn btn-sm btn-primary" aria-current="page">📻 Agentenfunk</a>
-    <a href="/governance/usecases" class="btn btn-sm">📑 Use Cases</a>
-    <a href="/governance/logs" class="btn btn-sm">📜 Audit</a>
-  </nav>
 
   <div class="funk-grid">
     <section class="card">

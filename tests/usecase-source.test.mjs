@@ -583,10 +583,15 @@ test('the adapted Usecase import and working-source hashes bind the exact page',
   const task2140 = provenance.followup_changes.find(change => change.scope === 'Task2140: Ocean read-only usecases and safe source errors');
   assert.ok(task2140);
   const task2140Files = Object.fromEntries(task2140.files.map(file => [file.path, file]));
-  assert.equal(task2140Files[path].sha256, hash);
+  // Later follow-ups (e.g. PB-5a) extend the chain; the newest record of the page must be the working source.
+  const newest = provenance.followup_changes.filter(change => Array.isArray(change.files) && change.files.some(file => file.path === path)).at(-1);
+  assert.equal(newest.files.find(file => file.path === path).sha256, hash);
+  assert.ok(task2140Files[path].sha256);
   assert.equal(task2140Files[sourcePath].sha256,
     createHash('sha256').update(readFileSync(resolve(root, sourcePath))).digest('hex'));
-  assert.equal(task2140Files[testPath].sha256, testHash);
+  assert.ok(task2140Files[testPath].sha256);
+  const newestTest = provenance.followup_changes.filter(change => Array.isArray(change.files) && change.files.some(file => file.path === testPath)).at(-1);
+  assert.equal(newestTest.files.find(file => file.path === testPath).sha256, testHash);
 });
 
 test('Ocean mit source: Zeile sichtbar, übrige Anzeige identisch zu BACH', async () => {
