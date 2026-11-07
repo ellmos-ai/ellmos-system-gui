@@ -8,7 +8,7 @@
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
     ".github/workflows/tests.yml": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
     "README.md": "77e2d973b1755e4d9e80fa22a131fccc5c054970ddd1a6648a0962a5e50ca18c",
-    "RELEASE_GATE.md": "de9ea2fbc10dbb8be48238853d24c011c9460d719b66236a3bf0076fa16d5337",
+    "RELEASE_GATE.md": "636385bf638c579baff26f12ae300a0f3cbd07ceda5331a70071f710b9d5c0bf",
     "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
@@ -5751,7 +5751,7 @@
     },
     {
       "date": "2026-11-07",
-      "summary": "Release metadata for 0.2.36: version aligned in package.json, package-lock.json, ellmos-module.v2.json and src-tauri/tauri.conf.json; README and RELEASE_GATE describe the content (#125, #126, #128) and keep the mandatory consumer smoke. No application source change.",
+      "summary": "Release metadata for 0.2.36: version aligned in package.json, package-lock.json, ellmos-module.v2.json and src-tauri/tauri.conf.json; README and RELEASE_GATE describe the content (#125, #126, #128) and keep the mandatory consumer smoke and add the dist serving test as a mandatory release step. No application source change.",
       "files": [
         {
           "path": "README.md",
@@ -5761,7 +5761,7 @@
         {
           "path": "RELEASE_GATE.md",
           "previous_sha256": "41cb733d1128fb0eb3e53c3b45419944526d5c0c64ee9524a737d84168741561",
-          "sha256": "de9ea2fbc10dbb8be48238853d24c011c9460d719b66236a3bf0076fa16d5337"
+          "sha256": "636385bf638c579baff26f12ae300a0f3cbd07ceda5331a70071f710b9d5c0bf"
         },
         {
           "path": "ellmos-module.v2.json",
