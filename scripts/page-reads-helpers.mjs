@@ -12,6 +12,7 @@ export const HELPERS = [
   {file: 'src/lib/transcript-history.mjs', name: 'read', url: 0, method: 'GET', scope: 'global'},
   {file: 'src/lib/chat-client.mjs', name: 'post', url: 0, method: 'POST'},
   {file: 'src/lib/domain-pins.mjs', name: 'request', url: 0, options: 1},
+  {file: 'src/lib/notes-client.mjs', name: 'call', url: 0, options: 1},
   {file: 'src/lib/hierarchy-assignment.mjs', name: 'request', method: 0, url: 1},
   {file: 'src/lib/model-sockets.mjs', name: 'request', url: 0, options: 1, prefix: '/api/system/model-sockets'},
   {file: 'src/lib/daemon-chains.mjs', name: 'request', method: 0, url: 1},

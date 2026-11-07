@@ -1811,7 +1811,32 @@
    }
   ],
   "/agenten/bibliothek": [],
-  "/notizen": [],
+  "/notizen": [
+   {
+    "method": "GET",
+    "path": "/api/notes",
+    "required": true
+   },
+   {
+    "method": "POST",
+    "path": "/api/notes",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/notes/{id}/archive",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/notes-client.mjs#archiveNote"
+   },
+   {
+    "method": "POST",
+    "path": "/api/notes/{id}/unarchive",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/notes-client.mjs#unarchiveNote"
+   }
+  ],
   "/system/installation-updates": [
    {
     "method": "GET",

@@ -7,7 +7,7 @@ import {commonRoutePaths, legacyFallbackRoutes} from '../src/lib/navigation-rout
 const root = process.cwd();
 const pagesRoot = join(root, 'src', 'pages');
 const expectedFallbackPaths = [
-  '/persoenlich', '/denkarium', '/financial', '/gesundheit', '/ati', '/steuer',
+  '/persoenlich', '/financial', '/gesundheit', '/ati', '/steuer',
   '/inbox', '/help', '/tools', '/maintenance', '/kontakte', '/daemon',
 ];
 
