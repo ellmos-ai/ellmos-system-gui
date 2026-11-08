@@ -38,11 +38,25 @@
               "description": "Benachrichtigungen und Nachrichtenverlauf"
             },
             {
-              "id": "living-running",
+              "id": "agents",
               "label": "Deine Agenten",
               "icon": "⚡",
-              "href": "/agenten/running",
-              "description": "Living & Running, Läufe und Fortsetzung"
+              "children": [
+                {
+                  "id": "living-running",
+                  "label": "Living & Running",
+                  "icon": "⚡",
+                  "href": "/agenten/running",
+                  "description": "Living & Running, Läufe und Fortsetzung"
+                },
+                {
+                  "id": "memory",
+                  "label": "Memory",
+                  "icon": "🧠",
+                  "href": "/memory",
+                  "description": "Arbeitsgedächtnis und Wissensinspektor"
+                }
+              ]
             },
             {
               "id": "routines",
@@ -61,14 +75,7 @@
                   "label": "Agenten-Bibliothek",
                   "icon": "🤖",
                   "href": "/agenten/blueprints",
-                  "description": "Vorlagen und Agenten zusammenstellen"
-                },
-                {
-                  "id": "prompt-agents",
-                  "label": "Prompt-Agenten",
-                  "icon": "🗣️",
-                  "href": "/agenten/subscription-agents",
-                  "description": "Extern zugeschaltete Prompt-Agenten"
+                  "description": "Vorlagen, Prompt-Agenten und Agenten zusammenstellen"
                 },
                 {
                   "id": "chains",
@@ -477,7 +484,8 @@
   },
   "redirects": {
     "/agenten/fabrika": "/agenten/blueprints",
-    "/agenten/bibliothek": "/agenten/blueprints"
+    "/agenten/bibliothek": "/agenten/blueprints",
+    "/agenten/subscription-agents": "/agenten/blueprints?tab=prompt-agents"
   },
   "area_navs": [
     {
@@ -491,12 +499,6 @@
           "label": "Vorlagen",
           "icon": "🤖",
           "href": "/agenten/blueprints"
-        },
-        {
-          "id": "prompt-agents",
-          "label": "Prompt-Agenten",
-          "icon": "✍️",
-          "href": "/agenten/subscription-agents"
         },
         {
           "id": "chains",
