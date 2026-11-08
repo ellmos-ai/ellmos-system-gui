@@ -7,8 +7,8 @@
   "files_sha256": {
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
     ".github/workflows/tests.yml": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
-    "README.md": "6e1629f94fe7ee24959bccae39bd018cba6b8f4492323c4e013cac6e4618698d",
-    "RELEASE_GATE.md": "c8f4e4b0651c8672b9dbc887f5df379aaf0348625e24b2a5619240b30c1d6c8a",
+    "README.md": "764cae993332f16bcc14fb044dc8a695e86a3e93477c7261c5b523cb61244162",
+    "RELEASE_GATE.md": "f27ab81c4cff536ea19b9fb827292ce9de96987ad53fdee1dd4398d8c6189675",
     "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
@@ -20,11 +20,11 @@
     "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
-    "ellmos-module.v2.json": "3d8f72d5a188142352f6439b5f4ddac1fc3a043b4a830719d673967b1ce47757",
+    "ellmos-module.v2.json": "8f4f09c9a4afca0679f7e38d72406db195363adb3e154dbba89af41b3fdf4424",
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
-    "package.json": "2004b1bf5bc25c8ea302e194484abcc8fa5ef6c4de57d8d3fc70ab9bc74084e9",
+    "package.json": "f8e2ae35c413fa0dbb006b43dada12d4140642f1774f2f0614a22b32af98be93",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "b2ab990a780b7395f8869b2a709e2253daaa6b5d7becd0c63c75b78a8e54ef80",
+    "public/page-reads.v1.json": "b7af8890eefada79a80bb81a25934f896fab9282fe610600b61546335b71d757",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -283,7 +283,7 @@
     "src/pages/agenten/blueprints.astro": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
-    "src/pages/agenten/running.astro": "931004fd1346072fb0ef1c42b54a3ac6ae669616bd15da993cb83943c537d1a5",
+    "src/pages/agenten/running.astro": "5b242b331a287ac147f465da6e1a0b7687c5abe24cc5f587ec0c6dec88cc14b5",
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
     "src/pages/agenten/subscription-agents.astro": "5e1eca8ee6ef5e97a018c104f1e4f342975897bcd9ff656b7ca2a2636b5cb4b5",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
@@ -388,10 +388,10 @@
     "src/pages/agenten/bibliothek.astro": "4d388a99fd18fe7d8cb119ad2b3da7c41e1dfbe130b73ef8c323f7629a99186b",
     "tests/voice-mic-layout.test.mjs": "3f89ea7ff49ff62cb4e454a732af9eb67efafbc109582a2aa8e4656fa75d9780",
     "tests/no-legacy-device-token.test.mjs": "60d51e2891e6f7386eb54baec000b54105d8cf6aeefa51fcc3186512a1b52255",
-    "src/lib/chat-client.mjs": "455ad4ec3b81be29af49f7bd2020a72739bdac2cda28fcc4ab929cce1d0de396",
-    "src/lib/transcript-history.mjs": "cc740d8cab7269271ad3f5cb5d66c9f19816cf81049c53de3d10fa637c4d774d",
-    "src/scripts/chat-page.mjs": "75824fe0bb4567718ad39d6a1234b960da0e24a1c9a87cacde19ae20628a9f66",
-    "tests/chat-client.test.mjs": "50a40ff895ff3ef95189f9f94d6ec8a9fcfe8e0cd008600a3f9d0fa41d62ae69",
+    "src/lib/chat-client.mjs": "c2d2acb3ee9fb52c963874e739a26946669eb29d55811d72148c635422b0b1b3",
+    "src/lib/transcript-history.mjs": "30270ecc9afb6599aef106fa15cee808408de8b1cc2fe57c2d8fe73daf500fd9",
+    "src/scripts/chat-page.mjs": "55270255e662c188e0d5b145da289b0be754a49a46b073e296b12a94e445d1d9",
+    "tests/chat-client.test.mjs": "473d13499ab21dbb2841d13aa920adc58f0a0d1dbd88c9f69f95a4a226b55bfd",
     "tests/route-contract.test.mjs": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
@@ -5903,6 +5903,16 @@
           "sha256": "ed19be877328d1b4d482fe7490758760ccb363022a47aa72dd3ffab3d737fdef"
         }
       ]
+    },
+    {
+      "scope": "v0.2.40: agent session-log and direct-chat modal on /agenten/running",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "b2ab990a780b7395f8869b2a709e2253daaa6b5d7becd0c63c75b78a8e54ef80",
+          "sha256": "b7af8890eefada79a80bb81a25934f896fab9282fe610600b61546335b71d757"
+        }
+      ]
     }
   ],
   "readme_banner": {
@@ -5912,5 +5922,6 @@
     "usage": "GitHub README only; not a frontend background.",
     "sha256": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "added_on": "2026-10-11"
-  }
+  },
+  "version": "0.2.40"
 }

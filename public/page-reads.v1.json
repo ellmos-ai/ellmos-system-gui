@@ -1410,6 +1410,36 @@
     "path": "/api/task-returns/timeline",
     "required": false,
     "query": "hours,limit,task_id"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-history/sessions",
+    "required": false,
+    "query": "source,problems,archive,limit,offset"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agent-history/sessions/{snapshot_id}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/transcript-history.mjs#loadSession"
+   },
+   {
+    "method": "POST",
+    "path": "/api/chat-control/chat",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/chat-control/fork",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/agent-history/sessions/{snapshot_id}/resume",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/lib/chat-client.mjs#resumeWorker"
    }
   ],
   "/agenten/sessions": [

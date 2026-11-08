@@ -55,9 +55,11 @@ export async function sendChatMessage(prompt, chatId, {signal} = {}) {
 export const forkSession = (chatId, snapshotId, {signal} = {}) =>
   post('/api/chat-control/fork', {chat_id: chatId, snapshot_id: snapshotId}, signal);
 
-export function resumeWorker(snapshotId, workerId, {signal} = {}) {
+export function resumeWorker(snapshotId, workerId, {signal, prompt} = {}) {
   if (!WORKER_RE.test(workerId)) return Promise.reject(new Error('Ungültige Worker-Kennung.'));
-  return post(`/api/agent-history/sessions/${snapshotId}/resume`, {worker_id: workerId}, signal);
+  const body = {worker_id: workerId};
+  if (typeof prompt === 'string' && prompt.trim()) body.prompt = prompt.trim();
+  return post(`/api/agent-history/sessions/${snapshotId}/resume`, body, signal);
 }
 
 export function describeSendError(error) {
