@@ -6,12 +6,6 @@ export const LIVING_AGENT_GROUP_LABELS = Object.freeze({
   disabled: 'Deaktiviert',
 });
 
-export const LIVING_AGENT_GROUP_EMPTY_HINTS = Object.freeze({
-  living: 'Keine aktiven Living-Agenten in diesem Bereich.',
-  paused: 'Keine pausierten Agenten.',
-  disabled: 'Keine deaktivierten Agenten.',
-});
-
 export function isAgentPaused(agent) {
   if (!agent || typeof agent !== 'object' || Array.isArray(agent)) return false;
   if (agent.pause_info && typeof agent.pause_info === 'object' && agent.pause_info.is_paused === true) {
@@ -60,7 +54,6 @@ export function groupLivingAgents(items = [], selectAgent = (item) => item) {
       {
         id,
         label: LIVING_AGENT_GROUP_LABELS[id],
-        emptyHint: LIVING_AGENT_GROUP_EMPTY_HINTS[id],
         items: [],
       },
     ]),
@@ -126,6 +119,7 @@ export function applyLivingGroupsToContainer(doc, container) {
   for (const id of LIVING_AGENT_GROUP_ORDER) {
     const label = LIVING_AGENT_GROUP_LABELS[id];
     const groupCards = buckets.get(id) || [];
+    if (groupCards.length === 0) continue; // empty groups stay out of the way
 
     const section = doc.createElement('section');
     section.className = 'living-agent-group';
@@ -147,21 +141,11 @@ export function applyLivingGroupsToContainer(doc, container) {
     header.append(title, count);
     section.append(header);
 
-    if (groupCards.length > 0) {
-      const grid = doc.createElement('div');
-      grid.className = 'living-agent-group-grid';
-      grid.dataset.livingGroupGrid = id;
-      for (const card of groupCards) {
-        grid.append(card);
-      }
-      section.append(grid);
-    } else {
-      const empty = doc.createElement('p');
-      empty.className = 'living-agent-group-empty text-muted';
-      empty.dataset.livingGroupEmpty = id;
-      empty.textContent = LIVING_AGENT_GROUP_EMPTY_HINTS[id];
-      section.append(empty);
-    }
+    const grid = doc.createElement('div');
+    grid.className = 'living-agent-group-grid';
+    grid.dataset.livingGroupGrid = id;
+    for (const card of groupCards) grid.append(card);
+    section.append(grid);
 
     container.append(section);
   }

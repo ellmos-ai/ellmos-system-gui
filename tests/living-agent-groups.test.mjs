@@ -4,7 +4,6 @@ import { readFileSync } from 'node:fs';
 import {
   LIVING_AGENT_GROUP_ORDER,
   LIVING_AGENT_GROUP_LABELS,
-  LIVING_AGENT_GROUP_EMPTY_HINTS,
   isAgentPaused,
   classifyLivingAgentGroup,
   classifyLivingAgentRecord,
@@ -159,7 +158,7 @@ function createFakeDoc() {
   };
 }
 
-test('applyLivingGroupsToContainer renders three labelled sections and German empty hints', () => {
+test('applyLivingGroupsToContainer renders labelled sections and leaves empty groups out', () => {
   const doc = createFakeDoc();
   const container = doc.createElement('div');
 
@@ -182,17 +181,12 @@ test('applyLivingGroupsToContainer renders three labelled sections and German em
   const sections = container.children.filter((c) => c.dataset?.livingGroupSection);
   assert.deepEqual(
     sections.map((s) => s.dataset.livingGroupSection),
-    ['living', 'paused', 'disabled'],
+    ['living', 'disabled'], // the paused group is empty and not rendered
   );
   assert.deepEqual(
     sections.map((s) => s.attributes['aria-label']),
-    ['Living', 'Pausiert', 'Deaktiviert'],
+    ['Living', 'Deaktiviert'],
   );
-
-  //Paused group is empty -> contains German hint
-  const pausedEmpty = sections[1].children.find((c) => c.dataset?.livingGroupEmpty === 'paused');
-  assert.ok(pausedEmpty);
-  assert.equal(pausedEmpty.textContent, LIVING_AGENT_GROUP_EMPTY_HINTS.paused);
 
   // Static button stays at the end of container
   assert.equal(container.children.at(-1), addButton);
