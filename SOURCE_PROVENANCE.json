@@ -7,8 +7,8 @@
   "files_sha256": {
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
     ".github/workflows/tests.yml": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
-    "README.md": "1f8915b43dafac2cc025883ab722c3e64c8d5770f8bb5e1118324c9eaf7ff970",
-    "RELEASE_GATE.md": "636385bf638c579baff26f12ae300a0f3cbd07ceda5331a70071f710b9d5c0bf",
+    "README.md": "a1fbc80c3ed085294717d2f3219693d8fe96583e4c1338b8c670a3ef02e6273e",
+    "RELEASE_GATE.md": "cd2e9239cad513447bac29f31a1edbcb43ef431ba93bcde424df0b8579141cdf",
     "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
@@ -20,9 +20,9 @@
     "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
-    "ellmos-module.v2.json": "0fc858b3f66562f64d41a55d553892bf660524676db69d6eb0bac823282032b7",
-    "package-lock.json": "a7ca6b4d17126984acdbd7b97f1b9649c24ec43004e641764d5dd22357b749fd",
-    "package.json": "b0e0ee0e02caaa41fa2dceae3542d58cd2f8e6e3beb8501cc42bf327d4c1aec4",
+    "ellmos-module.v2.json": "059ff338ff986c0d447e80b016a9c5b9b1bed6b2ee1f1dc5b61e854ccea8e933",
+    "package-lock.json": "07b50f62d7e7f2e5ca91e32e09c72d428470387567aef245091272eb5ff08931",
+    "package.json": "bdb92150e133420e33332f396458b76133f5eb9a58addff4fa63f64eed9c4535",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "b2ab990a780b7395f8869b2a709e2253daaa6b5d7becd0c63c75b78a8e54ef80",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -5829,6 +5829,37 @@
           "path": "src/components/WorkerPolicySettings.astro",
           "previous_sha256": "51bd535eb231b0bbc12b7802cd50daafc3b007b2e3c89b2563fe9df44507bdcd",
           "sha256": "5f18aa3fe8fbba8fcc76f36c306beab94b64be5154cdec086074ffd651a077d0"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "summary": "Release metadata for 0.2.37: version aligned in package.json, package-lock.json, ellmos-module.v2.json and src-tauri/tauri.conf.json; README and RELEASE_GATE describe the content (#131, #129, #127, #133) and keep the mandatory consumer smoke and dist serving test. No application source change.",
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "1f8915b43dafac2cc025883ab722c3e64c8d5770f8bb5e1118324c9eaf7ff970",
+          "sha256": "a1fbc80c3ed085294717d2f3219693d8fe96583e4c1338b8c670a3ef02e6273e"
+        },
+        {
+          "path": "RELEASE_GATE.md",
+          "previous_sha256": "636385bf638c579baff26f12ae300a0f3cbd07ceda5331a70071f710b9d5c0bf",
+          "sha256": "cd2e9239cad513447bac29f31a1edbcb43ef431ba93bcde424df0b8579141cdf"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "0fc858b3f66562f64d41a55d553892bf660524676db69d6eb0bac823282032b7",
+          "sha256": "059ff338ff986c0d447e80b016a9c5b9b1bed6b2ee1f1dc5b61e854ccea8e933"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "a7ca6b4d17126984acdbd7b97f1b9649c24ec43004e641764d5dd22357b749fd",
+          "sha256": "07b50f62d7e7f2e5ca91e32e09c72d428470387567aef245091272eb5ff08931"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "b0e0ee0e02caaa41fa2dceae3542d58cd2f8e6e3beb8501cc42bf327d4c1aec4",
+          "sha256": "bdb92150e133420e33332f396458b76133f5eb9a58addff4fa63f64eed9c4535"
         }
       ]
     }
