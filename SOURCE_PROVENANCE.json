@@ -243,7 +243,7 @@
     "src/components/TaskLeasePanel.astro": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
     "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
     "src/components/WorkerLeaseCountdown.astro": "c60b7c2e33e83d833ffdd85066c1aed3d18144108af9ffb0ef09c8960f33c52d",
-    "src/components/WorkerPolicySettings.astro": "51bd535eb231b0bbc12b7802cd50daafc3b007b2e3c89b2563fe9df44507bdcd",
+    "src/components/WorkerPolicySettings.astro": "5f18aa3fe8fbba8fcc76f36c306beab94b64be5154cdec086074ffd651a077d0",
     "src/config/nav_config.json": "b733d931b6350eecb16584125ec4eeb2c2df625f05e1c369a5454503097830e8",
     "src/i18n/world.json": "5162900f4327c3b9143f7a38c29276e1f6ed9cee0617da86d361881a462fc2db",
     "src/layouts/BachLayout.astro": "280095e742e9b86c19bc7d22ac356ab829962a0c7d3821b41cf4f30312616185",
@@ -320,7 +320,7 @@
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
     "src/pages/talk.astro": "a61230acda6dc9aa97eeb6aa7b57d1bca0565161cd9af685c092c42e07ac9548",
-    "src/pages/tasks.astro": "c35b28003cbafcb037d7685bb79d653cb319814f8b585df97ec7906451f01eb0",
+    "src/pages/tasks.astro": "fe73e94f5fbd143b607c28dcb78770656f5bed77cd7a89277baea06a118c1fb2",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
@@ -5813,6 +5813,22 @@
           "path": "scripts/page-reads-helpers.mjs",
           "previous_sha256": "621c99d968601dcdea44ee4130db8e8a00c9ce8c228cb9bd90a8b4a65bc6088d",
           "sha256": "2c09229565e98b75010bbca31679589fade600e6e4cc8cbc850063ba7ab3285b"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "summary": "Scoped-CSS traps (T-20261107-118724049): rules for elements created by script in tasks.astro and WorkerPolicySettings.astro now keep a scoped template ancestor and wrap only the runtime part in :global(), so they apply; the guard list KNOWN_TRAPS is empty.",
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "c35b28003cbafcb037d7685bb79d653cb319814f8b585df97ec7906451f01eb0",
+          "sha256": "fe73e94f5fbd143b607c28dcb78770656f5bed77cd7a89277baea06a118c1fb2"
+        },
+        {
+          "path": "src/components/WorkerPolicySettings.astro",
+          "previous_sha256": "51bd535eb231b0bbc12b7802cd50daafc3b007b2e3c89b2563fe9df44507bdcd",
+          "sha256": "5f18aa3fe8fbba8fcc76f36c306beab94b64be5154cdec086074ffd651a077d0"
         }
       ]
     },
