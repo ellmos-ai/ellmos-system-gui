@@ -24,11 +24,10 @@ function isCompanionActive(companion, currentUrl) {
  * @param {object} [input]
  * @param {string} [input.referrer] - document.referrer
  * @param {string} [input.href] - location.href
- * @param {number} [input.historyLength] - history.length
  * @param {boolean|string|number} [input.companion] - explicit companion flag or read from href ?companion=1
  * @returns {{ mode: "back" | "fallback" | "close", label: string }}
  */
-export function decideBackAction({ referrer = "", href = "", historyLength = 1, companion } = {}) {
+export function decideBackAction({ referrer = "", href = "", companion } = {}) {
   const currentUrl = parseUrlSafe(href);
 
   if (isCompanionActive(companion, currentUrl)) {

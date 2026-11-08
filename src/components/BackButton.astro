@@ -1,5 +1,8 @@
 ---
-// BackButton.astro - Context-aware back / fallback / companion-close navigation button (PB-23 / G4)
+// BackButton.astro - way back for pages opened from another page (PB-23).
+// Server-rendered as a plain link to the fallback, so it works without script; the script upgrades the label and
+// action: "Zurück" (history.back) after arriving from another page of this GUI, "Fenster schließen" in the
+// talk companion window, otherwise the fallback link stays.
 interface Props {
   fallback?: string;
 }
@@ -7,124 +10,40 @@ interface Props {
 const { fallback = "/" } = Astro.props;
 ---
 
-<a
-  href={fallback}
-  class="btn btn-secondary back-nav-btn"
-  data-back-button
-  data-fallback={fallback}
-  data-mode="back"
-  aria-label="Zurück zur vorherigen Seite"
->
-  <span class="back-nav-glyph" aria-hidden="true" data-back-glyph>←</span>
-  <span class="back-nav-label" data-back-label>Zurück</span>
-</a>
+<div class="back-nav" data-back-nav>
+  <a href={fallback} class="btn btn-secondary btn-sm" data-back-button data-fallback={fallback}>
+    <span aria-hidden="true" data-back-glyph>←</span>
+    <span data-back-label>Zur Startseite</span>
+  </a>
+</div>
 
 <script>
   import { decideBackAction } from "./back-button-logic.mjs";
 
-  function initBackButtons() {
-    const buttons = document.querySelectorAll<HTMLAnchorElement>("[data-back-button]");
-    buttons.forEach((btn) => {
-      if (btn.dataset.backBound === "1") return;
-      btn.dataset.backBound = "1";
+  for (const nav of document.querySelectorAll<HTMLElement>("[data-back-nav]")) {
+    const button = nav.querySelector<HTMLAnchorElement>("[data-back-button]")!;
+    const { mode, label } = decideBackAction({ referrer: document.referrer, href: location.href });
+    button.querySelector("[data-back-label]")!.textContent = label;
+    button.querySelector("[data-back-glyph]")!.textContent = mode === "close" ? "✕" : "←";
 
-      const fallback = btn.dataset.fallback || "/";
-      const companion = new URLSearchParams(window.location.search).get("companion") === "1";
-      const decision = decideBackAction({
-        referrer: document.referrer,
-        href: window.location.href,
-        historyLength: window.history.length,
-        companion,
-      });
+    button.addEventListener("click", (event) => {
+      if (mode === "fallback") return; // stays a plain link
+      event.preventDefault();
+      if (mode === "back") return history.back();
+      window.close();
+      // window.close() is ignored for windows a script did not open; do not strand the user.
+      setTimeout(() => { if (!window.closed) location.assign(button.dataset.fallback || "/"); }, 300);
+    });
 
-      const labelEl = btn.querySelector<HTMLElement>("[data-back-label]");
-      const glyphEl = btn.querySelector<HTMLElement>("[data-back-glyph]");
-
-      btn.dataset.mode = decision.mode;
-      if (labelEl) labelEl.textContent = decision.label;
-      btn.setAttribute("href", fallback);
-
-      if (decision.mode === "close") {
-        if (glyphEl) glyphEl.textContent = "✕";
-        btn.setAttribute("aria-label", "Fenster schließen");
-      } else if (decision.mode === "fallback") {
-        if (glyphEl) glyphEl.textContent = "←";
-        btn.setAttribute("aria-label", "Zur Startseite");
-      } else {
-        if (glyphEl) glyphEl.textContent = "←";
-        btn.setAttribute("aria-label", "Zurück zur vorherigen Seite");
-      }
-
-      btn.addEventListener("click", (ev) => {
-        const currentCompanion = new URLSearchParams(window.location.search).get("companion") === "1";
-        const currentDecision = decideBackAction({
-          referrer: document.referrer,
-          href: window.location.href,
-          historyLength: window.history.length,
-          companion: currentCompanion,
-        });
-
-        if (currentDecision.mode === "close") {
-          ev.preventDefault();
-          try {
-            window.close();
-          } catch (_) {}
-          setTimeout(() => {
-            if (!window.closed) {
-              window.location.assign(fallback);
-            }
-          }, 300);
-        } else if (currentDecision.mode === "back") {
-          ev.preventDefault();
-          window.history.back();
-        } else {
-          ev.preventDefault();
-          window.location.assign(fallback);
-        }
-      });
+    // The layout shows its own "← zurück zu <Bereich>" link for ?from=<area>; one way back is enough.
+    addEventListener("DOMContentLoaded", () => {
+      const crumb = document.querySelector<HTMLElement>("[data-breadcrumb]");
+      if (crumb && !crumb.hidden && mode !== "close") nav.hidden = true;
     });
   }
-
-  initBackButtons();
 </script>
 
 <style>
-  .back-nav-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.42rem 0.85rem;
-    font-size: 0.82rem;
-    font-weight: 600;
-    line-height: 1.3;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-    text-decoration: none;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background var(--duration) var(--ease),
-                border-color var(--duration) var(--ease),
-                color var(--duration) var(--ease),
-                transform var(--duration) var(--ease);
-  }
-
-  .back-nav-btn:hover {
-    background: var(--bg-elevated);
-    border-color: var(--accent);
-    color: var(--text);
-  }
-
-  .back-nav-btn:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
-  }
-
-  .back-nav-glyph {
-    font-size: 0.95em;
-    line-height: 1;
-  }
+  .back-nav { margin: 0 0 0.75rem; }
+  .back-nav[hidden] { display: none; }
 </style>

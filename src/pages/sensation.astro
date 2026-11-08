@@ -6,6 +6,7 @@ import BackButton from "../components/BackButton.astro";
 
 <BachLayout title="ELLMOS Sensation · Sensorik & Präsenz" currentPath="/sensation">
   <div class="sensation-page">
+    <BackButton fallback="/" />
     <header class="card-header" style="margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
       <div>
         <span class="badge">👁️ ellmos-sensation · Kamera, Mikrofon, Sound &amp; Präsenz-Gate</span>
@@ -14,8 +15,7 @@ import BackButton from "../components/BackButton.astro";
           Berechtigungsgesteuerter Zugriff auf Kamera, Mikrofone und Klangerzeugung. Erkennt Nutzer-Präsenz am PC und pausiert bei Anwesenheit automatisch störende Desktop-Automationen (<code>open-compute</code>).
         </p>
       </div>
-      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
-        <BackButton fallback="/" />
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
         <a href="/governance" class="btn btn-secondary">🛡️ Governance &amp; Control</a>
         <a href="/talk" class="btn btn-secondary">🎙️ ELLMOS Talk</a>
       </div>
