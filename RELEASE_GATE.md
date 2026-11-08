@@ -1,6 +1,6 @@
 # Release gate: ellmos-system-gui
 
-## Release evidence 0.2.38 — 2026-11-08
+## Release evidence 0.2.39 — 2026-11-08
 
 | Item | SOLL | IST (this commit) |
 |---|---|---|

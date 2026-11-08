@@ -46,8 +46,8 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       <label>Zugang<select id="agent-overview-access" data-agent-overview-control="access"><option value="all">Alle Zugänge</option><option value="local">Lokal</option><option value="cloud">Cloud / API</option><option value="prompt">Prompt / CLI</option><option value="unknown">Unbekannt</option></select></label>
       <label>Funktion<select id="agent-overview-function" data-agent-overview-control="function"><option value="all">Alle Funktionen</option></select></label>
       <label>Tatsächliche Startart<select id="agent-overview-start" data-agent-overview-control="start"><option value="all">Alle Startarten</option><option value="unknown">Unbekannt</option></select></label>
-      <label>Sortierung<select id="agent-overview-sort" data-agent-overview-control="sort"><option value="name">Name</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option><option value="status">Status</option></select></label>
-      <label>Gruppierung<select id="agent-overview-group" data-agent-overview-control="group"><option value="none">Aus</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option></select></label>
+      <label>Sortierung<select id="agent-overview-sort" data-agent-overview-control="sort"><option value="status" selected>Status</option><option value="name">Name</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option></select></label>
+      <label>Gruppierung<select id="agent-overview-group" data-agent-overview-control="group"><option value="none">Aus</option><option value="status">Status</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option></select></label>
       <label>Darstellung<select id="agent-overview-view" data-agent-overview-control="view"><option value="cards">Karten</option><option value="list">Kompakte Liste</option></select></label>
       <small id="agent-overview-summary" role="status" aria-live="polite">Gemeinsame Filter für Running und Deine Agenten.</small>
     </div>
@@ -1121,8 +1121,108 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     let coreCatalog = {};
     let coreEditorAgent = null;
     let coreEditorVersion = null;
+    let latestLocalCoreEntries = [];
+    let latestProfileWorkerEntries = [];
+    let latestLocalCoreAddButton = null;
+    const rememberedTileOpenDetails = new Map();
+
+    function getTilePersistenceKey(tile) {
+      if (!tile?.dataset) return '';
+      if (tile.dataset.workerId) return 'running-worker:' + tile.dataset.workerId;
+      if (tile.dataset.runningSlot) return 'running-core:' + tile.dataset.runningSlot;
+      if (tile.dataset.appearanceWorker) return 'ready-worker:' + tile.dataset.appearanceWorker;
+      if (tile.dataset.coreAgentId) return 'core:' + tile.dataset.coreAgentId;
+      if (tile.dataset.interfaceSlot) return 'iface:' + tile.dataset.interfaceSlot;
+      return '';
+    }
+
+    function getDetailPersistenceKey(details, index = 0) {
+      if (!details) return '';
+      if (details.dataset?.action) return 'action:' + details.dataset.action;
+      if (details.classList?.contains('agent-tile-details')) return 'class:agent-tile-details';
+      if (details.classList?.contains('agent-tile-more')) return 'class:agent-tile-more';
+      if (details.classList?.contains('worker-selection-policy')) return 'class:worker-selection-policy';
+      if (details.classList?.contains('worker-queue-details')) return 'class:worker-queue-details';
+      if (details.classList?.contains('worker-selection-evidence')) return 'class:worker-selection-evidence';
+      const summary = details.querySelector?.('summary')?.textContent?.trim();
+      return summary ? 'summary:' + summary : 'idx:' + index;
+    }
+
+    function rememberTileDetailsState(root = document) {
+      if (typeof rememberWorkerSelectionPolicyStates === 'function') rememberWorkerSelectionPolicyStates();
+      if (typeof root?.querySelectorAll !== 'function') return;
+      for (const tile of root.querySelectorAll('.agent-tile')) {
+        const tileKey = getTilePersistenceKey(tile);
+        if (!tileKey) continue;
+        const openSet = new Set();
+        const detailsList = [...tile.querySelectorAll('details')];
+        detailsList.forEach((details, index) => {
+          if (details.open) openSet.add(getDetailPersistenceKey(details, index));
+        });
+        if (openSet.size > 0) rememberedTileOpenDetails.set(tileKey, openSet);
+        else rememberedTileOpenDetails.delete(tileKey);
+      }
+    }
+
+    function restoreTileDetailsState(root = document) {
+      if (typeof root?.querySelectorAll !== 'function') return;
+      for (const tile of root.querySelectorAll('.agent-tile')) {
+        const tileKey = getTilePersistenceKey(tile);
+        const openSet = tileKey ? rememberedTileOpenDetails.get(tileKey) : null;
+        if (!openSet?.size) continue;
+        const detailsList = [...tile.querySelectorAll('details')];
+        detailsList.forEach((details, index) => {
+          if (openSet.has(getDetailPersistenceKey(details, index))) details.open = true;
+        });
+      }
+    }
+
+    document.addEventListener?.('toggle', (event) => {
+      const details = event?.target;
+      if (!details || details.tagName !== 'DETAILS') return;
+      const tile = details.closest?.('.agent-tile');
+      if (!tile) return;
+      const tileKey = getTilePersistenceKey(tile);
+      if (!tileKey) return;
+      const openSet = new Set();
+      const detailsList = [...tile.querySelectorAll('details')];
+      detailsList.forEach((item, index) => {
+        if (item.open) openSet.add(getDetailPersistenceKey(item, index));
+      });
+      if (openSet.size > 0) rememberedTileOpenDetails.set(tileKey, openSet);
+      else rememberedTileOpenDetails.delete(tileKey);
+    }, true);
+
+    function syncCombinedReadyAgentsGrid() {
+      const readyGrid = document.getElementById('ready-agents-grid');
+      const localTarget = document.getElementById('local-core-agent-cards');
+      if (localTarget) {
+        localTarget.replaceChildren();
+        localTarget.style.display = 'none';
+      }
+      if (!readyGrid) return;
+      agentOverviewController?.beginContainer(readyGrid);
+      if (latestProfileWorkerEntries.length === 0 && latestLocalCoreEntries.length === 0) return;
+      readyGrid.style.display = 'grid';
+      const nodes = [];
+      for (const entry of latestLocalCoreEntries) {
+        nodes.push(entry.card);
+        if (typeof registerAgentOverviewCard === 'function') {
+          registerAgentOverviewCard(readyGrid, entry.card, entry.agent, 'core', 'ready');
+        }
+      }
+      for (const entry of latestProfileWorkerEntries) {
+        nodes.push(entry.card);
+        if (typeof registerAgentOverviewCard === 'function') {
+          registerAgentOverviewCard(readyGrid, entry.card, entry.worker, 'worker', 'ready');
+        }
+      }
+      if (latestLocalCoreAddButton) nodes.push(latestLocalCoreAddButton);
+      readyGrid.replaceChildren(...nodes);
+    }
 
     function renderCoreAgents(data) {
+      if (typeof rememberTileDetailsState === 'function') rememberTileDetailsState(document);
       coreRefreshEpoch += 1;
       coreConfigVersion = data.configuration_version;
       coreAgents = data.agents;
@@ -1138,6 +1238,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       const activeCoreIds = typeof runningCoreAgentIds === 'undefined' ? new Set() : runningCoreAgentIds;
       target.replaceChildren();
       if (localTarget) localTarget.replaceChildren();
+      if (typeof latestLocalCoreEntries !== 'undefined') latestLocalCoreEntries = [];
       for (const agent of coreAgents) {
         const isSysRole = isCanonicalSystemRole(agent);
         const isRunning = activeCoreIds.has(String(agent.id));
@@ -1148,6 +1249,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
           runningTarget.append(card);
           if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(runningTarget, card, agent, 'core', 'running');
         } else if (!isSysRole && localTarget) {
+          if (typeof latestLocalCoreEntries !== 'undefined') latestLocalCoreEntries.push({card, agent});
           localTarget.append(card);
           if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(localTarget, card, agent, 'core', 'ready');
         } else {
@@ -1158,10 +1260,14 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       }
       const add = coreElement('button', '+ Lokalen Agenten anlegen', 'btn core-slot-add');
       add.addEventListener('click', () => openCoreEditor());
+      if (typeof latestLocalCoreAddButton !== 'undefined') latestLocalCoreAddButton = add;
       if (localTarget) localTarget.append(add);
       else target.append(add);
+      if (typeof syncCombinedReadyAgentsGrid === 'function') syncCombinedReadyAgentsGrid();
       if (typeof renderCoreQueueDiagnostics === 'function') renderCoreQueueDiagnostics();
+      if (typeof renderWorkerSelectionPolicies === 'function') renderWorkerSelectionPolicies();
       if (typeof applyAgentOverviewControls === 'function') applyAgentOverviewControls();
+      if (typeof restoreTileDetailsState === 'function') restoreTileDetailsState(document);
     }
 
     async function coreRequest(path, method = 'GET', body) {
@@ -1197,6 +1303,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     }
 
     function renderRolePinningAndInterfaceExtensions(data) {
+      rememberTileDetailsState(document);
       const coreGrid = document.getElementById('core-agent-cards');
       const hasTalkInCore = Array.isArray(data?.agents) && data.agents.some(a => a.id === 'buddha_talk');
       if (coreGrid && !hasTalkInCore && !coreGrid.querySelector('[data-core-agent-id="buddha_talk"]')) {
@@ -1206,11 +1313,14 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const talkActive = (talkOpModeEl?.value || 'ptt') !== 'off';
         const talkModel = (talkModelEl?.value || 'buddha-default').trim();
         const talkPersona = (talkPersonaEl?.value || 'buddha').trim();
-        const talkCard = renderAgentTile({id: 'buddha_talk', name: 'ELLMOS-Talk · Funkgerät'}, 'talk', {
+        const talkAgent = {id: 'buddha_talk', name: 'ELLMOS-Talk · Funkgerät', enabled: talkActive, status: talkActive ? 'idle' : 'paused'};
+        const talkCard = renderAgentTile(talkAgent, 'talk', {
           statusLabel: talkActive ? 'Ready · Living' : 'Pausiert', tone: talkActive ? 'ok' : 'idle',
           modelLines: [talkActive ? `Besetzt von: ${talkModel} (${talkPersona})` : 'Nicht besetzt · Schnittstelle inaktiv'],
         });
         coreGrid.append(talkCard);
+        if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(coreGrid, talkCard, talkAgent, 'core', 'ready');
+        if (typeof applyAgentOverviewControls === 'function') applyAgentOverviewControls();
       }
 
       const ifaceGrid = document.getElementById('optional-interface-slot-cards');
@@ -1228,6 +1338,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
           ifaceGrid.append(icard);
         }
       }
+      restoreTileDetailsState(document);
     }
 
     function openCoreEditor(slotId = null) {
@@ -1530,6 +1641,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         if (epoch !== workerRefreshEpoch) return;
         if (data.schema !== 'bach.workers.status.v1' || data.availability !== 'available' || !Array.isArray(data.workers))
           throw new Error('Workerquelle ist nicht bestätigt');
+        rememberTileDetailsState(document);
         rememberWorkerSelectionPolicyStates();
         agentOverviewController?.beginContainer(readyGrid);
         agentOverviewController?.beginContainer(runningList);
@@ -1558,12 +1670,12 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
 
         // Ready/profile cards show configured bindings only; resolved_model may describe a prior run.
         // 1. Render Einsatzbereite Agenten
+        latestProfileWorkerEntries = [];
         if (profileWorkers.length === 0) {
-          const hasLocalCore = (Array.isArray(coreAgents) && coreAgents.some(a => !isCanonicalSystemRole(a)))
-            || (document.getElementById('local-core-agent-cards')?.children.length > 0);
+          const hasLocalCore = latestLocalCoreEntries.length > 0
+            || (Array.isArray(coreAgents) && coreAgents.some(a => !isCanonicalSystemRole(a)));
           if (hasLocalCore) {
-            readyGrid.innerHTML = '';
-            readyGrid.style.display = 'none';
+            syncCombinedReadyAgentsGrid();
           } else {
             readyGrid.style.display = 'grid';
             readyGrid.innerHTML = `
@@ -1580,8 +1692,10 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
             const card = renderAgentTile(worker, 'worker', {statusLabel: state.label, state, running: false, tone: state.ready ? 'ok' : undefined});
             registerAgentOverviewCard(readyGrid, card, worker, 'worker', 'ready');
             window.BachAgentColor?.applyAgentColor(card, worker);
+            latestProfileWorkerEntries.push({card, worker});
             return card;
           }));
+          syncCombinedReadyAgentsGrid();
         }
 
         // 2. Render Running Workers
@@ -1604,6 +1718,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         }
         renderWorkerSelectionPolicies();
         applyAgentOverviewControls();
+        restoreTileDetailsState(document);
         window.BachWorkerLeaseCountdown?.update(runningWorkers);
       } catch (error) {
         if (epoch !== workerRefreshEpoch) return;
