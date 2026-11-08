@@ -1,115 +1,65 @@
-// Pure logic for the interactive header paper boat (PB-25 item 13).
-// Mode is persisted in localStorage under "bach-boat-mode" ("on" | "off" | "logo", default "on").
-// Clicking the boat 3 times within 2 seconds (2000 ms) sinks it for the rest of the page session.
+// Pure logic for the header paper boat (PB-25 item 13).
+// Mode lives in localStorage under BOAT_MODE_KEY ("on" | "off" | "logo", default "on").
+// Three clicks within two seconds sink the boat until the browser session ends.
 
 export const BOAT_MODE_KEY = 'bach-boat-mode';
 export const BOAT_MODES = Object.freeze(['on', 'off', 'logo']);
-export const DEFAULT_BOAT_MODE = 'on';
 export const SINK_CLICK_THRESHOLD = 3;
 export const SINK_WINDOW_MS = 2000;
 
-export const BOAT_MODE_LABELS = Object.freeze({
-  on: 'An',
-  off: 'Aus',
-  logo: 'Logo',
-});
-
-/**
- * Normalizes a raw mode value to one of "on" | "off" | "logo".
- * Unknown or missing values fall back to "on".
- */
+// Anything that is not one of the three modes means "on".
 export function normalizeBoatMode(value) {
-  if (typeof value !== 'string') return DEFAULT_BOAT_MODE;
-  const trimmed = value.trim().toLowerCase();
-  return BOAT_MODES.includes(trimmed) ? trimmed : DEFAULT_BOAT_MODE;
+  const mode = typeof value === 'string' ? value.trim().toLowerCase() : '';
+  return BOAT_MODES.includes(mode) ? mode : 'on';
 }
 
-export const parseBoatMode = normalizeBoatMode;
-
-/**
- * Computes behaviour flags for a given boat mode, session sunk state, and reduced-motion preference.
- */
-export function boatModeBehavior(mode, options = {}) {
-  const normalized = normalizeBoatMode(mode);
-  const sunk = Boolean(options?.sunk);
-  const reducedMotion = Boolean(options?.reducedMotion);
-  const visible = normalized !== 'off' && !sunk;
-  const hidden = !visible;
-  const staticLogo = normalized === 'logo';
-  const animated = normalized === 'on' && !sunk && !reducedMotion;
-  return {
-    mode: normalized,
-    label: BOAT_MODE_LABELS[normalized],
-    visible,
-    hidden,
-    animated,
-    staticLogo,
-    alignedToLogo: staticLogo,
-    standingStill: staticLogo || reducedMotion,
-    sunk: normalized !== 'off' && sunk,
-    canSink: visible,
-    showRestore: normalized !== 'off' && sunk,
-  };
+// Keeps the clicks inside the window, adds this one, and reports whether the boat sinks.
+export function recordBoatClick(timestamps, now, windowMs = SINK_WINDOW_MS, threshold = SINK_CLICK_THRESHOLD) {
+  const recent = timestamps.filter(t => now - t <= windowMs);
+  recent.push(now);
+  return {timestamps: recent, sunk: recent.length >= threshold};
 }
 
-export const boatModeFlags = boatModeBehavior;
+// Wires the boat in the header (markup: Header.astro). Visibility is pure CSS on
+// #header-ocean-waterline[data-boat-mode][data-boat-sunk]; window.bachBoatMode is the setting's entry point.
+export function initializeHeaderBoat() {
+  const sunkKey = 'bach-boat-sunk-session';
+  const line = document.getElementById('header-ocean-waterline');
+  const restore = document.getElementById('header-boat-restore-btn');
+  // Storage can throw (private mode, blocked cookies); the boat then simply behaves as "on".
+  const getStored = (store, key) => { try { return store.getItem(key); } catch { return null; } };
+  const setStored = (store, key, value) => { try { value === null ? store.removeItem(key) : store.setItem(key, value); } catch { /* not persisted */ } };
+  let clicks = [];
+  let sinkTimer = 0;
 
-/**
- * Pure click-window evaluator: given previous click timestamps (ms) and current timestamp `nowMs`,
- * keeps only clicks within `windowMs` (default 2000 ms) and checks if `threshold` (default 3) is reached.
- */
-export function recordBoatClick(
-  timestamps = [],
-  nowMs = Date.now(),
-  windowMs = SINK_WINDOW_MS,
-  threshold = SINK_CLICK_THRESHOLD,
-) {
-  const safeNow = Number.isFinite(nowMs) ? nowMs : 0;
-  const prior = Array.isArray(timestamps) ? timestamps : [];
-  const recent = prior.filter(
-    (t) => typeof t === 'number' && Number.isFinite(t) && safeNow >= t && safeNow - t <= windowMs,
-  );
-  recent.push(safeNow);
-  const sunk = recent.length >= threshold;
-  return {
-    timestamps: recent,
-    count: recent.length,
-    sunk,
-    shouldSink: sunk,
+  function render() {
+    const mode = normalizeBoatMode(getStored(localStorage, BOAT_MODE_KEY));
+    const sunk = getStored(sessionStorage, sunkKey) === '1';
+    if (line) { line.dataset.boatMode = mode; line.dataset.boatSunk = String(sunk); delete line.dataset.boatSinking; }
+    if (restore) restore.hidden = !sunk || mode === 'off';
+    window.dispatchEvent(new CustomEvent('bach-boat-mode-change', {detail: {mode, sunk}}));
+  }
+  function raise() {
+    clearTimeout(sinkTimer);
+    clicks = [];
+    setStored(sessionStorage, sunkKey, null);
+    render();
+  }
+
+  window.bachBoatMode = {
+    get: () => normalizeBoatMode(getStored(localStorage, BOAT_MODE_KEY)),
+    set: value => { setStored(localStorage, BOAT_MODE_KEY, normalizeBoatMode(value)); raise(); },
   };
-}
-
-/**
- * Stateful tracker for boat clicks within the 2-second window.
- */
-export function createBoatClickTracker({
-  windowMs = SINK_WINDOW_MS,
-  threshold = SINK_CLICK_THRESHOLD,
-} = {}) {
-  let timestamps = [];
-  let sunk = false;
-
-  return {
-    click(nowMs = Date.now()) {
-      if (sunk) {
-        return { timestamps: [...timestamps], count: timestamps.length, sunk: true, shouldSink: false };
-      }
-      const result = recordBoatClick(timestamps, nowMs, windowMs, threshold);
-      timestamps = result.timestamps;
-      if (result.sunk) {
-        sunk = true;
-      }
-      return result;
-    },
-    reset() {
-      timestamps = [];
-      sunk = false;
-    },
-    isSunk() {
-      return sunk;
-    },
-    getTimestamps() {
-      return [...timestamps];
-    },
-  };
+  document.getElementById('header-paper-boat-btn')?.addEventListener('click', () => {
+    if (!line || line.dataset.boatSunk === 'true' || line.dataset.boatSinking) return;
+    const click = recordBoatClick(clicks, Date.now());
+    clicks = click.sunk ? [] : click.timestamps;
+    if (!click.sunk) return;
+    const finish = () => { setStored(sessionStorage, sunkKey, '1'); render(); };
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return finish();
+    line.dataset.boatSinking = 'true';
+    sinkTimer = setTimeout(finish, 650); // length of the paperBoatSink animation
+  });
+  restore?.addEventListener('click', () => { raise(); document.getElementById('header-paper-boat-btn')?.focus({preventScroll: true}); });
+  render();
 }

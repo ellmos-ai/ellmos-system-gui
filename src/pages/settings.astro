@@ -293,7 +293,7 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
           <hr style="border:0;border-top:1px solid var(--border);margin:1rem 0;" />
           <label for="boat-mode-select">Papierboot in der Kopfzeile</label>
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
-            <select id="boat-mode-select" aria-label="Papierboot in der Kopfzeile" style="padding:0.5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);">
+            <select id="boat-mode-select" style="padding:0.5rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);">
               <option value="on" selected>An</option>
               <option value="off">Aus</option>
               <option value="logo">Logo</option>
@@ -1238,29 +1238,13 @@ import WorkerPolicySettings from "../components/WorkerPolicySettings.astro";
 
     const boatModeSelect = document.getElementById('boat-mode-select');
     const boatModeStatus = document.getElementById('boat-mode-status');
-    function currentBoatMode() {
-      const raw = window.bachBoatMode?.get?.()
-        || localStorage.getItem('bach-boat-mode')
-        || document.documentElement.dataset.boatMode;
-      return ['on', 'off', 'logo'].includes(raw) ? raw : 'on';
-    }
-    function syncBoatModeControls(event) {
-      const mode = ['on', 'off', 'logo'].includes(event?.detail?.mode) ? event.detail.mode : currentBoatMode();
+    const boatModeLabels = { on: 'An (animiert)', off: 'Aus (ausgeblendet)', logo: 'Logo (stehend am Logo)' };
+    function syncBoatModeControls() {
+      const mode = window.bachBoatMode?.get() ?? 'on'; // defined by the header
       if (boatModeSelect) boatModeSelect.value = mode;
-      if (boatModeStatus) {
-        boatModeStatus.textContent = mode === 'off' ? 'Aus (ausgeblendet)' : mode === 'logo' ? 'Logo (stehend am Logo)' : 'An (animiert)';
-      }
+      if (boatModeStatus) boatModeStatus.textContent = boatModeLabels[mode];
     }
-    boatModeSelect?.addEventListener('change', () => {
-      const mode = ['on', 'off', 'logo'].includes(boatModeSelect.value) ? boatModeSelect.value : 'on';
-      if (typeof window.applyBoatMode === 'function') window.applyBoatMode(mode, true);
-      else if (window.bachBoatMode?.set) window.bachBoatMode.set(mode, true);
-      else {
-        localStorage.setItem('bach-boat-mode', mode);
-        document.documentElement.dataset.boatMode = mode;
-      }
-      syncBoatModeControls({ detail: { mode } });
-    });
+    boatModeSelect?.addEventListener('change', () => window.bachBoatMode?.set(boatModeSelect.value));
     window.addEventListener('bach-boat-mode-change', syncBoatModeControls);
     syncBoatModeControls();
 

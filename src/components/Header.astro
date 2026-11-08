@@ -173,10 +173,9 @@ function lineIconSvg(id: string): string {
       type="button"
       id="header-boat-restore-btn"
       class="header-boat-restore-btn"
-      aria-label="Boot zurückholen"
       title="Versunkenes Papierboot wieder an die Wasseroberfläche holen"
       hidden
-    >⛵ Boot zurückholen</button>
+    >Boot zurückholen</button>
   </div>
 
   <div class="header-right">
@@ -749,141 +748,6 @@ function lineIconSvg(id: string): string {
     set: (value, persist = true) => applyUiDensity(value, persist),
   };
   applyUiDensity(window.bachUiDensity.get(), false);
-
-  // Header paper boat mode ('on' | 'off' | 'logo') in localStorage key 'bach-boat-mode' + 3-click sink Easter egg
-  const validBoatModes = new Set(['on', 'off', 'logo']);
-  const boatModeKey = 'bach-boat-mode';
-  const boatSunkSessionKey = 'bach-boat-sunk-session';
-  function normalizeHeaderBoatMode(value) {
-    if (typeof value !== 'string') return 'on';
-    const cleaned = value.trim().toLowerCase();
-    return validBoatModes.has(cleaned) ? cleaned : 'on';
-  }
-  let boatClickTimestamps = [];
-  let boatSinkTimer = null;
-
-  function applyBoatMode(value, persist = true, clearSunk = false) {
-    const mode = normalizeHeaderBoatMode(value);
-    document.documentElement.dataset.boatMode = mode;
-    const waterline = document.getElementById('header-ocean-waterline');
-    const track = document.getElementById('header-paper-boat-track');
-    const boatBtn = document.getElementById('header-paper-boat-btn');
-    const restoreBtn = document.getElementById('header-boat-restore-btn');
-    if (clearSunk) {
-      try { sessionStorage.removeItem(boatSunkSessionKey); } catch (_) {}
-      if (waterline) {
-        delete waterline.dataset.boatSunk;
-        delete waterline.dataset.boatSinking;
-      }
-    }
-    const isSunk = Boolean(waterline?.dataset.boatSunk === 'true');
-    if (waterline) {
-      waterline.dataset.boatMode = mode;
-    }
-    if (track) {
-      track.hidden = mode === 'off' || isSunk;
-    }
-    if (boatBtn) {
-      boatBtn.hidden = mode === 'off' || isSunk;
-    }
-    if (restoreBtn) {
-      restoreBtn.hidden = !(mode !== 'off' && isSunk);
-    }
-    if (persist) {
-      try { localStorage.setItem(boatModeKey, mode); } catch (_) {}
-    }
-    const boatSelect = document.getElementById('boat-mode-select');
-    if (boatSelect && validBoatModes.has(mode)) {
-      boatSelect.value = mode;
-    }
-    window.dispatchEvent(new CustomEvent('bach-boat-mode-change', { detail: { mode, sunk: isSunk } }));
-    return mode;
-  }
-
-  function restoreHeaderBoat() {
-    if (boatSinkTimer) {
-      clearTimeout(boatSinkTimer);
-      boatSinkTimer = null;
-    }
-    boatClickTimestamps = [];
-    const current = normalizeHeaderBoatMode(localStorage.getItem(boatModeKey));
-    const targetMode = current === 'off' ? 'on' : current;
-    applyBoatMode(targetMode, true, true);
-  }
-
-  function sinkHeaderBoat() {
-    const waterline = document.getElementById('header-ocean-waterline');
-    const track = document.getElementById('header-paper-boat-track');
-    const boatBtn = document.getElementById('header-paper-boat-btn');
-    const restoreBtn = document.getElementById('header-boat-restore-btn');
-    if (!waterline) return;
-    try { sessionStorage.setItem(boatSunkSessionKey, '1'); } catch (_) {}
-    const reducedMotion = Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    const trackerRecord = window.BachHeaderBoat?.recordBoatClick;
-    void trackerRecord;
-    if (reducedMotion) {
-      delete waterline.dataset.boatSinking;
-      waterline.dataset.boatSunk = 'true';
-      if (track) track.hidden = true;
-      if (boatBtn) boatBtn.hidden = true;
-      if (restoreBtn) restoreBtn.hidden = false;
-      window.dispatchEvent(new CustomEvent('bach-boat-mode-change', { detail: { mode: waterline.dataset.boatMode || 'on', sunk: true } }));
-      return;
-    }
-    waterline.dataset.boatSinking = 'true';
-    if (boatSinkTimer) clearTimeout(boatSinkTimer);
-    boatSinkTimer = setTimeout(() => {
-      delete waterline.dataset.boatSinking;
-      waterline.dataset.boatSunk = 'true';
-      if (track) track.hidden = true;
-      if (boatBtn) boatBtn.hidden = true;
-      if (restoreBtn) restoreBtn.hidden = false;
-      window.dispatchEvent(new CustomEvent('bach-boat-mode-change', { detail: { mode: waterline.dataset.boatMode || 'on', sunk: true } }));
-    }, 650);
-  }
-
-  window.applyBoatMode = (value, persist = true) => applyBoatMode(value, persist, true);
-  window.restoreHeaderBoat = restoreHeaderBoat;
-  window.bachBoatMode = {
-    get: () => normalizeHeaderBoatMode(localStorage.getItem(boatModeKey) || document.documentElement.dataset.boatMode),
-    set: (value, persist = true) => applyBoatMode(value, persist, true),
-    restore: () => restoreHeaderBoat(),
-  };
-
-  (function initHeaderPaperBoat() {
-    const waterline = document.getElementById('header-ocean-waterline');
-    const boatBtn = document.getElementById('header-paper-boat-btn');
-    const restoreBtn = document.getElementById('header-boat-restore-btn');
-    let sunkInSession = false;
-    try { sunkInSession = sessionStorage.getItem(boatSunkSessionKey) === '1'; } catch (_) {}
-    if (waterline && sunkInSession) {
-      waterline.dataset.boatSunk = 'true';
-    }
-    applyBoatMode(window.bachBoatMode.get(), false, false);
-
-    boatBtn?.addEventListener('click', () => {
-      if (waterline?.dataset.boatSunk === 'true' || waterline?.dataset.boatSinking === 'true') return;
-      const now = Date.now();
-      const recordFn = window.BachHeaderBoat?.recordBoatClick;
-      if (typeof recordFn === 'function') {
-        const res = recordFn(boatClickTimestamps, now);
-        boatClickTimestamps = res.timestamps;
-        if (res.sunk) sinkHeaderBoat();
-      } else {
-        boatClickTimestamps = boatClickTimestamps.filter(t => now - t <= 2000);
-        boatClickTimestamps.push(now);
-        if (boatClickTimestamps.length >= 3) {
-          boatClickTimestamps = [];
-          sinkHeaderBoat();
-        }
-      }
-    });
-
-    restoreBtn?.addEventListener('click', () => {
-      restoreHeaderBoat();
-      document.getElementById('header-paper-boat-btn')?.focus({ preventScroll: true });
-    });
-  })();
 
   // Keep the mobile navigation reachable without changing desktop navigation state.
   const navToggle = document.getElementById('nav-toggle');
@@ -1755,12 +1619,12 @@ function lineIconSvg(id: string): string {
   refreshActiveNavigation();
   import {initializeWorldI18n} from "../lib/i18n.mjs";
   import * as HeaderStatus from "../lib/header-status.mjs";
-  import * as HeaderBoat from "../lib/header-boat.mjs";
+  import { initializeHeaderBoat } from "../lib/header-boat.mjs";
   (window as any).BachHeaderStatus = HeaderStatus;
-  (window as any).BachHeaderBoat = HeaderBoat;
   document.dispatchEvent(new Event('bach:header-status-ready'));
   initializeDomainMenu();
   initializeWorldI18n();
+  initializeHeaderBoat();
 </script>
 
 <style>
