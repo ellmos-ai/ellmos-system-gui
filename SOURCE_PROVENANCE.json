@@ -7,8 +7,8 @@
   "files_sha256": {
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
     ".github/workflows/tests.yml": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
-    "README.md": "a1fbc80c3ed085294717d2f3219693d8fe96583e4c1338b8c670a3ef02e6273e",
-    "RELEASE_GATE.md": "cd2e9239cad513447bac29f31a1edbcb43ef431ba93bcde424df0b8579141cdf",
+    "README.md": "6438e48f633bdb0902dc6d589ce6d037f3b643d1714425494679082e97c8b816",
+    "RELEASE_GATE.md": "fbddf57a3ad9dabc7d074f3d73d5ea3e1bab4b8223bbe48f42d9b5d6ca77dfea",
     "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
@@ -20,9 +20,9 @@
     "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
-    "ellmos-module.v2.json": "059ff338ff986c0d447e80b016a9c5b9b1bed6b2ee1f1dc5b61e854ccea8e933",
-    "package-lock.json": "07b50f62d7e7f2e5ca91e32e09c72d428470387567aef245091272eb5ff08931",
-    "package.json": "bdb92150e133420e33332f396458b76133f5eb9a58addff4fa63f64eed9c4535",
+    "ellmos-module.v2.json": "a8717c0b3e5c88f77c3d97a06ff053c521a1d24a340b734424d8d7cb1c3b3194",
+    "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
+    "package.json": "3c17c353cdc673ad50c98b5bbc8af8a1374a1909185c3e2e60df5d5a42866bfb",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "b2ab990a780b7395f8869b2a709e2253daaa6b5d7becd0c63c75b78a8e54ef80",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -283,7 +283,7 @@
     "src/pages/agenten/blueprints.astro": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
-    "src/pages/agenten/running.astro": "afa65e510a9bef7e3622a0c7b9045b39d9d9673d39b92b9b7a67eabcd4ff28c6",
+    "src/pages/agenten/running.astro": "8409464401a5a90c65080885dad03831170c102886fb6828a62bb94cf119491a",
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
     "src/pages/agenten/subscription-agents.astro": "5e1eca8ee6ef5e97a018c104f1e4f342975897bcd9ff656b7ca2a2636b5cb4b5",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
@@ -359,7 +359,7 @@
     "tests/run-dompurify-browser.mjs": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
     "tests/settings-connections.test.mjs": "5ad0a09c43b7a215a5f4924d00bd84becadee8e862483337927a2f36c1f35d6a",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "tests/system-slots.test.mjs": "194460463414fc8fe67d36b5763a08db0b731a162121e7afb51b0b15310dac62",
+    "tests/system-slots.test.mjs": "ed19be877328d1b4d482fe7490758760ccb363022a47aa72dd3ffab3d737fdef",
     "tests/task-assignment.test.mjs": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
     "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
     "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
@@ -5860,6 +5860,47 @@
           "path": "package.json",
           "previous_sha256": "b0e0ee0e02caaa41fa2dceae3542d58cd2f8e6e3beb8501cc42bf327d4c1aec4",
           "sha256": "bdb92150e133420e33332f396458b76133f5eb9a58addff4fa63f64eed9c4535"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "summary": "Release 0.2.38: unify agent tile action buttons on /agenten/running to unambiguous action verbs (Starten, Fortsetzen, Pausieren, Stoppen) instead of An/Aus state labels; update tests and release metadata.",
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "a1fbc80c3ed085294717d2f3219693d8fe96583e4c1338b8c670a3ef02e6273e",
+          "sha256": "6438e48f633bdb0902dc6d589ce6d037f3b643d1714425494679082e97c8b816"
+        },
+        {
+          "path": "RELEASE_GATE.md",
+          "previous_sha256": "cd2e9239cad513447bac29f31a1edbcb43ef431ba93bcde424df0b8579141cdf",
+          "sha256": "fbddf57a3ad9dabc7d074f3d73d5ea3e1bab4b8223bbe48f42d9b5d6ca77dfea"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "059ff338ff986c0d447e80b016a9c5b9b1bed6b2ee1f1dc5b61e854ccea8e933",
+          "sha256": "a8717c0b3e5c88f77c3d97a06ff053c521a1d24a340b734424d8d7cb1c3b3194"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "07b50f62d7e7f2e5ca91e32e09c72d428470387567aef245091272eb5ff08931",
+          "sha256": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "bdb92150e133420e33332f396458b76133f5eb9a58addff4fa63f64eed9c4535",
+          "sha256": "3c17c353cdc673ad50c98b5bbc8af8a1374a1909185c3e2e60df5d5a42866bfb"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "afa65e510a9bef7e3622a0c7b9045b39d9d9673d39b92b9b7a67eabcd4ff28c6",
+          "sha256": "8409464401a5a90c65080885dad03831170c102886fb6828a62bb94cf119491a"
+        },
+        {
+          "path": "tests/system-slots.test.mjs",
+          "previous_sha256": "194460463414fc8fe67d36b5763a08db0b731a162121e7afb51b0b15310dac62",
+          "sha256": "ed19be877328d1b4d482fe7490758760ccb363022a47aa72dd3ffab3d737fdef"
         }
       ]
     }

@@ -822,18 +822,39 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     // builds a card by hand. source: 'core' (system slot or profile), 'worker', 'talk' or 'interface'.
     function tileActionsFor(agent, source, ctx) {
       const id = agent.id;
-      const noPowerReason = 'Systemplätze und Profile werden mit An und Aus gesteuert';
       const workerOnly = 'Nur für laufende Hintergrundworker verfügbar';
       const viaOccupancy = 'Schnittstellen werden über die Besetzung gesteuert';
       if (source === 'core') {
         const enabled = agent.enabled === true;
+        const workerSlot = agent.execution_kind === 'worker' || id === 'buddha_always_on';
+        const status = String(agent.status || '').toLowerCase();
+        const paused = !enabled || agent.pause_info?.is_paused === true || status === 'paused';
+        const live = workerSlot
+          ? (ctx.running === true || agent.running === true || agent.worker_active === true)
+          : enabled;
+        const canStart = Boolean(String(agent.backend || '').trim() && String(agent.model || '').trim());
+        const runLabel = live ? 'Pausieren' : (paused ? 'Fortsetzen' : 'Starten');
+        const runSpec = live
+          ? {label: 'Pausieren', ariaLabel: (agent.name || id) + ' pausieren', onClick: () => toggleCoreSlot(id, false)}
+          : !canStart
+            ? {label: 'Starten', reason: 'Start nicht bestätigt: Modell oder Anbieter fehlt'}
+            : {label: runLabel, tone: 'primary', ariaLabel: (agent.name || id) + (paused ? ' fortsetzen' : ' starten'),
+               onClick: () => toggleCoreSlot(id, true)};
         return {
-          run: {label: enabled ? 'An' : 'Aus', role: 'switch', checked: enabled, ariaLabel: (agent.name || agent.id) + ' ein- oder ausschalten',
-            onClick: () => toggleCoreSlot(id, !enabled)},
+          run: runSpec,
           edit: {label: ctx.sysRole ? 'Besetzung ändern' : 'Bearbeiten', onClick: () => openCoreEditor(id)},
           chat: {href: '/chat?slot_id=' + encodeURIComponent(id)},
           assign: {href: '/tasks?create=1&assign_slot=' + encodeURIComponent(id)},
-          pause: {reason: noPowerReason}, stop: {reason: noPowerReason},
+          pause: live
+            ? {reason: 'Läuft: Pausieren steht oben auf der Kachel'}
+            : paused
+              ? {reason: 'Der Agent ist bereits pausiert'}
+              : canStart
+                ? {label: 'Pausieren', onClick: () => toggleCoreSlot(id, false)}
+                : {reason: 'Pausieren setzt einen startbereiten Agenten voraus'},
+          stop: live
+            ? {label: 'Stoppen', tone: 'danger', onClick: () => toggleCoreSlot(id, false)}
+            : {reason: 'Nur aktive oder laufende Agenten können gestoppt werden'},
           handoff: {reason: workerOnly}, decompose: {reason: workerOnly},
           delete: {reason: 'Agentenprofile werden im Bearbeiten-Dialog gelöscht'},
         };
@@ -1413,8 +1434,8 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const data = await coreRequest('/' + encodeURIComponent(slotId) + '/toggle', 'POST',
           {configuration_version:coreConfigVersion, enabled});
         renderCoreAgents(data);
-        feedback.textContent = enabled ? 'Agentenprofil eingeschaltet; Live-Status wird geprüft.' :
-          'Agentenprofil ausgeschaltet. Laufende Arbeit wird beendet; Status neu prüfen.';
+        feedback.textContent = enabled ? 'Start angefordert; Live-Status wird geprüft.' :
+          'Agent pausiert. Laufende Arbeit wird beendet; Status neu prüfen.';
       } catch (error) {feedback.textContent = 'Schalter nicht bestätigt: ' + error.message; await loadCoreSlots();}
     }
 
