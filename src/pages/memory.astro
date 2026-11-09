@@ -73,7 +73,7 @@ const mermaidCode = `flowchart TD
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.65rem;">
         <a href="/help?tab=architecture" class="btn btn-secondary btn-sm">🏗️ Hilfe › Architektur (Schaubild, Reiter 1–3, 6 &amp; Modulschaltplan)</a>
         <a href="/governance#hooks-guards" class="btn btn-secondary btn-sm">🛡️ Governance › Hooks &amp; Guards (Reiter 4 &amp; 5)</a>
-        <a href="/skills#skill-keeper" class="btn btn-secondary btn-sm">🌙 Skills &amp; Software › Skill Keeper (Reiter 7 Hermes)</a>
+        <a href="/skills#skill-keeper" class="btn btn-secondary btn-sm">🌙 Skills &amp; Software › Skill Keeper (Skill-Gärtner)</a>
         <a href="/notizen" class="btn btn-secondary btn-sm">📝 Notizen (Gedanken &amp; Logbuch)</a>
       </div>
     </div>
@@ -522,12 +522,12 @@ const mermaidCode = `flowchart TD
     <div class="insp-panel" id="panel-learn" style="display:none;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
         <div>
-          <h3 style="margin:0 0 0.25rem 0;font-size:1.2rem;color:var(--text);">🌙 Ocean Subsystem Hermes: Skill-Lernen & Destillation</h3>
+          <h3 style="margin:0 0 0.25rem 0;font-size:1.2rem;color:var(--text);">🌙 Skill-Gärtner: Skill-Lernen & Destillation</h3>
           <p style="color:var(--text-muted);font-size:0.875rem;margin:0;">
             Autonome Extraktion von Verhaltensweisen, Lessons Learned und neuen Skills aus Roh-Logs nach deterministischer Rauschreduzierung.
           </p>
         </div>
-        <span class="badge" id="hermes-status-badge" title="Für Hermes liegt kein bestätigter Laufzeitstatus vor.">Hermes: Status ungeprüft</span>
+        <span class="badge" id="hermes-status-badge" title="Für den Skill-Gärtner liegt kein bestätigter Laufzeitstatus vor.">Skill-Gärtner: Status ungeprüft</span>
       </div>
 
       <!-- Hermes Live Metrics Bar -->
@@ -560,10 +560,10 @@ const mermaidCode = `flowchart TD
         <!-- WORKBENCH -->
         <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.25rem;">
           <h4 style="margin:0 0 0.5rem 0;font-size:0.95rem;color:var(--text);display:flex;align-items:center;gap:0.4rem;">
-            <span>⚡</span> Interaktive Hermes-Destillation (Transkript oder Dialogtext)
+            <span>⚡</span> Interaktive Destillation (Transkript oder Dialogtext)
           </h4>
           <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">
-            Füge einen Rohtext, einen Transkript-Ausschnitt oder eine Session-ID ein. Hermes filtert das Rauschen (~76%), extrahiert Lessons Learned und synthetisiert einen normgerechten SKILL.md-Entwurf.
+            Füge einen Rohtext, einen Transkript-Ausschnitt oder eine Session-ID ein. Der Skill-Gärtner filtert das Rauschen (~76%), extrahiert Lessons Learned und synthetisiert einen normgerechten SKILL.md-Entwurf.
           </p>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
@@ -607,7 +607,7 @@ const mermaidCode = `flowchart TD
                 <span>📋</span> Skill-Kandidaten Queue (Human-in-the-Loop)
               </h4>
               <span style="font-size:0.75rem;color:var(--text-muted);">
-                Von Hermes autonom generierte Skills erfordern eine Operator-Freigabe vor der Aktivierung.
+                Vom Skill-Gärtner autonom generierte Skills erfordern eine Operator-Freigabe vor der Aktivierung.
               </span>
             </div>
             <div style="display:flex;gap:0.35rem;">
@@ -1517,7 +1517,7 @@ const mermaidCode = `flowchart TD
     }
 
     if (btn) btn.disabled = true;
-    if (feedback) feedback.textContent = '⏳ Hermes destilliert (Rauschfilterung & Lessons)...';
+    if (feedback) feedback.textContent = '⏳ Der Skill-Gärtner destilliert (Rauschfilterung & Lessons)...';
 
     try {
       const res = await fetch('/api/learning/hermes/distill', {

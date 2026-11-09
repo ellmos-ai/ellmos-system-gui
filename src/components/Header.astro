@@ -121,11 +121,17 @@ function lineIconSvg(id: string): string {
   </div>
 
   <!-- Animiertes Origami-Papierboot im freien Bereich auf der Trennlinie zum Body (Meeresoberfläche) -->
-  <div class="header-ocean-waterline" aria-hidden="true" title="OCEAN · Vom Rinnsal über den BACH bis ins Meer">
-    <div class="header-waterline-surface"></div>
-    <div class="header-paper-boat-track">
-      <div class="header-paper-boat-hull">
-        <span class="header-boat-wake"></span>
+  <div class="header-ocean-waterline" id="header-ocean-waterline" data-boat-mode="on" title="OCEAN · Vom Rinnsal über den BACH bis ins Meer">
+    <div class="header-waterline-surface" aria-hidden="true"></div>
+    <div class="header-paper-boat-track" id="header-paper-boat-track">
+      <button
+        type="button"
+        id="header-paper-boat-btn"
+        class="header-paper-boat-hull"
+        aria-label="Origami-Papierboot auf der Wasserlinie (3× schnell klicken zum Versenken)"
+        title="Origami-Papierboot (3× innerhalb von 2 Sekunden klicken zum Versenken)"
+      >
+        <span class="header-boat-wake" aria-hidden="true"></span>
         <svg class="header-paper-boat-svg" viewBox="0 0 84 44" width="54" height="29" focusable="false" aria-hidden="true">
           <defs>
             <linearGradient id="paper-boat-hull-grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -160,9 +166,16 @@ function lineIconSvg(id: string): string {
           <line x1="42" y1="3" x2="42" y2="35" stroke="#64748b" stroke-width="0.95" stroke-opacity="0.65" />
           <line x1="16" y1="35.5" x2="68" y2="35.5" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" />
         </svg>
-        <span class="header-boat-reflection"></span>
-      </div>
+        <span class="header-boat-reflection" aria-hidden="true"></span>
+      </button>
     </div>
+    <button
+      type="button"
+      id="header-boat-restore-btn"
+      class="header-boat-restore-btn"
+      title="Versunkenes Papierboot wieder an die Wasseroberfläche holen"
+      hidden
+    >Boot zurückholen</button>
   </div>
 
   <div class="header-right">
@@ -1606,10 +1619,12 @@ function lineIconSvg(id: string): string {
   refreshActiveNavigation();
   import {initializeWorldI18n} from "../lib/i18n.mjs";
   import * as HeaderStatus from "../lib/header-status.mjs";
+  import { initializeHeaderBoat } from "../lib/header-boat.mjs";
   (window as any).BachHeaderStatus = HeaderStatus;
   document.dispatchEvent(new Event('bach:header-status-ready'));
   initializeDomainMenu();
   initializeWorldI18n();
+  initializeHeaderBoat();
 </script>
 
 <style>
@@ -1663,6 +1678,29 @@ function lineIconSvg(id: string): string {
     z-index: 4;
     overflow: visible;
   }
+  .header-ocean-waterline[data-boat-mode="off"] {
+    display: none !important;
+  }
+  .header-ocean-waterline[data-boat-mode="logo"] {
+    left: 118px;
+    right: auto;
+    width: 72px;
+  }
+  .header-ocean-waterline[data-boat-mode="logo"] .header-waterline-surface {
+    opacity: 0.55;
+  }
+  .header-ocean-waterline[data-boat-mode="logo"] .header-paper-boat-track {
+    animation: none !important;
+    left: 4px;
+    transform: none !important;
+  }
+  .header-ocean-waterline[data-boat-mode="logo"] .header-paper-boat-hull {
+    animation: none !important;
+    transform: none !important;
+  }
+  .header-ocean-waterline[data-boat-mode="logo"] .header-boat-wake {
+    display: none;
+  }
   .header-waterline-surface {
     position: absolute;
     left: 0;
@@ -1679,14 +1717,61 @@ function lineIconSvg(id: string): string {
     width: 58px;
     height: 32px;
     animation: paperBoatVoyage 32s ease-in-out infinite;
+    pointer-events: auto;
   }
   .header-paper-boat-hull {
     position: relative;
     width: 54px;
     height: 29px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
     transform-origin: 50% 85%;
     animation: paperBoatBobbing 3.2s ease-in-out infinite;
     filter: drop-shadow(0 3px 6px rgba(2, 132, 199, 0.38));
+  }
+  .header-paper-boat-hull:focus-visible {
+    outline: 2px solid var(--shell-accent, #38bdf8);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .header-ocean-waterline[data-boat-sinking="true"] .header-paper-boat-hull {
+    animation: paperBoatSink 0.65s ease-in forwards !important;
+    pointer-events: none;
+  }
+  .header-ocean-waterline[data-boat-sunk="true"] .header-paper-boat-track {
+    display: none !important;
+  }
+  .header-boat-restore-btn {
+    position: absolute;
+    left: 8px;
+    bottom: 3px;
+    pointer-events: auto;
+    padding: 0.1rem 0.45rem;
+    font: inherit;
+    font-size: 0.68rem;
+    color: var(--shell-muted, #94a3b8);
+    background: rgba(15, 23, 42, 0.78);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 999px;
+    cursor: pointer;
+    line-height: 1.3;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .header-boat-restore-btn[hidden] {
+    display: none !important;
+  }
+  .header-boat-restore-btn:hover,
+  .header-boat-restore-btn:focus-visible {
+    color: var(--text, #f8fafc);
+    border-color: var(--shell-accent, #38bdf8);
+  }
+  .header-boat-restore-btn:focus-visible {
+    outline: 2px solid var(--shell-accent, #38bdf8);
+    outline-offset: 2px;
   }
   .header-paper-boat-svg {
     display: block;
@@ -1740,6 +1825,27 @@ function lineIconSvg(id: string): string {
     }
     50% {
       transform: translateY(-2.4px) rotate(1.8deg);
+    }
+  }
+  @keyframes paperBoatSink {
+    0% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 1;
+    }
+    45% {
+      transform: translateY(6px) rotate(16deg);
+      opacity: 0.85;
+    }
+    100% {
+      transform: translateY(24px) rotate(32deg) scale(0.82);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .header-paper-boat-track,
+    .header-paper-boat-hull,
+    .header-ocean-waterline[data-boat-sinking="true"] .header-paper-boat-hull {
+      animation: none !important;
     }
   }
   @media (max-width: 1120px) {
