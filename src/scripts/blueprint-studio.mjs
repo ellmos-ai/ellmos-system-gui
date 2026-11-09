@@ -49,8 +49,13 @@ if (typeof document !== "undefined") initializeStudio();
 
 function initializeStudio() {
   const $ = id => document.getElementById(id);
+  const initialParams = typeof location !== "undefined" ? new URLSearchParams(location.search) : new URLSearchParams();
+  const requestedTab = initialParams.get("tab") === "subscription-agents" ? "prompt-agents" : initialParams.get("tab");
+  const initialLibrary = ["templates", "custom", "prompt-agents", "teams"].includes(requestedTab)
+    ? requestedTab
+    : (typeof location !== "undefined" && location.hash === "#prompt-agents" ? "prompt-agents" : "templates");
   const state = {colorSupported:false,blueprints:[], teams:[], skills:[], tools:[], contracts:[], governance:[], core:null,
-    prompts:null, library:"custom", edit:null, instance:null, instanceVersion:null, instanceConfig:null, promptVersion:null,
+    prompts:null, library:initialLibrary, edit:null, instance:null, instanceVersion:null, instanceConfig:null, promptVersion:null,
     team:null, copy:null, revisionContract:null, avatar:"", symbol:"", modelRequest:0};
   const labels = {agent:"Agent",role:"Rolle",skill:"Skill-Vorlage",workflow:"Workflow-Vorlage",service:"Service-Vorlage",contractus:"Arbeitsvertrag"};
   const icons = {agent:"🤖",role:"🎭",skill:"🧩",workflow:"⛓",service:"⚙",contractus:"📜"};
@@ -89,7 +94,12 @@ function initializeStudio() {
     const custom=state.blueprints.filter(bp=>!bp.is_template), templates=state.blueprints.filter(bp=>bp.is_template);
     $("count-custom").textContent=custom.length; $("count-templates").textContent=templates.length; $("count-teams").textContent=state.teams.length;
     document.querySelectorAll("[data-library]").forEach(button=>button.setAttribute("aria-selected",String(button.dataset.library===state.library)));
-    const showTeams=state.library==="teams"; $("studio-grid").hidden=showTeams; $("studio-teams").hidden=!showTeams;
+    const showTeams=state.library==="teams", showPromptAgents=state.library==="prompt-agents";
+    $("studio-grid").hidden=showTeams||showPromptAgents; $("studio-teams").hidden=!showTeams;
+    if($("studio-prompt-agents"))$("studio-prompt-agents").hidden=!showPromptAgents;
+    if($("studio-toolbar"))$("studio-toolbar").hidden=showPromptAgents;
+    if($("ocean-role-socket-panel"))$("ocean-role-socket-panel").hidden=showPromptAgents;
+    if(showPromptAgents) return;
     if(showTeams) { renderTeams(); return; }
     const query=$("studio-search").value.toLocaleLowerCase("de"),kind=$("studio-kind").value;
     const items=(state.library==="templates"?templates:custom).filter(bp=>(!kind||bp.kind===kind)&&
@@ -332,11 +342,13 @@ function initializeStudio() {
     if(!payload.leader_agent)throw new Error("Bitte mindestens ein Mitglied auswählen.");
     await post("/api/agenten/teams"+(state.team?"/"+state.team.id:""),payload);close("team-editor");await loadData();
   },"team-status");
+  if(state.library==="prompt-agents")render();
   loadData().then(()=>{
     const params=new URLSearchParams(location.search),id=params.get("edit")||params.get("copy");
     const bp=id?byId(id):state.blueprints.find(item=>item.name===params.get("blueprint"));
-    if(["custom","templates","teams"].includes(params.get("tab"))){state.library=params.get("tab");render();}
-    if(bp)openEditor(bp,params.has("copy")||bp.is_template===1);else if(params.has("new"))openEditor();
+    const tab=params.get("tab")==="subscription-agents"?"prompt-agents":params.get("tab");
+    if(["custom","templates","teams","prompt-agents"].includes(tab)){state.library=tab;render();}
+    if(bp && state.library!=="prompt-agents")openEditor(bp,params.has("copy")||bp.is_template===1);else if(params.has("new"))openEditor();
     if(params.get("create")==="team")openTeam();
     if(params.get("restore")==="prompts")$("studio-prompts")?.click();
   }).catch(error=>notify("studio-status",error.message,true));

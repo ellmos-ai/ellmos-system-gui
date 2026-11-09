@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {createTriggerClient} from '../src/lib/agent-triggers.mjs';
+import {formatTriggerStatus} from '../src/lib/agent-triggers-ui.mjs';
 const trigger = (extra = {}) => ({id: 't', agent_id: 'a', version: 1, revision: 1, enabled: false, deleted: false, schedule: {kind: 'daily', time: '09:00', timezone: 'Europe/Berlin'}, ...extra});
 const envelope = value => ({schema: 'bach.agent-triggers.v1', provider: 'ellmos-scheduler', source: 'external_scheduler', state: 'available', ...value});
 const reply = (value, status = 200) => ({ok: status === 200, status, json: async () => value});
@@ -55,4 +57,23 @@ test('native slash identifiers are encoded as one object identifier and independ
     assert.equal((await client.get(id)).id, id);
     assert.equal(called, '/api/agent-triggers/' + encodeURIComponent(id));
   }
+});
+test('running.astro no longer imports AgentTriggers and links to /routinen#startregeln below the page header', () => {
+  const running = readFileSync(new URL('../src/pages/agenten/running.astro', import.meta.url), 'utf8');
+  assert.doesNotMatch(running, /AgentTriggers/);
+  const h1Index = running.indexOf('</h1>');
+  const linkIndex = running.indexOf('/routinen#startregeln');
+  assert.ok(h1Index > -1 && linkIndex > h1Index, 'link to /routinen#startregeln must appear after the h1 block');
+  assert.match(running, /Automatische Startregeln und Zeitpläne für deine Agenten findest du unter\s+<a href="\/routinen#startregeln">Routinen & Jobs<\/a>\./);
+
+  const component = readFileSync(new URL('../src/components/AgentTriggers.astro', import.meta.url), 'utf8');
+  assert.match(component, /<section id="startregeln"[^>]*aria-label="Automatische Startregeln & Zeitpläne">/);
+  assert.match(component, /<h2>Automatische Startregeln & Zeitpläne<\/h2>/);
+  assert.match(component, /Hier legst du fest, nach welchem Zeitplan oder Ereignis ein Agent künftig automatisch angestoßen werden soll – das Speichern einer Regel startet noch keinen Agenten\./);
+});
+test('trigger status text formats zero, singular and plural rule counts', () => {
+  assert.equal(formatTriggerStatus(0), 'Noch keine Startregel gespeichert.');
+  assert.equal(formatTriggerStatus(1), '1 Startregel gespeichert.');
+  assert.equal(formatTriggerStatus(2), '2 Startregeln gespeichert.');
+  assert.equal(formatTriggerStatus(5), '5 Startregeln gespeichert.');
 });

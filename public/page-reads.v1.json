@@ -1117,9 +1117,7 @@
     "method": "GET",
     "path": "/api/agenten/library",
     "required": false
-   }
-  ],
-  "/agenten/subscription-agents": [
+   },
    {
     "method": "GET",
     "path": "/api/gui/capabilities",
@@ -1127,13 +1125,8 @@
    },
    {
     "method": "GET",
-    "path": "/api/agent-studio/blueprints",
-    "required": true
-   },
-   {
-    "method": "GET",
     "path": "/api/capabilities/skills/library",
-    "required": true
+    "required": false
    },
    {
     "method": "POST",
@@ -1141,6 +1134,7 @@
     "required": false
    }
   ],
+  "/agenten/subscription-agents": [],
   "/agenten/fabrika": [],
   "/agenten/marblerun": [
    {
@@ -1365,39 +1359,6 @@
     "method": "POST",
     "path": "/api/slots",
     "required": false
-   },
-   {
-    "method": "GET",
-    "path": "/api/agent-triggers",
-    "required": false
-   },
-   {
-    "method": "GET",
-    "path": "/api/agent-triggers/{id}",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/agent-triggers.mjs#get"
-   },
-   {
-    "method": "POST",
-    "path": "/api/agent-triggers",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/agent-triggers.mjs#write"
-   },
-   {
-    "method": "PUT",
-    "path": "/api/agent-triggers/{id}",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/agent-triggers.mjs#write"
-   },
-   {
-    "method": "DELETE",
-    "path": "/api/agent-triggers/{id}",
-    "required": false,
-    "dynamic": true,
-    "found_in": "src/lib/agent-triggers.mjs#write"
    },
    {
     "method": "GET",
