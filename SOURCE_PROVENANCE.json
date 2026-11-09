@@ -310,7 +310,7 @@
     "src/pages/notizen.astro": "55f9b57e345d574794d67a458184128d6f675dfbe4b212b1d2770d4ff4cd7865",
     "src/pages/persoenlich.astro": "f4f26c145c11721776c7e150032ed1d6a0d2d3e3f6172e6f891f821863ebc700",
     "src/pages/routinen.astro": "a2e041430e5848a19429b15999ac6af86613eedf05de1c3112d239e74894e746",
-    "src/pages/sensation.astro": "e120299d80044aca691ca217e4020dae8ec792486c2e650b5a74e7d76f9d6471",
+    "src/pages/sensation.astro": "110ae810922ef21fe8aee85d370f296c860b005f1873f6bf79996d4e76bbfed0",
     "src/pages/sessions.astro": "bb515024c04451ca8b7e3b586350707a7da29db6dc5467c2172aca3ff87a8774",
     "src/pages/settings.astro": "448cb74dd0f404c97b4984f9b7e2bfca4e8343f591822ecd3d6745bf531912e9",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
@@ -319,7 +319,7 @@
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
-    "src/pages/talk.astro": "e2f86dbd99c5d82199151537fa1b47a82842cb958865933934353c4666992626",
+    "src/pages/talk.astro": "a61230acda6dc9aa97eeb6aa7b57d1bca0565161cd9af685c092c42e07ac9548",
     "src/pages/tasks.astro": "fe73e94f5fbd143b607c28dcb78770656f5bed77cd7a89277baea06a118c1fb2",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
@@ -5911,6 +5911,22 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "b2ab990a780b7395f8869b2a709e2253daaa6b5d7becd0c63c75b78a8e54ef80",
           "sha256": "b7af8890eefada79a80bb81a25934f896fab9282fe610600b61546335b71d757"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "summary": "Back navigation (PB-23, T-20261107-358958436): /sensation and /talk show a back button that returns to the previous page of this GUI, closes the talk companion window, or links to the start page. New files BackButton.astro, back-button-logic.mjs and tests/back-button.test.mjs are not pinned here.",
+      "files": [
+        {
+          "path": "src/pages/sensation.astro",
+          "previous_sha256": "e120299d80044aca691ca217e4020dae8ec792486c2e650b5a74e7d76f9d6471",
+          "sha256": "110ae810922ef21fe8aee85d370f296c860b005f1873f6bf79996d4e76bbfed0"
+        },
+        {
+          "path": "src/pages/talk.astro",
+          "previous_sha256": "e2f86dbd99c5d82199151537fa1b47a82842cb958865933934353c4666992626",
+          "sha256": "a61230acda6dc9aa97eeb6aa7b57d1bca0565161cd9af685c092c42e07ac9548"
         }
       ]
     }
