@@ -1,10 +1,12 @@
 ---
 // sensation.astro - Unified ELLMOS Sensation Camera, Mic, Presence & Consent Panel
 import BachLayout from "../layouts/BachLayout.astro";
+import BackButton from "../components/BackButton.astro";
 ---
 
 <BachLayout title="ELLMOS Sensation · Sensorik & Präsenz" currentPath="/sensation">
   <div class="sensation-page">
+    <BackButton fallback="/" />
     <header class="card-header" style="margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
       <div>
         <span class="badge">👁️ ellmos-sensation · Kamera, Mikrofon, Sound &amp; Präsenz-Gate</span>
