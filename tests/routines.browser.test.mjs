@@ -88,16 +88,15 @@ test('every source is read: rows from BACH, Ocean and Life, all measured, source
   const {page, context, errors} = await open();
   try {
     const rows = page.locator('#routine-list .routine-row');
-    assert.equal(await rows.count(), 8);
-    assert.equal(await page.locator('#routine-list .routine-row[data-source="measured"]').count(), 8);
+    assert.equal(await rows.count(), 9);
+    assert.equal(await page.locator('#routine-list .routine-row[data-source="measured"]').count(), 9);
     const origins = await rows.evaluateAll(nodes => [...new Set(nodes.map(n => n.dataset.origin))].sort());
-    assert.deepEqual(origins, ['bach', 'life', 'ocean']);
+    assert.deepEqual(origins, ['bach', 'life', 'module', 'ocean']);
     const card = key => page.locator(`[data-source-card="${key}"]`);
     assert.equal(await card('bach').getAttribute('data-state'), 'available');
     assert.equal(await card('ocean').getAttribute('data-state'), 'available');
     assert.equal(await card('life').getAttribute('data-state'), 'available');
-    assert.equal(await card('module').getAttribute('data-state'), 'unavailable');
-    assert.match(await card('module').innerText(), /nicht erreichbar: kein Backend-Pfad/);
+    assert.equal(await card('module').getAttribute('data-state'), 'available');
     assert.match(await card('bach').innerText(), /Daemon ist gestoppt/);
     assert.deepEqual(errors, []);
   } finally { await context.close(); }
@@ -118,15 +117,16 @@ test('a job that never ran and one whose last run failed carry a visible warning
 
 test('an unreachable source is named with its reason and the other sources stay on the page', async t => {
   if (!browser) return t.skip('kein Playwright-Browser installiert');
-  const {page, context} = await open({fault: {ocean: 404, life: 401}});
+  const {page, context} = await open({fault: {ocean: 404, life: 401, module: 404}});
   try {
     assert.equal(await page.locator('#routine-list .routine-row').count(), 5);
     assert.match(await page.locator('[data-source-card="ocean"]').innerText(), /nicht erreichbar: Pfad nicht vorhanden/);
     assert.match(await page.locator('[data-source-card="life"]').innerText(), /nicht erreichbar: Geräteanmeldung erforderlich/);
+    assert.match(await page.locator('[data-source-card="module"]').innerText(), /nicht erreichbar: Pfad nicht vorhanden/);
     await page.selectOption('#routine-source-filter', 'life');
     assert.match(await page.locator('#routine-list .routine-empty').innerText(), /Life.*nicht erreichbar: Geräteanmeldung/);
     await page.selectOption('#routine-source-filter', 'module');
-    assert.match(await page.locator('#routine-list .routine-empty').innerText(), /Modul.*nicht erreichbar: kein Backend-Pfad/);
+    assert.match(await page.locator('#routine-list .routine-empty').innerText(), /Modul.*nicht erreichbar: Pfad nicht vorhanden/);
   } finally { await context.close(); }
 });
 

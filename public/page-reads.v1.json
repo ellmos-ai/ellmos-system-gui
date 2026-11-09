@@ -804,6 +804,11 @@
     "required": true
    },
    {
+    "method": "GET",
+    "path": "/api/automations",
+    "required": false
+   },
+   {
     "method": "PUT",
     "path": "/api/daemon/jobs/{id}/toggle",
     "required": false,

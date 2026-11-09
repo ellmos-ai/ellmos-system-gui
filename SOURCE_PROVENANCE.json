@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "f8e2ae35c413fa0dbb006b43dada12d4140642f1774f2f0614a22b32af98be93",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "b7af8890eefada79a80bb81a25934f896fab9282fe610600b61546335b71d757",
+    "public/page-reads.v1.json": "c7999dd63834f15e2a0c44c0fa32d577286e2978516a28dd73e5ecedc1a0f9e2",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -368,7 +368,7 @@
     "tests/task-result-history.test.mjs": "a8e65cb916164a023482cc2215a86c75aa6b85f40fdde167f250b03f7355381a",
     "tests/task-result-source.test.mjs": "bd049ed077424589a4dd44750761c0b8f089c2bc48e2ffe9833ed729e77b0c43",
     "tests/task-summary.test.mjs": "d2481b2dc978b4a1a689171aebabf12b3d9be093dc0fea5e8a6bea02da42aa46",
-    "tests/tasks-routines.test.mjs": "ae0aabd669d5d37d37b06c7cf9cbeb237b7045d9b3f5e26f57a6d1cdb6fbfea0",
+    "tests/tasks-routines.test.mjs": "6f7d425e389176b1676e1da690c6c0da565f0c41d5baa293c91059cd994704d1",
     "tests/theme-contrast.test.mjs": "7e955a7e88dd90fc34ec6a1092173d32dfac3abb95e97b7f5715d790f6d6d194",
     "tests/ticket-symbol.test.mjs": "07dff1019f27e8d06f730c01d2c939059f4520316e79b54d13923448e50310bb",
     "tests/usecase-source.test.mjs": "cb3808c5825654fc41225305111906891ef7f5556ec1ee848055b803cfccc870",
@@ -5927,6 +5927,22 @@
           "path": "src/pages/talk.astro",
           "previous_sha256": "e2f86dbd99c5d82199151537fa1b47a82842cb958865933934353c4666992626",
           "sha256": "a61230acda6dc9aa97eeb6aa7b57d1bca0565161cd9af685c092c42e07ac9548"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "summary": "Module automations as /routinen source (PB-6, T-20261107-206833979): register GET /api/automations under /routinen in public/page-reads.v1.json and update test assertions in tests/tasks-routines.test.mjs.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "b7af8890eefada79a80bb81a25934f896fab9282fe610600b61546335b71d757",
+          "sha256": "c7999dd63834f15e2a0c44c0fa32d577286e2978516a28dd73e5ecedc1a0f9e2"
+        },
+        {
+          "path": "tests/tasks-routines.test.mjs",
+          "previous_sha256": "ae0aabd669d5d37d37b06c7cf9cbeb237b7045d9b3f5e26f57a6d1cdb6fbfea0",
+          "sha256": "6f7d425e389176b1676e1da690c6c0da565f0c41d5baa293c91059cd994704d1"
         }
       ]
     }
