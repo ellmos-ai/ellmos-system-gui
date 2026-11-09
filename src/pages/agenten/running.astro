@@ -46,8 +46,8 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       <label>Zugang<select id="agent-overview-access" data-agent-overview-control="access"><option value="all">Alle Zugänge</option><option value="local">Lokal</option><option value="cloud">Cloud / API</option><option value="prompt">Prompt / CLI</option><option value="unknown">Unbekannt</option></select></label>
       <label>Funktion<select id="agent-overview-function" data-agent-overview-control="function"><option value="all">Alle Funktionen</option></select></label>
       <label>Tatsächliche Startart<select id="agent-overview-start" data-agent-overview-control="start"><option value="all">Alle Startarten</option><option value="unknown">Unbekannt</option></select></label>
-      <label>Sortierung<select id="agent-overview-sort" data-agent-overview-control="sort"><option value="name">Name</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option><option value="status">Status</option></select></label>
-      <label>Gruppierung<select id="agent-overview-group" data-agent-overview-control="group"><option value="none">Aus</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option></select></label>
+      <label>Sortierung<select id="agent-overview-sort" data-agent-overview-control="sort"><option value="status" selected>Status</option><option value="name">Name</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option></select></label>
+      <label>Gruppierung<select id="agent-overview-group" data-agent-overview-control="group"><option value="none">Aus</option><option value="status">Status</option><option value="access">Zugang</option><option value="function">Funktion</option><option value="start">Startart</option></select></label>
       <label>Darstellung<select id="agent-overview-view" data-agent-overview-control="view"><option value="cards">Karten</option><option value="list">Kompakte Liste</option></select></label>
       <small id="agent-overview-summary" role="status" aria-live="polite">Gemeinsame Filter für Running und Deine Agenten.</small>
     </div>
@@ -428,6 +428,45 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     </form>
   </dialog>
 
+  <dialog id="agent-session-modal" class="core-slot-modal agent-session-modal" aria-labelledby="agent-session-modal-title">
+    <div class="agent-session-shell">
+      <header class="agent-session-header">
+        <div>
+          <h2 id="agent-session-modal-title">Session-Log &amp; Direkt-Chat</h2>
+          <small id="agent-session-modal-meta" class="text-muted"></small>
+        </div>
+        <div class="agent-session-header-actions">
+          <label class="agent-session-tool-toggle"><input type="checkbox" id="agent-session-show-tools" onchange="onAgentSessionToolsToggle()" /> Tool-Details</label>
+          <button type="button" class="btn btn-sm" id="agent-session-refresh-btn" onclick="refreshAgentSessionModal()">Aktualisieren</button>
+          <a id="agent-session-fullchat-link" class="btn btn-sm" href="/chat">Im Vollbild-Chat</a>
+          <button type="button" class="btn btn-sm" onclick="closeAgentSessionModal()" aria-label="Schließen">✕</button>
+        </div>
+      </header>
+      <div class="agent-session-layout">
+        <aside class="agent-session-sidebar" aria-label="Gespeicherte Sessions">
+          <div class="agent-session-sidebar-head">
+            <strong>Sessions</strong>
+            <button type="button" class="btn btn-sm btn-primary" id="agent-session-new-btn" onclick="startNewAgentModalChat()">Neuer Direkt-Chat</button>
+          </div>
+          <p id="agent-session-list-state" class="text-muted">Sessions werden geladen …</p>
+          <ul id="agent-session-list" class="agent-session-list"></ul>
+        </aside>
+        <section class="agent-session-main" aria-label="Session-Verlauf und Direktnachricht">
+          <div id="agent-session-bar" class="agent-session-bar" hidden></div>
+          <div id="agent-session-messages" class="agent-session-messages" role="log" aria-live="polite"></div>
+          <p id="agent-session-status" class="agent-session-status" role="status" aria-live="polite"></p>
+          <form id="agent-session-form" class="agent-session-form" onsubmit="event.preventDefault();submitAgentSessionMessage()">
+            <textarea id="agent-session-input" rows="3" maxlength="20000" placeholder="Direktnachricht an diesen Agenten schreiben … (Enter zum Senden, Shift+Enter für Zeilenumbruch)"></textarea>
+            <div class="agent-session-form-actions">
+              <button type="submit" class="btn btn-primary" id="agent-session-send-btn">Nachricht senden</button>
+              <button type="button" class="btn" id="agent-session-resume-worker-btn" onclick="resumeAgentWorkerFromModal()" hidden>Als Worker-Hinweis starten</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </dialog>
+
   <style>
     :global(.worker-queue-details) {font-size:.8rem;line-height:1.45;margin:.5rem 0;color:var(--text);overflow-wrap:anywhere}
     :global(details.worker-queue-details summary) {cursor:pointer;font-weight:600}
@@ -566,9 +605,38 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     #template-agent-picker label { display:grid; gap:.35rem; }
     #template-agent-picker input, #template-agent-picker select { min-width:0; width:100%; padding:.65rem; border:1px solid var(--border); border-radius:5px; color:var(--text); background:var(--bg-dark); }
     #template-agent-picker pre { max-height:15rem; overflow:auto; font-size:.8rem; }
+    :global(#agent-session-modal.agent-session-modal) { width:min(94vw, 68rem); max-width:68rem; padding:1rem; }
+    :global(.agent-session-shell) { display:grid; gap:.8rem; }
+    :global(.agent-session-header) { display:flex; align-items:flex-start; justify-content:space-between; gap:.75rem; flex-wrap:wrap; border-bottom:1px solid var(--border); padding-bottom:.65rem; }
+    :global(.agent-session-header h2) { margin:0; font-size:1.08rem; }
+    :global(.agent-session-header-actions) { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; }
+    :global(.agent-session-tool-toggle) { display:inline-flex; align-items:center; gap:.35rem; font-size:.8rem; color:var(--text-muted); cursor:pointer; }
+    :global(.agent-session-layout) { display:grid; grid-template-columns:minmax(14rem, 18rem) minmax(0, 1fr); gap:.9rem; min-height:26rem; max-height:72vh; }
+    @media (max-width: 760px) { :global(.agent-session-layout) { grid-template-columns:1fr; max-height:none; } }
+    :global(.agent-session-sidebar) { display:flex; flex-direction:column; gap:.5rem; border:1px solid var(--border); border-radius:var(--radius-sm); padding:.65rem; background:var(--bg-dark); min-height:0; overflow:hidden; }
+    :global(.agent-session-sidebar-head) { display:flex; align-items:center; justify-content:space-between; gap:.5rem; }
+    :global(.agent-session-list) { list-style:none; margin:0; padding:0; display:grid; gap:.35rem; overflow-y:auto; flex:1; }
+    :global(.agent-session-item) { width:100%; text-align:left; padding:.5rem .6rem; border:1px solid var(--border); border-radius:4px; background:var(--bg-card); color:var(--text); cursor:pointer; display:grid; gap:.2rem; font:inherit; font-size:.8rem; }
+    :global(.agent-session-item[aria-current="true"]) { border-color:var(--accent-text); background:color-mix(in srgb, var(--accent-text) 14%, var(--bg-card)); }
+    :global(.agent-session-item-title) { font-weight:600; overflow-wrap:anywhere; }
+    :global(.agent-session-item-meta) { font-size:.72rem; color:var(--text-muted); }
+    :global(.agent-session-main) { display:flex; flex-direction:column; gap:.55rem; min-height:0; overflow:hidden; }
+    :global(.agent-session-bar) { display:flex; align-items:center; justify-content:space-between; gap:.5rem; flex-wrap:wrap; padding:.45rem .65rem; border:1px solid var(--border); border-radius:4px; background:var(--bg-dark); font-size:.8rem; }
+    :global(.agent-session-messages) { flex:1; min-height:14rem; max-height:44vh; overflow-y:auto; padding:.65rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-dark); display:grid; gap:.55rem; align-content:start; }
+    :global(.agent-session-msg) { padding:.55rem .7rem; border:1px solid var(--border); border-radius:6px; background:var(--bg-card); font-size:.83rem; line-height:1.45; overflow-wrap:anywhere; }
+    :global(.agent-session-msg-user) { border-color:color-mix(in srgb, var(--accent-text) 45%, var(--border)); }
+    :global(.agent-session-msg-tool) { font-family:var(--font-mono, monospace); font-size:.75rem; background:color-mix(in srgb, var(--bg-card) 70%, transparent); }
+    :global(.agent-session-msg-failed) { border-color:var(--accent-danger, #ef4444); }
+    :global(.agent-session-msg-head) { font-size:.72rem; font-weight:700; color:var(--text-muted); margin-bottom:.25rem; }
+    :global(.agent-session-msg-body) { white-space:pre-wrap; margin:0; }
+    :global(.agent-session-status) { margin:0; min-height:1.25em; font-size:.78rem; color:var(--text-muted); }
+    :global(.agent-session-status[data-error="true"]) { color:var(--accent-danger, #ef4444); }
+    :global(.agent-session-form) { display:grid; gap:.45rem; }
+    :global(.agent-session-form textarea) { width:100%; min-width:0; padding:.55rem; border:1px solid var(--border); border-radius:5px; background:var(--bg-card); color:var(--text); font:inherit; font-size:.84rem; resize:vertical; }
+    :global(.agent-session-form-actions) { display:flex; align-items:center; justify-content:flex-end; gap:.5rem; flex-wrap:wrap; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';import * as AgentTile from '../../lib/agent-tile.mjs';import * as UiIcons from '../../lib/ui-icons.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachAgentTile=AgentTile;window.BachUiIcons=UiIcons;window.BachProviderRequestStatus=providerRequestStatusText;</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';import * as AgentTile from '../../lib/agent-tile.mjs';import * as UiIcons from '../../lib/ui-icons.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachAgentTile=AgentTile;window.BachUiIcons=UiIcons;import {sendChatMessage,describeSendError,forkSession,resumeWorker,newChatId,ChatSendError} from '../../lib/chat-client.mjs';import {loadSessionPage,loadSession} from '../../lib/transcript-history.mjs';window.BachProviderRequestStatus=providerRequestStatusText;window.BachChatModalTools={sendChatMessage,describeSendError,forkSession,resumeWorker,newChatId,ChatSendError,loadSessionPage,loadSession};</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -822,18 +890,39 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     // builds a card by hand. source: 'core' (system slot or profile), 'worker', 'talk' or 'interface'.
     function tileActionsFor(agent, source, ctx) {
       const id = agent.id;
-      const noPowerReason = 'Systemplätze und Profile werden mit An und Aus gesteuert';
       const workerOnly = 'Nur für laufende Hintergrundworker verfügbar';
       const viaOccupancy = 'Schnittstellen werden über die Besetzung gesteuert';
       if (source === 'core') {
         const enabled = agent.enabled === true;
+        const workerSlot = agent.execution_kind === 'worker' || id === 'buddha_always_on';
+        const status = String(agent.status || '').toLowerCase();
+        const paused = !enabled || agent.pause_info?.is_paused === true || status === 'paused';
+        const live = workerSlot
+          ? (ctx.running === true || agent.running === true || agent.worker_active === true)
+          : enabled;
+        const canStart = Boolean(String(agent.backend || '').trim() && String(agent.model || '').trim());
+        const runLabel = live ? 'Pausieren' : (paused ? 'Fortsetzen' : 'Starten');
+        const runSpec = live
+          ? {label: 'Pausieren', ariaLabel: (agent.name || id) + ' pausieren', onClick: () => toggleCoreSlot(id, false)}
+          : !canStart
+            ? {label: 'Starten', reason: 'Start nicht bestätigt: Modell oder Anbieter fehlt'}
+            : {label: runLabel, tone: 'primary', ariaLabel: (agent.name || id) + (paused ? ' fortsetzen' : ' starten'),
+               onClick: () => toggleCoreSlot(id, true)};
         return {
-          run: {label: enabled ? 'An' : 'Aus', role: 'switch', checked: enabled, ariaLabel: (agent.name || agent.id) + ' ein- oder ausschalten',
-            onClick: () => toggleCoreSlot(id, !enabled)},
+          run: runSpec,
           edit: {label: ctx.sysRole ? 'Besetzung ändern' : 'Bearbeiten', onClick: () => openCoreEditor(id)},
-          chat: {href: '/chat?slot_id=' + encodeURIComponent(id)},
+          chat: {label: 'Chat öffnen', href: '/chat?slot_id=' + encodeURIComponent(id), onClick: event => { event?.preventDefault?.(); openAgentSessionModal(agent, 'core'); }},
           assign: {href: '/tasks?create=1&assign_slot=' + encodeURIComponent(id)},
-          pause: {reason: noPowerReason}, stop: {reason: noPowerReason},
+          pause: live
+            ? {reason: 'Läuft: Pausieren steht oben auf der Kachel'}
+            : paused
+              ? {reason: 'Der Agent ist bereits pausiert'}
+              : canStart
+                ? {label: 'Pausieren', onClick: () => toggleCoreSlot(id, false)}
+                : {reason: 'Pausieren setzt einen startbereiten Agenten voraus'},
+          stop: live
+            ? {label: 'Stoppen', tone: 'danger', onClick: () => toggleCoreSlot(id, false)}
+            : {reason: 'Nur aktive oder laufende Agenten können gestoppt werden'},
           handoff: {reason: workerOnly}, decompose: {reason: workerOnly},
           delete: {reason: 'Agentenprofile werden im Bearbeiten-Dialog gelöscht'},
         };
@@ -870,7 +959,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       else act.run = {label: paused ? 'Fortsetzen' : 'Starten', tone: 'primary', onClick: () => runWorkerAction(id, 'start')};
       act.edit = state.canEdit ? {onClick: () => editWorkerConfiguration(id)}
         : {reason: 'Bearbeiten geht nur, wenn der Worker bereit, pausiert, abgeschlossen oder fehlerhaft ist'};
-      act.chat = {reason: 'Für Hintergrundworker ist kein Chat angebunden'};
+      act.chat = {label: 'Chat öffnen', href: '/chat?slot_id=' + encodeURIComponent(id), onClick: event => { event?.preventDefault?.(); openAgentSessionModal(agent, 'worker'); }};
       act.assign = agent.runtime_verified === true && ['idle', 'completed', 'running'].includes(status)
         ? {href: '/tasks?create=1&assign_slot=' + encodeURIComponent(id)}
         : {reason: 'Zuweisen setzt einen bestätigten Laufstatus voraus'};
@@ -1100,8 +1189,108 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     let coreCatalog = {};
     let coreEditorAgent = null;
     let coreEditorVersion = null;
+    let latestLocalCoreEntries = [];
+    let latestProfileWorkerEntries = [];
+    let latestLocalCoreAddButton = null;
+    const rememberedTileOpenDetails = new Map();
+
+    function getTilePersistenceKey(tile) {
+      if (!tile?.dataset) return '';
+      if (tile.dataset.workerId) return 'running-worker:' + tile.dataset.workerId;
+      if (tile.dataset.runningSlot) return 'running-core:' + tile.dataset.runningSlot;
+      if (tile.dataset.appearanceWorker) return 'ready-worker:' + tile.dataset.appearanceWorker;
+      if (tile.dataset.coreAgentId) return 'core:' + tile.dataset.coreAgentId;
+      if (tile.dataset.interfaceSlot) return 'iface:' + tile.dataset.interfaceSlot;
+      return '';
+    }
+
+    function getDetailPersistenceKey(details, index = 0) {
+      if (!details) return '';
+      if (details.dataset?.action) return 'action:' + details.dataset.action;
+      if (details.classList?.contains('agent-tile-details')) return 'class:agent-tile-details';
+      if (details.classList?.contains('agent-tile-more')) return 'class:agent-tile-more';
+      if (details.classList?.contains('worker-selection-policy')) return 'class:worker-selection-policy';
+      if (details.classList?.contains('worker-queue-details')) return 'class:worker-queue-details';
+      if (details.classList?.contains('worker-selection-evidence')) return 'class:worker-selection-evidence';
+      const summary = details.querySelector?.('summary')?.textContent?.trim();
+      return summary ? 'summary:' + summary : 'idx:' + index;
+    }
+
+    function rememberTileDetailsState(root = document) {
+      if (typeof rememberWorkerSelectionPolicyStates === 'function') rememberWorkerSelectionPolicyStates();
+      if (typeof root?.querySelectorAll !== 'function') return;
+      for (const tile of root.querySelectorAll('.agent-tile')) {
+        const tileKey = getTilePersistenceKey(tile);
+        if (!tileKey) continue;
+        const openSet = new Set();
+        const detailsList = [...tile.querySelectorAll('details')];
+        detailsList.forEach((details, index) => {
+          if (details.open) openSet.add(getDetailPersistenceKey(details, index));
+        });
+        if (openSet.size > 0) rememberedTileOpenDetails.set(tileKey, openSet);
+        else rememberedTileOpenDetails.delete(tileKey);
+      }
+    }
+
+    function restoreTileDetailsState(root = document) {
+      if (typeof root?.querySelectorAll !== 'function') return;
+      for (const tile of root.querySelectorAll('.agent-tile')) {
+        const tileKey = getTilePersistenceKey(tile);
+        const openSet = tileKey ? rememberedTileOpenDetails.get(tileKey) : null;
+        if (!openSet?.size) continue;
+        const detailsList = [...tile.querySelectorAll('details')];
+        detailsList.forEach((details, index) => {
+          if (openSet.has(getDetailPersistenceKey(details, index))) details.open = true;
+        });
+      }
+    }
+
+    document.addEventListener?.('toggle', (event) => {
+      const details = event?.target;
+      if (!details || details.tagName !== 'DETAILS') return;
+      const tile = details.closest?.('.agent-tile');
+      if (!tile) return;
+      const tileKey = getTilePersistenceKey(tile);
+      if (!tileKey) return;
+      const openSet = new Set();
+      const detailsList = [...tile.querySelectorAll('details')];
+      detailsList.forEach((item, index) => {
+        if (item.open) openSet.add(getDetailPersistenceKey(item, index));
+      });
+      if (openSet.size > 0) rememberedTileOpenDetails.set(tileKey, openSet);
+      else rememberedTileOpenDetails.delete(tileKey);
+    }, true);
+
+    function syncCombinedReadyAgentsGrid() {
+      const readyGrid = document.getElementById('ready-agents-grid');
+      const localTarget = document.getElementById('local-core-agent-cards');
+      if (localTarget) {
+        localTarget.replaceChildren();
+        localTarget.style.display = 'none';
+      }
+      if (!readyGrid) return;
+      agentOverviewController?.beginContainer(readyGrid);
+      if (latestProfileWorkerEntries.length === 0 && latestLocalCoreEntries.length === 0) return;
+      readyGrid.style.display = 'grid';
+      const nodes = [];
+      for (const entry of latestLocalCoreEntries) {
+        nodes.push(entry.card);
+        if (typeof registerAgentOverviewCard === 'function') {
+          registerAgentOverviewCard(readyGrid, entry.card, entry.agent, 'core', 'ready');
+        }
+      }
+      for (const entry of latestProfileWorkerEntries) {
+        nodes.push(entry.card);
+        if (typeof registerAgentOverviewCard === 'function') {
+          registerAgentOverviewCard(readyGrid, entry.card, entry.worker, 'worker', 'ready');
+        }
+      }
+      if (latestLocalCoreAddButton) nodes.push(latestLocalCoreAddButton);
+      readyGrid.replaceChildren(...nodes);
+    }
 
     function renderCoreAgents(data) {
+      if (typeof rememberTileDetailsState === 'function') rememberTileDetailsState(document);
       coreRefreshEpoch += 1;
       coreConfigVersion = data.configuration_version;
       coreAgents = data.agents;
@@ -1117,6 +1306,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       const activeCoreIds = typeof runningCoreAgentIds === 'undefined' ? new Set() : runningCoreAgentIds;
       target.replaceChildren();
       if (localTarget) localTarget.replaceChildren();
+      if (typeof latestLocalCoreEntries !== 'undefined') latestLocalCoreEntries = [];
       for (const agent of coreAgents) {
         const isSysRole = isCanonicalSystemRole(agent);
         const isRunning = activeCoreIds.has(String(agent.id));
@@ -1127,6 +1317,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
           runningTarget.append(card);
           if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(runningTarget, card, agent, 'core', 'running');
         } else if (!isSysRole && localTarget) {
+          if (typeof latestLocalCoreEntries !== 'undefined') latestLocalCoreEntries.push({card, agent});
           localTarget.append(card);
           if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(localTarget, card, agent, 'core', 'ready');
         } else {
@@ -1137,10 +1328,14 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       }
       const add = coreElement('button', '+ Lokalen Agenten anlegen', 'btn core-slot-add');
       add.addEventListener('click', () => openCoreEditor());
+      if (typeof latestLocalCoreAddButton !== 'undefined') latestLocalCoreAddButton = add;
       if (localTarget) localTarget.append(add);
       else target.append(add);
+      if (typeof syncCombinedReadyAgentsGrid === 'function') syncCombinedReadyAgentsGrid();
       if (typeof renderCoreQueueDiagnostics === 'function') renderCoreQueueDiagnostics();
+      if (typeof renderWorkerSelectionPolicies === 'function') renderWorkerSelectionPolicies();
       if (typeof applyAgentOverviewControls === 'function') applyAgentOverviewControls();
+      if (typeof restoreTileDetailsState === 'function') restoreTileDetailsState(document);
     }
 
     async function coreRequest(path, method = 'GET', body) {
@@ -1176,6 +1371,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     }
 
     function renderRolePinningAndInterfaceExtensions(data) {
+      rememberTileDetailsState(document);
       const coreGrid = document.getElementById('core-agent-cards');
       const hasTalkInCore = Array.isArray(data?.agents) && data.agents.some(a => a.id === 'buddha_talk');
       if (coreGrid && !hasTalkInCore && !coreGrid.querySelector('[data-core-agent-id="buddha_talk"]')) {
@@ -1185,11 +1381,14 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const talkActive = (talkOpModeEl?.value || 'ptt') !== 'off';
         const talkModel = (talkModelEl?.value || 'buddha-default').trim();
         const talkPersona = (talkPersonaEl?.value || 'buddha').trim();
-        const talkCard = renderAgentTile({id: 'buddha_talk', name: 'ELLMOS-Talk · Funkgerät'}, 'talk', {
+        const talkAgent = {id: 'buddha_talk', name: 'ELLMOS-Talk · Funkgerät', enabled: talkActive, status: talkActive ? 'idle' : 'paused'};
+        const talkCard = renderAgentTile(talkAgent, 'talk', {
           statusLabel: talkActive ? 'Ready · Living' : 'Pausiert', tone: talkActive ? 'ok' : 'idle',
           modelLines: [talkActive ? `Besetzt von: ${talkModel} (${talkPersona})` : 'Nicht besetzt · Schnittstelle inaktiv'],
         });
         coreGrid.append(talkCard);
+        if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(coreGrid, talkCard, talkAgent, 'core', 'ready');
+        if (typeof applyAgentOverviewControls === 'function') applyAgentOverviewControls();
       }
 
       const ifaceGrid = document.getElementById('optional-interface-slot-cards');
@@ -1207,6 +1406,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
           ifaceGrid.append(icard);
         }
       }
+      restoreTileDetailsState(document);
     }
 
     function openCoreEditor(slotId = null) {
@@ -1413,8 +1613,8 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const data = await coreRequest('/' + encodeURIComponent(slotId) + '/toggle', 'POST',
           {configuration_version:coreConfigVersion, enabled});
         renderCoreAgents(data);
-        feedback.textContent = enabled ? 'Agentenprofil eingeschaltet; Live-Status wird geprüft.' :
-          'Agentenprofil ausgeschaltet. Laufende Arbeit wird beendet; Status neu prüfen.';
+        feedback.textContent = enabled ? 'Start angefordert; Live-Status wird geprüft.' :
+          'Agent pausiert. Laufende Arbeit wird beendet; Status neu prüfen.';
       } catch (error) {feedback.textContent = 'Schalter nicht bestätigt: ' + error.message; await loadCoreSlots();}
     }
 
@@ -1509,6 +1709,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         if (epoch !== workerRefreshEpoch) return;
         if (data.schema !== 'bach.workers.status.v1' || data.availability !== 'available' || !Array.isArray(data.workers))
           throw new Error('Workerquelle ist nicht bestätigt');
+        rememberTileDetailsState(document);
         rememberWorkerSelectionPolicyStates();
         agentOverviewController?.beginContainer(readyGrid);
         agentOverviewController?.beginContainer(runningList);
@@ -1537,12 +1738,12 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
 
         // Ready/profile cards show configured bindings only; resolved_model may describe a prior run.
         // 1. Render Einsatzbereite Agenten
+        latestProfileWorkerEntries = [];
         if (profileWorkers.length === 0) {
-          const hasLocalCore = (Array.isArray(coreAgents) && coreAgents.some(a => !isCanonicalSystemRole(a)))
-            || (document.getElementById('local-core-agent-cards')?.children.length > 0);
+          const hasLocalCore = latestLocalCoreEntries.length > 0
+            || (Array.isArray(coreAgents) && coreAgents.some(a => !isCanonicalSystemRole(a)));
           if (hasLocalCore) {
-            readyGrid.innerHTML = '';
-            readyGrid.style.display = 'none';
+            syncCombinedReadyAgentsGrid();
           } else {
             readyGrid.style.display = 'grid';
             readyGrid.innerHTML = `
@@ -1559,8 +1760,10 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
             const card = renderAgentTile(worker, 'worker', {statusLabel: state.label, state, running: false, tone: state.ready ? 'ok' : undefined});
             registerAgentOverviewCard(readyGrid, card, worker, 'worker', 'ready');
             window.BachAgentColor?.applyAgentColor(card, worker);
+            latestProfileWorkerEntries.push({card, worker});
             return card;
           }));
+          syncCombinedReadyAgentsGrid();
         }
 
         // 2. Render Running Workers
@@ -1583,6 +1786,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         }
         renderWorkerSelectionPolicies();
         applyAgentOverviewControls();
+        restoreTileDetailsState(document);
         window.BachWorkerLeaseCountdown?.update(runningWorkers);
       } catch (error) {
         if (epoch !== workerRefreshEpoch) return;
@@ -2077,6 +2281,298 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       if (interactive) console.log("Living & Running Daten aktualisiert");
     }
 
+
+    let agentModalState = {
+      agent: null,
+      source: 'core',
+      slotId: '',
+      chatId: '',
+      sessions: [],
+      viewing: null,
+      includeTools: false,
+      sending: false,
+      epoch: 0,
+    };
+
+    function setAgentModalStatus(text, isError = false) {
+      const el = document.getElementById('agent-session-status');
+      if (!el) return;
+      el.textContent = text || '';
+      el.dataset.error = isError ? 'true' : 'false';
+    }
+
+    function formatAgentModalStamp(val) {
+      const d = new Date(val || '');
+      return Number.isFinite(d.getTime())
+        ? d.toLocaleString('de-DE', {dateStyle: 'short', timeStyle: 'short'})
+        : 'Zeitpunkt unbekannt';
+    }
+
+    function renderAgentModalSessionList() {
+      const listEl = document.getElementById('agent-session-list');
+      const stateEl = document.getElementById('agent-session-list-state');
+      if (!listEl || !stateEl) return;
+      listEl.replaceChildren();
+      if (!agentModalState.sessions.length) {
+        stateEl.hidden = false;
+        stateEl.textContent = 'Noch keine gespeicherten Sessions für diesen Agenten.';
+        return;
+      }
+      stateEl.hidden = true;
+      for (const row of agentModalState.sessions) {
+        const li = coreElement('li');
+        const btn = coreElement('button', undefined, 'agent-session-item');
+        btn.type = 'button';
+        if (agentModalState.viewing && agentModalState.viewing.id === row.id) {
+          btn.setAttribute('aria-current', 'true');
+        }
+        btn.append(coreElement('span', row.name || ('Session #' + row.id), 'agent-session-item-title'));
+        const metaParts = [
+          formatAgentModalStamp(row['created_' + 'at']),
+          (row.stored_message_count || 0) + ' Nachr.',
+        ];
+        if (row.archived) metaParts.push('archiviert');
+        if ((row.failed_count || 0) > 0) metaParts.push(row.failed_count + ' Fehler');
+        btn.append(coreElement('span', metaParts.join(' · '), 'agent-session-item-meta'));
+        btn.addEventListener('click', () => openAgentModalSnapshot(row.id));
+        li.append(btn);
+        listEl.append(li);
+      }
+    }
+
+    function renderAgentModalBar() {
+      const bar = document.getElementById('agent-session-bar');
+      const resumeBtn = document.getElementById('agent-session-resume-worker-btn');
+      if (!bar) return;
+      bar.replaceChildren();
+      const v = agentModalState.viewing;
+      const isWorkerLike = agentModalState.source === 'worker' || agentModalState.slotId === 'buddha_always_on';
+      if (resumeBtn) {
+        resumeBtn.hidden = !(v && isWorkerLike);
+      }
+      if (!v) {
+        bar.hidden = false;
+        bar.append(coreElement('strong', 'Direkt-Chat (' + agentModalState.slotId + ')'));
+        bar.append(coreElement('span', 'Nachrichten unten gehen direkt an diesen Agenten.', 'text-muted'));
+        return;
+      }
+      bar.hidden = false;
+      bar.append(coreElement('strong', v.name || ('Session #' + v.id)));
+      const info = formatAgentModalStamp(v.stamp) + (v.archived ? ' · archiviert' : '') + ' · Quelle: ' + (v.source || 'system');
+      bar.append(coreElement('span', info, 'text-muted'));
+    }
+
+    function renderAgentModalMessages(messages) {
+      const box = document.getElementById('agent-session-messages');
+      if (!box) return;
+      box.replaceChildren();
+      const list = Array.isArray(messages) ? messages : [];
+      if (!list.length) {
+        box.append(coreElement('p', 'Keine sichtbaren Nachrichten in diesem Verlauf. Schreib unten eine Nachricht, um direkt mit dem Agenten zu chatten.', 'text-muted'));
+        return;
+      }
+      for (const m of list) {
+        if (!agentModalState.includeTools && m.role === 'tool') continue;
+        const role = m.role === 'user' ? 'user' : m.role === 'tool' ? 'tool' : 'assistant';
+        const failed = m.answer_status === 'failed';
+        const item = coreElement('div', undefined, 'agent-session-msg agent-session-msg-' + role + (failed ? ' agent-session-msg-failed' : ''));
+        const headLabel = role === 'user' ? 'Du' : role === 'tool' ? 'Werkzeug' : (agentModalState.agent?.name || agentModalState.slotId || 'Agent') + (failed ? ' · Fehlgeschlagen' : '');
+        item.append(coreElement('div', headLabel, 'agent-session-msg-head'));
+        item.append(coreElement('p', m.content || '(Kein sichtbarer Text)', 'agent-session-msg-body'));
+        box.append(item);
+      }
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function openAgentModalSnapshot(snapshotId) {
+      const tools = window.BachChatModalTools;
+      if (!tools) return;
+      const epoch = ++agentModalState.epoch;
+      setAgentModalStatus('Session #' + snapshotId + ' wird geladen …');
+      try {
+        const detail = await tools.loadSession(snapshotId, null, {include_tools: agentModalState.includeTools});
+        if (epoch !== agentModalState.epoch) return;
+        agentModalState.viewing = {
+          id: snapshotId,
+          name: detail.name,
+          chat_id: detail.chat_id || '',
+          source: detail.chat_source || 'system',
+          archived: detail.archived === true,
+          stamp: detail['created_' + 'at'],
+          messages: detail.messages || [],
+        };
+        if (agentModalState.viewing.source === 'user' && !agentModalState.viewing.archived && /^slot:[A-Za-z0-9_-]{1,80}:[a-f0-9]{32}$/.test(agentModalState.viewing.chat_id)) {
+          agentModalState.chatId = agentModalState.viewing.chat_id;
+        }
+        renderAgentModalSessionList();
+        renderAgentModalBar();
+        renderAgentModalMessages(detail.messages || []);
+        setAgentModalStatus('Session geladen (' + (detail.messages || []).length + ' Einträge). Du kannst unten direkt antworten oder weiterschreiben.');
+      } catch (err) {
+        if (epoch === agentModalState.epoch) {
+          setAgentModalStatus('Session konnte nicht geladen werden: ' + (err.message || err), true);
+        }
+      }
+    }
+
+    function startNewAgentModalChat() {
+      const tools = window.BachChatModalTools;
+      if (!tools || !agentModalState.slotId) return;
+      agentModalState.epoch++;
+      agentModalState.viewing = null;
+      agentModalState.chatId = tools.newChatId(agentModalState.slotId);
+      renderAgentModalSessionList();
+      renderAgentModalBar();
+      renderAgentModalMessages([]);
+      setAgentModalStatus('Neuer Direkt-Chat mit ' + (agentModalState.agent?.name || agentModalState.slotId) + ' bereit.');
+      document.getElementById('agent-session-input')?.focus();
+    }
+
+    async function refreshAgentSessionModal() {
+      const tools = window.BachChatModalTools;
+      if (!tools || !agentModalState.slotId) return;
+      const stateEl = document.getElementById('agent-session-list-state');
+      if (stateEl) {
+        stateEl.hidden = false;
+        stateEl.textContent = 'Sessions werden geladen …';
+      }
+      try {
+        const page = await tools.loadSessionPage({slot_id: agentModalState.slotId, limit: 25});
+        agentModalState.sessions = page.sessions || [];
+        renderAgentModalSessionList();
+        if (agentModalState.viewing) {
+          await openAgentModalSnapshot(agentModalState.viewing.id);
+        } else if (agentModalState.sessions.length > 0) {
+          await openAgentModalSnapshot(agentModalState.sessions[0].id);
+        } else {
+          startNewAgentModalChat();
+        }
+      } catch (err) {
+        if (stateEl) {
+          stateEl.hidden = false;
+          stateEl.textContent = 'Sessions nicht verfügbar: ' + (err.message || err);
+        }
+        setAgentModalStatus('Session-Liste konnte nicht geladen werden: ' + (err.message || err), true);
+      }
+    }
+
+    function onAgentSessionToolsToggle() {
+      const cb = document.getElementById('agent-session-show-tools');
+      agentModalState.includeTools = Boolean(cb && cb.checked);
+      if (agentModalState.viewing) {
+        openAgentModalSnapshot(agentModalState.viewing.id);
+      }
+    }
+
+    async function openAgentSessionModal(agent, source = 'core') {
+      const modal = document.getElementById('agent-session-modal');
+      const tools = window.BachChatModalTools;
+      if (!modal || !tools || !agent) return;
+      const slotId = String(agent.id || '');
+      agentModalState = {
+        agent,
+        source,
+        slotId,
+        chatId: tools.newChatId(slotId),
+        sessions: [],
+        viewing: null,
+        includeTools: Boolean(document.getElementById('agent-session-show-tools')?.checked),
+        sending: false,
+        epoch: 0,
+      };
+      const titleEl = document.getElementById('agent-session-modal-title');
+      const metaEl = document.getElementById('agent-session-modal-meta');
+      const linkEl = document.getElementById('agent-session-fullchat-link');
+      if (titleEl) titleEl.textContent = (agent.name || slotId) + ' — Session-Log & Direkt-Chat';
+      if (metaEl) metaEl.textContent = slotId + ' · ' + (agent.backend || 'Anbieter') + ' · ' + (agent.model || 'Modell');
+      if (linkEl) linkEl.href = '/chat?slot_id=' + encodeURIComponent(slotId);
+      renderAgentModalBar();
+      renderAgentModalMessages([]);
+      if (!modal.open) modal.showModal();
+      await refreshAgentSessionModal();
+    }
+
+    function closeAgentSessionModal() {
+      const modal = document.getElementById('agent-session-modal');
+      if (modal && modal.open) modal.close();
+    }
+
+    async function submitAgentSessionMessage() {
+      const tools = window.BachChatModalTools;
+      const input = document.getElementById('agent-session-input');
+      const sendBtn = document.getElementById('agent-session-send-btn');
+      const box = document.getElementById('agent-session-messages');
+      if (!tools || !input || agentModalState.sending || !agentModalState.slotId) return;
+      const text = input.value.trim();
+      if (!text) return;
+      agentModalState.sending = true;
+      if (sendBtn) sendBtn.disabled = true;
+      input.value = '';
+
+      const userItem = coreElement('div', undefined, 'agent-session-msg agent-session-msg-user');
+      userItem.append(coreElement('div', 'Du', 'agent-session-msg-head'));
+      userItem.append(coreElement('p', text, 'agent-session-msg-body'));
+      box?.append(userItem);
+      if (box) box.scrollTop = box.scrollHeight;
+
+      try {
+        if (agentModalState.source === 'core' && agentModalState.agent && agentModalState.agent.enabled === false) {
+          setAgentModalStatus('Agentenprofil wird für den Direkt-Chat aktiviert …');
+          await toggleCoreSlot(agentModalState.slotId, true);
+          agentModalState.agent.enabled = true;
+        }
+        let targetChatId = agentModalState.chatId;
+        const v = agentModalState.viewing;
+        const isInPlaceUserChat = v && v.source === 'user' && !v.archived && /^slot:[A-Za-z0-9_-]{1,80}:[a-f0-9]{32}$/.test(v.chat_id);
+        if (v && !isInPlaceUserChat) {
+          targetChatId = tools.newChatId(agentModalState.slotId);
+          setAgentModalStatus('Session #' + v.id + ' wird als Direkt-Chat übernommen …');
+          await tools.forkSession(targetChatId, v.id);
+          agentModalState.chatId = targetChatId;
+          agentModalState.viewing = null;
+          renderAgentModalBar();
+        }
+        setAgentModalStatus('Sende Nachricht an ' + (agentModalState.agent?.name || agentModalState.slotId) + ' …');
+        const answer = await tools.sendChatMessage(text, targetChatId);
+        const replyItem = coreElement('div', undefined, 'agent-session-msg agent-session-msg-assistant');
+        replyItem.append(coreElement('div', agentModalState.agent?.name || agentModalState.slotId, 'agent-session-msg-head'));
+        replyItem.append(coreElement('p', answer, 'agent-session-msg-body'));
+        box?.append(replyItem);
+        if (box) box.scrollTop = box.scrollHeight;
+        setAgentModalStatus('Antwort empfangen.');
+        const page = await tools.loadSessionPage({slot_id: agentModalState.slotId, limit: 25});
+        agentModalState.sessions = page.sessions || [];
+        renderAgentModalSessionList();
+      } catch (err) {
+        const msg = err instanceof tools.ChatSendError ? tools.describeSendError(err) : (err.message || String(err));
+        setAgentModalStatus(msg, true);
+      } finally {
+        agentModalState.sending = false;
+        if (sendBtn) sendBtn.disabled = false;
+      }
+    }
+
+    async function resumeAgentWorkerFromModal() {
+      const tools = window.BachChatModalTools;
+      const input = document.getElementById('agent-session-input');
+      const v = agentModalState.viewing;
+      if (!tools || !v || !agentModalState.slotId) return;
+      const hint = input ? input.value.trim() : '';
+      setAgentModalStatus('Worker ' + agentModalState.slotId + ' wird mit Session #' + v.id + ' gestartet …');
+      try {
+        await tools.resumeWorker(v.id, agentModalState.slotId, {prompt: hint});
+        if (input && hint) input.value = '';
+        setAgentModalStatus('Worker „' + (agentModalState.agent?.name || agentModalState.slotId) + '“ wurde mit dem Übergabezettel gestartet.');
+        loadBackgroundWorkers();
+        loadCoreSlots();
+      } catch (err) {
+        const msg = err instanceof tools.ChatSendError
+          ? 'Worker nicht gestartet' + (err.status ? ' (HTTP ' + err.status + ')' : '') + (err.reason ? ': ' + err.reason : '')
+          : (err.message || String(err));
+        setAgentModalStatus(msg, true);
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       if (location.hash === '#models-resources' || new URLSearchParams(location.search).get('tab') === 'resources') {
         const drawer = document.getElementById('running-models-resources-drawer');
@@ -2085,6 +2581,12 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         if (torch) torch.open = true;
       }
       initializeAgentOverviewControls();
+      document.getElementById('agent-session-input')?.addEventListener('keydown', event => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          event.preventDefault();
+          submitAgentSessionMessage();
+        }
+      });
       document.getElementById('worker-blueprint-backend')?.addEventListener('change', () => loadWorkerBlueprintModels());
       document.getElementById('worker-blueprint-sub-mode')?.addEventListener('change', updateWorkerCreationModeFields);
       document.getElementById('worker-blueprint-run-mode')?.addEventListener('change', updateWorkerRunModeFields);

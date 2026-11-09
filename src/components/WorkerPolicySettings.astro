@@ -93,33 +93,33 @@
   .worker-policy-status {padding:.65rem .8rem;border:1px solid var(--border);border-radius:var(--radius-sm);overflow-wrap:anywhere}
   .worker-policy-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1rem;margin-top:1rem}
   .worker-policy-grid label {display:flex;flex-direction:column;gap:.4rem;color:var(--text);min-width:0}
-  .worker-policy-grid select,.worker-policy-grid input[type=number],.worker-reviewer-row input,.worker-reviewer-row select {background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;font:inherit;max-width:100%;box-sizing:border-box}
+  .worker-policy-grid select,.worker-policy-grid input[type=number],.worker-reviewers :global(.worker-reviewer-row input),.worker-reviewers :global(.worker-reviewer-row select) {background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;font:inherit;max-width:100%;box-sizing:border-box}
   .worker-policy-operator {display:flex;flex-direction:column;gap:.4rem;margin-top:1rem;color:var(--text)}
   .worker-policy-operator input {background:var(--bg-dark);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;font:inherit;max-width:100%;box-sizing:border-box}
   .worker-policy-operator small {color:var(--text-muted);font-size:.8rem;line-height:1.45}
   .worker-policy-expiry-duration {display:grid;grid-template-columns:minmax(5rem,.6fr) minmax(0,1fr);gap:.4rem}
-  .worker-policy-grid small,.worker-reviewers .card-desc {color:var(--text-muted);font-size:.8rem;line-height:1.45}
+  .worker-policy-grid small,.worker-reviewers :global(.card-desc) {color:var(--text-muted);font-size:.8rem;line-height:1.45}
   .worker-reviewer-availability {margin-top:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem}
-  .worker-reviewer-availability .card-desc {color:var(--text-muted);font-size:.8rem;line-height:1.45}
+  .worker-reviewer-availability :global(.card-desc) {color:var(--text-muted);font-size:.8rem;line-height:1.45}
   .worker-reviewer-availability-list {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:.75rem}
-  .worker-reviewer-availability-card {min-width:0;padding:.8rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
-  .worker-reviewer-availability-card h4 {margin:.1rem 0 .65rem;font-size:.95rem;overflow-wrap:anywhere}
-  .worker-reviewer-availability-card dl {display:grid;gap:.55rem;margin:0}
-  .worker-reviewer-availability-card dl > div {display:grid;grid-template-columns:minmax(7.5rem,.7fr) minmax(0,1fr);gap:.55rem}
-  .worker-reviewer-availability-card dt {color:var(--text-muted);font-size:.8rem}
-  .worker-reviewer-availability-card dd {margin:0;overflow-wrap:anywhere}
+  .worker-reviewer-availability-list :global(.worker-reviewer-availability-card) {min-width:0;padding:.8rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-dark)}
+  .worker-reviewer-availability-list :global(.worker-reviewer-availability-card h4) {margin:.1rem 0 .65rem;font-size:.95rem;overflow-wrap:anywhere}
+  .worker-reviewer-availability-list :global(.worker-reviewer-availability-card dl) {display:grid;gap:.55rem;margin:0}
+  .worker-reviewer-availability-list :global(.worker-reviewer-availability-card dl > div) {display:grid;grid-template-columns:minmax(7.5rem,.7fr) minmax(0,1fr);gap:.55rem}
+  .worker-reviewer-availability-list :global(.worker-reviewer-availability-card dt) {color:var(--text-muted);font-size:.8rem}
+  .worker-reviewer-availability-list :global(.worker-reviewer-availability-card dd) {margin:0;overflow-wrap:anywhere}
   .worker-policy-check {display:flex!important;flex-direction:row!important;align-items:flex-start;gap:.55rem!important;padding:.65rem;border:1px solid var(--border);border-radius:var(--radius-sm)}
   .worker-policy-check input {margin-top:.2rem}
   .worker-reviewers {margin-top:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem}
-  .worker-reviewer-row {display:grid;grid-template-columns:minmax(0,1fr) minmax(140px,.45fr) auto;gap:.5rem;align-items:center;margin:.5rem 0}
+  .worker-reviewers :global(.worker-reviewer-row) {display:grid;grid-template-columns:minmax(0,1fr) minmax(140px,.45fr) auto;gap:.5rem;align-items:center;margin:.5rem 0}
   .worker-selection-help {margin-top:1rem}
   .worker-selection-help summary {cursor:pointer;font-weight:600}
   .worker-selection-help li {margin:.45rem 0}
   .worker-policy-actions {display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
   @media(max-width:560px) {
-    .worker-reviewer-row {grid-template-columns:1fr}
-    .worker-reviewer-row button {justify-self:start}
-    .worker-reviewer-availability-card dl > div {grid-template-columns:1fr;gap:.2rem}
+    .worker-reviewers :global(.worker-reviewer-row) {grid-template-columns:1fr}
+    .worker-reviewers :global(.worker-reviewer-row button) {justify-self:start}
+    .worker-reviewer-availability-list :global(.worker-reviewer-availability-card dl > div) {grid-template-columns:1fr;gap:.2rem}
   }
 </style>
 
