@@ -41,6 +41,7 @@ test('Routinen page reads are declared and the old personal Life route stays ava
     'GET /api/recurring',
     'GET /api/daemon/status',
     'GET /api/routines',
+    'GET /api/automations',
     'PUT /api/daemon/jobs/{id}/toggle',
     'POST /api/daemon/jobs/{id}/run',
     'POST /api/recurring/trigger/{id}',
