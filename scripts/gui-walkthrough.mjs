@@ -11,6 +11,8 @@ import {parseArgs} from 'node:util';
 
 export const REPORT_SCHEMA = 'ellmos.gui.walkthrough.v1';
 export const MANIFEST_SCHEMA = 'ellmos.gui.page-reads.v1';
+export const POLAROID_SCHEMA = 'ellmos.gui.polaroid-briefing.v1';
+export const VALID_BILDER_MODI = new Set(['serie', 'polaroid', 'swipe']);
 // The GUI ignores prefers-color-scheme: BachLayout.astro reads localStorage "bach-theme" (default "dark"; "light", "ocean", ...).
 // So each variant sets both the media feature and the stored theme; without the latter light and dark shots are identical.
 export const THEME_KEY = 'bach-theme';
@@ -143,7 +145,59 @@ async function visit(context, base, page, variant, outDir, harvest) {
   return {record, anchors};
 }
 
-export async function walkthrough({base, outRoot, only, manifestPath}) {
+export function generatePolaroidBriefing(report, options = {}) {
+  const bilder_modus = options.bilder_modus || options['polaroid-modus'] || 'serie';
+  if (!VALID_BILDER_MODI.has(bilder_modus)) {
+    throw new Error(`Ungültiger bilder_modus "${bilder_modus}". Erlaubt sind: ${[...VALID_BILDER_MODI].join(', ')}`);
+  }
+  const posten = (report?.pages || []).map(page => {
+    const bilder = (page.variants || []).map(v => v.screenshot).filter(Boolean);
+    return {
+      id: page.slug || slugFor(page.path),
+      pfad: page.path,
+      titel: `Visuelle Abnahme: ${page.path}`,
+      status: page.status,
+      bilder,
+      bilder_modus,
+      entscheidung: {
+        typ: 'visuelle_abnahme',
+        optionen: ['Abgenommen', 'Nacharbeiten'],
+        kommentar_erforderlich_bei: ['Nacharbeiten']
+      }
+    };
+  });
+  return {
+    schema: POLAROID_SCHEMA,
+    generiert_am: report?.generatedAt || new Date().toISOString(),
+    basis_url: report?.base || '',
+    bilder_modus,
+    gesamt_posten: posten.length,
+    posten
+  };
+}
+
+export function formatPolaroidMarkdown(briefing) {
+  const lines = [
+    `# Polaroid-Briefing: Visuelle Abnahme`,
+    ``,
+    `- Modus: \`${briefing.bilder_modus}\``,
+    `- Generiert am: ${briefing.generiert_am}`,
+    `- Geprüfte Seiten: ${briefing.gesamt_posten}`,
+    ``,
+    `## Posten`,
+    ``
+  ];
+  for (const p of briefing.posten) {
+    lines.push(`### ${p.titel}`);
+    lines.push(`- Pfad: \`${p.pfad}\``);
+    lines.push(`- Status: \`${p.status ?? 'unbekannt'}\``);
+    lines.push(`- Bilder (${p.bilder_modus}): ${p.bilder.length ? p.bilder.map(b => `\`${b}\``).join(', ') : 'keine'}`);
+    lines.push(``);
+  }
+  return lines.join('\n');
+}
+
+export async function walkthrough({base, outRoot, only, manifestPath, polaroid, polaroidModus}) {
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
   const list = selectPages(loadPageList(manifest), only);
   const {chromium} = await import('playwright-core');
@@ -193,7 +247,13 @@ export async function walkthrough({base, outRoot, only, manifestPath}) {
     links
   };
   writeFileSync(join(outDir, 'report.json'), JSON.stringify(report, null, 2) + '\n');
-  return {outDir, summary};
+  let polaroidBriefing = null;
+  if (polaroid) {
+    polaroidBriefing = generatePolaroidBriefing(report, {bilder_modus: polaroidModus || 'serie'});
+    writeFileSync(join(outDir, 'polaroid-briefing.json'), JSON.stringify(polaroidBriefing, null, 2) + '\n');
+    writeFileSync(join(outDir, 'polaroid-briefing.md'), formatPolaroidMarkdown(polaroidBriefing) + '\n');
+  }
+  return {outDir, summary, report, polaroidBriefing};
 }
 
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
@@ -203,15 +263,22 @@ if (isMain) {
     base: {type: 'string', default: 'http://127.0.0.1:4321'},
     out: {type: 'string', default: join(root, 'reports', 'gui-walkthrough')},
     only: {type: 'string'},
+    polaroid: {type: 'boolean', default: false},
+    'polaroid-modus': {type: 'string', default: 'serie'},
     'no-fail': {type: 'boolean', default: false}
   }});
   const base = values.base.replace(/\/+$/, '');
   const {outDir, summary} = await walkthrough({
     base, outRoot: resolve(values.out), only: values.only?.split(',').map(s => s.trim()).filter(Boolean),
-    manifestPath: join(root, 'public', 'page-reads.v1.json')
+    manifestPath: join(root, 'public', 'page-reads.v1.json'),
+    polaroid: values.polaroid,
+    polaroidModus: values['polaroid-modus']
   });
   const line = (label, value) => console.log(`${label.padEnd(24)}${value}`);
   line('report', join(outDir, 'report.json'));
+  if (values.polaroid) {
+    line('polaroid briefing', join(outDir, 'polaroid-briefing.json'));
+  }
   line('pages', summary.pages);
   line('http errors', summary.httpErrors.length ? summary.httpErrors.join(', ') : 0);
   line('variant errors', summary.variantErrors.length);

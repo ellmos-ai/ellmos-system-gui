@@ -156,9 +156,9 @@ async fn attach(
     let origin = target.origin().ascii_serialization();
     let allowed_origin = origin.clone();
     let title = if contract == "authentication_required" {
-        "BACH · Ocean – Anmeldung erforderlich"
+        "Ocean (BACH) – Anmeldung erforderlich"
     } else {
-        "BACH · Ocean"
+        "Ocean (BACH)"
     };
     let backend = WebviewWindowBuilder::new(&app, BACKEND, WebviewUrl::External(target.clone()))
         .title(title)
@@ -273,7 +273,7 @@ fn main() {
                 _ => {}
             });
             WebviewWindowBuilder::new(app, CONNECTION, WebviewUrl::App("index.html".into()))
-                .title("BACH · Ocean verbinden")
+                .title("Ocean (BACH) verbinden")
                 .inner_size(760.0, 620.0)
                 .min_inner_size(560.0, 520.0)
                 .on_navigation(local_document)

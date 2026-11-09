@@ -68,6 +68,8 @@ jobs:
     timeout-minutes: 35
     env:
       DESKTOP_BUNDLES: ${{ matrix.bundles }}
+      NO_STRIP: 'true'
+      APPIMAGE_EXTRACT_AND_RUN: '1'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -106,6 +108,36 @@ jobs:
           assert bundles.resolve().is_relative_to(target) and not bundles.is_symlink()
           if bundles.exists():
               shutil.rmtree(bundles)
+      - name: Pre-populate Linux Tauri AppImage bundler tools via GitHub API
+        if: runner.os == 'Linux'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          mkdir -p "$HOME/.cache/tauri"
+          gh release download apprun-old --repo tauri-apps/binary-releases --pattern "AppRun-x86_64" --dir "$HOME/.cache/tauri" --clobber
+          chmod +x "$HOME/.cache/tauri/AppRun-x86_64"
+          gh release download linuxdeploy-07333c6 --repo tauri-apps/binary-releases --pattern "linuxdeploy-x86_64.AppImage" --dir "$HOME/.cache/tauri" --clobber
+          mv -f "$HOME/.cache/tauri/linuxdeploy-x86_64.AppImage" "$HOME/.cache/tauri/linuxdeploy-07333c6-x86_64.AppImage"
+          chmod +x "$HOME/.cache/tauri/linuxdeploy-07333c6-x86_64.AppImage"
+          gh release download continuous --repo linuxdeploy/linuxdeploy-plugin-appimage --pattern "linuxdeploy-plugin-appimage-x86_64.AppImage" --dir "$HOME/.cache/tauri" --clobber
+          mv -f "$HOME/.cache/tauri/linuxdeploy-plugin-appimage-x86_64.AppImage" "$HOME/.cache/tauri/linuxdeploy-plugin-appimage.AppImage"
+          chmod +x "$HOME/.cache/tauri/linuxdeploy-plugin-appimage.AppImage"
+      - name: Pre-populate Windows Tauri NSIS bundler tools via GitHub API
+        if: runner.os == 'Windows'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tauriCache = Join-Path $env:LOCALAPPDATA "tauri"
+          Remove-Item -Recurse -Force (Join-Path $tauriCache "NSIS"), (Join-Path $tauriCache "nsis-3.13") -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force -Path $tauriCache | Out-Null
+          gh release download nsis-3.13 --repo tauri-apps/binary-releases --pattern "nsis-3.13.zip" --dir $env:RUNNER_TEMP --clobber
+          Expand-Archive -Path (Join-Path $env:RUNNER_TEMP "nsis-3.13.zip") -DestinationPath $tauriCache -Force
+          Rename-Item -Path (Join-Path $tauriCache "nsis-3.13") -NewName "NSIS"
+          $pluginsAdd = Join-Path $tauriCache "NSIS\Plugins\x86-unicode\additional"
+          New-Item -ItemType Directory -Force -Path $pluginsAdd | Out-Null
+          gh release download nsis_tauri_utils-v0.5.3 --repo tauri-apps/nsis-tauri-utils --pattern "nsis_tauri_utils.dll" --dir $pluginsAdd --clobber
       - name: Compile desktop consumer and unsigned installer candidates
         shell: bash
         run: node .github/desktop-toolchain/node_modules/@tauri-apps/cli/tauri.js build --ci --no-sign --bundles "$DESKTOP_BUNDLES" -- --locked
