@@ -68,6 +68,8 @@ jobs:
     timeout-minutes: 35
     env:
       DESKTOP_BUNDLES: ${{ matrix.bundles }}
+      NO_STRIP: 'true'
+      APPIMAGE_EXTRACT_AND_RUN: '1'
     steps:
       - uses: actions/checkout@v4
         with:
