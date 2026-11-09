@@ -233,7 +233,7 @@
     "src/assets/ticket-symbols/topics_uni.svg": "45b565524ec66eff4b5f87a12729afc958d5ff2027af337f8472ecde0fe1bd19",
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
-    "src/components/CapabilityBoard.astro": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b",
+    "src/components/CapabilityBoard.astro": "d0fdd81643eef72dfca32e2a46aa483a2c53b9756a26f2060e837899c8724dde",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
     "src/components/Header.astro": "317e9ef6e0943e212a3feffa9b46a82c745876f7d505c8995fa06660b495b813",
     "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
@@ -254,7 +254,7 @@
     "src/lib/agent-overview.mjs": "577beec1bb33f98cbf81d54a39f5d8b9a4e4b95671081d5061381e7e75712738",
     "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236",
     "src/lib/capability-board-client.mjs": "7a80423bc472ade80f05065c57ef9b732493b40cd2900f0705b2c3af8f72d831",
-    "src/lib/capability-board-ui.mjs": "ae4d73808cb1b95c904c02d5996cb2ba5e3ac6cc9eba249e6801619b9a9cb123",
+    "src/lib/capability-board-ui.mjs": "b3a8276ab0e79f3aa241722800026166424c9f980d7a8f2753b96d6db4d9ceae",
     "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
     "src/lib/domain-pins.mjs": "e6c4fd1700f0cfc0995c17c0ec3cb66d3ac12f7457eff13b96421d314999a813",
     "src/lib/domain-routes.mjs": "2dd127d08b0f53110306e09ca256b75c138ca56fcc444f0f4e62f59f75403dd3",
@@ -299,7 +299,7 @@
     "src/pages/governance/index.astro": "5b5ce800eff6bfa95996c969416394d4af11a3aac05352947897e5bf29f775e3",
     "src/pages/governance/logs.astro": "1227c2cb3cb5306990090b2adf9b7d6384f3e4a118db0c309011004a26e73a1d",
     "src/pages/governance/usecases.astro": "fabb09df9521dc2d8ada7c3e6864753939b14547faecd8fc10818b8dfc6d2685",
-    "src/pages/help.astro": "5bf12452ea86c99a01f41b0b21ac9c27b47a28778abcce70848008c451c2893e",
+    "src/pages/help.astro": "996f0e55545bfe0a474a85971c75f13cf80226506a43742da824aeaea1b27921",
     "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
@@ -5927,6 +5927,27 @@
           "path": "src/pages/talk.astro",
           "previous_sha256": "e2f86dbd99c5d82199151537fa1b47a82842cb958865933934353c4666992626",
           "sha256": "a61230acda6dc9aa97eeb6aa7b57d1bca0565161cd9af685c092c42e07ac9548"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-09",
+      "summary": "PB-25 items 1, 4, 10, 11, 12: Cleaned skills library (removed outdated dummies, added honest empty status and origin formatting for Ocean, BACH, Mac Studio), replaced static assignment with persona routing and blueprint links, restored cognitive system memory documentation with 5 memory layers and memory map topology table, separated documentation from interaction with action bar linking to operative views (/memory, /skills, /notizen, /routinen), and bound Ocean doc-keeper / help_projection with 6-language parity overview. Added tests/pb25-items-1-4-10-12.test.mjs.",
+      "files": [
+        {
+          "path": "src/components/CapabilityBoard.astro",
+          "previous_sha256": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b",
+          "sha256": "d0fdd81643eef72dfca32e2a46aa483a2c53b9756a26f2060e837899c8724dde"
+        },
+        {
+          "path": "src/lib/capability-board-ui.mjs",
+          "previous_sha256": "ae4d73808cb1b95c904c02d5996cb2ba5e3ac6cc9eba249e6801619b9a9cb123",
+          "sha256": "b3a8276ab0e79f3aa241722800026166424c9f980d7a8f2753b96d6db4d9ceae"
+        },
+        {
+          "path": "src/pages/help.astro",
+          "previous_sha256": "5bf12452ea86c99a01f41b0b21ac9c27b47a28778abcce70848008c451c2893e",
+          "sha256": "996f0e55545bfe0a474a85971c75f13cf80226506a43742da824aeaea1b27921"
         }
       ]
     }
