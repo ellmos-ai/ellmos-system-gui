@@ -7,8 +7,8 @@
   "files_sha256": {
     ".gitattributes": "8d75fbed0329d55480242ea79c61cbdd3da312c700298bfba9572b81ec325cc6",
     ".github/workflows/tests.yml": "e565ab1c0af2ca180332244da856578c8bc3ed2cc7702c9a326318a701845995",
-    "README.md": "1f8915b43dafac2cc025883ab722c3e64c8d5770f8bb5e1118324c9eaf7ff970",
-    "RELEASE_GATE.md": "636385bf638c579baff26f12ae300a0f3cbd07ceda5331a70071f710b9d5c0bf",
+    "README.md": "764cae993332f16bcc14fb044dc8a695e86a3e93477c7261c5b523cb61244162",
+    "RELEASE_GATE.md": "f27ab81c4cff536ea19b9fb827292ce9de96987ad53fdee1dd4398d8c6189675",
     "SECURITY.md": "ec89bad193b46f950706d904fb652494977240e88784680e84cc14cb01619b43",
     "assets/readme-bridge-banner.png": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "astro.config.mjs": "89ab453b48228d1bfc9027586060a119040bff5cb534ec9bde8c7293d294afd2",
@@ -20,11 +20,11 @@
     "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
-    "ellmos-module.v2.json": "0fc858b3f66562f64d41a55d553892bf660524676db69d6eb0bac823282032b7",
-    "package-lock.json": "a7ca6b4d17126984acdbd7b97f1b9649c24ec43004e641764d5dd22357b749fd",
-    "package.json": "b0e0ee0e02caaa41fa2dceae3542d58cd2f8e6e3beb8501cc42bf327d4c1aec4",
+    "ellmos-module.v2.json": "8f4f09c9a4afca0679f7e38d72406db195363adb3e154dbba89af41b3fdf4424",
+    "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
+    "package.json": "f8e2ae35c413fa0dbb006b43dada12d4140642f1774f2f0614a22b32af98be93",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "26b627b41141983b6e437033eda5d895138ed1decc2367885ea67a83e8ffb7c1",
+    "public/page-reads.v1.json": "0197f29dc91a8a24154691d2f70146d45f8fc0481a349ae26842298684a1a190",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -243,7 +243,7 @@
     "src/components/TaskLeasePanel.astro": "38486536b27da46eb19ac593173edb141d62fdd206cc3111a363ece8196fdcf7",
     "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
     "src/components/WorkerLeaseCountdown.astro": "c60b7c2e33e83d833ffdd85066c1aed3d18144108af9ffb0ef09c8960f33c52d",
-    "src/components/WorkerPolicySettings.astro": "51bd535eb231b0bbc12b7802cd50daafc3b007b2e3c89b2563fe9df44507bdcd",
+    "src/components/WorkerPolicySettings.astro": "5f18aa3fe8fbba8fcc76f36c306beab94b64be5154cdec086074ffd651a077d0",
     "src/config/nav_config.json": "6ca3b184668ca2848684f9764bf2257f6e47d844fa69182a55372a6efd9f5164",
     "src/i18n/world.json": "5162900f4327c3b9143f7a38c29276e1f6ed9cee0617da86d361881a462fc2db",
     "src/layouts/BachLayout.astro": "280095e742e9b86c19bc7d22ac356ab829962a0c7d3821b41cf4f30312616185",
@@ -251,7 +251,7 @@
     "src/lib/agent-avatar-catalog.mjs": "6da91323ab28c22ddbe8555a3f59497c61c1d406bcd692fcd5bfb26643a82fc0",
     "src/lib/agent-avatar.mjs": "963908968e71a4a05f01836dedbe153d1cd62c78f513ce25c4d7dc0f0e72a383",
     "src/lib/agent-history.mjs": "959884f2e66b5d4a230aef12805cb4e62f94c311d323cf6197959047f7710389",
-    "src/lib/agent-overview.mjs": "8689d0c72d4aacedea15d014d7711b4c6c15052a007c0dd1e24883fea21debec",
+    "src/lib/agent-overview.mjs": "577beec1bb33f98cbf81d54a39f5d8b9a4e4b95671081d5061381e7e75712738",
     "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236",
     "src/lib/capability-board-client.mjs": "7a80423bc472ade80f05065c57ef9b732493b40cd2900f0705b2c3af8f72d831",
     "src/lib/capability-board-ui.mjs": "ae4d73808cb1b95c904c02d5996cb2ba5e3ac6cc9eba249e6801619b9a9cb123",
@@ -283,7 +283,7 @@
     "src/pages/agenten/blueprints.astro": "0f61e86acd0678959a1821e98a277c7cb356bb8236b178ac3a853f2ad75ae07e",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
-    "src/pages/agenten/running.astro": "0fb473f995594a5add621054b4791c17c715e9d01836ec92f2aca4a7d2bf8c0f",
+    "src/pages/agenten/running.astro": "81762bc9224516da4dcf513d2d9cd7c8678544891f117dcf09378118d9673292",
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
     "src/pages/agenten/subscription-agents.astro": "9e88d4d65c5562d13332a112ab68b072318f146f7177bced5aa423d6110b6013",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
@@ -301,7 +301,7 @@
     "src/pages/governance/usecases.astro": "fabb09df9521dc2d8ada7c3e6864753939b14547faecd8fc10818b8dfc6d2685",
     "src/pages/help.astro": "5bf12452ea86c99a01f41b0b21ac9c27b47a28778abcce70848008c451c2893e",
     "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
-    "src/pages/index.astro": "6bc4d682340263c20c84894966941cfb9f7270a918c9a0c1b018ec501c44dba2",
+    "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
     "src/pages/life.astro": "cda4b01d98b1af8b1781db159c1b198b7f2662db7887e988fafcb2fd6ce118c7",
     "src/pages/maintenance.astro": "1e47fe3566eee28aa580867ad6eef3df5001b80aeec29d97481ff0449d70e3ab",
@@ -320,7 +320,7 @@
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
     "src/pages/talk.astro": "e2f86dbd99c5d82199151537fa1b47a82842cb958865933934353c4666992626",
-    "src/pages/tasks.astro": "c35b28003cbafcb037d7685bb79d653cb319814f8b585df97ec7906451f01eb0",
+    "src/pages/tasks.astro": "fe73e94f5fbd143b607c28dcb78770656f5bed77cd7a89277baea06a118c1fb2",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
@@ -336,7 +336,7 @@
     "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
     "tests/agent-color.test.mjs": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
-    "tests/agent-overview.test.mjs": "78633d56f7c018f7b35df0067f8befb6a6d5809f1c0fd511c44386cbcebb62ca",
+    "tests/agent-overview.test.mjs": "be2ce93eadd913a8e5a49b7d21e6a48a76002a60307e6d3d92428c8e875fff56",
     "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
@@ -359,7 +359,7 @@
     "tests/run-dompurify-browser.mjs": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
     "tests/settings-connections.test.mjs": "5ad0a09c43b7a215a5f4924d00bd84becadee8e862483337927a2f36c1f35d6a",
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
-    "tests/system-slots.test.mjs": "194460463414fc8fe67d36b5763a08db0b731a162121e7afb51b0b15310dac62",
+    "tests/system-slots.test.mjs": "ed19be877328d1b4d482fe7490758760ccb363022a47aa72dd3ffab3d737fdef",
     "tests/task-assignment.test.mjs": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
     "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
     "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
@@ -388,10 +388,10 @@
     "src/pages/agenten/bibliothek.astro": "4d388a99fd18fe7d8cb119ad2b3da7c41e1dfbe130b73ef8c323f7629a99186b",
     "tests/voice-mic-layout.test.mjs": "3f89ea7ff49ff62cb4e454a732af9eb67efafbc109582a2aa8e4656fa75d9780",
     "tests/no-legacy-device-token.test.mjs": "60d51e2891e6f7386eb54baec000b54105d8cf6aeefa51fcc3186512a1b52255",
-    "src/lib/chat-client.mjs": "455ad4ec3b81be29af49f7bd2020a72739bdac2cda28fcc4ab929cce1d0de396",
-    "src/lib/transcript-history.mjs": "cc740d8cab7269271ad3f5cb5d66c9f19816cf81049c53de3d10fa637c4d774d",
-    "src/scripts/chat-page.mjs": "75824fe0bb4567718ad39d6a1234b960da0e24a1c9a87cacde19ae20628a9f66",
-    "tests/chat-client.test.mjs": "50a40ff895ff3ef95189f9f94d6ec8a9fcfe8e0cd008600a3f9d0fa41d62ae69",
+    "src/lib/chat-client.mjs": "c2d2acb3ee9fb52c963874e739a26946669eb29d55811d72148c635422b0b1b3",
+    "src/lib/transcript-history.mjs": "30270ecc9afb6599aef106fa15cee808408de8b1cc2fe57c2d8fe73daf500fd9",
+    "src/scripts/chat-page.mjs": "55270255e662c188e0d5b145da289b0be754a49a46b073e296b12a94e445d1d9",
+    "tests/chat-client.test.mjs": "473d13499ab21dbb2841d13aa920adc58f0a0d1dbd88c9f69f95a4a226b55bfd",
     "tests/route-contract.test.mjs": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
@@ -5818,12 +5818,110 @@
     },
     {
       "date": "2026-11-08",
-      "summary": "PB-25 items 6, 7, 8 and 9: Prompt-Agenten is a tab of the agent library (old /agenten/subscription-agents redirects), Deine Agenten has Living & Running and Memory, living agents on Living & Running are grouped by Living, Pausiert and Deaktiviert, and the start-rule panel (Automatische Startregeln & Zeitpläne) lives on Routinen & Jobs only. Page reads of the composer moved to /agenten/blueprints, the agent-trigger reads left /agenten/running. New files living-agent-groups.mjs and its test are not pinned here.",
+      "summary": "Scoped-CSS traps (T-20261107-118724049): rules for elements created by script in tasks.astro and WorkerPolicySettings.astro now keep a scoped template ancestor and wrap only the runtime part in :global(), so they apply; the guard list KNOWN_TRAPS is empty.",
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "c35b28003cbafcb037d7685bb79d653cb319814f8b585df97ec7906451f01eb0",
+          "sha256": "fe73e94f5fbd143b607c28dcb78770656f5bed77cd7a89277baea06a118c1fb2"
+        },
+        {
+          "path": "src/components/WorkerPolicySettings.astro",
+          "previous_sha256": "51bd535eb231b0bbc12b7802cd50daafc3b007b2e3c89b2563fe9df44507bdcd",
+          "sha256": "5f18aa3fe8fbba8fcc76f36c306beab94b64be5154cdec086074ffd651a077d0"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "summary": "Release metadata for 0.2.37: version aligned in package.json, package-lock.json, ellmos-module.v2.json and src-tauri/tauri.conf.json; README and RELEASE_GATE describe the content (#131, #129, #127, #133) and keep the mandatory consumer smoke and dist serving test. No application source change.",
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "1f8915b43dafac2cc025883ab722c3e64c8d5770f8bb5e1118324c9eaf7ff970",
+          "sha256": "a1fbc80c3ed085294717d2f3219693d8fe96583e4c1338b8c670a3ef02e6273e"
+        },
+        {
+          "path": "RELEASE_GATE.md",
+          "previous_sha256": "636385bf638c579baff26f12ae300a0f3cbd07ceda5331a70071f710b9d5c0bf",
+          "sha256": "cd2e9239cad513447bac29f31a1edbcb43ef431ba93bcde424df0b8579141cdf"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "0fc858b3f66562f64d41a55d553892bf660524676db69d6eb0bac823282032b7",
+          "sha256": "059ff338ff986c0d447e80b016a9c5b9b1bed6b2ee1f1dc5b61e854ccea8e933"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "a7ca6b4d17126984acdbd7b97f1b9649c24ec43004e641764d5dd22357b749fd",
+          "sha256": "07b50f62d7e7f2e5ca91e32e09c72d428470387567aef245091272eb5ff08931"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "b0e0ee0e02caaa41fa2dceae3542d58cd2f8e6e3beb8501cc42bf327d4c1aec4",
+          "sha256": "bdb92150e133420e33332f396458b76133f5eb9a58addff4fa63f64eed9c4535"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "summary": "Release 0.2.38: unify agent tile action buttons on /agenten/running to unambiguous action verbs (Starten, Fortsetzen, Pausieren, Stoppen) instead of An/Aus state labels; update tests and release metadata.",
+      "files": [
+        {
+          "path": "README.md",
+          "previous_sha256": "a1fbc80c3ed085294717d2f3219693d8fe96583e4c1338b8c670a3ef02e6273e",
+          "sha256": "6438e48f633bdb0902dc6d589ce6d037f3b643d1714425494679082e97c8b816"
+        },
+        {
+          "path": "RELEASE_GATE.md",
+          "previous_sha256": "cd2e9239cad513447bac29f31a1edbcb43ef431ba93bcde424df0b8579141cdf",
+          "sha256": "fbddf57a3ad9dabc7d074f3d73d5ea3e1bab4b8223bbe48f42d9b5d6ca77dfea"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "059ff338ff986c0d447e80b016a9c5b9b1bed6b2ee1f1dc5b61e854ccea8e933",
+          "sha256": "a8717c0b3e5c88f77c3d97a06ff053c521a1d24a340b734424d8d7cb1c3b3194"
+        },
+        {
+          "path": "package-lock.json",
+          "previous_sha256": "07b50f62d7e7f2e5ca91e32e09c72d428470387567aef245091272eb5ff08931",
+          "sha256": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526"
+        },
+        {
+          "path": "package.json",
+          "previous_sha256": "bdb92150e133420e33332f396458b76133f5eb9a58addff4fa63f64eed9c4535",
+          "sha256": "3c17c353cdc673ad50c98b5bbc8af8a1374a1909185c3e2e60df5d5a42866bfb"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "afa65e510a9bef7e3622a0c7b9045b39d9d9673d39b92b9b7a67eabcd4ff28c6",
+          "sha256": "8409464401a5a90c65080885dad03831170c102886fb6828a62bb94cf119491a"
+        },
+        {
+          "path": "tests/system-slots.test.mjs",
+          "previous_sha256": "194460463414fc8fe67d36b5763a08db0b731a162121e7afb51b0b15310dac62",
+          "sha256": "ed19be877328d1b4d482fe7490758760ccb363022a47aa72dd3ffab3d737fdef"
+        }
+      ]
+    },
+    {
+      "scope": "v0.2.40: agent session-log and direct-chat modal on /agenten/running",
       "files": [
         {
           "path": "public/page-reads.v1.json",
           "previous_sha256": "b2ab990a780b7395f8869b2a709e2253daaa6b5d7becd0c63c75b78a8e54ef80",
-          "sha256": "26b627b41141983b6e437033eda5d895138ed1decc2367885ea67a83e8ffb7c1"
+          "sha256": "b7af8890eefada79a80bb81a25934f896fab9282fe610600b61546335b71d757"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "summary": "PB-25 items 6, 7, 8 and 9: Prompt-Agenten is a tab of the agent library (old /agenten/subscription-agents redirects), Deine Agenten has Living & Running and Memory, living agents on Living & Running are grouped by Living, Pausiert and Deaktiviert, and the start-rule panel (Automatische Startregeln & Zeitpläne) lives on Routinen & Jobs only. Page reads of the composer moved to /agenten/blueprints, the agent-trigger reads left /agenten/running. New files living-agent-groups.mjs and its test are not pinned here.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "b7af8890eefada79a80bb81a25934f896fab9282fe610600b61546335b71d757",
+          "sha256": "0197f29dc91a8a24154691d2f70146d45f8fc0481a349ae26842298684a1a190"
         },
         {
           "path": "src/components/AgentTriggers.astro",
@@ -5847,7 +5945,7 @@
         },
         {
           "path": "src/pages/agenten/running.astro",
-          "previous_sha256": "afa65e510a9bef7e3622a0c7b9045b39d9d9673d39b92b9b7a67eabcd4ff28c6",
+          "previous_sha256": "8409464401a5a90c65080885dad03831170c102886fb6828a62bb94cf119491a",
           "sha256": "0fb473f995594a5add621054b4791c17c715e9d01836ec92f2aca4a7d2bf8c0f"
         },
         {
@@ -5875,5 +5973,6 @@
     "usage": "GitHub README only; not a frontend background.",
     "sha256": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "added_on": "2026-10-11"
-  }
+  },
+  "version": "0.2.40"
 }

@@ -79,6 +79,7 @@ function buildAction(document, id, spec = {}) {
   } else if (typeof spec.href === 'string' && spec.disabled !== true) {
     node = el(document, 'a', 'btn btn-sm' + tone, label);
     node.href = spec.href;
+    if (typeof spec.onClick === 'function') node.addEventListener('click', spec.onClick);
   } else {
     node = el(document, 'button', 'btn btn-sm' + tone, label);
     node.type = 'button';
