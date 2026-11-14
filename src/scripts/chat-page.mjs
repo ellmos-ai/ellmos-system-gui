@@ -11,11 +11,11 @@ function initialize() {
   const statusEl = $('chat-status'), slotSelect = $('chat-slot-select'), listEl = $('chat-history-list');
   if (!log || !form) return;
   const params = parseChatParams(location.search);
-  const state = {source: 'user', problems: false, offset: 0, rows: [], counts: null, hasMore: false, slot: 'buddha_chat',
-    chatId: '', viewing: null, epoch: 0, listRequest: 0};
+  const wanted = params.slotId ?? params.agent;
+  const state = {source: wanted ? 'all' : 'user', problems: false, offset: 0, rows: [], counts: null, hasMore: false, slot: 'buddha_chat',
+    slotFilter: wanted || null, chatId: '', viewing: null, epoch: 0, listRequest: 0};
 
   // The slot chosen by a deep link joins the list of slots (the backend decides whether it is usable).
-  const wanted = params.slotId ?? params.agent;
   if (wanted && ![...slotSelect.options].some(o => o.value === wanted)) slotSelect.append(new Option(wanted, wanted));
   if (wanted) state.slot = wanted;
   slotSelect.value = state.slot;
@@ -90,7 +90,7 @@ function initialize() {
     const note = $('chat-history-state');
     note.hidden = false; note.dataset.error = 'false'; note.textContent = 'Verläufe werden geladen …';
     try {
-      const data = await loadSessionPage({offset: state.offset, limit: 25, source: state.source, problems: state.problems});
+      const data = await loadSessionPage({offset: state.offset, limit: 25, source: state.source, problems: state.problems, ...(state.slotFilter ? {slot_id: state.slotFilter} : {})});
       if (request !== state.listRequest) return;
       state.rows = state.rows.concat(data.sessions); state.counts = data.source_counts ?? null; state.hasMore = data.has_more;
       state.offset = state.rows.length;
@@ -187,16 +187,24 @@ function initialize() {
 
   // ---- controls
   for (const button of document.querySelectorAll('[data-chat-source]'))
-    button.addEventListener('click', () => { state.source = button.dataset.chatSource; refreshList(); });
+    button.addEventListener('click', () => { state.slotFilter = null; state.source = button.dataset.chatSource; refreshList(); });
   $('chat-problems').addEventListener('change', event => { state.problems = event.target.checked; refreshList(); });
   $('chat-history-more').addEventListener('click', () => refreshList(false));
   $('chat-new').addEventListener('click', startNewChat);
-  slotSelect.addEventListener('change', () => { state.slot = slotSelect.value; startNewChat(); });
+  slotSelect.addEventListener('change', async () => {
+    state.slot = slotSelect.value;
+    state.slotFilter = slotSelect.value;
+    state.source = 'all';
+    const page = await refreshList();
+    if (page?.sessions?.length) { await openSession(page.sessions[0].id); return; }
+    startNewChat();
+  });
 
   // ---- start: deep link first, then the remembered chat, otherwise a fresh one
   (async () => {
     const firstPage = await refreshList();
     if (params.resumeSession) { await openSession(params.resumeSession); return; }
+    if (wanted && firstPage?.sessions?.length) { await openSession(firstPage.sessions[0].id); return; }
     if (!wanted) {
       const last = remembered();
       const row = last && firstPage?.sessions.find(r => r.chat_id === last && !r.archived);

@@ -122,11 +122,11 @@ test('running: PB-4 evidence is kept, an error tile says why or that the reason 
     assert.match(await failed.locator('.agent-tile-status').innerText(), /Fehler/);
     assert.match(await failed.locator('[data-slot="error"]').innerText(), /Ursache vom Backend nicht gemeldet/);
     const chat = failed.locator('[data-action="chat"]');
-    assert.equal(await chat.getAttribute('aria-disabled'), 'true');
-    assert.match(await chat.getAttribute('title'), /kein Chat angebunden/);
+    assert.equal(await chat.getAttribute('aria-disabled'), null);
+    assert.equal(await chat.innerText(), 'Chat öffnen');
     // the running worker can be paused from the main slot, the on/off switch of a system slot keeps its role
     assert.equal(await run.locator('[data-action="run"]').innerText(), 'Pausieren');
-    assert.equal(await page.locator('[data-core-agent-id="buddha_chat"] [data-action="run"]').getAttribute('role'), 'switch');
+    assert.equal(await page.locator('[data-core-agent-id="buddha_chat"] [data-action="run"]').innerText(), 'Pausieren');
   } finally { await context.close(); }
 });
 

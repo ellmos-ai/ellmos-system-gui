@@ -225,25 +225,25 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
     .task-detail-grid>div { min-width:0; border-top:1px solid var(--border); padding:.45rem 0; }
     .task-detail-grid dt,.muted { color:var(--text-muted); font-size:.8rem; }
     .task-detail-grid dd { margin:.25rem 0 0; overflow-wrap:anywhere; }
-    .task-description { white-space:pre-wrap; overflow-wrap:anywhere; }
+    .task-detail :global(.task-description) { white-space:pre-wrap; overflow-wrap:anywhere; }
     .task-worker-result {border-top:1px solid var(--border);margin-top:1rem;padding-top:.5rem;}
     .task-worker-result details {margin:.8rem 0;}
     .task-worker-result label {display:flex;flex-direction:column;gap:.35rem;}
     .task-worker-result input {color:var(--text);background:var(--bg-card);border:1px solid var(--border);padding:.6rem;margin-bottom:.6rem;max-width:100%;box-sizing:border-box;}
     .task-result-gates {margin-top:.8rem;padding:.7rem;border:1px solid var(--border);border-radius:var(--radius-sm);}
     .task-result-gates ol {padding-left:1.5rem;margin-bottom:0;}
-    .task-result-gates li {margin:.65rem 0;overflow-wrap:anywhere;}
-    .task-result-gates li[data-state="confirmed"] strong {color:var(--success-text);}
-    .task-result-gates li[data-state="blocked"] strong,.task-result-gates li[data-state="stale"] strong {color:var(--error-text);}
-    .task-result-gate-state {margin-left:.45rem;font-size:.82em;color:var(--text-muted);}
-    .task-result-gate-detail {margin:.2rem 0 0;color:var(--text-muted);font-size:.88em;}
+    .task-result-gates :global(li) {margin:.65rem 0;overflow-wrap:anywhere;}
+    .task-result-gates :global(li[data-state="confirmed"] strong) {color:var(--success-text);}
+    .task-result-gates :global(li[data-state="blocked"] strong),.task-result-gates :global(li[data-state="stale"] strong) {color:var(--error-text);}
+    .task-result-gates :global(.task-result-gate-state) {margin-left:.45rem;font-size:.82em;color:var(--text-muted);}
+    .task-result-gates :global(.task-result-gate-detail) {margin:.2rem 0 0;color:var(--text-muted);font-size:.88em;}
     .task-result-correction {margin-top:1rem;padding-top:.7rem;border-top:1px solid var(--border);}
     .task-result-correction textarea {display:block;width:100%;box-sizing:border-box;resize:vertical;color:var(--text);background:var(--bg-card);border:1px solid var(--border);padding:.6rem;font:inherit;}
     .task-result-history {margin-top:1rem;padding-top:.7rem;border-top:1px solid var(--border);}
     .task-result-history ol {padding-left:1.5rem;}
-    .task-result-history li {margin:.65rem 0;padding-left:.2rem;overflow-wrap:anywhere;}
-    .task-result-history li p {white-space:pre-wrap;}
-    .task-result-history details {margin:.4rem 0;}
+    .task-result-history :global(li) {margin:.65rem 0;padding-left:.2rem;overflow-wrap:anywhere;}
+    .task-result-history :global(li p) {white-space:pre-wrap;}
+    .task-result-history :global(details) {margin:.4rem 0;}
     .task-edit-grid label { min-width:0; display:flex; flex-direction:column; gap:.35rem; }
     .task-edit-grid input,.task-edit-grid select,.task-edit-grid textarea { min-width:0; width:100%; box-sizing:border-box; padding:.6rem; background:var(--bg-dark); color:var(--text); border:1px solid var(--border); border-radius:var(--radius-sm); font:inherit; }
     .task-edit-wide { grid-column:1/-1; }
@@ -283,7 +283,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
     .task-thread-main {display:flex;flex-direction:column;gap:1.25rem;}
     .task-order {padding:1rem;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-panel);}
     .task-order h3,.task-context h3,.task-worker-result>h3 {font-size:.95rem;font-weight:600;margin:0 0 .7rem;}
-    .task-description {font-size:.9rem;line-height:1.65;overflow-wrap:anywhere;}
+    .task-detail :global(.task-description) {font-size:.9rem;line-height:1.65;overflow-wrap:anywhere;}
     .task-worker-result {border-top:0;margin:0;padding:0;}
     .task-evidence-hint {font-size:.82rem;color:var(--text-muted);margin-bottom:.75rem;}
     .task-context {display:flex;flex-direction:column;gap:.85rem;border-top:1px solid var(--border);padding-top:1rem;}
@@ -296,7 +296,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
     :global(#tasks-table-container th),:global(#tasks-table-container td) {padding:.6rem .65rem !important;vertical-align:top;}
     :global(#tasks-table-container table) {min-width:42rem;font-size:.82rem !important;}
     :global(#tasks-table-container tbody tr:hover) {background:var(--bg-panel);}
-    .task-detail :global(button:focus-visible),.task-detail :global(input:focus-visible),.task-detail :global(select:focus-visible),.task-detail :global(textarea:focus-visible),.task-detail summary:focus-visible,.task-overview-technical>summary:focus-visible {outline:2px solid var(--accent-blue-text);outline-offset:3px;}
+    .task-detail :global(button:focus-visible),.task-detail :global(input:focus-visible),.task-detail :global(select:focus-visible),.task-detail :global(textarea:focus-visible),.task-detail :global(summary:focus-visible),.task-overview-technical>summary:focus-visible {outline:2px solid var(--accent-blue-text);outline-offset:3px;}
     @media(max-width:1100px) {.task-board-layout.is-open {grid-template-columns:minmax(16rem,1fr) 10px minmax(18rem,var(--task-detail-width,26rem));}}
     @media(max-width:900px) {.task-board-layout.is-open {grid-template-columns:minmax(0,1fr);} .task-board-layout.is-open .task-split-resizer {display:none;} .task-board-layout.is-open .task-detail {position:static;max-height:none;overflow:visible;} .task-detail-columns {grid-template-columns:minmax(0,1fr);} .task-context {border-top:1px solid var(--border);padding-top:1rem;}}
     @media(max-width:620px) {.task-detail {padding:.85rem;} .task-filter-bar {padding:.75rem;} .task-context .task-detail-grid>div {grid-template-columns:minmax(0,1fr);gap:.1rem;}}

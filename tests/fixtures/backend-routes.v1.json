@@ -76,6 +76,7 @@
   "GET /api/artifacts/content",
   "GET /api/artifacts/download",
   "GET /api/assignees",
+  "GET /api/automations",
   "GET /api/ati/sessions",
   "GET /api/ati/stats",
   "GET /api/ati/tasks",

@@ -69,6 +69,8 @@ test('fork and worker resume use the existing routes with the documented bodies'
     await resumeWorker(9, 'worker-7');
     assert.equal(calls[0].url, '/api/agent-history/sessions/9/resume');
     assert.deepEqual(JSON.parse(calls[0].options.body), {worker_id: 'worker-7'});
+    await resumeWorker(9, 'worker-7', {prompt: 'Bitte weiter'});
+    assert.deepEqual(JSON.parse(calls[1].options.body), {worker_id: 'worker-7', prompt: 'Bitte weiter'});
     await assert.rejects(resumeWorker(9, 'not a worker!'));
   });
 });

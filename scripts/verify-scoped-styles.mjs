@@ -13,10 +13,7 @@ import {fileURLToPath} from 'node:url';
 const GENERIC = new Set(['btn', 'badge', 'muted', 'active', 'hidden', 'empty']);
 // Findings that predate PB-6 (T-20261106-101728788). They may only shrink: a fixed entry must be removed (checkTree reports it as stale).
 // running.astro is left to the open agent-tile PR (gui#129), the other two to a follow-up so this change stays on /routinen.
-export const KNOWN_TRAPS = {
-  'src/pages/tasks.astro': ['task-description', 'task-result-gate-state', 'task-result-gate-detail'],
-  'src/components/WorkerPolicySettings.astro': ['worker-reviewer-row', 'card-desc', 'worker-reviewer-availability-card'],
-};
+export const KNOWN_TRAPS = {};
 
 const literals = text => [...text.matchAll(/(['"`])((?:\\.|(?!\1)[^\\])*)\1/g)].map(m => m[2]);
 const words = text => text.split(/\s+/).filter(w => /^[A-Za-z_][\w-]*$/.test(w));

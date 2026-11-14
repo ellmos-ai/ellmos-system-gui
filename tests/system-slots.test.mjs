@@ -64,15 +64,20 @@ test('stored Running alone cannot produce a Running badge or visible editor form
   assert.ok(h.elements.some(element=>element.dataset.avatarPreset==='preset:companion'));
 });
 
-test('the visible switch sends a desired off state and all slots can open a chat', () => {
+test('action buttons use clear verbs (Pausieren, Starten, Fortsetzen) and send the matching desired state', () => {
   const h = renderer();
-  h.render({configuration_version:'a'.repeat(64), agents:[{id:'system-expert', name:'Experte', enabled:true,
-    backend:'ollama', model:'qwen', runtime_verified:true, running:false}]});
-  const toggle = h.elements.find(element => element.attributes.role === 'switch');
-  assert.equal(toggle.attributes['aria-checked'], 'true');
-  toggle.handlers.click();
-  assert.deepEqual(h.switches, [['system-expert', false]]);
-  assert.ok(h.elements.some(element => element.href === '/chat?slot_id=system-expert'));
+  h.render({configuration_version:'a'.repeat(64), agents:[
+    {id:'buddha_chat', name:'Buddha Chat', enabled:true, backend:'ollama', model:'qwen', runtime_verified:true, running:false},
+    {id:'worker-idle', name:'Boss', execution_kind:'worker', enabled:true, status:'ready', backend:'ollama', model:'qwen', runtime_verified:true, running:false, worker_active:false},
+    {id:'worker-paused', name:'Experte', execution_kind:'worker', enabled:false, status:'paused', backend:'ollama', model:'qwen', runtime_verified:true, running:false, worker_active:false},
+  ]});
+  const runButtons = h.elements.filter(element => element.dataset?.action === 'run');
+  assert.deepEqual(runButtons.map(b => b.textContent), ['Pausieren', 'Starten', 'Fortsetzen']);
+  runButtons[0].handlers.click();
+  runButtons[1].handlers.click();
+  runButtons[2].handlers.click();
+  assert.deepEqual(h.switches, [['buddha_chat', false], ['worker-idle', true], ['worker-paused', true]]);
+  assert.ok(h.elements.some(element => element.href === '/chat?slot_id=buddha_chat'));
 });
 
 

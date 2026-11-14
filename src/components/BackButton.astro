@@ -1,0 +1,49 @@
+---
+// BackButton.astro - way back for pages opened from another page (PB-23).
+// Server-rendered as a plain link to the fallback, so it works without script; the script upgrades the label and
+// action: "Zurück" (history.back) after arriving from another page of this GUI, "Fenster schließen" in the
+// talk companion window, otherwise the fallback link stays.
+interface Props {
+  fallback?: string;
+}
+
+const { fallback = "/" } = Astro.props;
+---
+
+<div class="back-nav" data-back-nav>
+  <a href={fallback} class="btn btn-secondary btn-sm" data-back-button data-fallback={fallback}>
+    <span aria-hidden="true" data-back-glyph>←</span>
+    <span data-back-label>Zur Startseite</span>
+  </a>
+</div>
+
+<script>
+  import { decideBackAction } from "./back-button-logic.mjs";
+
+  for (const nav of document.querySelectorAll<HTMLElement>("[data-back-nav]")) {
+    const button = nav.querySelector<HTMLAnchorElement>("[data-back-button]")!;
+    const { mode, label } = decideBackAction({ referrer: document.referrer, href: location.href });
+    button.querySelector("[data-back-label]")!.textContent = label;
+    button.querySelector("[data-back-glyph]")!.textContent = mode === "close" ? "✕" : "←";
+
+    button.addEventListener("click", (event) => {
+      if (mode === "fallback") return; // stays a plain link
+      event.preventDefault();
+      if (mode === "back") return history.back();
+      window.close();
+      // window.close() is ignored for windows a script did not open; do not strand the user.
+      setTimeout(() => { if (!window.closed) location.assign(button.dataset.fallback || "/"); }, 300);
+    });
+
+    // The layout shows its own "← zurück zu <Bereich>" link for ?from=<area>; one way back is enough.
+    addEventListener("DOMContentLoaded", () => {
+      const crumb = document.querySelector<HTMLElement>("[data-breadcrumb]");
+      if (crumb && !crumb.hidden && mode !== "close") nav.hidden = true;
+    });
+  }
+</script>
+
+<style>
+  .back-nav { margin: 0 0 0.75rem; }
+  .back-nav[hidden] { display: none; }
+</style>

@@ -7,7 +7,8 @@ export function pageShape(data,key,schema){
   return data;
 }
 export const SOURCES=['user','buddha','worker','system'];
-export function validateSessionPage(data,{agent_id=null,archive='all',offset=0,limit=25,source='all',problems=false}={}){
+const SLOT_FILTER_RE=/^[A-Za-z0-9._-]{1,80}$/;
+export function validateSessionPage(data,{agent_id=null,archive='all',offset=0,limit=25,source='all',problems=false,slot_id=null}={}){
   pageShape(data,'sessions','bach.chat-sessions.v1');
   if(data.source!=='session_snapshots'||data.snapshot_type!=='chat-transcript.v1'||
      data.agent_id!==agent_id||data.context!==(agent_id===null?'global':'profile')||data.archive!==archive||
@@ -16,6 +17,7 @@ export function validateSessionPage(data,{agent_id=null,archive='all',offset=0,l
   // Filters must be confirmed by the backend; an older backend that ignores them would show the wrong list silently.
   if(source!=='all'&&data.source_filter!==source)throw new Error('Quellenfilter vom Backend nicht bestätigt.');
   if(problems&&data.problems!==true)throw new Error('Problemfilter vom Backend nicht bestätigt.');
+  if(slot_id!==null&&data.slot_filter!==slot_id)throw new Error('Steckplatzfilter vom Backend nicht bestätigt.');
   if(data.source_counts!==undefined&&(typeof data.source_counts!=='object'||data.source_counts===null||SOURCES.some(k=>!integer(data.source_counts[k]))))
     throw new Error('Quellenzähler nicht bestätigt.');
   const seen=new Set();
@@ -64,13 +66,15 @@ export function pageOptions(options={}){
 export async function loadSessionPage(options={}){
   const {offset,limit}=pageOptions(options),agent_id=options.agent_id??null,archive=options.archive??'all';
   if((agent_id!==null&&!integer(agent_id,1,2147483647))||!['all','current','archived'].includes(archive))throw new Error('Ungültige Dialogauswahl.');
-  const source=options.source??'all',problems=options.problems===true;
+  const source=options.source??'all',problems=options.problems===true,slot_id=options.slot_id??null;
   if(source!=='all'&&!SOURCES.includes(source))throw new Error('Ungültige Quellenauswahl.');
+  if(slot_id!==null&&(typeof slot_id!=='string'||!SLOT_FILTER_RE.test(slot_id)))throw new Error('Ungültige Steckplatzauswahl.');
   const query=new URLSearchParams({offset:String(offset),limit:String(limit),archive});
   if(source!=='all')query.set('source',source);
   if(problems)query.set('problems','true');
   if(agent_id!==null)query.set('agent_id',String(agent_id));
-  return validateSessionPage(await read('/api/agent-history/sessions?'+query,options.signal),{offset,limit,agent_id,archive,source,problems});
+  if(slot_id!==null)query.set('slot_id',slot_id);
+  return validateSessionPage(await read('/api/agent-history/sessions?'+query,options.signal),{offset,limit,agent_id,archive,source,problems,slot_id});
 }
 export async function loadSession(snapshot_id,agent_id=null,{signal,include_tools=false}={}){
   if(!integer(snapshot_id,1,2147483647)||(agent_id!==null&&!integer(agent_id,1,2147483647)))throw new Error('Ungültige Dialogkennung.');

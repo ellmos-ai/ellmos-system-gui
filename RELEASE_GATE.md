@@ -1,5 +1,29 @@
 # Release gate: ellmos-system-gui
 
+## Release evidence 0.2.40 — 2026-11-08
+
+| Item | SOLL | IST (this commit) |
+|---|---|---|
+| Content | 0.2.37 plus unified action verbs (`Starten`, `Fortsetzen`, `Pausieren`, `Stoppen`) across all agent tiles on `/agenten/running` (no `An`/`Aus` state-vs-action conflation) | `src/pages/agenten/running.astro`, unit & browser tests (`tests/agent-tile.test.mjs`, `tests/agent-tile.browser.test.mjs`, `tests/system-slots.test.mjs`), version metadata (`package.json`, `package-lock.json`, `ellmos-module.v2.json`, `src-tauri/tauri.conf.json`), README, this section, matching `SOURCE_PROVENANCE.json` hashes |
+| Source tests | `npm ci` and `npm test` green | 823 passed, 0 failed |
+| Release build | Clean checkout of the release commit, `npm ci`, `npm run build:release`, `scripts/package_release.py` | Recorded with the archive hand-over |
+| Independent archive check | Commit in `dist-manifest.json` equals the tag commit; every file hash matches; archive SHA-256 re-computed; root `LICENSE` bytes equal the repository MIT license; `THIRD_PARTY_LICENSES.md` bundled | Same place as the build row |
+| **Consumer smoke (mandatory)** | `python scripts/consumer_smoke.py --bach <BACH checkout> --dist <extracted release dist>` exits 0 and reports all pages passing BACH's own page gate | Recorded with the archive hand-over |
+| **Dist serving test (mandatory)** | In the BACH pin branch with `GUI_RELEASE_TEST_DIST` and `ELLMOS_SYSTEM_GUI_DIST` set to the extracted release dist: `python -m pytest system/tests/test_gui_gux_shared_contract.py system/tests/test_gui_release_integrity.py` passes, in particular `test_all_pinned_release_pages_use_exact_shared_bytes` | Recorded with the archive hand-over |
+| Consumers | Pins and installation are separate gates | Not claimed here |
+
+## Release evidence 0.2.37 — 2026-11-08
+
+| Item | SOLL | IST (this commit) |
+|---|---|---|
+| Content | 0.2.36 plus PB-6 `/routinen` (#131), PB-5b agent tile & talk view (#129), PB-11 `/notizen` on `llm-note` (#127) and scoped-CSS fixes in `/tasks` & worker policy settings (#133); no further source change | Version metadata (`package.json`, `package-lock.json`, `ellmos-module.v2.json`, `src-tauri/tauri.conf.json`), README, this section, matching `SOURCE_PROVENANCE.json` hashes |
+| Source tests | `npm ci` and `npm test` green | See the release / pull request description |
+| Release build | Clean checkout of the merge commit, `npm ci`, `npm run build:release`, `scripts/package_release.py` | Recorded with the archive hand-over, because archive name and SHA-256 depend on the merge commit |
+| Independent archive check | Commit in `dist-manifest.json` equals the tag commit; every file hash matches; archive SHA-256 re-computed; root `LICENSE` bytes equal the repository MIT license; `THIRD_PARTY_LICENSES.md` bundled | Same place as the build row |
+| **Consumer smoke (mandatory)** | `python scripts/consumer_smoke.py --bach <BACH checkout> --dist <extracted release dist>` exits 0 and reports all pages passing BACH's own page gate | Recorded with the archive hand-over; run against the BACH revision that carries the pin |
+| **Dist serving test (mandatory)** | In the BACH pin branch with `GUI_RELEASE_TEST_DIST` and `ELLMOS_SYSTEM_GUI_DIST` set to the extracted release dist: `python -m pytest system/tests/test_gui_gux_shared_contract.py system/tests/test_gui_release_integrity.py` passes, in particular `test_all_pinned_release_pages_use_exact_shared_bytes` (every page served with HTTP 200 and the exact release bytes) | Recorded with the archive hand-over |
+| Consumers | Pins and installation are separate gates | Not claimed here |
+
 ## Release evidence 0.2.36 — 2026-11-07
 
 | Item | SOLL | IST (this commit) |

@@ -10,15 +10,43 @@ const DEFAULT_PREFERENCES = Object.freeze({
   function: 'all',
   start: 'all',
   query: '',
-  sort: 'name',
+  sort: 'status',
   group: 'none',
   view: 'cards',
 });
 
 const ACCESS_VALUES = new Set(['all', 'local', 'cloud', 'prompt', 'unknown']);
 const SORT_VALUES = new Set(['name', 'access', 'function', 'start', 'status']);
-const GROUP_VALUES = new Set(['none', 'access', 'function', 'start']);
+const GROUP_VALUES = new Set(['none', 'access', 'function', 'start', 'status']);
 const VIEW_VALUES = new Set(['cards', 'list']);
+
+const STATUS_BUCKET_ORDER = Object.freeze({
+  running: 0,
+  starting: 1,
+  ready: 2,
+  idle: 2,
+  completed: 2,
+  paused: 3,
+  stopping: 3,
+  error: 4,
+  expired: 5,
+  deleted: 6,
+  unknown: 7,
+});
+
+const STATUS_GROUP_LABELS = Object.freeze({
+  running: 'Aktiv (Running)',
+  starting: 'Aktiv (Running)',
+  ready: 'Bereit (Living)',
+  idle: 'Bereit (Living)',
+  completed: 'Bereit (Living)',
+  paused: 'Pausiert',
+  stopping: 'Pausiert',
+  error: 'Fehler · Status prüfen',
+  expired: 'Weitere Zustände',
+  deleted: 'Weitere Zustände',
+  unknown: 'Weitere Zustände',
+});
 
 function cleanText(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -47,7 +75,11 @@ export function readAgentOverviewPreferences(storage) {
   try {
     const source = storage === undefined ? globalThis.localStorage : storage;
     const raw = source?.getItem('bach.agent-overview.preferences.v1');
-    return normalizeAgentOverviewPreferences(raw ? JSON.parse(raw) : {});
+    const parsed = raw ? JSON.parse(raw) : {};
+    if (parsed && typeof parsed === 'object' && !parsed.sortMigratedV2 && parsed.sort === 'name') {
+      parsed.sort = 'status';
+    }
+    return normalizeAgentOverviewPreferences(parsed);
   } catch {
     return {...DEFAULT_PREFERENCES};
   }
@@ -57,7 +89,7 @@ export function writeAgentOverviewPreferences(value, storage) {
   const normalized = normalizeAgentOverviewPreferences(value);
   try {
     const target = storage === undefined ? globalThis.localStorage : storage;
-    target?.setItem('bach.agent-overview.preferences.v1', JSON.stringify(normalized));
+    target?.setItem('bach.agent-overview.preferences.v1', JSON.stringify({...normalized, sortMigratedV2: true}));
   } catch {
     // Browser storage can be disabled; the in-memory controls still work.
   }
@@ -94,6 +126,25 @@ export function classifyActualStartType(_agent = {}) {
 export function isConfirmedAgentRunning(agent = {}) {
   return agent.runtime_verified === true && agent.running === true
     && !['starting', 'stopping'].includes(agent.status);
+}
+
+export function classifyAgentStatus(agent = {}, source = 'worker') {
+  if (isConfirmedAgentRunning(agent)) return 'running';
+  const raw = cleanText(agent.status).toLowerCase();
+  if (raw === 'starting') return 'starting';
+  if (raw === 'stopping') return 'stopping';
+  if (raw === 'error') return 'error';
+  if (raw === 'expired') return 'expired';
+  if (raw === 'deleted') return 'deleted';
+  if (raw === 'paused' || agent.pause_info?.is_paused === true || (source === 'core' && agent.enabled === false)) {
+    return 'paused';
+  }
+  if (['idle', 'ready', 'completed'].includes(raw)) return 'ready';
+  return raw || 'unknown';
+}
+
+function statusBucketRank(status) {
+  return STATUS_BUCKET_ORDER[cleanText(status).toLowerCase()] ?? STATUS_BUCKET_ORDER.unknown;
 }
 
 export function projectRunningSourceNotice(sources = [], emptyText = 'Kein Agentenlauf aktiv.') {
@@ -200,10 +251,13 @@ export function createAgentOverviewMeta(document, agent = {}, {source = 'worker'
 }
 
 function compareOverviewItems(left, right, sort) {
+  if (sort === 'status') {
+    return (statusBucketRank(left.status) - statusBucketRank(right.status))
+      || left.name.localeCompare(right.name, 'de-DE', {sensitivity: 'base'});
+  }
   const key = (item) => sort === 'access' ? item.accessLabel
     : sort === 'function' ? item.functionLabel
-      : sort === 'start' ? item.startLabel
-        : sort === 'status' ? item.status : item.name;
+      : sort === 'start' ? item.startLabel : item.name;
   return key(left).localeCompare(key(right), 'de-DE', {sensitivity: 'base'})
     || left.name.localeCompare(right.name, 'de-DE', {sensitivity: 'base'});
 }
@@ -212,16 +266,23 @@ function groupOverviewItems(items, state) {
   if (state.group === 'none') return [{key:'all', label:'', items:[...items].sort((a,b)=>compareOverviewItems(a,b,state.sort))}];
   const groups = new Map();
   for (const item of items) {
+    const statusKey = STATUS_GROUP_LABELS[item.status]
+      ? (['idle', 'ready', 'completed'].includes(item.status) ? 'ready' : ['paused', 'stopping'].includes(item.status) ? 'paused' : item.status)
+      : 'unknown';
     const key = state.group === 'access' ? item.access
-      : state.group === 'function' ? item.function : item.start;
+      : state.group === 'function' ? item.function
+        : state.group === 'status' ? statusKey : item.start;
     const label = state.group === 'access' ? item.accessLabel
-      : state.group === 'function' ? item.functionLabel : item.startLabel;
-    if (!groups.has(key)) groups.set(key, {key, label, items:[]});
+      : state.group === 'function' ? item.functionLabel
+        : state.group === 'status' ? (STATUS_GROUP_LABELS[item.status] || STATUS_GROUP_LABELS.unknown) : item.startLabel;
+    if (!groups.has(key)) groups.set(key, {key, label, rank: statusBucketRank(item.status), items:[]});
     groups.get(key).items.push(item);
   }
   return [...groups.values()]
-    .sort((left,right)=>left.label.localeCompare(right.label,'de-DE',{sensitivity:'base'}))
-    .map((group)=>({...group, items:group.items.sort((a,b)=>compareOverviewItems(a,b,state.sort))}));
+    .sort((left,right)=> state.group === 'status'
+      ? (left.rank - right.rank || left.label.localeCompare(right.label,'de-DE',{sensitivity:'base'}))
+      : left.label.localeCompare(right.label,'de-DE',{sensitivity:'base'}))
+    .map((group)=>({key: group.key, label: group.label, items:group.items.sort((a,b)=>compareOverviewItems(a,b,state.sort))}));
 }
 
 export function projectAgentOverview(records, preferences = {}) {
@@ -244,7 +305,7 @@ export function projectAgentOverview(records, preferences = {}) {
       functionLabel: functionFacet.label,
       start,
       startLabel: 'Unbekannt',
-      status: cleanText(agent.status).toLowerCase() || 'unknown',
+      status: classifyAgentStatus(agent, source),
       name: cleanText(agent.name || agent.id) || 'Unbenannt',
       search: [agent.name, agent.id, agent.backend, agent.model, agent.resolved_model, functionFacet.label]
         .map(cleanText).join(' ').toLocaleLowerCase('de-DE'),
@@ -273,7 +334,7 @@ export function decorateAgentOverviewCard(card, agent, {source = 'worker', lane}
   card.dataset.agentOverviewFunction = functionFacet.id;
   card.dataset.agentOverviewFunctionLabel = functionFacet.label;
   card.dataset.agentOverviewStart = start;
-  card.dataset.agentOverviewStatus = cleanText(agent.status).toLowerCase() || 'unknown';
+  card.dataset.agentOverviewStatus = classifyAgentStatus(agent, source);
   card.dataset.agentOverviewName = cleanText(agent.name || agent.id) || 'Unbenannt';
   card.dataset.agentOverviewSearch = [agent.name, agent.id, agent.backend, agent.model, agent.resolved_model, functionFacet.label]
     .map(cleanText).join(' ').toLocaleLowerCase('de-DE');

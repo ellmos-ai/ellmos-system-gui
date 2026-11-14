@@ -369,3 +369,37 @@ test('Core Ready cards suppress stale resolved models until the agent is confirm
   assert.deepEqual(tileModelLines(staleReadyCore), ['Modellbindung: Model-A']);
   assert.deepEqual(tileModelLines(confirmedRunningCore), ['Modellbindung: Model-A', 'Läuft mit: Model-B']);
 });
+
+test('status sorting groups ready/living, paused (including disabled core profiles), and error agents together by default', () => {
+  const defaults = normalizeAgentOverviewPreferences({});
+  assert.equal(defaults.sort, 'status');
+  const records = [
+    {source: 'core', agent: {id: 'boss-paused', name: 'Boss Pausiert', enabled: false, status: 'idle', backend: 'ollama', model: 'qwen'}},
+    {source: 'worker', agent: {id: 'w-err-2', name: 'Worker Fehler B', status: 'error', backend: 'ollama-cloud', model: 'glm:cloud'}},
+    {source: 'worker', agent: {id: 'w-ready', name: 'DeepSeek Bereit', status: 'idle', backend: 'ollama-cloud', model: 'deepseek:cloud'}},
+    {source: 'worker', agent: {id: 'w-paused', name: 'Cloud Pausiert', status: 'paused', backend: 'ollama-cloud', model: 'gpt:cloud'}},
+    {source: 'core', agent: {id: 'boss-ready', name: 'Boss Bereit', enabled: true, status: 'idle', backend: 'ollama', model: 'qwen'}},
+    {source: 'worker', agent: {id: 'w-err-1', name: 'Worker Fehler A', status: 'error', backend: 'ollama-cloud', model: 'glm:cloud'}},
+  ];
+  const projected = projectAgentOverview(records, {});
+  assert.deepEqual(
+    projected.items.map(item => `${item.name}:${item.status}`),
+    [
+      'Boss Bereit:ready',
+      'DeepSeek Bereit:ready',
+      'Boss Pausiert:paused',
+      'Cloud Pausiert:paused',
+      'Worker Fehler A:error',
+      'Worker Fehler B:error',
+    ]
+  );
+  const groupedByStatus = projectAgentOverview(records, {group: 'status'});
+  assert.deepEqual(groupedByStatus.groups.map(g => g.label), [
+    'Bereit (Living)',
+    'Pausiert',
+    'Fehler · Status prüfen',
+  ]);
+  assert.match(runningPage, /function rememberTileDetailsState\(/);
+  assert.match(runningPage, /function restoreTileDetailsState\(/);
+  assert.match(runningPage, /function syncCombinedReadyAgentsGrid\(/);
+});

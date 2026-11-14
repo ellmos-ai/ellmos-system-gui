@@ -11,7 +11,7 @@ const byId = (items, id) => items.find(item => item.id === id);
 
 test('all sources answer: one list with stable IDs, measured data and a confirmed state per source', async () => {
   const {items, sources} = await loadRoutines(routinesBackend());
-  assert.deepEqual(items.map(i => i.id).sort(), ['bach-job:1', 'bach-job:2', 'bach-job:3', 'bach-recurring:doc_review', 'bach-recurring:self_check',
+  assert.deepEqual(items.map(i => i.id).sort(), ['automation-master:weekly-cleanup', 'bach-job:1', 'bach-job:2', 'bach-job:3', 'bach-recurring:doc_review', 'bach-recurring:self_check',
     'life:12', 'life:13', 'ocean:team.weekly']);
   assert.equal(new Set(items.map(i => i.id)).size, items.length);
   assert.ok(items.every(i => i.dataSource === 'measured'));
@@ -21,6 +21,7 @@ test('all sources answer: one list with stable IDs, measured data and a confirme
   assert.match(sources.bach.note, /Daemon.*gestoppt/);
   assert.deepEqual([sources.ocean.state, sources.ocean.count], ['available', 1]);
   assert.deepEqual([sources.life.state, sources.life.count], ['available', 2]);
+  assert.deepEqual([sources.module.state, sources.module.count], ['available', 1]);
 });
 
 test('a deleted trigger (tombstone) is not listed as a routine', async () => {
@@ -28,12 +29,16 @@ test('a deleted trigger (tombstone) is not listed as a routine', async () => {
   assert.equal(byId(items, 'ocean:old.trigger'), undefined);
 });
 
-test('the module source has no backend path yet and says so instead of pretending', async () => {
+test('module source queries /api/automations and reports available when answered, or unavailable when unreachable', async () => {
   const calls = [];
-  const {sources} = await loadRoutines(routinesBackend({}, calls));
-  assert.equal(sources.module.state, 'unavailable');
-  assert.match(sources.module.reason, /kein Backend-Pfad/);
-  assert.ok(!calls.some(c => /modul/i.test(c)));
+  const ok = await loadRoutines(routinesBackend({}, calls));
+  assert.equal(ok.sources.module.state, 'available');
+  assert.equal(ok.sources.module.count, 1);
+  assert.ok(calls.includes('GET /api/automations'));
+
+  const failed = await loadRoutines(routinesBackend({module: 404}));
+  assert.equal(failed.sources.module.state, 'unavailable');
+  assert.match(failed.sources.module.reason, /nicht vorhanden/);
 });
 
 test('an unreachable source names its reason, the other sources stay intact', async () => {
@@ -42,13 +47,15 @@ test('an unreachable source names its reason, the other sources stay intact', as
     [{ocean: 503}, 'ocean', /nicht verfügbar/],
     [{life: 401}, 'life', /Geräteanmeldung/],
     [{life: 'down'}, 'life', /Verbindung/],
+    [{module: 404}, 'module', /nicht vorhanden/],
+    [{module: 503}, 'module', /nicht verfügbar/],
   ];
   for (const [fault, key, reason] of cases) {
     const {items, sources} = await loadRoutines(routinesBackend(fault));
     assert.equal(sources[key].state, 'unavailable', JSON.stringify(fault));
     assert.match(sources[key].reason, reason);
     assert.equal(items.some(i => i.source === key), false);
-    for (const other of ['bach', 'life', 'ocean'].filter(k => k !== key)) assert.equal(sources[other].state, 'available');
+    for (const other of ['bach', 'life', 'ocean', 'module'].filter(k => k !== key)) assert.equal(sources[other].state, 'available');
   }
 });
 
@@ -102,6 +109,7 @@ test('filters combine origin, type and a text query', async () => {
   const {items} = await loadRoutines(routinesBackend());
   assert.equal(filterRoutines(items, {source: 'bach'}).length, 5);
   assert.equal(filterRoutines(items, {source: 'life'}).length, 2);
+  assert.equal(filterRoutines(items, {source: 'module'}).length, 1);
   assert.equal(filterRoutines(items, {source: 'bach', kind: 'job'}).length, 3);
   assert.deepEqual(filterRoutines(items, {query: 'rauchmelder'}).map(i => i.id), ['life:13']);
   assert.equal(filterRoutines(items, {}).length, items.length);

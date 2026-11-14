@@ -21,10 +21,10 @@ const find = (node, predicate) => all(node).filter(predicate);
 
 const SPECS = {
   'system-slot': {name: 'Buddha Chat', status: {label: 'Ready · Living', tone: 'ok'}, model: ['Modellbindung: qwen · ollama'],
-    actions: {run: {label: 'An', role: 'switch', checked: true, onClick() {}}, edit: {label: 'Besetzung ändern', onClick() {}},
+    actions: {run: {label: 'Pausieren', onClick() {}}, edit: {label: 'Besetzung ändern', onClick() {}},
       chat: {href: '/chat?slot_id=buddha_chat'}, assign: {href: '/tasks?create=1&assign_slot=buddha_chat'}}},
   'system-profile': {name: 'Experte', status: {label: 'Pausiert', tone: 'idle'}, model: ['Modellbindung: qwen · ollama'],
-    actions: {run: {label: 'Aus', role: 'switch', checked: false, onClick() {}}, edit: {label: 'Bearbeiten', onClick() {}}, chat: {href: '/chat?slot_id=x'}}},
+    actions: {run: {label: 'Fortsetzen', tone: 'primary', onClick() {}}, edit: {label: 'Bearbeiten', onClick() {}}, chat: {href: '/chat?slot_id=x'}}},
   worker: {name: 'DeepSeek', status: {label: 'Living · Bereit', tone: 'ok'}, model: ['Modellbindung: deepseek · openrouter'],
     actions: {run: {label: 'Starten', onClick() {}}, edit: {onClick() {}}, delete: {onClick() {}}, pause: {onClick() {}}}},
   'worker-running': {name: 'Reviewer', status: {label: 'Running · bestätigt', tone: 'busy'}, task: 'Task #2217',
@@ -81,12 +81,14 @@ for (const [kind, spec] of Object.entries(SPECS)) {
   });
 }
 
-test('the switch keeps role and state for the on/off action', () => {
-  const tile = createAgentTile(doc, {kind: 'system-slot', ...SPECS['system-slot']});
-  const run = find(tile, n => n.dataset.action === 'run')[0];
-  assert.equal(run.attributes.role, 'switch');
-  assert.equal(run.attributes['aria-checked'], 'true');
-  assert.equal(run.dataset.checked, 'true');
+test('agent tiles use unambiguous action verbs (Starten, Fortsetzen, Pausieren) instead of An/Aus state labels', () => {
+  for (const [kind, spec] of Object.entries(SPECS)) {
+    const tile = createAgentTile(doc, {kind, ...spec});
+    const run = find(tile, n => n.dataset.action === 'run')[0];
+    assert.ok(['Starten', 'Fortsetzen', 'Pausieren'].some(verb => run.textContent.startsWith(verb)), `${kind} run label: ${run.textContent}`);
+    assert.doesNotMatch(run.textContent, /^(An|Aus)\b/);
+  }
+  assert.doesNotMatch(page, /enabled \? 'An' : 'Aus'/);
 });
 
 test('the status badge carries the label and a tone; the error slot is empty unless there is something to say', () => {
