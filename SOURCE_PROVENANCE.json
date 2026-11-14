@@ -303,7 +303,7 @@
     "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
-    "src/pages/life.astro": "1e2e68e9c4aeed2ff3a482880721afbeafc245f3368bb34e558685222bc27a81",
+    "src/pages/life.astro": "16e533d34d02db04ef6cb9be9c486b5e46ebd377b0a48c2930a75aee74fdf5a7",
     "src/pages/maintenance.astro": "1e47fe3566eee28aa580867ad6eef3df5001b80aeec29d97481ff0449d70e3ab",
     "src/pages/memory.astro": "47ab9040873b20341882c6d9463eb70a523ef6c4852d5e4357f9bb3f397f6952",
     "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
@@ -5968,6 +5968,22 @@
         {
           "path": "tests/life-finance-summary.test.mjs",
           "sha256": "302a6ca079ce89e3c7eeeeccf904dd1e860062bfe63cec6e09acd4bd84528ada"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-14",
+      "summary": "Life finance categories (PB-12 follow-up from the gui#140 review): summen_kategorie is a JSON object text; src/pages/life.astro now renders it as 'Name: Betrag' pairs (largest first) or '–' instead of the raw text; new case in tests/life-finance-summary.test.mjs.",
+      "files": [
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "1e2e68e9c4aeed2ff3a482880721afbeafc245f3368bb34e558685222bc27a81",
+          "sha256": "16e533d34d02db04ef6cb9be9c486b5e46ebd377b0a48c2930a75aee74fdf5a7"
+        },
+        {
+          "path": "tests/life-finance-summary.test.mjs",
+          "previous_sha256": "302a6ca079ce89e3c7eeeeccf904dd1e860062bfe63cec6e09acd4bd84528ada",
+          "sha256": "2b90970e2321ea5eba98e2cf65af73c72b789d19c0ca6f2778ff2d1efbb562ee"
         }
       ]
     }

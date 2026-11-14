@@ -36,3 +36,20 @@ test('Finance loader does not log response data to console', () => {
   const consoleCalls = loaderBody.match(/console\.\w+\s*\([^)]*\)/g) || [];
   assert.deepEqual(consoleCalls, ["console.error('[life] finance summary unavailable')"]);
 });
+
+test('category column shows name and amount pairs instead of raw JSON', async () => {
+  const vm = await import('node:vm');
+  const start = page.indexOf('function financeCategoryText(');
+  const end = page.indexOf('async function loadFinanceSummary(', start);
+  assert.ok(start !== -1 && end !== -1, 'financeCategoryText should exist before the loader');
+  const categoryText = vm.runInNewContext('(' + page.slice(start, end).trim() + ')');
+  const fmt = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+  assert.equal(categoryText('{}', fmt), '–');
+  assert.equal(categoryText('not json', fmt), '–');
+  assert.equal(categoryText(null, fmt), '–');
+  assert.equal(categoryText('[1, 2]', fmt), '–');
+  const text = categoryText('{"Software": 12.5, "Buero": 40}', fmt);
+  assert.equal(text, `Buero: ${fmt.format(40)} · Software: ${fmt.format(12.5)}`);
+  assert.doesNotMatch(text, /[{}"]/);
+  assert.ok(loaderBody.includes('financeCategoryText(item.summen_kategorie, eurFmt)'));
+});
