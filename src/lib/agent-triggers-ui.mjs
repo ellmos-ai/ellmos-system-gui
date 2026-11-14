@@ -1,5 +1,11 @@
 import {createTriggerClient} from './agent-triggers.mjs';
 
+export function formatTriggerStatus(count) {
+  if (count === 0) return 'Noch keine Startregel gespeichert.';
+  if (count === 1) return '1 Startregel gespeichert.';
+  return `${count} Startregeln gespeichert.`;
+}
+
 export function mountAgentTriggers(panel, client = createTriggerClient()) {
   const find = name => panel.querySelector(`[data-trigger-${name}]`);
   const form = find('form'), status = find('status'), list = find('list');
@@ -48,7 +54,7 @@ export function mountAgentTriggers(panel, client = createTriggerClient()) {
         }
         list.append(row);
       }
-      message(`${values.filter(v => !v.deleted).length} Definitionen bestätigt. Kein Laufstatus abgeleitet.`);
+      message(formatTriggerStatus(values.filter(v => !v.deleted).length));
     } catch (error) { if (own !== epoch) return; available = false; list.replaceChildren(); message(error.message); }
     find('new').disabled = !available;
   }

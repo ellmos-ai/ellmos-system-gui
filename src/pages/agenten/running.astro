@@ -1,7 +1,6 @@
 ---
 // running.astro - Deine Agenten · Living & Running
 import BachLayout from "../../layouts/BachLayout.astro";
-import AgentTriggers from '../../components/AgentTriggers.astro';
 import portraitAtlas from '../../assets/agent-portraits.png';
 import '../../styles/agent-avatars.css';
 import '../../styles/ticket-symbols.css';
@@ -12,7 +11,6 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
 ---
 
 <BachLayout title="Deine Agenten · Living & Running" currentPath="/agenten/running">
-  <AgentTriggers />
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
     <div>
       <h1 style="font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:0.25rem;">
@@ -35,6 +33,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       </button>
     </div>
   </div>
+  <p class="core-explanation text-muted">Automatische Startregeln und Zeitpläne für deine Agenten findest du unter <a href="/routinen#startregeln">Routinen & Jobs</a>.</p>
 
   <div class="running-history-group">
   <!-- Aktuell arbeitende Agenten; Ready-Worker werden nicht als Running ausgegeben. -->
@@ -636,7 +635,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     :global(.agent-session-form-actions) { display:flex; align-items:center; justify-content:flex-end; gap:.5rem; flex-wrap:wrap; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';import * as AgentTile from '../../lib/agent-tile.mjs';import * as UiIcons from '../../lib/ui-icons.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachAgentTile=AgentTile;window.BachUiIcons=UiIcons;import {sendChatMessage,describeSendError,forkSession,resumeWorker,newChatId,ChatSendError} from '../../lib/chat-client.mjs';import {loadSessionPage,loadSession} from '../../lib/transcript-history.mjs';window.BachProviderRequestStatus=providerRequestStatusText;window.BachChatModalTools={sendChatMessage,describeSendError,forkSession,resumeWorker,newChatId,ChatSendError,loadSessionPage,loadSession};</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';import * as AgentTile from '../../lib/agent-tile.mjs';import * as UiIcons from '../../lib/ui-icons.mjs';import * as LivingAgentGroups from '../../lib/living-agent-groups.mjs';import {sendChatMessage,describeSendError,forkSession,resumeWorker,newChatId,ChatSendError} from '../../lib/chat-client.mjs';import {loadSessionPage,loadSession} from '../../lib/transcript-history.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachAgentTile=AgentTile;window.BachUiIcons=UiIcons;window.BachLivingAgentGroups=LivingAgentGroups;window.BachProviderRequestStatus=providerRequestStatusText;window.BachChatModalTools={sendChatMessage,describeSendError,forkSession,resumeWorker,newChatId,ChatSendError,loadSessionPage,loadSession};</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -790,7 +789,8 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       if (agent.status === 'error') return 'Fehler · Status prüfen';
       if (agent.status === 'expired') return 'Abgelaufen';
       if (agent.status === 'deleted') return 'Entfernt';
-      if (agent.enabled !== true || agent.pause_info?.is_paused || agent.status === 'paused') return 'Pausiert';
+      if (agent.enabled !== true) return 'Deaktiviert';
+      if (agent.pause_info?.is_paused || agent.status === 'paused') return 'Pausiert';
       if (!String(agent.backend || '').trim() || !String(agent.model || '').trim()) return 'Modell oder Anbieter fehlt';
       return ['idle', 'ready', 'completed'].includes(agent.status) ? 'Ready · Living' : 'Status unbekannt';
     }
@@ -1028,7 +1028,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
           (receipt.state === 'confirmed' ? ' · ' + receipt.created_ids.map(id => '#' + id).join(', ') : '')));
       }
       const tone = source === 'core' && agent.enabled === false ? 'idle' : tileTools.tileStatusTone(agent);
-      return tileTools.createAgentTile(document, {
+      const card = tileTools.createAgentTile(document, {
         kind, name: agent.name || agent.id,
         kindLabel: sysRole ? (SYSTEM_ROLE_DESCRIPTIONS[agent.id] || 'Systemplatz (Hardwareschnittstelle)')
           : source === 'worker' ? 'Hintergrundworker' : source === 'core' ? (agent.role_id || 'Eigenes Profil') : undefined,
@@ -1040,15 +1040,34 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         data: ctx.data || (source === 'worker'
           ? {appearanceWorker: agent.id, workerId: running ? agent.id : undefined} : {coreAgentId: agent.id}),
       });
+      const livingGroup = window.BachLivingAgentGroups?.classifyLivingAgentRecord?.(agent, source);
+      if (livingGroup && card?.dataset) card.dataset.livingGroup = livingGroup;
+      return card;
+    }
+
+    function applyLivingAgentGroups() {
+      if (typeof document?.getElementById !== 'function') return;
+      window.BachLivingAgentGroups?.applyLivingGroupsToContainers?.(document, [
+        document.getElementById('local-core-agent-cards'),
+        document.getElementById('ready-agents-grid'),
+        document.getElementById('core-agent-cards'),
+      ]);
     }
 
     function updateAgentOverviewSummary(result) {
       const summary = document.getElementById('agent-overview-summary');
       if (summary) summary.textContent = `${result.visible} von ${result.total} beobachteten Agenten sichtbar · tatsächliche Startart nur mit Laufzeitbeleg, derzeit unbekannt.`;
+      applyLivingAgentGroups();
     }
 
     function applyAgentOverviewControls() {
+      if (typeof document?.getElementById === 'function') {
+        window.BachLivingAgentGroups?.unwrapLivingGroupSections?.(document.getElementById('local-core-agent-cards'));
+        window.BachLivingAgentGroups?.unwrapLivingGroupSections?.(document.getElementById('ready-agents-grid'));
+        window.BachLivingAgentGroups?.unwrapLivingGroupSections?.(document.getElementById('core-agent-cards'));
+      }
       agentOverviewController?.refresh();
+      applyLivingAgentGroups();
     }
 
     function initializeAgentOverviewControls() {
@@ -1381,7 +1400,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const talkActive = (talkOpModeEl?.value || 'ptt') !== 'off';
         const talkModel = (talkModelEl?.value || 'buddha-default').trim();
         const talkPersona = (talkPersonaEl?.value || 'buddha').trim();
-        const talkAgent = {id: 'buddha_talk', name: 'ELLMOS-Talk · Funkgerät', enabled: talkActive, status: talkActive ? 'idle' : 'paused'};
+        const talkAgent = {id: 'buddha_talk', name: 'ELLMOS-Talk · Funkgerät', enabled: talkActive, status: talkActive ? 'ready' : 'paused'};
         const talkCard = renderAgentTile(talkAgent, 'talk', {
           statusLabel: talkActive ? 'Ready · Living' : 'Pausiert', tone: talkActive ? 'ok' : 'idle',
           modelLines: [talkActive ? `Besetzt von: ${talkModel} (${talkPersona})` : 'Nicht besetzt · Schnittstelle inaktiv'],
@@ -1389,6 +1408,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         coreGrid.append(talkCard);
         if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(coreGrid, talkCard, talkAgent, 'core', 'ready');
         if (typeof applyAgentOverviewControls === 'function') applyAgentOverviewControls();
+        if (typeof applyLivingAgentGroups === 'function') applyLivingAgentGroups();
       }
 
       const ifaceGrid = document.getElementById('optional-interface-slot-cards');
@@ -1687,14 +1707,14 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       const status = String(worker.status || '').toLowerCase();
       const configured = typeof worker.backend === 'string' && !!worker.backend.trim() &&
         typeof worker.model === 'string' && !!worker.model.trim();
-      const labels = {idle:'Living · Bereit', paused:'Pausiert', completed:'Abgeschlossen · bereit',
+      const labels = {idle:'Living · Bereit', paused:'Pausiert', disabled:'Deaktiviert', completed:'Abgeschlossen · bereit',
         error:'Fehler · Status prüfen', expired:'Abgelaufen', deleted:'Entfernt',
         starting:'Startet', stopping:'Wird beendet'};
       const canEdit = ['idle', 'paused', 'completed', 'error'].includes(status);
       const waiting = worker.runtime_verified === true && worker.worker_active === true && worker.running === false && status === 'running';
-      const ready = configured && (waiting || ['idle', 'completed'].includes(status));
-      return {ready, canEdit, canStart:configured && canEdit,
-        waiting, label:waiting ? 'Living · Wartet auf Aufgaben' : !configured && canEdit ? 'Modell oder Anbieter fehlt' : status === 'running' ? 'Laufstatus nicht bestätigt' : labels[status] || 'Status unbekannt'};
+      const ready = worker.enabled !== false && configured && (waiting || ['idle', 'completed'].includes(status));
+      return {ready, canEdit, canStart:worker.enabled !== false && configured && canEdit,
+        waiting, label:worker.enabled === false ? 'Deaktiviert' : waiting ? 'Living · Wartet auf Aufgaben' : !configured && canEdit ? 'Modell oder Anbieter fehlt' : status === 'running' ? 'Laufstatus nicht bestätigt' : labels[status] || 'Status unbekannt'};
     }
 
     async function loadBackgroundWorkers() {
@@ -2698,6 +2718,45 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
 </BachLayout>
 
 <style>
+  :global(.living-agent-group) {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--bg-card) 86%, var(--bg-dark));
+  }
+  :global(.living-agent-group[data-living-group-section="living"]) {
+    border-left: 3px solid var(--success, #22c55e);
+  }
+  :global(.living-agent-group[data-living-group-section="paused"]) {
+    border-left: 3px solid var(--warning, #f59e0b);
+  }
+  :global(.living-agent-group[data-living-group-section="disabled"]) {
+    border-left: 3px solid var(--border);
+    opacity: 0.92;
+  }
+  :global(.living-agent-group-header) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  :global(.living-agent-group-title) {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--text);
+  }
+  :global(.living-agent-group-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 0.85rem;
+  }
+  .core-explanation a { color: var(--accent-blue-text); }
 </style>
 
 <script>
