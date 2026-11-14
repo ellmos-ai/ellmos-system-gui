@@ -97,9 +97,10 @@ if (board) {
         if (isControlCenterMcp) meta.append(badge('⭐ Bündelt alle MCP-Werkzeuge'));
         if (isDeprecatedBachMcp) meta.append(badge('⚠️ veraltet · ersetzt durch ellmos-*commander'));
         card.append(meta);
+        let plug = null; // appended after the source details, so the plug always sits at the bottom of the tile
         if (kind === 'plugins') {
           card.append(node('p', item.code_present ? 'Plugin-Dateien vorhanden' : 'Installationsverweis ohne erreichbare Dateien'));
-          card.append(plugCableElement(item, fetchedAt));
+          plug = plugCableElement(item, fetchedAt);
         } else if (kind === 'mcp') {
           card.append(node('p', 'Im Client konfiguriert · ' + item.transport));
           if (isDeprecatedBachMcp) card.append(node('p', 'Veralteter BACH-Servername — bitte auf den entsprechenden ellmos-*commander umstellen.', 'card-caption'));
@@ -122,6 +123,7 @@ if (board) {
         const detail = node('details'), summary = node('summary', 'Quelle');
         detail.append(summary, node('p', item.path || item.source || 'Quelle nicht angegeben'));
         card.append(detail);
+        if (plug) card.append(plug);
       }
       byId('board-items').append(card);
     }
@@ -210,8 +212,22 @@ if (board) {
     },'wissen');
   }
   function describeSource() {
-    byId('skill-source-info').textContent = currentSource?.source_version === '0' ? 'Neue lokale Anleitung. Eine bestehende Kennung wird nicht überschrieben.'
-      : currentSource ? (currentSource.version || 'Ohne Versionsnummer') + ' · Quelle ' + currentSource.source_version.slice(0, 12) : 'Aktuelle Quelle wird geladen …';
+    const info = byId('skill-source-info');
+    info.replaceChildren();
+    if (currentSource?.source_version === '0') {
+      info.textContent = 'Neue lokale Anleitung. Eine bestehende Kennung wird nicht überschrieben.';
+      return;
+    }
+    if (!currentSource) {
+      info.textContent = 'Aktuelle Quelle wird geladen …';
+      return;
+    }
+    info.append(node('span', currentSource.version || 'Ohne Versionsnummer'));
+    if (currentSource.source_version) {
+      const hashDetails = node('details', null, 'skill-hash-details');
+      hashDetails.append(node('summary', 'Technische Details'), node('p', 'Quelle (SHA-256): ' + currentSource.source_version, 'skill-hash-value'));
+      info.append(hashDetails);
+    }
   }
   async function loadHistory() {
     const select = byId('skill-history');
