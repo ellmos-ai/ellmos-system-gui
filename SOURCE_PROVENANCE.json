@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "f8e2ae35c413fa0dbb006b43dada12d4140642f1774f2f0614a22b32af98be93",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "c7999dd63834f15e2a0c44c0fa32d577286e2978516a28dd73e5ecedc1a0f9e2",
+    "public/page-reads.v1.json": "92f0d835e3e8734cc10fa0bf87360198912ea7474a50fa0b8109ecd3e95d4c9d",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -303,7 +303,7 @@
     "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
-    "src/pages/life.astro": "cda4b01d98b1af8b1781db159c1b198b7f2662db7887e988fafcb2fd6ce118c7",
+    "src/pages/life.astro": "1e2e68e9c4aeed2ff3a482880721afbeafc245f3368bb34e558685222bc27a81",
     "src/pages/maintenance.astro": "1e47fe3566eee28aa580867ad6eef3df5001b80aeec29d97481ff0449d70e3ab",
     "src/pages/memory.astro": "47ab9040873b20341882c6d9463eb70a523ef6c4852d5e4357f9bb3f397f6952",
     "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
@@ -5943,6 +5943,31 @@
           "path": "tests/tasks-routines.test.mjs",
           "previous_sha256": "ae0aabd669d5d37d37b06c7cf9cbeb237b7045d9b3f5e26f57a6d1cdb6fbfea0",
           "sha256": "6f7d425e389176b1676e1da690c6c0da565f0c41d5baa293c91059cd994704d1"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-14",
+      "summary": "Life finance tab bound to the local finance summary (PB-12, T-20261114-327037444): src/pages/life.astro loads GET /api/financial/summary when the Finanzen tab opens and shows a measured month table with honest empty and error states; registered in public/page-reads.v1.json and tests/fixtures/backend-routes.v1.json; new tests/life-finance-summary.test.mjs.",
+      "files": [
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "cda4b01d98b1af8b1781db159c1b198b7f2662db7887e988fafcb2fd6ce118c7",
+          "sha256": "1e2e68e9c4aeed2ff3a482880721afbeafc245f3368bb34e558685222bc27a81"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "c7999dd63834f15e2a0c44c0fa32d577286e2978516a28dd73e5ecedc1a0f9e2",
+          "sha256": "92f0d835e3e8734cc10fa0bf87360198912ea7474a50fa0b8109ecd3e95d4c9d"
+        },
+        {
+          "path": "tests/fixtures/backend-routes.v1.json",
+          "previous_sha256": "548e5039d7ac4675ec40c3d7721258f4c2d55e616a90327b984695c8b5edc154",
+          "sha256": "556e97bc3e7964a1843b9d65b7870b7f79fc3fa474125fa11b1cdc8edee52ee6"
+        },
+        {
+          "path": "tests/life-finance-summary.test.mjs",
+          "sha256": "302a6ca079ce89e3c7eeeeccf904dd1e860062bfe63cec6e09acd4bd84528ada"
         }
       ]
     }

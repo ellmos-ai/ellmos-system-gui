@@ -432,6 +432,11 @@
     "method": "POST",
     "path": "/api/routines",
     "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/summary",
+    "required": false
    }
   ],
   "/memory": [
