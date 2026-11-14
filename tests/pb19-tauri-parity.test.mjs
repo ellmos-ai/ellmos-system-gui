@@ -51,7 +51,7 @@ test('Tauri updater configuration structure is valid', () => {
   }
 });
 
-test('Tauri expected_page_count matches Web-Build parity (51 productive pages)', () => {
+test('Tauri expected_page_count matches Web-Build parity (52 productive pages, incl. /foerderplaner)', () => {
   const pages = pagePaths(new URL('src/pages/', root)).filter(p => p.pathname.endsWith('.astro'));
-  assert.equal(pages.length, 51);
+  assert.equal(pages.length, 52);
 });

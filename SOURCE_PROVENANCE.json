@@ -5970,7 +5970,8 @@
           "previous_sha256": "419cc003835917e4be438c229ccddbe3689c133fc74056e52e1d8f2e48a90fa1",
           "sha256": "bf07df534aec5700416568d1361b328d15217146a70c645dcb7e5b75eee2a99f"
         }
-      ]
+      ],
+      "source_base_commit": "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e"
     },
     {
       "date": "2026-11-07",
@@ -5995,6 +5996,28 @@
           "path": "tests/domain-pins.test.mjs",
           "previous_sha256": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
           "sha256": "f082e8231d3445f3eb40de7a8563285e16168f81f85c5ba4c3374105a381a925"
+        }
+      ],
+      "source_base_commit": "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e"
+    },
+    {
+      "date": "2026-11-14",
+      "scope": "OCEAN gui#132: integrate deployed GUI branch and current main without losing branch provenance",
+      "source_base_commit": "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e",
+      "merged_source_commit": "91e695540e67bce69bd6cbc99a8ad707acc4abde",
+      "common_base_commit": "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e",
+      "branch_bases": [
+        "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e"
+      ],
+      "changes": [
+        "Merge current main into the branch; only SOURCE_PROVENANCE.json conflicted, all hashes recomputed from the merged tree."
+      ],
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "83ab3ecaa5f0cbb3d7b66396443defd15269d1fa07363190009f12b1f606ec69",
+          "other_parent_sha256": "c7999dd63834f15e2a0c44c0fa32d577286e2978516a28dd73e5ecedc1a0f9e2",
+          "sha256": "3b59087c912a3057c3385794af0dc268afccfe07ee0adc04ea173217812aea03"
         }
       ]
     }
