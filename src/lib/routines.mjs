@@ -4,8 +4,6 @@ import {parseTrigger} from './agent-triggers.mjs';
 
 export const SOURCE_KEYS = ['bach', 'ocean', 'module', 'life'];
 export const SOURCE_LABEL = {bach: 'BACH', ocean: 'Ocean', module: 'Modul', life: 'Life · persönlich'};
-// The module source has no HTTP path in the backend yet (W1 diagnosis section 13.1). When one exists, add a reader here.
-const MODULE_REASON = 'kein Backend-Pfad für Modul-Automationen (BACH-Adapter fehlt)';
 
 const reasonFor = status => status === 401 || status === 403 ? 'Geräteanmeldung erforderlich'
   : status === 404 ? 'Pfad nicht vorhanden (Backend ohne diese Schnittstelle)' : `Schnittstelle nicht verfügbar (HTTP ${status})`;
@@ -74,8 +72,21 @@ const fromTrigger = trigger => trigger.deleted ? null : finish({
   schedule: triggerSchedule(trigger.schedule), next: null, last: null, active: trigger.enabled,
 });
 
+const fromModule = item => item && typeof item === 'object' && item.id != null ? finish({
+  id: String(item.id), source: 'module', kind: item.kind || 'routine', origin: item.origin || 'Modul-Automation',
+  name: item.name || item.title || '', detail: item.title && item.name && item.title !== item.name ? item.title : (item.detail || ''),
+  schedule: item.schedule ? String(item.schedule) : 'Nicht geplant', next: item.next_run, last: item.last_run,
+  result: item.last_result || null, active: item.enabled !== false,
+}) : null;
+
 const acceptTriggers = data => data?.schema === 'bach.agent-triggers.v1' && data.provider === 'ellmos-scheduler'
   && data.source === 'external_scheduler' && data.state === 'available' && Array.isArray(data.triggers) ? data.triggers.map(parseTrigger) : null;
+
+const acceptAutomations = data =>
+  Array.isArray(data?.items) ? data.items
+  : Array.isArray(data?.automations) ? data.automations
+  : Array.isArray(data) ? data
+  : null;
 
 // The client owns the fetcher, so the page-reads guard can follow every call (scripts/page-reads-helpers.mjs: read).
 export function createRoutinesClient(fetcher = globalThis.fetch) {
@@ -91,12 +102,13 @@ export function createRoutinesClient(fetcher = globalThis.fetch) {
   }
 
   async function load() {
-    const [jobs, recurring, daemon, ocean, life] = await Promise.all([
+    const [jobs, recurring, daemon, ocean, life, module] = await Promise.all([
       read('/api/daemon/jobs', d => Array.isArray(d?.jobs) ? d.jobs : null),
       read('/api/recurring', d => d?.success === true && d.tasks && typeof d.tasks === 'object' ? Object.entries(d.tasks) : null),
       read('/api/daemon/status', d => d && typeof d.running === 'boolean' ? d : null),
       read('/api/agent-triggers', acceptTriggers),
       read('/api/routines', d => d?.success === true && Array.isArray(d.routines) ? d.routines : null),
+      read('/api/automations', acceptAutomations),
     ]);
     const sources = {}, items = [];
     const take = (_key, result, map) => result.value ? map(result.value).filter(Boolean) : [];
@@ -107,10 +119,11 @@ export function createRoutinesClient(fetcher = globalThis.fetch) {
       count: bachItems.length, note: daemon.value?.running === false && jobs.value ? 'Der BACH-Daemon ist gestoppt: Jobs laufen nicht von selbst.' : null};
     const oceanItems = take('ocean', ocean, v => v.map(fromTrigger));
     sources.ocean = {state: ocean.value ? 'available' : 'unavailable', reason: ocean.reason || null, count: oceanItems.length, note: null};
-    sources.module = {state: 'unavailable', reason: MODULE_REASON, count: 0, note: null};
+    const moduleItems = take('module', module, v => v.map(fromModule));
+    sources.module = {state: module.value ? 'available' : 'unavailable', reason: module.reason || null, count: moduleItems.length, note: null};
     const lifeItems = take('life', life, v => v.map(fromLife));
     sources.life = {state: life.value ? 'available' : 'unavailable', reason: life.reason || null, count: lifeItems.length, note: null};
-    items.push(...bachItems, ...oceanItems, ...lifeItems);
+    items.push(...bachItems, ...oceanItems, ...moduleItems, ...lifeItems);
     return {items, sources};
   }
 

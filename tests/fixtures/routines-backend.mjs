@@ -27,9 +27,14 @@ export const TRIGGERS = [
   {id: 'old.trigger', agent_id: 'worker@mac', version: 2, revision: 2, enabled: false, deleted: true, executor: 'deliver-report',
     schedule: {kind: 'interval', every_seconds: 3600}, payload: {}, authorities: []},
 ];
+export const MODULE_AUTOMATIONS = [
+  {id: 'automation-master:weekly-cleanup', name: 'weekly-cleanup', title: 'Wöchentliche Bereinigung',
+    schedule: 'wöchentlich', last_run: '2026-11-01 04:00:00', next_run: '2026-11-08 04:00:00',
+    last_result: 'success', enabled: true, source: 'automation-master'},
+];
 const envelope = value => ({schema: 'bach.agent-triggers.v1', provider: 'ellmos-scheduler', source: 'external_scheduler', state: 'available', ...value});
 
-// fault: {bach: 503, recurring: 503, ocean: 404, life: 401, status: 500}; a number is an HTTP status, 'down' makes the fetch throw.
+// fault: {bach: 503, recurring: 503, ocean: 404, life: 401, status: 500, module: 404}; a number is an HTTP status, 'down' makes the fetch throw.
 export function routinesBackend(fault = {}, calls = []) {
   return async (path, options = {}) => {
     const url = new URL(path, 'http://x'), method = options.method || 'GET';
@@ -45,6 +50,7 @@ export function routinesBackend(fault = {}, calls = []) {
     if (method === 'GET' && url.pathname === '/api/recurring') return reply('recurring', {success: true, count: 2, tasks: RECURRING});
     if (method === 'GET' && url.pathname === '/api/routines') return reply('life', {success: true, routines: LIFE});
     if (method === 'GET' && url.pathname === '/api/agent-triggers') return reply('ocean', envelope({triggers: TRIGGERS}));
+    if (method === 'GET' && url.pathname === '/api/automations') return reply('module', {ok: true, source: 'automation-master', count: MODULE_AUTOMATIONS.length, items: MODULE_AUTOMATIONS, automations: MODULE_AUTOMATIONS});
     if (method === 'PUT' && /^\/api\/daemon\/jobs\/\d+\/toggle$/.test(url.pathname)) return reply('bach', {is_active: false});
     if (method === 'POST' && /^\/api\/daemon\/jobs\/\d+\/run$/.test(url.pathname)) return reply('bach', {status: 'started', job_id: 1});
     if (method === 'POST' && /^\/api\/recurring\/trigger\//.test(url.pathname)) return reply('recurring', {success: true});

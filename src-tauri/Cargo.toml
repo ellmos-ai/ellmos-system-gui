@@ -1,6 +1,6 @@
 [package]
 name = "ellmos-system-gui-desktop"
-version = "0.1.0"
+version = "0.2.40"
 description = "Desktop consumer of the shared BACH and Ocean GUI"
 edition = "2021"
 license = "MIT"
