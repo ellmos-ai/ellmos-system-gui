@@ -2,7 +2,7 @@
 // The draft lives in memory only: the database behind /api/skills-board/hierarchy is the single store.
 import {GROUPS, createHierarchyClient, cloneLists, diffAssignments, hasChanges, loadedView, derivedExpertNote} from './hierarchy-assignment.mjs';
 
-const root = document.getElementById('assignment-panel');
+const root = document.getElementById('persona-routing-panel') || document.getElementById('assignment-panel');
 if (root) {
   const client = createHierarchyClient();
   const part = id => root.querySelector('[data-part="' + id + '"]');
@@ -167,27 +167,40 @@ if (root) {
     render();
   }
 
-  part('agent').addEventListener('change', event => {
+  part('agent')?.addEventListener('change', event => {
     if (hasChanges(diffAssignments(state.base, state.draft)) && !window.confirm('Ungespeicherte Änderungen für diesen Agenten verwerfen?')) { event.target.value = state.agent; return; }
     setDraftFor(event.target.value); render();
   });
-  part('filter').addEventListener('input', event => { state.filter = event.target.value; render(); });
-  part('review').addEventListener('click', () => { state.preview = true; render(); });
-  part('reset').addEventListener('click', () => { setDraftFor(state.agent); status(''); render(); });
-  part('reload').addEventListener('click', () => {
+  part('filter')?.addEventListener('input', event => { state.filter = event.target.value; render(); });
+  part('review')?.addEventListener('click', () => { state.preview = true; render(); });
+  part('reset')?.addEventListener('click', () => { setDraftFor(state.agent); status(''); render(); });
+  part('reload')?.addEventListener('click', () => {
     if (state.draft && hasChanges(diffAssignments(state.base, state.draft)) && !window.confirm('Ungespeicherte Änderungen verwerfen und neu laden?')) return;
     status(''); load();
   });
 
-  // Tabs (Anleitungen | Zuordnung): arrow keys move between the tabs, the hash #zuordnung selects the second one.
+  // Tabs (Anleitungen | Persona-Routing): arrow keys move between the tabs, the hash #persona-routing selects the second one.
   const tabs = [...document.querySelectorAll('[data-skills-tab]')];
-  const panels = {anleitungen: document.getElementById('skills-panel'), zuordnung: root};
+  const panels = {
+    anleitungen: document.getElementById('skills-panel'),
+    'persona-routing': document.getElementById('persona-routing-panel') || root,
+    zuordnung: document.getElementById('persona-routing-panel') || root
+  };
   function selectTab(name, focus) {
-    for (const tab of tabs) { const on = tab.dataset.skillsTab === name; tab.setAttribute('aria-selected', String(on)); tab.tabIndex = on ? 0 : -1; if (on && focus) tab.focus(); }
-    for (const [key, panel] of Object.entries(panels)) panel.hidden = key !== name;
-    document.getElementById('board-actions').hidden = name !== 'anleitungen';
-    try { history.replaceState(null, '', name === 'zuordnung' ? '#zuordnung' : location.pathname + location.search); } catch { /* not essential */ }
-    if (name === 'zuordnung' && !state.loaded) { state.loaded = true; load(); }
+    const targetName = name === 'zuordnung' ? 'persona-routing' : name;
+    for (const tab of tabs) {
+      const on = tab.dataset.skillsTab === targetName || (targetName === 'persona-routing' && tab.dataset.skillsTab === 'zuordnung');
+      tab.setAttribute('aria-selected', String(on));
+      tab.tabIndex = on ? 0 : -1;
+      if (on && focus) tab.focus();
+    }
+    for (const [key, panel] of Object.entries(panels)) {
+      if (panel) panel.hidden = (key !== targetName && !(targetName === 'persona-routing' && key === 'zuordnung'));
+    }
+    const boardActions = document.getElementById('board-actions');
+    if (boardActions) boardActions.hidden = targetName !== 'anleitungen';
+    try { history.replaceState(null, '', targetName === 'persona-routing' ? '#persona-routing' : location.pathname + location.search); } catch { /* not essential */ }
+    if (targetName === 'zuordnung' && !state.loaded && part('agent')) { state.loaded = true; load(); }
   }
   for (const [index, tab] of tabs.entries()) {
     tab.addEventListener('click', () => selectTab(tab.dataset.skillsTab, false));
@@ -198,5 +211,6 @@ if (root) {
       if (event.key === 'End') { event.preventDefault(); selectTab(tabs[tabs.length - 1].dataset.skillsTab, true); }
     });
   }
-  selectTab(location.hash === '#zuordnung' ? 'zuordnung' : 'anleitungen', false);
+  const initialTab = (location.hash === '#persona-routing' || location.hash === '#zuordnung') ? 'persona-routing' : 'anleitungen';
+  selectTab(initialTab, false);
 }

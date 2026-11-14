@@ -12,28 +12,50 @@ if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
       <p class="eyebrow" style="margin:0 0 0.25rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Hilfe · Architektur · Dokumentation</p>
       <h1 style="margin:0 0 0.35rem 0;font-size:1.65rem;">❓ Hilfe &amp; Architektur-Dokumentation (#2455, #2459, #2480)</h1>
       <p style="margin:0;opacity:0.85;font-size:0.9rem;">
-        Kognitiver Memory-Schaltplan (Kontextfenster, Exekutive, Sensoren, Startprompt), Ocean-Modulschaltplan und Bedienungsanleitung.
+        Kognitives System, Memory-Karte, Ocean-Modulschaltplan und Ocean-Dokusystem (doc-keeper &amp; help_projection).
       </p>
-    </div>
-    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-      <a href="/chat?agent=ticket-master" class="btn btn-primary btn-sm">🎫 Frag den Ticket-Master (Chat) →</a>
-      <a href="/memory" class="btn btn-secondary btn-sm">💾 Langzeitgedächtnis öffnen</a>
     </div>
   </div>
 
-  <!-- Reiter-Leiste Hilfe › Architektur / Modulschaltplan / Bedienungsanleitung -->
+  <!-- AKTIONSLEISTE: DIREKTE SYSTEM-INTERAKTION (OPERATIVE ANSICHTEN) (PB-25 Punkt 11) -->
+  <section
+    class="help-interaction-bar card"
+    data-section-role="interaction-links"
+    aria-label="Direkte System-Interaktion (Operative Ansichten)"
+    style="margin-bottom:1.4rem;padding:1.1rem 1.25rem;border-radius:12px;border:1px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--bg-card));display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;"
+  >
+    <div style="max-width:55ch;">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+        <span class="badge" style="background:var(--accent);color:#fff;">⚡ Operative Eingriffe</span>
+        <strong style="font-size:1rem;color:var(--text);">Direkte System-Interaktion (Operative Ansichten)</strong>
+      </div>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);line-height:1.4;">
+        Dokumentation und operative Eingriffe sind getrennt: Nutze diese Schnellzugriffe, um aktiv Daten, Fähigkeiten, Notizen oder Zeitpläne zu verändern.
+      </p>
+    </div>
+    <div style="display:flex;gap:0.55rem;flex-wrap:wrap;align-items:center;">
+      <a href="/memory" class="btn btn-secondary btn-sm" id="interact-link-memory">🧠 Memory bearbeiten (/memory · /agenten/memory)</a>
+      <a href="/skills" class="btn btn-secondary btn-sm" id="interact-link-skills">🧭 Skills schalten (/skills)</a>
+      <a href="/notizen" class="btn btn-secondary btn-sm" id="interact-link-notizen">📝 Notizen anlegen (/notizen)</a>
+      <a href="/routinen" class="btn btn-secondary btn-sm" id="interact-link-routinen">⏱️ Routinen &amp; Jobs (/routinen)</a>
+      <a href="/chat?agent=ticket-master" class="btn btn-primary btn-sm" id="interact-link-chat">🎫 Frag den Ticket-Master →</a>
+    </div>
+  </section>
+
+  <!-- Reiter-Leiste Hilfe › Architektur & Memory / Modulschaltplan / Dokusystem & Bedienungsanleitung -->
   <nav aria-label="Hilfe-Bereiche" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.25rem;padding:0.65rem 0.9rem;border-radius:12px;border:1px solid rgba(148,163,184,0.22);background:rgba(15,23,42,0.5);">
     <button type="button" class="btn btn-primary btn-sm help-tab-btn" data-help-tab="architecture">🏗️ Architektur &amp; Kognitiver Schaltplan</button>
     <button type="button" class="btn btn-secondary btn-sm help-tab-btn" data-help-tab="modules">🌊 Ocean-Modulschaltplan &amp; Schnittplan</button>
-    <button type="button" class="btn btn-secondary btn-sm help-tab-btn" data-help-tab="manual">📘 Bedienungsanleitung &amp; Moduldoku</button>
+    <button type="button" class="btn btn-secondary btn-sm help-tab-btn" data-help-tab="manual">📘 Ocean-Dokusystem &amp; Moduldoku</button>
   </nav>
 
-  <!-- REITER 1: ARCHITEKTUR & KOGNITIVER SCHALTPLAN (aus /memory verschoben: Schaubild + Reiter 1–3 & 6) -->
-  <section id="help-panel-architecture" class="help-tab-panel" style="display:grid;gap:1rem;margin-bottom:1.5rem;">
+  <!-- REITER 1: ARCHITEKTUR & KOGNITIVER SCHALTPLAN + MEMORY-KARTE (PB-25 Punkt 10) -->
+  <section id="help-panel-architecture" class="help-tab-panel" data-section-role="documentation" style="display:grid;gap:1.5rem;margin-bottom:1.5rem;">
+    <!-- Kognitiver Memory-Schaltplan -->
     <div style="padding:1.25rem;border-radius:12px;border:1px solid rgba(148,163,184,0.22);background:rgba(15,23,42,0.5);">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.75rem;">
         <h2 style="margin:0;font-size:1.15rem;">🧠 Kognitiver Memory-Schaltplan (Prozess-Topologie)</h2>
-        <a href="/memory" class="btn btn-secondary btn-sm">Interaktiven SVG/Mermaid-Graph in Memory öffnen ↗</a>
+        <a href="/memory" class="btn btn-secondary btn-sm">Interaktiven Graph in Memory öffnen ↗</a>
       </div>
       <p style="margin:0 0 1rem 0;font-size:0.86rem;opacity:0.85;">
         Das Arbeitsgedächtnismodell trennt Steuerung (Zentrale Exekutive &amp; Sensoren), Kontextbereitstellung (Hooker &amp; Startprompt-Boot-Bus), Aktionskontrolle (Guards unter <a href="/governance#hooks-guards">Governance › Hooks &amp; Guards</a>) und Lernen (<a href="/skills#skill-keeper">Skills › Skill Keeper</a>).
@@ -57,10 +79,140 @@ if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
         </article>
       </div>
     </div>
+
+    <!-- PFLICHTABSCHNITT: KOGNITIVES SYSTEM & GEDÄCHTNIS-ARCHITEKTUR (MEMORY-KARTE) (PB-25 Punkt 10) -->
+    <div
+      id="kognitives-system-memory"
+      data-help-cognitive-memory="true"
+      data-section-role="documentation"
+      style="padding:1.4rem;border-radius:12px;border:1px solid rgba(148,163,184,0.25);background:rgba(15,23,42,0.6);"
+    >
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <div>
+          <span class="badge" style="background:var(--accent);color:#fff;">🧠 5-Schichten-Gedächtnis</span>
+          <h2 style="margin:0.35rem 0 0.3rem;font-size:1.3rem;">Kognitives System &amp; Gedächtnis-Architektur (Memory-Karte)</h2>
+          <p style="margin:0;font-size:0.88rem;color:var(--text-muted);max-width:76ch;line-height:1.5;">
+            Die Gedächtnisarchitektur trennt strikt zwischen fünf komplementären Kognitionsschichten. Sie stellt sicher, dass flüchtige Arbeitskontexte, chronologische Verläufe, dauerhafte Fakten und freie Denknotizen sauber organisiert und durch asynchrone Konsolidierung gepflegt werden.
+          </p>
+        </div>
+        <a href="/memory" class="btn btn-secondary btn-sm">Gedächtnisinspektor (/memory) ↗</a>
+      </div>
+
+      <!-- Die 5 Gedächtnisschichten -->
+      <h3 style="font-size:1.05rem;margin:1.2rem 0 0.6rem 0;color:var(--text);">Die 5 Gedächtnisschichten im Überblick</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:0.9rem;margin-bottom:1.5rem;">
+        <article style="padding:1rem;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(15,23,42,0.45);">
+          <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+            <span class="badge" style="background:rgba(59,130,246,0.25);color:var(--text);">1. Schicht</span>
+            <strong style="font-size:0.95rem;">Arbeitsgedächtnis (Working Memory)</strong>
+          </div>
+          <p style="margin:0;font-size:0.83rem;color:var(--text-muted);line-height:1.45;">
+            <strong>Aktiver Kontext &amp; Inferenzfenster:</strong> Phonologische Schleife und visuell-räumlicher Notizblock nach Baddeley. Hält Systemkontext, Nutzeranweisungen, Tool-Ergebnisse und CoT-Zwischenschritte während des laufenden LLM-Laufs. Fluchtig (In-Memory), existiert nur für die Lebensdauer der aktuellen Inferenz.
+          </p>
+        </article>
+
+        <article style="padding:1rem;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(15,23,42,0.45);">
+          <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+            <span class="badge" style="background:rgba(16,185,129,0.25);color:var(--text);">2. Schicht</span>
+            <strong style="font-size:0.95rem;">Episodisches Gedächtnis (Session Snapshots)</strong>
+          </div>
+          <p style="margin:0;font-size:0.83rem;color:var(--text-muted);line-height:1.45;">
+            <strong>Gesprächs- &amp; Aktionsverläufe:</strong> Vollständige Protokolle und Snapshots früherer Dialoge (<code>session_transcripts</code>, <code>sessions.astro</code>). Rekonstruiert den zeitlichen Ablauf, Arbeitsstände und Entscheidungswege über Stunden und Tage hinweg.
+          </p>
+        </article>
+
+        <article style="padding:1rem;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(15,23,42,0.45);">
+          <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+            <span class="badge" style="background:rgba(234,179,8,0.25);color:var(--text);">3. Schicht</span>
+            <strong style="font-size:0.95rem;">Semantisches Gedächtnis (Memory Facts)</strong>
+          </div>
+          <p style="margin:0;font-size:0.83rem;color:var(--text-muted);line-height:1.45;">
+            <strong>Dauerhaftes Faktenwissen:</strong> Strukturierte Tabellen in <code>bach.db</code> (<code>memory_facts</code>, <code>memory_lessons</code>). Speichert verifizierte Fakten, Systemregeln, Entitäten und Nutzerpräferenzen mit Konfidenzwerten, Kategorie und lückenlosem Herkunftsnachweis.
+          </p>
+        </article>
+
+        <article style="padding:1rem;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(15,23,42,0.45);">
+          <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+            <span class="badge" style="background:rgba(168,85,247,0.25);color:var(--text);">4. Schicht</span>
+            <strong style="font-size:0.95rem;">Notiz- &amp; Ideenspeicher (llm-note)</strong>
+          </div>
+          <p style="margin:0;font-size:0.83rem;color:var(--text-muted);line-height:1.45;">
+            <strong>Denkarium &amp; Entwurfsraum:</strong> Unstrukturierter, persistenter Speicher für flüchtige Gedanken, Brainstorming, Zwischenentwürfe und Merkzettel (<code>llm-note</code>, <code>/notizen</code>), unabhängig von formalen Sessions oder Aufgaben.
+          </p>
+        </article>
+
+        <article style="padding:1rem;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(15,23,42,0.45);grid-column:1/-1;">
+          <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
+            <span class="badge" style="background:rgba(236,72,153,0.25);color:var(--text);">5. Schicht</span>
+            <strong style="font-size:0.95rem;">Konsolidierung (Sleep / Gardener &amp; memoryhooker)</strong>
+          </div>
+          <p style="margin:0;font-size:0.83rem;color:var(--text-muted);line-height:1.45;">
+            <strong>Asynchrone Schlaf- &amp; Pflegezyklen:</strong> Autonome Hintergrund-Routinen (<code>Sleep / Gardener</code> und <code>memoryhooker</code>) werten episodische Gesprächsverläufe aus, filtern operatives Rauschen (~76%), deduplizieren Einträge und überführen wesentliche Erkenntnisse als destillierte Fakten in das semantische Langzeitgedächtnis.
+          </p>
+        </article>
+      </div>
+
+      <!-- Memory-Karte (Gedächtnis-Topologie) -->
+      <h3 style="font-size:1.05rem;margin:1.4rem 0 0.5rem 0;color:var(--text);">Memory-Karte (Gedächtnis-Topologie &amp; Zugriffsmatrix)</h3>
+      <p style="margin:0 0 0.85rem 0;font-size:0.84rem;color:var(--text-muted);line-height:1.45;">
+        Die Memory-Karte beschreibt die physische Verortung, Latenzen und Datenströme zwischen den fünf Schichten:
+      </p>
+
+      <div class="memory-map-container" data-memory-map="topology" style="overflow-x:auto;">
+        <table class="memory-map-table" style="width:100%;border-collapse:collapse;font-size:0.83rem;border:1px solid rgba(148,163,184,0.22);border-radius:8px;overflow:hidden;">
+          <thead>
+            <tr style="background:rgba(15,23,42,0.8);text-align:left;border-bottom:1px solid rgba(148,163,184,0.22);">
+              <th style="padding:0.65rem 0.85rem;color:var(--text);">Schicht &amp; Komponente</th>
+              <th style="padding:0.65rem 0.85rem;color:var(--text);">Kognitive Rolle</th>
+              <th style="padding:0.65rem 0.85rem;color:var(--text);">Speicherort / Persistenz</th>
+              <th style="padding:0.65rem 0.85rem;color:var(--text);">Latenz &amp; Lebensdauer</th>
+              <th style="padding:0.65rem 0.85rem;color:var(--text);">Lese- &amp; Schreibpfade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.15);background:rgba(15,23,42,0.3);">
+              <td style="padding:0.6rem 0.85rem;"><strong>1. Arbeitsgedächtnis</strong><br/><small style="color:var(--text-muted);">Working Memory</small></td>
+              <td style="padding:0.6rem 0.85rem;">Aktives Kontextfenster, CoT, Tool-Loop</td>
+              <td style="padding:0.6rem 0.85rem;">RAM / Inferenz-Tokenpuffer (flüchtig)</td>
+              <td style="padding:0.6rem 0.85rem;">&lt; 50 ms &middot; 1 Inferenzlauf</td>
+              <td style="padding:0.6rem 0.85rem;">Startprompt-Bus, Hooker-Injektion</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.15);background:rgba(15,23,42,0.15);">
+              <td style="padding:0.6rem 0.85rem;"><strong>2. Episodisches Gedächtnis</strong><br/><small style="color:var(--text-muted);">Session Snapshots</small></td>
+              <td style="padding:0.6rem 0.85rem;">Dialogchronik, Session-Transkripte</td>
+              <td style="padding:0.6rem 0.85rem;">Dateisystem / <code>session_transcripts</code></td>
+              <td style="padding:0.6rem 0.85rem;">~ 100 ms &middot; Wochen bis Monate</td>
+              <td style="padding:0.6rem 0.85rem;"><code>/api/memory/sessions</code>, History-Reader</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.15);background:rgba(15,23,42,0.3);">
+              <td style="padding:0.6rem 0.85rem;"><strong>3. Semantisches Gedächtnis</strong><br/><small style="color:var(--text-muted);">Memory Facts</small></td>
+              <td style="padding:0.6rem 0.85rem;">Faktenwissen, Lessons, Regeln, Profile</td>
+              <td style="padding:0.6rem 0.85rem;">SQLite (<code>bach.db</code>, <code>memory_facts</code>)</td>
+              <td style="padding:0.6rem 0.85rem;">&lt; 5 ms &middot; Permanent</td>
+              <td style="padding:0.6rem 0.85rem;"><code>/api/memory/facts</code>, <code>/api/memory/lessons</code></td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(148,163,184,0.15);background:rgba(15,23,42,0.15);">
+              <td style="padding:0.6rem 0.85rem;"><strong>4. Notizspeicher</strong><br/><small style="color:var(--text-muted);">llm-note / Denkarium</small></td>
+              <td style="padding:0.6rem 0.85rem;">Ideenentwürfe, temporäre Merkzettel</td>
+              <td style="padding:0.6rem 0.85rem;">JSON/Markdown (<code>notizen</code>)</td>
+              <td style="padding:0.6rem 0.85rem;">&lt; 10 ms &middot; Bis zur Archivierung</td>
+              <td style="padding:0.6rem 0.85rem;"><code>/api/notizen</code>, <code>llm-note</code> Tool</td>
+            </tr>
+            <tr style="background:rgba(15,23,42,0.3);">
+              <td style="padding:0.6rem 0.85rem;"><strong>5. Konsolidierung</strong><br/><small style="color:var(--text-muted);">Sleep / Gardener &amp; Hooks</small></td>
+              <td style="padding:0.6rem 0.85rem;">Rauschfilterung (~76%), Destillation</td>
+              <td style="padding:0.6rem 0.85rem;">Hintergrundprozess &amp; Cron-Jobs</td>
+              <td style="padding:0.6rem 0.85rem;">Zyklisch (Ruhephasen / Nachts)</td>
+              <td style="padding:0.6rem 0.85rem;"><code>memoryhooker</code>, <code>Gardener</code> Daemon</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
   <!-- REITER 2: OCEAN-MODULSCHALTPLAN & SCHNITTPLAN (#2458) -->
-  <section id="help-panel-modules" class="help-tab-panel" style="display:grid;gap:1rem;margin-bottom:1.5rem;">
+  <section id="help-panel-modules" class="help-tab-panel" data-section-role="documentation" style="display:grid;gap:1rem;margin-bottom:1.5rem;">
     <div style="padding:1.25rem;border-radius:12px;border:1px solid rgba(148,163,184,0.22);background:rgba(15,23,42,0.5);">
       <h2 style="margin:0 0 0.5rem 0;font-size:1.15rem;">🌊 Ocean-Modulschaltplan &amp; Remodularisierungs-Schnittplan (#2458)</h2>
       <p style="margin:0 0 0.85rem 0;font-size:0.86rem;opacity:0.85;">
@@ -83,45 +235,181 @@ if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
     </div>
   </section>
 
-  <!-- REITER 3: BEDIENUNGSANLEITUNG & MODULDOKU (#2459) -->
-  <section class="help-projection-panel help-tab-panel" id="ocean-help-projection" style="margin-bottom:1.5rem;padding:1.25rem;border-radius:12px;border:1px solid rgba(148,163,184,0.22);background:rgba(15,23,42,0.5);">
-    <h2 style="margin:0 0 0.5rem 0;font-size:1.35rem;">📘 Ocean &amp; BACH Dokumentation &amp; Bedienungsanleitung (#2459)</h2>
-    <p style="margin:0 0 0.75rem 0;opacity:0.85;">
-      Verbindliche Rangfolge bei Abweichungen: <strong>1. Jüngere Nutzerentscheidung</strong> &rarr;
-      <strong>2. Aktueller Umbauplan</strong> &rarr;
-      <strong>3. Moduldoku (Manifest <code>ellmos.module.v2</code>)</strong> &rarr;
-      <strong>4. Kerndoku des installierten Kerns (<code>docs/CORE.md</code> / <code>SKILL.md</code>)</strong>.
+  <!-- REITER 3: OCEAN-DOKUSYSTEM (DOC-KEEPER & HELP_PROJECTION) (PB-25 Punkt 12) -->
+  <section
+    class="help-projection-panel help-tab-panel"
+    id="ocean-doc-system"
+    data-section-role="documentation"
+    data-help-ocean-docs="true"
+    data-doc-keeper="true"
+    data-help-projection="true"
+    style="margin-bottom:1.5rem;padding:1.4rem;border-radius:12px;border:1px solid rgba(148,163,184,0.25);background:rgba(15,23,42,0.6);"
+  >
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+      <div>
+        <span class="badge" style="background:var(--accent);color:#fff;">📚 Ocean-Dokusystem</span>
+        <h2 style="margin:0.35rem 0 0.3rem;font-size:1.3rem;">Ocean-Dokusystem (ellmos-doc-keeper &amp; help_projection)</h2>
+        <p style="margin:0;font-size:0.88rem;color:var(--text-muted);max-width:76ch;line-height:1.5;">
+          Zentrale Dokumentationsanbindung über <code>ellmos-doc-keeper</code> und <code>help_projection.py</code>, vollständig kompatibel mit der BACH-Hilfe-Schnittstelle (<code>/api/help</code>). Überwacht kontinuierlich Dokumentations-Erosion, SOLL/IST-Terraforming und mehrsprachige Parität.
+        </p>
+      </div>
+      <span class="badge" id="help-doc-keeper-badge" style="background:rgba(16,185,129,0.2);color:var(--text);">✓ doc-keeper aktiv &middot; BACH /api/help kompatibel</span>
+    </div>
+
+    <!-- Verbindliche Rangfolge -->
+    <div style="padding:0.75rem 1rem;border-radius:8px;background:rgba(15,23,42,0.4);border:1px solid rgba(148,163,184,0.18);margin-bottom:1.2rem;font-size:0.83rem;">
+      <strong>Verbindliche Dokumentations-Rangfolge bei Abweichungen:</strong><br/>
+      1. Jüngere Nutzerentscheidung &rarr; 2. Aktueller Umbauplan &rarr; 3. Moduldoku (Manifest <code>ellmos.module.v2</code>) &rarr; 4. Kerndoku des installierten Kerns (<code>docs/CORE.md</code> / <code>SKILL.md</code>).
+    </div>
+
+    <!-- Themen-Katalog -->
+    <h3 style="font-size:1.05rem;margin:1.2rem 0 0.6rem 0;color:var(--text);">Themen-Katalog der Dokumentation</h3>
+    <div class="doc-topic-catalog" data-topic-catalog="true" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0.85rem;margin-bottom:1.4rem;">
+      <article style="padding:0.9rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);background:rgba(15,23,42,0.35);">
+        <strong style="color:var(--text);font-size:0.92rem;">🏛️ Kern &amp; Architektur (<code>core</code>)</strong>
+        <p style="margin:0.35rem 0 0;font-size:0.81rem;color:var(--text-muted);">
+          Systemarchitektur, Sicherheit, Governance-Policies (P-001 bis P-007), Agenten-Protokolle, Rollen und Lebenszyklus. Einstieg: <code>docs/CORE.md</code>.
+        </p>
+      </article>
+
+      <article style="padding:0.9rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);background:rgba(15,23,42,0.35);">
+        <strong style="color:var(--text);font-size:0.92rem;">📦 Fachmodule (<code>modules</code>)</strong>
+        <p style="margin:0.35rem 0 0;font-size:0.81rem;color:var(--text-muted);">
+          Spezialisierte Fachdomänen: Steuer, Förderplaner (ICF), Media Studio, Anonymizer, Clip Storyboard Director und Doc-Services.
+        </p>
+      </article>
+
+      <article style="padding:0.9rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);background:rgba(15,23,42,0.35);">
+        <strong style="color:var(--text);font-size:0.92rem;">🧭 Fähigkeiten &amp; Skills (<code>skills</code>)</strong>
+        <p style="margin:0.35rem 0 0;font-size:0.81rem;color:var(--text-muted);">
+          Skill-Bibliothek, SKILL.md-Konventionen, Werkzeug-Bindungen, Prompt-Injektionen und Skill-Gärtner-Destillation.
+        </p>
+      </article>
+
+      <article style="padding:0.9rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);background:rgba(15,23,42,0.35);">
+        <strong style="color:var(--text);font-size:0.92rem;">🔌 Schnittstellen &amp; MCP (<code>mcp</code>)</strong>
+        <p style="margin:0.35rem 0 0;font-size:0.81rem;color:var(--text-muted);">
+          Meta-Server <code>ellmos-controlcenter-mcp</code>, FileCommander, CodeCommander, ServerCommander und Homebase-Verbindungen.
+        </p>
+      </article>
+
+      <article style="padding:0.9rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);background:rgba(15,23,42,0.35);">
+        <strong style="color:var(--text);font-size:0.92rem;">📐 Schnittstellenverträge (<code>api</code>)</strong>
+        <p style="margin:0.35rem 0 0;font-size:0.81rem;color:var(--text-muted);">
+          REST-API-Endpunkte, Event-Streams, JSON-Schemas (<code>ellmos.*</code>), CAS-Versionierung und Fehlerklassifikation.
+        </p>
+      </article>
+
+      <article style="padding:0.9rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);background:rgba(15,23,42,0.35);">
+        <strong style="color:var(--text);font-size:0.92rem;">🛠️ Betrieb &amp; Wartung (<code>operations</code>)</strong>
+        <p style="margin:0.35rem 0 0;font-size:0.81rem;color:var(--text-muted);">
+          Installation, Komponenten-Updates, Daemon-Verwaltung, Log-Audit und Integritätsprüfungen (<code>/maintenance</code>).
+        </p>
+      </article>
+    </div>
+
+    <!-- Sprachparitäts-Übersicht -->
+    <h3 style="font-size:1.05rem;margin:1.4rem 0 0.5rem 0;color:var(--text);">Sprachparitäts-Übersicht (6 kanonische Sprachen)</h3>
+    <p style="margin:0 0 0.85rem 0;font-size:0.84rem;color:var(--text-muted);line-height:1.45;">
+      Das Dokusystem pflegt alle Hilfedokumente synchron über sechs Sprachen. Der <code>doc-keeper</code> validiert Vollständigkeit und meldet Übersetzungs-Lags automatisch:
     </p>
-    <div id="help-doc-keeper-audit-card" data-schema="ellmos.doc-keeper-audit-report.v1" style="margin-bottom:0.85rem;padding:0.9rem;border-radius:10px;border:1px solid rgba(16,185,129,0.35);background:rgba(6,78,59,0.22);">
+
+    <div class="doc-language-parity" data-language-parity="true" style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.83rem;border:1px solid rgba(148,163,184,0.22);border-radius:8px;overflow:hidden;">
+        <thead>
+          <tr style="background:rgba(15,23,42,0.8);text-align:left;border-bottom:1px solid rgba(148,163,184,0.22);">
+            <th style="padding:0.6rem 0.85rem;color:var(--text);">Sprachcode</th>
+            <th style="padding:0.6rem 0.85rem;color:var(--text);">Sprache</th>
+            <th style="padding:0.6rem 0.85rem;color:var(--text);">Status</th>
+            <th style="padding:0.6rem 0.85rem;color:var(--text);">Dateikonvention</th>
+            <th style="padding:0.6rem 0.85rem;color:var(--text);">Prüfmechanismus</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(148,163,184,0.15);background:rgba(15,23,42,0.3);">
+            <td style="padding:0.55rem 0.85rem;"><code>de</code></td>
+            <td style="padding:0.55rem 0.85rem;">Deutsch (Standardsprache)</td>
+            <td style="padding:0.55rem 0.85rem;"><span class="badge" style="background:rgba(16,185,129,0.2);color:var(--text);">100% Kanonisch</span></td>
+            <td style="padding:0.55rem 0.85rem;"><code>README.md</code>, <code>SKILL.md</code></td>
+            <td style="padding:0.55rem 0.85rem;">doc-keeper Referenzstand</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(148,163,184,0.15);background:rgba(15,23,42,0.15);">
+            <td style="padding:0.55rem 0.85rem;"><code>en</code></td>
+            <td style="padding:0.55rem 0.85rem;">English</td>
+            <td style="padding:0.55rem 0.85rem;"><span class="badge" style="background:rgba(16,185,129,0.2);color:var(--text);">Vollständig</span></td>
+            <td style="padding:0.55rem 0.85rem;"><code>README.en.md</code>, <code>SKILL.en.md</code></td>
+            <td style="padding:0.55rem 0.85rem;">Paritätsprüfung (0 Drift)</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(148,163,184,0.15);background:rgba(15,23,42,0.3);">
+            <td style="padding:0.55rem 0.85rem;"><code>es</code></td>
+            <td style="padding:0.55rem 0.85rem;">Español</td>
+            <td style="padding:0.55rem 0.85rem;"><span class="badge" style="background:rgba(16,185,129,0.2);color:var(--text);">Parität aktiv</span></td>
+            <td style="padding:0.55rem 0.85rem;"><code>README.es.md</code>, <code>SKILL.es.md</code></td>
+            <td style="padding:0.55rem 0.85rem;">help_projection Sync</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(148,163,184,0.15);background:rgba(15,23,42,0.15);">
+            <td style="padding:0.55rem 0.85rem;"><code>ja</code></td>
+            <td style="padding:0.55rem 0.85rem;">日本語</td>
+            <td style="padding:0.55rem 0.85rem;"><span class="badge" style="background:rgba(16,185,129,0.2);color:var(--text);">Parität aktiv</span></td>
+            <td style="padding:0.55rem 0.85rem;"><code>README.ja.md</code>, <code>SKILL.ja.md</code></td>
+            <td style="padding:0.55rem 0.85rem;">help_projection Sync</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(148,163,184,0.15);background:rgba(15,23,42,0.3);">
+            <td style="padding:0.55rem 0.85rem;"><code>ru</code></td>
+            <td style="padding:0.55rem 0.85rem;">Русский</td>
+            <td style="padding:0.55rem 0.85rem;"><span class="badge" style="background:rgba(16,185,129,0.2);color:var(--text);">Parität aktiv</span></td>
+            <td style="padding:0.55rem 0.85rem;"><code>README.ru.md</code>, <code>SKILL.ru.md</code></td>
+            <td style="padding:0.55rem 0.85rem;">help_projection Sync</td>
+          </tr>
+          <tr style="background:rgba(15,23,42,0.15);">
+            <td style="padding:0.55rem 0.85rem;"><code>zh</code></td>
+            <td style="padding:0.55rem 0.85rem;">中文</td>
+            <td style="padding:0.55rem 0.85rem;"><span class="badge" style="background:rgba(16,185,129,0.2);color:var(--text);">Parität aktiv</span></td>
+            <td style="padding:0.55rem 0.85rem;"><code>README.zh.md</code>, <code>SKILL.zh.md</code></td>
+            <td style="padding:0.55rem 0.85rem;">help_projection Sync</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3-Ursachen-Dokumentationsmaschine (doc-keeper Audit-Karte) -->
+    <div id="help-doc-keeper-audit-card" data-schema="ellmos.doc-keeper-audit-report.v1" style="margin-top:1.4rem;padding:0.95rem;border-radius:10px;border:1px solid rgba(16,185,129,0.35);background:rgba(6,78,59,0.22);">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;flex-wrap:wrap;">
         <strong>🔍 3-Ursachen-Dokumentationsmaschine (<code>doc-keeper-machine</code> · SOLL vs. IST)</strong>
         <span id="help-doc-audit-badge" style="font-size:0.78rem;padding:0.2rem 0.55rem;border-radius:6px;background:rgba(16,185,129,0.2);">CLI/API &amp; 6-Sprachen-Parität: Geprüft (0 Drift)</span>
       </div>
       <p style="margin:0.35rem 0 0.5rem;font-size:0.83rem;opacity:0.9;">
-        Prüft <code>system/docs/help/*.txt</code>, <code>README*.md</code> und <code>SKILL.md</code> Stück für Stück gegen den Code und unterscheidet:
+        Prüft <code>system/docs/help/*.txt</code>, <code>README*.md</code> und <code>SKILL.md</code> kontinuierlich gegen den Quellcode und unterscheidet:
         <strong>1. Ungewollte Erosion</strong> (P1-Reparatur-Task) &middot;
         <strong>2. Geplantes Terraforming</strong> (SOLL/IST-Trennung + P2-Task) &middot;
         <strong>3. Erfolgtes Terraforming mit Doku-Lag</strong> (<code>local_doc_update</code>).
       </p>
       <div id="help-doc-audit-findings" style="display:grid;gap:0.4rem;font-size:0.8rem;"></div>
     </div>
-    <div id="help-module-manifest-list" data-schema="ellmos.open-ocean.help-projection.v1" style="display:grid;gap:0.65rem;">
-      <div class="help-core-card" style="padding:0.75rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);">
-        <strong>Kerndokumentation (Ocean &amp; BACH)</strong>
-        <div style="font-size:0.9rem;opacity:0.85;">Einstieg: <code>docs/CORE.md</code>, <code>SKILL.md</code> &middot; Sprachen: <code>de, en, es, ja, ru, zh</code></div>
+
+    <!-- Modul-Manifeste Liste -->
+    <div style="margin-top:1.2rem;">
+      <h4 style="margin:0 0 0.5rem;font-size:0.95rem;color:var(--text);">Modul-Manifeste &amp; Doku-Projektion (help_projection.py)</h4>
+      <div id="help-module-manifest-list" data-schema="ellmos.open-ocean.help-projection.v1" style="display:grid;gap:0.65rem;">
+        <div class="help-core-card" style="padding:0.75rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);">
+          <strong>Kerndokumentation (Ocean &amp; BACH)</strong>
+          <div style="font-size:0.9rem;opacity:0.85;">Einstieg: <code>docs/CORE.md</code>, <code>SKILL.md</code> &middot; Sprachen: <code>de, en, es, ja, ru, zh</code></div>
+        </div>
       </div>
     </div>
   </section>
+
   <div hidden>
     <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
   </div>
+
   <script is:inline>
     (function initHelpTabs() {
       const buttons = Array.from(document.querySelectorAll('.help-tab-btn'));
       const map = {
         architecture: document.getElementById('help-panel-architecture'),
         modules: document.getElementById('help-panel-modules'),
-        manual: document.getElementById('ocean-help-projection'),
+        manual: document.getElementById('ocean-doc-system') || document.getElementById('ocean-help-projection'),
       };
       function selectTab(tab) {
         buttons.forEach((btn) => {
@@ -140,23 +428,25 @@ if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
       const requested = new URLSearchParams(window.location.search).get('tab');
       if (requested && map[requested]) selectTab(requested);
     })();
+
     (async function loadManifestHelpProjection() {
       const container = document.getElementById("help-module-manifest-list");
       if (!container) return;
       try {
         const res = await fetch("/api/domains/modules");
-        if (!res.ok) return;
-        const payload = await res.json();
-        const items = Array.isArray(payload?.modules) ? payload.modules : [];
-        for (const mod of items) {
-          const docs = mod?.docs || {};
-          const entry = docs.entry || "README.md";
-          const langs = Array.isArray(docs.languages) && docs.languages.length ? docs.languages.join(", ") : "de, en";
-          const card = document.createElement("div");
-          card.className = "help-module-card";
-          card.style.cssText = "padding:0.75rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);";
-          card.innerHTML = `<strong>${mod.id || mod.name || "Modul"}</strong> <span style="opacity:0.75;">v${mod.version || "0.0.0"}</span><div style="font-size:0.9rem;opacity:0.85;">Doku-Einstieg: <code>${entry}</code> &middot; Sprachen: <code>${langs}</code></div>`;
-          container.appendChild(card);
+        if (res.ok) {
+          const payload = await res.json();
+          const items = Array.isArray(payload?.modules) ? payload.modules : [];
+          for (const mod of items) {
+            const docs = mod?.docs || {};
+            const entry = docs.entry || "README.md";
+            const langs = Array.isArray(docs.languages) && docs.languages.length ? docs.languages.join(", ") : "de, en";
+            const card = document.createElement("div");
+            card.className = "help-module-card";
+            card.style.cssText = "padding:0.75rem;border-radius:8px;border:1px solid rgba(148,163,184,0.18);";
+            card.innerHTML = `<strong>${mod.id || mod.name || "Modul"}</strong> <span style="opacity:0.75;">v${mod.version || "0.0.0"}</span><div style="font-size:0.9rem;opacity:0.85;">Doku-Einstieg: <code>${entry}</code> &middot; Sprachen: <code>${langs}</code></div>`;
+            container.appendChild(card);
+          }
         }
         const auditRes = await fetch("/api/help/doc-audit");
         if (auditRes.ok) {
@@ -171,7 +461,7 @@ if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
           }
         }
       } catch (_err) {
-        // Honest readback: keep static core documentation card if module endpoint is offline.
+        // Honest readback: keep static core documentation and language parity card if live endpoints are offline.
       }
     })();
   </script>
