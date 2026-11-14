@@ -1285,6 +1285,20 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     // ── FINANZEN: lokaler /api/financial/summary-Vertrag ──
     let _financeSummaryLoaded = false;
 
+    // summen_kategorie arrives as a JSON object text ({"Kategorie": Betrag}); show "Name: Betrag" pairs.
+    function financeCategoryText(raw, eurFmt) {
+      let categories = raw;
+      if (typeof raw === 'string') {
+        try { categories = JSON.parse(raw); } catch (_err) { return '–'; }
+      }
+      if (!categories || typeof categories !== 'object' || Array.isArray(categories)) return '–';
+      const parts = Object.entries(categories)
+        .filter(([, amount]) => Number.isFinite(Number(amount)))
+        .sort((a, b) => Number(b[1]) - Number(a[1]))
+        .map(([name, amount]) => `${name}: ${eurFmt.format(Number(amount))}`);
+      return parts.length ? parts.join(' · ') : '–';
+    }
+
     async function loadFinanceSummary() {
       if (_financeSummaryLoaded) return;
       _financeSummaryLoaded = true;
@@ -1322,7 +1336,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
         const thead = document.createElement('thead');
         const headRow = document.createElement('tr');
-        for (const label of ['Monat', 'Kategorie', 'Ausgaben', 'davon Abos', 'steuerrelevant', 'Rechnungen', 'Abos']) {
+        for (const label of ['Monat', 'Kategorien', 'Ausgaben', 'davon Abos', 'steuerrelevant', 'Rechnungen', 'Abos']) {
           const th = document.createElement('th');
           th.textContent = label;
           th.style.textAlign = 'left';
@@ -1340,7 +1354,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
           const jjjj = item.jahr != null ? String(item.jahr) : '–';
           const cells = [
             `${mm}/${jjjj}`,
-            String(item.summen_kategorie ?? ''),
+            financeCategoryText(item.summen_kategorie, eurFmt),
             eurFmt.format(Number(item.total_ausgaben ?? 0)),
             eurFmt.format(Number(item.total_abos ?? 0)),
             eurFmt.format(Number(item.total_steuer_relevant ?? 0)),
