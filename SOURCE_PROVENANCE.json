@@ -374,7 +374,7 @@
     "tests/usecase-source.test.mjs": "cb3808c5825654fc41225305111906891ef7f5556ec1ee848055b803cfccc870",
     "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
     "tests/worker-policy-settings.test.mjs": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
-    "tests/worker-queue.test.mjs": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
+    "tests/worker-queue.test.mjs": "4f8416e7e8b9c963fc6daa4ad139e70eab3fe9311c5a27b451f27e7293881d52",
     "src/lib/voice-and-talk-contract.mjs": "ae0b57f627bc47143784b10160ccfb51883530fc9869f9e31b602c5f33055980",
     "tests/voice-and-talk-contract.test.mjs": "4029b20acea02ea7ddd4e03b89acfff77f878b66c087771b9a8064311e3eaf09",
     "src/components/AgentTriggers.astro": "2a69dc3e3e6c223cc53ae2d0b8a6e02b6164ac27bb78d29ac85fd5d107f2c9fe",
@@ -5984,6 +5984,22 @@
           "path": "tests/life-finance-summary.test.mjs",
           "previous_sha256": "302a6ca079ce89e3c7eeeeccf904dd1e860062bfe63cec6e09acd4bd84528ada",
           "sha256": "2b90970e2321ea5eba98e2cf65af73c72b789d19c0ca6f2778ff2d1efbb562ee"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-16",
+      "summary": "Worker queue UI parity with bach.worker-queue.v1: add pickup, repository, selection-policy, completion-guard and unresolved-tool-trace rejection/denial codes in src/lib/worker-queue-ui.mjs so valid queue observations render instead of falling back to 'Aufgabenauswahl nicht bestätigt'; expand tests/worker-queue.test.mjs.",
+      "files": [
+        {
+          "path": "src/lib/worker-queue-ui.mjs",
+          "previous_sha256": "dc9ff8b347f19ee344040774358df60d7322a8226f8e13824263d70c184584a1",
+          "sha256": "9806f3b66ae3ec4367f9d8b9e7e26599317a6d1b1ab80f2e0bcf8693d1da8302"
+        },
+        {
+          "path": "tests/worker-queue.test.mjs",
+          "previous_sha256": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
+          "sha256": "4f8416e7e8b9c963fc6daa4ad139e70eab3fe9311c5a27b451f27e7293881d52"
         }
       ]
     }

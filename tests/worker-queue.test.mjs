@@ -110,3 +110,27 @@ test('missing or reclassified non-Buddha system workers cannot retain an old rec
   context.workerQueueSnapshots=new Map([['another-system-worker',{runtime_verified:true,system:false,queue_status:acquired}]]);render();
   assert.equal(card.textContent,'Aufgabenauswahl nicht bestätigt');
 });
+
+test('repository, pickup, policy and acquire-denial extensions validate and render',()=>{
+  const repoFiltered={...empty,reason:'selection_excluded',candidate_count:55,scanned_pages:1,
+    rejected_counts:{repository_unverified:45,repository_not_allowed:3,repository_capability_missing:2,
+      selection_policy_unavailable:1,pickup_category:1,pickup_priority:1,pickup_tags:1,excluded_tag:1}};
+  assert.deepEqual(validateQueueStatus(repoFiltered),repoFiltered);
+  const details=createQueueDetails(document,repoFiltered);
+  assert.equal(details.tagName,'details');
+  assert.match(details.textContent,/Ziel-Repository nicht bestätigt: 45/);
+  assert.match(details.textContent,/Ziel-Repository nicht freigegeben: 3/);
+  assert.match(details.textContent,/Kategorie ausgeschlossen: 1/);
+  assert.match(details.textContent,/Ausschluss-Tag gesetzt: 1/);
+
+  const extendedDenied={...empty,reason:'acquire_denied',candidate_count:4,matched_count:3,attempted_count:3,
+    rejected_counts:{repository_unverified:1,repository_changed:1,completion_guard:1,unresolved_tool_trace:1}};
+  assert.deepEqual(validateQueueStatus(extendedDenied),extendedDenied);
+  const deniedDetails=createQueueDetails(document,extendedDenied);
+  assert.match(deniedDetails.textContent,/Ziel-Repository vor Übernahme geändert: 1/);
+  assert.match(deniedDetails.textContent,/Abschlussprüfung blockiert: 1/);
+  assert.match(deniedDetails.textContent,/Offene Werkzeugspur aus früherem Lauf: 1/);
+
+  assert.equal(validateQueueStatus({...empty,reason:'acquire_denied',candidate_count:1,matched_count:1,
+    attempted_count:1,rejected_counts:{repository_unverified:1}}),null);
+});
