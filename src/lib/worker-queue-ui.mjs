@@ -6,15 +6,25 @@ const reasons = {
 };
 const rejections = {
   explicit_slot_required: 'Ausdrückliche Slotzuordnung fehlt', slot_binding: 'Anderer Slot',
-  model_binding: 'Anderes Modell', pickup_filter: 'Kategorie, Priorität oder Tags',
+  model_binding: 'Anderes Modell', selection_policy_unavailable: 'Auswahlrichtlinie nicht verfügbar',
+  pickup_filter: 'Kategorie, Priorität oder Tags', pickup_category: 'Kategorie ausgeschlossen',
+  pickup_priority: 'Priorität ausgeschlossen', pickup_tags: 'Pflicht-Tag fehlt',
+  excluded_tag: 'Ausschluss-Tag gesetzt',
+  repository_capability_missing: 'Schreibwerkzeuge ohne Repository-Freigabe',
+  repository_unverified: 'Ziel-Repository nicht bestätigt',
+  repository_not_allowed: 'Ziel-Repository nicht freigegeben',
+  repository_changed: 'Ziel-Repository vor Übernahme geändert',
   ownership: 'Passende Workerzuweisung fehlt', deferred_version: 'Taskversion bereits zurückgegeben',
   changed_selection: 'Aufgabe zwischenzeitlich geändert', held: 'Lease bereits belegt',
   not_claimable: 'Nicht übernehmbar, zum Beispiel offene Abhängigkeit',
   creator_priority: 'Vorrang des Erstellers', stale_task_version: 'Taskversion veraltet',
-  already_held_by_caller: 'Bereits durch diesen Aufrufer belegt', conflict: 'Vergabekonflikt',
+  already_held_by_caller: 'Bereits durch diesen Aufrufer belegt',
+  completion_guard: 'Abschlussprüfung blockiert', conflict: 'Vergabekonflikt',
+  unresolved_tool_trace: 'Offene Werkzeugspur aus früherem Lauf',
 };
 const denials = new Set(['held','not_claimable','creator_priority','stale_task_version',
-  'already_held_by_caller','conflict','changed_selection']);
+  'already_held_by_caller','completion_guard','conflict','unresolved_tool_trace',
+  'changed_selection','repository_changed']);
 const stateReasons = {acquired:['task_acquired'], waiting:['empty_queue','selection_excluded','acquire_denied'],
   error:['selection_error']};
 const counters = ['candidate_count','matched_count','attempted_count','scanned_pages'];
