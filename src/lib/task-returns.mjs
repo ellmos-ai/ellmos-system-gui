@@ -38,9 +38,84 @@ const FIXED = {
   quota_exceeded: ['provider', 'Anbieter-Kontingent erschöpft', 'Kontingent abwarten oder dem Worker ein anderes Modell geben.'],
   cloud_call_retry_exhausted: ['provider', 'Cloud-Aufruf nach mehreren Versuchen aufgegeben',
     'Anbieter und Netzwerkverbindung des Workers prüfen.'],
+  'project_lock:task_scope': ['task', 'Arbeitsbereich der Aufgabe gesperrt',
+    'Im Arbeitsbereich oder Zwilling der Aufgabe liegt eine Sperre (LOCK*.txt). Sperre prüfen oder die Aufgabe später erneut starten.'],
+  task_context_unavailable: ['task', 'Aufgabenkontext nicht bereit',
+    'Der Worker hat vor dem ersten Werkzeugaufruf keinen gültigen Korrekturkontext erhalten. Verlauf und Aufgaben-Snapshot prüfen.'],
+  total_deadline: ['task', 'Gesamtfrist der Aufgabe abgelaufen',
+    'Die maximale Gesamtlaufzeit dieses Durchlaufs ist abgelaufen. Aufgabe prüfen, ggf. teilen oder mit frischem Budget neu starten.'],
 };
 const REPEATED = 'repeated_return:';
 const HOST_PREFIX = 'host_precondition:';
+const BACKEND_ERROR_PREFIX = 'backend_error:';
+const PROVIDER_LABELS = {
+  ollama: 'Ollama',
+  openrouter: 'OpenRouter',
+  hermes: 'Hermes',
+  transient: 'Vorübergehend',
+};
+const TIMEOUT_KINDS = new Set([
+  'connect_timeout', 'read_timeout', 'write_timeout', 'pool_timeout', 'transport_timeout',
+]);
+const TRANSPORT_KINDS = new Set(['connection_error', 'transport_error']);
+
+function describeBackendError(raw) {
+  const rest = raw.slice(BACKEND_ERROR_PREFIX.length);
+  if (rest === 'unclassified') {
+    return {code: raw, scope: 'provider', title: 'Anbieterfehler nicht eingestuft',
+      hint: 'Der Modellaufruf meldete einen unspezifischen Fehler. Anbieter- und Worker-Log prüfen.'};
+  }
+  const parts = rest.split(':').filter(Boolean);
+  const provider = parts[0] || '';
+  const kind = parts[1] || '';
+  const status = parts[2] || '';
+  if (provider === 'transient') {
+    if (kind === 'httpx_connect_error') {
+      return {code: raw, scope: 'provider', title: 'Modell-Anbieter vorübergehend nicht erreichbar',
+        hint: 'Verbindungsaufbau fehlgeschlagen. Netzwerk, Dienst und Anbieterstatus prüfen.'};
+    }
+    if (kind === 'httpx_read_timeout') {
+      return {code: raw, scope: 'provider', title: 'Modellantwort vorübergehend ausgeblieben (Host-Stall)',
+        hint: 'Wiederholte Lese-Zeitüberschreitung beim Anbieter. Erreichbarkeit und Last des Anbieters prüfen.'};
+    }
+    return {code: raw, scope: 'provider',
+      title: `Vorübergehender Anbieterfehler (${parts.slice(1).join(':') || 'unbekannt'})`,
+      hint: 'Der Modell-Anbieter war kurzzeitig gestört. Später erneut versuchen oder Modell wechseln.'};
+  }
+  const label = PROVIDER_LABELS[provider] || provider || 'Anbieter';
+  if (kind === 'quota_exceeded') {
+    return {code: raw, scope: 'provider', title: `Anbieter-Kontingent erschöpft (${label})`,
+      hint: 'Nutzungskontingent beim Anbieter aufgebraucht. Kontingent abwarten oder anderes Modell zuweisen.'};
+  }
+  if (kind === 'rate_limited' || status === '429') {
+    return {code: raw, scope: 'provider',
+      title: `Anfrage-Limit beim Anbieter erreicht (${label}${status ? ` HTTP ${status}` : ''})`,
+      hint: 'Der Anbieter drosselt Anfragen (Rate-Limit). Abkühlzeit abwarten oder ein anderes Modell wählen.'};
+  }
+  if (kind === 'tool_parse_error') {
+    return {code: raw, scope: 'provider', title: `Werkzeugaufruf vom Modell nicht lesbar (${label})`,
+      hint: 'Das Modell lieferte einen fehlerhaften Werkzeugaufruf. Bei Wiederholung Modell oder Prompt prüfen.'};
+  }
+  if (TIMEOUT_KINDS.has(kind)) {
+    return {code: raw, scope: 'provider', title: `Zeitüberschreitung beim Anbieter (${label}: ${kind})`,
+      hint: 'Anfrage oder Antwort beim Modell-Anbieter hat zu lange gedauert. Verbindung und Auslastung prüfen.'};
+  }
+  if (TRANSPORT_KINDS.has(kind)) {
+    return {code: raw, scope: 'provider', title: `Verbindungsfehler zum Anbieter (${label}: ${kind})`,
+      hint: 'Netzwerk- oder Transportfehler beim Modell-Anbieter. Erreichbarkeit und Worker-Log prüfen.'};
+  }
+  if (kind === 'http_error') {
+    const authHint = (status === '401' || status === '403')
+      ? 'Zugangsdaten, Freigabe oder Modellsperre beim Anbieter prüfen.'
+      : 'Anbieterstatus, Modell und HTTP-Antwort im Worker-Log prüfen.';
+    return {code: raw, scope: 'provider',
+      title: status ? `Anbieterfehler HTTP ${status} (${label})` : `HTTP-Fehler beim Anbieter (${label})`,
+      hint: authHint};
+  }
+  return {code: raw, scope: 'provider',
+    title: kind ? `Anbieterfehler (${label}: ${kind}${status ? ` ${status}` : ''})` : `Anbieterfehler (${label})`,
+    hint: 'Der Modell-Anbieter meldete einen Fehler. Anbieterstatus und Worker-Log prüfen.'};
+}
 
 /** @returns {{code:string,title:string,hint:string,scope:'host'|'task'|'provider'|'unknown'}} */
 export function describeReason(code) {
@@ -55,6 +130,9 @@ export function describeReason(code) {
     const entry = HOST[raw.slice(HOST_PREFIX.length)];
     return {code: raw, scope: 'host', title: entry ? entry[0] : `Voraussetzung des Hosts fehlt (${raw.slice(HOST_PREFIX.length)})`,
       hint: entry ? entry[1] : 'Der Host erfüllt eine Voraussetzung nicht. Das betrifft alle Aufgaben, nicht nur diese.'};
+  }
+  if (raw.startsWith(BACKEND_ERROR_PREFIX) && raw.length > BACKEND_ERROR_PREFIX.length) {
+    return describeBackendError(raw);
   }
   if (raw.startsWith('capability_missing:'))
     return {code: raw, scope: 'task', title: `Dem Worker fehlt eine Berechtigung (${raw.slice(19)})`,
