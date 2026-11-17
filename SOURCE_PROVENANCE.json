@@ -396,7 +396,8 @@
     "tests/talk-consumer-errors.test.mjs": "276355edf35a659d3323478eda8819e9bb4831ddf1c78f82a8f435e7eb5176f8",
     "tests/chat-warmup-ui.test.mjs": "2519f968f1d698a0d96c1a1d1c8a57c02496521238fc0858f9fc2410a43ab84a",
     "src/lib/task-created-date.mjs": "ef4305861349fd5b05aef32a1db5940fbc7e41bb6f2610ba147c5a7fd0217f9a",
-    "tests/task-created-dates.test.mjs": "ef5fb8f6698fa3ed7ef6d5d959a4f33fd9c71621cf2af5426c715b05cf0fbd39"
+    "tests/task-created-dates.test.mjs": "ef5fb8f6698fa3ed7ef6d5d959a4f33fd9c71621cf2af5426c715b05cf0fbd39",
+    "tests/fixtures/abort-visibility-backend.mjs": "f8d4dff945e49bf4fdac7614dccbd5a4d2104b247bdd75641bd61f36574c9c30"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -6076,6 +6077,17 @@
           "path": "tests/task-filters.test.mjs",
           "previous_sha256": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
           "sha256": "096ca637679b3572ccd46ab1f1635f57268622cae25d6a2b6a83f097652a01aa"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "summary": "BACH #4215 browser fixture parity: existing return-visibility browser tests now receive the native default task date/sort receipt; no existing test assertions removed.",
+      "files": [
+        {
+          "path": "tests/fixtures/abort-visibility-backend.mjs",
+          "previous_sha256": null,
+          "sha256": "f8d4dff945e49bf4fdac7614dccbd5a4d2104b247bdd75641bd61f36574c9c30"
         }
       ]
     }
