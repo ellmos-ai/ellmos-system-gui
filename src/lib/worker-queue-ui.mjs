@@ -17,12 +17,15 @@ const rejections = {
   ownership: 'Passende Workerzuweisung fehlt', deferred_version: 'Taskversion bereits zurückgegeben',
   changed_selection: 'Aufgabe zwischenzeitlich geändert', held: 'Lease bereits belegt',
   not_claimable: 'Nicht übernehmbar, zum Beispiel offene Abhängigkeit',
+  dependencies_unfinished: 'Abhängigkeiten noch offen', dependencies_missing: 'Abhängigkeiten fehlen',
+  dependencies_invalid: 'Abhängigkeiten ungültig', status_not_claimable: 'Aufgabenstatus nicht übernehmbar',
   creator_priority: 'Vorrang des Erstellers', stale_task_version: 'Taskversion veraltet',
   already_held_by_caller: 'Bereits durch diesen Aufrufer belegt',
   completion_guard: 'Abschlussprüfung blockiert', conflict: 'Vergabekonflikt',
   unresolved_tool_trace: 'Offene Werkzeugspur aus früherem Lauf',
 };
 const denials = new Set(['held','not_claimable','creator_priority','stale_task_version',
+  'dependencies_unfinished','dependencies_missing','dependencies_invalid','status_not_claimable',
   'already_held_by_caller','completion_guard','conflict','unresolved_tool_trace',
   'changed_selection','repository_changed']);
 const stateReasons = {acquired:['task_acquired'], waiting:['empty_queue','selection_excluded','acquire_denied'],
@@ -61,9 +64,15 @@ export function validateQueueStatus(raw) {
     if (total+acquired !== raw.candidate_count || attemptsRejected+acquired !== raw.attempted_count
         || raw.attempted_count !== raw.matched_count) return null;
   }
+  const examples = raw.rejection_examples;
+  if (examples !== undefined && examples !== null && (typeof examples !== 'object' || Array.isArray(examples)
+      || !Object.entries(examples).every(([reason,ids])=>own(rejected,reason) && Array.isArray(ids)
+        && ids.length <= Math.min(5,rejected[reason]) && ids.every(taskId) && new Set(ids).size === ids.length))) return null;
   const result = Object.fromEntries(['schema','source','authority_mode','state','reason','observed_at',
     'scan_complete',...counters].map(key=>[key,raw[key]]));
   result.rejected_counts = {...rejected};
+  if (examples !== undefined && examples !== null)
+    result.rejection_examples = Object.fromEntries(Object.entries(examples).map(([reason,ids])=>[reason,[...ids]]));
   for (const key of ['last_candidate_task_id','selected_task_id']) if (taskId(raw[key])) result[key]=raw[key];
   return result;
 }
@@ -94,7 +103,19 @@ export function createQueueDetails(document,raw,{key='',available=true}={}) {
     details.append(link);
   }
   const list=node('ul');
-  for(const [reason,value] of Object.entries(receipt.rejected_counts))if(value>0)list.append(node('li',rejections[reason]+': '+value));
+  for(const [reason,value] of Object.entries(receipt.rejected_counts))if(value>0) {
+    const item=node('li',rejections[reason]+': '+value);
+    const examples=receipt.rejection_examples?.[reason] || [];
+    if(examples.length) {
+      item.append(node('span',' · Beispiele: '));
+      examples.forEach((id,index)=>{
+        if(index)item.append(node('span',', '));
+        const link=node('a','#'+id);link.href='/tasks?task='+id;link.title='Aufgabe #'+id;
+        item.append(link);
+      });
+    }
+    list.append(item);
+  }
   if(list.children.length)details.append(list);
   details.append(node('small','Datierter Auswahlbeleg; kein Nachweis aktueller Inferenz oder fachlicher Ergebnisqualität.'));
   return details;
