@@ -58,7 +58,7 @@ import BackButton from "../components/BackButton.astro";
           <input
             type="text"
             id="utteranceInput"
-            placeholder="Funkspruch an Buddha, Claude, Gemini oder Codex tippen + Enter…"
+            placeholder="Funkspruch an deinen konfigurierten Assistenten tippen + Enter…"
             style="flex:1;padding:0.55rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-dark);color:var(--text);font-size:0.86rem;"
           />
           <button type="submit" class="btn btn-primary" id="sendBtn"><UiIcon name="send" /> Senden</button>
@@ -75,7 +75,7 @@ import BackButton from "../components/BackButton.astro";
       <section class="card" style="display:flex;flex-direction:column;gap:0.85rem;">
         <h2 class="card-title">Dual-Model, Visualizer &amp; Stimmen-Konfiguration</h2>
         <label style="display:flex;flex-direction:column;gap:0.28rem;font-size:0.84rem;">
-          <span>Hauptmodell (Deep Reasoning / Persona):</span>
+          <span>Assistentenansicht (Modell wird am Steckplatz konfiguriert):</span>
           <select id="talk-main-model" class="lang-switcher">
             <option value="buddha">Buddha (Lokaler / Cloud-Cortex-Slot)</option>
             <option value="claude">Claude Opus / Sonnet</option>
@@ -323,9 +323,11 @@ import BackButton from "../components/BackButton.astro";
         if (!text) return;
         const persona = mainModelSelect?.value || "buddha";
         const lang = document.documentElement.lang || "de";
+        if (sendStudioTurn.pending) return null;
+        sendStudioTurn.pending = true;
         let turnResolved = false;
         appendTranscriptEntry("Du", text, "user");
-        if (transcriptBox) transcriptBox.textContent = `Fast-Reflex (${persona.toUpperCase()}) prüft den Kanal …`;
+        if (transcriptBox) transcriptBox.textContent = `Funkgerät prüft den Kanal …`;
         // Stage 1: Fast-Reflex (<200ms Vorlauf-Backchanneling vor der Hauptmodell-Antwort)
         fetch("/api/talk/reflex", {
           method: "POST",
@@ -343,7 +345,7 @@ import BackButton from "../components/BackButton.astro";
               reflexStatus.textContent = `FastReflexLoop (${targetMs} ms · ${fastModel}): „${ack}“`;
             }
             if (transcriptBox) {
-              transcriptBox.textContent = `${ack} (${persona.toUpperCase()} formuliert die Hauptantwort …)`;
+              transcriptBox.textContent = `${ack} (Antwort wird vorbereitet …)`;
             }
             appendTranscriptEntry(`Fast-Reflex (${fastModel})`, ack, "reflex");
           })
@@ -357,27 +359,40 @@ import BackButton from "../components/BackButton.astro";
             body: JSON.stringify({ user_utterance: text, persona, language: lang }),
           });
           turnResolved = true;
-          if (!res.ok) return;
-          const data = await res.json();
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || data?.ok === false) {
+            throw new Error(data.detail || data.error || ('Talk fehlgeschlagen (HTTP ' + res.status + ').'));
+          }
+          const reply = data.spoken_text || (data.sentences || []).join(" ") || "";
+          if (!reply.trim()) throw new Error('Chatdienst lieferte keine gesprochene Antwort.');
           if (data.visual_state) applyVisualState(data.visual_state);
           if (data.reflex && reflexStatus) {
             reflexStatus.textContent = `FastReflexLoop (${data.reflex.latency_target_ms || 180} ms · ${data.reflex.fast_model || "fast-reflex"}): „${data.reflex.ack_text || "bereit"}“`;
           }
-          const reply = data.spoken_text || (data.sentences || []).join(" ") || "";
           if (transcriptBox && reply) transcriptBox.textContent = reply;
           if (reply) {
-            appendTranscriptEntry(persona.toUpperCase(), reply, "model", data.visual_state?.color_primary);
+            appendTranscriptEntry("Assistent", reply, "model", data.visual_state?.color_primary);
             await playSpokenResponse(reply, lang);
           }
-        } catch (_) {}
+          return data;
+        } catch (error) {
+          turnResolved = true;
+          const message = 'Keine bestätigte Antwort: ' + (error.message || 'Verbindung fehlgeschlagen.') + ' · Eingabe bleibt erhalten.';
+          if (transcriptBox) transcriptBox.textContent = message;
+          if (reflexStatus) reflexStatus.textContent = 'Talk fehlgeschlagen · Erneut senden möglich';
+          if (utteranceInput && !utteranceInput.value.trim()) utteranceInput.value = text;
+          return null;
+        } finally {
+          sendStudioTurn.pending = false;
+        }
       }
 
       form?.addEventListener("submit", async (e) => {
         e.preventDefault();
         const val = utteranceInput?.value?.trim() || "";
         if (!val) return;
-        if (utteranceInput) utteranceInput.value = "";
-        await sendStudioTurn(val);
+        const response = await sendStudioTurn(val);
+        if (response && utteranceInput?.value?.trim() === val) utteranceInput.value = "";
       });
 
       cycleBtn?.addEventListener("click", async () => {
@@ -491,7 +506,7 @@ import BackButton from "../components/BackButton.astro";
         if (fastModelSelect && cfg.fast_relay_model) fastModelSelect.value = cfg.fast_relay_model;
         if (wakewordInput && cfg.wake_word) wakewordInput.value = cfg.wake_word;
         if (apiStatus) {
-          apiStatus.textContent = `Verbunden: ${cfg.persona || "buddha"} (${cfg.primary_model || "buddha-default"}) · Modus: ${cfg.operating_mode || "ptt"}`;
+          apiStatus.textContent = `Steckplatz: ${cfg.bound_slot || "nicht zugeordnet"} · Modell am Steckplatz konfiguriert · Modus: ${cfg.operating_mode || "ptt"}`;
         }
       }
       if (window.__bachTalkConfig) syncFromGlobalConfig(window.__bachTalkConfig);

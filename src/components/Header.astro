@@ -994,7 +994,7 @@ function lineIconSvg(id: string): string {
       if (personaSelect) personaSelect.value = persona;
       if (opmodeSelect) opmodeSelect.value = opmode;
       if (summonSelect && cfg.summon_policy) summonSelect.value = cfg.summon_policy;
-      if (activeModelPill) activeModelPill.textContent = cfg.primary_model || 'buddha-default';
+      if (activeModelPill) activeModelPill.textContent = 'Steckplatz: ' + (cfg.bound_slot || 'nicht zugeordnet');
       syncSegmentedControls(persona, opmode);
 
       const modeLabels = {
@@ -1065,13 +1065,15 @@ function lineIconSvg(id: string): string {
 
     async function sendHeaderTalkTurn(utterance) {
       if (!utterance) return null;
+      if (sendHeaderTalkTurn.pending) return null;
+      sendHeaderTalkTurn.pending = true;
+      let turnResolved = false;
       try {
         const persona = personaSelect?.value || 'buddha';
         const lang = document.documentElement.lang || 'de';
-        let turnResolved = false;
         if (replyBox) {
           replyBox.hidden = false;
-          replyBox.textContent = `Fast-Reflex (${persona.toUpperCase()}) prüft den Kanal …`;
+          replyBox.textContent = `Funkgerät prüft den Kanal …`;
         }
         // Stage 1: Fast-Reflex (<200ms Vorlauf-Backchanneling vor der Hauptmodell-Antwort)
         fetch('/api/talk/reflex', {
@@ -1087,7 +1089,7 @@ function lineIconSvg(id: string): string {
             const fastModel = rData.reflex?.fast_model || 'fast-reflex';
             if (replyBox && ack) {
               replyBox.hidden = false;
-              replyBox.textContent = `${ack} (${fastModel} · ${persona.toUpperCase()} denkt nach …)`;
+              replyBox.textContent = `${ack} (${fastModel} · Antwort wird vorbereitet …)`;
             }
           })
           .catch(() => {});
@@ -1099,8 +1101,11 @@ function lineIconSvg(id: string): string {
           body: JSON.stringify({ user_utterance: utterance, persona, language: lang }),
         });
         turnResolved = true;
-        if (!res.ok) return null;
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data?.ok === false) {
+          throw new Error(data.detail || data.error || ('Talk fehlgeschlagen (HTTP ' + res.status + ').'));
+        }
+        if (!data?.spoken_text?.trim()) throw new Error('Chatdienst lieferte keine gesprochene Antwort.');
         if (data && data.visual_state) applyTalkStateToHeader(data.visual_state);
         if (replyBox && data?.spoken_text) {
           replyBox.hidden = false;
@@ -1134,8 +1139,16 @@ function lineIconSvg(id: string): string {
           }
         }
         return data;
-      } catch (_) {
+      } catch (error) {
+        turnResolved = true;
+        if (replyBox) {
+          replyBox.hidden = false;
+          replyBox.textContent = 'Keine bestätigte Antwort: ' + (error.message || 'Verbindung fehlgeschlagen.') + ' · Eingabe bleibt erhalten.';
+        }
+        if (quickInput && !quickInput.value.trim()) quickInput.value = utterance;
         return null;
+      } finally {
+        sendHeaderTalkTurn.pending = false;
       }
     }
 
@@ -1275,8 +1288,8 @@ function lineIconSvg(id: string): string {
       ev.preventDefault();
       const val = quickInput?.value?.trim() || '';
       if (!val) return;
-      if (quickInput) quickInput.value = '';
-      await sendHeaderTalkTurn(val);
+      const response = await sendHeaderTalkTurn(val);
+      if (response && quickInput?.value?.trim() === val) quickInput.value = '';
     });
 
     async function captureViaLocalStt() {

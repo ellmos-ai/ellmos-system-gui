@@ -107,6 +107,12 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/chat-client.mjs#resumeWorker"
+   },
+   {
+    "method": "GET",
+    "path": "/api/chat-control/readiness",
+    "required": false,
+    "query": "chat_id,agent_id"
    }
   ],
   "/connectors": [],

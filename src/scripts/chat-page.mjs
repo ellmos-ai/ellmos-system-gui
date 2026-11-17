@@ -165,14 +165,22 @@ function initialize() {
   async function send(text) {
     if (sending || !text) return;
     sending = true; sendBtn.disabled = true;
+    const targetChatId = state.chatId, targetSlot = state.slot;
     const retry = log.querySelector('.chat-bubble-error'); retry?.remove();
     bubble('user', 'Du', text);
     setStatus('Sende Nachricht …');
     try {
-      const answer = await sendChatMessage(text, state.chatId);
-      bubble('assistant', state.slot, answer);
+      const answer = await sendChatMessage(text, targetChatId, {
+        onReadiness: readiness => {
+          if (state.chatId === targetChatId && (readiness.load_required === true || readiness.readiness_state === 'startable')) {
+            setStatus('Buddha wird gestartet; die erste Antwort kann länger dauern.');
+          }
+        },
+      });
+      bubble('assistant', targetSlot, answer);
       setStatus('Antwort empfangen.');
       refreshList();
+      return true;
     } catch (error) {
       if (!(error instanceof ChatSendError)) throw error;
       const again = node('button', 'Erneut senden', 'btn btn-secondary btn-sm'); again.type = 'button';
@@ -180,9 +188,16 @@ function initialize() {
       shown.setAttribute('role', 'alert');
       again.addEventListener('click', () => { shown.previousElementSibling?.remove(); shown.remove(); sending = false; send(text); });
       setStatus('Senden fehlgeschlagen.', true);
+      return false;
     } finally { sending = false; sendBtn.disabled = input.disabled; }
   }
-  form.addEventListener('submit', event => { event.preventDefault(); const text = input.value.trim(); if (!text) return; input.value = ''; send(text); });
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const text = input.value.trim();
+    if (sending || !text) return;
+    const confirmed = await send(text);
+    if (confirmed && input.value.trim() === text) input.value = '';
+  });
   input.addEventListener('keydown', event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); form.requestSubmit(); } });
 
   // ---- controls
