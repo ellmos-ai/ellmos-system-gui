@@ -45,6 +45,40 @@ const FIXED = {
   total_deadline: ['task', 'Gesamtfrist der Aufgabe abgelaufen',
     'Die maximale Gesamtlaufzeit dieses Durchlaufs ist abgelaufen. Aufgabe prüfen, ggf. teilen oder mit frischem Budget neu starten.'],
 };
+// Exact producer notes: a transition is evidence, but not an explanation of its cause.
+const RECORDED_RETURNS = {
+  reason_not_provided: ['unknown', 'Rückgabegrund nicht angegeben',
+    'Der Rückgabeeintrag enthält keinen sachlichen Grund. Aufgabenverlauf und Protokoll des meldenden Dienstes prüfen.'],
+  ticket_claim_rollback: ['task', 'Ticket-Übernahme zurückgerollt',
+    'Eine Ticket-Übernahme wurde zurückgenommen. Den Anlass im Ticket-Verlauf und Ticket-Master-Protokoll prüfen.'],
+  ticket_claim_released: ['task', 'Ticket-Übernahme freigegeben',
+    'Eine bestehende Ticket-Übernahme wurde freigegeben. Anlass und nächste Zuständigkeit im Ticket-Verlauf prüfen.'],
+  ticket_moved: ['task', 'Ticket verschoben',
+    'Zielbereich und Anlass der Verschiebung im Ticket-Verlauf prüfen.'],
+  'ticket_moved:solved': ['task', 'Ticket nach „Erledigt“ verschoben',
+    'Ticket-Verlauf und hinterlegtes Ergebnis prüfen.'],
+  'ticket_moved:blocked': ['task', 'Ticket nach „Blockiert“ verschoben',
+    'Blockierende Voraussetzung und nächsten Schritt im Ticket-Verlauf prüfen.'],
+  'ticket_moved:user': ['task', 'Ticket in den Nutzerbereich verschoben',
+    'Im Ticket prüfen, welche Entscheidung oder Eingabe benötigt wird.'],
+  'ticket_moved:waiting': ['task', 'Ticket nach „Wartend“ verschoben',
+    'Im Ticket-Verlauf prüfen, worauf gewartet wird und wann erneut geprüft werden soll.'],
+  'ticket_moved:parked': ['task', 'Ticket nach „Geparkt“ verschoben',
+    'Anlass und Bedingungen für eine spätere Wiederaufnahme im Ticket-Verlauf prüfen.'],
+  'ticket_moved:actionable': ['task', 'Ticket zu den bearbeitbaren Tickets verschoben',
+    'Ticket-Verlauf und Zuständigkeit für die nächste Bearbeitung prüfen.'],
+  'ticket_moved:inbox': ['task', 'Ticket in den Eingang verschoben',
+    'Ticket-Verlauf und noch ausstehende Einordnung prüfen.'],
+};
+const TOOL_FAILURES = {
+  tool_denial_limit: ['Werkzeugaufrufe wiederholt abgelehnt',
+    'Im Worker-Verlauf die abgelehnten Werkzeugaufrufe und ihre Fehlermeldungen prüfen: Zielpfad und Arbeitsverzeichnis, vorhandene Freigaben und Berechtigungen sowie die Validierung der Werkzeugargumente. Erst die konkrete Ursache beheben und dann erneut versuchen.'],
+  tool_denial_repeated: ['Werkzeugaufrufe wiederholt abgelehnt',
+    'Im Worker-Verlauf die abgelehnten Werkzeugaufrufe und ihre Fehlermeldungen prüfen: Zielpfad und Arbeitsverzeichnis, vorhandene Freigaben und Berechtigungen sowie die Validierung der Werkzeugargumente. Erst die konkrete Ursache beheben und dann erneut versuchen.'],
+  tool_call_limit: ['Werkzeugbudget des Laufs ausgeschöpft',
+    'Die maximale Zahl erlaubter Werkzeugaufrufe wurde erreicht. Anzahl und Ablauf im Worker-Verlauf prüfen; wiederholte Aufrufe reduzieren oder die Aufgabe in kleinere Schritte aufteilen.'],
+};
+
 const REPEATED = 'repeated_return:';
 const HOST_PREFIX = 'host_precondition:';
 const BACKEND_ERROR_PREFIX = 'backend_error:';
@@ -137,6 +171,18 @@ export function describeReason(code) {
   if (raw.startsWith('capability_missing:'))
     return {code: raw, scope: 'task', title: `Dem Worker fehlt eine Berechtigung (${raw.slice(19)})`,
       hint: 'Aufgabe von einem Worker bearbeiten lassen, der dieses Werkzeug nutzen darf.'};
+  if (Object.prototype.hasOwnProperty.call(RECORDED_RETURNS, raw)) {
+    const [scope, title, hint] = RECORDED_RETURNS[raw];
+    return {code: raw, scope, title, hint};
+  }
+  const toolCode = raw.startsWith('model_failure:') ? raw.slice(14) : raw;
+  if (Object.prototype.hasOwnProperty.call(TOOL_FAILURES, toolCode)) {
+    const [title, hint] = TOOL_FAILURES[toolCode];
+    return {code: raw, scope: 'task', title, hint};
+  }
+  if (/^ticket-master@[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(raw))
+    return {code: raw, scope: 'unknown', title: 'Agentenkennung statt Rückgabegrund',
+      hint: 'Dieser historische Eintrag enthält eine Agentenkennung. Der eigentliche Rückgabegrund ist daraus nicht rekonstruierbar; Aufgaben- und Ticket-Verlauf prüfen.'};
   if (raw.startsWith('model_failure:'))
     return {code: raw, scope: 'provider', title: `Modellaufruf fehlgeschlagen (${raw.slice(14)})`,
       hint: 'Anbieter, Modell und Kontingent des Workers prüfen.'};
