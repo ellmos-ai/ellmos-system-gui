@@ -267,7 +267,7 @@
     "src/lib/settings-connections.mjs": "1ef6196556c70917058cc243b6f5609468743feb49de219f42d3aec2be960955",
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
     "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
-    "src/lib/task-filters.mjs": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1",
+    "src/lib/task-filters.mjs": "ad5a3404af703c2ada4f8c406c60777ead14f27d7a4dc5bb74fb28cc4f4a6a64",
     "src/lib/task-hindrances.mjs": "d4742b8c504f82c1ef7a3a531ee835963f596c5d9938ef33e561306201e77e10",
     "src/lib/task-lease-panel.mjs": "c9228c144211321e6ca4e8415f88556e4c453572fdf9f228f6c702220be3039f",
     "src/lib/task-rationale.mjs": "91e3bfd3a3502e3e6d384ee8d42de06c530e5d49c16899c61e1d5de20001ed3f",
@@ -320,7 +320,7 @@
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
     "src/pages/talk.astro": "cc28dbf6e5a8c500f6b035233ea49bbaff17dc143f050803416af27bfa55fe26",
-    "src/pages/tasks.astro": "fe73e94f5fbd143b607c28dcb78770656f5bed77cd7a89277baea06a118c1fb2",
+    "src/pages/tasks.astro": "5a61f8316afc4d0fe1d78749955bc426cae3c75f67b20c2596507067652491d9",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
@@ -361,7 +361,7 @@
     "tests/subscription-agents-client.test.mjs": "fd5fa5b1472e6e8466be9d5aacb78aa3eaf45fb54711fb124d129df6d6e7f56a",
     "tests/system-slots.test.mjs": "ed19be877328d1b4d482fe7490758760ccb363022a47aa72dd3ffab3d737fdef",
     "tests/task-assignment.test.mjs": "fb51be7fe8811413c213815b969655a73ad1146c974446c94f93a32cb216a5ef",
-    "tests/task-filters.test.mjs": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
+    "tests/task-filters.test.mjs": "096ca637679b3572ccd46ab1f1635f57268622cae25d6a2b6a83f097652a01aa",
     "tests/task-lease-panel.test.mjs": "80bad387eba8c34a121a5e097c8a3603a9f5f3e860c00ef59f2727709a719a21",
     "tests/task-rationale.test.mjs": "b4b110fb3ea3ca97e1d385a460c03aac4a69e50cf58f39c1a10fb0f25ffa7889",
     "tests/task-result-completion.test.mjs": "4fc173ff298fa78a11713f917a2da15b885ac33ca3f6e31235913e74dfcd5ee8",
@@ -394,7 +394,10 @@
     "tests/chat-client.test.mjs": "473d13499ab21dbb2841d13aa920adc58f0a0d1dbd88c9f69f95a4a226b55bfd",
     "tests/route-contract.test.mjs": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1",
     "tests/talk-consumer-errors.test.mjs": "276355edf35a659d3323478eda8819e9bb4831ddf1c78f82a8f435e7eb5176f8",
-    "tests/chat-warmup-ui.test.mjs": "2519f968f1d698a0d96c1a1d1c8a57c02496521238fc0858f9fc2410a43ab84a"
+    "tests/chat-warmup-ui.test.mjs": "2519f968f1d698a0d96c1a1d1c8a57c02496521238fc0858f9fc2410a43ab84a",
+    "src/lib/task-created-date.mjs": "ef4305861349fd5b05aef32a1db5940fbc7e41bb6f2610ba147c5a7fd0217f9a",
+    "tests/task-created-dates.test.mjs": "ef5fb8f6698fa3ed7ef6d5d959a4f33fd9c71621cf2af5426c715b05cf0fbd39",
+    "tests/fixtures/abort-visibility-backend.mjs": "f8d4dff945e49bf4fdac7614dccbd5a4d2104b247bdd75641bd61f36574c9c30"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -6043,6 +6046,59 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "92f0d835e3e8734cc10fa0bf87360198912ea7474a50fa0b8109ecd3e95d4c9d",
           "sha256": "116923af9f87fc3da6f70577e59e4dbd9658e6c33b7b3eaef663fd18eac3b2cf"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "summary": "BACH #4215: visible task creation dates, inclusive stored-calendar date ranges and server-side priority/newest/oldest sorting; preserve filters in links, reset pagination on change and require the backend filter/sort receipt. Historical timestamps and source-import hashes stay unchanged.",
+      "files": [
+        {
+          "path": "src/lib/task-created-date.mjs",
+          "previous_sha256": null,
+          "sha256": "ef4305861349fd5b05aef32a1db5940fbc7e41bb6f2610ba147c5a7fd0217f9a"
+        },
+        {
+          "path": "src/lib/task-filters.mjs",
+          "previous_sha256": "8a3f72b48c7306eb0acc7bdcce8b27846e1d9c76d9c0f7ad3da816c2261445d1",
+          "sha256": "ad5a3404af703c2ada4f8c406c60777ead14f27d7a4dc5bb74fb28cc4f4a6a64"
+        },
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "fe73e94f5fbd143b607c28dcb78770656f5bed77cd7a89277baea06a118c1fb2",
+          "sha256": "3d32ecb32f3641e4dbed01dc40cc3906754de95d8df7277859977b3229e95135"
+        },
+        {
+          "path": "tests/task-created-dates.test.mjs",
+          "previous_sha256": null,
+          "sha256": "ef5fb8f6698fa3ed7ef6d5d959a4f33fd9c71621cf2af5426c715b05cf0fbd39"
+        },
+        {
+          "path": "tests/task-filters.test.mjs",
+          "previous_sha256": "94701d5047025185d162af729c9b72098180e1a30c323a01e285389bb064f001",
+          "sha256": "096ca637679b3572ccd46ab1f1635f57268622cae25d6a2b6a83f097652a01aa"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "summary": "BACH #4215 browser fixture parity: existing return-visibility browser tests now receive the native default task date/sort receipt; no existing test assertions removed.",
+      "files": [
+        {
+          "path": "tests/fixtures/abort-visibility-backend.mjs",
+          "previous_sha256": null,
+          "sha256": "f8d4dff945e49bf4fdac7614dccbd5a4d2104b247bdd75641bd61f36574c9c30"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "summary": "BACH #4215 browser acceptance: let the search field shrink within a mobile filter row after adding date and sorting controls, so it stays inside the card at 390px.",
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "3d32ecb32f3641e4dbed01dc40cc3906754de95d8df7277859977b3229e95135",
+          "sha256": "5a61f8316afc4d0fe1d78749955bc426cae3c75f67b20c2596507067652491d9"
         }
       ]
     }
