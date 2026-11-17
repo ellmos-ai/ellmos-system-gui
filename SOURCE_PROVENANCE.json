@@ -320,7 +320,7 @@
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
     "src/pages/talk.astro": "cc28dbf6e5a8c500f6b035233ea49bbaff17dc143f050803416af27bfa55fe26",
-    "src/pages/tasks.astro": "3d32ecb32f3641e4dbed01dc40cc3906754de95d8df7277859977b3229e95135",
+    "src/pages/tasks.astro": "5a61f8316afc4d0fe1d78749955bc426cae3c75f67b20c2596507067652491d9",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
@@ -6088,6 +6088,17 @@
           "path": "tests/fixtures/abort-visibility-backend.mjs",
           "previous_sha256": null,
           "sha256": "f8d4dff945e49bf4fdac7614dccbd5a4d2104b247bdd75641bd61f36574c9c30"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "summary": "BACH #4215 browser acceptance: let the search field shrink within a mobile filter row after adding date and sorting controls, so it stays inside the card at 390px.",
+      "files": [
+        {
+          "path": "src/pages/tasks.astro",
+          "previous_sha256": "3d32ecb32f3641e4dbed01dc40cc3906754de95d8df7277859977b3229e95135",
+          "sha256": "5a61f8316afc4d0fe1d78749955bc426cae3c75f67b20c2596507067652491d9"
         }
       ]
     }
