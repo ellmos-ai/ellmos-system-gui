@@ -66,9 +66,17 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
         <option value="P2">P2 · Wichtig</option><option value="P3">P3 · Normal</option><option value="P4">P4 · Niedrig</option>
       </select></label>
       <label for="tasks-agent-filter">Agent<select id="tasks-agent-filter" disabled><option value="">Alle Agenten</option></select></label>
+      <label for="tasks-created-from">Erstellt von<input type="date" id="tasks-created-from" min="0001-01-01" max="9999-12-31" aria-describedby="tasks-date-hint"></label>
+      <label for="tasks-created-to">Erstellt bis<input type="date" id="tasks-created-to" min="0001-01-01" max="9999-12-31" aria-describedby="tasks-date-hint"></label>
+      <label for="tasks-sort">Sortierung<select id="tasks-sort">
+        <option value="priority" selected>Priorität, dann neueste</option>
+        <option value="created_desc">Neueste zuerst</option>
+        <option value="created_asc">Älteste zuerst</option>
+      </select></label>
       <label for="tasks-search">Suche<input type="search" id="tasks-search" maxlength="200" placeholder="Titel, Beschreibung oder #ID" autocomplete="off"></label>
       <button class="btn" id="tasks-reset-filters" type="button">Zurücksetzen</button>
     </div>
+    <p class="task-date-hint" id="tasks-date-hint">Erstellzeitraum einschließlich Anfangs- und Endtag.</p>
     <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
       <span style="color:var(--text-muted);font-size:0.85rem;" id="tasks-count-badge">Lade...</span>
       <button class="btn" id="tasks-prev-page" type="button" disabled>← Zurück</button>
@@ -211,6 +219,8 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
     .task-filter-controls {display:flex;align-items:end;gap:.65rem;flex-wrap:wrap;min-width:0}
     .task-filter-controls label {display:flex;flex-direction:column;gap:.35rem;color:var(--text-muted);font-size:.8rem;min-width:0}
     .task-filter-controls input[type=search] {background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;max-width:100%;font:inherit;min-width:12rem}
+    .task-date-hint {color:var(--text-muted);font-size:.75rem;margin:0;flex-basis:100%;}
+    .task-filter-controls input[type=date] {background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;max-width:100%;font:inherit;}
     .task-filter-controls select {background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem;max-width:100%;font:inherit}
     @media(max-width:620px) {.task-filter-controls {width:100%}.task-filter-controls label {flex:1 1 150px}}
     .task-detail { margin-top:1.25rem; padding:1.25rem; }
@@ -308,6 +318,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
     import {taskRationale} from '../lib/task-rationale.mjs';
     import {createAssignmentController, taskResponseError, assignmentCatalogue, isGateReopenBlocked} from '../lib/task-assignment.mjs';
     import {readTaskFilters, taskFilterQuery, writeTaskFilters, readTaskPage, taskCountLabel} from '../lib/task-filters.mjs';
+    import {taskCreatedDate} from '../lib/task-created-date.mjs';
     import {correctionAttemptMatchesView, createCorrectionAttempt, generateCorrectionRequestId,
       buildResultAcceptanceRequest, canConfirmTaskResult, resultAcceptanceConfirmed, taskResultAccepted,
       taskResultCompletionMessage,
@@ -422,6 +433,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
             <tr style="border-bottom:1px solid var(--border);color:var(--text-muted);text-align:left;">
               <th style="padding:0.75rem 0.5rem;width:70px;">ID</th>
               <th style="padding:0.75rem 0.5rem;">Aufgabe</th>
+              <th style="padding:0.75rem 0.5rem;width:145px;">Erstellt</th>
               <th style="padding:0.75rem 0.5rem;width:140px;">Zuständig</th>
               <th style="padding:0.75rem 0.5rem;width:100px;">Prio</th>
               <th style="padding:0.75rem 0.5rem;width:100px;">Status</th>
@@ -430,6 +442,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
           </thead>
           <tbody>
             ${filtered.map(t => {
+              const created = taskCreatedDate(t.created_at);
               const isDone = isDoneStatus(t.status);
               const isTerminal = isTerminalStatus(t.status);
               const prioColor = (t.priority === 'P1' || t.priority === 'hoch' || t.priority === 'kritisch') ? 'var(--error)' : 'var(--text-muted)';
@@ -446,6 +459,9 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
                     <div style="font-weight:600;color:var(--text);${isDone ? 'text-decoration:line-through;' : ''}">${escapeHtml(t.title || t.name || 'Unbenannt')}</div>
                     ${t.description ? `<div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.2rem;">${escapeHtml(t.description.slice(0, 100))}</div>` : ''}
                     <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem;">Nächste Handlung: ${rationaleText}</div>
+                  </td>
+                  <td style="padding:0.75rem 0.5rem;white-space:nowrap;color:var(--text-muted);">
+                    ${created ? `<time datetime="${escapeHtml(created.raw)}" title="${escapeHtml(created.raw)}">${escapeHtml(created.label)}</time>` : '<span title="Kein gültiges Erstelldatum vorhanden">Unbekannt</span>'}
                   </td>
                   <td style="padding:0.75rem 0.5rem;">
                     <span class="badge ${badgeClass}">${escapeHtml(rawAssignee)}</span>
@@ -482,6 +498,9 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
       document.getElementById('tasks-status-filter').value = currentFilters.status;
       document.getElementById('tasks-priority-filter').value = currentFilters.priority;
       document.getElementById('tasks-search').value = currentFilters.q;
+      document.getElementById('tasks-created-from').value = currentFilters.createdFrom;
+      document.getElementById('tasks-created-to').value = currentFilters.createdTo;
+      document.getElementById('tasks-sort').value = currentFilters.sort;
       const agent = document.getElementById('tasks-agent-filter');
       if (currentFilters.agent && ![...agent.options].some(o => o.value === currentFilters.agent)) agent.add(new Option(currentFilters.agent, currentFilters.agent));
       agent.value = currentFilters.agent;
@@ -518,7 +537,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
       const value = event.target.value.trim().slice(0, 200);
       searchTimer = setTimeout(() => { if (value !== currentFilters.q) { currentFilters = {...currentFilters, q:value}; applyFilterChange(); } }, 300);
     });
-    for (const [id, key] of [['tasks-assignment-filter','assignment'], ['tasks-status-filter','status'], ['tasks-priority-filter','priority']]) {
+    for (const [id, key] of [['tasks-assignment-filter','assignment'], ['tasks-status-filter','status'], ['tasks-priority-filter','priority'], ['tasks-created-from','createdFrom'], ['tasks-created-to','createdTo'], ['tasks-sort','sort']]) {
       document.getElementById(id).addEventListener('change', event => {
         currentFilters = {...currentFilters, [key]:event.target.value};
         currentOffset = 0;
@@ -527,7 +546,7 @@ import GitHubReviewEvidence from "../components/GitHubReviewEvidence.astro";
       });
     }
     document.getElementById('tasks-reset-filters').addEventListener('click', () => {
-      currentFilters = {assignment:'all',status:'open',priority:'',q:'',agent:''};
+      currentFilters = readTaskFilters('');
       currentOffset = 0;
       syncTaskFilterControls();
       history.replaceState(null, '', writeTaskFilters(location.href, currentFilters));
