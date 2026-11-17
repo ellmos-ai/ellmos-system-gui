@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "f8e2ae35c413fa0dbb006b43dada12d4140642f1774f2f0614a22b32af98be93",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "92f0d835e3e8734cc10fa0bf87360198912ea7474a50fa0b8109ecd3e95d4c9d",
+    "public/page-reads.v1.json": "116923af9f87fc3da6f70577e59e4dbd9658e6c33b7b3eaef663fd18eac3b2cf",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -235,7 +235,7 @@
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
-    "src/components/Header.astro": "317e9ef6e0943e212a3feffa9b46a82c745876f7d505c8995fa06660b495b813",
+    "src/components/Header.astro": "92331ffbb6606e3aa1998e1861a992404fea179a51b818e981daa6973ae8ba01",
     "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
@@ -319,7 +319,7 @@
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
     "src/pages/system/installation-updates.astro": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
-    "src/pages/talk.astro": "a61230acda6dc9aa97eeb6aa7b57d1bca0565161cd9af685c092c42e07ac9548",
+    "src/pages/talk.astro": "cc28dbf6e5a8c500f6b035233ea49bbaff17dc143f050803416af27bfa55fe26",
     "src/pages/tasks.astro": "fe73e94f5fbd143b607c28dcb78770656f5bed77cd7a89277baea06a118c1fb2",
     "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
@@ -388,11 +388,13 @@
     "src/pages/agenten/bibliothek.astro": "4d388a99fd18fe7d8cb119ad2b3da7c41e1dfbe130b73ef8c323f7629a99186b",
     "tests/voice-mic-layout.test.mjs": "3f89ea7ff49ff62cb4e454a732af9eb67efafbc109582a2aa8e4656fa75d9780",
     "tests/no-legacy-device-token.test.mjs": "60d51e2891e6f7386eb54baec000b54105d8cf6aeefa51fcc3186512a1b52255",
-    "src/lib/chat-client.mjs": "c2d2acb3ee9fb52c963874e739a26946669eb29d55811d72148c635422b0b1b3",
+    "src/lib/chat-client.mjs": "086b38a361e64f86a04041fbebb9bab3717c8920b941b76db4516b18d24fa2f4",
     "src/lib/transcript-history.mjs": "30270ecc9afb6599aef106fa15cee808408de8b1cc2fe57c2d8fe73daf500fd9",
-    "src/scripts/chat-page.mjs": "55270255e662c188e0d5b145da289b0be754a49a46b073e296b12a94e445d1d9",
+    "src/scripts/chat-page.mjs": "c129d3559f04f46ac1801bf69e2180673a0742439382f2c28a701004636fd89d",
     "tests/chat-client.test.mjs": "473d13499ab21dbb2841d13aa920adc58f0a0d1dbd88c9f69f95a4a226b55bfd",
-    "tests/route-contract.test.mjs": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1"
+    "tests/route-contract.test.mjs": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1",
+    "tests/talk-consumer-errors.test.mjs": "276355edf35a659d3323478eda8819e9bb4831ddf1c78f82a8f435e7eb5176f8",
+    "tests/chat-warmup-ui.test.mjs": "2519f968f1d698a0d96c1a1d1c8a57c02496521238fc0858f9fc2410a43ab84a"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -6000,6 +6002,47 @@
           "path": "tests/worker-queue.test.mjs",
           "previous_sha256": "f67b8e14b5f5d5f647fe4375793fc85ec14ac70390758939cb217aed54773d14",
           "sha256": "4f8416e7e8b9c963fc6daa4ad139e70eab3fe9311c5a27b451f27e7293881d52"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "summary": "Authenticated Talk and Chat consumer parity: preserve failed or edited drafts, guard duplicate pending turns, show HTTP/network errors, retain reflex feedback, describe slot binding, and conditionally display exact-target cold-start readiness before the authoritative Chat POST.",
+      "files": [
+        {
+          "path": "src/components/Header.astro",
+          "previous_sha256": "317e9ef6e0943e212a3feffa9b46a82c745876f7d505c8995fa06660b495b813",
+          "sha256": "92331ffbb6606e3aa1998e1861a992404fea179a51b818e981daa6973ae8ba01"
+        },
+        {
+          "path": "src/pages/talk.astro",
+          "previous_sha256": "a61230acda6dc9aa97eeb6aa7b57d1bca0565161cd9af685c092c42e07ac9548",
+          "sha256": "cc28dbf6e5a8c500f6b035233ea49bbaff17dc143f050803416af27bfa55fe26"
+        },
+        {
+          "path": "tests/talk-consumer-errors.test.mjs",
+          "previous_sha256": null,
+          "sha256": "276355edf35a659d3323478eda8819e9bb4831ddf1c78f82a8f435e7eb5176f8"
+        },
+        {
+          "path": "src/lib/chat-client.mjs",
+          "previous_sha256": "c2d2acb3ee9fb52c963874e739a26946669eb29d55811d72148c635422b0b1b3",
+          "sha256": "086b38a361e64f86a04041fbebb9bab3717c8920b941b76db4516b18d24fa2f4"
+        },
+        {
+          "path": "src/scripts/chat-page.mjs",
+          "previous_sha256": "55270255e662c188e0d5b145da289b0be754a49a46b073e296b12a94e445d1d9",
+          "sha256": "c129d3559f04f46ac1801bf69e2180673a0742439382f2c28a701004636fd89d"
+        },
+        {
+          "path": "tests/chat-warmup-ui.test.mjs",
+          "previous_sha256": null,
+          "sha256": "2519f968f1d698a0d96c1a1d1c8a57c02496521238fc0858f9fc2410a43ab84a"
+        },
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "92f0d835e3e8734cc10fa0bf87360198912ea7474a50fa0b8109ecd3e95d4c9d",
+          "sha256": "116923af9f87fc3da6f70577e59e4dbd9658e6c33b7b3eaef663fd18eac3b2cf"
         }
       ]
     }

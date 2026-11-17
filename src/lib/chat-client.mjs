@@ -45,8 +45,21 @@ async function post(url, body, signal) {
   return data ?? {};
 }
 
-export async function sendChatMessage(prompt, chatId, {signal} = {}) {
-  const data = await post('/api/chat-control/chat', {prompt, chat_id: chatId}, signal);
+export async function sendChatMessage(prompt, chatId, {signal, agentId, onReadiness} = {}) {
+  const profile = /^agent:([1-9][0-9]*):/.exec(chatId);
+  const boundAgentId = agentId ?? (profile ? Number(profile[1]) : undefined);
+  const body = {prompt, chat_id: chatId};
+  if (boundAgentId !== undefined) body.agent_id = boundAgentId;
+  if (typeof onReadiness === 'function') {
+    const params = new URLSearchParams({chat_id: chatId});
+    if (boundAgentId !== undefined) params.set('agent_id', String(boundAgentId));
+    try {
+      const response = await fetch('/api/chat-control/readiness?' + params, {signal});
+      const readiness = await response.json();
+      if (response.ok && readiness && typeof readiness === 'object') onReadiness(readiness);
+    } catch { /* The optional observation never replaces the authoritative POST gate. */ }
+  }
+  const data = await post('/api/chat-control/chat', body, signal);
   const answer = typeof data.answer === 'string' ? data.answer.trim() : '';
   if (!answer) throw new ChatSendError('empty', 200, '');
   return answer;
