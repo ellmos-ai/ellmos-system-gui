@@ -199,7 +199,7 @@ test('a delayed prompt is discarded after the case changes and a new readiness c
     await page.evaluate(() => new Promise(requestAnimationFrame));
     assert.equal(await page.locator('#report-prompt').inputValue(), '');
     assert.equal(await page.locator('#report-prompt-box').isHidden(), true);
-    assert.equal(await page.locator('#report-cloud-steps').isDisabled(), true);
+    assert.equal(await page.locator('#report-cloud-steps').evaluate(fieldset => fieldset.disabled), true);
     assert.match(await page.locator('#report-reason-title').textContent(), /Namenserkennung fehlt/);
   } finally {
     oldPrompt.resolve(IDENTITY_BLOCK);

@@ -395,8 +395,9 @@
     "tests/route-contract.test.mjs": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1",
     "src/lib/report-session.mjs": "04f08b572b763b1a184a1fac6e719852b43d6ea03efbb2c684d973f0081061f1",
     "src/scripts/foerderplaner-page.mjs": "3e40325dacacedc2830839dd47fcb60ddf46c694cdb5d1af24921fcc9ee9188a",
-    "tests/foerderplaner.browser.test.mjs": "fce6f86ecf75530bc39d254a2fbc2769d8e3ac06a132e9a52fdf51d8a94cdd6e",
-    "tests/report-session.test.mjs": "e3dc57aa01a5a5db8d6727822ba3f4963e0dc7f507eae490f54c5cc3bcd07a81"
+    "tests/foerderplaner.browser.test.mjs": "62193adb7c88a27256b91ab7dd9b54017c8c88d6ebe28ac0d0c590eaf8c5b338",
+    "tests/report-session.test.mjs": "e3dc57aa01a5a5db8d6727822ba3f4963e0dc7f507eae490f54c5cc3bcd07a81",
+    "tests/fixtures/shared-dist.mjs": "444793d2356200461a80774835cf31dcc3e270fcbf19d69fed5c31030d3ee14b"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -6042,12 +6043,17 @@
         {
           "path": "tests/foerderplaner.browser.test.mjs",
           "previous_sha256": "571097f9ec3847b995001ce1cbeecd5efe2337c4fe6855e7f070c6d178b794aa",
-          "sha256": "fce6f86ecf75530bc39d254a2fbc2769d8e3ac06a132e9a52fdf51d8a94cdd6e"
+          "sha256": "62193adb7c88a27256b91ab7dd9b54017c8c88d6ebe28ac0d0c590eaf8c5b338"
         },
         {
           "path": "tests/report-session.test.mjs",
           "previous_sha256": "f6ab23251bfc56af282d6593401983c8eb800606f6dace8f58e2b5741b61d36c",
           "sha256": "e3dc57aa01a5a5db8d6727822ba3f4963e0dc7f507eae490f54c5cc3bcd07a81"
+        },
+        {
+          "path": "tests/fixtures/shared-dist.mjs",
+          "previous_sha256": "dbf7fa56533cffb46cb6f4003fdbdfda60888c3b0299c79443244b2cdf2692d9",
+          "sha256": "444793d2356200461a80774835cf31dcc3e270fcbf19d69fed5c31030d3ee14b"
         }
       ]
     }
