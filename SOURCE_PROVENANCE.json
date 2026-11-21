@@ -303,7 +303,7 @@
     "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
-    "src/pages/life.astro": "1db31a7bf4d5bcccb28ac0d99ad5c25bdfe5e99353c91cf4bac64b5c21cd42c1",
+    "src/pages/life.astro": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481",
     "src/pages/maintenance.astro": "1e47fe3566eee28aa580867ad6eef3df5001b80aeec29d97481ff0449d70e3ab",
     "src/pages/memory.astro": "47ab9040873b20341882c6d9463eb70a523ef6c4852d5e4357f9bb3f397f6952",
     "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
@@ -401,7 +401,7 @@
     "src/lib/task-returns.mjs": "6799edd2abbd7c416fe79d998b2d0051b3d47d1dadcf8d15e537b0de6215cc21",
     "src/lib/worker-queue-ui.mjs": "27e0c12966fe6887aaf677764079d043df68bf1932b503ad6997640626b3caf4",
     "tests/task-return-diagnostics.test.mjs": "b1412151e7d9f79d6459a6a981ce27923bb07292f01bedc5ba82f43d0122038f",
-    "tests/life-finance-summary.test.mjs": "9c60b2de124c2322fa2703a6b2cefa702c6b53e1793d0cea1e3ec4ca2d66d70a"
+    "tests/life-finance-summary.test.mjs": "c87ed0a461c0830d4356fdb7799adb97cdabc49ac24182db506ffff2a338bc5e"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -6139,12 +6139,12 @@
         {
           "path": "src/pages/life.astro",
           "previous_sha256": "16e533d34d02db04ef6cb9be9c486b5e46ebd377b0a48c2930a75aee74fdf5a7",
-          "sha256": "1db31a7bf4d5bcccb28ac0d99ad5c25bdfe5e99353c91cf4bac64b5c21cd42c1"
+          "sha256": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481"
         },
         {
           "path": "tests/life-finance-summary.test.mjs",
           "previous_sha256": "2b90970e2321ea5eba98e2cf65af73c72b789d19c0ca6f2778ff2d1efbb562ee",
-          "sha256": "9c60b2de124c2322fa2703a6b2cefa702c6b53e1793d0cea1e3ec4ca2d66d70a"
+          "sha256": "c87ed0a461c0830d4356fdb7799adb97cdabc49ac24182db506ffff2a338bc5e"
         }
       ]
     }

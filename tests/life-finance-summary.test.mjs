@@ -77,12 +77,14 @@ test('unavailable sources and partial rows never render zero; the next request c
   const schema = 'bach.financial_summary.v1';
   const row = {jahr: 2026, monat: 11, summen_kategorie: '{}', total_ausgaben: 0,
     total_abos: 0, total_steuer_relevant: 0, anzahl_rechnungen: 0, anzahl_abos: 0};
-  const valid = {schema, status: 'ok', data_source: 'measured', duplicate_subscription_rows: 0, summaries: [row, {...row, monat: null}]};
+  const valid = {schema, status: 'ok', data_source: 'measured', source_checked: true,
+    duplicate_subscription_rows: 0, summaries: [row, {...row, monat: null}]};
   const {load, summary, status} = financeHarness([
     {schema, status: 'unavailable', data_source: 'unavailable', summaries: []},
+    {...valid, source_checked: undefined},
     {...valid, summaries: [{...row, total_ausgaben: null}]}, valid,
   ]);
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 3; i++) {
     await load();
     assert.equal(summary.dataset.source, 'unavailable');
     assert.deepEqual(summary.children, []);

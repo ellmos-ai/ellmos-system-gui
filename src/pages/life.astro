@@ -1315,7 +1315,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         if (!res.ok) throw new Error('unavailable');
         const data = await res.json();
         if (data?.schema !== 'bach.financial_summary.v1' || data.status !== 'ok'
-            || data.data_source !== 'measured' || !Array.isArray(data.summaries)
+            || data.data_source !== 'measured' || data.source_checked !== true || !Array.isArray(data.summaries)
             || !Number.isSafeInteger(data.duplicate_subscription_rows) || data.duplicate_subscription_rows < 0
             || !data.summaries.every(item => item && Number.isSafeInteger(item.jahr) && item.jahr > 0
               && (item.monat === null || (Number.isSafeInteger(item.monat) && item.monat >= 1 && item.monat <= 12))
