@@ -21,6 +21,25 @@ function Invoke-Nsis($Program, $Arguments) {
     }
 }
 
+function Read-Registration($Key, $InstallDir) {
+    $registration = Get-ItemProperty -LiteralPath $Key
+    if ($registration.InstallLocation.Trim('"') -ine $InstallDir -or
+        $registration.UninstallString.Trim('"') -ine (Join-Path $InstallDir 'uninstall.exe')) {
+        throw 'The registered install location or uninstaller is incorrect.'
+    }
+    return $registration
+}
+
+function Uninstall-Nsis($InstallDir, $RegistrationKey, $UninstallCopy) {
+    # Run from outside the install directory so NSIS can remove the original.
+    Copy-Item -LiteralPath (Join-Path $InstallDir 'uninstall.exe') -Destination $UninstallCopy
+    Invoke-Nsis $UninstallCopy "/S _?=$InstallDir"
+    if ((Test-Path -LiteralPath $InstallDir) -or (Test-Path -LiteralPath $RegistrationKey)) {
+        throw 'The installation directory or per-user registration remained after uninstall.'
+    }
+    Remove-Item -LiteralPath $UninstallCopy
+}
+
 $root = Split-Path -Parent $PSScriptRoot
 $package = Join-Path $root 'desktop-package'
 $receipt = Get-Content -LiteralPath (Join-Path $package 'desktop-artifact.json') -Raw | ConvertFrom-Json -AsHashtable
@@ -46,7 +65,6 @@ $sandbox = Join-Path $env:RUNNER_TEMP ('openocean-installer-' + [guid]::NewGuid(
 New-Item -ItemType Directory -Path $sandbox | Out-Null
 $installDir = Join-Path $sandbox 'installed app'
 $installed = Join-Path $installDir $binaryName
-$uninstaller = Join-Path $installDir 'uninstall.exe'
 
 # Use the executable packaged by NSIS as the reference for the installed bytes.
 $payloadDir = Join-Path $sandbox 'payload'
@@ -58,22 +76,62 @@ if ($LASTEXITCODE -ne 0) {
 $payload = Join-Path $payloadDir $binaryName
 $payloadHash = (Get-FileHash -LiteralPath $payload -Algorithm SHA256).Hash.ToLowerInvariant()
 
+$legacy = $null
+if ($env:LEGACY_RUN) {
+    $legacyPackage = Join-Path $env:RUNNER_TEMP 'legacy-desktop'
+    $legacyReceipt = Get-Content -LiteralPath (Join-Path $legacyPackage 'desktop-artifact.json') -Raw | ConvertFrom-Json -AsHashtable
+    $legacyInstaller = $legacyReceipt.bundles.nsis.file
+    if ($legacyReceipt.source.repository -cne $env:GITHUB_REPOSITORY -or
+        $legacyReceipt.source.commit -cne $env:LEGACY_COMMIT -or
+        $legacyReceipt.build.run_id -ne [long]$env:LEGACY_RUN -or $legacyReceipt.build.os -cne 'Windows' -or
+        $legacyInstaller -cnotmatch '^bundles/BACH Ocean_(\d+\.\d+\.\d+)_x64-setup\.exe$') {
+        throw 'Unexpected legacy desktop build receipt.'
+    }
+    $legacyVersion = $Matches[1]
+    $legacySetup = Join-Path $legacyPackage $legacyInstaller
+    $legacyHash = (Get-FileHash -LiteralPath $legacySetup -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ([version]$legacyVersion -ge [version]$config.version -or
+        $legacyHash -cne $env:LEGACY_INSTALLER_SHA256 -or $legacyHash -cne $legacyReceipt.files[$legacyInstaller].sha256) {
+        throw 'The legacy installer version or checksum does not match the requested baseline.'
+    }
+    $legacyKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\BACH Ocean'
+    $legacyDir = Join-Path $sandbox 'legacy app'
+    if (Test-Path -LiteralPath $legacyKey) {
+        throw 'The Windows runner already has the legacy product installed.'
+    }
+    Invoke-Nsis $legacySetup "/S /D=$legacyDir"
+    if ((Read-Registration $legacyKey $legacyDir).DisplayVersion -cne $legacyVersion) {
+        throw 'The legacy installer registered the wrong version.'
+    }
+    $legacyBinary = Join-Path $legacyDir $binaryName
+    $legacyBinaryHash = (Get-FileHash -LiteralPath $legacyBinary -Algorithm SHA256).Hash.ToLowerInvariant()
+    # Cover both data directories addressed by the legacy uninstaller.
+    $profileSamples = foreach ($parent in @($env:APPDATA, $env:LOCALAPPDATA)) {
+        $profileDir = Join-Path $parent $config.identifier
+        New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
+        $sample = Join-Path $profileDir ("preservation-" + [Guid]::NewGuid().ToString('N') + '.txt')
+        Set-Content -LiteralPath $sample -Value ([Guid]::NewGuid().ToString('N')) -Encoding utf8
+        [pscustomobject]@{ File = $sample; Hash = (Get-FileHash -LiteralPath $sample -Algorithm SHA256).Hash }
+    }
+    $legacy = [ordered]@{
+        source = $legacyReceipt.source
+        run_id = $legacyReceipt.build.run_id
+        version = $legacyVersion
+        installer_sha256 = $legacyHash
+    }
+}
+
 # NSIS consumes the final directory argument verbatim, including spaces.
 Invoke-Nsis $installer "/S /D=$installDir"
-$registration = Get-ItemProperty -LiteralPath $regPath
-if ($registration.DisplayVersion -cne $config.version -or
-    $registration.InstallLocation.Trim('"') -ine $installDir -or
-    $registration.UninstallString.Trim('"') -ine $uninstaller) {
-    throw 'The registered version, install location or uninstaller is incorrect.'
+if ((Read-Registration $regPath $installDir).DisplayVersion -cne $config.version) {
+    throw 'The installed version is incorrect.'
 }
 $installedHash = (Get-FileHash -LiteralPath $installed -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($installedHash -cne $payloadHash) {
     throw 'The installed executable does not match the verified NSIS payload.'
 }
 
-# Run the generated uninstaller from outside the installation directory so it can remove the original.
 $uninstallCopy = Join-Path $sandbox 'uninstall.exe'
-Copy-Item -LiteralPath $uninstaller -Destination $uninstallCopy
 try {
     $app = Start-Process -FilePath $installed -WorkingDirectory $installDir -WindowStyle Hidden -PassThru
     try {
@@ -89,13 +147,37 @@ try {
         }
         $app.Dispose()
     }
+    if ($null -ne $legacy) {
+        if ((Get-FileHash -LiteralPath $legacyBinary -Algorithm SHA256).Hash.ToLowerInvariant() -cne $legacyBinaryHash -or
+            (Read-Registration $legacyKey $legacyDir).DisplayVersion -cne $legacyVersion) {
+            throw 'The old product was changed before the replacement was started.'
+        }
+        Uninstall-Nsis $legacyDir $legacyKey $uninstallCopy
+        if ((Read-Registration $regPath $installDir).DisplayVersion -cne $config.version -or
+            (Get-FileHash -LiteralPath $installed -Algorithm SHA256).Hash.ToLowerInvariant() -cne $installedHash) {
+            throw 'Removing the legacy product changed the replacement installation.'
+        }
+    }
 } finally {
-    Invoke-Nsis $uninstallCopy "/S _?=$installDir"
+    Uninstall-Nsis $installDir $regPath $uninstallCopy
 }
-if ((Test-Path -LiteralPath $installDir) -or (Test-Path -LiteralPath $regPath)) {
-    throw 'The installation directory or per-user registration remained after uninstall.'
+if ($null -ne $legacy) {
+    Invoke-Nsis $legacySetup "/S /D=$legacyDir"
+    if ((Read-Registration $legacyKey $legacyDir).DisplayVersion -cne $legacyVersion -or
+        (Get-FileHash -LiteralPath $legacyBinary -Algorithm SHA256).Hash.ToLowerInvariant() -cne $legacyBinaryHash) {
+        throw 'The previous installer did not restore the verified legacy installation.'
+    }
+    Uninstall-Nsis $legacyDir $legacyKey $uninstallCopy
+    foreach ($sample in $profileSamples) {
+        if ((Get-FileHash -LiteralPath $sample.File -Algorithm SHA256).Hash -cne $sample.Hash) {
+            throw 'A profile sample changed during the migration or rollback.'
+        }
+    }
+    $legacy['coexistence_until_replacement_started'] = $true
+    $legacy['old_installation_removed'] = $true
+    $legacy['rollback_installer_restored_previous_version'] = $true
+    $legacy['roaming_and_local_data_samples_preserved'] = $true
 }
-Remove-Item -LiteralPath $uninstallCopy
 
 $evidence = [ordered]@{
     schema = 'ellmos-system-gui.windows-installer-check.v1'
@@ -110,6 +192,9 @@ $evidence = [ordered]@{
     per_user_registration_verified = $true
     windows_message_loop_idle = $true
     installed_files_and_registration_removed = $true
+}
+if ($null -ne $legacy) {
+    $evidence['legacy_migration'] = $legacy
 }
 $evidence | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $package 'windows-installer-check.json') -Encoding utf8
 Write-Output "Installed, launched and uninstalled Windows desktop version $($config.version)."
