@@ -1,4 +1,5 @@
-import {parseChatParams, newChatId, sendChatMessage, describeSendError, forkSession, resumeWorker, isProblem, continueMode, ChatSendError} from '../lib/chat-client.mjs';
+import {parseChatParams, newChatId, sendChatMessage, describeSendError, forkSession, resumeWorker,
+  describeWorkerResume, describeWorkerResumeError, isProblem, continueMode, ChatSendError} from '../lib/chat-client.mjs';
 import {loadSessionPage, loadSession} from '../lib/transcript-history.mjs';
 
 const $ = id => document.getElementById(id);
@@ -151,9 +152,14 @@ function initialize() {
   }
   async function continueWorker(row) {
     if (!confirm('Den Worker „' + row.chat_id + '“ mit diesem Verlauf neu starten?')) return;
+    const epoch = state.epoch;
     setStatus('Worker wird fortgesetzt …');
-    try { await resumeWorker(row.id, row.chat_id); setStatus('Worker „' + row.chat_id + '“ wurde mit dem Übergabezettel gestartet.'); }
-    catch (error) { setStatus(error instanceof ChatSendError ? 'Worker nicht fortgesetzt' + (error.status ? ' (HTTP ' + error.status + ')' : '') + (error.reason ? ': ' + error.reason : '') : error.message, true); }
+    try {
+      const receipt = await resumeWorker(row.id, row.chat_id);
+      if (state.epoch === epoch) setStatus(describeWorkerResume(receipt, row.chat_id));
+    } catch (error) {
+      if (state.epoch === epoch) setStatus(describeWorkerResumeError(error), true);
+    }
   }
   function startNewChat() {
     state.epoch++; state.viewing = null; state.chatId = newChatId(state.slot); remember();
