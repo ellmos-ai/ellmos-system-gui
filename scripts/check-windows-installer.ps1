@@ -132,8 +132,22 @@ if ($installedHash -cne $payloadHash) {
 }
 
 $uninstallCopy = Join-Path $sandbox 'uninstall.exe'
+$testPolicyKey = 'SOFTWARE\Policies\Microsoft\Edge\WebView2\AdditionalBrowserArguments'
+$testPolicy = $null
+$ownsTestPolicy = $false
 try {
     $webviewProfile = Join-Path $sandbox 'webview-profile'
+    $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
+    $listener.Start()
+    try { $webviewPort = $listener.LocalEndpoint.Port }
+    finally { $listener.Stop() }
+    # Elevated WebView2 hosts ignore debug arguments from the environment.
+    $testPolicy = [Microsoft.Win32.Registry]::LocalMachine.CreateSubKey($testPolicyKey)
+    if ($testPolicy.GetValueNames() -contains $binaryName) {
+        throw 'The Windows runner already has a WebView2 policy for this executable.'
+    }
+    $testPolicy.SetValue($binaryName, "--remote-debugging-address=127.0.0.1 --remote-debugging-port=$webviewPort")
+    $ownsTestPolicy = $true
     $app = Start-Process -FilePath $installed -WorkingDirectory $installDir -WindowStyle Hidden -PassThru -Environment @{
         WEBVIEW2_USER_DATA_FOLDER = $webviewProfile
     }
@@ -154,6 +168,17 @@ try {
         } while ($runtimeDeadline.ElapsedMilliseconds -lt 20000)
         if (-not $runtime -or -not (Test-Path -LiteralPath $webviewProfile -PathType Container) -or $app.HasExited) {
             throw 'The installed app did not start WebView2 with its isolated test profile.'
+        }
+        if (-not $runtime.CommandLine.Contains("--remote-debugging-port=$webviewPort")) {
+            throw 'WebView2 did not apply the executable-specific debug policy.'
+        }
+        $probe = node (Join-Path $PSScriptRoot 'check-windows-webview.mjs') $webviewPort
+        if ($LASTEXITCODE -ne 0) { throw "The WebView2 connection test failed (exit $LASTEXITCODE)." }
+        $connection = $probe | ConvertFrom-Json -AsHashtable
+        if ($connection.schema -cne 'ellmos-system-gui.windows-webview-check.v1' -or
+            $connection.loopback_opt_in_enforced -ne $true -or $connection.fixture_opened -ne $true -or
+            $connection.authentication_required -ne $true) {
+            throw 'The WebView2 connection test did not return its expected receipt.'
         }
     } finally {
         if (-not $app.HasExited) {
@@ -176,7 +201,12 @@ try {
         }
     }
 } finally {
-    Uninstall-Nsis $installDir $regPath $uninstallCopy
+    try {
+        if ($ownsTestPolicy) { $testPolicy.DeleteValue($binaryName) }
+    } finally {
+        if ($testPolicy) { $testPolicy.Dispose() }
+        Uninstall-Nsis $installDir $regPath $uninstallCopy
+    }
 }
 if ($null -ne $legacy) {
     Invoke-Nsis $legacySetup "/S /D=$legacyDir"
@@ -211,6 +241,7 @@ $evidence = [ordered]@{
     installed_webview = [ordered]@{
         runtime_child_started = $true
         isolated_profile_created = $true
+        connection = $connection
     }
     installed_files_and_registration_removed = $true
 }

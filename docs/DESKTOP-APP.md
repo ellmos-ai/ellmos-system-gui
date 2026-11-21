@@ -109,9 +109,12 @@ und den Registry-Eintrag mit der Konfiguration ab, startet die EXE bis zur
 Windows-Nachrichtenschleife und prüft die Entfernung des Installationsordners
 und des Deinstallationseintrags. Der Abschnitt `installed_webview` in
 `windows-installer-check.json` belegt den zur gestarteten EXE gehörenden
-WebView2-Prozess und sein temporäres Profil.
-Der Verbindungsdialog und die Anmeldung im installierten Fenster, die
-Geräteabnahme, automatische Updates und die Signierung benötigen eigene Nachweise.
+WebView2-Prozess und sein temporäres Profil. Playwright prüft im installierten
+Verbindungsdialog die HTTP-Loopback-Bestätigung und das Öffnen einer isolierten
+Testseite mit erforderlicher Anmeldung. Dafür öffnet die CI vorübergehend einen
+Loopback-Debug-Port für diese EXE. Der Test entfernt den Richtlinienwert vor
+der Deinstallation. Die Anmeldung an einem echten Backend, die Geräteabnahme,
+automatische Updates und die Signierung benötigen eigene Nachweise.
 
 Der heruntergeladene Beleg und die Binary müssen zum selben vollständig
 erfolgreichen CI-Lauf und exakten Quellcommit gehören; der Dateihash muss passen.
