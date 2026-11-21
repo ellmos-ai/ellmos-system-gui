@@ -283,7 +283,7 @@
     "src/pages/agenten/blueprints.astro": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
-    "src/pages/agenten/running.astro": "5b242b331a287ac147f465da6e1a0b7687c5abe24cc5f587ec0c6dec88cc14b5",
+    "src/pages/agenten/running.astro": "de62b068f10604add64d641984d881c1d26dfceb547ae857a340a7415eafaa31",
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
     "src/pages/agenten/subscription-agents.astro": "5e1eca8ee6ef5e97a018c104f1e4f342975897bcd9ff656b7ca2a2636b5cb4b5",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
@@ -372,7 +372,7 @@
     "tests/theme-contrast.test.mjs": "7e955a7e88dd90fc34ec6a1092173d32dfac3abb95e97b7f5715d790f6d6d194",
     "tests/ticket-symbol.test.mjs": "07dff1019f27e8d06f730c01d2c939059f4520316e79b54d13923448e50310bb",
     "tests/usecase-source.test.mjs": "cb3808c5825654fc41225305111906891ef7f5556ec1ee848055b803cfccc870",
-    "tests/worker-decomposition.test.mjs": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
+    "tests/worker-decomposition.test.mjs": "616ff5ee47c3b7ba57ff2beae09bf58763cf131a8ef298828943b9e829ae76f6",
     "tests/worker-policy-settings.test.mjs": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
     "tests/worker-queue.test.mjs": "9a35203491037c61d905d4309c1e841239404fdc4b0eafb1b2a2649ffc48141f",
     "src/lib/voice-and-talk-contract.mjs": "ae0b57f627bc47143784b10160ccfb51883530fc9869f9e31b602c5f33055980",
@@ -6128,6 +6128,22 @@
           "path": "tests/worker-queue.test.mjs",
           "previous_sha256": "4f8416e7e8b9c963fc6daa4ad139e70eab3fe9311c5a27b451f27e7293881d52",
           "sha256": "9a35203491037c61d905d4309c1e841239404fdc4b0eafb1b2a2649ffc48141f"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "summary": "Living & Running: keep worker action receipts and rejection messages visible across status refreshes and late responses.",
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "5b242b331a287ac147f465da6e1a0b7687c5abe24cc5f587ec0c6dec88cc14b5",
+          "sha256": "de62b068f10604add64d641984d881c1d26dfceb547ae857a340a7415eafaa31"
+        },
+        {
+          "path": "tests/worker-decomposition.test.mjs",
+          "previous_sha256": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
+          "sha256": "616ff5ee47c3b7ba57ff2beae09bf58763cf131a8ef298828943b9e829ae76f6"
         }
       ]
     }
