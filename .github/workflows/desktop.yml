@@ -8,6 +8,7 @@ on:
       - '.github/workflows/desktop.yml'
       - '.github/desktop-toolchain/**'
       - 'scripts/package-desktop.py'
+      - 'scripts/check-windows-installer.ps1'
       - 'docs/DESKTOP-APP.md'
   push:
     branches: [main]
@@ -17,10 +18,26 @@ on:
       - '.github/workflows/desktop.yml'
       - '.github/desktop-toolchain/**'
       - 'scripts/package-desktop.py'
+      - 'scripts/check-windows-installer.ps1'
       - 'docs/DESKTOP-APP.md'
+  workflow_dispatch:
+    inputs:
+      legacy_run:
+        description: 'Successful main-branch Windows desktop build for BACH Ocean'
+        type: string
+        required: true
+      legacy_commit:
+        description: 'Exact source commit of that Windows build'
+        type: string
+        required: true
+      legacy_installer_sha256:
+        description: 'Expected SHA-256 of the BACH Ocean NSIS installer'
+        type: string
+        required: true
 
 permissions:
   contents: read
+  actions: read
 
 env:
   DESKTOP_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -154,6 +171,37 @@ jobs:
           print('Windows binary uses GUI subsystem; no console subsystem.')
       - name: Package compiled desktop consumer and source receipt
         run: python scripts/package-desktop.py
+      - name: Verify legacy Windows artifact source
+        if: runner.os == 'Windows' && github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LEGACY_RUN: ${{ inputs.legacy_run }}
+          LEGACY_COMMIT: ${{ inputs.legacy_commit }}
+        shell: pwsh
+        run: |
+          if ($env:LEGACY_RUN -notmatch '^[0-9]+$' -or $env:LEGACY_COMMIT -cnotmatch '^[a-f0-9]{40}$') {
+            throw 'Expected a run ID and exact legacy commit.'
+          }
+          $run = gh run view $env:LEGACY_RUN --repo $env:GITHUB_REPOSITORY --json headSha,headBranch,event,conclusion,workflowName | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0 -or $run.headSha -cne $env:LEGACY_COMMIT -or $run.headBranch -cne 'main' -or
+              $run.event -cne 'push' -or $run.conclusion -cne 'success' -or $run.workflowName -cne 'Desktop compile') {
+            throw 'The legacy run is not the successful main-branch desktop build requested.'
+          }
+      - uses: actions/download-artifact@v4
+        if: runner.os == 'Windows' && github.event_name == 'workflow_dispatch'
+        with:
+          name: desktop-consumer-Windows-${{ inputs.legacy_commit }}
+          run-id: ${{ inputs.legacy_run }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/legacy-desktop
+      - name: Verify Windows installer lifecycle
+        if: runner.os == 'Windows'
+        env:
+          LEGACY_RUN: ${{ inputs.legacy_run }}
+          LEGACY_COMMIT: ${{ inputs.legacy_commit }}
+          LEGACY_INSTALLER_SHA256: ${{ inputs.legacy_installer_sha256 }}
+        shell: pwsh
+        run: ./scripts/check-windows-installer.ps1
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-consumer-${{ runner.os }}-${{ env.DESKTOP_SOURCE_COMMIT }}
