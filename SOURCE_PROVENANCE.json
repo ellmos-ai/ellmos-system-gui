@@ -334,7 +334,7 @@
     "src/styles/main.css": "d95cbb61312745dd3d13f3f158882b38333117c3e5e96364c27f0a0d6c93f6ae",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
-    "tests/agent-color.test.mjs": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
+    "tests/agent-color.test.mjs": "8663e1a58154b0b8c2488a89990386e28595631b3d4dc4749efeed0e20a51b98",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/agent-overview.test.mjs": "be2ce93eadd913a8e5a49b7d21e6a48a76002a60307e6d3d92428c8e875fff56",
     "tests/blueprint-studio.test.mjs": "48265ed61f13628ba059315f4e5a7b452f38e7256a0f314be6234bcc50d4681b",
@@ -6149,6 +6149,11 @@
           "path": "tests/blueprint-studio.test.mjs",
           "previous_sha256": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
           "sha256": "48265ed61f13628ba059315f4e5a7b452f38e7256a0f314be6234bcc50d4681b"
+        },
+        {
+          "path": "tests/agent-color.test.mjs",
+          "previous_sha256": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
+          "sha256": "8663e1a58154b0b8c2488a89990386e28595631b3d4dc4749efeed0e20a51b98"
         }
       ]
     }
