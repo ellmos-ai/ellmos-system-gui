@@ -177,8 +177,9 @@ test('the page shows both modes and keeps the cloud steps disabled until readine
     assert.match(page, new RegExp(`id="${id}"`), id);
   assert.match(page, /Modus lokal/);
   assert.match(page, /Modus Cloud/);
-  assert.match(script, /loadReadiness\(\)/);
-  assert.match(script, /setCloudEnabled\(state\.cloudReady\)/);
+  assert.match(script, /loadReadiness\(\{signal: reportCase\.controller\.signal\}\)/);
+  assert.match(script, /reportCase\.ready = state\.cloudReady/);
+  assert.match(script, /disabled = !activeCase\.ready \|\| activeCase\.busy/);
   assert.match(page, /<fieldset id="report-cloud-steps" disabled/);
   assert.doesNotMatch(page + script, /#[0-9a-f]{3,6}\b|rgba?\(/i, 'nur Farb-Tokens (Kontrast in allen Themes)');
 });

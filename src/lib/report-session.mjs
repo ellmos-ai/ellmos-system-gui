@@ -102,36 +102,36 @@ const READINESS_UNKNOWN = {blocked: true, code: 'readiness_unknown', title: 'Ber
   next: 'BACH-Verbindung und Version prüfen (Route /api/report/readiness) oder den Modus lokal nutzen.', detail: ''};
 
 // Cloud nur, wenn BACH es ausdrücklich erlaubt; jede andere Antwort gilt als nicht bereit (fail-closed).
-export async function loadReadiness() {
+export async function loadReadiness({signal} = {}) {
   let data;
-  try { data = await call('/api/report/readiness', {method: 'GET'}); } catch (_error) { return {cloudReady: false, reason: READINESS_UNKNOWN}; }
+  try { data = await call('/api/report/readiness', {method: 'GET', signal}); } catch (_error) { return {cloudReady: false, reason: READINESS_UNKNOWN}; }
   if (data?.success === true && data.cloud_ready === true) return {cloudReady: true, reason: null};
   if (data?.success === true && data.cloud_ready === false)
     return {cloudReady: false, reason: reasonView({success: false, privacy_block: true, error_code: data.error_code, error: data.error})};
   return {cloudReady: false, reason: READINESS_UNKNOWN};
 }
 
-export async function startSession() {
-  return call('/api/report/session/start', {method: 'POST', headers: JSON_HEADERS, body: '{}'});
+export async function startSession({signal} = {}) {
+  return call('/api/report/session/start', {method: 'POST', headers: JSON_HEADERS, body: '{}', signal});
 }
 
-export async function importFolder(sessionId, folder) {
+export async function importFolder(sessionId, folder, {signal} = {}) {
   return call('/api/report/session/' + encodeURIComponent(sessionId) + '/import',
-    {method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({folder: String(folder || '').trim()})});
+    {method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({folder: String(folder || '').trim()}), signal});
 }
 
-export async function createProfile(sessionId, form) {
+export async function createProfile(sessionId, form, {signal} = {}) {
   return call('/api/report/session/' + encodeURIComponent(sessionId) + '/profile',
-    {method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(profileBody(form))});
+    {method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(profileBody(form)), signal});
 }
 
-export async function buildPrompt(sessionId, form) {
+export async function buildPrompt(sessionId, form, {signal} = {}) {
   return call('/api/report/session/' + encodeURIComponent(sessionId) + '/prompt',
-    {method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(promptBody(form))});
+    {method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(promptBody(form)), signal});
 }
 
 // Rückersetzung der Tarnwerte geschieht lokal in BACH, nach der Modellantwort.
-export async function generateReport(sessionId, llmResponse) {
+export async function generateReport(sessionId, llmResponse, {signal} = {}) {
   return call('/api/report/session/' + encodeURIComponent(sessionId) + '/generate',
-    {method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({llm_response: String(llmResponse || ''), auto_deanonymize: true})});
+    {method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({llm_response: String(llmResponse || ''), auto_deanonymize: true}), signal});
 }

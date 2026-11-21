@@ -5,14 +5,11 @@ import {
 } from '../lib/report-session.mjs';
 
 const $ = id => document.getElementById(id);
-let sessionId = '';
+const newCase = () => ({sessionId: '', ready: false, busy: false, controller: new AbortController()});
+let activeCase = newCase();
 
-// Cloud-Schritte nur, wenn BACH die Namenserkennung bestätigt (fail-closed: Fieldset ist im HTML gesperrt).
-function setCloudEnabled(ready) {
-  $('report-cloud-steps').disabled = !ready;
-  setStatus('report-mode-cloud-state', ready
-    ? 'Bereit: Namenserkennung vorhanden, Datenschutz-Sperre aktiv.'
-    : 'Gesperrt: Der Cloud-Weg ist auf diesem Rechner nicht bereit (Grund unten).');
+function updateControls() {
+  $('report-cloud-steps').disabled = !activeCase.ready || activeCase.busy;
 }
 
 function showReason(view) {
@@ -37,24 +34,35 @@ function setStatus(id, text) {
 function hidePrompt() {
   $('report-prompt').value = '';
   $('report-prompt-box').hidden = true;
+  setStatus('report-copy-status', '');
 }
 
 // Eine Sitzung je Fall; BACH hält sie im Speicher, bis der Dienst neu startet.
-async function withSession(action) {
-  if (!sessionId) {
-    const started = await startSession();
+async function withSession(reportCase, action) {
+  const signal = reportCase.controller.signal;
+  if (!reportCase.sessionId) {
+    const started = await startSession({signal});
+    if (reportCase !== activeCase) return;
     if (!started || started.success !== true) return started;
-    sessionId = started.session_id;
-    setStatus('report-session-id', sessionId);
+    if (typeof started.session_id !== 'string' || !started.session_id.trim()) {
+      throw new Error('BACH hat keine Sitzung bestätigt.');
+    }
+    reportCase.sessionId = started.session_id;
+    setStatus('report-session-id', reportCase.sessionId);
   }
-  return action(sessionId);
+  return action(reportCase.sessionId, {signal});
 }
 
 async function step(statusId, action, describe) {
+  const reportCase = activeCase;
+  if (!reportCase.ready || reportCase.busy) return;
+  reportCase.busy = true;
+  updateControls();
   showReason(null);
   setStatus(statusId, 'Läuft …');
   try {
-    const data = await withSession(action);
+    const data = await withSession(reportCase, action);
+    if (reportCase !== activeCase) return;
     const view = reasonView(data);
     if (view) {
       showReason(view);
@@ -64,9 +72,15 @@ async function step(statusId, action, describe) {
     setStatus(statusId, describe(data));
     return data;
   } catch (error) {
+    if (reportCase !== activeCase) return;
     showReason({blocked: false, code: '', title: 'Schritt nicht ausgeführt', text: error.message, next: ''});
     setStatus(statusId, 'Fehlgeschlagen');
     return null;
+  } finally {
+    if (reportCase === activeCase) {
+      reportCase.busy = false;
+      updateControls();
+    }
   }
 }
 
@@ -74,36 +88,46 @@ const value = id => $(id)?.value ?? '';
 
 $('report-import-form')?.addEventListener('submit', event => {
   event.preventDefault();
-  step('report-import-status', id => importFolder(id, value('report-folder')),
+  hidePrompt();
+  const folder = value('report-folder');
+  step('report-import-status', (id, options) => importFolder(id, folder, options),
     data => `${data.imported_count} Dateien übernommen.`);
 });
 
 $('report-profile-form')?.addEventListener('submit', event => {
   event.preventDefault();
   hidePrompt();
-  step('report-profile-status', id => createProfile(id, {
+  const form = {
     clientName: value('report-client-name'), geburtsdatum: value('report-birthdate'), parents: value('report-parents'),
     address: value('report-address'), terms: value('report-terms'),
-  }), data => `Profil angelegt: Tarnname ${data.tarnname}, ${data.mappings_count} Ersetzungen.`);
+  };
+  step('report-profile-status', (id, options) => createProfile(id, form, options),
+    data => `Profil angelegt: Tarnname ${data.tarnname}, ${data.mappings_count} Ersetzungen.`);
 });
 
-$('report-prompt-form')?.addEventListener('submit', async event => {
+$('report-prompt-form')?.addEventListener('submit', event => {
   event.preventDefault();
   hidePrompt();
-  const data = await step('report-prompt-status', id => buildPrompt(id, {
+  const form = {
     period: value('report-period'), knowledgeBase: $('report-kb')?.checked !== false, instructions: value('report-instructions'),
-  }), result => `Prompt bereit (${result.prompt_length} Zeichen).`);
-  if (data && typeof data.prompt === 'string') {
-    $('report-prompt').value = data.prompt;
+  };
+  step('report-prompt-status', (id, options) => buildPrompt(id, form, options), result => {
+    if (typeof result.prompt !== 'string' || !result.prompt.trim()) throw new Error('BACH hat keinen Prompt bestätigt.');
+    $('report-prompt').value = result.prompt;
     $('report-prompt-box').hidden = false;
-  }
+    return `Prompt bereit (${result.prompt_length} Zeichen).`;
+  });
 });
 
 $('report-copy')?.addEventListener('click', async () => {
+  const reportCase = activeCase;
+  const prompt = value('report-prompt');
+  if (!prompt || reportCase.busy || !reportCase.ready || $('report-prompt-box').hidden) return;
   try {
-    await navigator.clipboard.writeText(value('report-prompt'));
-    setStatus('report-copy-status', 'Kopiert.');
+    await navigator.clipboard.writeText(prompt);
+    if (reportCase === activeCase && value('report-prompt') === prompt) setStatus('report-copy-status', 'Kopiert.');
   } catch (_error) {
+    if (reportCase !== activeCase || value('report-prompt') !== prompt) return;
     $('report-prompt')?.select();
     setStatus('report-copy-status', 'Bitte manuell kopieren (Strg+C).');
   }
@@ -111,12 +135,15 @@ $('report-copy')?.addEventListener('click', async () => {
 
 $('report-generate-form')?.addEventListener('submit', event => {
   event.preventDefault();
-  step('report-generate-status', id => generateReport(id, value('report-response')),
+  const response = value('report-response');
+  step('report-generate-status', (id, options) => generateReport(id, response, options),
     data => `Bericht erstellt: ${data.output_path}`);
 });
 
 $('report-new-case')?.addEventListener('click', () => {
-  sessionId = '';
+  activeCase.controller.abort();
+  activeCase = newCase();
+  $('report-cloud-steps').querySelectorAll('form').forEach(form => form.reset());
   setStatus('report-session-id', 'noch keine');
   hidePrompt();
   showReason(null);
@@ -126,8 +153,16 @@ $('report-new-case')?.addEventListener('click', () => {
 });
 
 async function checkReadiness() {
-  const state = await loadReadiness();
-  setCloudEnabled(state.cloudReady);
+  const reportCase = activeCase;
+  updateControls();
+  setStatus('report-mode-cloud-state', 'Bereitschaft wird geprüft …');
+  const state = await loadReadiness({signal: reportCase.controller.signal});
+  if (reportCase !== activeCase) return;
+  reportCase.ready = state.cloudReady;
+  updateControls();
+  setStatus('report-mode-cloud-state', state.cloudReady
+    ? 'Bereit: Namenserkennung vorhanden, Datenschutz-Sperre aktiv.'
+    : 'Gesperrt: Der Cloud-Weg ist auf diesem Rechner nicht bereit (Grund unten).');
   if (state.reason) showReason(state.reason);
 }
 
