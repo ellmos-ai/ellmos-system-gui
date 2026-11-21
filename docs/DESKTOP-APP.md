@@ -103,6 +103,13 @@ aller enthaltenen Lieferdateien fest. Änderungen der beiden Locks während des 
 werden abgewiesen. Die Windows-CI prüft weiterhin direkt den PE-Header der App auf
 GUI-Subsystem2.
 
+Unter Windows prüft ein zusätzlicher Schritt den NSIS-Installer in einem
+frischen GitHub-Runner. Er gleicht die installierte EXE und den Registry-Eintrag
+ab, startet die EXE bis zur Windows-Nachrichtenschleife und prüft die Entfernung
+des Installationsordners und des Deinstallationseintrags. Der Nachweis steht in
+`windows-installer-check.json`. Sichtbare Oberfläche, Anmeldung, Update,
+Signierung und Geräteabnahme benötigen eigene Nachweise.
+
 Der heruntergeladene Beleg und die Binary müssen zum selben vollständig
 erfolgreichen CI-Lauf und exakten Quellcommit gehören; der Dateihash muss passen.
 Ein Hash aus demselben Paket ist ein Integritätsbeleg, keine unabhängige Signatur.

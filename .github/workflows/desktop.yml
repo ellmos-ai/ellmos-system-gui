@@ -8,6 +8,7 @@ on:
       - '.github/workflows/desktop.yml'
       - '.github/desktop-toolchain/**'
       - 'scripts/package-desktop.py'
+      - 'scripts/check-windows-installer.ps1'
       - 'docs/DESKTOP-APP.md'
   push:
     branches: [main]
@@ -17,6 +18,7 @@ on:
       - '.github/workflows/desktop.yml'
       - '.github/desktop-toolchain/**'
       - 'scripts/package-desktop.py'
+      - 'scripts/check-windows-installer.ps1'
       - 'docs/DESKTOP-APP.md'
 
 permissions:
@@ -154,6 +156,10 @@ jobs:
           print('Windows binary uses GUI subsystem; no console subsystem.')
       - name: Package compiled desktop consumer and source receipt
         run: python scripts/package-desktop.py
+      - name: Verify Windows installer lifecycle
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/check-windows-installer.ps1
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-consumer-${{ runner.os }}-${{ env.DESKTOP_SOURCE_COMMIT }}
