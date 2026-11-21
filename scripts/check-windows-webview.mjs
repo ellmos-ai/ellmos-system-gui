@@ -12,7 +12,7 @@ if (process.platform !== 'win32' || process.env.GITHUB_ACTIONS !== 'true'
 }
 const port = Number(process.argv[2]);
 assert.ok(Number.isInteger(port) && port > 0 && port <= 65535, 'Invalid WebView debug port');
-const debuggerOrigin = 'http://127.0.0.1:' + port;
+const debuggerOrigins = ['http://127.0.0.1:', 'http://[::1]:'].map(host => host + port);
 const marker = randomUUID();
 let capabilityReads = 0;
 const fixture = createServer((request, response) => {
@@ -44,12 +44,16 @@ try {
   fixture.listen(0, '127.0.0.1');
   await once(fixture, 'listening');
   const origin = 'http://127.0.0.1:' + fixture.address().port;
-  await waitFor(async () => {
-    try {
-      return (await fetch(debuggerOrigin + '/json/version', {signal: AbortSignal.timeout(800)})).ok;
-    } catch {
-      return false;
+  const debuggerOrigin = await waitFor(async () => {
+    for (const address of debuggerOrigins) {
+      try {
+        const response = await fetch(address + '/json/version', {signal: AbortSignal.timeout(800)});
+        if (response.ok && typeof (await response.json()).webSocketDebuggerUrl === 'string') return address;
+      } catch {
+        // The other loopback family may be the one exposed by WebView2.
+      }
     }
+    return null;
   }, 'its local debugger');
   browser = await chromium.connectOverCDP(debuggerOrigin, {timeout: 10000});
   const pages = () => browser.contexts().flatMap(context => context.pages());

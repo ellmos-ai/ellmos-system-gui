@@ -141,14 +141,28 @@ try {
         WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = "--remote-debugging-address=127.0.0.1 --remote-debugging-port=$webviewPort"
         WEBVIEW2_USER_DATA_FOLDER = Join-Path $sandbox 'webview-profile'
     }
-    $app = Start-Process -FilePath $installed -WorkingDirectory $installDir -WindowStyle Hidden -PassThru -Environment $webviewEnv
+    $webviewOutput = Join-Path $sandbox 'installed-launch.stderr.log'
+    $app = Start-Process -FilePath $installed -WorkingDirectory $installDir -WindowStyle Hidden -PassThru -Environment $webviewEnv -RedirectStandardError $webviewOutput
     try {
         if (-not $app.WaitForInputIdle(20000) -or $app.HasExited) {
             throw 'The installed executable did not reach an idle Windows message loop.'
         }
         $probe = node (Join-Path $PSScriptRoot 'check-windows-webview.mjs') $webviewPort
         if ($LASTEXITCODE -ne 0) {
-            throw "The installed WebView2 connection test failed (exit $LASTEXITCODE)."
+            $probeExit = $LASTEXITCODE
+            $app.Refresh()
+            $webviewProcesses = @(Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe'" |
+                Where-Object {
+                    $_.CommandLine -and ($_.ParentProcessId -eq $app.Id -or
+                        $_.CommandLine.Contains($webviewEnv.WEBVIEW2_USER_DATA_FOLDER))
+                })
+            $matchingDebugPort = @($webviewProcesses | Where-Object {
+                $_.CommandLine.Contains("--remote-debugging-port=$webviewPort")
+            }).Count
+            Write-Host "WebView diagnostic: app_exited=$($app.HasExited), profile_present=$(Test-Path -LiteralPath $webviewEnv.WEBVIEW2_USER_DATA_FOLDER), profile_processes=$($webviewProcesses.Count), debug_port_processes=$matchingDebugPort"
+            if ($app.HasExited) { Write-Host "Installed app exit code: $($app.ExitCode)" }
+            if (Test-Path -LiteralPath $webviewOutput) { Get-Content -LiteralPath $webviewOutput -Tail 12 }
+            throw "The installed WebView2 connection test failed (exit $probeExit)."
         }
         $webview = $probe | ConvertFrom-Json
         if ($webview.schema -cne 'ellmos-system-gui.windows-webview-check.v1' -or
