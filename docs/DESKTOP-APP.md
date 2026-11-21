@@ -104,8 +104,9 @@ werden abgewiesen. Die Windows-CI prüft weiterhin direkt den PE-Header der App 
 GUI-Subsystem2.
 
 Unter Windows prüft ein zusätzlicher Schritt den NSIS-Installer in einem
-frischen GitHub-Runner. Er gleicht die installierte EXE und den Registry-Eintrag
-ab, startet die EXE bis zur Windows-Nachrichtenschleife und prüft die Entfernung
+frischen GitHub-Runner. Er gleicht die installierte EXE mit dem Installer-Inhalt
+und den Registry-Eintrag mit der Konfiguration ab, startet die EXE bis zur
+Windows-Nachrichtenschleife und prüft die Entfernung
 des Installationsordners und des Deinstallationseintrags. Der Nachweis steht in
 `windows-installer-check.json`. Sichtbare Oberfläche, Anmeldung, Update,
 Signierung und Geräteabnahme benötigen eigene Nachweise.

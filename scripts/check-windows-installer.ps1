@@ -48,6 +48,16 @@ $installDir = Join-Path $sandbox 'installed app'
 $installed = Join-Path $installDir $binaryName
 $uninstaller = Join-Path $installDir 'uninstall.exe'
 
+# Use the executable packaged by NSIS as the reference for the installed bytes.
+$payloadDir = Join-Path $sandbox 'payload'
+$sevenZip = Join-Path $env:ProgramFiles '7-Zip/7z.exe'
+& $sevenZip e -y "-o$payloadDir" $installer $binaryName -r
+if ($LASTEXITCODE -ne 0) {
+    throw "Could not extract the NSIS application payload (exit $LASTEXITCODE)."
+}
+$payload = Join-Path $payloadDir $binaryName
+$payloadHash = (Get-FileHash -LiteralPath $payload -Algorithm SHA256).Hash.ToLowerInvariant()
+
 # NSIS consumes the final directory argument verbatim, including spaces.
 Invoke-Nsis $installer "/S /D=$installDir"
 $registration = Get-ItemProperty -LiteralPath $regPath
@@ -57,8 +67,8 @@ if ($registration.DisplayVersion -cne $config.version -or
     throw 'The registered version, install location or uninstaller is incorrect.'
 }
 $installedHash = (Get-FileHash -LiteralPath $installed -Algorithm SHA256).Hash.ToLowerInvariant()
-if ($installedHash -cne $receipt.files[$binaryName].sha256) {
-    throw 'The installed executable does not match the build receipt.'
+if ($installedHash -cne $payloadHash) {
+    throw 'The installed executable does not match the verified NSIS payload.'
 }
 
 # Run the generated uninstaller from outside the installation directory so it can remove the original.
@@ -95,6 +105,7 @@ $evidence = [ordered]@{
     run_attempt = $receipt.build.run_attempt
     version = $config.version
     installer_sha256 = $installerHash
+    installer_payload_sha256 = $payloadHash
     installed_binary_sha256 = $installedHash
     per_user_registration_verified = $true
     windows_message_loop_idle = $true
