@@ -299,7 +299,7 @@
     "src/pages/governance/index.astro": "5b5ce800eff6bfa95996c969416394d4af11a3aac05352947897e5bf29f775e3",
     "src/pages/governance/logs.astro": "1227c2cb3cb5306990090b2adf9b7d6384f3e4a118db0c309011004a26e73a1d",
     "src/pages/governance/usecases.astro": "fabb09df9521dc2d8ada7c3e6864753939b14547faecd8fc10818b8dfc6d2685",
-    "src/pages/help.astro": "5bf12452ea86c99a01f41b0b21ac9c27b47a28778abcce70848008c451c2893e",
+    "src/pages/help.astro": "a76db365556eeb71100b28cf27159054a3dba56dcfe92efcc33cb8d80f8f307a",
     "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
@@ -400,7 +400,8 @@
     "tests/fixtures/abort-visibility-backend.mjs": "f8d4dff945e49bf4fdac7614dccbd5a4d2104b247bdd75641bd61f36574c9c30",
     "src/lib/task-returns.mjs": "6799edd2abbd7c416fe79d998b2d0051b3d47d1dadcf8d15e537b0de6215cc21",
     "src/lib/worker-queue-ui.mjs": "27e0c12966fe6887aaf677764079d043df68bf1932b503ad6997640626b3caf4",
-    "tests/task-return-diagnostics.test.mjs": "b1412151e7d9f79d6459a6a981ce27923bb07292f01bedc5ba82f43d0122038f"
+    "tests/task-return-diagnostics.test.mjs": "b1412151e7d9f79d6459a6a981ce27923bb07292f01bedc5ba82f43d0122038f",
+    "tests/help-audit.test.mjs": "49650eb3d28b8d89ba809c053a79a10592432009ec5deb291ec9f22bc80bab79"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -6128,6 +6129,22 @@
           "path": "tests/worker-queue.test.mjs",
           "previous_sha256": "4f8416e7e8b9c963fc6daa4ad139e70eab3fe9311c5a27b451f27e7293881d52",
           "sha256": "9a35203491037c61d905d4309c1e841239404fdc4b0eafb1b2a2649ffc48141f"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-22",
+      "summary": "PB-17: show dated documentation reports, limited CLI and language-file checks, and unavailable states independently of the module catalog.",
+      "files": [
+        {
+          "path": "src/pages/help.astro",
+          "previous_sha256": "5bf12452ea86c99a01f41b0b21ac9c27b47a28778abcce70848008c451c2893e",
+          "sha256": "a76db365556eeb71100b28cf27159054a3dba56dcfe92efcc33cb8d80f8f307a"
+        },
+        {
+          "path": "tests/help-audit.test.mjs",
+          "previous_sha256": null,
+          "sha256": "49650eb3d28b8d89ba809c053a79a10592432009ec5deb291ec9f22bc80bab79"
         }
       ]
     }
