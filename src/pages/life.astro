@@ -244,7 +244,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
           <a href="/financial" class="btn btn-secondary">Vollständiges Finanzmodul ↗</a>
         </div>
         <p id="finance-summary-status" class="load-status" role="status" aria-live="polite"></p>
-        <div id="finance-summary" data-source="measured"></div>
+        <div id="finance-summary" data-source="unchecked"></div>
       </div>
     </div>
 
@@ -1293,9 +1293,9 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       }
       if (!categories || typeof categories !== 'object' || Array.isArray(categories)) return '–';
       const parts = Object.entries(categories)
-        .filter(([, amount]) => Number.isFinite(Number(amount)))
-        .sort((a, b) => Number(b[1]) - Number(a[1]))
-        .map(([name, amount]) => `${name}: ${eurFmt.format(Number(amount))}`);
+        .filter(([, amount]) => Number.isFinite(amount))
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, amount]) => `${name}: ${eurFmt.format(amount)}`);
       return parts.length ? parts.join(' · ') : '–';
     }
 
@@ -1307,15 +1307,25 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       if (!statusEl || !container) return;
 
       statusEl.textContent = 'Lade Finanzübersicht …';
+      container.dataset.source = 'loading';
       container.replaceChildren();
 
       try {
         const res = await lifeApiFetch('/api/financial/summary');
         if (!res.ok) throw new Error('unavailable');
         const data = await res.json();
-        if (!data || !Array.isArray(data.summaries)) throw new Error('invalid');
+        if (data?.schema !== 'bach.financial_summary.v1' || data.status !== 'ok'
+            || data.data_source !== 'measured' || !Array.isArray(data.summaries)
+            || !Number.isSafeInteger(data.duplicate_subscription_rows) || data.duplicate_subscription_rows < 0
+            || !data.summaries.every(item => item && Number.isSafeInteger(item.jahr) && item.jahr > 0
+              && (item.monat === null || (Number.isSafeInteger(item.monat) && item.monat >= 1 && item.monat <= 12))
+              && ['total_ausgaben', 'total_abos', 'total_steuer_relevant'].every(key => Number.isFinite(item[key]))
+              && ['anzahl_rechnungen', 'anzahl_abos'].every(key => Number.isSafeInteger(item[key]) && item[key] >= 0))) {
+          throw new Error('invalid');
+        }
 
-        const dupCount = Number(data.duplicate_subscription_rows);
+        container.dataset.source = 'measured';
+        const dupCount = data.duplicate_subscription_rows;
         if (data.summaries.length === 0) {
           statusEl.textContent = 'Für die erfassten Zeiträume liegen noch keine Finanzdaten vor.';
           if (Number.isFinite(dupCount) && dupCount > 0) {
@@ -1336,7 +1346,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
         const thead = document.createElement('thead');
         const headRow = document.createElement('tr');
-        for (const label of ['Monat', 'Kategorien', 'Ausgaben', 'davon Abos', 'steuerrelevant', 'Rechnungen', 'Abos']) {
+        for (const label of ['Zeitraum', 'Kategorien', 'Ausgaben', 'Laufende Abokosten', 'steuerrelevant', 'Rechnungen', 'Abos']) {
           const th = document.createElement('th');
           th.textContent = label;
           th.style.textAlign = 'left';
@@ -1350,16 +1360,16 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         const tbody = document.createElement('tbody');
         for (const item of rows) {
           const tr = document.createElement('tr');
-          const mm = item.monat != null ? String(item.monat).padStart(2, '0') : '–';
-          const jjjj = item.jahr != null ? String(item.jahr) : '–';
+          const period = item.monat === null ? `${item.jahr} bis heute`
+            : `${String(item.monat).padStart(2, '0')}/${item.jahr}`;
           const cells = [
-            `${mm}/${jjjj}`,
+            period,
             financeCategoryText(item.summen_kategorie, eurFmt),
-            eurFmt.format(Number(item.total_ausgaben ?? 0)),
-            eurFmt.format(Number(item.total_abos ?? 0)),
-            eurFmt.format(Number(item.total_steuer_relevant ?? 0)),
-            String(item.anzahl_rechnungen ?? 0),
-            String(item.anzahl_abos ?? 0)
+            eurFmt.format(item.total_ausgaben),
+            eurFmt.format(item.total_abos),
+            eurFmt.format(item.total_steuer_relevant),
+            String(item.anzahl_rechnungen),
+            String(item.anzahl_abos)
           ];
           for (const value of cells) {
             const td = document.createElement('td');
@@ -1372,6 +1382,10 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         }
         table.append(tbody);
         container.append(table);
+        const subscriptionNote = document.createElement('p');
+        subscriptionNote.className = 'load-status';
+        subscriptionNote.textContent = 'Laufende Abokosten sind Monatswerte oder auf ein Jahr hochgerechnete Werte. Die Ausgaben stammen aus erfassten Finanzmails.';
+        container.append(subscriptionNote);
 
         if (Number.isFinite(dupCount) && dupCount > 0) {
           const hint = document.createElement('p');
@@ -1383,9 +1397,9 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         statusEl.textContent = '';
       } catch (_err) {
         _financeSummaryLoaded = false; // reopening the tab retries
+        container.dataset.source = 'unavailable';
         container.replaceChildren();
-        statusEl.textContent = 'Finanzübersicht nicht erreichbar. Das Finanzmodul unter /financial bleibt nutzbar.';
-        console.error('[life] finance summary unavailable');
+        statusEl.textContent = 'Die Finanzquelle hat keine verlässliche Übersicht geliefert.';
       }
     }
 
