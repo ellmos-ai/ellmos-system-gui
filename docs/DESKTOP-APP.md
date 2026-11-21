@@ -107,9 +107,13 @@ Unter Windows prüft ein zusätzlicher Schritt den NSIS-Installer in einem
 frischen GitHub-Runner. Er gleicht die installierte EXE mit dem Installer-Inhalt
 und den Registry-Eintrag mit der Konfiguration ab, startet die EXE bis zur
 Windows-Nachrichtenschleife und prüft die Entfernung
-des Installationsordners und des Deinstallationseintrags. Der Nachweis steht in
-`windows-installer-check.json`. Sichtbare Oberfläche, Anmeldung, Update,
-Signierung und Geräteabnahme benötigen eigene Nachweise.
+des Installationsordners und des Deinstallationseintrags. Playwright prüft in der
+installierten WebView2 die HTTP-Loopback-Bestätigung und das Öffnen einer isolierten
+Testseite mit erforderlicher Anmeldung. Die Probe verwendet ein temporäres
+WebView2-Profil und ein Debug-Interface auf Loopback ausschließlich im CI-Prozess.
+`windows-installer-check.json` enthält dafür den Abschnitt `installed_webview`.
+Die Anmeldung an einem echten Backend, sichtbare Fenster auf einem Nutzergerät,
+automatische Updates, Signierung und Geräteabnahme benötigen eigene Nachweise.
 
 Der heruntergeladene Beleg und die Binary müssen zum selben vollständig
 erfolgreichen CI-Lauf und exakten Quellcommit gehören; der Dateihash muss passen.

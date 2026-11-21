@@ -133,10 +133,28 @@ if ($installedHash -cne $payloadHash) {
 
 $uninstallCopy = Join-Path $sandbox 'uninstall.exe'
 try {
-    $app = Start-Process -FilePath $installed -WorkingDirectory $installDir -WindowStyle Hidden -PassThru
+    $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
+    $listener.Start()
+    try { $webviewPort = $listener.LocalEndpoint.Port }
+    finally { $listener.Stop() }
+    $webviewEnv = @{
+        WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = "--remote-debugging-address=127.0.0.1 --remote-debugging-port=$webviewPort"
+        WEBVIEW2_USER_DATA_FOLDER = Join-Path $sandbox 'webview-profile'
+    }
+    $app = Start-Process -FilePath $installed -WorkingDirectory $installDir -WindowStyle Hidden -PassThru -Environment $webviewEnv
     try {
         if (-not $app.WaitForInputIdle(20000) -or $app.HasExited) {
             throw 'The installed executable did not reach an idle Windows message loop.'
+        }
+        $probe = node (Join-Path $PSScriptRoot 'check-windows-webview.mjs') $webviewPort
+        if ($LASTEXITCODE -ne 0) {
+            throw "The installed WebView2 connection test failed (exit $LASTEXITCODE)."
+        }
+        $webview = $probe | ConvertFrom-Json
+        if ($webview.schema -cne 'ellmos-system-gui.windows-webview-check.v1' -or
+            $webview.loopback_opt_in_enforced -ne $true -or $webview.fixture_opened -ne $true -or
+            $webview.authentication_required -ne $true) {
+            throw 'The installed WebView2 connection test did not return its expected receipt.'
         }
     } finally {
         if (-not $app.HasExited) {
@@ -191,6 +209,7 @@ $evidence = [ordered]@{
     installed_binary_sha256 = $installedHash
     per_user_registration_verified = $true
     windows_message_loop_idle = $true
+    installed_webview = $webview
     installed_files_and_registration_removed = $true
 }
 if ($null -ne $legacy) {
