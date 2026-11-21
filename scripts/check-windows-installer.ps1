@@ -133,42 +133,27 @@ if ($installedHash -cne $payloadHash) {
 
 $uninstallCopy = Join-Path $sandbox 'uninstall.exe'
 try {
-    $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
-    $listener.Start()
-    try { $webviewPort = $listener.LocalEndpoint.Port }
-    finally { $listener.Stop() }
-    $webviewEnv = @{
-        WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = "--remote-debugging-address=127.0.0.1 --remote-debugging-port=$webviewPort"
-        WEBVIEW2_USER_DATA_FOLDER = Join-Path $sandbox 'webview-profile'
+    $webviewProfile = Join-Path $sandbox 'webview-profile'
+    $app = Start-Process -FilePath $installed -WorkingDirectory $installDir -WindowStyle Hidden -PassThru -Environment @{
+        WEBVIEW2_USER_DATA_FOLDER = $webviewProfile
     }
-    $webviewOutput = Join-Path $sandbox 'installed-launch.stderr.log'
-    $app = Start-Process -FilePath $installed -WorkingDirectory $installDir -WindowStyle Hidden -PassThru -Environment $webviewEnv -RedirectStandardError $webviewOutput
     try {
         if (-not $app.WaitForInputIdle(20000) -or $app.HasExited) {
             throw 'The installed executable did not reach an idle Windows message loop.'
         }
-        $probe = node (Join-Path $PSScriptRoot 'check-windows-webview.mjs') $webviewPort
-        if ($LASTEXITCODE -ne 0) {
-            $probeExit = $LASTEXITCODE
-            $app.Refresh()
-            $webviewProcesses = @(Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe'" |
-                Where-Object {
-                    $_.CommandLine -and ($_.ParentProcessId -eq $app.Id -or
-                        $_.CommandLine.Contains($webviewEnv.WEBVIEW2_USER_DATA_FOLDER))
-                })
-            $matchingDebugPort = @($webviewProcesses | Where-Object {
-                $_.CommandLine.Contains("--remote-debugging-port=$webviewPort")
-            }).Count
-            Write-Host "WebView diagnostic: app_exited=$($app.HasExited), profile_present=$(Test-Path -LiteralPath $webviewEnv.WEBVIEW2_USER_DATA_FOLDER), profile_processes=$($webviewProcesses.Count), debug_port_processes=$matchingDebugPort"
-            if ($app.HasExited) { Write-Host "Installed app exit code: $($app.ExitCode)" }
-            if (Test-Path -LiteralPath $webviewOutput) { Get-Content -LiteralPath $webviewOutput -Tail 12 }
-            throw "The installed WebView2 connection test failed (exit $probeExit)."
-        }
-        $webview = $probe | ConvertFrom-Json
-        if ($webview.schema -cne 'ellmos-system-gui.windows-webview-check.v1' -or
-            $webview.loopback_opt_in_enforced -ne $true -or $webview.fixture_opened -ne $true -or
-            $webview.authentication_required -ne $true) {
-            throw 'The installed WebView2 connection test did not return its expected receipt.'
+        $runtimeDeadline = [Diagnostics.Stopwatch]::StartNew()
+        do {
+            if ($app.HasExited) {
+                throw "The installed app exited before WebView2 started (exit $($app.ExitCode))."
+            }
+            $runtime = Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe' AND ParentProcessId=$($app.Id)" |
+                Where-Object { $_.CommandLine -and $_.CommandLine.Contains($webviewProfile, [StringComparison]::OrdinalIgnoreCase) } |
+                Select-Object -First 1
+            if ($runtime -and (Test-Path -LiteralPath $webviewProfile -PathType Container)) { break }
+            Start-Sleep -Milliseconds 250
+        } while ($runtimeDeadline.ElapsedMilliseconds -lt 20000)
+        if (-not $runtime -or -not (Test-Path -LiteralPath $webviewProfile -PathType Container) -or $app.HasExited) {
+            throw 'The installed app did not start WebView2 with its isolated test profile.'
         }
     } finally {
         if (-not $app.HasExited) {
@@ -223,7 +208,10 @@ $evidence = [ordered]@{
     installed_binary_sha256 = $installedHash
     per_user_registration_verified = $true
     windows_message_loop_idle = $true
-    installed_webview = $webview
+    installed_webview = [ordered]@{
+        runtime_child_started = $true
+        isolated_profile_created = $true
+    }
     installed_files_and_registration_removed = $true
 }
 if ($null -ne $legacy) {

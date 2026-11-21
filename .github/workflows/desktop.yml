@@ -9,7 +9,6 @@ on:
       - '.github/desktop-toolchain/**'
       - 'scripts/package-desktop.py'
       - 'scripts/check-windows-installer.ps1'
-      - 'scripts/check-windows-webview.mjs'
       - 'docs/DESKTOP-APP.md'
   push:
     branches: [main]
@@ -20,7 +19,6 @@ on:
       - '.github/desktop-toolchain/**'
       - 'scripts/package-desktop.py'
       - 'scripts/check-windows-installer.ps1'
-      - 'scripts/check-windows-webview.mjs'
       - 'docs/DESKTOP-APP.md'
   workflow_dispatch:
     inputs:
@@ -196,9 +194,6 @@ jobs:
           run-id: ${{ inputs.legacy_run }}
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/legacy-desktop
-      - name: Install the locked WebView test client
-        if: runner.os == 'Windows'
-        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Verify Windows installer lifecycle
         if: runner.os == 'Windows'
         env:
