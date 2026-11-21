@@ -280,7 +280,7 @@
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
-    "src/pages/agenten/blueprints.astro": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
+    "src/pages/agenten/blueprints.astro": "412383d3eb96aae1986d57e92945fc65b523cdb8d4e5a74dd50f6331c7e71290",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
     "src/pages/agenten/running.astro": "5b242b331a287ac147f465da6e1a0b7687c5abe24cc5f587ec0c6dec88cc14b5",
@@ -326,7 +326,7 @@
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
     "src/scripts/agent-history.mjs": "3b5080126d5653be9931211c3c6f9cc05ad085a97fc3026117868262e08de26f",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/scripts/blueprint-studio.mjs": "e5ec034d151be478b3598f932e15f2afaa8f1895e7cdbb24252d9af9cd93e749",
+    "src/scripts/blueprint-studio.mjs": "81d541679dfa25482b91efde879992e6b2027787c05e1de95a064c8fb97542e3",
     "src/scripts/domain-studio.mjs": "d883c4a608b1fd087a9c021eb6b8d496fb420a5d0412388e14c65d11cdd6d2ca",
     "src/scripts/installation-updates.mjs": "c6fcc4aaee0cb0056246cb870008e27e6a538cb18037ca4fe6793f68cbbbcb6c",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
@@ -337,7 +337,7 @@
     "tests/agent-color.test.mjs": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/agent-overview.test.mjs": "be2ce93eadd913a8e5a49b7d21e6a48a76002a60307e6d3d92428c8e875fff56",
-    "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
+    "tests/blueprint-studio.test.mjs": "48265ed61f13628ba059315f4e5a7b452f38e7256a0f314be6234bcc50d4681b",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
     "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
@@ -6128,6 +6128,27 @@
           "path": "tests/worker-queue.test.mjs",
           "previous_sha256": "4f8416e7e8b9c963fc6daa4ad139e70eab3fe9311c5a27b451f27e7293881d52",
           "sha256": "9a35203491037c61d905d4309c1e841239404fdc4b0eafb1b2a2649ffc48141f"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "summary": "Keep ordered fallback model bindings when editing or copying a blueprint and verify the saved binding.",
+      "files": [
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "e5ec034d151be478b3598f932e15f2afaa8f1895e7cdbb24252d9af9cd93e749",
+          "sha256": "81d541679dfa25482b91efde879992e6b2027787c05e1de95a064c8fb97542e3"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
+          "sha256": "412383d3eb96aae1986d57e92945fc65b523cdb8d4e5a74dd50f6331c7e71290"
+        },
+        {
+          "path": "tests/blueprint-studio.test.mjs",
+          "previous_sha256": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
+          "sha256": "48265ed61f13628ba059315f4e5a7b452f38e7256a0f314be6234bcc50d4681b"
         }
       ]
     }

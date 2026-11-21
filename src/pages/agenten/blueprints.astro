@@ -119,7 +119,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           <div class="studio-group-body">
             <div class="studio-fields">
               <label>Anbieter<select id="bp-backend"><option value="ollama">Ollama · lokal</option><option value="lmstudio">LM Studio · lokal</option><option value="hermes">Hermes · API</option><option value="ollama-cloud">Ollama Cloud</option><option value="openrouter">OpenRouter</option><option value="claude-api">Claude API</option><option value="openai">OpenAI API</option><option value="claude">Claude CLI · Subscription</option><option value="codex">Codex CLI · Subscription</option></select></label>
-              <label>Modell<input id="bp-model" list="bp-models" autocomplete="off" maxlength="120" /><datalist id="bp-models"></datalist></label>
+              <label>Modell<input id="bp-model" list="bp-models" autocomplete="off" maxlength="120" /><datalist id="bp-models"></datalist>
+                <small class="studio-note" id="bp-model-fallbacks" hidden></small></label>
               <label>Arbeitsvertrag<select id="bp-contractus-preset"></select></label>
               <label>Modus<select id="bp-mode"><option value="safe">Safe</option><option value="full">Full</option></select></label>
               <label>Arbeitsweise<select id="bp-modus"><option value="casualis">Ein Arbeitsblock</option><option value="usus">Dauerläufer</option><option value="impetus_temporal" disabled>Zeitlich begrenzt · noch nicht ausführbar</option><option value="impetus_causa" disabled>Ereignisgesteuert · noch nicht ausführbar</option></select></label>
@@ -156,7 +157,8 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         <p id="instance-description"></p>
         <div class="studio-fields">
           <label>Anbieter<select id="instance-backend"></select></label>
-          <label>Modell<input id="instance-model" list="instance-models" required maxlength="120" /><datalist id="instance-models"></datalist></label>
+          <label>Modell<input id="instance-model" list="instance-models" required maxlength="120" /><datalist id="instance-models"></datalist>
+            <small class="studio-note" id="instance-model-fallbacks" hidden></small></label>
           <label>Modus<select id="instance-mode"><option value="safe">Safe</option><option value="full">Full</option></select></label>
         </div>
         <p class="studio-note">Der Steckplatz wird als Living konfiguriert. Einen Worker startest du anschließend ausdrücklich; Aufgaben weist du im Taskboard zu.</p>
