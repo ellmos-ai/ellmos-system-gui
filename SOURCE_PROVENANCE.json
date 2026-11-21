@@ -280,7 +280,7 @@
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
-    "src/pages/agenten/blueprints.astro": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
+    "src/pages/agenten/blueprints.astro": "84fe497afc8fd7f6591ca198e726ac9347bad32e8e151865d6cb30bfcb85d956",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
     "src/pages/agenten/running.astro": "5b242b331a287ac147f465da6e1a0b7687c5abe24cc5f587ec0c6dec88cc14b5",
@@ -383,8 +383,8 @@
     "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
     "scripts/page-reads-helpers.mjs": "2c09229565e98b75010bbca31679589fade600e6e4cc8cbc850063ba7ab3285b",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
-    "src/lib/role-socket-preview.mjs": "95145d84fc33c4dffb1a3517f9255061aa7a69a4fac63dae5ed80412e7234baf",
-    "tests/role-socket-preview.test.mjs": "caffb4c42832e5a29aa1e9136b648cb70bd0a9c23aaec2a23cd13d321d84b89f",
+    "src/lib/role-socket-preview.mjs": "5fe445fa828709ecb8cef14fc26c2e4a3c1f9662a8f4dc19e752803cb933d47c",
+    "tests/role-socket-preview.test.mjs": "e024944cca4d787ef26c78753fabee0eb3c20b8badcab56a505b75289f83e0ff",
     "src/pages/agenten/bibliothek.astro": "4d388a99fd18fe7d8cb119ad2b3da7c41e1dfbe130b73ef8c323f7629a99186b",
     "tests/voice-mic-layout.test.mjs": "3f89ea7ff49ff62cb4e454a732af9eb67efafbc109582a2aa8e4656fa75d9780",
     "tests/no-legacy-device-token.test.mjs": "60d51e2891e6f7386eb54baec000b54105d8cf6aeefa51fcc3186512a1b52255",
@@ -6128,6 +6128,27 @@
           "path": "tests/worker-queue.test.mjs",
           "previous_sha256": "4f8416e7e8b9c963fc6daa4ad139e70eab3fe9311c5a27b451f27e7293881d52",
           "sha256": "9a35203491037c61d905d4309c1e841239404fdc4b0eafb1b2a2649ffc48141f"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "summary": "PB-10: expose module roles beyond the initial preview and label missing provider bindings accurately.",
+      "files": [
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
+          "sha256": "84fe497afc8fd7f6591ca198e726ac9347bad32e8e151865d6cb30bfcb85d956"
+        },
+        {
+          "path": "src/lib/role-socket-preview.mjs",
+          "previous_sha256": "95145d84fc33c4dffb1a3517f9255061aa7a69a4fac63dae5ed80412e7234baf",
+          "sha256": "5fe445fa828709ecb8cef14fc26c2e4a3c1f9662a8f4dc19e752803cb933d47c"
+        },
+        {
+          "path": "tests/role-socket-preview.test.mjs",
+          "previous_sha256": "caffb4c42832e5a29aa1e9136b648cb70bd0a9c23aaec2a23cd13d321d84b89f",
+          "sha256": "e024944cca4d787ef26c78753fabee0eb3c20b8badcab56a505b75289f83e0ff"
         }
       ]
     }
