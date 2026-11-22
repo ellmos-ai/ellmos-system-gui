@@ -14,6 +14,7 @@ import sys
 import tempfile
 import threading
 import time
+from urllib.parse import urlsplit
 from zipfile import ZipFile
 
 import httpx
@@ -140,7 +141,9 @@ def check_browser(origin, token, out):
 
         def record(path):
             _, name, heading = PAGES[path]
-            assert page.url == origin + path
+            url = urlsplit(page.url)
+            assert f"{url.scheme}://{url.netloc}" == origin
+            assert url.path == path, url.path
             expect(page.get_by_role("heading", level=1, name=heading)).to_be_visible()
             page.screenshot(path=out / f"{name}.png")
 
