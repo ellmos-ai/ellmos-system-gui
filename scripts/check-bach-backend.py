@@ -270,7 +270,7 @@ def observe_wkwebview_requests(app, observations):
     return application
 
 
-def check_macos_application(origin, worker_count, app, manifest, out, scratch):
+def check_macos_application(origin, worker_count, open_task_id, app, manifest, out, scratch):
     binary = app / "Contents" / "MacOS" / "ellmos-system-gui-desktop"
     candidate = binary.read_bytes()
     assert b"OCEAN_MAC_SMOKE_INPUTS" not in candidate, "Expected the regular DMG build"
@@ -282,7 +282,7 @@ def check_macos_application(origin, worker_count, app, manifest, out, scratch):
     home.mkdir()
     config = scratch / "ocean-test.json"
     config.write_text(json.dumps({
-        "application": str(app.resolve()), "origin": origin, "openTask": OPEN_TASK,
+        "application": str(app.resolve()), "origin": origin, "openTask": OPEN_TASK, "openTaskID": open_task_id,
         "doneTask": DONE_TASK, "workerCount": worker_count, "output": str(output), "home": str(home),
     }), encoding="utf-8")
     scripts = Path("scripts/macos-desktop-uitest").resolve()
@@ -361,7 +361,8 @@ def main():
                 worker_count = result["running_worker_profile_count"]
                 if args.macos_app:
                     result["native_webview"] = check_macos_application(
-                        origin, worker_count, args.macos_app, manifest, args.out, scratch
+                        origin, worker_count, result["task_ids"]["pending"],
+                        args.macos_app, manifest, args.out, scratch,
                     )
                     protected = {"/api/tasks", "/api/tasks?status=done", "/api/system/workers"}
                     assert protected <= observations, f"Missing authenticated WKWebView reads: {protected - observations}"

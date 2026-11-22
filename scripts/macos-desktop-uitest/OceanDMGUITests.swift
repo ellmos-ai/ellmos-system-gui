@@ -5,6 +5,7 @@ final class OceanDMGUITests: XCTestCase {
         let application: String
         let origin: String
         let openTask: String
+        let openTaskID: Int
         let doneTask: String
         let workerCount: Int
         let output: String
@@ -17,6 +18,18 @@ final class OceanDMGUITests: XCTestCase {
             throw UITestFailure(message)
         }
         return element
+    }
+
+    private func requireVisibleText(in window: XCUIElement, prefix: String) throws {
+        let deadline = Date().addingTimeInterval(20)
+        repeat {
+            if window.staticTexts.allElementsBoundByIndex.contains(where: {
+                ($0.value as? String)?.hasPrefix(prefix) == true
+            }) { return }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+        } while Date() < deadline
+        print(window.debugDescription)
+        throw UITestFailure("Missing native text beginning with " + prefix)
     }
 
     private struct UITestFailure: LocalizedError {
@@ -48,32 +61,31 @@ final class OceanDMGUITests: XCTestCase {
 
         let backend = try require(app.windows["Ocean (BACH)"], "BACH backend window not found")
         let web = backend
-        let heading = web.staticTexts.matching(NSPredicate(format: "title BEGINSWITH %@ OR value BEGINSWITH %@", "Willkommen", "Willkommen")).firstMatch
+        let heading = web.staticTexts.matching(NSPredicate(format: "title BEGINSWITH %@", "Willkommen")).firstMatch
         _ = try require(heading, "Dashboard did not render in WKWebView", in: backend)
-        let openTitle = web.staticTexts.matching(NSPredicate(format: "value CONTAINS %@", input.openTask)).firstMatch
-        _ = try require(openTitle, "The enrolled device could not read its open BACH task", in: backend)
+        let dashboardTask = web.staticTexts["#\(input.openTaskID): \(input.openTask)"].firstMatch
+        _ = try require(dashboardTask, "The enrolled device could not read its open BACH task", in: backend)
         try backend.screenshot().pngRepresentation.write(to: output.appendingPathComponent("dashboard.png"))
 
         let tasks = try require(web.links["Aufgaben"].firstMatch, "Tasks link not found")
         tasks.click()
+        let openTitle = web.staticTexts[input.openTask].firstMatch
         _ = try require(openTitle, "Open task not rendered on the Tasks page", in: backend)
-        let filter = try require(web.popUpButtons.matching(
-            NSPredicate(format: "value CONTAINS %@ OR title == %@", "Offen · alle aktiven", "Status")).firstMatch, "Task status filter not found", in: backend)
+        let filter = try require(web.popUpButtons["Status"].firstMatch, "Task status filter not found", in: backend)
         filter.click()
         let doneOption = try require(app.menuItems.matching(NSPredicate(format: "title CONTAINS %@ OR label CONTAINS %@", "Erledigt · alle", "Erledigt · alle")).firstMatch,
                                      "Completed task option not found", in: app)
         doneOption.click()
-        let doneTitle = web.staticTexts.matching(NSPredicate(format: "value CONTAINS %@", input.doneTask)).firstMatch
+        let doneTitle = web.staticTexts[input.doneTask].firstMatch
         _ = try require(doneTitle, "Completed task not rendered after filtering", in: backend)
         XCTAssertFalse(openTitle.exists)
         try backend.screenshot().pngRepresentation.write(to: output.appendingPathComponent("aufgaben.png"))
 
         let running = try require(web.links["Deine Agenten"].firstMatch, "Living & Running link not found")
         running.click()
-        _ = try require(web.staticTexts.matching(NSPredicate(format: "title CONTAINS %@ OR value CONTAINS %@", "Living & Running", "Living & Running")).firstMatch,
+        _ = try require(web.staticTexts.matching(NSPredicate(format: "title CONTAINS %@", "Living & Running")).firstMatch,
                         "Living & Running did not render", in: backend)
-        _ = try require(web.staticTexts.matching(NSPredicate(format: "value BEGINSWITH %@", "\(input.workerCount) Worker registriert")).firstMatch,
-                        "Worker count did not match the Control API", in: backend)
+        try requireVisibleText(in: backend, prefix: "\(input.workerCount) Worker registriert")
         try backend.screenshot().pngRepresentation.write(to: output.appendingPathComponent("running.png"))
 
         try require(backend.buttons["_XCUI:CloseWindow"].firstMatch, "Backend close button not found").click()
