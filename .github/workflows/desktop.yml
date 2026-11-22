@@ -15,6 +15,7 @@ on:
       - 'scripts/check-linux-webview.mjs'
       - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
+      - 'scripts/check-macos-webview.mjs'
       - 'docs/DESKTOP-APP.md'
   push:
     branches: [main]
@@ -31,6 +32,7 @@ on:
       - 'scripts/check-linux-webview.mjs'
       - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
+      - 'scripts/check-macos-webview.mjs'
       - 'docs/DESKTOP-APP.md'
   workflow_dispatch:
     inputs:
@@ -120,10 +122,8 @@ jobs:
           cache: npm
           cache-dependency-path: .github/desktop-toolchain/package-lock.json
       - name: Install locked dependencies for the WebView smoke
-        if: runner.os == 'Windows' || runner.os == 'Linux'
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Build the shared GUI for the native WebView smoke
-        if: runner.os == 'Windows' || runner.os == 'Linux'
         run: npm run build:release
       - name: Install locked desktop build tools
         working-directory: .github/desktop-toolchain
@@ -262,6 +262,14 @@ jobs:
           LEGACY_COMMIT: ${{ inputs.legacy_commit }}
           LEGACY_DMG_SHA256: ${{ inputs.legacy_dmg_sha256 }}
         run: python scripts/check-macos-installer.py
+      - name: Verify three shared GUI pages in the separate macOS smoke build
+        if: runner.os == 'macOS'
+        env:
+          CARGO_TARGET_DIR: ${{ runner.temp }}/ocean-wkwebview-target
+        shell: bash
+        run: |
+          node .github/desktop-toolchain/node_modules/@tauri-apps/cli/tauri.js build --ci --no-sign --bundles app --features macos-native-smoke -- --locked
+          node scripts/check-macos-webview.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-consumer-${{ runner.os }}-${{ env.DESKTOP_SOURCE_COMMIT }}

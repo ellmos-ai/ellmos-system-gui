@@ -26,3 +26,4 @@ reqwest-updater = { package = "reqwest", version = "=0.13.5", default-features =
 [features]
 default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
+macos-native-smoke = []

@@ -239,6 +239,13 @@ auf Xvfb. Der Fenstermanager schließt erst das Backend-Fenster und dann
 das wieder sichtbare Anschlussfenster. Das Artefakt dokumentiert die
 drei Ansichten und das anschließende Prozessende.
 
+Für macOS baut CI zusätzlich ein eigenes App-Bundle mit dem Cargo-Feature
+`macos-native-smoke`. Dieser Build öffnet dieselben drei Seiten aus dem
+gleichen Web-Build in WKWebView, prüft Aufgabenfilter und Agentensuche
+und beendet die App über ihre Fenster. CI zeichnet das Ergebnis und
+die getrennten Binärprüfsummen auf. Der reguläre DMG- und Updatertest
+läuft mit dem normalen Kandidaten vor diesem Zusatzbuild.
+
 ## Offene vollständige Abnahme
 
 Die Task2337-Anforderungen bleiben erhalten: tatsächlicher Start und Reconnect,
