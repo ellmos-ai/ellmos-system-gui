@@ -71,8 +71,14 @@ let windowManager;
 let session;
 let driverOrigin;
 async function request(path, method = 'GET', body) {
-  const response = await fetch(driverOrigin + path, {method, signal:AbortSignal.timeout(15000),
-    ...(body ? {headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)} : {})});
+  let response;
+  try {
+    response = await fetch(driverOrigin + path, {method, signal:AbortSignal.timeout(15000),
+      headers:{Connection:'close', ...(body ? {'Content-Type':'application/json'} : {})},
+      ...(body ? {body:JSON.stringify(body)} : {})});
+  } catch (error) {
+    throw new Error(method + ' ' + path + ': ' + error.message, {cause:error});
+  }
   const {value} = await response.json();
   if (!response.ok) throw new Error(`${method} ${path}: ${value?.error}: ${value?.message}`);
   return value;
@@ -100,6 +106,7 @@ try {
   await waitFor(() => request('/status').then(result => result.ready, () => false), 'the local WebDriver');
   console.error('WebKitGTK smoke: driver accepting requests');
   const opened = await request('/session', 'POST', {capabilities:{alwaysMatch:{
+    pageLoadStrategy:'none', timeouts:{script:5000, pageLoad:8000, implicit:0},
     'webkitgtk:browserOptions':{binary:application, args:[]},
   }}});
   assert.ok(opened.sessionId, 'WebKit did not create a session');
@@ -109,8 +116,10 @@ try {
   const evaluate = (script, ...args) => call('/execute/sync', 'POST', {script,args});
   const connection = await waitFor(() => x11Window('^Ocean \\(BACH\\) verbinden$'), 'the native connection window');
   console.error('WebKitGTK smoke: native connection window visible');
-  const originOfWindow = await evaluate('return location.href');
-  assert.match(originOfWindow, /^(?:tauri:\/\/localhost|https?:\/\/tauri\.localhost)(?:\/|$)/);
+  const bundledUrl = /^(?:tauri:\/\/localhost|https?:\/\/tauri\.localhost)(?:\/|$)/;
+  await waitFor(async () => bundledUrl.test(await call('/url')), 'the bundled connection page');
+  console.error('WebKitGTK smoke: bundled connection document loaded');
+  await waitFor(() => evaluate("return !!document.querySelector('#backend-url')"), 'the connection form');
   await evaluate(`
     document.querySelector('#backend-url').value = arguments[0];
     document.querySelector('#connect').click();
