@@ -120,6 +120,27 @@ def start_window(package, home, app=APP):
                 process.wait(5)
 
 
+def verify_native_pages(home, commit):
+    home.mkdir()
+    result = run(
+        "node", "scripts/check-linux-webview.mjs", timeout=180,
+        env={
+            **os.environ, "HOME": str(home), "GDK_BACKEND": "x11", "LIBGL_ALWAYS_SOFTWARE": "1",
+            "WEBKIT_DISABLE_DMABUF_RENDERER": "1",
+            **{f"XDG_{name}": str(home / directory) for name, directory in (
+                ("DATA_HOME", "data"), ("CONFIG_HOME", "config"), ("CACHE_HOME", "cache"),
+            )},
+        },
+    )
+    proof = json.loads(result.stdout)
+    require(proof["source_commit"] == commit and proof["renderer"] == "WebKitGTK"
+            and proof["native_windows_observed"] and proof["exited_after_window_close"]
+            and proof["web_build_page_count"] == proof["page_contract_count"]
+            and [page["route"] for page in proof["routes"]] == ["/", "/tasks", "/agenten/running"],
+            "Linux native GUI smoke returned unexpected evidence")
+    return proof
+
+
 def verify_legacy_migration(directory, current, home, pin):
     commit = os.environ["LEGACY_COMMIT"]
     run_id = os.environ["LEGACY_RUN"]
@@ -212,7 +233,10 @@ def main():
         home = Path(home)
         install(package[0], PRODUCT, version, package[3])
         window = start_window(PRODUCT, home)
-        purge(PRODUCT)
+        try:
+            native_pages = verify_native_pages(home / "webview", commit)
+        finally:
+            purge(PRODUCT)
         pin = os.environ.get("LEGACY_DEB_SHA256")
         migration = verify_legacy_migration(temp / "legacy-desktop", package, home, pin) if pin else None
     appimage_pin = os.environ.get("LEGACY_APPIMAGE_SHA256")
@@ -223,7 +247,8 @@ def main():
         "schema": "ellmos-system-gui.linux-installer-check.v1",
         "source_commit": commit, "run_id": int(run_id), "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
         "package": PRODUCT, "version": version, "deb_sha256": package[2], "installed_binary_sha256": package[3],
-        "clean_install_start": window, "purged": True, "legacy_migration": migration, "signed_appimage_update": signed,
+        "clean_install_start": window, "purged": True, "legacy_migration": migration,
+        "signed_appimage_update": signed, "native_pages": native_pages,
     }
     (directory / "linux-installer-check.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(receipt))

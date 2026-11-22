@@ -233,6 +233,12 @@ Aufgaben und einen einsatzbereiten Worker. Der Test prüft den Aufgabenfilter,
 die Agentensuche in Running, sichtbare Überschriften sowie das saubere Beenden
 der App. Das CI-Artefakt enthält Bilder der drei Ansichten.
 
+Unter Linux läuft derselbe Seitendurchgang in der aus dem Debian-Paket
+installierten App. WebKitWebDriver steuert deren eingebettetes WebKitGTK
+auf Xvfb. Der Fenstermanager schließt erst das Backend-Fenster und dann
+das wieder sichtbare Anschlussfenster. Das Artefakt dokumentiert die
+drei Ansichten und das anschließende Prozessende.
+
 ## Offene vollständige Abnahme
 
 Die Task2337-Anforderungen bleiben erhalten: tatsächlicher Start und Reconnect,
