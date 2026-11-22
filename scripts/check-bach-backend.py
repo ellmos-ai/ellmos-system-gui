@@ -47,7 +47,9 @@ def load_gui(bach, archive, scratch):
 def prepare_backend(bach, dist, scratch):
     home = scratch / "home"
     home.mkdir()
-    database = scratch / "bach.db"
+    assert bach == (Path(os.environ["GITHUB_WORKSPACE"]) / ".ci-bach").resolve()
+    database = bach / "system" / "data" / "bach.db"
+    assert not database.exists(), "Expected a fresh BACH checkout"
     os.environ.update(
         HOME=str(home),
         XDG_CONFIG_HOME=str(home / ".config"),
@@ -74,7 +76,6 @@ def prepare_backend(bach, dist, scratch):
     key = secrets.token_urlsafe(32)
     grant_path = scratch / "grant.json"
     setup = BACHSetup(bach_root=bach, grant_path=grant_path, grant_key=key)
-    setup.db_path = database
     setup.journal_path = scratch / "setup-journal.jsonl"
     manifest = load_manifest(setup.manifest_path)
     profile = load_product_profile(setup.product_profile_path)
