@@ -60,6 +60,10 @@ try {
   const pages = () => browser.contexts().flatMap(context => context.pages());
   const connection = await waitFor(() => pages().find(page =>
     /^(?:tauri:\/\/localhost|https?:\/\/tauri\.localhost)(?:\/|$)/.test(page.url())), 'the bundled connection page');
+  await connection.getByText('Desktop-App aktualisieren', { exact: true }).click({timeout: 10000});
+  await connection.locator('#check-desktop-update').click({timeout: 10000});
+  await connection.locator('#desktop-update-status').filter({hasText: 'kein signierter Update-Kanal'}).waitFor({timeout: 10000});
+  assert.equal(await connection.locator('#install-desktop-update').isVisible(), false);
   await connection.locator('#backend-url').fill(origin, {timeout: 10000});
   await connection.locator('#connect').click({timeout: 10000});
   await connection.locator('#connection-status[data-state="error"]').waitFor({timeout: 10000});
@@ -72,6 +76,15 @@ try {
   const content = backend.locator('#fixture-marker');
   await content.waitFor({state:'attached',timeout:10000});
   assert.equal(await content.textContent(), marker);
+  const remoteUpdateDenied = await backend.evaluate(async () => {
+    const invoke = window.__TAURI__?.core?.invoke;
+    if (typeof invoke !== 'function') return true;
+    return Promise.race([
+      invoke('check_desktop_update').then(() => false, () => true),
+      new Promise(resolve => setTimeout(() => resolve(false), 3000)),
+    ]);
+  });
+  assert.equal(remoteUpdateDenied, true, 'The remote backend can invoke a desktop update check');
   assert.equal(capabilityReads, 1, 'Expected one backend capability request');
   await connection.locator('#connection-status[data-state="connected"]').waitFor({state:'attached',timeout:10000});
   assert.match(await connection.locator('#connection-status').textContent(), /Anmeldung ist im App-Fenster geöffnet/);
@@ -80,6 +93,8 @@ try {
     loopback_opt_in_enforced:true,
     fixture_opened:true,
     authentication_required:true,
+    unsigned_update_channel_unavailable:true,
+    remote_update_denied:true,
   }));
 } finally {
   if (browser) await browser.close();

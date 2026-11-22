@@ -170,6 +170,10 @@ jobs:
       - name: Compile desktop consumer and unsigned installer candidates
         shell: bash
         run: node .github/desktop-toolchain/node_modules/@tauri-apps/cli/tauri.js build --ci --no-sign --bundles "$DESKTOP_BUNDLES" -- --locked
+      - name: Verify signed update validation
+        if: runner.os == 'Linux'
+        working-directory: src-tauri
+        run: cargo test --release --locked desktop_updates::tests
       - name: Verify Windows GUI subsystem
         if: runner.os == 'Windows'
         shell: python
