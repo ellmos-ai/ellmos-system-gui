@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
+      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/bach-playwright
       BACH_COMMIT: a2e40a36618e1acf9c2a7b3fe08f4ee174c6f8f8
     steps:
       - uses: actions/checkout@v4
