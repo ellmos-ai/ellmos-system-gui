@@ -40,27 +40,43 @@ function Uninstall-Nsis($InstallDir, $RegistrationKey, $UninstallCopy) {
     Remove-Item -LiteralPath $UninstallCopy
 }
 
-function Test-InstalledWindow($Executable) {
-    $process = Start-Process -FilePath $Executable -WorkingDirectory (Split-Path -Parent $Executable) -WindowStyle Normal -PassThru
-    try {
-        if (-not $process.WaitForInputIdle(20000) -or $process.HasExited) {
-            throw 'The updater test application did not reach its Windows message loop.'
-        }
-        $deadline = [Diagnostics.Stopwatch]::StartNew()
-        do {
-            $process.Refresh()
-            if ($process.HasExited) { throw 'The updater test application stopped before showing its window.' }
-            if ($process.MainWindowHandle -ne [IntPtr]::Zero) { return $true }
-            Start-Sleep -Milliseconds 250
-        } while ($deadline.ElapsedMilliseconds -lt 20000)
-        throw 'The updater test application did not show its window.'
-    } finally {
-        if (-not $process.HasExited) {
-            $process.Kill()
-            if (-not $process.WaitForExit(10000)) { throw 'The updater test application did not stop.' }
-        }
-        $process.Dispose()
+function Wait-NativeWindow($Process) {
+    if (-not $Process.WaitForInputIdle(20000) -or $Process.HasExited) {
+        throw 'The updater test application did not reach its Windows message loop.'
     }
+    $deadline = [Diagnostics.Stopwatch]::StartNew()
+    do {
+        $Process.Refresh()
+        if ($Process.HasExited) { throw 'The updater test application stopped before showing its window.' }
+        if ($Process.MainWindowHandle -ne [IntPtr]::Zero) { return $Process.Id }
+        Start-Sleep -Milliseconds 250
+    } while ($deadline.ElapsedMilliseconds -lt 20000)
+    throw 'The updater test application did not show its window.'
+}
+
+function Stop-TestApplication($Process) {
+    try {
+        if (-not $Process.HasExited) {
+            $Process.Kill()
+            if (-not $Process.WaitForExit(10000)) { throw 'The updater test application did not stop.' }
+        }
+    } finally {
+        $Process.Dispose()
+    }
+}
+
+function Wait-RestartedProcess($Executable, $RequestedAfter) {
+    $name = [IO.Path]::GetFileNameWithoutExtension($Executable)
+    $deadline = [Diagnostics.Stopwatch]::StartNew()
+    do {
+        $instances = @(Get-Process -Name $name -ErrorAction SilentlyContinue | Where-Object {
+            $_.Path -ieq $Executable -and -not $_.HasExited -and $_.StartTime -ge $RequestedAfter
+        })
+        if ($instances.Count -gt 1) { throw 'Multiple processes restarted from the update location.' }
+        if ($instances.Count -eq 1) { return $instances[0] }
+        Start-Sleep -Milliseconds 250
+    } while ($deadline.ElapsedMilliseconds -lt 45000)
+    throw 'The NSIS updater did not restart the installed application.'
 }
 
 function Test-SignedNsisUpdate($Installer, $InstallerHash, $PayloadHash, $Version, $RegistrationKey, $ProfileSamples) {
@@ -84,12 +100,16 @@ function Test-SignedNsisUpdate($Installer, $InstallerHash, $PayloadHash, $Versio
     $executable = Join-Path $directory $binaryName
     $uninstaller = Join-Path $fixture 'uninstall.exe'
     Invoke-Nsis $baseline "/S /D=$directory"
+    $restarted = $null
     try {
         $oldHash = (Get-FileHash -LiteralPath $executable -Algorithm SHA256).Hash.ToLowerInvariant()
         if ((Read-Registration $RegistrationKey $directory).DisplayVersion -cne $baselineVersion -or
             $oldHash -ceq $PayloadHash) { throw 'The NSIS update baseline was not installed.' }
-        $before = Test-InstalledWindow $executable
+        $previous = Start-Process -FilePath $executable -WorkingDirectory $directory -WindowStyle Normal -PassThru
+        try { $before = Wait-NativeWindow $previous }
+        finally { Stop-TestApplication $previous }
 
+        $updateRequested = Get-Date
         $opensslPath = $env:PATH
         try {
             if (-not (Get-Command openssl.exe -ErrorAction SilentlyContinue)) {
@@ -119,27 +139,35 @@ function Test-SignedNsisUpdate($Installer, $InstallerHash, $PayloadHash, $Versio
             Where-Object { $_.ExecutablePath -ieq $handoff[0].FullName } | Select-Object -First 1
         if ($installerProcess) {
             $pending = Get-Process -Id $installerProcess.ProcessId -ErrorAction SilentlyContinue
-            if ($pending -and -not $pending.WaitForExit(90000)) { throw 'The signed NSIS installer did not finish.' }
+            if ($pending -and -not $pending.WaitForExit(90000)) {
+                $pending.Refresh()
+                throw "The signed NSIS installer did not finish. Window: $($pending.MainWindowTitle)"
+            }
         }
+        $restarted = Wait-RestartedProcess $executable $updateRequested
         if ((Read-Registration $RegistrationKey $directory).DisplayVersion -cne $Version -or
             (Get-FileHash -LiteralPath $executable -Algorithm SHA256).Hash.ToLowerInvariant() -cne $PayloadHash) {
             throw 'NSIS did not install the signed update at the original location.'
         }
-        $after = Test-InstalledWindow $executable
+        $after = Wait-NativeWindow $restarted
         foreach ($sample in $ProfileSamples) {
             if ((Get-FileHash -LiteralPath $sample.File -Algorithm SHA256).Hash -cne $sample.Hash) {
                 throw 'A profile sample changed during the signed NSIS update.'
             }
         }
     } finally {
-        Uninstall-Nsis $directory $RegistrationKey $uninstaller
+        try { if ($restarted) { Stop-TestApplication $restarted } }
+        finally { Uninstall-Nsis $directory $RegistrationKey $uninstaller }
     }
     return [ordered]@{
         baseline_version = $baselineVersion
         baseline_installer_sha256 = $baselineHash
         baseline_binary_sha256 = $oldHash
-        previous_window_visible = $before
-        updated_window_visible = $after
+        previous_window_visible = $true
+        updated_window_visible = $true
+        automatic_restart = $true
+        previous_process_id = $before
+        restarted_process_id = $after
         installed_binary_sha256 = $PayloadHash
         signed_installer_sha256 = $proof.package_sha256
         tampered_payload_rejected = $proof.tampered_payload_rejected

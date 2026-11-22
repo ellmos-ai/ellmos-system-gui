@@ -216,8 +216,10 @@ Unter Windows prüft der manuell gestartete Lauf zusätzlich den signierten
 NSIS-Updatepfad. Er baut aus denselben Quellen einen OpenOcean-Installer
 mit der Testversion 0.2.39, damit der Paketname beim Update unverändert
 bleibt. Er kontrolliert den Installationspfad, die registrierte Version,
-den Start der aktualisierten App und den Erhalt beider Profildateien.
-Den Start nach dem Update löst der Test selbst aus.
+den automatischen Neustart der aktualisierten App durch NSIS und den
+Erhalt beider Profildateien. Nach der Bestätigung installiert NSIS das
+Windows-Update ohne weiteren Dialog. Der Test beobachtet das Fenster des
+neu gestarteten Prozesses am ursprünglichen Installationspfad.
 [Tauri-Updater](https://v2.tauri.app/plugin/updater/)
 
 ## Offene vollständige Abnahme

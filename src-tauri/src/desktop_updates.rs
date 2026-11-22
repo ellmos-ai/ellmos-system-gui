@@ -271,6 +271,8 @@ mod tests {
                 .unwrap();
         let manifest = |kind| origin.join(kind).unwrap();
         let previous_version = if cfg!(windows) { "0.2.39" } else { "0.2.38" };
+        let app_config: serde_json::Value =
+            serde_json::from_str(include_str!("../tauri.conf.json")).unwrap();
         let mut context = tauri::test::mock_context(tauri::test::noop_assets());
         context.package_info_mut().version = previous_version.parse().unwrap();
         context.config_mut().plugins.0.insert(
@@ -278,7 +280,7 @@ mod tests {
             json!({
                 "pubkey": fs::read_to_string(root.join("update-key.pub")).unwrap().trim(),
                 "requireSignedVersion": true,
-                "windows": {"installMode": "quiet"},
+                "windows": app_config["plugins"]["updater"]["windows"],
                 "endpoints": [manifest("/valid/latest.json")]
             }),
         );
@@ -333,7 +335,7 @@ mod tests {
                 // on a successful handoff. The fixture driver verifies the installed files.
                 let bytes = update.download(|_, _| {}, || {}).await.unwrap();
                 fs::write(root.join("update-checks-complete"), b"verified").unwrap();
-                update.restart_after_install(false).install(bytes).unwrap();
+                update.install(bytes).unwrap();
                 panic!("Windows updater returned without exiting after installer handoff");
             }
             #[cfg(not(windows))]
