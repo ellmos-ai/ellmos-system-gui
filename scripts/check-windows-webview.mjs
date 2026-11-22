@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
+import {readFileSync} from 'node:fs';
 import {createServer} from 'node:http';
 import {once} from 'node:events';
 import {resolve} from 'node:path';
@@ -15,8 +16,9 @@ if (process.platform !== 'win32' || process.env.GITHUB_ACTIONS !== 'true'
 const port = Number(process.argv[2]);
 assert.ok(Number.isInteger(port) && port > 0 && port <= 65535, 'Invalid WebView debug port');
 const debuggerOrigins = ['http://127.0.0.1:', 'http://[::1]:'].map(host => host + port);
+const real = process.env.BACH_NATIVE_CHECK === '1' ? JSON.parse(readFileSync(0, 'utf8')) : null;
 const marker = randomUUID();
-const gui = await openVerifiedGui(resolve('dist'), process.env.DESKTOP_SOURCE_COMMIT);
+const gui = await openVerifiedGui(real?.dist ?? resolve('dist'), real?.guiCommit ?? process.env.DESKTOP_SOURCE_COMMIT);
 const guiErrors = [];
 let capabilityReads = 0;
 let serveRealGui = false;
@@ -52,10 +54,14 @@ async function waitFor(check, label) {
 
 let browser;
 try {
-  const listening = once(fixture, 'listening');
-  fixture.listen(0, '127.0.0.1');
-  await listening;
-  const origin = 'http://127.0.0.1:' + fixture.address().port;
+  let origin = real?.origin;
+  if (!origin) {
+    const listening = once(fixture, 'listening');
+    fixture.listen(0, '127.0.0.1');
+    await listening;
+    origin = 'http://127.0.0.1:' + fixture.address().port;
+  }
+  assert.match(origin, /^http:\/\/127\.0\.0\.1:\d+$/);
   const debuggerOrigin = await waitFor(async () => {
     for (const address of debuggerOrigins) {
       try {
@@ -79,14 +85,28 @@ try {
   await connection.locator('#connect').click({timeout: 10000});
   await connection.locator('#connection-status[data-state="error"]').waitFor({timeout: 10000});
   assert.match(await connection.locator('#connection-status').innerText(), /Loopbackadressen/);
-  assert.equal(capabilityReads, 0, 'Unconfirmed HTTP reached the fixture');
+  if (!real) assert.equal(capabilityReads, 0, 'Unconfirmed HTTP reached the fixture');
 
   await connection.locator('#allow-loopback-http').check({timeout: 10000});
   await connection.locator('#connect').click({timeout: 10000});
   const backend = await waitFor(() => pages().find(page => page.url() === origin + '/'), 'the loopback backend');
-  const content = backend.locator('#fixture-marker');
-  await content.waitFor({state:'attached',timeout:10000});
-  assert.equal(await content.textContent(), marker);
+  if (real) {
+    const session = await backend.evaluate(async token => {
+      const response = await fetch('/api/devices/verify', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token}),
+      });
+      return {ok:response.ok, valid:(await response.json()).valid === true};
+    }, real.token);
+    assert.deepEqual(session, {ok:true, valid:true});
+    const cookie = (await backend.context().cookies(origin)).find(item => item.name === 'bach_device_token');
+    assert.equal(cookie?.httpOnly, true, 'No HttpOnly BACH device cookie');
+    const tasksStatus = await backend.evaluate(async () => (await fetch('/api/tasks')).status);
+    assert.equal(tasksStatus, 200, 'BACH did not authorize the WebView2 device session');
+  } else {
+    const content = backend.locator('#fixture-marker');
+    await content.waitFor({state:'attached',timeout:10000});
+    assert.equal(await content.textContent(), marker);
+  }
   const remoteUpdateDenied = await backend.evaluate(async () => {
     const invoke = window.__TAURI__?.core?.invoke;
     if (typeof invoke !== 'function') return true;
@@ -96,23 +116,36 @@ try {
     ]);
   });
   assert.equal(remoteUpdateDenied, true, 'The remote backend can invoke a desktop update check');
-  assert.equal(capabilityReads, 1, 'Expected one backend capability request');
+  if (!real) assert.equal(capabilityReads, 1, 'Expected one backend capability request');
   await connection.locator('#connection-status[data-state="connected"]').waitFor({state:'attached',timeout:10000});
-  assert.match(await connection.locator('#connection-status').textContent(), /Anmeldung ist im App-Fenster geöffnet/);
+  const status = await connection.locator('#connection-status').textContent();
+  if (real) {
+    assert.doesNotMatch(status, /Anmeldung ist im App-Fenster geöffnet/);
+  } else {
+    assert.match(status, /Anmeldung ist im App-Fenster geöffnet/);
+  }
   serveRealGui = true;
-  const nativePages = await walkGuiPages(backend, gui, origin, resolve('desktop-package', 'webview-smoke'));
+  const nativePages = await walkGuiPages(backend, gui, origin,
+    real?.output ?? resolve('desktop-package', 'webview-smoke'), real ? {
+      openTitle:real.openTask, doneTitle:real.doneTask, workerCount:real.workerCount,
+      workerName:null, backend:'bach-control-api',
+    } : undefined);
   assert.deepEqual(guiErrors, [], 'The verified static GUI fixture reported errors');
   console.log(JSON.stringify({
     schema:'ellmos-system-gui.windows-webview-check.v1',
     loopback_opt_in_enforced:true,
-    fixture_opened:true,
-    authentication_required:true,
+    fixture_opened:!real,
+    authentication_required:!real,
+    device_session_verified:!!real,
+    desktop_source_commit:process.env.DESKTOP_SOURCE_COMMIT,
     unsigned_update_channel_unavailable:true,
     remote_update_denied:true,
     native_pages:nativePages,
   }));
 } finally {
   if (browser) await browser.close();
-  fixture.closeAllConnections();
-  await new Promise(resolve => fixture.close(resolve));
+  if (fixture.listening) {
+    fixture.closeAllConnections();
+    await new Promise(resolve => fixture.close(resolve));
+  }
 }

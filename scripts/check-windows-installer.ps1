@@ -298,64 +298,83 @@ $testPolicyKey = 'SOFTWARE\Policies\Microsoft\Edge\WebView2\AdditionalBrowserArg
 $testPolicy = $null
 $ownsTestPolicy = $false
 try {
-    $webviewProfile = Join-Path $sandbox 'webview-profile'
-    $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
-    $listener.Start()
-    try { $webviewPort = $listener.LocalEndpoint.Port }
-    finally { $listener.Stop() }
     # Elevated WebView2 hosts ignore debug arguments from the environment.
     $testPolicy = [Microsoft.Win32.Registry]::LocalMachine.CreateSubKey($testPolicyKey)
     if ($testPolicy.GetValueNames() -contains $binaryName) {
         throw 'The Windows runner already has a WebView2 policy for this executable.'
     }
-    $testPolicy.SetValue($binaryName, "--remote-debugging-address=127.0.0.1 --remote-debugging-port=$webviewPort")
     $ownsTestPolicy = $true
-    $app = Start-Process -FilePath $installed -WorkingDirectory $installDir -WindowStyle Hidden -PassThru -Environment @{
-        WEBVIEW2_USER_DATA_FOLDER = $webviewProfile
-    }
-    try {
-        if (-not $app.WaitForInputIdle(20000) -or $app.HasExited) {
-            throw 'The installed executable did not reach an idle Windows message loop.'
+    $bachPages = $null
+    $modes = @('fixture')
+    if ($env:BACH_SMOKE_ARCHIVE) { $modes += 'bach' }
+    foreach ($mode in $modes) {
+        $webviewProfile = Join-Path $sandbox "webview-profile-$mode"
+        $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 0)
+        $listener.Start()
+        try { $webviewPort = $listener.LocalEndpoint.Port }
+        finally { $listener.Stop() }
+        $testPolicy.SetValue($binaryName, "--remote-debugging-address=127.0.0.1 --remote-debugging-port=$webviewPort")
+        $app = Start-Process -FilePath $installed -WorkingDirectory $installDir -WindowStyle Hidden -PassThru -Environment @{
+            WEBVIEW2_USER_DATA_FOLDER = $webviewProfile
         }
-        $runtimeDeadline = [Diagnostics.Stopwatch]::StartNew()
-        do {
-            if ($app.HasExited) {
-                throw "The installed app exited before WebView2 started (exit $($app.ExitCode))."
+        try {
+            if (-not $app.WaitForInputIdle(20000) -or $app.HasExited) {
+                throw 'The installed executable did not reach an idle Windows message loop.'
             }
-            $runtime = Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe' AND ParentProcessId=$($app.Id)" |
-                Where-Object { $_.CommandLine -and $_.CommandLine.Contains($webviewProfile, [StringComparison]::OrdinalIgnoreCase) } |
-                Select-Object -First 1
-            if ($runtime -and (Test-Path -LiteralPath $webviewProfile -PathType Container)) { break }
-            Start-Sleep -Milliseconds 250
-        } while ($runtimeDeadline.ElapsedMilliseconds -lt 20000)
-        if (-not $runtime -or -not (Test-Path -LiteralPath $webviewProfile -PathType Container) -or $app.HasExited) {
-            throw 'The installed app did not start WebView2 with its isolated test profile.'
-        }
-        if (-not $runtime.CommandLine.Contains("--remote-debugging-port=$webviewPort")) {
-            throw 'WebView2 did not apply the executable-specific debug policy.'
-        }
-        $probe = node (Join-Path $PSScriptRoot 'check-windows-webview.mjs') $webviewPort
-        if ($LASTEXITCODE -ne 0) { throw "The WebView2 connection test failed (exit $LASTEXITCODE)." }
-        $connection = $probe | ConvertFrom-Json -AsHashtable
-        if ($connection.schema -cne 'ellmos-system-gui.windows-webview-check.v1' -or
-            $connection.loopback_opt_in_enforced -ne $true -or $connection.fixture_opened -ne $true -or
-            $connection.authentication_required -ne $true) {
-            throw 'The WebView2 connection test did not return its expected receipt.'
-        }
-        $pages = $connection.native_pages
-        if ($pages.source_commit -cne $env:DESKTOP_SOURCE_COMMIT -or $pages.routes.Count -ne 3 -or
-            $pages.web_build_page_count -ne $pages.page_contract_count -or $pages.uncaught_javascript_errors -ne 0) {
-            throw 'The native page smoke did not return its expected receipt.'
-        }
-        Close-TestDesktop $app
-    } finally {
-        if (-not $app.HasExited) {
-            $app.Kill()
-            if (-not $app.WaitForExit(10000)) {
-                throw 'The application process did not stop after termination.'
+            $runtimeDeadline = [Diagnostics.Stopwatch]::StartNew()
+            do {
+                if ($app.HasExited) {
+                    throw "The installed app exited before WebView2 started (exit $($app.ExitCode))."
+                }
+                $runtime = Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe' AND ParentProcessId=$($app.Id)" |
+                    Where-Object { $_.CommandLine -and $_.CommandLine.Contains($webviewProfile, [StringComparison]::OrdinalIgnoreCase) } |
+                    Select-Object -First 1
+                if ($runtime -and (Test-Path -LiteralPath $webviewProfile -PathType Container)) { break }
+                Start-Sleep -Milliseconds 250
+            } while ($runtimeDeadline.ElapsedMilliseconds -lt 20000)
+            if (-not $runtime -or -not (Test-Path -LiteralPath $webviewProfile -PathType Container) -or $app.HasExited) {
+                throw 'The installed app did not start WebView2 with its isolated test profile.'
             }
+            if (-not $runtime.CommandLine.Contains("--remote-debugging-port=$webviewPort")) {
+                throw 'WebView2 did not apply the executable-specific debug policy.'
+            }
+            if ($mode -eq 'bach') {
+                $output = Join-Path $package 'bach-native-smoke'
+                & python (Join-Path $PSScriptRoot 'check-bach-backend.py') '.ci-bach' $env:BACH_SMOKE_ARCHIVE $output `
+                    --native --webview2-port $webviewPort | Out-Host
+                if ($LASTEXITCODE -ne 0) { throw "The BACH WebView2 integration failed (exit $LASTEXITCODE)." }
+                $bachPages = Get-Content -LiteralPath (Join-Path $output 'result.json') -Raw | ConvertFrom-Json -AsHashtable
+                if ($bachPages.bach_installer_verified -ne $true -or
+                    $bachPages.native_webview.desktop_source_commit -cne $env:DESKTOP_SOURCE_COMMIT -or
+                    $bachPages.native_webview.renderer -cne 'WebView2' -or
+                    $bachPages.native_webview.device_session_verified -ne $true) {
+                    throw 'The BACH WebView2 test did not return its expected receipt.'
+                }
+            } else {
+                $probe = node (Join-Path $PSScriptRoot 'check-windows-webview.mjs') $webviewPort
+                if ($LASTEXITCODE -ne 0) { throw "The WebView2 connection test failed (exit $LASTEXITCODE)." }
+                $connection = $probe | ConvertFrom-Json -AsHashtable
+                if ($connection.schema -cne 'ellmos-system-gui.windows-webview-check.v1' -or
+                    $connection.loopback_opt_in_enforced -ne $true -or $connection.fixture_opened -ne $true -or
+                    $connection.authentication_required -ne $true) {
+                    throw 'The WebView2 connection test did not return its expected receipt.'
+                }
+                $pages = $connection.native_pages
+                if ($pages.source_commit -cne $env:DESKTOP_SOURCE_COMMIT -or $pages.routes.Count -ne 3 -or
+                    $pages.web_build_page_count -ne $pages.page_contract_count -or $pages.uncaught_javascript_errors -ne 0) {
+                    throw 'The native page smoke did not return its expected receipt.'
+                }
+            }
+            Close-TestDesktop $app
+        } finally {
+            if (-not $app.HasExited) {
+                $app.Kill()
+                if (-not $app.WaitForExit(10000)) {
+                    throw 'The application process did not stop after termination.'
+                }
+            }
+            $app.Dispose()
         }
-        $app.Dispose()
     }
     if ($null -ne $legacy) {
         if ((Get-FileHash -LiteralPath $legacyBinary -Algorithm SHA256).Hash.ToLowerInvariant() -cne $legacyBinaryHash -or
@@ -411,6 +430,7 @@ $evidence = [ordered]@{
         isolated_profile_created = $true
         clean_window_exit = $true
         connection = $connection
+        bach_native_pages = $bachPages
     }
     installed_files_and_registration_removed = $true
 }

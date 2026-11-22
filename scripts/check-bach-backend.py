@@ -52,6 +52,7 @@ def prepare_backend(bach, dist, scratch):
     assert not database.exists(), "Expected a fresh BACH checkout"
     os.environ.update(
         HOME=str(home),
+        USERPROFILE=str(home),
         XDG_CONFIG_HOME=str(home / ".config"),
         XDG_DATA_HOME=str(home / ".local/share"),
         XDG_STATE_HOME=str(home / ".local/state"),
@@ -196,28 +197,46 @@ def check_browser(origin, token, worker_count, out):
         browser.close()
 
 
-def check_native(origin, token, worker_count, dist, commit, out):
+def check_native(origin, token, worker_count, dist, commit, out, webview2_port):
     config = {
         "origin": origin, "token": token, "workerCount": worker_count, "dist": str(dist),
         "guiCommit": commit, "output": str(out.resolve()), "openTask": OPEN_TASK, "doneTask": DONE_TASK,
     }
-    result = subprocess.run(
-        ["node", "scripts/check-linux-webview.mjs"], check=True, encoding="utf-8", timeout=180,
-        input=json.dumps(config), stdout=subprocess.PIPE,
-        env={
-            **os.environ,
-            "BACH_NATIVE_CHECK": "1",
+
+    windows = webview2_port is not None
+    if windows:
+        command = ["node", "scripts/check-windows-webview.mjs", str(webview2_port)]
+        platform_env = {}
+    else:
+        command = ["node", "scripts/check-linux-webview.mjs"]
+        platform_env = {
             "GDK_BACKEND": "x11",
             "LIBGL_ALWAYS_SOFTWARE": "1",
             "WEBKIT_DISABLE_DMABUF_RENDERER": "1",
-        },
+        }
+    result = subprocess.run(
+        command, check=True, encoding="utf-8", timeout=180,
+        input=json.dumps(config), stdout=subprocess.PIPE,
+        env={**os.environ, "BACH_NATIVE_CHECK": "1", **platform_env},
     )
     proof = json.loads(result.stdout)
+    if windows:
+        assert proof["schema"] == "ellmos-system-gui.windows-webview-check.v1"
+        assert proof["device_session_verified"] and proof["remote_update_denied"]
+        assert proof["loopback_opt_in_enforced"] and not proof["authentication_required"]
+        proof = {
+            **proof["native_pages"],
+            "device_session_verified": proof["device_session_verified"],
+            "desktop_source_commit": proof["desktop_source_commit"],
+            "renderer": "WebView2",
+        }
+    else:
+        assert proof["renderer"] == "WebKitGTK" and proof["native_windows_observed"]
+        assert proof["device_session_verified"] and proof["exited_after_window_close"]
     assert proof["fixture_backend"] == "bach-control-api"
     assert proof["desktop_source_commit"] == os.environ["DESKTOP_SOURCE_COMMIT"]
     assert proof["source_commit"] == commit
-    assert proof["renderer"] == "WebKitGTK" and proof["native_windows_observed"]
-    assert proof["device_session_verified"] and proof["exited_after_window_close"]
+    assert [row["route"] for row in proof["routes"]] == list(PAGES)
     return proof
 
 
@@ -227,7 +246,12 @@ def main():
     parser.add_argument("archive", type=Path)
     parser.add_argument("out", type=Path)
     parser.add_argument("--native", action="store_true")
+    parser.add_argument("--webview2-port", type=int)
     args = parser.parse_args()
+    if args.webview2_port is not None and (
+        not args.native or sys.platform != "win32" or not 0 < args.webview2_port <= 65535
+    ):
+        parser.error("--webview2-port requires --native on Windows and a valid local port")
     assert os.environ.get("GITHUB_ACTIONS") == "true"
     assert os.environ.get("RUNNER_ENVIRONMENT") == "github-hosted"
     bach_commit = subprocess.check_output(["git", "-C", str(args.bach), "rev-parse", "HEAD"], text=True).strip()
@@ -255,7 +279,8 @@ def main():
                 worker_count = result["running_worker_profile_count"]
                 if args.native:
                     result["native_webview"] = check_native(
-                        origin, token, worker_count, dist, manifest["source_commit"], args.out
+                        origin, token, worker_count, dist, manifest["source_commit"],
+                        args.out, args.webview2_port,
                     )
                 else:
                     check_browser(origin, token, worker_count, args.out)

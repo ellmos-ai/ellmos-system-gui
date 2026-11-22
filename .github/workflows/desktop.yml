@@ -243,19 +243,20 @@ jobs:
           run-id: ${{ inputs.legacy_run }}
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/legacy-desktop
+      - name: Prepare the isolated BACH backend for the installed app
+        if: runner.os == 'Linux' || runner.os == 'Windows'
+        uses: ./.github/actions/prepare-bach-smoke
+        with:
+          github-token: ${{ github.token }}
       - name: Verify Windows installer lifecycle
         if: runner.os == 'Windows'
         env:
+          PYTHONUTF8: '1'
           LEGACY_RUN: ${{ inputs.legacy_run }}
           LEGACY_COMMIT: ${{ inputs.legacy_commit }}
           LEGACY_INSTALLER_SHA256: ${{ inputs.legacy_installer_sha256 }}
         shell: pwsh
         run: ./scripts/check-windows-installer.ps1
-      - name: Prepare the isolated BACH backend for the installed Linux app
-        if: runner.os == 'Linux'
-        uses: ./.github/actions/prepare-bach-smoke
-        with:
-          github-token: ${{ github.token }}
       - name: Verify Debian installer lifecycle
         if: runner.os == 'Linux'
         env:
