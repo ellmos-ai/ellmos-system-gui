@@ -117,6 +117,13 @@ try {
   const connection = await waitFor(() => x11Window('^Ocean \\(BACH\\) verbinden$'), 'the native connection window');
   console.error('WebKitGTK smoke: native connection window visible');
   const bundledUrl = /^(?:tauri:\/\/localhost|https?:\/\/tauri\.localhost)(?:\/|$)/;
+  const startupUrl = await call('/url');
+  console.error('WebKitGTK smoke: initial WebDriver URL ' + JSON.stringify(startupUrl));
+  // Creating an automation session can reset the reused native view to about:blank.
+  // Restore only the bundled connection document, then use the app's real attach UI.
+  if (!startupUrl || startupUrl === 'about:blank') {
+    await call('/url', 'POST', {url:'tauri://localhost/'});
+  }
   await waitFor(async () => bundledUrl.test(await call('/url')), 'the bundled connection page');
   console.error('WebKitGTK smoke: bundled connection document loaded');
   await waitFor(() => evaluate("return !!document.querySelector('#backend-url')"), 'the connection form');
