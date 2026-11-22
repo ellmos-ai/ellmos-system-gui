@@ -10,6 +10,7 @@ on:
       - 'scripts/package-desktop.py'
       - 'scripts/check-windows-installer.ps1'
       - 'scripts/check-windows-webview.mjs'
+      - 'scripts/check-linux-installer.py'
       - 'docs/DESKTOP-APP.md'
   push:
     branches: [main]
@@ -21,6 +22,7 @@ on:
       - 'scripts/package-desktop.py'
       - 'scripts/check-windows-installer.ps1'
       - 'scripts/check-windows-webview.mjs'
+      - 'scripts/check-linux-installer.py'
       - 'docs/DESKTOP-APP.md'
   workflow_dispatch:
     inputs:
@@ -36,6 +38,9 @@ on:
         description: 'Expected SHA-256 of the BACH Ocean NSIS installer'
         type: string
         required: true
+      legacy_deb_sha256:
+        description: 'Expected SHA-256 of the Debian package from the same build (optional migration test)'
+        type: string
 
 permissions:
   contents: read
@@ -116,7 +121,7 @@ jobs:
           key: ${{ runner.os }}-desktop-${{ hashFiles('src-tauri/Cargo.lock') }}
       - name: Linux webview dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev librsvg2-dev libayatana-appindicator3-dev patchelf libfuse2t64
+        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev librsvg2-dev libayatana-appindicator3-dev patchelf libfuse2t64 xvfb xauth xdotool dbus-daemon
       - name: Remove cached bundle outputs
         shell: python
         run: |
@@ -173,8 +178,8 @@ jobs:
           print('Windows binary uses GUI subsystem; no console subsystem.')
       - name: Package compiled desktop consumer and source receipt
         run: python scripts/package-desktop.py
-      - name: Verify legacy Windows artifact source
-        if: runner.os == 'Windows' && github.event_name == 'workflow_dispatch'
+      - name: Verify legacy desktop artifact source
+        if: github.event_name == 'workflow_dispatch' && (runner.os == 'Windows' || (runner.os == 'Linux' && inputs.legacy_deb_sha256 != ''))
         env:
           GH_TOKEN: ${{ github.token }}
           LEGACY_RUN: ${{ inputs.legacy_run }}
@@ -190,9 +195,9 @@ jobs:
             throw 'The legacy run is not the successful main-branch desktop build requested.'
           }
       - uses: actions/download-artifact@v4
-        if: runner.os == 'Windows' && github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' && (runner.os == 'Windows' || (runner.os == 'Linux' && inputs.legacy_deb_sha256 != ''))
         with:
-          name: desktop-consumer-Windows-${{ inputs.legacy_commit }}
+          name: desktop-consumer-${{ runner.os }}-${{ inputs.legacy_commit }}
           run-id: ${{ inputs.legacy_run }}
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/legacy-desktop
@@ -207,6 +212,13 @@ jobs:
           LEGACY_INSTALLER_SHA256: ${{ inputs.legacy_installer_sha256 }}
         shell: pwsh
         run: ./scripts/check-windows-installer.ps1
+      - name: Verify Debian installer lifecycle
+        if: runner.os == 'Linux'
+        env:
+          LEGACY_RUN: ${{ inputs.legacy_run }}
+          LEGACY_COMMIT: ${{ inputs.legacy_commit }}
+          LEGACY_DEB_SHA256: ${{ inputs.legacy_deb_sha256 }}
+        run: xvfb-run -a dbus-run-session -- python scripts/check-linux-installer.py
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-consumer-${{ runner.os }}-${{ env.DESKTOP_SOURCE_COMMIT }}

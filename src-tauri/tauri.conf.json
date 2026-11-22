@@ -34,6 +34,12 @@
     "license": "MIT",
     "homepage": "https://github.com/ellmos-ai/ellmos-system-gui",
     "shortDescription": "Desktop connection to OpenOcean (BACH)",
+    "linux": {
+      "deb": {
+        "conflicts": ["bach-ocean (<< 0.2.40)"],
+        "replaces": ["bach-ocean (<< 0.2.40)"]
+      }
+    },
     "windows": {
       "webviewInstallMode": {
         "type": "embedBootstrapper"
