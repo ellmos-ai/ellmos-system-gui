@@ -32,10 +32,12 @@ Popupfenster werden abgewiesen; Navigation bleibt am exakten gewählten Origin.
 
 ## Berechtigungsgrenze und Belege
 
-Nur das gebündelte Fenster `connection` erhält die einzelne native Berechtigung
-`allow-attach`. Der asynchrone Rust-Handler prüft zusätzlich Label und lokalen
-Dokument-Origin. Das Remote-Fenster `backend` erhält keine Capabilities oder
-Remote-IPC-Freigabe. Keine globale Fenster-Wildcard ist konfiguriert.
+Nur das gebündelte Fenster `connection` erhält `allow-attach` und
+die beiden Anwendungsbefehle zum Prüfen und Installieren von App-Updates.
+Die Rust-Handler prüfen zusätzlich Label und lokalen Dokument-Origin.
+Das Remote-Fenster `backend` erhält keine Capabilities oder
+Remote-IPC-Freigabe. Die allgemeinen Befehle des Updater-Plugins sind
+für Webviews gesperrt.
 
 Ein begrenzter GET auf `/api/gui/capabilities` folgt keinen Redirects. Das Schema
 `ellmos.gui.capabilities.v1` belegt nur Vertragskompatibilität. HTTP401/403 oder
@@ -185,6 +187,25 @@ startet zuerst die neue App und entfernt danach das alte Bundle. Zwei
 synthetische Dateien im temporären Anwendungsprofil bleiben erhalten.
 Der Test erteilt keine Bildschirmaufnahmeberechtigung. Signierung,
 Notarisierung, Anmeldung und Geräteabnahme bleiben separate Schritte.
+
+### Signierte In-App-Updates
+
+Über **Desktop-App aktualisieren** im Anschlussfenster prüft die App den
+festen HTTPS-Kanal in GitHub Releases. Bei einem Angebot zeigt sie die
+Version an. Erst der separate Klick auf **Update installieren** löst den
+Download aus. Der Tauri-Updater prüft die Dateisignatur und die Bindung
+an die angezeigte Version vor der Installation. macOS und Linux zeigen
+nach bestätigter Installation einen Hinweis auf den Neustart.
+
+Die Standardbuilds tragen keinen Produktionsschlüssel. Eine freigegebene
+Release-Konfiguration muss den öffentlichen Tauri-Schlüssel einbetten,
+die Update-Artefakte erzeugen und das passende `latest.json` bereitstellen.
+Der private Schlüssel gehört ausschließlich in die kontrollierte
+Signierumgebung. Die Signatur muss die jeweilige App-Version binden.
+Die CI verifiziert geänderte Bytes und eine abweichende
+Versionsangabe mit einem eigens dafür signierten Testinhalt. Das belegt
+die Signaturprüfung, noch keine Installation eines signierten Releases.
+[Tauri-Updater](https://v2.tauri.app/plugin/updater/)
 
 ## Offene vollständige Abnahme
 

@@ -1,5 +1,7 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
 
+mod desktop_updates;
+
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::time::Duration;
 
@@ -232,8 +234,14 @@ fn main() {
                 show_connection(app);
             }
         }))
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(DesktopState::default())
-        .invoke_handler(tauri::generate_handler![attach])
+        .manage(desktop_updates::DesktopUpdates::default())
+        .invoke_handler(tauri::generate_handler![
+            attach,
+            desktop_updates::check_desktop_update,
+            desktop_updates::install_desktop_update
+        ])
         .setup(|app| {
             let connection = SubmenuBuilder::new(app, "Verbindung")
                 .text("connection", "Verbindung wechseln …")
