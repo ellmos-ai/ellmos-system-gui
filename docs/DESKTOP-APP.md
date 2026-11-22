@@ -208,7 +208,10 @@ BACH-Ocean-0.2.38-DMG prüft auf einem GitHub-gehosteten Mac zusätzlich die
 Installation des Updates auf 0.2.40. Der Tauri-Updater lädt das mit einem
 kurzlebigen Testschlüssel signierte App-Archiv über lokales HTTPS. Der
 Lauf prüft beide Fehlerfälle, den sichtbaren App-Start nach dem Update
-und den Erhalt einer Testdatei im Benutzerprofil.
+und den Erhalt einer Testdatei im Benutzerprofil. Mit dem exakt vorgegebenen
+AppImage aus demselben Altbuild prüft CI unter Linux dieselben Fälle, den
+Start beider AppImages unter Xvfb und die erhaltenen Ausführungsrechte.
+Das Debian-Paket hat einen eigenen APT-Installations- und Migrationstest.
 [Tauri-Updater](https://v2.tauri.app/plugin/updater/)
 
 ## Offene vollständige Abnahme

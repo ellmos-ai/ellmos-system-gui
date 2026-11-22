@@ -11,6 +11,7 @@ on:
       - 'scripts/check-windows-installer.ps1'
       - 'scripts/check-windows-webview.mjs'
       - 'scripts/check-linux-installer.py'
+      - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
       - 'docs/DESKTOP-APP.md'
   push:
@@ -24,16 +25,17 @@ on:
       - 'scripts/check-windows-installer.ps1'
       - 'scripts/check-windows-webview.mjs'
       - 'scripts/check-linux-installer.py'
+      - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
       - 'docs/DESKTOP-APP.md'
   workflow_dispatch:
     inputs:
       legacy_run:
-        description: 'Successful main-branch Windows desktop build for BACH Ocean'
+        description: 'Successful main-branch desktop build for BACH Ocean'
         type: string
         required: true
       legacy_commit:
-        description: 'Exact source commit of that Windows build'
+        description: 'Exact source commit of that desktop build'
         type: string
         required: true
       legacy_installer_sha256:
@@ -42,6 +44,9 @@ on:
         required: true
       legacy_deb_sha256:
         description: 'Expected SHA-256 of the Debian package from the same build (optional migration test)'
+        type: string
+      legacy_appimage_sha256:
+        description: 'Expected SHA-256 of the AppImage from the same build (optional signed update test)'
         type: string
       legacy_dmg_sha256:
         description: 'Expected SHA-256 of the macOS DMG from the same build (optional migration test)'
@@ -191,7 +196,7 @@ jobs:
         if: >-
           github.event_name == 'workflow_dispatch' &&
           (runner.os == 'Windows' ||
-          (runner.os == 'Linux' && inputs.legacy_deb_sha256 != '') ||
+          (runner.os == 'Linux' && (inputs.legacy_deb_sha256 != '' || inputs.legacy_appimage_sha256 != '')) ||
           (runner.os == 'macOS' && inputs.legacy_dmg_sha256 != ''))
         env:
           GH_TOKEN: ${{ github.token }}
@@ -211,7 +216,7 @@ jobs:
         if: >-
           github.event_name == 'workflow_dispatch' &&
           (runner.os == 'Windows' ||
-          (runner.os == 'Linux' && inputs.legacy_deb_sha256 != '') ||
+          (runner.os == 'Linux' && (inputs.legacy_deb_sha256 != '' || inputs.legacy_appimage_sha256 != '')) ||
           (runner.os == 'macOS' && inputs.legacy_dmg_sha256 != ''))
         with:
           name: desktop-consumer-${{ runner.os }}-${{ inputs.legacy_commit }}
@@ -235,6 +240,7 @@ jobs:
           LEGACY_RUN: ${{ inputs.legacy_run }}
           LEGACY_COMMIT: ${{ inputs.legacy_commit }}
           LEGACY_DEB_SHA256: ${{ inputs.legacy_deb_sha256 }}
+          LEGACY_APPIMAGE_SHA256: ${{ inputs.legacy_appimage_sha256 }}
         run: xvfb-run -a dbus-run-session -- python scripts/check-linux-installer.py
       - name: Verify macOS DMG lifecycle
         if: runner.os == 'macOS'

@@ -1,14 +1,23 @@
 """Check the exact Debian artifact on a disposable GitHub-hosted runner."""
 
-import hashlib
 import json
 import os
 import re
+import shutil
 import signal
 import subprocess
 import tempfile
 import time
+from contextlib import suppress
 from pathlib import Path
+
+from desktop_update_fixture import (
+    digest,
+    receipt_bundle,
+    require,
+    run,
+    run_signed_update,
+)
 
 APP = Path("/usr/bin/ellmos-system-gui-desktop")
 PRODUCT = "open-ocean"
@@ -22,26 +31,7 @@ APP_ID = "ai.ellmos.system-gui.desktop"
 RELATION = "bach-ocean (<< 0.2.40)"
 
 
-def require(condition, message):
-    if not condition:
-        raise ValueError(message)
-
-
-def run(*args, timeout=30, check=True):
-    result = subprocess.run(
-        args, check=False, timeout=timeout, text=True, encoding="utf-8", capture_output=True,
-    )
-    if check and result.returncode:
-        raise RuntimeError(f"{args[0]} failed ({result.returncode}): {result.stderr[-2048:]}")
-    return result
-
-
-def digest(path):
-    with path.open("rb") as stream:
-        return hashlib.file_digest(stream, "sha256").hexdigest()
-
-
-def verified_package(directory, *, package, commit, run_id, pin=None):
+def read_artifacts(directory, commit, run_id):
     receipt = json.loads((directory / "desktop-artifact.json").read_text(encoding="utf-8"))
     require(
         receipt["schema"] == "ellmos-system-gui.desktop-artifact.v1"
@@ -50,18 +40,12 @@ def verified_package(directory, *, package, commit, run_id, pin=None):
         and receipt["build"]["run_id"] == int(run_id),
         "Debian artifact source does not match",
     )
-    relative = receipt["bundles"]["deb"]["file"]
-    bundle = directory / relative
-    require(
-        bundle.parent == directory / "bundles" and bundle.suffix == ".deb"
-        and bundle.is_file() and not bundle.is_symlink()
-        and bundle.resolve().is_relative_to(directory.resolve()),
-        "Invalid Debian artifact path",
-    )
-    file = receipt["files"][relative]
-    actual = digest(bundle)
-    require(actual == file["sha256"] and bundle.stat().st_size == file["bytes"], "Debian artifact changed")
-    require(pin is None or pin == actual, "Legacy Debian artifact does not match the supplied SHA-256")
+    return receipt
+
+
+def verified_package(directory, *, package, commit, run_id, pin=None):
+    receipt = read_artifacts(directory, commit, run_id)
+    bundle, actual = receipt_bundle(directory, receipt, "deb", ".deb", pin)
     require(run("dpkg-deb", "-f", str(bundle), "Package").stdout.strip() == package, "Wrong Debian package")
     version = run("dpkg-deb", "-f", str(bundle), "Version").stdout.strip()
     with tempfile.TemporaryDirectory(prefix="ocean-deb-payload-") as temp:
@@ -93,7 +77,7 @@ def purge(package):
     require(not installed(package) and not APP.exists() and not LAUNCHERS[package].exists(), "Package residue")
 
 
-def start_window(package, home):
+def start_window(package, home, app=APP):
     env = {
         **os.environ, "HOME": str(home), "GDK_BACKEND": "x11", "LIBGL_ALWAYS_SOFTWARE": "1",
         "WEBKIT_DISABLE_DMABUF_RENDERER": "1",
@@ -101,16 +85,27 @@ def start_window(package, home):
             ("DATA_HOME", "data"), ("CONFIG_HOME", "config"), ("CACHE_HOME", "cache"),
         )},
     }
+    appimage = app.suffix == ".AppImage"
+    if appimage:
+        env["APPIMAGE_EXTRACT_AND_RUN"] = "1"
     with tempfile.TemporaryFile() as output:
-        process = subprocess.Popen([str(APP)], env=env, stdout=output, stderr=subprocess.STDOUT, start_new_session=True)
+        process = subprocess.Popen([str(app)], env=env, stdout=output, stderr=subprocess.STDOUT, start_new_session=True)
         try:
             deadline = time.monotonic() + 20
             while process.poll() is None and time.monotonic() < deadline:
-                windows = run("xdotool", "search", "--onlyvisible", "--pid", str(process.pid), check=False)
+                # The AppImage runtime can put the window in a child process.
+                search = ("--name", ".*") if appimage else ("--pid", str(process.pid))
+                windows = run("xdotool", "search", "--onlyvisible", *search, check=False)
                 for window in windows.stdout.split():
                     name = run("xdotool", "getwindowname", window, check=False).stdout.strip()
-                    if name == WINDOWS[package] and process.poll() is None:
+                    if name != WINDOWS[package] or process.poll() is not None:
+                        continue
+                    if not appimage:
                         return {"window_title": name, "visible_on_virtual_display": True}
+                    owner = run("xdotool", "getwindowpid", window, check=False).stdout.strip()
+                    with suppress(ProcessLookupError):
+                        if owner.isdecimal() and os.getpgid(int(owner)) == process.pid:
+                            return {"window_title": name, "visible_on_virtual_display": True}
                 time.sleep(.25)
             output.seek(0)
             raise RuntimeError(f"Expected native connection window. Output: {output.read(2048)!r}")
@@ -156,6 +151,45 @@ def verify_legacy_migration(directory, current, home, pin):
     }
 
 
+def verify_signed_appimage(directory, legacy_directory, temp, commit, run_id, version, pin):
+    legacy_commit = os.environ["LEGACY_COMMIT"]
+    legacy_run = os.environ["LEGACY_RUN"]
+    require(re.fullmatch(r"[a-f0-9]{64}", pin) and re.fullmatch(r"[a-f0-9]{40}", legacy_commit),
+            "Invalid legacy AppImage pin")
+    legacy_artifacts = read_artifacts(legacy_directory, legacy_commit, legacy_run)
+    previous, previous_sha = receipt_bundle(legacy_directory, legacy_artifacts, "appimage", ".AppImage", pin)
+    require(previous.name == "BACH Ocean_0.2.38_amd64.AppImage", "Unexpected legacy AppImage")
+    artifacts = read_artifacts(directory, commit, run_id)
+    source, current_sha = receipt_bundle(directory, artifacts, "appimage", ".AppImage")
+    require(source.name.endswith(f"_{version}_amd64.AppImage"), "Unexpected update AppImage")
+
+    with tempfile.TemporaryDirectory(prefix="ocean-signed-appimage-", dir=temp) as work:
+        scratch = Path(work).resolve()
+        home = scratch / "home"
+        marker = home / "data" / APP_ID / "signed-update-ci.txt"
+        marker.parent.mkdir(parents=True)
+        marker.write_text("CI update sample\n", encoding="utf-8")
+        marker_sha = digest(marker)
+
+        app = scratch / "Ocean.AppImage"
+        shutil.copyfile(previous, app)
+        permissions = 0o755
+        app.chmod(permissions)
+        before = start_window(LEGACY, home, app)
+        proof = run_signed_update(source, scratch, version)
+        require(digest(app) == current_sha and proof["package_sha256"] == current_sha
+                and (app.stat().st_mode & 0o777) == permissions, "Updated AppImage does not match the package")
+        after = start_window(PRODUCT, home, app)
+        require(digest(marker) == marker_sha, "User file changed during signed AppImage update")
+        app.unlink()
+    return {
+        "legacy_commit": legacy_commit, "legacy_run_id": int(legacy_run),
+        "legacy_appimage_sha256": previous_sha, "legacy_version": "0.2.38",
+        "previous_start": before, "updated_start": after,
+        **proof, "synthetic_user_file_preserved": True,
+    }
+
+
 def main():
     require(
         os.environ.get("GITHUB_ACTIONS") == "true"
@@ -181,11 +215,15 @@ def main():
         purge(PRODUCT)
         pin = os.environ.get("LEGACY_DEB_SHA256")
         migration = verify_legacy_migration(temp / "legacy-desktop", package, home, pin) if pin else None
+    appimage_pin = os.environ.get("LEGACY_APPIMAGE_SHA256")
+    signed = verify_signed_appimage(
+        directory, temp / "legacy-desktop", temp, commit, run_id, version, appimage_pin,
+    ) if appimage_pin else None
     receipt = {
         "schema": "ellmos-system-gui.linux-installer-check.v1",
         "source_commit": commit, "run_id": int(run_id), "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
         "package": PRODUCT, "version": version, "deb_sha256": package[2], "installed_binary_sha256": package[3],
-        "clean_install_start": window, "purged": True, "legacy_migration": migration,
+        "clean_install_start": window, "purged": True, "legacy_migration": migration, "signed_appimage_update": signed,
     }
     (directory / "linux-installer-check.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(receipt))
