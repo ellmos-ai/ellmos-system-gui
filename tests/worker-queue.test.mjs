@@ -110,3 +110,69 @@ test('missing or reclassified non-Buddha system workers cannot retain an old rec
   context.workerQueueSnapshots=new Map([['another-system-worker',{runtime_verified:true,system:false,queue_status:acquired}]]);render();
   assert.equal(card.textContent,'Aufgabenauswahl nicht bestätigt');
 });
+
+test('repository, pickup, policy and acquire-denial extensions validate and render',()=>{
+  const repoFiltered={...empty,reason:'selection_excluded',candidate_count:55,scanned_pages:1,
+    rejected_counts:{repository_unverified:45,repository_not_allowed:3,repository_capability_missing:2,
+      selection_policy_unavailable:1,pickup_category:1,pickup_priority:1,pickup_tags:1,excluded_tag:1}};
+  assert.deepEqual(validateQueueStatus(repoFiltered),repoFiltered);
+  const details=createQueueDetails(document,repoFiltered);
+  assert.equal(details.tagName,'details');
+  assert.match(details.textContent,/Ziel-Repository nicht bestätigt: 45/);
+  assert.match(details.textContent,/Ziel-Repository nicht freigegeben: 3/);
+  assert.match(details.textContent,/Kategorie ausgeschlossen: 1/);
+  assert.match(details.textContent,/Ausschluss-Tag gesetzt: 1/);
+
+  const extendedDenied={...empty,reason:'acquire_denied',candidate_count:4,matched_count:3,attempted_count:3,
+    rejected_counts:{repository_unverified:1,repository_changed:1,completion_guard:1,unresolved_tool_trace:1}};
+  assert.deepEqual(validateQueueStatus(extendedDenied),extendedDenied);
+  const deniedDetails=createQueueDetails(document,extendedDenied);
+  assert.match(deniedDetails.textContent,/Ziel-Repository vor Übernahme geändert: 1/);
+  assert.match(deniedDetails.textContent,/Abschlussprüfung blockiert: 1/);
+  assert.match(deniedDetails.textContent,/Offene Werkzeugspur aus früherem Lauf: 1/);
+
+  assert.equal(validateQueueStatus({...empty,reason:'acquire_denied',candidate_count:1,matched_count:1,
+    attempted_count:1,rejected_counts:{repository_unverified:1}}),null);
+});
+
+
+test('native dependency and status denials keep acquire accounting and expose bounded task examples',()=>{
+  const codes={dependencies_unfinished:'Abhängigkeiten noch offen',dependencies_missing:'Abhängigkeiten fehlen',
+    dependencies_invalid:'Abhängigkeiten ungültig',status_not_claimable:'Aufgabenstatus nicht übernehmbar'};
+  for (const [reason,label] of Object.entries(codes)) {
+    const raw={...empty,reason:'acquire_denied',candidate_count:6,matched_count:6,attempted_count:6,
+      rejected_counts:{[reason]:6},rejection_examples:{[reason]:[1,2,3,4,5]}};
+    const validated=validateQueueStatus(raw);
+    assert.deepEqual(validated,raw);
+    assert.notEqual(validated.rejection_examples,raw.rejection_examples);
+    assert.notEqual(validated.rejection_examples[reason],raw.rejection_examples[reason]);
+    const details=createQueueDetails(document,raw);
+    assert.match(details.textContent,new RegExp(label+': 6'));
+    const all=node=>[node,...node.children.flatMap(all)];
+    const links=all(details).filter(node=>node.tagName==='a');
+    assert.deepEqual(links.map(node=>node.href),[1,2,3,4,5].map(id=>'/tasks?task='+id));
+    assert.deepEqual(links.map(node=>node.textContent),[1,2,3,4,5].map(id=>'#'+id));
+    assert.match(details.textContent,/Beispiele/);
+    assert.equal(validateQueueStatus({...raw,reason:'selection_excluded',matched_count:0,attempted_count:0}),null);
+    assert.equal(validateQueueStatus({...raw,authority_mode:'invented'}),null);
+  }
+});
+
+test('rejection examples match the native optional bounded-map contract and cannot create authority',()=>{
+  const raw={...denied,rejection_examples:{ownership:[41],not_claimable:[42]}};
+  assert.deepEqual(validateQueueStatus(raw),raw);
+  assert.deepEqual(validateQueueStatus({...denied,rejection_examples:null}),denied);
+  assert.deepEqual(validateQueueStatus({...denied,rejection_examples:{}}),{...denied,rejection_examples:{}});
+  for (const examples of [[],true,'x',
+    {unknown:[1]}, {held:[1]}, {ownership:'41'}, {ownership:[0]}, {ownership:[-1]},
+    {ownership:['41']}, {ownership:[true]}, {ownership:[1.5]}, {ownership:[Number.MAX_SAFE_INTEGER+1]},
+    {ownership:[41,41]}, {ownership:[41,42]}, {not_claimable:['<script>']}]) {
+    assert.equal(validateQueueStatus({...denied,rejection_examples:examples}),null,JSON.stringify(examples));
+  }
+  const six={...empty,reason:'acquire_denied',candidate_count:6,matched_count:6,attempted_count:6,
+    rejected_counts:{dependencies_unfinished:6},rejection_examples:{dependencies_unfinished:[1,2,3,4,5,6]}};
+  assert.equal(validateQueueStatus(six),null);
+  assert.equal(validateQueueStatus({...raw,selected_task_id:41}),null);
+  const privateFields=validateQueueStatus({...raw,lease_id:'private',task_prompt:'private'});
+  assert.doesNotMatch(JSON.stringify(privateFields),/private/);
+});

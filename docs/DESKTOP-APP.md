@@ -32,10 +32,12 @@ Popupfenster werden abgewiesen; Navigation bleibt am exakten gewählten Origin.
 
 ## Berechtigungsgrenze und Belege
 
-Nur das gebündelte Fenster `connection` erhält die einzelne native Berechtigung
-`allow-attach`. Der asynchrone Rust-Handler prüft zusätzlich Label und lokalen
-Dokument-Origin. Das Remote-Fenster `backend` erhält keine Capabilities oder
-Remote-IPC-Freigabe. Keine globale Fenster-Wildcard ist konfiguriert.
+Nur das gebündelte Fenster `connection` erhält `allow-attach` und
+die beiden Anwendungsbefehle zum Prüfen und Installieren von App-Updates.
+Die Rust-Handler prüfen zusätzlich Label und lokalen Dokument-Origin.
+Das Remote-Fenster `backend` erhält keine Capabilities oder
+Remote-IPC-Freigabe. Die allgemeinen Befehle des Updater-Plugins sind
+für Webviews gesperrt.
 
 Ein begrenzter GET auf `/api/gui/capabilities` folgt keinen Redirects. Das Schema
 `ellmos.gui.capabilities.v1` belegt nur Vertragskompatibilität. HTTP401/403 oder
@@ -103,9 +105,42 @@ aller enthaltenen Lieferdateien fest. Änderungen der beiden Locks während des 
 werden abgewiesen. Die Windows-CI prüft weiterhin direkt den PE-Header der App auf
 GUI-Subsystem2.
 
+Unter Windows prüft ein zusätzlicher Schritt den NSIS-Installer in einem
+frischen GitHub-Runner. Er gleicht die installierte EXE mit dem Installer-Inhalt
+und den Registry-Eintrag mit der Konfiguration ab, startet die EXE bis zur
+Windows-Nachrichtenschleife und prüft die Entfernung des Installationsordners
+und des Deinstallationseintrags. Der Abschnitt `installed_webview` in
+`windows-installer-check.json` belegt den zur gestarteten EXE gehörenden
+WebView2-Prozess und sein temporäres Profil. Playwright prüft im installierten
+Verbindungsdialog die HTTP-Loopback-Bestätigung und das Öffnen einer isolierten
+Testseite mit erforderlicher Anmeldung. Dafür öffnet die CI vorübergehend einen
+Loopback-Debug-Port für diese EXE. Der Test entfernt den Richtlinienwert vor
+der Deinstallation. Die Anmeldung an einem echten Backend, die Geräteabnahme,
+automatische Updates und die Signierung benötigen eigene Nachweise.
+
 Der heruntergeladene Beleg und die Binary müssen zum selben vollständig
 erfolgreichen CI-Lauf und exakten Quellcommit gehören; der Dateihash muss passen.
 Ein Hash aus demselben Paket ist ein Integritätsbeleg, keine unabhängige Signatur.
+
+### Windows-Wechsel von BACH Ocean zu OpenOcean
+
+Die App-ID bleibt `ai.ellmos.system-gui.desktop`. Windows führt **BACH Ocean**
+und **OpenOcean** unter getrennten Deinstallationseinträgen.
+
+1. BACH Ocean schließen. OpenOcean in einen separaten Installationsordner
+   installieren und öffnen. Die Verbindung mit dem gewohnten Backend prüfen.
+2. Erst danach unter **Installierte Apps** den alten Eintrag **BACH Ocean**
+   deinstallieren. Die Option zum Löschen der App-Daten dabei abgewählt lassen.
+   Beide Versionen verwenden dieselben App-Datenverzeichnisse.
+3. Für den Rückweg OpenOcean schließen und ohne Löschen der App-Daten
+   deinstallieren. Anschließend den vorherigen Installer von BACH Ocean verwenden.
+
+Der manuell gestartete Workflow **Desktop compile** prüft diese Abfolge mit
+einem älteren Windows-Artefakt von `main`. Als Eingaben dienen CI-Lauf,
+Quellcommit und Installer-SHA-256. Der Windows-Beleg
+`windows-installer-check.json` enthält hierfür `legacy_migration`.
+Der Test verwendet eigens angelegte Dateien in beiden App-Datenverzeichnissen.
+Anmeldungen und bestehende WebView-Sitzungen werden am Gerät geprüft.
 Die Programme und Installer werden beim Erstellen des Artefakts nicht gestartet.
 Die Buildoption `--no-sign` erzeugt ausdrücklich Kandidaten ohne Publishersignatur
 oder Notarisierung. Der Receiptwert `acceptance.installer=false` kennzeichnet die
@@ -115,6 +150,101 @@ gemeinsamen Rust-Dependencygraphen im Quellstand. Codesignierung/Notarisierung,
 wirkliche Installation, Update/Rückweg, Datenerhalt bei Deinstallation und
 Store-Veröffentlichung sind noch offen. Es gibt keinen automatischen Release,
 Store-Upload oder Start der Kandidaten.
+
+### Debian-Paket und Wechsel von BACH Ocean zu OpenOcean
+
+`open-ocean` ersetzt auf Debian-basierten Systemen das frühere Paket
+`bach-ocean` in Versionen vor 0.2.40. Beide Pakete verwenden denselben
+Programmpfad. APT entfernt beim Wechsel die alte Paketregistrierung und
+überträgt die Programmdatei an das neue Paket. Die Desktop-Anwendung
+verwendet weiterhin dieselbe App-ID.
+
+Der Linux-Runner prüft das gebaute `.deb` mit APT und dpkg. Er verifiziert
+die installierte Datei anhand des Hashes ihres Gegenstücks im Paket, startet das native
+Verbindungsfenster auf einem virtuellen Display und prüft die Entfernung
+von Programmdatei und Startmenüeintrag. Der Nachweis steht im
+Artefakt `linux-installer-check.json`.
+
+Beim manuellen Workflow-Start aktiviert die zusätzliche Eingabe
+`legacy_deb_sha256` den Paketwechsel und Rückweg mit dem Linux-Artefakt aus
+dem angegebenen Main-Lauf. Zwei Testdateien in isolierten
+XDG-Anwendungsordnern belegen den Datenerhalt. Produktive Anmeldungen,
+AppImage-Installation, automatische Updates und Geräteabnahme
+benötigen eigene Nachweise.
+
+### macOS-Paket und Wechsel von BACH Ocean zu OpenOcean
+
+Der macOS-Runner hängt die zum Commit gehörende `.dmg` schreibgeschützt
+ein und kopiert die Anwendung in einen frischen, temporären
+Anwendungsordner. Er prüft App-ID, Version, ausführbaren Einstieg und
+Dateihash, startet die installierte App und liest ihr sichtbares Fenster
+über die WindowServer-Metadaten zurück. Anschließend entfernt er das
+Testbundle. Der Nachweis steht in `macos-installer-check.json`.
+
+Beim manuellen Workflow-Start aktiviert `legacy_dmg_sha256` zusätzlich
+den Wechsel von BACH Ocean 0.2.38 zu OpenOcean und den Rückweg. Der Test
+startet zuerst die neue App und entfernt danach das alte Bundle. Zwei
+synthetische Dateien im temporären Anwendungsprofil bleiben erhalten.
+Der Test erteilt keine Bildschirmaufnahmeberechtigung. Signierung,
+Notarisierung, Anmeldung und Geräteabnahme bleiben separate Schritte.
+
+### Signierte In-App-Updates
+
+Über **Desktop-App aktualisieren** im Anschlussfenster prüft die App den
+festen HTTPS-Kanal in GitHub Releases. Bei einem Angebot zeigt sie die
+Version an. Erst der separate Klick auf **Update installieren** löst den
+Download aus. Der Tauri-Updater prüft die Dateisignatur und die Bindung
+an die angezeigte Version vor der Installation. macOS und Linux zeigen
+nach bestätigter Installation einen Hinweis auf den Neustart.
+
+Die Standardbuilds tragen keinen Produktionsschlüssel. Eine freigegebene
+Release-Konfiguration muss den öffentlichen Tauri-Schlüssel einbetten,
+die Update-Artefakte erzeugen und das passende `latest.json` bereitstellen.
+Der private Schlüssel gehört ausschließlich in die kontrollierte
+Signierumgebung. Die Signatur muss die jeweilige App-Version binden.
+Die CI verifiziert geänderte Bytes und eine abweichende Versionsangabe
+in einem Signaturtest. Ein manuell gestarteter CI-Lauf mit fest vorgegebenem
+BACH-Ocean-0.2.38-DMG prüft auf einem GitHub-gehosteten Mac zusätzlich die
+Installation des Updates auf 0.2.40. Der Tauri-Updater lädt das mit einem
+kurzlebigen Testschlüssel signierte App-Archiv über lokales HTTPS. Der
+Lauf prüft beide Fehlerfälle, den sichtbaren App-Start nach dem Update
+und den Erhalt einer Testdatei im Benutzerprofil. Mit dem exakt vorgegebenen
+AppImage aus demselben Altbuild prüft CI unter Linux dieselben Fälle, den
+Start beider AppImages unter Xvfb und die erhaltenen Ausführungsrechte.
+Das Debian-Paket hat einen eigenen APT-Installations- und Migrationstest.
+Unter Windows prüft der manuell gestartete Lauf zusätzlich den signierten
+NSIS-Updatepfad. Er baut aus denselben Quellen einen OpenOcean-Installer
+mit der Testversion 0.2.39, damit der Paketname beim Update unverändert
+bleibt. Er kontrolliert den Installationspfad, die registrierte Version,
+den automatischen Neustart der aktualisierten App durch NSIS und den
+Erhalt beider Profildateien. Nach der Bestätigung installiert NSIS das
+Windows-Update ohne weiteren Dialog. Der Test beobachtet das Fenster des
+neu gestarteten Prozesses am ursprünglichen Installationspfad.
+[Tauri-Updater](https://v2.tauri.app/plugin/updater/)
+
+### Drei Kernseiten im nativen Fenster
+
+Der Windows-CI-Installer startet die installierte Anwendung. Der Test
+öffnet Dashboard, Aufgaben und Running in deren WebView2 mit dem
+Web-Build desselben Commits. Er vergleicht alle gebauten HTML-Seiten
+mit dem Seitenvertrag und prüft die SHA-256-Werte der ausgelieferten
+Dateien. Eine lokale, schreibgeschützte Test-API liefert synthetische
+Aufgaben und einen einsatzbereiten Worker. Der Test prüft den Aufgabenfilter,
+die Agentensuche in Running, sichtbare Überschriften sowie das saubere Beenden
+der App. Das CI-Artefakt enthält Bilder der drei Ansichten.
+
+Unter Linux läuft derselbe Seitendurchgang in der aus dem Debian-Paket
+installierten App. WebKitWebDriver steuert deren eingebettetes WebKitGTK
+auf Xvfb. Der Fenstermanager schließt erst das Backend-Fenster und dann
+das wieder sichtbare Anschlussfenster. Das Artefakt dokumentiert die
+drei Ansichten und das anschließende Prozessende.
+
+Für macOS baut CI zusätzlich ein eigenes App-Bundle mit dem Cargo-Feature
+`macos-native-smoke`. Dieser Build öffnet dieselben drei Seiten aus dem
+gleichen Web-Build in WKWebView, prüft Aufgabenfilter und Agentensuche
+und beendet die App über ihre Fenster. CI zeichnet das Ergebnis und
+die getrennten Binärprüfsummen auf. Der reguläre DMG- und Updatertest
+läuft mit dem normalen Kandidaten vor diesem Zusatzbuild.
 
 ## Offene vollständige Abnahme
 

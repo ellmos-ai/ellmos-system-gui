@@ -45,8 +45,21 @@ async function post(url, body, signal) {
   return data ?? {};
 }
 
-export async function sendChatMessage(prompt, chatId, {signal} = {}) {
-  const data = await post('/api/chat-control/chat', {prompt, chat_id: chatId}, signal);
+export async function sendChatMessage(prompt, chatId, {signal, agentId, onReadiness} = {}) {
+  const profile = /^agent:([1-9][0-9]*):/.exec(chatId);
+  const boundAgentId = agentId ?? (profile ? Number(profile[1]) : undefined);
+  const body = {prompt, chat_id: chatId};
+  if (boundAgentId !== undefined) body.agent_id = boundAgentId;
+  if (typeof onReadiness === 'function') {
+    const params = new URLSearchParams({chat_id: chatId});
+    if (boundAgentId !== undefined) params.set('agent_id', String(boundAgentId));
+    try {
+      const response = await fetch('/api/chat-control/readiness?' + params, {signal});
+      const readiness = await response.json();
+      if (response.ok && readiness && typeof readiness === 'object') onReadiness(readiness);
+    } catch { /* The optional observation never replaces the authoritative POST gate. */ }
+  }
+  const data = await post('/api/chat-control/chat', body, signal);
   const answer = typeof data.answer === 'string' ? data.answer.trim() : '';
   if (!answer) throw new ChatSendError('empty', 200, '');
   return answer;
@@ -55,11 +68,38 @@ export async function sendChatMessage(prompt, chatId, {signal} = {}) {
 export const forkSession = (chatId, snapshotId, {signal} = {}) =>
   post('/api/chat-control/fork', {chat_id: chatId, snapshot_id: snapshotId}, signal);
 
-export function resumeWorker(snapshotId, workerId, {signal, prompt} = {}) {
-  if (!WORKER_RE.test(workerId)) return Promise.reject(new Error('Ungültige Worker-Kennung.'));
+export async function resumeWorker(snapshotId, workerId, {signal, prompt} = {}) {
+  if (!Number.isSafeInteger(snapshotId) || snapshotId < 1 || snapshotId > 2147483647) {
+    throw new Error('Ungültige Dialogkennung.');
+  }
+  if (typeof workerId !== 'string' || !WORKER_RE.test(workerId)) throw new Error('Ungültige Worker-Kennung.');
   const body = {worker_id: workerId};
   if (typeof prompt === 'string' && prompt.trim()) body.prompt = prompt.trim();
-  return post(`/api/agent-history/sessions/${snapshotId}/resume`, body, signal);
+  const receipt = await post(`/api/agent-history/sessions/${snapshotId}/resume`, body, signal);
+  if (receipt.ok !== true || receipt.action !== 'resume' || receipt.snapshot_id !== snapshotId
+      || receipt.worker_id !== workerId || receipt.start?.start_acknowledged !== true) {
+    throw new ChatSendError('unconfirmed');
+  }
+  return receipt;
+}
+
+export function describeWorkerResume(receipt, name) {
+  const start = receipt.start;
+  const label = `Worker „${name}“`;
+  const states = {running: 'läuft', stopping: 'wird angehalten', stopped: 'ist angehalten',
+    paused: 'ist pausiert', idle: 'ist inaktiv', expired: 'hat eine abgelaufene Lease'};
+  const state = start.runtime_state;
+  if (start.runtime_readback === 'available' && start.worker?.id === receipt.worker_id
+      && start.worker.status === state && Object.hasOwn(states, state)) {
+    return `Start mit Übergabezettel bestätigt. ${label} ${states[state]}.`;
+  }
+  return `Start mit Übergabezettel für ${label} bestätigt. Der aktuelle Laufstatus ist noch nicht bestätigt.`;
+}
+
+export function describeWorkerResumeError(error) {
+  const status = error.status ? ` (HTTP ${error.status})` : '';
+  const reason = error.reason ? ` – ${error.reason}` : '';
+  return `Fortsetzung des Workers konnte nicht bestätigt werden${status}${reason}.`;
 }
 
 export function describeSendError(error) {

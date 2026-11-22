@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createGovernanceRequest} from '../src/lib/governance-request.mjs';
-import {parseRegistry,parseEffective,parseCapabilities,describeFailure,parsePolarisStatus,describePolarisWriteConflict} from '../src/lib/governance-readers.mjs';
+import {registryQuery,effectiveQuery,parseRegistry,parseEffective,parseCapabilities,describeFailure,parsePolarisStatus,describePolarisWriteConflict} from '../src/lib/governance-readers.mjs';
 const URL='/api/governance/policy-registry';
 const entry=()=>({id:'p1',kind:'policy',extension:{nested:['kept']}});
 const registry=(tag='current')=>({schema:'bach.policy-registry.v1',availability:'available',entries:[entry()],count:1,registry_version:tag,provider:{id:'policy-registry',extra:tag},extension:{tag,list:[{unknown:true}]}});
@@ -10,6 +10,38 @@ const deferred=()=>{let resolve,reject;const promise=new Promise((yes,no)=>{reso
 const client=()=>{const states=[];return {states,reader:createGovernanceRequest(s=>states.push(s))};};
 const last=states=>states.at(-1);
 const cleared=s=>{assert.equal(s.model,null);assert.equal(s.payload,null);};
+
+// BACH governance_registry.py accepts 256/256/512 Unicode code points.
+// Only the registry route accepts kind.
+const codePoint = '\u{1F30A}';
+const limits = {scope: 256, consumer: 256, query: 512};
+const filtersAtLimit = Object.fromEntries(Object.entries(limits).map(([key, limit]) => [key, codePoint.repeat(limit)]));
+for (const [path, buildQuery, parse, acceptsKind] of [
+  [URL, registryQuery, parseRegistry, true],
+  ['/api/governance/effective-policy', effectiveQuery, parseEffective, false],
+]) {
+  test(path + ' sends all supported parameters at the BACH limit and rejects overflow', async () => {
+    const {states, reader} = client();
+    const query = buildQuery({...filtersAtLimit, kind: 'decision-candidate'});
+    const expected = {...filtersAtLimit};
+    if (acceptsKind) expected.kind = 'decision-candidate';
+    const fixture = {...registry(), effective: {selected: entry(), candidate_ids: ['p1']}};
+    let outgoing;
+    await reader.load(path + '?' + query, parse, async (requestUrl, options) => {
+      outgoing = {requestUrl, method: options.method};
+      return response(fixture);
+    });
+    const requested = new globalThis.URL(outgoing.requestUrl, 'http://fixture.invalid');
+    assert.equal(requested.pathname, path);
+    assert.deepEqual(Object.fromEntries(requested.searchParams), expected);
+    assert.equal(outgoing.method, 'GET');
+    assert.equal(last(states).state, 'ok');
+    for (const key of Object.keys(limits)) {
+      assert.throws(() => buildQuery({...filtersAtLimit, [key]: filtersAtLimit[key] + codePoint}), new RegExp(key));
+    }
+    if (acceptsKind) assert.throws(() => buildQuery({...filtersAtLimit, kind: 'decision-candidate-extra'}), /kind/);
+  });
+}
 
 test('success preserves full registry and effective payloads including unknown fields',async()=>{
  const {states,reader}=client(),raw=registry();
@@ -120,6 +152,25 @@ test('optional capability failure never clears independent registry success',asy
  pending.resolve(response({detail:'private fixture diagnostic'},503));await load;
  assert.equal(last(cap.states).state,'unavailable');assert.equal(last(cap.states).failure.detail,null);
  assert.strictEqual(last(reg.states),settled);assert.equal(reg.states.length,count);assert.equal(settled.state,'ok');
+});
+
+test('BACH kit verification is preserved independently of route and provider availability', async () => {
+  for (const [verified, installed, installedFilesVerified, count] of [
+    [false, false, false, 0],
+    [false, true, false, 51],
+    [false, true, true, 50],
+    [true, true, true, 51],
+  ]) {
+    const {states, reader} = client();
+    const kit = {verified, installed, installed_files_verified: installedFilesVerified, dist_page_count: count};
+    const policy = {adapter_registered: true, available: null, runtime_verified: false};
+    const payload = {schema: 'ellmos.gui.capabilities.v1', kit, modules: {'policy-registry': policy}};
+    await reader.load('/api/gui/capabilities', parseCapabilities, async () => response(payload), () => 'ok');
+    assert.equal(last(states).state, 'ok');
+    assert.deepEqual(last(states).model.kit, kit);
+    assert.deepEqual(last(states).model.policy, policy);
+    assert.deepEqual(last(states).payload, payload);
+  }
 });
 
 test('backslash URL cannot escape the relative endpoint origin',async()=>{

@@ -17,10 +17,26 @@ export function blueprintState(blueprint) {
 export function executionSettings(blueprint, fallback = {}) {
   return {...fallback, ...(blueprint.contractus?.execution || {}), ...(blueprint.instance || {})};
 }
+export function modelBindingMatches(saved, sent) {
+  if (saved?.backend !== sent.backend || saved?.model !== sent.model) return false;
+  const savedFallbacks = saved?.model_fallbacks;
+  if (!Object.hasOwn(sent, "model_fallbacks")) return savedFallbacks === undefined;
+  return Array.isArray(savedFallbacks) && savedFallbacks.length === sent.model_fallbacks.length
+    && sent.model_fallbacks.every((target, index) => target?.backend === savedFallbacks[index]?.backend
+      && target?.model === savedFallbacks[index]?.model);
+}
 export function instanceSettings(blueprint, core) {
-  const fallback = core?.agents?.find(slot => slot.id === "buddha_chat") || {};
+  const defaults = {...core?.agents?.find(slot => slot.id === "buddha_chat")};
+  delete defaults.model_fallbacks;
   const fresh = core?.agents?.find(slot => slot.blueprint_id === blueprint.id);
-  return {...executionSettings({...blueprint, instance:null}, fallback), ...(fresh || {})};
+  const settings = {...executionSettings({...blueprint, instance:null}, defaults), ...(fresh || {})};
+  if (fresh && !Object.hasOwn(fresh, "model_fallbacks")) delete settings.model_fallbacks;
+  return settings;
+}
+function showModelFallbacks(note, fallbacks) {
+  note.hidden = !Array.isArray(fallbacks) || fallbacks.length === 0;
+  note.textContent = note.hidden ? "" : "Ausweichmodelle in dieser Reihenfolge: " +
+    fallbacks.map(target => target?.backend + " · " + target?.model).join(", ");
 }
 export function startLabel(slot) {
   const remoteModel = /:cloud(?:\s|$)/i.test([slot.model,slot.resolved_model].filter(Boolean).join(" "));
@@ -148,7 +164,8 @@ function initializeStudio() {
   }
   function editorPayload() {
     const previous=state.edit||state.copy||{};
-    const execution={backend:$("bp-backend").value,model:$("bp-model").value.trim(),mode:$("bp-mode").value,
+    const storedFallbacks=previous.contractus?.execution?.model_fallbacks;
+    const execution={...(Array.isArray(storedFallbacks)?{model_fallbacks:storedFallbacks}:{}),backend:$("bp-backend").value,model:$("bp-model").value.trim(),mode:$("bp-mode").value,
       think:$("bp-think").checked,include_system_prompt:$("bp-include-system").checked,
       custom_system_prompt:$("bp-system").value,avatar:state.avatar,symbol:state.symbol,
       pause_after:$("bp-pause-basis").value==="none"?0:Number($("bp-pause-after").value),pause_minutes:Number($("bp-pause-minutes").value),pause_basis:$("bp-pause-basis").value==="tasks"?"tasks":"runs"};
@@ -183,6 +200,7 @@ function initializeStudio() {
     $("bp-system").value=config.custom_system_prompt||"";$("bp-system").disabled=!$("bp-include-system").checked;
     $("bp-system-default").textContent=state.prompts?.prompts?.system_default?.effective||"Systemvorlage derzeit nicht erreichbar.";
     choose($("bp-backend"),config.backend||"ollama");$("bp-model").value=config.model||"";
+    showModelFallbacks($("bp-model-fallbacks"),bp.contractus?.execution?.model_fallbacks);
     choose($("bp-mode"),config.mode||"safe");$("bp-think").checked=config.think!==false;
     $("bp-turns").value=bp.contractus?.turns??bp.contractus?.max_turns??20;
     $("bp-pause-after").value=config.pause_after??5;$("bp-pause-minutes").value=config.pause_minutes??1;
@@ -216,6 +234,7 @@ function initializeStudio() {
     const config=instanceSettings(bp,core);state.instanceConfig=config;
     $("instance-backend").replaceChildren(...[...$("bp-backend").options].map(option=>new Option(option.text,option.value)));
     choose($("instance-backend"),config.backend||"ollama");$("instance-model").value=config.model||"";
+    showModelFallbacks($("instance-model-fallbacks"),config.model_fallbacks);
     choose($("instance-mode"),config.mode||"safe");$("instance-description").textContent=bp.title||bp.name;
     notify("instance-status","");$("instance-editor").showModal();loadModels("instance").catch(error=>notify("instance-status",error.message,true));
   }
@@ -291,6 +310,8 @@ function initializeStudio() {
     try{
       const saved=await post("/api/agent-studio/blueprints",payload);await loadData();
       const readback=byId(saved.id);if(!readback||Number(readback.version)!==payload.expected_version+1||readback.persona_prompt!==payload.persona_prompt||!colorReadbackMatches(readback,payload.color))throw new Error("Gespeicherte Version nicht bestätigt. Entwurf bleibt geöffnet.");
+      if(!modelBindingMatches(readback.contractus?.execution,payload.contractus.execution))
+        throw new Error("Gespeicherte Modellbindung nicht bestätigt. Entwurf bleibt geöffnet.");
       if(payload.derived_from&&(!readback.derived_from||
          readback.derived_from.blueprint_id!==payload.derived_from.blueprint_id||
          readback.derived_from.version!==payload.derived_from.version||
@@ -306,7 +327,12 @@ function initializeStudio() {
     try{
       const result=await post("/api/agent-studio/blueprints/"+bp.id+"/materialize",{expected_version:bp.version,configuration_version:state.instanceVersion,execution});
       if(result.worker_started!==false||result.slot_id!=="system-blueprint-"+bp.id)throw new Error("Instanziierung nicht bestätigt.");
-      close("instance-editor");await loadData();notify("studio-status","Steckplatz eingerichtet · "+(result.is_living===true?"Living bereit":"Runtime-Status wird unter Living & Running geprüft"));
+      const observed=await api("/api/system/core-agents");
+      const slot=observed.agents?.find(item=>item.id===result.slot_id);
+      if(typeof result.configuration_version!=="string"||observed.configuration_version!==result.configuration_version||
+         !modelBindingMatches(slot,{...execution,model_fallbacks:execution.model_fallbacks??[]}))
+        throw new Error("Modellbindung des Steckplatzes nicht bestätigt. Bitte aktualisieren.");
+      close("instance-editor");await loadData();notify("studio-status","Steckplatz eingerichtet · "+(slot.living===true?"Living bereit":"Runtime-Status wird unter Living & Running geprüft"));
     }finally{$("instance-save").disabled=false;}
   },"instance-status");
   handle("studio-prompts","click",async()=>{

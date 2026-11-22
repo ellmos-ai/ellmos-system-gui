@@ -107,6 +107,12 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/chat-client.mjs#resumeWorker"
+   },
+   {
+    "method": "GET",
+    "path": "/api/chat-control/readiness",
+    "required": false,
+    "query": "chat_id,agent_id"
    }
   ],
   "/connectors": [],
@@ -431,6 +437,11 @@
    {
     "method": "POST",
     "path": "/api/routines",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/summary",
     "required": false
    }
   ],
@@ -886,6 +897,16 @@
     "path": "/api/system/worker-policy",
     "required": false
    },
+    {
+      "method": "GET",
+      "path": "/api/system/abort-notice-settings",
+      "required": false
+    },
+    {
+      "method": "PUT",
+      "path": "/api/system/abort-notice-settings",
+      "required": false
+    },
    {
     "method": "GET",
     "path": "/api/system/cluster-cockpit",
