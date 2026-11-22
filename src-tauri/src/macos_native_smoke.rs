@@ -15,7 +15,7 @@ struct Inputs {
     worker: String,
 }
 
-fn evaluate(window: &WebviewWindow, script: &str) -> Result<bool, String> {
+fn evaluation(window: &WebviewWindow, script: &str) -> Result<Option<String>, String> {
     let (sender, receiver) = mpsc::channel();
     window
         .eval_with_callback(script, move |value| {
@@ -23,12 +23,16 @@ fn evaluate(window: &WebviewWindow, script: &str) -> Result<bool, String> {
         })
         .map_err(|error| error.to_string())?;
     // Wry can defer script evaluation while a document is still loading.
-    let Ok(value) = receiver.recv_timeout(Duration::from_secs(3)) else {
+    Ok(receiver
+        .recv_timeout(Duration::from_secs(3))
+        .ok()
+        .filter(|value| !value.is_empty() && value != "null"))
+}
+
+fn evaluate(window: &WebviewWindow, script: &str) -> Result<bool, String> {
+    let Some(value) = evaluation(window, script)? else {
         return Ok(false);
     };
-    if value.is_empty() || value == "null" {
-        return Ok(false);
-    }
     serde_json::from_str(&value)
         .map_err(|error| format!("Unexpected WKWebView response {value}: {error}"))
 }
@@ -90,13 +94,31 @@ fn record_page(
 }
 
 fn walk(app: &AppHandle, connection: &WebviewWindow, inputs: Inputs) -> Result<(), String> {
+    let url = connection.url().ok();
+    eprintln!(
+        "WKWebView smoke: connection window visible={}, url={url:?}",
+        native_visible(connection)?
+    );
+    if !native_visible(connection)? {
+        connection.show().map_err(|error| error.to_string())?;
+    }
+    if !url.as_ref().is_some_and(super::local_document) {
+        connection
+            .navigate(Url::parse("tauri://localhost/").map_err(|error| error.to_string())?)
+            .map_err(|error| error.to_string())?;
+    }
     wait_for("the visible bundled connection form", || {
         Ok(native_visible(connection)?
-            && evaluate(
-                connection,
-                "Boolean(document.querySelector('#backend-url'))",
-            )?)
+            && evaluate(connection, "Boolean(document.querySelector('#backend-url'))")?)
+    })
+    .map_err(|error| {
+        let state = evaluation(
+            connection,
+            "({url:location.href,ready:document.readyState, title:document.title, form:!!document.querySelector('#backend-url')})",
+        );
+        format!("{error}. WKWebView state: {state:?}; URL: {:?}", connection.url())
     })?;
+    eprintln!("WKWebView smoke: bundled connection form ready");
     action(connection, &format!(
         "(() => {{ document.querySelector('#backend-url').value = {}; document.querySelector('#connect').click(); return true; }})()",
         serde_json::json!(inputs.origin)
@@ -114,6 +136,7 @@ fn walk(app: &AppHandle, connection: &WebviewWindow, inputs: Inputs) -> Result<(
             None => Ok(false),
         }
     })?;
+    eprintln!("WKWebView smoke: native backend window visible");
     let backend = app
         .get_webview_window(super::BACKEND)
         .ok_or("Backend window disappeared")?;
