@@ -637,7 +637,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     :global(.agent-session-form-actions) { display:flex; align-items:center; justify-content:flex-end; gap:.5rem; flex-wrap:wrap; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';import * as AgentTile from '../../lib/agent-tile.mjs';import * as UiIcons from '../../lib/ui-icons.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachAgentTile=AgentTile;window.BachUiIcons=UiIcons;import {sendChatMessage,describeSendError,forkSession,resumeWorker,newChatId,ChatSendError} from '../../lib/chat-client.mjs';import {loadSessionPage,loadSession} from '../../lib/transcript-history.mjs';window.BachProviderRequestStatus=providerRequestStatusText;window.BachChatModalTools={sendChatMessage,describeSendError,forkSession,resumeWorker,newChatId,ChatSendError,loadSessionPage,loadSession};</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';import * as AgentTile from '../../lib/agent-tile.mjs';import * as UiIcons from '../../lib/ui-icons.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachAgentTile=AgentTile;window.BachUiIcons=UiIcons;import {sendChatMessage,describeSendError,forkSession,resumeWorker,describeWorkerResume,describeWorkerResumeError,newChatId,ChatSendError} from '../../lib/chat-client.mjs';import {loadSessionPage,loadSession} from '../../lib/transcript-history.mjs';window.BachProviderRequestStatus=providerRequestStatusText;window.BachChatModalTools={sendChatMessage,describeSendError,forkSession,resumeWorker,describeWorkerResume,describeWorkerResumeError,newChatId,ChatSendError,loadSessionPage,loadSession};</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -2562,20 +2562,24 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       const tools = window.BachChatModalTools;
       const input = document.getElementById('agent-session-input');
       const v = agentModalState.viewing;
-      if (!tools || !v || !agentModalState.slotId) return;
+      const slotId = agentModalState.slotId;
+      if (!tools || !v || !slotId) return;
+      const name = agentModalState.agent?.name || slotId;
+      const epoch = agentModalState.epoch;
+      const isCurrent = () => agentModalState.viewing === v && agentModalState.epoch === epoch
+        && document.getElementById('agent-session-modal')?.open;
       const hint = input ? input.value.trim() : '';
-      setAgentModalStatus('Worker ' + agentModalState.slotId + ' wird mit Session #' + v.id + ' gestartet …');
+      setAgentModalStatus('Worker ' + slotId + ' wird mit Session #' + v.id + ' gestartet …');
       try {
-        await tools.resumeWorker(v.id, agentModalState.slotId, {prompt: hint});
-        if (input && hint) input.value = '';
-        setAgentModalStatus('Worker „' + (agentModalState.agent?.name || agentModalState.slotId) + '“ wurde mit dem Übergabezettel gestartet.');
+        const receipt = await tools.resumeWorker(v.id, slotId, {prompt: hint});
+        if (isCurrent()) {
+          if (input && hint && input.value.trim() === hint) input.value = '';
+          setAgentModalStatus(tools.describeWorkerResume(receipt, name));
+        }
         loadBackgroundWorkers();
         loadCoreSlots();
       } catch (err) {
-        const msg = err instanceof tools.ChatSendError
-          ? 'Worker nicht gestartet' + (err.status ? ' (HTTP ' + err.status + ')' : '') + (err.reason ? ': ' + err.reason : '')
-          : (err.message || String(err));
-        setAgentModalStatus(msg, true);
+        if (isCurrent()) setAgentModalStatus(tools.describeWorkerResumeError(err), true);
       }
     }
 
