@@ -103,6 +103,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       <h3 id="local-agent-ready-title">🤖 Deine Agenten</h3>
       <p class="section-description">Konfigurierte Agentenprofile in Ruhestellung. Die Modellbindung steht direkt beim Agentenprofil.</p>
       <p id="worker-status-summary" role="status" aria-live="polite" style="font-size:0.78rem;color:var(--text-muted);margin:0.25rem 0 0.65rem 0;">Workerstatus wird geprüft…</p>
+      <p id="worker-action-feedback" role="status"></p>
       <div id="local-core-agent-cards" class="core-grid agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:0.85rem;margin-bottom:0.85rem;"></div>
       <div id="ready-agents-grid" class="core-grid agent-overview-container" data-agent-overview-lane="ready" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:0.85rem;">
         <p class="loading-state" style="grid-column:1/-1;text-align:center;padding:1.25rem;">Prüfe einsatzbereite Agenten…</p>
@@ -636,7 +637,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     :global(.agent-session-form-actions) { display:flex; align-items:center; justify-content:flex-end; gap:.5rem; flex-wrap:wrap; }
   </style>
 
-  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';import * as AgentTile from '../../lib/agent-tile.mjs';import * as UiIcons from '../../lib/ui-icons.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachAgentTile=AgentTile;window.BachUiIcons=UiIcons;import {sendChatMessage,describeSendError,forkSession,resumeWorker,newChatId,ChatSendError} from '../../lib/chat-client.mjs';import {loadSessionPage,loadSession} from '../../lib/transcript-history.mjs';window.BachProviderRequestStatus=providerRequestStatusText;window.BachChatModalTools={sendChatMessage,describeSendError,forkSession,resumeWorker,newChatId,ChatSendError,loadSessionPage,loadSession};</script>
+  <script>import '../../lib/agent-avatar-browser.mjs';import '../../lib/ticket-symbol.mjs';import '../../lib/worker-queue-browser.mjs';import '../../lib/worker-selection-policy.mjs';import '../../scripts/agent-color.mjs';import * as AgentOverview from '../../lib/agent-overview.mjs';import {providerRequestStatusText} from '../../lib/provider-request-status.mjs';import * as TaskReturns from '../../lib/task-returns.mjs';import * as AgentTile from '../../lib/agent-tile.mjs';import * as UiIcons from '../../lib/ui-icons.mjs';window.BachTaskReturns=TaskReturns;window.BachAgentOverview=AgentOverview;window.BachAgentTile=AgentTile;window.BachUiIcons=UiIcons;import {sendChatMessage,describeSendError,forkSession,resumeWorker,describeWorkerResume,describeWorkerResumeError,newChatId,ChatSendError} from '../../lib/chat-client.mjs';import {loadSessionPage,loadSession} from '../../lib/transcript-history.mjs';window.BachProviderRequestStatus=providerRequestStatusText;window.BachChatModalTools={sendChatMessage,describeSendError,forkSession,resumeWorker,describeWorkerResume,describeWorkerResumeError,newChatId,ChatSendError,loadSessionPage,loadSession};</script>
   <script is:inline>
     function escapeHtml(t) {
       if (t == null) return '';
@@ -1186,6 +1187,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
 
     let coreRefreshEpoch = 0;
     let workerRefreshEpoch = 0;
+    let workerActionEpoch = 0;
     let coreCatalog = {};
     let coreEditorAgent = null;
     let coreEditorVersion = null;
@@ -1808,11 +1810,15 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     }
 
     async function runWorkerAction(workerId, action, generation, taskBinding) {
-      const summary = document.getElementById('worker-status-summary');
+      const feedback = document.getElementById('worker-action-feedback');
       const safeActions = new Set(['start', 'pause', 'stop', 'handoff', 'decompose']);
       if (!safeActions.has(action)) return;
       workerRefreshEpoch += 1;
-      summary.textContent = 'Aktion wird angefordert…';
+      const epoch = ++workerActionEpoch;
+      const setFeedback = (message) => {
+        if (epoch === workerActionEpoch) feedback.textContent = message;
+      };
+      setFeedback('Aktion wird angefordert…');
       try {
         const response = await fetch(`/api/system/workers/${encodeURIComponent(workerId)}/${action}`, {
           method: 'POST', headers: {'Content-Type': 'application/json'},
@@ -1822,20 +1828,20 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const data = await response.json();
         if (!response.ok || data.ok !== true) throw new Error(data.detail || 'Aktion nicht bestätigt');
         if (action === 'decompose') {
-          summary.textContent = data.receipt?.state === 'confirmed'
+          setFeedback(data.receipt?.state === 'confirmed'
             ? 'Teilaufgabenanlage durch den Lead bestätigt.'
             : data.receipt?.state === 'error' ? 'Zerlegung ohne bestätigte Teilaufgaben beendet.'
             : data.receipt?.state === 'cancelled' ? 'Zerlegungsanfrage abgebrochen.'
-            : 'Zerlegung angefordert · Bestätigung folgt im Workerstatus.';
+            : 'Zerlegung angefordert · Bestätigung folgt im Workerstatus.');
         } else if (action === 'handoff') {
-          summary.textContent = data.receipt?.state === 'confirmed'
+          setFeedback(data.receipt?.state === 'confirmed'
             ? 'Kontextübergabe durch die Laufzeit bestätigt.'
-            : 'Kontextübergabe angefordert · Bestätigung folgt im Workerstatus.';
+            : 'Kontextübergabe angefordert · Bestätigung folgt im Workerstatus.');
         } else {
-          summary.textContent = 'Aktion bestätigt; Laufstatus wird neu gelesen.';
+          setFeedback('Aktion bestätigt. Der Laufstatus wird neu gelesen.');
         }
       } catch (error) {
-        summary.textContent = error.message;
+        setFeedback(error.message);
       }
       await loadBackgroundWorkers();
     }
@@ -2556,20 +2562,24 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       const tools = window.BachChatModalTools;
       const input = document.getElementById('agent-session-input');
       const v = agentModalState.viewing;
-      if (!tools || !v || !agentModalState.slotId) return;
+      const slotId = agentModalState.slotId;
+      if (!tools || !v || !slotId) return;
+      const name = agentModalState.agent?.name || slotId;
+      const epoch = agentModalState.epoch;
+      const isCurrent = () => agentModalState.viewing === v && agentModalState.epoch === epoch
+        && document.getElementById('agent-session-modal')?.open;
       const hint = input ? input.value.trim() : '';
-      setAgentModalStatus('Worker ' + agentModalState.slotId + ' wird mit Session #' + v.id + ' gestartet …');
+      setAgentModalStatus('Worker ' + slotId + ' wird mit Session #' + v.id + ' gestartet …');
       try {
-        await tools.resumeWorker(v.id, agentModalState.slotId, {prompt: hint});
-        if (input && hint) input.value = '';
-        setAgentModalStatus('Worker „' + (agentModalState.agent?.name || agentModalState.slotId) + '“ wurde mit dem Übergabezettel gestartet.');
+        const receipt = await tools.resumeWorker(v.id, slotId, {prompt: hint});
+        if (isCurrent()) {
+          if (input && hint && input.value.trim() === hint) input.value = '';
+          setAgentModalStatus(tools.describeWorkerResume(receipt, name));
+        }
         loadBackgroundWorkers();
         loadCoreSlots();
       } catch (err) {
-        const msg = err instanceof tools.ChatSendError
-          ? 'Worker nicht gestartet' + (err.status ? ' (HTTP ' + err.status + ')' : '') + (err.reason ? ': ' + err.reason : '')
-          : (err.message || String(err));
-        setAgentModalStatus(msg, true);
+        if (isCurrent()) setAgentModalStatus(tools.describeWorkerResumeError(err), true);
       }
     }
 

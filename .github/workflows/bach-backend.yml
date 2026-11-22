@@ -1,0 +1,39 @@
+name: BACH backend integration
+
+on:
+  pull_request:
+    paths:
+      - '.github/actions/prepare-bach-smoke/action.yml'
+      - '.github/workflows/bach-backend.yml'
+      - 'scripts/check-bach-backend.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bach-backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: ./.github/actions/prepare-bach-smoke
+        with:
+          github-token: ${{ github.token }}
+      - name: Install Chromium for Playwright
+        shell: bash
+        run: |
+          python -m pip install playwright
+          export PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/bach-playwright"
+          printf 'PLAYWRIGHT_BROWSERS_PATH=%s\n' "$PLAYWRIGHT_BROWSERS_PATH" >> "$GITHUB_ENV"
+          python -m playwright install --with-deps chromium
+      - name: Verify BACH pages, authenticated data and worker readback
+        run: python scripts/check-bach-backend.py .ci-bach "$BACH_SMOKE_ARCHIVE" "$RUNNER_TEMP/bach-readback"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bach-backend-readback
+          path: ${{ runner.temp }}/bach-readback
+          if-no-files-found: error

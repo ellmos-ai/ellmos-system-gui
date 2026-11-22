@@ -2,10 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {parseChatParams, newChatId, sendChatMessage, describeSendError, forkSession, resumeWorker,
-  isProblem, continueMode, ChatSendError} from '../src/lib/chat-client.mjs';
+  describeWorkerResume, describeWorkerResumeError, isProblem, continueMode, ChatSendError} from '../src/lib/chat-client.mjs';
 import {loadSessionPage} from '../src/lib/transcript-history.mjs';
 
 const json = (data, status = 200) => new Response(JSON.stringify(data), {status, headers: {'Content-Type': 'application/json'}});
+const resumeReceipt = (start = {}) => ({ok: true, action: 'resume', worker_id: 'worker-7', snapshot_id: 9,
+  start: {start_acknowledged: true, runtime_readback: 'available', runtime_state: 'running',
+    worker: {id: 'worker-7', status: 'running'}, ...start}});
 const withFetch = async (impl, body) => {
   const old = globalThis.fetch, calls = [];
   globalThis.fetch = async (url, options) => { calls.push({url, options}); return impl(url, options); };
@@ -65,14 +68,43 @@ test('fork and worker resume use the existing routes with the documented bodies'
     assert.equal(calls[0].url, '/api/chat-control/fork');
     assert.deepEqual(JSON.parse(calls[0].options.body), {chat_id: 'slot:buddha_chat:' + 'b'.repeat(32), snapshot_id: 9});
   });
-  await withFetch(() => json({ok: true, action: 'resume'}), async calls => {
-    await resumeWorker(9, 'worker-7');
+  await withFetch(() => json(resumeReceipt()), async calls => {
+    assert.deepEqual(await resumeWorker(9, 'worker-7'), resumeReceipt());
     assert.equal(calls[0].url, '/api/agent-history/sessions/9/resume');
     assert.deepEqual(JSON.parse(calls[0].options.body), {worker_id: 'worker-7'});
     await resumeWorker(9, 'worker-7', {prompt: 'Bitte weiter'});
     assert.deepEqual(JSON.parse(calls[1].options.body), {worker_id: 'worker-7', prompt: 'Bitte weiter'});
     await assert.rejects(resumeWorker(9, 'not a worker!'));
+    await assert.rejects(resumeWorker(0, 'worker-7'), /Dialogkennung/);
+    assert.equal(calls.length, 2);
   });
+});
+
+test('worker resume requires an acknowledgement for the exact snapshot and worker', async () => {
+  for (const response of [null, {ok: true}, {...resumeReceipt(), worker_id: 'worker-8'},
+    {...resumeReceipt(), snapshot_id: 8}, resumeReceipt({start_acknowledged: false})]) {
+    await withFetch(() => json(response), async () => {
+      await assert.rejects(resumeWorker(9, 'worker-7'), (error) => {
+        assert.equal(error.kind, 'unconfirmed');
+        assert.match(describeWorkerResumeError(error), /konnte nicht bestätigt werden/);
+        return true;
+      });
+    });
+  }
+});
+
+test('worker resume distinguishes the observed runtime state from a start acknowledgement', () => {
+  assert.match(describeWorkerResume(resumeReceipt(), 'Worker Sieben'), /„Worker Sieben“ läuft/);
+  const idle = resumeReceipt({runtime_state: 'idle', worker: {id: 'worker-7', status: 'idle'}});
+  assert.match(describeWorkerResume(idle, 'Worker Sieben'), /„Worker Sieben“ ist inaktiv/);
+  for (const uncertain of [resumeReceipt({runtime_readback: 'unavailable'}),
+    resumeReceipt({worker: {id: 'worker-8', status: 'running'}}),
+    resumeReceipt({worker: {id: 'worker-7', status: 'idle'}})]) {
+    const message = describeWorkerResume(uncertain, 'Worker Sieben');
+    assert.match(message, /Laufstatus ist noch nicht bestätigt/);
+    assert.doesNotMatch(message, /läuft/);
+  }
+  assert.match(describeWorkerResumeError(new ChatSendError('http', 409, 'Worker läuft bereits')), /HTTP 409.*Worker läuft bereits/);
 });
 
 test('a problem is a failed answer, three or more returns, or flapping', () => {

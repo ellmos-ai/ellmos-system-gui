@@ -1,6 +1,6 @@
 [package]
 name = "ellmos-system-gui-desktop"
-version = "0.2.40"
+version = "0.2.41"
 description = "Desktop consumer of the shared BACH and Ocean GUI"
 edition = "2021"
 license = "MIT"
@@ -12,10 +12,18 @@ tauri-build = { version = "=2.7.4", features = [] }
 [dependencies]
 tauri = { version = "=2.12.5", features = [] }
 tauri-plugin-single-instance = "=2.5.4"
+tauri-plugin-updater = { version = "=2.14.1", default-features = false, features = ["rustls-tls", "zip"] }
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
+[dev-dependencies]
+tauri = { version = "=2.12.5", features = ["test"] }
+
+[target.'cfg(any(target_os = "linux", target_os = "macos", windows))'.dev-dependencies]
+reqwest-updater = { package = "reqwest", version = "=0.13.5", default-features = false, features = ["rustls-no-provider"] }
+
 [features]
 default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
+macos-native-smoke = []
