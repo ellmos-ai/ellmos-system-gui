@@ -8,6 +8,7 @@ final class OceanDMGUITests: XCTestCase {
         let doneTask: String
         let workerCount: Int
         let output: String
+        let home: String
     }
 
     private func require(_ element: XCUIElement, _ message: String, in window: XCUIElement? = nil) throws -> XCUIElement {
@@ -29,7 +30,7 @@ final class OceanDMGUITests: XCTestCase {
         let input = try JSONDecoder().decode(Inputs.self, from: Data(contentsOf: configURL))
         let output = URL(fileURLWithPath: input.output, isDirectory: true)
         let app = XCUIApplication(url: URL(fileURLWithPath: input.application, isDirectory: true))
-        app.launchEnvironment = ["HOME": input.output, "CFFIXED_USER_HOME": input.output]
+        app.launchEnvironment = ["HOME": input.home, "CFFIXED_USER_HOME": input.home]
         app.launch()
 
         let connection = try require(app.windows["Ocean (BACH) verbinden"], "Installed connection window not found")

@@ -278,10 +278,12 @@ def check_macos_application(origin, worker_count, app, manifest, out, scratch):
     runner_temp = Path(os.environ["RUNNER_TEMP"]).resolve()
     assert app.resolve().is_relative_to(runner_temp)
     output = out.resolve()
+    home = scratch / "desktop-home"
+    home.mkdir()
     config = scratch / "ocean-test.json"
     config.write_text(json.dumps({
         "application": str(app.resolve()), "origin": origin, "openTask": OPEN_TASK,
-        "doneTask": DONE_TASK, "workerCount": worker_count, "output": str(output),
+        "doneTask": DONE_TASK, "workerCount": worker_count, "output": str(output), "home": str(home),
     }), encoding="utf-8")
     scripts = Path("scripts/macos-desktop-uitest").resolve()
     project = scratch / "OceanDMG.xcodeproj"
