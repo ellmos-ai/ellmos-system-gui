@@ -6,6 +6,7 @@ import re
 import shutil
 import signal
 import subprocess
+import sys
 import tempfile
 import time
 from contextlib import suppress
@@ -236,6 +237,14 @@ def main():
         window = start_window(PRODUCT, home)
         try:
             native_pages = verify_native_pages(home / "webview", commit)
+            bach_pages = None
+            if archive := os.environ.get("BACH_SMOKE_ARCHIVE"):
+                output = directory / "bach-native-smoke"
+                run(
+                    sys.executable, "scripts/check-bach-backend.py", ".ci-bach", archive,
+                    str(output), "--native", timeout=240,
+                )
+                bach_pages = json.loads((output / "result.json").read_text(encoding="utf-8"))
         finally:
             purge(PRODUCT)
         pin = os.environ.get("LEGACY_DEB_SHA256")
@@ -249,7 +258,7 @@ def main():
         "source_commit": commit, "run_id": int(run_id), "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
         "package": PRODUCT, "version": version, "deb_sha256": package[2], "installed_binary_sha256": package[3],
         "clean_install_start": window, "purged": True, "legacy_migration": migration,
-        "signed_appimage_update": signed, "native_pages": native_pages,
+        "signed_appimage_update": signed, "native_pages": native_pages, "bach_native_pages": bach_pages,
     }
     (directory / "linux-installer-check.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(receipt))
