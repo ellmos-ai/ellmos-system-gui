@@ -897,6 +897,16 @@
     "path": "/api/system/worker-policy",
     "required": false
    },
+    {
+      "method": "GET",
+      "path": "/api/system/abort-notice-settings",
+      "required": false
+    },
+    {
+      "method": "PUT",
+      "path": "/api/system/abort-notice-settings",
+      "required": false
+    },
    {
     "method": "GET",
     "path": "/api/system/cluster-cockpit",

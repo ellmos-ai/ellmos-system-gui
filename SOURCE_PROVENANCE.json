@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "f8e2ae35c413fa0dbb006b43dada12d4140642f1774f2f0614a22b32af98be93",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "116923af9f87fc3da6f70577e59e4dbd9658e6c33b7b3eaef663fd18eac3b2cf",
+    "public/page-reads.v1.json": "3e75a4338d82710902601bd565e4dc9ddf95dad30808932ea8970f55e8774b5b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -312,7 +312,7 @@
     "src/pages/routinen.astro": "a2e041430e5848a19429b15999ac6af86613eedf05de1c3112d239e74894e746",
     "src/pages/sensation.astro": "110ae810922ef21fe8aee85d370f296c860b005f1873f6bf79996d4e76bbfed0",
     "src/pages/sessions.astro": "bb515024c04451ca8b7e3b586350707a7da29db6dc5467c2172aca3ff87a8774",
-    "src/pages/settings.astro": "448cb74dd0f404c97b4984f9b7e2bfca4e8343f591822ecd3d6745bf531912e9",
+    "src/pages/settings.astro": "e47804f9e2a8fbad19e217c8211f803551ba1acf6576970dd2af4b7e79f6a1be",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
@@ -400,7 +400,9 @@
     "tests/fixtures/abort-visibility-backend.mjs": "f8d4dff945e49bf4fdac7614dccbd5a4d2104b247bdd75641bd61f36574c9c30",
     "src/lib/task-returns.mjs": "6799edd2abbd7c416fe79d998b2d0051b3d47d1dadcf8d15e537b0de6215cc21",
     "src/lib/worker-queue-ui.mjs": "27e0c12966fe6887aaf677764079d043df68bf1932b503ad6997640626b3caf4",
-    "tests/task-return-diagnostics.test.mjs": "b1412151e7d9f79d6459a6a981ce27923bb07292f01bedc5ba82f43d0122038f"
+    "tests/task-return-diagnostics.test.mjs": "b1412151e7d9f79d6459a6a981ce27923bb07292f01bedc5ba82f43d0122038f",
+    "src/components/AbortNoticeSettings.astro": "bfdf75290de7342cc0663c7b662ecd05e4957456a1e3b4206af90674ab4c3ca9",
+    "tests/abort-notice-settings.browser.test.mjs": "265e2d42036b275b1b7fcaed81f1a2823953e262b8d18963a6a40c7006f102cd"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -6128,6 +6130,32 @@
           "path": "tests/worker-queue.test.mjs",
           "previous_sha256": "4f8416e7e8b9c963fc6daa4ad139e70eab3fe9311c5a27b451f27e7293881d52",
           "sha256": "9a35203491037c61d905d4309c1e841239404fdc4b0eafb1b2a2649ffc48141f"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-22",
+      "summary": "PB-4: add device-authenticated abort-notice settings with version conflict handling and persisted readback.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "116923af9f87fc3da6f70577e59e4dbd9658e6c33b7b3eaef663fd18eac3b2cf",
+          "sha256": "3e75a4338d82710902601bd565e4dc9ddf95dad30808932ea8970f55e8774b5b"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "448cb74dd0f404c97b4984f9b7e2bfca4e8343f591822ecd3d6745bf531912e9",
+          "sha256": "e47804f9e2a8fbad19e217c8211f803551ba1acf6576970dd2af4b7e79f6a1be"
+        },
+        {
+          "path": "src/components/AbortNoticeSettings.astro",
+          "previous_sha256": null,
+          "sha256": "bfdf75290de7342cc0663c7b662ecd05e4957456a1e3b4206af90674ab4c3ca9"
+        },
+        {
+          "path": "tests/abort-notice-settings.browser.test.mjs",
+          "previous_sha256": null,
+          "sha256": "265e2d42036b275b1b7fcaed81f1a2823953e262b8d18963a6a40c7006f102cd"
         }
       ]
     }
