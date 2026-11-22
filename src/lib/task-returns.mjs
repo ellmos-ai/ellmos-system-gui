@@ -38,9 +38,118 @@ const FIXED = {
   quota_exceeded: ['provider', 'Anbieter-Kontingent erschöpft', 'Kontingent abwarten oder dem Worker ein anderes Modell geben.'],
   cloud_call_retry_exhausted: ['provider', 'Cloud-Aufruf nach mehreren Versuchen aufgegeben',
     'Anbieter und Netzwerkverbindung des Workers prüfen.'],
+  'project_lock:task_scope': ['task', 'Arbeitsbereich der Aufgabe gesperrt',
+    'Im Arbeitsbereich oder Zwilling der Aufgabe liegt eine Sperre (LOCK*.txt). Sperre prüfen oder die Aufgabe später erneut starten.'],
+  task_context_unavailable: ['task', 'Aufgabenkontext nicht bereit',
+    'Der Worker hat vor dem ersten Werkzeugaufruf keinen gültigen Korrekturkontext erhalten. Verlauf und Aufgaben-Snapshot prüfen.'],
+  total_deadline: ['task', 'Gesamtfrist der Aufgabe abgelaufen',
+    'Die maximale Gesamtlaufzeit dieses Durchlaufs ist abgelaufen. Aufgabe prüfen, ggf. teilen oder mit frischem Budget neu starten.'],
 };
+// Exact producer notes: a transition is evidence, but not an explanation of its cause.
+const RECORDED_RETURNS = {
+  reason_not_provided: ['unknown', 'Rückgabegrund nicht angegeben',
+    'Der Rückgabeeintrag enthält keinen sachlichen Grund. Aufgabenverlauf und Protokoll des meldenden Dienstes prüfen.'],
+  ticket_claim_rollback: ['task', 'Ticket-Übernahme zurückgerollt',
+    'Eine Ticket-Übernahme wurde zurückgenommen. Den Anlass im Ticket-Verlauf und Ticket-Master-Protokoll prüfen.'],
+  ticket_claim_released: ['task', 'Ticket-Übernahme freigegeben',
+    'Eine bestehende Ticket-Übernahme wurde freigegeben. Anlass und nächste Zuständigkeit im Ticket-Verlauf prüfen.'],
+  ticket_moved: ['task', 'Ticket verschoben',
+    'Zielbereich und Anlass der Verschiebung im Ticket-Verlauf prüfen.'],
+  'ticket_moved:solved': ['task', 'Ticket nach „Erledigt“ verschoben',
+    'Ticket-Verlauf und hinterlegtes Ergebnis prüfen.'],
+  'ticket_moved:blocked': ['task', 'Ticket nach „Blockiert“ verschoben',
+    'Blockierende Voraussetzung und nächsten Schritt im Ticket-Verlauf prüfen.'],
+  'ticket_moved:user': ['task', 'Ticket in den Nutzerbereich verschoben',
+    'Im Ticket prüfen, welche Entscheidung oder Eingabe benötigt wird.'],
+  'ticket_moved:waiting': ['task', 'Ticket nach „Wartend“ verschoben',
+    'Im Ticket-Verlauf prüfen, worauf gewartet wird und wann erneut geprüft werden soll.'],
+  'ticket_moved:parked': ['task', 'Ticket nach „Geparkt“ verschoben',
+    'Anlass und Bedingungen für eine spätere Wiederaufnahme im Ticket-Verlauf prüfen.'],
+  'ticket_moved:actionable': ['task', 'Ticket zu den bearbeitbaren Tickets verschoben',
+    'Ticket-Verlauf und Zuständigkeit für die nächste Bearbeitung prüfen.'],
+  'ticket_moved:inbox': ['task', 'Ticket in den Eingang verschoben',
+    'Ticket-Verlauf und noch ausstehende Einordnung prüfen.'],
+};
+const TOOL_FAILURES = {
+  tool_denial_limit: ['Werkzeugaufrufe wiederholt abgelehnt',
+    'Im Worker-Verlauf die abgelehnten Werkzeugaufrufe und ihre Fehlermeldungen prüfen: Zielpfad und Arbeitsverzeichnis, vorhandene Freigaben und Berechtigungen sowie die Validierung der Werkzeugargumente. Erst die konkrete Ursache beheben und dann erneut versuchen.'],
+  tool_denial_repeated: ['Werkzeugaufrufe wiederholt abgelehnt',
+    'Im Worker-Verlauf die abgelehnten Werkzeugaufrufe und ihre Fehlermeldungen prüfen: Zielpfad und Arbeitsverzeichnis, vorhandene Freigaben und Berechtigungen sowie die Validierung der Werkzeugargumente. Erst die konkrete Ursache beheben und dann erneut versuchen.'],
+  tool_call_limit: ['Werkzeugbudget des Laufs ausgeschöpft',
+    'Die maximale Zahl erlaubter Werkzeugaufrufe wurde erreicht. Anzahl und Ablauf im Worker-Verlauf prüfen; wiederholte Aufrufe reduzieren oder die Aufgabe in kleinere Schritte aufteilen.'],
+};
+
 const REPEATED = 'repeated_return:';
 const HOST_PREFIX = 'host_precondition:';
+const BACKEND_ERROR_PREFIX = 'backend_error:';
+const PROVIDER_LABELS = {
+  ollama: 'Ollama',
+  openrouter: 'OpenRouter',
+  hermes: 'Hermes',
+  transient: 'Vorübergehend',
+};
+const TIMEOUT_KINDS = new Set([
+  'connect_timeout', 'read_timeout', 'write_timeout', 'pool_timeout', 'transport_timeout',
+]);
+const TRANSPORT_KINDS = new Set(['connection_error', 'transport_error']);
+
+function describeBackendError(raw) {
+  const rest = raw.slice(BACKEND_ERROR_PREFIX.length);
+  if (rest === 'unclassified') {
+    return {code: raw, scope: 'provider', title: 'Anbieterfehler nicht eingestuft',
+      hint: 'Der Modellaufruf meldete einen unspezifischen Fehler. Anbieter- und Worker-Log prüfen.'};
+  }
+  const parts = rest.split(':').filter(Boolean);
+  const provider = parts[0] || '';
+  const kind = parts[1] || '';
+  const status = parts[2] || '';
+  if (provider === 'transient') {
+    if (kind === 'httpx_connect_error') {
+      return {code: raw, scope: 'provider', title: 'Modell-Anbieter vorübergehend nicht erreichbar',
+        hint: 'Verbindungsaufbau fehlgeschlagen. Netzwerk, Dienst und Anbieterstatus prüfen.'};
+    }
+    if (kind === 'httpx_read_timeout') {
+      return {code: raw, scope: 'provider', title: 'Modellantwort vorübergehend ausgeblieben (Host-Stall)',
+        hint: 'Wiederholte Lese-Zeitüberschreitung beim Anbieter. Erreichbarkeit und Last des Anbieters prüfen.'};
+    }
+    return {code: raw, scope: 'provider',
+      title: `Vorübergehender Anbieterfehler (${parts.slice(1).join(':') || 'unbekannt'})`,
+      hint: 'Der Modell-Anbieter war kurzzeitig gestört. Später erneut versuchen oder Modell wechseln.'};
+  }
+  const label = PROVIDER_LABELS[provider] || provider || 'Anbieter';
+  if (kind === 'quota_exceeded') {
+    return {code: raw, scope: 'provider', title: `Anbieter-Kontingent erschöpft (${label})`,
+      hint: 'Nutzungskontingent beim Anbieter aufgebraucht. Kontingent abwarten oder anderes Modell zuweisen.'};
+  }
+  if (kind === 'rate_limited' || status === '429') {
+    return {code: raw, scope: 'provider',
+      title: `Anfrage-Limit beim Anbieter erreicht (${label}${status ? ` HTTP ${status}` : ''})`,
+      hint: 'Der Anbieter drosselt Anfragen (Rate-Limit). Abkühlzeit abwarten oder ein anderes Modell wählen.'};
+  }
+  if (kind === 'tool_parse_error') {
+    return {code: raw, scope: 'provider', title: `Werkzeugaufruf vom Modell nicht lesbar (${label})`,
+      hint: 'Das Modell lieferte einen fehlerhaften Werkzeugaufruf. Bei Wiederholung Modell oder Prompt prüfen.'};
+  }
+  if (TIMEOUT_KINDS.has(kind)) {
+    return {code: raw, scope: 'provider', title: `Zeitüberschreitung beim Anbieter (${label}: ${kind})`,
+      hint: 'Anfrage oder Antwort beim Modell-Anbieter hat zu lange gedauert. Verbindung und Auslastung prüfen.'};
+  }
+  if (TRANSPORT_KINDS.has(kind)) {
+    return {code: raw, scope: 'provider', title: `Verbindungsfehler zum Anbieter (${label}: ${kind})`,
+      hint: 'Netzwerk- oder Transportfehler beim Modell-Anbieter. Erreichbarkeit und Worker-Log prüfen.'};
+  }
+  if (kind === 'http_error') {
+    const authHint = (status === '401' || status === '403')
+      ? 'Zugangsdaten, Freigabe oder Modellsperre beim Anbieter prüfen.'
+      : 'Anbieterstatus, Modell und HTTP-Antwort im Worker-Log prüfen.';
+    return {code: raw, scope: 'provider',
+      title: status ? `Anbieterfehler HTTP ${status} (${label})` : `HTTP-Fehler beim Anbieter (${label})`,
+      hint: authHint};
+  }
+  return {code: raw, scope: 'provider',
+    title: kind ? `Anbieterfehler (${label}: ${kind}${status ? ` ${status}` : ''})` : `Anbieterfehler (${label})`,
+    hint: 'Der Modell-Anbieter meldete einen Fehler. Anbieterstatus und Worker-Log prüfen.'};
+}
 
 /** @returns {{code:string,title:string,hint:string,scope:'host'|'task'|'provider'|'unknown'}} */
 export function describeReason(code) {
@@ -56,9 +165,24 @@ export function describeReason(code) {
     return {code: raw, scope: 'host', title: entry ? entry[0] : `Voraussetzung des Hosts fehlt (${raw.slice(HOST_PREFIX.length)})`,
       hint: entry ? entry[1] : 'Der Host erfüllt eine Voraussetzung nicht. Das betrifft alle Aufgaben, nicht nur diese.'};
   }
+  if (raw.startsWith(BACKEND_ERROR_PREFIX) && raw.length > BACKEND_ERROR_PREFIX.length) {
+    return describeBackendError(raw);
+  }
   if (raw.startsWith('capability_missing:'))
     return {code: raw, scope: 'task', title: `Dem Worker fehlt eine Berechtigung (${raw.slice(19)})`,
       hint: 'Aufgabe von einem Worker bearbeiten lassen, der dieses Werkzeug nutzen darf.'};
+  if (Object.prototype.hasOwnProperty.call(RECORDED_RETURNS, raw)) {
+    const [scope, title, hint] = RECORDED_RETURNS[raw];
+    return {code: raw, scope, title, hint};
+  }
+  const toolCode = raw.startsWith('model_failure:') ? raw.slice(14) : raw;
+  if (Object.prototype.hasOwnProperty.call(TOOL_FAILURES, toolCode)) {
+    const [title, hint] = TOOL_FAILURES[toolCode];
+    return {code: raw, scope: 'task', title, hint};
+  }
+  if (/^ticket-master@[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(raw))
+    return {code: raw, scope: 'unknown', title: 'Agentenkennung statt Rückgabegrund',
+      hint: 'Dieser historische Eintrag enthält eine Agentenkennung. Der eigentliche Rückgabegrund ist daraus nicht rekonstruierbar; Aufgaben- und Ticket-Verlauf prüfen.'};
   if (raw.startsWith('model_failure:'))
     return {code: raw, scope: 'provider', title: `Modellaufruf fehlgeschlagen (${raw.slice(14)})`,
       hint: 'Anbieter, Modell und Kontingent des Workers prüfen.'};

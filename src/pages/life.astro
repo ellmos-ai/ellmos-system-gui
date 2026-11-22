@@ -243,7 +243,8 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
           </div>
           <a href="/financial" class="btn btn-secondary">Vollständiges Finanzmodul ↗</a>
         </div>
-        <p class="load-status">Für Monatsbudget, Belege und Rücklagen gibt es hier noch keinen belegten, gemeinsamen Auswertungsvertrag. Im Finanzbereich sind die vorhandenen Konten-, Abonnement- und Finanzmail-Funktionen erreichbar.</p>
+        <p id="finance-summary-status" class="load-status" role="status" aria-live="polite"></p>
+        <div id="finance-summary" data-source="unchecked"></div>
       </div>
     </div>
 
@@ -1281,6 +1282,127 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       }
     }
 
+    // ── FINANZEN: lokaler /api/financial/summary-Vertrag ──
+    let _financeSummaryLoaded = false;
+
+    // summen_kategorie arrives as a JSON object text ({"Kategorie": Betrag}); show "Name: Betrag" pairs.
+    function financeCategoryText(raw, eurFmt) {
+      let categories = raw;
+      if (typeof raw === 'string') {
+        try { categories = JSON.parse(raw); } catch (_err) { return '–'; }
+      }
+      if (!categories || typeof categories !== 'object' || Array.isArray(categories)) return '–';
+      const parts = Object.entries(categories)
+        .filter(([, amount]) => Number.isFinite(amount))
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, amount]) => `${name}: ${eurFmt.format(amount)}`);
+      return parts.length ? parts.join(' · ') : '–';
+    }
+
+    async function loadFinanceSummary() {
+      if (_financeSummaryLoaded) return;
+      _financeSummaryLoaded = true;
+      const statusEl = document.getElementById('finance-summary-status');
+      const container = document.getElementById('finance-summary');
+      if (!statusEl || !container) return;
+
+      statusEl.textContent = 'Lade Finanzübersicht …';
+      container.dataset.source = 'loading';
+      container.replaceChildren();
+
+      try {
+        const res = await lifeApiFetch('/api/financial/summary');
+        if (!res.ok) throw new Error('unavailable');
+        const data = await res.json();
+        if (data?.schema !== 'bach.financial_summary.v1' || data.status !== 'ok'
+            || data.data_source !== 'measured' || data.source_checked !== true || !Array.isArray(data.summaries)
+            || !Number.isSafeInteger(data.duplicate_subscription_rows) || data.duplicate_subscription_rows < 0
+            || !data.summaries.every(item => item && Number.isSafeInteger(item.jahr) && item.jahr > 0
+              && (item.monat === null || (Number.isSafeInteger(item.monat) && item.monat >= 1 && item.monat <= 12))
+              && ['total_ausgaben', 'total_abos', 'total_steuer_relevant'].every(key => Number.isFinite(item[key]))
+              && ['anzahl_rechnungen', 'anzahl_abos'].every(key => Number.isSafeInteger(item[key]) && item[key] >= 0))) {
+          throw new Error('invalid');
+        }
+
+        container.dataset.source = 'measured';
+        const dupCount = data.duplicate_subscription_rows;
+        if (data.summaries.length === 0) {
+          statusEl.textContent = 'Für die erfassten Zeiträume liegen noch keine Finanzdaten vor.';
+          if (Number.isFinite(dupCount) && dupCount > 0) {
+            const hint = document.createElement('p');
+            hint.className = 'load-status';
+            hint.textContent = `Hinweis: ${dupCount} doppelte Abo-Einträge im Finanzmodul.`;
+            container.append(hint);
+          }
+          return;
+        }
+
+        const eurFmt = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+        const rows = [...data.summaries].sort((a, b) => (Number(b.jahr) - Number(a.jahr)) || (Number(b.monat) - Number(a.monat)));
+
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+
+        const thead = document.createElement('thead');
+        const headRow = document.createElement('tr');
+        for (const label of ['Zeitraum', 'Kategorien', 'Ausgaben', 'Laufende Abokosten', 'steuerrelevant', 'Rechnungen', 'Abos']) {
+          const th = document.createElement('th');
+          th.textContent = label;
+          th.style.textAlign = 'left';
+          th.style.padding = '0.5rem 0.65rem';
+          th.style.borderBottom = '1px solid var(--border, rgba(255,255,255,0.12))';
+          headRow.append(th);
+        }
+        thead.append(headRow);
+        table.append(thead);
+
+        const tbody = document.createElement('tbody');
+        for (const item of rows) {
+          const tr = document.createElement('tr');
+          const period = item.monat === null ? `${item.jahr} bis heute`
+            : `${String(item.monat).padStart(2, '0')}/${item.jahr}`;
+          const cells = [
+            period,
+            financeCategoryText(item.summen_kategorie, eurFmt),
+            eurFmt.format(item.total_ausgaben),
+            eurFmt.format(item.total_abos),
+            eurFmt.format(item.total_steuer_relevant),
+            String(item.anzahl_rechnungen),
+            String(item.anzahl_abos)
+          ];
+          for (const value of cells) {
+            const td = document.createElement('td');
+            td.textContent = value;
+            td.style.padding = '0.45rem 0.65rem';
+            td.style.borderBottom = '1px solid var(--border, rgba(255,255,255,0.06))';
+            tr.append(td);
+          }
+          tbody.append(tr);
+        }
+        table.append(tbody);
+        container.append(table);
+        const subscriptionNote = document.createElement('p');
+        subscriptionNote.className = 'load-status';
+        subscriptionNote.textContent = 'Laufende Abokosten sind Monatswerte oder auf ein Jahr hochgerechnete Werte. Die Ausgaben stammen aus erfassten Finanzmails.';
+        container.append(subscriptionNote);
+
+        if (Number.isFinite(dupCount) && dupCount > 0) {
+          const hint = document.createElement('p');
+          hint.className = 'load-status';
+          hint.textContent = `Hinweis: ${dupCount} doppelte Abo-Einträge im Finanzmodul.`;
+          container.append(hint);
+        }
+
+        statusEl.textContent = '';
+      } catch (_err) {
+        _financeSummaryLoaded = false; // reopening the tab retries
+        container.dataset.source = 'unavailable';
+        container.replaceChildren();
+        statusEl.textContent = 'Die Finanzquelle hat keine verlässliche Übersicht geliefert.';
+      }
+    }
+
     // ── MAIN TAB SETUP ──
     function setupTabs() {
       const tabButtons = document.querySelectorAll('.tab-btn');
@@ -1303,6 +1425,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
           if (tab === 'kalender') loadCalendarEvents();
           if (tab === 'routinen') loadPersonalRoutines();
           if (tab === 'aufgaben') loadUserTasks();
+          if (tab === 'finanzen') loadFinanceSummary();
         });
       });
 

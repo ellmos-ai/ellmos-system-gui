@@ -14,12 +14,12 @@ test('personal and automated assignment combine independently with every status 
   }
 });
 test('links, refresh and reset preserve independent selections and task deep links',()=>{
-  assert.deepEqual(readTaskFilters('?assigned_to=user'),{assignment:'user',status:'open',priority:'',q:'',agent:''});
-  const filters={assignment:'user',status:'done',priority:'P1',q:'',agent:''};
+  assert.deepEqual(readTaskFilters('?assigned_to=user'),{assignment:'user',status:'open',priority:'',q:'',agent:'',createdFrom:'',createdTo:'',sort:'priority'});
+  const filters={assignment:'user',status:'done',priority:'P1',q:'',agent:'',createdFrom:'',createdTo:'',sort:'priority'};
   const url=writeTaskFilters('http://localhost/tasks?task=17&offset=100',filters);
   assert.equal(url.searchParams.get('task'),'17');assert.equal(url.searchParams.has('offset'),false);
   assert.deepEqual(readTaskFilters(url.search),filters);
-  assert.deepEqual(readTaskFilters('?status=completed&assignment_group=auto'),{assignment:'auto',status:'done',priority:'',q:'',agent:''});
+  assert.deepEqual(readTaskFilters('?status=completed&assignment_group=auto'),{assignment:'auto',status:'done',priority:'',q:'',agent:'',createdFrom:'',createdTo:'',sort:'priority'});
   for(const status of ['pending','in_progress','review','blocked','cancelled','archived','duplicate']) {
     const direct=readTaskFilters('?status='+status+'&assignment_group=auto');
     assert.equal(direct.status,status);
@@ -33,18 +33,18 @@ test('links, refresh and reset preserve independent selections and task deep lin
   assert.equal(readTaskFilters('?status=canceled').status,'cancelled');
 });
 test('count describes the whole filtered result before pagination',()=>{
-  const filters={assignment:'user',status:'open',priority:'',q:'',agent:''};
+  const filters={assignment:'user',status:'open',priority:'',q:'',agent:'',createdFrom:'',createdTo:'',sort:'priority'};
   const rows=Array.from({length:100},(_,id)=>({id}));
-  const page=readTaskPage({success:true,tasks:rows,total:120,has_more:true,applied_filters:{assignment_group:'user',status:'nonterminal'}},filters);
+  const page=readTaskPage({success:true,tasks:rows,total:120,has_more:true,applied_filters:{sort:'priority',assignment_group:'user',status:'nonterminal'}},filters);
   assert.equal(page.total,120);assert.equal(page.hasMore,true);
   assert.equal(taskCountLabel(100,page.total,0),'1–100 von 120 passenden Aufgaben');
   assert.equal(taskCountLabel(20,page.total,100),'101–120 von 120 passenden Aufgaben');
   assert.equal(taskCountLabel(0,0,0),'0 von 0 passenden Aufgaben');
   assert.throws(()=>readTaskPage({success:true,tasks:rows,total:100},filters),/kombinierte Zuordnung/);
-  assert.throws(()=>readTaskPage({success:true,tasks:rows,total:100,applied_filters:{assignment_group:'user',status:'all'}},filters),/Statusfilter/);
+  assert.throws(()=>readTaskPage({success:true,tasks:rows,total:100,applied_filters:{sort:'priority',assignment_group:'user',status:'all'}},filters),/Statusfilter/);
 });
 test('search and agent filters join the same query for every page and survive links',()=>{
-  const filters={assignment:'user',status:'done',priority:'',q:' foo #12 ',agent:'claude'};
+  const filters={assignment:'user',status:'done',priority:'',q:' foo #12 ',agent:'claude',createdFrom:'',createdTo:'',sort:'priority'};
   const first=taskFilterQuery(filters,0), next=taskFilterQuery(filters,100);
   for(const key of ['q','assigned_to','assignment_group','status'])assert.equal(next.get(key),first.get(key));
   assert.equal(first.get('q'),'foo #12');assert.equal(first.get('assigned_to'),'claude');
@@ -54,19 +54,19 @@ test('search and agent filters join the same query for every page and survive li
   assert.throws(()=>taskFilterQuery({...filters,q:'x'.repeat(201)},0),/Ungültige/);
 });
 test('a backend that ignores q is reported instead of filtering one page client-side',()=>{
-  const filters={assignment:'all',status:'open',priority:'',q:'abc',agent:''};
-  const old=readTaskPage({success:true,tasks:[{id:1}],total:1,applied_filters:{assignment_group:'all',status:'nonterminal'}},filters);
+  const filters={assignment:'all',status:'open',priority:'',q:'abc',agent:'',createdFrom:'',createdTo:'',sort:'priority'};
+  const old=readTaskPage({success:true,tasks:[{id:1}],total:1,applied_filters:{sort:'priority',assignment_group:'all',status:'nonterminal'}},filters);
   assert.equal(old.searchUnsupported,true);assert.deepEqual(old.tasks,[]);
-  const ok=readTaskPage({success:true,tasks:[{id:1}],total:1,applied_filters:{assignment_group:'all',status:'nonterminal',q:'abc'}},filters);
+  const ok=readTaskPage({success:true,tasks:[{id:1}],total:1,applied_filters:{sort:'priority',assignment_group:'all',status:'nonterminal',q:'abc'}},filters);
   assert.equal(ok.searchUnsupported,false);assert.equal(ok.tasks.length,1);
-  assert.equal(readTaskPage({success:true,tasks:[],total:0,applied_filters:{status:'nonterminal'}},{...filters,q:''}).searchUnsupported,false);
+  assert.equal(readTaskPage({success:true,tasks:[],total:0,applied_filters:{sort:'priority',status:'nonterminal'}},{...filters,q:''}).searchUnsupported,false);
 });
 test('individual status requires a matching backend filter receipt, including review',()=>{
   for(const status of ['pending','in_progress','review','blocked','cancelled','archived','duplicate']) {
-    const filters={assignment:'all',status,priority:'',q:'',agent:''};
-    const good={success:true,tasks:[{id:1,status}],total:1,applied_filters:{status}};
+    const filters={assignment:'all',status,priority:'',q:'',agent:'',createdFrom:'',createdTo:'',sort:'priority'};
+    const good={success:true,tasks:[{id:1,status}],total:1,applied_filters:{sort:'priority',status}};
     assert.equal(readTaskPage(good,filters).tasks[0].status,status);
-    assert.throws(()=>readTaskPage({...good,applied_filters:{status:'nonterminal'}},filters),/Statusfilter/);
+    assert.throws(()=>readTaskPage({...good,applied_filters:{sort:'priority',status:'nonterminal'}},filters),/Statusfilter/);
     assert.throws(()=>taskFilterQuery({...filters,status:'unknown'}),/Ungültige/);
   }
 });
