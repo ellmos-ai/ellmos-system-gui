@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import {execFile, spawn} from 'node:child_process';
 import {once} from 'node:events';
+import {readFileSync} from 'node:fs';
 import {mkdir, readlink, writeFile} from 'node:fs/promises';
 import {createServer} from 'node:http';
 import {createServer as createSocket} from 'node:net';
@@ -15,8 +16,11 @@ assert.ok(process.platform === 'linux' && process.env.GITHUB_ACTIONS === 'true'
   'Use a disposable GitHub-hosted Linux runner with Xvfb');
 const application = '/usr/bin/ellmos-system-gui-desktop';
 const command = promisify(execFile);
-const output = resolve('desktop-package/webview-smoke');
-const gui = await openVerifiedGui(resolve('dist'), process.env.DESKTOP_SOURCE_COMMIT);
+const real = process.env.BACH_NATIVE_CHECK === '1' ? JSON.parse(readFileSync(0, 'utf8')) : null;
+const output = real?.output ?? resolve('desktop-package/webview-smoke');
+const gui = await openVerifiedGui(real?.dist ?? resolve('dist'), real?.guiCommit ?? process.env.DESKTOP_SOURCE_COMMIT);
+const openTask = real?.openTask ?? smokeSamples.openTask.title;
+const doneTask = real?.doneTask ?? smokeSamples.doneTask.title;
 const errors = [];
 let capabilityReads = 0;
 const fixture = createServer((request, response) => {
@@ -85,7 +89,8 @@ async function request(path, method = 'GET', body) {
 }
 
 try {
-  const origin = 'http://127.0.0.1:' + await startListening(fixture);
+  const origin = real?.origin ?? ('http://127.0.0.1:' + await startListening(fixture));
+  assert.match(origin, /^http:\/\/127\.0\.0\.1:\d+$/);
   const portSocket = createSocket();
   const driverPort = await startListening(portSocket);
   await closeServer(portSocket);
@@ -132,13 +137,13 @@ try {
     document.querySelector('#connect').click();
   `, origin);
   await waitFor(() => evaluate("return document.querySelector('#connection-status')?.dataset.state === 'error'"), 'HTTP consent enforcement');
-  assert.equal(capabilityReads, 0, 'The fixture was contacted before HTTP consent');
+  if (!real) assert.equal(capabilityReads, 0, 'The fixture was contacted before HTTP consent');
   await evaluate(`
     document.querySelector('#allow-loopback-http').click();
     document.querySelector('#connect').click();
   `);
-  const backend = await waitFor(() => x11Window('^Ocean \\(BACH\\) – Anmeldung erforderlich$', connection.pid),
-    'the native backend window');
+  const backendTitle = real ? '^Ocean \\(BACH\\)$' : '^Ocean \\(BACH\\) – Anmeldung erforderlich$';
+  const backend = await waitFor(() => x11Window(backendTitle, connection.pid), 'the native backend window');
   console.error('WebKitGTK smoke: native backend window visible');
   await waitFor(async () => {
     for (const handle of await call('/window/handles')) {
@@ -147,7 +152,25 @@ try {
     }
     return false;
   }, 'the backend WebView target');
-  assert.equal(capabilityReads, 1);
+  if (real) {
+    const login = await call('/execute/async', 'POST', {args:[real.token], script:`
+      const [token, done] = arguments;
+      fetch('/api/devices/verify', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({token}),
+      }).then(async res => done({ok:res.ok, valid:(await res.json()).valid === true}))
+        .catch(() => done({ok:false, valid:false}));
+    `});
+    assert.deepEqual(login, {ok:true, valid:true}, 'BACH device login failed');
+    const authorized = await call('/execute/async', 'POST', {args:[], script:`
+      const done = arguments[0];
+      fetch('/api/tasks').then(res => done(res.status)).catch(() => done(0));
+    `});
+    assert.equal(authorized, 200, 'BACH did not authorize the native WebView session');
+    await evaluate('location.reload()');
+  } else {
+    assert.equal(capabilityReads, 1);
+  }
 
   await mkdir(output, {recursive:true});
   const routes = [];
@@ -168,33 +191,35 @@ try {
     console.error('WebKitGTK smoke: rendered ' + path);
   }
 
-  await waitText('#tasks-container', smokeSamples.openTask.title);
+  await waitText('#tasks-container', openTask);
   await record('/', 'dashboard', 'Willkommen');
   await evaluate("document.querySelector('#main-content a[href=\"/tasks\"]').click()");
-  await waitText('#tasks-table-container', smokeSamples.openTask.title);
+  await waitText('#tasks-table-container', openTask);
   await evaluate(`
     const filter = document.querySelector('#tasks-status-filter');
     filter.value = 'done';
     filter.dispatchEvent(new Event('change', {bubbles:true}));
   `);
-  await waitText('#tasks-table-container', smokeSamples.doneTask.title);
-  assert.equal(await evaluate(containsVisibleText, '#tasks-table-container', smokeSamples.openTask.title), false);
+  await waitText('#tasks-table-container', doneTask);
+  assert.equal(await evaluate(containsVisibleText, '#tasks-table-container', openTask), false);
   await record('/tasks', 'aufgaben', 'Aufgaben');
 
   await call('/back', 'POST', {});
-  await waitText('#tasks-container', smokeSamples.openTask.title);
+  await waitText('#tasks-container', openTask);
   await evaluate("document.querySelector('#main-content a[href=\"/agenten/running\"]').click()");
-  await waitText('#worker-status-summary', '1 Worker registriert');
-  await waitText('#ready-agents-grid', smokeSamples.worker.name);
-  const search = `
-    const input = document.querySelector('#agent-overview-query');
-    input.value = arguments[0];
-    input.dispatchEvent(new Event('input', {bubbles:true}));
-  `;
-  await evaluate(search, 'anderer Name');
-  await waitFor(async () => !await evaluate(containsVisibleText, '#ready-agents-grid', smokeSamples.worker.name), 'the filtered agent list');
-  await evaluate(search, '');
-  await waitText('#ready-agents-grid', smokeSamples.worker.name);
+  await waitText('#worker-status-summary', (real?.workerCount ?? 1) + ' Worker registriert');
+  if (!real) {
+    await waitText('#ready-agents-grid', smokeSamples.worker.name);
+    const search = `
+      const input = document.querySelector('#agent-overview-query');
+      input.value = arguments[0];
+      input.dispatchEvent(new Event('input', {bubbles:true}));
+    `;
+    await evaluate(search, 'anderer Name');
+    await waitFor(async () => !await evaluate(containsVisibleText, '#ready-agents-grid', smokeSamples.worker.name), 'the filtered agent list');
+    await evaluate(search, '');
+    await waitText('#ready-agents-grid', smokeSamples.worker.name);
+  }
   await record('/agenten/running', 'running', 'Living & Running');
   assert.deepEqual(errors, [], 'The verified static GUI fixture reported errors');
 
@@ -209,7 +234,9 @@ try {
   console.error('WebKitGTK smoke: native app exited');
   console.log(JSON.stringify({
     source_commit:gui.sourceCommit, web_build_page_count:gui.pageCount, page_contract_count:gui.pageCount,
-    fixture_backend:'loopback-read-only', renderer:'WebKitGTK', native_windows_observed:true,
+    desktop_source_commit:process.env.DESKTOP_SOURCE_COMMIT,
+    fixture_backend:real ? 'bach-control-api' : 'loopback-read-only',
+    device_session_verified:!!real, renderer:'WebKitGTK', native_windows_observed:true,
     exited_after_window_close:true, routes,
   }));
 } finally {

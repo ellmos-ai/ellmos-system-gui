@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import secrets
 import socket
+import subprocess
 import sys
 import tempfile
 import threading
@@ -18,7 +19,6 @@ from urllib.parse import urlsplit
 from zipfile import ZipFile
 
 import httpx
-from playwright.sync_api import expect, sync_playwright
 import uvicorn
 
 
@@ -63,12 +63,30 @@ def prepare_backend(bach, dist, scratch):
     )
     sys.path[:0] = [str(bach), str(bach / "system")]
     from setup import BACHSetup
+    from system.tools.installer_manifest import (
+        GRANT_SCHEMA,
+        compute_grant_signature,
+        load_manifest,
+        load_product_profile,
+        payload_digest,
+    )
 
-    setup = BACHSetup(bach_root=bach)
+    key = secrets.token_urlsafe(32)
+    grant_path = scratch / "grant.json"
+    setup = BACHSetup(bach_root=bach, grant_path=grant_path, grant_key=key)
     setup.db_path = database
-    # The committed schema is the fresh database snapshot for this API test.
-    # The installer migration sequence is exercised independently.
-    setup._step_s2_db_init(None)
+    setup.journal_path = scratch / "setup-journal.jsonl"
+    manifest = load_manifest(setup.manifest_path)
+    profile = load_product_profile(setup.product_profile_path)
+    grant = {
+        "schema": GRANT_SCHEMA,
+        "grant_id": "bach-backend-ci",
+        "manifest_digest": payload_digest(manifest),
+        "profile_id": profile["profile_id"],
+    }
+    grant["signature"] = compute_grant_signature(grant, key)
+    grant_path.write_text(json.dumps(grant), encoding="utf-8")
+    assert setup.run(skip_pip=True, quiet=True), "BACH installer did not complete"
     from gui.device_auth import create_device
     from hub.bach_paths import BACH_DB
 
@@ -130,6 +148,8 @@ def check_http(origin, token, manifest):
 
 
 def check_browser(origin, token, worker_count, out):
+    from playwright.sync_api import expect, sync_playwright
+
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         context = browser.new_context(viewport={"width": 1400, "height": 950})
@@ -175,12 +195,41 @@ def check_browser(origin, token, worker_count, out):
         browser.close()
 
 
+def check_native(origin, token, worker_count, dist, commit, out):
+    config = {
+        "origin": origin, "token": token, "workerCount": worker_count, "dist": str(dist),
+        "guiCommit": commit, "output": str(out.resolve()), "openTask": OPEN_TASK, "doneTask": DONE_TASK,
+    }
+    result = subprocess.run(
+        ["node", "scripts/check-linux-webview.mjs"], check=True, encoding="utf-8", timeout=180,
+        input=json.dumps(config), stdout=subprocess.PIPE,
+        env={
+            **os.environ,
+            "BACH_NATIVE_CHECK": "1",
+            "GDK_BACKEND": "x11",
+            "LIBGL_ALWAYS_SOFTWARE": "1",
+            "WEBKIT_DISABLE_DMABUF_RENDERER": "1",
+        },
+    )
+    proof = json.loads(result.stdout)
+    assert proof["fixture_backend"] == "bach-control-api"
+    assert proof["desktop_source_commit"] == os.environ["DESKTOP_SOURCE_COMMIT"]
+    assert proof["source_commit"] == commit
+    assert proof["renderer"] == "WebKitGTK" and proof["native_windows_observed"]
+    assert proof["device_session_verified"] and proof["exited_after_window_close"]
+    return proof
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("bach", type=Path)
     parser.add_argument("archive", type=Path)
     parser.add_argument("out", type=Path)
+    parser.add_argument("--native", action="store_true")
     args = parser.parse_args()
+    assert os.environ.get("GITHUB_ACTIONS") == "true"
+    assert os.environ.get("RUNNER_ENVIRONMENT") == "github-hosted"
+    bach_commit = subprocess.check_output(["git", "-C", str(args.bach), "rev-parse", "HEAD"], text=True).strip()
     args.out.mkdir(parents=True, exist_ok=False)
     with tempfile.TemporaryDirectory(prefix="bach-backend-") as directory:
         scratch = Path(directory).resolve()
@@ -202,7 +251,14 @@ def main():
             try:
                 wait_for_gui(server, thread, origin)
                 result = check_http(origin, token, manifest)
-                check_browser(origin, token, result["running_worker_profile_count"], args.out)
+                worker_count = result["running_worker_profile_count"]
+                if args.native:
+                    result["native_webview"] = check_native(
+                        origin, token, worker_count, dist, manifest["source_commit"], args.out
+                    )
+                else:
+                    check_browser(origin, token, worker_count, args.out)
+                    result["chromium_browser_session_verified"] = True
             finally:
                 server.should_exit = True
                 thread.join(10)
@@ -211,11 +267,11 @@ def main():
                 control.server_close()
                 assert not thread.is_alive(), "BACH GUI did not stop"
         result.update(
-            bach_commit=os.environ["BACH_COMMIT"],
+            bach_commit=bach_commit,
+            bach_installer_verified=True,
             gui_commit=manifest["source_commit"],
             gui_archive_sha256=archive_sha,
             anonymous_task_and_worker_reads_rejected=True,
-            chromium_browser_session_verified=True,
         )
         (args.out / "result.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(result, indent=2))
