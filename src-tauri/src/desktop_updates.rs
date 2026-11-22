@@ -278,7 +278,6 @@ mod tests {
             json!({
                 "pubkey": fs::read_to_string(root.join("update-key.pub")).unwrap().trim(),
                 "requireSignedVersion": true,
-                "windows": {"installMode": "quiet"},
                 "endpoints": [manifest("/valid/latest.json")]
             }),
         );
@@ -333,7 +332,7 @@ mod tests {
                 // on a successful handoff. The fixture driver verifies the installed files.
                 let bytes = update.download(|_, _| {}, || {}).await.unwrap();
                 fs::write(root.join("update-checks-complete"), b"verified").unwrap();
-                update.restart_after_install(false).install(bytes).unwrap();
+                update.install(bytes).unwrap();
                 panic!("Windows updater returned without exiting after installer handoff");
             }
             #[cfg(not(windows))]
