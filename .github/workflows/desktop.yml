@@ -10,6 +10,7 @@ on:
       - 'scripts/package-desktop.py'
       - 'scripts/check-windows-installer.ps1'
       - 'scripts/check-windows-webview.mjs'
+      - 'scripts/check-native-gui-pages.mjs'
       - 'scripts/check-linux-installer.py'
       - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
@@ -24,6 +25,7 @@ on:
       - 'scripts/package-desktop.py'
       - 'scripts/check-windows-installer.ps1'
       - 'scripts/check-windows-webview.mjs'
+      - 'scripts/check-native-gui-pages.mjs'
       - 'scripts/check-linux-installer.py'
       - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
@@ -115,6 +117,12 @@ jobs:
           node-version: '22'
           cache: npm
           cache-dependency-path: .github/desktop-toolchain/package-lock.json
+      - name: Install the locked WebView test client
+        if: runner.os == 'Windows'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Build the shared GUI for the native WebView smoke
+        if: runner.os == 'Windows'
+        run: npm run build:release
       - name: Install locked desktop build tools
         working-directory: .github/desktop-toolchain
         run: npm ci --ignore-scripts --no-audit --no-fund
@@ -223,9 +231,6 @@ jobs:
           run-id: ${{ inputs.legacy_run }}
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/legacy-desktop
-      - name: Install the locked WebView test client
-        if: runner.os == 'Windows'
-        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Verify Windows installer lifecycle
         if: runner.os == 'Windows'
         env:

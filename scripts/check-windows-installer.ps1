@@ -79,6 +79,29 @@ function Wait-RestartedProcess($Executable, $RequestedAfter) {
     throw 'The NSIS updater did not restart the installed application.'
 }
 
+function Close-TestDesktop($Process) {
+    # Closing the backend returns to the connection window. Closing that window exits Tauri.
+    $Process.Refresh()
+    $first = $Process.MainWindowHandle
+    if ($first -eq [IntPtr]::Zero -or -not $Process.CloseMainWindow()) {
+        throw 'The native smoke test could not request window close.'
+    }
+    $deadline = [Diagnostics.Stopwatch]::StartNew()
+    do {
+        if ($Process.HasExited) { break }
+        $Process.Refresh()
+        $active = $Process.MainWindowHandle
+        if ($active -ne [IntPtr]::Zero -and $active -ne $first) {
+            if (-not $Process.CloseMainWindow()) { throw 'Could not close the restored connection window.' }
+            break
+        }
+        Start-Sleep -Milliseconds 250
+    } while ($deadline.ElapsedMilliseconds -lt 10000)
+    if (-not $Process.WaitForExit(10000) -or $Process.ExitCode -ne 0) {
+        throw 'The native desktop did not exit cleanly after its windows were closed.'
+    }
+}
+
 function Test-SignedNsisUpdate($Installer, $InstallerHash, $PayloadHash, $Version, $RegistrationKey, $ProfileSamples) {
     if ((Test-Path -LiteralPath $RegistrationKey) -or $Version -cne '0.2.40') {
         throw 'Expected a clean registration and the 0.2.40 update candidate.'
@@ -319,6 +342,12 @@ try {
             $connection.authentication_required -ne $true) {
             throw 'The WebView2 connection test did not return its expected receipt.'
         }
+        $pages = $connection.native_pages
+        if ($pages.source_commit -cne $env:DESKTOP_SOURCE_COMMIT -or $pages.routes.Count -ne 3 -or
+            $pages.web_build_page_count -ne $pages.page_contract_count -or $pages.uncaught_javascript_errors -ne 0) {
+            throw 'The native page smoke did not return its expected receipt.'
+        }
+        Close-TestDesktop $app
     } finally {
         if (-not $app.HasExited) {
             $app.Kill()
@@ -380,6 +409,7 @@ $evidence = [ordered]@{
     installed_webview = [ordered]@{
         runtime_child_started = $true
         isolated_profile_created = $true
+        clean_window_exit = $true
         connection = $connection
     }
     installed_files_and_registration_removed = $true
@@ -389,5 +419,5 @@ if ($null -ne $legacy) {
     $evidence['signed_nsis_update'] = Test-SignedNsisUpdate $installer $installerHash $payloadHash `
         $config.version $regPath $profileSamples
 }
-$evidence | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $package 'windows-installer-check.json') -Encoding utf8
+$evidence | ConvertTo-Json -Depth 9 | Set-Content -LiteralPath (Join-Path $package 'windows-installer-check.json') -Encoding utf8
 Write-Output "Installed, launched and uninstalled Windows desktop version $($config.version)."
