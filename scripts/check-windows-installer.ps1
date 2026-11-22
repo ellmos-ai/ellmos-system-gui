@@ -40,13 +40,124 @@ function Uninstall-Nsis($InstallDir, $RegistrationKey, $UninstallCopy) {
     Remove-Item -LiteralPath $UninstallCopy
 }
 
+function Test-InstalledWindow($Executable) {
+    $process = Start-Process -FilePath $Executable -WorkingDirectory (Split-Path -Parent $Executable) -WindowStyle Normal -PassThru
+    try {
+        if (-not $process.WaitForInputIdle(20000) -or $process.HasExited) {
+            throw 'The updater test application did not reach its Windows message loop.'
+        }
+        $deadline = [Diagnostics.Stopwatch]::StartNew()
+        do {
+            $process.Refresh()
+            if ($process.HasExited) { throw 'The updater test application stopped before showing its window.' }
+            if ($process.MainWindowHandle -ne [IntPtr]::Zero) { return $true }
+            Start-Sleep -Milliseconds 250
+        } while ($deadline.ElapsedMilliseconds -lt 20000)
+        throw 'The updater test application did not show its window.'
+    } finally {
+        if (-not $process.HasExited) {
+            $process.Kill()
+            if (-not $process.WaitForExit(10000)) { throw 'The updater test application did not stop.' }
+        }
+        $process.Dispose()
+    }
+}
+
+function Test-SignedNsisUpdate($Installer, $InstallerHash, $PayloadHash, $Version, $RegistrationKey, $ProfileSamples) {
+    if ((Test-Path -LiteralPath $RegistrationKey) -or $Version -cne '0.2.40') {
+        throw 'Expected a clean registration and the 0.2.40 update candidate.'
+    }
+    $baselineVersion = '0.2.39'
+    $fixture = Join-Path $env:RUNNER_TEMP ('ocean-signed-nsis-' + [guid]::NewGuid().ToString('N'))
+    New-Item -ItemType Directory -Path $fixture | Out-Null
+    $baselineConfig = Join-Path $fixture 'baseline.json'
+    @{ version = $baselineVersion } | ConvertTo-Json | Set-Content -LiteralPath $baselineConfig -Encoding utf8NoBOM
+    # Keep the product identity and install a versioned baseline distinct from the renamed BACH package.
+    $cli = Join-Path $root '.github/desktop-toolchain/node_modules/@tauri-apps/cli/tauri.js'
+    & node $cli build --ci --no-sign --bundles nsis --config $baselineConfig -- --locked | Out-Host
+    if ($LASTEXITCODE) { throw "Building the NSIS baseline failed (exit $LASTEXITCODE)." }
+    $bundles = Join-Path $root 'src-tauri/target/release/bundle/nsis'
+    $baseline = Join-Path $bundles "OpenOcean_${baselineVersion}_x64-setup.exe"
+    $baselineHash = (Get-FileHash -LiteralPath $baseline -Algorithm SHA256).Hash.ToLowerInvariant()
+
+    $directory = Join-Path $fixture 'installed app'
+    $executable = Join-Path $directory $binaryName
+    $uninstaller = Join-Path $fixture 'uninstall.exe'
+    Invoke-Nsis $baseline "/S /D=$directory"
+    try {
+        $oldHash = (Get-FileHash -LiteralPath $executable -Algorithm SHA256).Hash.ToLowerInvariant()
+        if ((Read-Registration $RegistrationKey $directory).DisplayVersion -cne $baselineVersion -or
+            $oldHash -ceq $PayloadHash) { throw 'The NSIS update baseline was not installed.' }
+        $before = Test-InstalledWindow $executable
+
+        $opensslPath = $env:PATH
+        try {
+            if (-not (Get-Command openssl.exe -ErrorAction SilentlyContinue)) {
+                $gitRoot = Split-Path -Parent (Split-Path -Parent (Get-Command git.exe).Source)
+                $opensslBin = Join-Path $gitRoot 'usr/bin'
+                if (-not (Test-Path -LiteralPath (Join-Path $opensslBin 'openssl.exe') -PathType Leaf)) {
+                    throw 'OpenSSL is missing on the disposable Windows runner.'
+                }
+                $env:PATH = "$opensslBin;$opensslPath"
+            }
+            $proof = python -B (Join-Path $PSScriptRoot 'desktop_update_fixture.py') $Installer $fixture $Version
+            if ($LASTEXITCODE) { throw "Native signed NSIS updater check failed (exit $LASTEXITCODE)." }
+        } finally {
+            $env:PATH = $opensslPath
+        }
+        $proof = $proof | ConvertFrom-Json -AsHashtable
+        if ($proof.package_sha256 -cne $InstallerHash -or $proof.tampered_payload_rejected -ne $true -or
+            $proof.incorrect_version_rejected -ne $true) { throw 'Unexpected signature check receipt.' }
+
+        # The native updater launches NSIS asynchronously before it exits.
+        $handoff = @(Get-ChildItem -LiteralPath (Join-Path $fixture 'temp') -Recurse -File -Filter '*-installer.exe')
+        if ($handoff.Count -ne 1 -or
+            (Get-FileHash -LiteralPath $handoff[0].FullName -Algorithm SHA256).Hash.ToLowerInvariant() -cne $InstallerHash) {
+            throw 'The native updater did not hand off the signed NSIS bytes.'
+        }
+        $installerProcess = Get-CimInstance Win32_Process -Filter "Name='$($handoff[0].Name)'" |
+            Where-Object { $_.ExecutablePath -ieq $handoff[0].FullName } | Select-Object -First 1
+        if ($installerProcess) {
+            $pending = Get-Process -Id $installerProcess.ProcessId -ErrorAction SilentlyContinue
+            if ($pending -and -not $pending.WaitForExit(90000)) { throw 'The signed NSIS installer did not finish.' }
+        }
+        if ((Read-Registration $RegistrationKey $directory).DisplayVersion -cne $Version -or
+            (Get-FileHash -LiteralPath $executable -Algorithm SHA256).Hash.ToLowerInvariant() -cne $PayloadHash) {
+            throw 'NSIS did not install the signed update at the original location.'
+        }
+        $after = Test-InstalledWindow $executable
+        foreach ($sample in $ProfileSamples) {
+            if ((Get-FileHash -LiteralPath $sample.File -Algorithm SHA256).Hash -cne $sample.Hash) {
+                throw 'A profile sample changed during the signed NSIS update.'
+            }
+        }
+    } finally {
+        Uninstall-Nsis $directory $RegistrationKey $uninstaller
+    }
+    return [ordered]@{
+        baseline_version = $baselineVersion
+        baseline_installer_sha256 = $baselineHash
+        baseline_binary_sha256 = $oldHash
+        previous_window_visible = $before
+        updated_window_visible = $after
+        installed_binary_sha256 = $PayloadHash
+        signed_installer_sha256 = $proof.package_sha256
+        tampered_payload_rejected = $proof.tampered_payload_rejected
+        incorrect_version_rejected = $proof.incorrect_version_rejected
+        roaming_and_local_data_samples_preserved = $true
+        installed_files_and_registration_removed = $true
+    }
+}
+
 $root = Split-Path -Parent $PSScriptRoot
 $package = Join-Path $root 'desktop-package'
 $receipt = Get-Content -LiteralPath (Join-Path $package 'desktop-artifact.json') -Raw | ConvertFrom-Json -AsHashtable
 $config = Get-Content -LiteralPath (Join-Path $root 'src-tauri/tauri.conf.json') -Raw | ConvertFrom-Json
 $binaryName = 'ellmos-system-gui-desktop.exe'
 $installerName = $receipt.bundles.nsis.file
-if ($receipt.source.commit -cne $env:DESKTOP_SOURCE_COMMIT -or $receipt.build.os -cne 'Windows' -or
+if ($receipt.source.repository -cne $env:GITHUB_REPOSITORY -or
+    $receipt.source.commit -cne $env:DESKTOP_SOURCE_COMMIT -or $receipt.build.os -cne 'Windows' -or
+    $receipt.build.run_id -ne [long]$env:GITHUB_RUN_ID -or
     $installerName -notmatch '^bundles/[^/\\]+-setup\.exe$') {
     throw 'Unexpected Windows desktop artifact receipt.'
 }
@@ -247,6 +358,8 @@ $evidence = [ordered]@{
 }
 if ($null -ne $legacy) {
     $evidence['legacy_migration'] = $legacy
+    $evidence['signed_nsis_update'] = Test-SignedNsisUpdate $installer $installerHash $payloadHash `
+        $config.version $regPath $profileSamples
 }
 $evidence | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $package 'windows-installer-check.json') -Encoding utf8
 Write-Output "Installed, launched and uninstalled Windows desktop version $($config.version)."

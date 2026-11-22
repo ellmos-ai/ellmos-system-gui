@@ -212,6 +212,12 @@ und den Erhalt einer Testdatei im Benutzerprofil. Mit dem exakt vorgegebenen
 AppImage aus demselben Altbuild prüft CI unter Linux dieselben Fälle, den
 Start beider AppImages unter Xvfb und die erhaltenen Ausführungsrechte.
 Das Debian-Paket hat einen eigenen APT-Installations- und Migrationstest.
+Unter Windows prüft der manuell gestartete Lauf zusätzlich den signierten
+NSIS-Updatepfad. Er baut aus denselben Quellen einen OpenOcean-Installer
+mit der Testversion 0.2.39, damit der Paketname beim Update unverändert
+bleibt. Er kontrolliert den Installationspfad, die registrierte Version,
+den Start der aktualisierten App und den Erhalt beider Profildateien.
+Den Start nach dem Update löst der Test selbst aus.
 [Tauri-Updater](https://v2.tauri.app/plugin/updater/)
 
 ## Offene vollständige Abnahme
