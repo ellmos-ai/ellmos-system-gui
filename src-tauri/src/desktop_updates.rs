@@ -218,4 +218,104 @@ mod tests {
         let replay = updater.restore_update(manifest("3.0.0")).unwrap().unwrap();
         assert!(replay.verify(PAYLOAD).is_err());
     }
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    #[ignore = "requires the CI-generated HTTPS fixture and temporary installed app"]
+    fn signed_macos_update_installs_verified_bundle() {
+        use std::{fs, path::PathBuf};
+        use tauri_plugin_updater::Error;
+
+        assert_eq!(std::env::var("GITHUB_ACTIONS").as_deref(), Ok("true"));
+        assert_eq!(
+            std::env::var("RUNNER_ENVIRONMENT").as_deref(),
+            Ok("github-hosted")
+        );
+        let root = PathBuf::from(std::env::var_os("OCEAN_SIGNED_UPDATE_FIXTURE").unwrap())
+            .canonicalize()
+            .unwrap();
+        let runner_temp = PathBuf::from(std::env::var_os("RUNNER_TEMP").unwrap())
+            .canonicalize()
+            .unwrap();
+        assert_eq!(root.parent(), Some(runner_temp.as_path()));
+        assert!(root
+            .file_name()
+            .unwrap()
+            .to_string_lossy()
+            .starts_with("ocean-dmg-"));
+        let executable =
+            root.join("Applications/BACH Ocean.app/Contents/MacOS/ellmos-system-gui-desktop");
+        assert_eq!(executable.canonicalize().unwrap(), executable);
+        let old_bytes = fs::read(&executable).unwrap();
+
+        let origin =
+            tauri::Url::parse(&fs::read_to_string(root.join("update-origin")).unwrap()).unwrap();
+        assert_eq!(
+            (origin.scheme(), origin.host_str()),
+            ("https", Some("127.0.0.1"))
+        );
+        assert!(origin.port().is_some());
+        let certificate =
+            reqwest_updater::Certificate::from_pem(&fs::read(root.join("update-ca.pem")).unwrap())
+                .unwrap();
+        let manifest = |kind| origin.join(kind).unwrap();
+        let mut context = tauri::test::mock_context(tauri::test::noop_assets());
+        context.package_info_mut().version = "0.2.38".parse().unwrap();
+        context.config_mut().plugins.0.insert(
+            "updater".into(),
+            json!({
+                "pubkey": fs::read_to_string(root.join("update-key.pub")).unwrap().trim(),
+                "requireSignedVersion": true,
+                "endpoints": [manifest("/valid/latest.json")]
+            }),
+        );
+        let app = tauri::test::mock_builder()
+            .plugin(tauri_plugin_updater::Builder::new().build())
+            .build(context)
+            .unwrap();
+
+        tauri::async_runtime::block_on(async {
+            let checked_update = |endpoint| {
+                let certificate = certificate.clone();
+                app.updater_builder()
+                    .executable_path(&executable)
+                    .timeout(Duration::from_secs(30))
+                    .no_proxy()
+                    .configure_client(move |client| {
+                        client
+                            .https_only(true)
+                            .tls_certs_only([certificate.clone()])
+                    })
+                    .endpoints(vec![manifest(endpoint)])
+                    .unwrap()
+                    .build()
+                    .unwrap()
+            };
+            for endpoint in ["/tampered/latest.json", "/wrong-version/latest.json"] {
+                let update = checked_update(endpoint).check().await.unwrap().unwrap();
+                let error = update
+                    .download_and_install(|_, _| {}, || {})
+                    .await
+                    .unwrap_err();
+                if endpoint.starts_with("/tampered") {
+                    assert!(matches!(error, Error::Minisign(_)), "{error:?}");
+                } else {
+                    assert!(
+                        matches!(error, Error::SignedVersionMismatch { .. }),
+                        "{error:?}"
+                    );
+                }
+                assert_eq!(fs::read(&executable).unwrap(), old_bytes);
+            }
+            let update = checked_update("/valid/latest.json")
+                .check()
+                .await
+                .unwrap()
+                .unwrap();
+            assert_eq!(update.current_version, "0.2.38");
+            assert_eq!(update.version, "0.2.40");
+            update.download_and_install(|_, _| {}, || {}).await.unwrap();
+            assert_ne!(fs::read(&executable).unwrap(), old_bytes);
+        });
+    }
 }

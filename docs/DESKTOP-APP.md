@@ -202,9 +202,13 @@ Release-Konfiguration muss den öffentlichen Tauri-Schlüssel einbetten,
 die Update-Artefakte erzeugen und das passende `latest.json` bereitstellen.
 Der private Schlüssel gehört ausschließlich in die kontrollierte
 Signierumgebung. Die Signatur muss die jeweilige App-Version binden.
-Die CI verifiziert geänderte Bytes und eine abweichende
-Versionsangabe mit einem eigens dafür signierten Testinhalt. Das belegt
-die Signaturprüfung, noch keine Installation eines signierten Releases.
+Die CI verifiziert geänderte Bytes und eine abweichende Versionsangabe
+in einem Signaturtest. Ein manuell gestarteter CI-Lauf mit fest vorgegebenem
+BACH-Ocean-0.2.38-DMG prüft auf einem GitHub-gehosteten Mac zusätzlich die
+Installation des Updates auf 0.2.40. Der Tauri-Updater lädt das mit einem
+kurzlebigen Testschlüssel signierte App-Archiv über lokales HTTPS. Der
+Lauf prüft beide Fehlerfälle, den sichtbaren App-Start nach dem Update
+und den Erhalt einer Testdatei im Benutzerprofil.
 [Tauri-Updater](https://v2.tauri.app/plugin/updater/)
 
 ## Offene vollständige Abnahme
