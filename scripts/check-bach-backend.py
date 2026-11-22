@@ -186,7 +186,7 @@ def check_browser(origin, token, worker_count, out):
         expect(tasks.get_by_text(OPEN_TASK, exact=True)).to_have_count(0)
         record("/tasks")
 
-        page.go_back(wait_until="domcontentloaded")
+        page.locator('a.logo[href="/"]').click()
         page.locator('#main-content a[href="/agenten/running"]').last.click()
         expect(page.locator("#worker-status-summary")).to_have_text(
             re.compile(rf"^{worker_count} Worker registriert")

@@ -113,7 +113,7 @@ export async function walkGuiPages(page, gui, origin, output, {
   assert.equal(await taskTable.getByText(openTitle, {exact:true}).count(), 0);
   await record('/tasks', 'aufgaben', /^Aufgaben$/);
 
-  await page.goBack({waitUntil:'domcontentloaded', timeout});
+  await page.locator('a.logo[href="/"]').click({timeout});
   await page.locator('#main-content a[href="/agenten/running"]').last().click({timeout});
   await page.locator('#worker-status-summary').filter({hasText:new RegExp('^' + workerCount + ' Worker registriert')}).waitFor({timeout});
   if (workerName !== null) {
