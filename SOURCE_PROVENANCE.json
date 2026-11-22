@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "f8e2ae35c413fa0dbb006b43dada12d4140642f1774f2f0614a22b32af98be93",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "116923af9f87fc3da6f70577e59e4dbd9658e6c33b7b3eaef663fd18eac3b2cf",
+    "public/page-reads.v1.json": "3e75a4338d82710902601bd565e4dc9ddf95dad30808932ea8970f55e8774b5b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -280,10 +280,10 @@
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
-    "src/pages/agenten/blueprints.astro": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
+    "src/pages/agenten/blueprints.astro": "87b47931792b3baa9cd04443ed5048a9416a72bc044fddb13f20e25549ce0de4",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
-    "src/pages/agenten/running.astro": "de62b068f10604add64d641984d881c1d26dfceb547ae857a340a7415eafaa31",
+    "src/pages/agenten/running.astro": "78f47600095cb8e58d431ccbcb863c3b662201cd44aba72f16f1f93527cff82b",
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
     "src/pages/agenten/subscription-agents.astro": "5e1eca8ee6ef5e97a018c104f1e4f342975897bcd9ff656b7ca2a2636b5cb4b5",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
@@ -299,11 +299,11 @@
     "src/pages/governance/index.astro": "5b5ce800eff6bfa95996c969416394d4af11a3aac05352947897e5bf29f775e3",
     "src/pages/governance/logs.astro": "1227c2cb3cb5306990090b2adf9b7d6384f3e4a118db0c309011004a26e73a1d",
     "src/pages/governance/usecases.astro": "fabb09df9521dc2d8ada7c3e6864753939b14547faecd8fc10818b8dfc6d2685",
-    "src/pages/help.astro": "5bf12452ea86c99a01f41b0b21ac9c27b47a28778abcce70848008c451c2893e",
+    "src/pages/help.astro": "a76db365556eeb71100b28cf27159054a3dba56dcfe92efcc33cb8d80f8f307a",
     "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
-    "src/pages/life.astro": "16e533d34d02db04ef6cb9be9c486b5e46ebd377b0a48c2930a75aee74fdf5a7",
+    "src/pages/life.astro": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481",
     "src/pages/maintenance.astro": "1e47fe3566eee28aa580867ad6eef3df5001b80aeec29d97481ff0449d70e3ab",
     "src/pages/memory.astro": "47ab9040873b20341882c6d9463eb70a523ef6c4852d5e4357f9bb3f397f6952",
     "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
@@ -312,7 +312,7 @@
     "src/pages/routinen.astro": "a2e041430e5848a19429b15999ac6af86613eedf05de1c3112d239e74894e746",
     "src/pages/sensation.astro": "110ae810922ef21fe8aee85d370f296c860b005f1873f6bf79996d4e76bbfed0",
     "src/pages/sessions.astro": "bb515024c04451ca8b7e3b586350707a7da29db6dc5467c2172aca3ff87a8774",
-    "src/pages/settings.astro": "448cb74dd0f404c97b4984f9b7e2bfca4e8343f591822ecd3d6745bf531912e9",
+    "src/pages/settings.astro": "e47804f9e2a8fbad19e217c8211f803551ba1acf6576970dd2af4b7e79f6a1be",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
@@ -326,7 +326,7 @@
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
     "src/scripts/agent-history.mjs": "3b5080126d5653be9931211c3c6f9cc05ad085a97fc3026117868262e08de26f",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/scripts/blueprint-studio.mjs": "e5ec034d151be478b3598f932e15f2afaa8f1895e7cdbb24252d9af9cd93e749",
+    "src/scripts/blueprint-studio.mjs": "81d541679dfa25482b91efde879992e6b2027787c05e1de95a064c8fb97542e3",
     "src/scripts/domain-studio.mjs": "d883c4a608b1fd087a9c021eb6b8d496fb420a5d0412388e14c65d11cdd6d2ca",
     "src/scripts/installation-updates.mjs": "c6fcc4aaee0cb0056246cb870008e27e6a538cb18037ca4fe6793f68cbbbcb6c",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
@@ -334,10 +334,10 @@
     "src/styles/main.css": "d95cbb61312745dd3d13f3f158882b38333117c3e5e96364c27f0a0d6c93f6ae",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
-    "tests/agent-color.test.mjs": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
+    "tests/agent-color.test.mjs": "8663e1a58154b0b8c2488a89990386e28595631b3d4dc4749efeed0e20a51b98",
     "tests/agent-history.test.mjs": "ed197be2bc69665feed7ded3ba358e2c1287140a5334f24761ae43d597ff217c",
     "tests/agent-overview.test.mjs": "be2ce93eadd913a8e5a49b7d21e6a48a76002a60307e6d3d92428c8e875fff56",
-    "tests/blueprint-studio.test.mjs": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
+    "tests/blueprint-studio.test.mjs": "48265ed61f13628ba059315f4e5a7b452f38e7256a0f314be6234bcc50d4681b",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
     "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
@@ -383,15 +383,15 @@
     "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
     "scripts/page-reads-helpers.mjs": "2c09229565e98b75010bbca31679589fade600e6e4cc8cbc850063ba7ab3285b",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
-    "src/lib/role-socket-preview.mjs": "95145d84fc33c4dffb1a3517f9255061aa7a69a4fac63dae5ed80412e7234baf",
-    "tests/role-socket-preview.test.mjs": "caffb4c42832e5a29aa1e9136b648cb70bd0a9c23aaec2a23cd13d321d84b89f",
+    "src/lib/role-socket-preview.mjs": "5fe445fa828709ecb8cef14fc26c2e4a3c1f9662a8f4dc19e752803cb933d47c",
+    "tests/role-socket-preview.test.mjs": "e024944cca4d787ef26c78753fabee0eb3c20b8badcab56a505b75289f83e0ff",
     "src/pages/agenten/bibliothek.astro": "4d388a99fd18fe7d8cb119ad2b3da7c41e1dfbe130b73ef8c323f7629a99186b",
     "tests/voice-mic-layout.test.mjs": "3f89ea7ff49ff62cb4e454a732af9eb67efafbc109582a2aa8e4656fa75d9780",
     "tests/no-legacy-device-token.test.mjs": "60d51e2891e6f7386eb54baec000b54105d8cf6aeefa51fcc3186512a1b52255",
-    "src/lib/chat-client.mjs": "086b38a361e64f86a04041fbebb9bab3717c8920b941b76db4516b18d24fa2f4",
+    "src/lib/chat-client.mjs": "9edda0e21291e52d8103ead5f8957b264e5e96fc3478e5710011292b09bd83c9",
     "src/lib/transcript-history.mjs": "30270ecc9afb6599aef106fa15cee808408de8b1cc2fe57c2d8fe73daf500fd9",
-    "src/scripts/chat-page.mjs": "c129d3559f04f46ac1801bf69e2180673a0742439382f2c28a701004636fd89d",
-    "tests/chat-client.test.mjs": "473d13499ab21dbb2841d13aa920adc58f0a0d1dbd88c9f69f95a4a226b55bfd",
+    "src/scripts/chat-page.mjs": "bd47a441a30a6ad158e0de7af274e38129396fbc8bca5af4c914e8f551a99651",
+    "tests/chat-client.test.mjs": "fa435cf7e0949fe80d0287b1c43383036bcf1a41e9ff931099972c31493b796f",
     "tests/route-contract.test.mjs": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1",
     "tests/talk-consumer-errors.test.mjs": "276355edf35a659d3323478eda8819e9bb4831ddf1c78f82a8f435e7eb5176f8",
     "tests/chat-warmup-ui.test.mjs": "2519f968f1d698a0d96c1a1d1c8a57c02496521238fc0858f9fc2410a43ab84a",
@@ -400,7 +400,11 @@
     "tests/fixtures/abort-visibility-backend.mjs": "f8d4dff945e49bf4fdac7614dccbd5a4d2104b247bdd75641bd61f36574c9c30",
     "src/lib/task-returns.mjs": "6799edd2abbd7c416fe79d998b2d0051b3d47d1dadcf8d15e537b0de6215cc21",
     "src/lib/worker-queue-ui.mjs": "27e0c12966fe6887aaf677764079d043df68bf1932b503ad6997640626b3caf4",
-    "tests/task-return-diagnostics.test.mjs": "b1412151e7d9f79d6459a6a981ce27923bb07292f01bedc5ba82f43d0122038f"
+    "tests/task-return-diagnostics.test.mjs": "b1412151e7d9f79d6459a6a981ce27923bb07292f01bedc5ba82f43d0122038f",
+    "src/components/AbortNoticeSettings.astro": "bfdf75290de7342cc0663c7b662ecd05e4957456a1e3b4206af90674ab4c3ca9",
+    "tests/abort-notice-settings.browser.test.mjs": "265e2d42036b275b1b7fcaed81f1a2823953e262b8d18963a6a40c7006f102cd",
+    "tests/help-audit.test.mjs": "49650eb3d28b8d89ba809c053a79a10592432009ec5deb291ec9f22bc80bab79",
+    "tests/life-finance-summary.test.mjs": "c87ed0a461c0830d4356fdb7799adb97cdabc49ac24182db506ffff2a338bc5e"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -6144,6 +6148,137 @@
           "path": "tests/worker-decomposition.test.mjs",
           "previous_sha256": "4bb6f120db4a6b085f151f3fe305f7c783292cc2ed4d7d8e9da64661ec9f1c79",
           "sha256": "616ff5ee47c3b7ba57ff2beae09bf58763cf131a8ef298828943b9e829ae76f6"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "summary": "PB-10: expose module roles beyond the initial preview and label missing provider bindings accurately.",
+      "files": [
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
+          "sha256": "87b47931792b3baa9cd04443ed5048a9416a72bc044fddb13f20e25549ce0de4"
+        },
+        {
+          "path": "src/lib/role-socket-preview.mjs",
+          "previous_sha256": "95145d84fc33c4dffb1a3517f9255061aa7a69a4fac63dae5ed80412e7234baf",
+          "sha256": "5fe445fa828709ecb8cef14fc26c2e4a3c1f9662a8f4dc19e752803cb933d47c"
+        },
+        {
+          "path": "tests/role-socket-preview.test.mjs",
+          "previous_sha256": "caffb4c42832e5a29aa1e9136b648cb70bd0a9c23aaec2a23cd13d321d84b89f",
+          "sha256": "e024944cca4d787ef26c78753fabee0eb3c20b8badcab56a505b75289f83e0ff"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "summary": "Keep ordered fallback model bindings when editing or copying a blueprint and verify the saved binding.",
+      "files": [
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "e5ec034d151be478b3598f932e15f2afaa8f1895e7cdbb24252d9af9cd93e749",
+          "sha256": "81d541679dfa25482b91efde879992e6b2027787c05e1de95a064c8fb97542e3"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
+          "sha256": "87b47931792b3baa9cd04443ed5048a9416a72bc044fddb13f20e25549ce0de4"
+        },
+        {
+          "path": "tests/blueprint-studio.test.mjs",
+          "previous_sha256": "f90bb8049b43337ef6a22c3376bbb86ede1eafa051b40d6c6f3051ee7eeeeec7",
+          "sha256": "48265ed61f13628ba059315f4e5a7b452f38e7256a0f314be6234bcc50d4681b"
+        },
+        {
+          "path": "tests/agent-color.test.mjs",
+          "previous_sha256": "4f5392106dd0339bafd9bee682e59ae8d898fc76d57f74e70ad3976fab081fba",
+          "sha256": "8663e1a58154b0b8c2488a89990386e28595631b3d4dc4749efeed0e20a51b98"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "summary": "Distinguish acknowledged worker continuation from the observed runtime state in Chat and Living & Running.",
+      "files": [
+        {
+          "path": "src/lib/chat-client.mjs",
+          "previous_sha256": "086b38a361e64f86a04041fbebb9bab3717c8920b941b76db4516b18d24fa2f4",
+          "sha256": "9edda0e21291e52d8103ead5f8957b264e5e96fc3478e5710011292b09bd83c9"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "5b242b331a287ac147f465da6e1a0b7687c5abe24cc5f587ec0c6dec88cc14b5",
+          "sha256": "78f47600095cb8e58d431ccbcb863c3b662201cd44aba72f16f1f93527cff82b"
+        },
+        {
+          "path": "src/scripts/chat-page.mjs",
+          "previous_sha256": "c129d3559f04f46ac1801bf69e2180673a0742439382f2c28a701004636fd89d",
+          "sha256": "bd47a441a30a6ad158e0de7af274e38129396fbc8bca5af4c914e8f551a99651"
+        },
+        {
+          "path": "tests/chat-client.test.mjs",
+          "previous_sha256": "473d13499ab21dbb2841d13aa920adc58f0a0d1dbd88c9f69f95a4a226b55bfd",
+          "sha256": "fa435cf7e0949fe80d0287b1c43383036bcf1a41e9ff931099972c31493b796f"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "summary": "PB-12: render Life finance values only from a verified measured response and distinguish recurring subscription costs from observed expenditure.",
+      "files": [
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "16e533d34d02db04ef6cb9be9c486b5e46ebd377b0a48c2930a75aee74fdf5a7",
+          "sha256": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481"
+        },
+        {
+          "path": "tests/life-finance-summary.test.mjs",
+          "previous_sha256": "2b90970e2321ea5eba98e2cf65af73c72b789d19c0ca6f2778ff2d1efbb562ee",
+          "sha256": "c87ed0a461c0830d4356fdb7799adb97cdabc49ac24182db506ffff2a338bc5e"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-22",
+      "summary": "PB-17: show dated documentation reports, limited CLI and language-file checks, and unavailable states independently of the module catalog.",
+      "files": [
+        {
+          "path": "src/pages/help.astro",
+          "previous_sha256": "5bf12452ea86c99a01f41b0b21ac9c27b47a28778abcce70848008c451c2893e",
+          "sha256": "a76db365556eeb71100b28cf27159054a3dba56dcfe92efcc33cb8d80f8f307a"
+        },
+        {
+          "path": "tests/help-audit.test.mjs",
+          "previous_sha256": null,
+          "sha256": "49650eb3d28b8d89ba809c053a79a10592432009ec5deb291ec9f22bc80bab79"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-22",
+      "summary": "PB-4: add device-authenticated abort-notice settings with version conflict handling and persisted readback.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "116923af9f87fc3da6f70577e59e4dbd9658e6c33b7b3eaef663fd18eac3b2cf",
+          "sha256": "3e75a4338d82710902601bd565e4dc9ddf95dad30808932ea8970f55e8774b5b"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "448cb74dd0f404c97b4984f9b7e2bfca4e8343f591822ecd3d6745bf531912e9",
+          "sha256": "e47804f9e2a8fbad19e217c8211f803551ba1acf6576970dd2af4b7e79f6a1be"
+        },
+        {
+          "path": "src/components/AbortNoticeSettings.astro",
+          "previous_sha256": null,
+          "sha256": "bfdf75290de7342cc0663c7b662ecd05e4957456a1e3b4206af90674ab4c3ca9"
+        },
+        {
+          "path": "tests/abort-notice-settings.browser.test.mjs",
+          "previous_sha256": null,
+          "sha256": "265e2d42036b275b1b7fcaed81f1a2823953e262b8d18963a6a40c7006f102cd"
         }
       ]
     }
