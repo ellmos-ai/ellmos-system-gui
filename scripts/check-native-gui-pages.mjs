@@ -15,6 +15,8 @@ const doneTask = {id:920002, title:'CI-Aufgabe bereits erledigt', status:'done',
 const worker = {id:'ci-worker', name:'CI-Worker für die Desktop-Prüfung',
   status:'idle', backend:'ollama', model:'ci-model', runtime_verified:true, running:false};
 
+export const smokeSamples = {openTask, doneTask, worker};
+
 export async function openVerifiedGui(dist, commit) {
   const manifest = JSON.parse(await readFile(join(dist, 'dist-manifest.json'), 'utf8'));
   assert.match(commit, /^[0-9a-f]{40}$/);

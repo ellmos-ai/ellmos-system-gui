@@ -12,6 +12,7 @@ on:
       - 'scripts/check-windows-webview.mjs'
       - 'scripts/check-native-gui-pages.mjs'
       - 'scripts/check-linux-installer.py'
+      - 'scripts/check-linux-webview.mjs'
       - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
       - 'docs/DESKTOP-APP.md'
@@ -27,6 +28,7 @@ on:
       - 'scripts/check-windows-webview.mjs'
       - 'scripts/check-native-gui-pages.mjs'
       - 'scripts/check-linux-installer.py'
+      - 'scripts/check-linux-webview.mjs'
       - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
       - 'docs/DESKTOP-APP.md'
@@ -117,11 +119,11 @@ jobs:
           node-version: '22'
           cache: npm
           cache-dependency-path: .github/desktop-toolchain/package-lock.json
-      - name: Install the locked WebView test client
-        if: runner.os == 'Windows'
+      - name: Install locked dependencies for the WebView smoke
+        if: runner.os == 'Windows' || runner.os == 'Linux'
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Build the shared GUI for the native WebView smoke
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' || runner.os == 'Linux'
         run: npm run build:release
       - name: Install locked desktop build tools
         working-directory: .github/desktop-toolchain
@@ -139,7 +141,13 @@ jobs:
           key: ${{ runner.os }}-desktop-${{ hashFiles('src-tauri/Cargo.lock') }}
       - name: Linux webview dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev librsvg2-dev libayatana-appindicator3-dev patchelf libfuse2t64 xvfb xauth xdotool dbus-daemon
+        run: |
+          sudo apt-get update
+          webdriver=webkitgtk-webdriver
+          if ! apt-cache policy "$webdriver" | awk '$1 == "Candidate:" && $2 != "(none)" { found=1 } END { exit !found }'; then
+            webdriver=webkit2gtk-driver
+          fi
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev librsvg2-dev libayatana-appindicator3-dev patchelf libfuse2t64 xvfb xauth xdotool dbus-daemon "$webdriver" openbox wmctrl
       - name: Remove cached bundle outputs
         shell: python
         run: |
