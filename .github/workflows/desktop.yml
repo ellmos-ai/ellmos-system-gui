@@ -11,6 +11,7 @@ on:
       - 'scripts/check-windows-installer.ps1'
       - 'scripts/check-windows-webview.mjs'
       - 'scripts/check-linux-installer.py'
+      - 'scripts/check-macos-installer.py'
       - 'docs/DESKTOP-APP.md'
   push:
     branches: [main]
@@ -23,6 +24,7 @@ on:
       - 'scripts/check-windows-installer.ps1'
       - 'scripts/check-windows-webview.mjs'
       - 'scripts/check-linux-installer.py'
+      - 'scripts/check-macos-installer.py'
       - 'docs/DESKTOP-APP.md'
   workflow_dispatch:
     inputs:
@@ -40,6 +42,9 @@ on:
         required: true
       legacy_deb_sha256:
         description: 'Expected SHA-256 of the Debian package from the same build (optional migration test)'
+        type: string
+      legacy_dmg_sha256:
+        description: 'Expected SHA-256 of the macOS DMG from the same build (optional migration test)'
         type: string
 
 permissions:
@@ -179,7 +184,11 @@ jobs:
       - name: Package compiled desktop consumer and source receipt
         run: python scripts/package-desktop.py
       - name: Verify legacy desktop artifact source
-        if: github.event_name == 'workflow_dispatch' && (runner.os == 'Windows' || (runner.os == 'Linux' && inputs.legacy_deb_sha256 != ''))
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          (runner.os == 'Windows' ||
+          (runner.os == 'Linux' && inputs.legacy_deb_sha256 != '') ||
+          (runner.os == 'macOS' && inputs.legacy_dmg_sha256 != ''))
         env:
           GH_TOKEN: ${{ github.token }}
           LEGACY_RUN: ${{ inputs.legacy_run }}
@@ -195,7 +204,11 @@ jobs:
             throw 'The legacy run is not the successful main-branch desktop build requested.'
           }
       - uses: actions/download-artifact@v4
-        if: github.event_name == 'workflow_dispatch' && (runner.os == 'Windows' || (runner.os == 'Linux' && inputs.legacy_deb_sha256 != ''))
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          (runner.os == 'Windows' ||
+          (runner.os == 'Linux' && inputs.legacy_deb_sha256 != '') ||
+          (runner.os == 'macOS' && inputs.legacy_dmg_sha256 != ''))
         with:
           name: desktop-consumer-${{ runner.os }}-${{ inputs.legacy_commit }}
           run-id: ${{ inputs.legacy_run }}
@@ -219,6 +232,13 @@ jobs:
           LEGACY_COMMIT: ${{ inputs.legacy_commit }}
           LEGACY_DEB_SHA256: ${{ inputs.legacy_deb_sha256 }}
         run: xvfb-run -a dbus-run-session -- python scripts/check-linux-installer.py
+      - name: Verify macOS DMG lifecycle
+        if: runner.os == 'macOS'
+        env:
+          LEGACY_RUN: ${{ inputs.legacy_run }}
+          LEGACY_COMMIT: ${{ inputs.legacy_commit }}
+          LEGACY_DMG_SHA256: ${{ inputs.legacy_dmg_sha256 }}
+        run: python scripts/check-macos-installer.py
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-consumer-${{ runner.os }}-${{ env.DESKTOP_SOURCE_COMMIT }}
