@@ -64,7 +64,14 @@ def verified_package(directory, *, package, commit, run_id, pin=None):
     require(pin is None or pin == actual, "Legacy Debian artifact does not match the supplied SHA-256")
     require(run("dpkg-deb", "-f", str(bundle), "Package").stdout.strip() == package, "Wrong Debian package")
     version = run("dpkg-deb", "-f", str(bundle), "Version").stdout.strip()
-    return bundle, version, actual, receipt["files"][APP.name]["sha256"]
+    with tempfile.TemporaryDirectory(prefix="ocean-deb-payload-") as temp:
+        root = Path(temp).resolve()
+        run("dpkg-deb", "-x", str(bundle), str(root))
+        binary = root / APP.relative_to("/")
+        require(binary.is_file() and not binary.is_symlink() and binary.resolve().is_relative_to(root),
+                "Debian package has no regular app binary")
+        binary_sha = digest(binary)
+    return bundle, version, actual, binary_sha
 
 
 def installed(package):

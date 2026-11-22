@@ -158,7 +158,7 @@ Programmpfad. APT entfernt beim Wechsel die alte Paketregistrierung und
 verwendet weiterhin dieselbe App-ID.
 
 Der Linux-Runner prüft das gebaute `.deb` mit APT und dpkg. Er verifiziert
-die installierte Datei anhand ihres Hashes, startet das native
+die installierte Datei anhand des Hashes ihres Gegenstücks im Paket, startet das native
 Verbindungsfenster auf einem virtuellen Display und prüft die Entfernung
 von Programmdatei und Startmenüeintrag. Der Nachweis steht im
 Artefakt `linux-installer-check.json`.
