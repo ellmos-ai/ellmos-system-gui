@@ -1,0 +1,116 @@
+<section class="card abort-settings" aria-labelledby="abort-notice-heading">
+  <h3 id="abort-notice-heading">Abbruchmeldungen im Postfach</h3>
+  <p id="abort-notice-status" role="status">Einstellungen werden geladen …</p>
+  <form id="abort-notice-form" hidden>
+    <fieldset disabled>
+      <label class="notice-toggle">
+        <input name="repeated_abort" type="checkbox" />
+        Wiederholte Abbrüche im Postfach melden
+      </label>
+      <label class="notice-cap">
+        Einzelmeldungen pro Stunde
+        <input name="max_per_hour" type="number" min="0" max="20" step="1" required aria-describedby="abort-notice-cap-help" />
+      </label>
+      <p id="abort-notice-cap-help">Weitere Abbrüche stehen in einer Sammelmeldung. Bei 0 erscheinen nur Sammelmeldungen.</p>
+      <button class="btn btn-primary" type="submit">Abbruchmeldungen speichern</button>
+    </fieldset>
+  </form>
+  <button class="btn btn-secondary" id="abort-notice-reload" type="button">Aktuellen Stand laden</button>
+</section>
+
+<style>
+  .abort-settings { margin-top: 1rem; padding: 1.15rem; }
+  .abort-settings h3 { margin-top: 0; }
+  .abort-settings fieldset { display: grid; gap: .7rem; margin: 0 0 .65rem; padding: 0; border: 0; min-width: 0; }
+  .notice-toggle, .notice-cap { display: flex; align-items: center; flex-wrap: wrap; gap: .55rem; min-height: 24px; }
+  .notice-cap input { box-sizing: border-box; width: 5rem; padding: .45rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-dark); color: var(--text); font: inherit; }
+  .abort-settings input[type="checkbox"] { margin: 0; }
+  .abort-settings fieldset button { justify-self: start; }
+  #abort-notice-cap-help { margin: 0; color: var(--text-muted); font-size: .85rem; }
+</style>
+
+<script>
+  import {consumerApiHeaders} from "../lib/consumer-api-auth.mjs";
+
+  const endpoint = "/api/system/abort-notice-settings";
+  const form = document.querySelector<HTMLFormElement>("#abort-notice-form")!;
+  const fields = form.querySelector("fieldset")!;
+  const enabled = form.querySelector<HTMLInputElement>('[name="repeated_abort"]')!;
+  const limit = form.querySelector<HTMLInputElement>('[name="max_per_hour"]')!;
+  const status = document.querySelector("#abort-notice-status")!;
+  const reload = document.querySelector<HTMLButtonElement>("#abort-notice-reload")!;
+
+  type NoticeSettings = {repeated_abort: boolean; max_per_hour: number; configuration_version: string};
+  let current: NoticeSettings | null = null;
+
+  async function readSettings(): Promise<NoticeSettings> {
+    const response = await fetch(endpoint, {headers: consumerApiHeaders(), cache: "no-store"});
+    if (!response.ok) throw new Error("Einstellungen nicht erreichbar");
+    const setting = await response.json();
+    if (setting?.schema !== "bach.abort-notice-settings.v1"
+        || typeof setting.configuration_version !== "string"
+        || !/^[a-f0-9]{64}$/.test(setting.configuration_version)
+        || typeof setting.repeated_abort !== "boolean"
+        || !Number.isInteger(setting.max_per_hour)
+        || setting.max_per_hour < 0 || setting.max_per_hour > 20) {
+      throw new Error("Ungültige Einstellungen");
+    }
+    return setting;
+  }
+
+  async function refresh(message = "", requested?: NoticeSettings) {
+    current = null;
+    reload.disabled = fields.disabled = true;
+    try {
+      const setting = await readSettings();
+      current = setting;
+      enabled.checked = setting.repeated_abort;
+      limit.value = String(setting.max_per_hour);
+      form.hidden = false;
+      const confirmed = requested
+        && setting.repeated_abort === requested.repeated_abort
+        && setting.max_per_hour === requested.max_per_hour;
+      status.textContent = requested
+        ? (confirmed ? "Gespeichert und vom Backend bestätigt." : "Das Backend meldet andere Werte. Der aktuelle Stand wurde geladen.")
+        : (message || "Aktueller Stand geladen.");
+    } catch {
+      form.hidden = true;
+      status.textContent = "Einstellungen derzeit nicht verfügbar.";
+    } finally {
+      reload.disabled = false;
+      fields.disabled = current === null;
+    }
+  }
+
+  reload.addEventListener("click", () => void refresh());
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (fields.disabled || current === null || !limit.validity.valid) return;
+    const requested = {
+      repeated_abort: enabled.checked,
+      max_per_hour: limit.valueAsNumber,
+      configuration_version: current.configuration_version,
+    };
+    reload.disabled = fields.disabled = true;
+    status.textContent = "Einstellungen werden gespeichert …";
+    let message = "Speichern nicht bestätigt. Aktueller Stand geladen.";
+    try {
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: consumerApiHeaders({"Content-Type": "application/json"}),
+        body: JSON.stringify(requested),
+      });
+      if (response.status === 409) {
+        message = "Die Einstellung wurde parallel geändert. Der aktuelle Stand wurde geladen.";
+      } else if (response.ok && (await response.json())?.updated === true) {
+        await refresh("", requested);
+        return;
+      }
+    } catch {
+      // The write may have reached the backend. Read the persisted state before enabling another attempt.
+    }
+    await refresh(message);
+  });
+
+  void refresh();
+</script>

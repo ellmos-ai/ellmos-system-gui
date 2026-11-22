@@ -27,13 +27,18 @@ class Element {
   replaceChildren(...children) { this.children = []; this.append(...children); }
   addEventListener(name, callback) { this.events.set(name, callback); }
   change(value) { this.value = value; this.events.get('change')?.(); }
+  click() { this.events.get('click')?.(); }
+  focus() { this.focused = true; }
 }
 function fixture() {
   const container = new Element('div'), select = new Element('select');
+  const source = new Element('select'), more = new Element('button');
   select.value = 'claude';
+  more.hidden = true;
   const document = {createElement: tag => new Element(tag),
-    getElementById: id => ({'ocean-role-socket-list': container, 'ocean-socket-provider-select': select})[id]};
-  return {document, container, select};
+    getElementById: id => ({'ocean-role-socket-list': container, 'ocean-socket-provider-select': select,
+      'ocean-role-source-select': source, 'ocean-role-show-more': more})[id]};
+  return {document, container, select, source, more};
 }
 function catalogue(template = {}) {
   return {templates: [{label:'Entwicklung', role_id:'developer', module_id:'example',
@@ -71,15 +76,14 @@ const payloads = [
   'javascript:globalThis.compromised=true',
   '&lt;img src=x onerror=compromised&gt;',
 ];
-for (const field of ['label','role_id','prompt','module_id','tier','socket_id','semantic_route','model','provider']) {
+for (const field of ['label','role_id','prompt','module_id','tier','socket_id','semantic_route','model']) {
   test('untrusted ' + field + ' is literal text with no metadata-derived elements or attributes', () => {
     for (const payload of payloads) {
       const f = fixture(), data = catalogue(), template = data.templates[0];
-      let provider = 'claude';
+      const provider = 'claude';
       if (field === 'role_id') { template.label = ''; template.role_id = payload; }
       else if (field === 'tier') { template.source = 'catalogue'; template.tier = payload; }
       else if (field === 'model') data.role_socket_catalog.provider_sockets.specialist.providers.claude = payload;
-      else if (field === 'provider') provider = payload;
       else template[field] = payload;
       renderRoleSocketPreview(f.document, f.container, data, provider);
       assert.ok(f.container.textContent.includes(payload), field + ' remains visible as text');
@@ -88,12 +92,12 @@ for (const field of ['label','role_id','prompt','module_id','tier','socket_id','
   });
 }
 
-test('semantic routes, role badges and the existing twelve-card limit are retained', () => {
+test('semantic routes, role badges and the first twelve cards are rendered by default', () => {
   const f = fixture(), data = catalogue({source:'role_catalogue', tier:'coordinator', semantic_route:'research-umbrella'});
   data.templates = Array.from({length:15}, (_, index) => ({...data.templates[0], label:'Role ' + index}));
   renderRoleSocketPreview(f.document, f.container, data, 'missing-provider');
   assert.equal(f.container.children.length, 12);
-  assert.match(f.container.children[0].textContent, /Role 0🧭 coordinatorUmbrella: research-umbrellaSockel specialist → missing-provider/);
+  assert.match(f.container.children[0].textContent, /Role 0🧭 coordinatorUmbrella: research-umbrellaSockel specialist → Keine Modellbindung/);
   assertStaticElements(f.container);
 });
 
@@ -136,7 +140,7 @@ test('malformed metadata cannot supply conversion hooks, tags or provider attrib
   const f = fixture(), data = catalogue({label:{toString(){throw Error('must not coerce');}},
     role_id:'fallback role', prompt:[], socket_id:{}, module_id:null});
   renderRoleSocketPreview(f.document, f.container, data, 'claude');
-  assert.equal(f.container.textContent, 'fallback role📦 Prompt: SKILL.mdSockel domain_specialist → claude');
+  assert.equal(f.container.textContent, 'fallback role📦 Prompt: SKILL.mdSockel domain_specialist → Keine Modellbindung');
   assertStaticElements(f.container);
 });
 
@@ -173,4 +177,36 @@ test('the heading shows the counted number, and no number when the catalogue is 
   const page = readFileSync(new URL('../src/pages/agenten/blueprints.astro', import.meta.url), 'utf8');
   assert.doesNotMatch(page, /19 Modul-Rollen/);
   assert.match(page, /id="ocean-module-role-count"/);
+});
+
+
+test('module roles behind builtin roles can be shown without losing the provider selection', async () => {
+  const f = fixture(), data = catalogue();
+  const moduleRole = data.templates[0];
+  data.templates = [
+    ...Array.from({length: 13}, (_, i) => ({...moduleRole, source: 'builtin', label: 'Ocean ' + i})),
+    ...Array.from({length: 19}, (_, i) => ({...moduleRole, label: 'Modul ' + i})),
+  ];
+  await mountRoleSocketPreview(f.document, async () => ({ok:true, json:async () => data}));
+  assert.equal(f.container.children.length, 12);
+  assert.equal(f.more.hidden, false);
+  assert.doesNotMatch(f.container.textContent, /Modul 0/);
+  f.source.change('module');
+  assert.equal(f.container.children.length, 12);
+  assert.doesNotMatch(f.container.textContent, /Ocean 0/);
+  f.more.click();
+  assert.equal(f.container.children.length, 19);
+  assert.equal(f.container.children[12].focused, true);
+  assert.equal(f.more.hidden, true);
+  f.select.change('codex');
+  assert.equal(f.container.children.length, 19);
+  assert.match(f.container.children[18].textContent, /Modul 18.*→ gpt/);
+});
+
+test('a provider excluded by the role or missing from the socket has no model binding', () => {
+  const f = fixture(), data = catalogue({providers:['claude']});
+  for (const provider of ['codex', 'unbekannt', '__proto__']) {
+    renderRoleSocketPreview(f.document, f.container, data, provider);
+    assert.match(f.container.textContent, /→ Keine Modellbindung$/);
+  }
 });
