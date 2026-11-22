@@ -99,14 +99,6 @@ fn walk(app: &AppHandle, connection: &WebviewWindow, inputs: Inputs) -> Result<(
         "WKWebView smoke: connection window visible={}, url={url:?}",
         native_visible(connection)?
     );
-    if !native_visible(connection)? {
-        connection.show().map_err(|error| error.to_string())?;
-    }
-    if !url.as_ref().is_some_and(super::local_document) {
-        connection
-            .navigate(Url::parse("tauri://localhost/").map_err(|error| error.to_string())?)
-            .map_err(|error| error.to_string())?;
-    }
     wait_for("the visible bundled connection form", || {
         Ok(native_visible(connection)?
             && evaluate(connection, "Boolean(document.querySelector('#backend-url'))")?)

@@ -282,7 +282,9 @@ fn main() {
                 "quit" => app.exit(0),
                 _ => {}
             });
-            WebviewWindowBuilder::new(app, CONNECTION, WebviewUrl::App("index.html".into()))
+            // Tauri shortens the exact name "index.html" to a pathless custom URL.
+            // Use the explicit file so the connection navigation policy can match it.
+            WebviewWindowBuilder::new(app, CONNECTION, WebviewUrl::App("./index.html".into()))
                 .title("Ocean (BACH) verbinden")
                 .inner_size(760.0, 620.0)
                 .min_inner_size(560.0, 520.0)
