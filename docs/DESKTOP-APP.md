@@ -149,6 +149,27 @@ wirkliche Installation, Update/Rückweg, Datenerhalt bei Deinstallation und
 Store-Veröffentlichung sind noch offen. Es gibt keinen automatischen Release,
 Store-Upload oder Start der Kandidaten.
 
+### Debian-Paket und Wechsel von BACH Ocean zu OpenOcean
+
+`open-ocean` ersetzt auf Debian-basierten Systemen das frühere Paket
+`bach-ocean` in Versionen vor 0.2.40. Beide Pakete verwenden denselben
+Programmpfad. APT entfernt beim Wechsel die alte Paketregistrierung und
+überträgt die Programmdatei an das neue Paket. Die Desktop-Anwendung
+verwendet weiterhin dieselbe App-ID.
+
+Der Linux-Runner prüft das gebaute `.deb` mit APT und dpkg. Er verifiziert
+die installierte Datei anhand ihres Hashes, startet das native
+Verbindungsfenster auf einem virtuellen Display und prüft die Entfernung
+von Programmdatei und Startmenüeintrag. Der Nachweis steht im
+Artefakt `linux-installer-check.json`.
+
+Beim manuellen Workflow-Start aktiviert die zusätzliche Eingabe
+`legacy_deb_sha256` den Paketwechsel und Rückweg mit dem Linux-Artefakt aus
+dem angegebenen Main-Lauf. Zwei Testdateien in isolierten
+XDG-Anwendungsordnern belegen den Datenerhalt. Produktive Anmeldungen,
+AppImage-Installation, automatische Updates und Geräteabnahme
+benötigen eigene Nachweise.
+
 ## Offene vollständige Abnahme
 
 Die Task2337-Anforderungen bleiben erhalten: tatsächlicher Start und Reconnect,
