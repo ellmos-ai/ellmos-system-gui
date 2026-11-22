@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import re
+import secrets
 import socket
 import sys
 import tempfile
@@ -56,6 +57,7 @@ def prepare_backend(bach, dist, scratch):
         BACH_NO_AUTO_MIGRATE="1",
         BACH_CONTROL_HOST="127.0.0.1",
         BACH_CONTROL_PORT="0",
+        BACH_CONTROL_API_TOKEN=secrets.token_urlsafe(32),
         ELLMOS_SYSTEM_GUI_DIST=str(dist),
     )
     sys.path[:0] = [str(bach), str(bach / "system")]
@@ -132,6 +134,7 @@ def check_browser(origin, token, out):
 
         page = context.new_page()
         page.set_default_timeout(20000)
+        expect.set_options(timeout=20000)
         errors = []
         page.on("pageerror", lambda error: errors.append(error.name))
 
