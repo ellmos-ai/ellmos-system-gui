@@ -10,8 +10,9 @@ final class OceanDMGUITests: XCTestCase {
         let output: String
     }
 
-    private func require(_ element: XCUIElement, _ message: String) throws -> XCUIElement {
+    private func require(_ element: XCUIElement, _ message: String, in window: XCUIElement? = nil) throws -> XCUIElement {
         guard element.waitForExistence(timeout: 25) else {
+            if let window { print(window.debugDescription) }
             throw UITestFailure(message)
         }
         return element
@@ -32,34 +33,34 @@ final class OceanDMGUITests: XCTestCase {
         app.launch()
 
         let connection = try require(app.windows["Ocean (BACH) verbinden"], "Installed connection window not found")
-        let connect = try require(connection.webViews.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Verbinden")).firstMatch,
-                                  "Connect button not found")
-        let address = try require(connection.webViews.textFields.firstMatch, "Backend address field not found")
+        let connect = try require(connection.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Verbinden")).firstMatch,
+                                  "Connect button not found", in: connection)
+        let address = try require(connection.textFields.firstMatch, "Backend address field not found", in: connection)
         address.click()
         address.typeText(input.origin)
         connect.click()
-        _ = try require(connection.webViews.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Loopbackadressen")).firstMatch,
-                        "Expected confirmation before using HTTP")
-        let consent = try require(connection.webViews.checkBoxes.firstMatch, "HTTP confirmation checkbox not found")
+        _ = try require(connection.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Loopbackadressen")).firstMatch,
+                        "Expected confirmation before using HTTP", in: connection)
+        let consent = try require(connection.checkBoxes.firstMatch, "HTTP confirmation checkbox not found", in: connection)
         consent.click()
         connect.click()
 
         let backend = try require(app.windows["Ocean (BACH)"], "BACH backend window not found")
-        let web = backend.webViews.firstMatch
+        let web = backend
         let heading = web.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Willkommen")).firstMatch
-        _ = try require(heading, "Dashboard did not render in WKWebView")
+        _ = try require(heading, "Dashboard did not render in WKWebView", in: backend)
         let openTitle = web.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", input.openTask)).firstMatch
-        _ = try require(openTitle, "The enrolled device could not read its open BACH task")
+        _ = try require(openTitle, "The enrolled device could not read its open BACH task", in: backend)
         try backend.screenshot().pngRepresentation.write(to: output.appendingPathComponent("dashboard.png"))
 
         let tasks = try require(web.links["Aufgaben"].firstMatch, "Tasks link not found")
         tasks.click()
         _ = try require(openTitle, "Open task not rendered on the Tasks page")
         let filter = try require(web.popUpButtons.matching(
-            NSPredicate(format: "value CONTAINS %@", "Offen · alle aktiven")).firstMatch, "Task status filter not found")
+            NSPredicate(format: "value CONTAINS %@", "Offen · alle aktiven")).firstMatch, "Task status filter not found", in: backend)
         filter.click()
         let doneOption = try require(app.menuItems.matching(NSPredicate(format: "label CONTAINS %@", "Erledigt · alle")).firstMatch,
-                                     "Completed task option not found")
+                                     "Completed task option not found", in: app)
         doneOption.click()
         let doneTitle = web.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", input.doneTask)).firstMatch
         _ = try require(doneTitle, "Completed task not rendered after filtering")
