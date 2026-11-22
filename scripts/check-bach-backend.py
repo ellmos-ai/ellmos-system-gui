@@ -123,7 +123,7 @@ def check_http(origin, token, manifest):
     return {"page_count": dist["page_count"], "pages": pages, "task_ids": task_ids, "worker_count": workers["count"]}
 
 
-def check_browser(origin, token, out):
+def check_browser(origin, token, worker_count, out):
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         context = browser.new_context(viewport={"width": 1400, "height": 950})
@@ -159,10 +159,10 @@ def check_browser(origin, token, out):
         record("/tasks")
 
         page.go_back(wait_until="domcontentloaded")
-        with page.expect_response(lambda response: response.url == origin + "/api/system/workers") as worker_read:
-            page.locator('#main-content a[href="/agenten/running"]').last.click()
-        assert worker_read.value.ok, worker_read.value.status
-        assert worker_read.value.json()["source"] == "authenticated_local_control_api"
+        page.locator('#main-content a[href="/agenten/running"]').last.click()
+        expect(page.locator("#worker-status-summary")).to_have_text(
+            re.compile(rf"^{worker_count} Worker registriert")
+        )
         record("/agenten/running")
         assert not errors, f"Uncaught browser errors: {errors}"
         context.close()
@@ -196,7 +196,7 @@ def main():
             try:
                 wait_for_gui(server, thread, origin)
                 result = check_http(origin, token, manifest)
-                check_browser(origin, token, args.out)
+                check_browser(origin, token, result["worker_count"], args.out)
             finally:
                 server.should_exit = True
                 thread.join(10)
