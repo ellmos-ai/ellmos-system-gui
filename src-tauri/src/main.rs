@@ -1,6 +1,8 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
 
 mod desktop_updates;
+#[cfg(all(target_os = "macos", feature = "macos-native-smoke"))]
+mod macos_native_smoke;
 
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::time::Duration;
@@ -287,6 +289,11 @@ fn main() {
                 .on_navigation(local_document)
                 .on_new_window(|_, _| NewWindowResponse::Deny)
                 .build()?;
+            #[cfg(all(target_os = "macos", feature = "macos-native-smoke"))]
+            macos_native_smoke::start(
+                app.handle().clone(),
+                app.get_webview_window(CONNECTION).expect("connection window"),
+            )?;
             Ok(())
         })
         .on_window_event(|window, event| match event {
