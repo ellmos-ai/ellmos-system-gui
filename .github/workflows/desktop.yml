@@ -8,6 +8,17 @@ on:
       - '.github/workflows/desktop.yml'
       - '.github/desktop-toolchain/**'
       - 'scripts/package-desktop.py'
+      - 'scripts/check-windows-installer.ps1'
+      - 'scripts/check-windows-webview.mjs'
+      - 'scripts/check-native-gui-pages.mjs'
+      - 'scripts/check-linux-installer.py'
+      - 'scripts/check-bach-backend.py'
+      - '.github/actions/prepare-bach-smoke/action.yml'
+      - 'scripts/check-linux-webview.mjs'
+      - 'scripts/desktop_update_fixture.py'
+      - 'scripts/check-macos-installer.py'
+      - 'scripts/macos-desktop-uitest/**'
+      - 'scripts/check-macos-webview.mjs'
       - 'docs/DESKTOP-APP.md'
   push:
     branches: [main]
@@ -17,10 +28,45 @@ on:
       - '.github/workflows/desktop.yml'
       - '.github/desktop-toolchain/**'
       - 'scripts/package-desktop.py'
+      - 'scripts/check-windows-installer.ps1'
+      - 'scripts/check-windows-webview.mjs'
+      - 'scripts/check-native-gui-pages.mjs'
+      - 'scripts/check-linux-installer.py'
+      - 'scripts/check-bach-backend.py'
+      - '.github/actions/prepare-bach-smoke/action.yml'
+      - 'scripts/check-linux-webview.mjs'
+      - 'scripts/desktop_update_fixture.py'
+      - 'scripts/check-macos-installer.py'
+      - 'scripts/macos-desktop-uitest/**'
+      - 'scripts/check-macos-webview.mjs'
       - 'docs/DESKTOP-APP.md'
+  workflow_dispatch:
+    inputs:
+      legacy_run:
+        description: 'Successful main-branch desktop build for BACH Ocean'
+        type: string
+        required: true
+      legacy_commit:
+        description: 'Exact source commit of that desktop build'
+        type: string
+        required: true
+      legacy_installer_sha256:
+        description: 'Expected SHA-256 of the BACH Ocean NSIS installer'
+        type: string
+        required: true
+      legacy_deb_sha256:
+        description: 'Expected SHA-256 of the Debian package from the same build (optional migration test)'
+        type: string
+      legacy_appimage_sha256:
+        description: 'Expected SHA-256 of the AppImage from the same build (optional signed update test)'
+        type: string
+      legacy_dmg_sha256:
+        description: 'Expected SHA-256 of the macOS DMG from the same build (optional migration test)'
+        type: string
 
 permissions:
   contents: read
+  actions: read
 
 env:
   DESKTOP_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -81,6 +127,10 @@ jobs:
           node-version: '22'
           cache: npm
           cache-dependency-path: .github/desktop-toolchain/package-lock.json
+      - name: Install locked dependencies for the WebView smoke
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Build the shared GUI for the native WebView smoke
+        run: npm run build:release
       - name: Install locked desktop build tools
         working-directory: .github/desktop-toolchain
         run: npm ci --ignore-scripts --no-audit --no-fund
@@ -97,7 +147,13 @@ jobs:
           key: ${{ runner.os }}-desktop-${{ hashFiles('src-tauri/Cargo.lock') }}
       - name: Linux webview dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev librsvg2-dev libayatana-appindicator3-dev patchelf libfuse2t64
+        run: |
+          sudo apt-get update
+          webdriver=webkitgtk-webdriver
+          if ! apt-cache policy "$webdriver" | awk '$1 == "Candidate:" && $2 != "(none)" { found=1 } END { exit !found }'; then
+            webdriver=webkit2gtk-driver
+          fi
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev librsvg2-dev libayatana-appindicator3-dev patchelf libfuse2t64 xvfb xauth xdotool dbus-daemon "$webdriver" openbox wmctrl
       - name: Remove cached bundle outputs
         shell: python
         run: |
@@ -141,6 +197,10 @@ jobs:
       - name: Compile desktop consumer and unsigned installer candidates
         shell: bash
         run: node .github/desktop-toolchain/node_modules/@tauri-apps/cli/tauri.js build --ci --no-sign --bundles "$DESKTOP_BUNDLES" -- --locked
+      - name: Verify signed update validation
+        if: runner.os == 'Linux'
+        working-directory: src-tauri
+        run: cargo test --release --locked desktop_updates::tests
       - name: Verify Windows GUI subsystem
         if: runner.os == 'Windows'
         shell: python
@@ -154,6 +214,73 @@ jobs:
           print('Windows binary uses GUI subsystem; no console subsystem.')
       - name: Package compiled desktop consumer and source receipt
         run: python scripts/package-desktop.py
+      - name: Verify legacy desktop artifact source
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          (runner.os == 'Windows' ||
+          (runner.os == 'Linux' && (inputs.legacy_deb_sha256 != '' || inputs.legacy_appimage_sha256 != '')) ||
+          (runner.os == 'macOS' && inputs.legacy_dmg_sha256 != ''))
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LEGACY_RUN: ${{ inputs.legacy_run }}
+          LEGACY_COMMIT: ${{ inputs.legacy_commit }}
+        shell: pwsh
+        run: |
+          if ($env:LEGACY_RUN -notmatch '^[0-9]+$' -or $env:LEGACY_COMMIT -cnotmatch '^[a-f0-9]{40}$') {
+            throw 'Expected a run ID and exact legacy commit.'
+          }
+          $run = gh run view $env:LEGACY_RUN --repo $env:GITHUB_REPOSITORY --json headSha,headBranch,event,conclusion,workflowName | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0 -or $run.headSha -cne $env:LEGACY_COMMIT -or $run.headBranch -cne 'main' -or
+              $run.event -cne 'push' -or $run.conclusion -cne 'success' -or $run.workflowName -cne 'Desktop compile') {
+            throw 'The legacy run is not the successful main-branch desktop build requested.'
+          }
+      - uses: actions/download-artifact@v4
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          (runner.os == 'Windows' ||
+          (runner.os == 'Linux' && (inputs.legacy_deb_sha256 != '' || inputs.legacy_appimage_sha256 != '')) ||
+          (runner.os == 'macOS' && inputs.legacy_dmg_sha256 != ''))
+        with:
+          name: desktop-consumer-${{ runner.os }}-${{ inputs.legacy_commit }}
+          run-id: ${{ inputs.legacy_run }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/legacy-desktop
+      - name: Prepare the isolated BACH backend for the installed app
+        uses: ./.github/actions/prepare-bach-smoke
+        with:
+          github-token: ${{ github.token }}
+      - name: Verify Windows installer lifecycle
+        if: runner.os == 'Windows'
+        env:
+          PYTHONUTF8: '1'
+          LEGACY_RUN: ${{ inputs.legacy_run }}
+          LEGACY_COMMIT: ${{ inputs.legacy_commit }}
+          LEGACY_INSTALLER_SHA256: ${{ inputs.legacy_installer_sha256 }}
+        shell: pwsh
+        run: ./scripts/check-windows-installer.ps1
+      - name: Verify Debian installer lifecycle
+        if: runner.os == 'Linux'
+        env:
+          LEGACY_RUN: ${{ inputs.legacy_run }}
+          LEGACY_COMMIT: ${{ inputs.legacy_commit }}
+          LEGACY_DEB_SHA256: ${{ inputs.legacy_deb_sha256 }}
+          LEGACY_APPIMAGE_SHA256: ${{ inputs.legacy_appimage_sha256 }}
+        run: xvfb-run -a dbus-run-session -- python scripts/check-linux-installer.py
+      - name: Verify macOS DMG lifecycle
+        if: runner.os == 'macOS'
+        env:
+          LEGACY_RUN: ${{ inputs.legacy_run }}
+          LEGACY_COMMIT: ${{ inputs.legacy_commit }}
+          LEGACY_DMG_SHA256: ${{ inputs.legacy_dmg_sha256 }}
+        run: python scripts/check-macos-installer.py
+      - name: Verify three shared GUI pages in the separate macOS smoke build
+        if: runner.os == 'macOS'
+        env:
+          CARGO_TARGET_DIR: ${{ runner.temp }}/ocean-wkwebview-target
+        shell: bash
+        run: |
+          node .github/desktop-toolchain/node_modules/@tauri-apps/cli/tauri.js build --ci --no-sign --bundles app --features macos-native-smoke -- --locked
+          node scripts/check-macos-webview.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-consumer-${{ runner.os }}-${{ env.DESKTOP_SOURCE_COMMIT }}

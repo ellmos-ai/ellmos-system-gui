@@ -1,4 +1,6 @@
 /* Catalogue metadata is untrusted: create only static elements and literal text. */
+const PAGE_SIZE = 12;
+const isModuleRole = (template) => template?.source === 'module_manifest_role';
 const text = (value, fallback = '') => typeof value === 'string' && value ? value : fallback;
 
 function own(object, key) {
@@ -22,17 +24,19 @@ function detail(document) {
 export function countModuleRoles(catalogue) {
   const templates = catalogue?.templates;
   if (!Array.isArray(templates)) return null;
-  return templates.filter(template => template && typeof template === 'object' && template.source === 'module_manifest_role').length;
+  return templates.filter(isModuleRole).length;
 }
 
-export function renderRoleSocketPreview(document, container, catalogue, provider) {
+export function renderRoleSocketPreview(document, container, catalogue, provider, {modulesOnly = false, limit = PAGE_SIZE} = {}) {
   const sockets = catalogue?.role_socket_catalog?.provider_sockets;
-  const templates = Array.isArray(catalogue?.templates) ? catalogue.templates : [];
+  const templates = (Array.isArray(catalogue?.templates) ? catalogue.templates : [])
+    .filter(template => template && typeof template === 'object' && !Array.isArray(template))
+    .filter(template => !modulesOnly || isModuleRole(template));
   const cards = [];
-  for (const template of templates.slice(0, 12)) {
-    if (!template || typeof template !== 'object' || Array.isArray(template)) continue;
+  for (const template of templates.slice(0, limit)) {
     const socketId = text(template.socket_id, 'domain_specialist');
-    const model = text(own(own(own(sockets, socketId), 'providers'), provider), text(provider));
+    const supported = !Array.isArray(template.providers) || template.providers.includes(provider);
+    const model = supported ? own(own(own(sockets, socketId), 'providers'), provider) : undefined;
     const card = element(document, 'div');
     Object.assign(card.style, {padding: '0.65rem', border: '1px solid var(--border)',
       borderRadius: '8px', background: 'var(--bg-dark)'});
@@ -49,24 +53,46 @@ export function renderRoleSocketPreview(document, container, catalogue, provider
       element(document, 'code', text(template.semantic_route, text(template.prompt, 'SKILL.md'))));
     const binding = detail(document);
     binding.append('Sockel ', element(document, 'code', socketId), ' → ',
-      element(document, 'strong', model));
+      element(document, 'strong', text(model, 'Keine Modellbindung')));
     card.append(heading, route, binding);
     cards.push(card);
   }
   container.replaceChildren(...cards);
+  return templates.length;
 }
 
 export async function mountRoleSocketPreview(document, fetcher = globalThis.fetch) {
   const container = document.getElementById('ocean-role-socket-list');
   const select = document.getElementById('ocean-socket-provider-select');
   if (!container || !select) return;
+  const source = document.getElementById('ocean-role-source-select');
+  const more = document.getElementById('ocean-role-show-more');
   let catalogue = null;
+  let limit = PAGE_SIZE;
   const render = () => {
-    if (catalogue) renderRoleSocketPreview(document, container, catalogue, select.value);
+    if (!catalogue) return;
+    const total = renderRoleSocketPreview(document, container, catalogue, select.value, {
+      modulesOnly: source?.value === 'module', limit,
+    });
+    if (more) more.hidden = total <= limit;
   };
   const count = document.getElementById('ocean-module-role-count');
   if (count) count.textContent = '';
   select.addEventListener('change', render);
+  source?.addEventListener('change', () => {
+    limit = PAGE_SIZE;
+    render();
+  });
+  more?.addEventListener('click', () => {
+    const firstNewIndex = limit;
+    limit += PAGE_SIZE;
+    render();
+    const firstNewRole = container.children[firstNewIndex];
+    if (firstNewRole) {
+      firstNewRole.tabIndex = -1;
+      firstNewRole.focus();
+    }
+  });
   try {
     const response = await fetcher('/api/agenten/library');
     if (response.ok) {

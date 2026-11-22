@@ -1,5 +1,9 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
 
+mod desktop_updates;
+#[cfg(all(target_os = "macos", feature = "macos-native-smoke"))]
+mod macos_native_smoke;
+
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::time::Duration;
 
@@ -232,8 +236,14 @@ fn main() {
                 show_connection(app);
             }
         }))
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(DesktopState::default())
-        .invoke_handler(tauri::generate_handler![attach])
+        .manage(desktop_updates::DesktopUpdates::default())
+        .invoke_handler(tauri::generate_handler![
+            attach,
+            desktop_updates::check_desktop_update,
+            desktop_updates::install_desktop_update
+        ])
         .setup(|app| {
             let connection = SubmenuBuilder::new(app, "Verbindung")
                 .text("connection", "Verbindung wechseln …")
@@ -272,13 +282,20 @@ fn main() {
                 "quit" => app.exit(0),
                 _ => {}
             });
-            WebviewWindowBuilder::new(app, CONNECTION, WebviewUrl::App("index.html".into()))
+            // Tauri shortens the exact name "index.html" to a pathless custom URL.
+            // Use the explicit file so the connection navigation policy can match it.
+            WebviewWindowBuilder::new(app, CONNECTION, WebviewUrl::App("./index.html".into()))
                 .title("Ocean (BACH) verbinden")
                 .inner_size(760.0, 620.0)
                 .min_inner_size(560.0, 520.0)
                 .on_navigation(local_document)
                 .on_new_window(|_, _| NewWindowResponse::Deny)
                 .build()?;
+            #[cfg(all(target_os = "macos", feature = "macos-native-smoke"))]
+            macos_native_smoke::start(
+                app.handle().clone(),
+                app.get_webview_window(CONNECTION).expect("connection window"),
+            )?;
             Ok(())
         })
         .on_window_event(|window, event| match event {

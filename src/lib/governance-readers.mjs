@@ -17,7 +17,7 @@ export function registryQuery(filters = {}) {
   for (const key of ['scope', 'consumer', 'query']) {
     const value = text(filters[key]);
     if (value) {
-      if (value.length > LIMITS[key]) throw new Error(key + ' ist zu lang (max. ' + LIMITS[key] + ').');
+      if ([...value].length > LIMITS[key]) throw new Error(key + ' ist zu lang (max. ' + LIMITS[key] + ').');
       query.set(key, value);
     }
   }

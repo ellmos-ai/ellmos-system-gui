@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {escapeHtml,blueprintState,executionSettings,normalizeTools,correlatedStart,instanceSettings,startLabel} from "../src/scripts/blueprint-studio.mjs";
+import {escapeHtml,blueprintState,executionSettings,normalizeTools,correlatedStart,instanceSettings,startLabel,modelBindingMatches} from "../src/scripts/blueprint-studio.mjs";
 
 test("catalogue escapes saved names and prompts",()=>{
   assert.equal(escapeHtml('<img src=x onerror="alert(1)">'),"&lt;img src=x onerror=&quot;alert(1)&quot;&gt;");
@@ -38,6 +38,15 @@ test("instance edits use values and CAS from the same fresh core image",()=>{
   assert.equal(instanceSettings(stale,core).mode,"full");
   assert.equal(instanceSettings(stale,core).backend,"openrouter");
 });
+test("instance setup never inherits the unrelated chat fallback chain",()=>{
+  const defaults=[{backend:"ollama",model:"chat-fallback"}];
+  const own=[{backend:"codex",model:"own-fallback"}];
+  const core={agents:[{id:"buddha_chat",backend:"ollama",model:"default",model_fallbacks:defaults}]};
+  assert.equal(Object.hasOwn(instanceSettings({id:7},core),"model_fallbacks"),false);
+  assert.deepEqual(instanceSettings({id:7,contractus:{execution:{model_fallbacks:own}}},core).model_fallbacks,own);
+  const existing={agents:[...core.agents,{id:"system-blueprint-7",blueprint_id:7,model_fallbacks:[]}]};
+  assert.deepEqual(instanceSettings({id:7,contractus:{execution:{model_fallbacks:own}}},existing).model_fallbacks,[]);
+});
 test("cloud and API paths never advertise a local start",()=>{
   assert.equal(startLabel({backend:"hermes",model:"any"}),"Cloud/API starten");
   assert.equal(startLabel({backend:"ollama",model:"model:cloud",resolved_model:"resolved"}),"Cloud/API starten");
@@ -47,4 +56,19 @@ test("cloud and API paths never advertise a local start",()=>{
 test("a made-up run_generation field cannot confirm the controller contract",()=>{
   const execution={schema:"bach.worker-execution.v1",worker_id:"system-blueprint-7",start_request_id:"a".repeat(32),service_instance:"b".repeat(32),run_generation:"c".repeat(32),terminal:false,worker_thread_started:true};
   assert.equal(correlatedStart({runtime_verified:true,execution},"system-blueprint-7","a".repeat(32)),false);
+});
+
+
+test("model readback checks the ordered fallback chain of the saved template",()=>{
+  const model_fallbacks=[{backend:"ollama",model:"local-fallback"},{backend:"openrouter",model:"other-model"}];
+  const sent={backend:"ollama",model:"primary",model_fallbacks};
+  const saved=execution=>({...execution});
+  assert.equal(modelBindingMatches(saved({...sent}),sent),true);
+  assert.equal(modelBindingMatches(saved({...sent,model_fallbacks:[...model_fallbacks].reverse()}),sent),false);
+  assert.equal(modelBindingMatches(saved({...sent,model_fallbacks:[]}),sent),false);
+  assert.equal(modelBindingMatches(saved({...sent,model:"different"}),sent),false);
+  const withoutFallbacks={backend:"ollama",model:"primary"};
+  assert.equal(modelBindingMatches(saved({...withoutFallbacks}),withoutFallbacks),true);
+  assert.equal(modelBindingMatches(saved(sent),withoutFallbacks),false);
+  assert.equal(modelBindingMatches(saved(withoutFallbacks),{...withoutFallbacks,model_fallbacks:[]}),false);
 });

@@ -51,7 +51,8 @@ export function backend(requests) {
     if (url.pathname === '/api/tasks') {
       const status = url.searchParams.get('status');
       return json({success: true, tasks: TASKS, total: TASKS.length, has_more: false,
-        applied_filters: {status, assignment_group: url.searchParams.get('assignment_group')}});
+        applied_filters: {status, assignment_group: url.searchParams.get('assignment_group'),
+          created_from: '', created_to: '', sort: 'priority', created_date_semantics: 'stored_calendar'}});
     }
     if (/^\/api\/tasks\/10\d$/.test(url.pathname)) return json(TASKS.find(t => `/api/tasks/${t.id}` === url.pathname));
     if (url.pathname === '/api/task-returns') {

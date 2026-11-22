@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {normalizeAgentColor, applyAgentColor, colorReadbackMatches} from '../src/scripts/agent-color.mjs';
+import {modelBindingMatches} from '../src/scripts/blueprint-studio.mjs';
 const running = readFileSync(new URL('../src/pages/agenten/running.astro', import.meta.url), 'utf8');
 const studio = readFileSync(new URL('../src/scripts/blueprint-studio.mjs', import.meta.url), 'utf8');
 
@@ -88,10 +89,11 @@ test('actual blueprint submit handler keeps draft open when color reload differs
   for(const mismatch of [false,true]) {
     let closed=false,loaded=false;
     const button={disabled:false};
-    const payload={expected_version:1,persona_prompt:'role',color:'#aabbcc'};
-    const readback={id:7,version:2,persona_prompt:'role',color:mismatch?null:'#aabbcc'};
+    const contractus={execution:{backend:'ollama',model:'fixture-model'}};
+    const payload={expected_version:1,persona_prompt:'role',color:'#aabbcc',contractus};
+    const readback={id:7,version:2,persona_prompt:'role',color:mismatch?null:'#aabbcc',contractus};
     const context=vm.createContext({editorPayload:()=>payload,$:()=>button,post:async()=>({id:7}),
-      loadData:async()=>{loaded=true;},byId:()=>readback,colorReadbackMatches,
+      loadData:async()=>{loaded=true;},byId:()=>readback,colorReadbackMatches,modelBindingMatches,
       close:()=>{closed=true;},state:{library:'templates'},render(){},notify(){}});
     const handler=vm.runInContext('('+handlerSource+')',context);
     if(mismatch) await assert.rejects(handler({preventDefault(){}}),/Version nicht bestätigt/);
