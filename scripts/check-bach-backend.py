@@ -283,7 +283,7 @@ def check_macos_application(origin, worker_count, open_task_id, app, manifest, o
     config = scratch / "ocean-test.json"
     config.write_text(json.dumps({
         "application": str(app.resolve()), "origin": origin, "openTask": OPEN_TASK, "openTaskID": open_task_id,
-        "doneTask": DONE_TASK, "workerCount": worker_count, "output": str(output), "home": str(home),
+        "doneTask": DONE_TASK, "workerCount": worker_count, "home": str(home),
     }), encoding="utf-8")
     scripts = Path("scripts/macos-desktop-uitest").resolve()
     project = scratch / "OceanDMG.xcodeproj"
@@ -291,12 +291,31 @@ def check_macos_application(origin, worker_count, open_task_id, app, manifest, o
         "ruby", str(scripts / "create-project.rb"), str(project),
         str(scripts / "OceanDMGUITests.swift"), str(config),
     ], check=True, timeout=45)
+    result_bundle = scratch / "native-ui.xcresult"
     subprocess.run([
         "xcodebuild", "-project", str(project), "-scheme", "OceanDMG",
         "-destination", "platform=macOS", "-parallel-testing-enabled", "NO",
-        "-derivedDataPath", str(scratch / "derived"), "test",
+        "-derivedDataPath", str(scratch / "derived"), "-resultBundlePath", str(result_bundle), "test",
     ], check=True, timeout=240)
-    proof = json.loads((output / "macos-ui-result.json").read_text(encoding="utf-8"))
+    exported = scratch / "attachments"
+    subprocess.run([
+        "xcrun", "xcresulttool", "export", "attachments", "--path", str(result_bundle),
+        "--output-path", str(exported),
+    ], check=True, timeout=45)
+    attachment_manifest = json.loads((exported / "manifest.json").read_text(encoding="utf-8"))
+    attachments = [row for test in attachment_manifest for row in test["attachments"]]
+
+    def read_attachment(name):
+        matches = [
+            row for row in attachments
+            if row["suggestedHumanReadableName"].startswith(name)
+        ]
+        assert len(matches) == 1, f"Missing or ambiguous XCTest attachment: {name}"
+        path = exported / matches[0]["exportedFileName"]
+        assert path.parent == exported and path.is_file() and not path.is_symlink()
+        return path.read_bytes()
+
+    proof = json.loads(read_attachment("ocean-ui-proof"))
     assert proof["renderer"] == "WKWebView"
     assert proof["routes"] == list(PAGES)
     for key in ("native_windows_observed", "http_consent_enforced", "tasks_filter_verified",
@@ -313,7 +332,10 @@ def check_macos_application(origin, worker_count, open_task_id, app, manifest, o
         ],
     )
     for row in proof["routes"]:
-        assert (output / row["screenshot"]).read_bytes().startswith(bytes.fromhex("89504e470d0a1a0a"))
+        screenshot = output / row["screenshot"]
+        png = read_attachment("ocean-" + screenshot.stem)
+        assert png.startswith(bytes.fromhex("89504e470d0a1a0a"))
+        screenshot.write_bytes(png)
     return proof
 
 
@@ -352,7 +374,7 @@ def main():
             origin = f"http://127.0.0.1:{listener.getsockname()[1]}"
             observations = set()
             application = observe_wkwebview_requests(app, observations) if args.macos_app else app
-            server = uvicorn.Server(uvicorn.Config(application, access_log=False))
+            server = uvicorn.Server(uvicorn.Config(application, access_log=False, timeout_graceful_shutdown=20))
             thread = threading.Thread(target=server.run, kwargs={"sockets": [listener]}, daemon=True)
             thread.start()
             try:
@@ -377,7 +399,7 @@ def main():
                     result["chromium_browser_session_verified"] = True
             finally:
                 server.should_exit = True
-                thread.join(10)
+                thread.join(30)
                 control.always_on_startup_stop.set()
                 control.shutdown()
                 control.server_close()

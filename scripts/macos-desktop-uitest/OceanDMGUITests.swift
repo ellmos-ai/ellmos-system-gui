@@ -8,7 +8,6 @@ final class OceanDMGUITests: XCTestCase {
         let openTaskID: Int
         let doneTask: String
         let workerCount: Int
-        let output: String
         let home: String
     }
 
@@ -32,6 +31,12 @@ final class OceanDMGUITests: XCTestCase {
         throw UITestFailure("Missing native text beginning with " + prefix)
     }
 
+    private func keep(_ attachment: XCTAttachment, name: String) {
+        attachment.name = name
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
     private struct UITestFailure: LocalizedError {
         let errorDescription: String?
         init(_ message: String) { errorDescription = message }
@@ -41,7 +46,6 @@ final class OceanDMGUITests: XCTestCase {
         continueAfterFailure = false
         let configURL = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "ocean-test", withExtension: "json"))
         let input = try JSONDecoder().decode(Inputs.self, from: Data(contentsOf: configURL))
-        let output = URL(fileURLWithPath: input.output, isDirectory: true)
         let app = XCUIApplication(url: URL(fileURLWithPath: input.application, isDirectory: true))
         app.launchEnvironment = ["HOME": input.home, "CFFIXED_USER_HOME": input.home]
         app.launch()
@@ -65,7 +69,7 @@ final class OceanDMGUITests: XCTestCase {
         _ = try require(heading, "Dashboard did not render in WKWebView", in: backend)
         let dashboardTask = web.staticTexts["#\(input.openTaskID): \(input.openTask)"].firstMatch
         _ = try require(dashboardTask, "The enrolled device could not read its open BACH task", in: backend)
-        try backend.screenshot().pngRepresentation.write(to: output.appendingPathComponent("dashboard.png"))
+        keep(XCTAttachment(screenshot: backend.screenshot()), name: "ocean-dashboard")
 
         let tasks = try require(web.links["Aufgaben"].firstMatch, "Tasks link not found")
         tasks.click()
@@ -79,14 +83,14 @@ final class OceanDMGUITests: XCTestCase {
         let doneTitle = web.staticTexts[input.doneTask].firstMatch
         _ = try require(doneTitle, "Completed task not rendered after filtering", in: backend)
         XCTAssertFalse(openTitle.exists)
-        try backend.screenshot().pngRepresentation.write(to: output.appendingPathComponent("aufgaben.png"))
+        keep(XCTAttachment(screenshot: backend.screenshot()), name: "ocean-aufgaben")
 
         let running = try require(web.links["Deine Agenten"].firstMatch, "Living & Running link not found")
         running.click()
         _ = try require(web.staticTexts.matching(NSPredicate(format: "title CONTAINS %@", "Living & Running")).firstMatch,
                         "Living & Running did not render", in: backend)
         try requireVisibleText(in: backend, prefix: "\(input.workerCount) Worker registriert")
-        try backend.screenshot().pngRepresentation.write(to: output.appendingPathComponent("running.png"))
+        keep(XCTAttachment(screenshot: backend.screenshot()), name: "ocean-running")
 
         try require(backend.buttons["_XCUI:CloseWindow"].firstMatch, "Backend close button not found").click()
         _ = try require(connection, "Connection window did not return after closing BACH")
@@ -102,7 +106,7 @@ final class OceanDMGUITests: XCTestCase {
             "connection_restored_after_backend_close": true,
             "clean_window_exit": true,
         ]
-        try JSONSerialization.data(withJSONObject: evidence, options: [.sortedKeys]).write(
-            to: output.appendingPathComponent("macos-ui-result.json"), options: .atomic)
+        let json = try JSONSerialization.data(withJSONObject: evidence, options: [.sortedKeys])
+        keep(XCTAttachment(data: json, uniformTypeIdentifier: "public.json"), name: "ocean-ui-proof")
     }
 }
