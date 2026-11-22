@@ -6,11 +6,14 @@ import os
 import plistlib
 import re
 import shutil
+import ssl
 import subprocess
 import tempfile
 import time
 from dataclasses import dataclass
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from threading import Thread
 
 WINDOW_PROBE = r"""
 import AppKit
@@ -58,8 +61,8 @@ def require(condition, message):
         raise ValueError(message)
 
 
-def run(*args, timeout=30, check=True):
-    result = subprocess.run(args, check=False, timeout=timeout, capture_output=True, text=True, encoding="utf-8")
+def run(*args, timeout=30, check=True, env=None):
+    result = subprocess.run(args, check=False, timeout=timeout, capture_output=True, text=True, encoding="utf-8", env=env)
     if check and result.returncode:
         raise RuntimeError(f"{args[0]} failed ({result.returncode}): {result.stderr[-2048:]}")
     return result
@@ -174,6 +177,118 @@ def migrate(current, previous, applications, scratch, home, probe):
             "synthetic_user_files_preserved": True}
 
 
+def signed_update_archive(directory, scratch, version):
+    receipt = json.loads((directory / "desktop-artifact.json").read_text(encoding="utf-8"))
+    relative = receipt["bundles"]["app"]["file"]
+    archive = directory / relative
+    require(archive.parent == directory / "bundles" and archive.name.endswith(".app.tar.gz")
+            and archive.is_file() and not archive.is_symlink()
+            and archive.resolve().is_relative_to(directory.resolve())
+            and digest(archive) == receipt["files"][relative]["sha256"], "Unverified macOS update archive")
+    fixture = scratch / "update.app.tar.gz"
+    shutil.copyfile(archive, fixture)
+    cli = Path(".github/desktop-toolchain/node_modules/@tauri-apps/cli/tauri.js").resolve()
+    key = scratch / "update-key"
+    run("node", str(cli), "signer", "generate", "--ci", "--password=", "--write-keys", str(key))
+    try:
+        run("node", str(cli), "signer", "sign", "--password=", "--private-key-path", str(key),
+            "--app-version", version, str(fixture))
+    finally:
+        key.unlink()
+    return fixture.read_bytes(), Path(str(fixture) + ".sig").read_text(encoding="utf-8").strip()
+
+
+def fixture_tls(scratch):
+    ca, ca_key = scratch / "update-ca.pem", scratch / "update-ca.key"
+    cert, cert_key = scratch / "update-server.pem", scratch / "update-server.key"
+    csr = scratch / "update-server.csr"
+    ca_config = scratch / "update-ca.cnf"
+    ca_config.write_text(
+        "[req]\ndistinguished_name=dn\nx509_extensions=ca\n"
+        "[dn]\n[ca]\nbasicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign\n",
+        encoding="ascii",
+    )
+    extensions = scratch / "update-server.cnf"
+    extensions.write_text(
+        "subjectAltName=IP:127.0.0.1\nextendedKeyUsage=serverAuth\nbasicConstraints=critical,CA:FALSE\n",
+        encoding="ascii",
+    )
+    run("openssl", "req", "-x509", "-nodes", "-newkey", "rsa:2048", "-days", "1",
+        "-config", str(ca_config), "-subj", "/CN=Ocean CI Update CA", "-keyout", str(ca_key), "-out", str(ca))
+    run("openssl", "req", "-new", "-nodes", "-newkey", "rsa:2048",
+        "-subj", "/CN=Ocean CI Update", "-keyout", str(cert_key), "-out", str(csr))
+    run("openssl", "x509", "-req", "-days", "1", "-in", str(csr), "-CA", str(ca),
+        "-CAkey", str(ca_key), "-set_serial", "1", "-extfile", str(extensions), "-out", str(cert))
+    ca_key.unlink()
+    tls = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    tls.load_cert_chain(cert, cert_key)
+    return tls
+
+
+def verify_signed_update(directory, current, previous, applications, scratch, home, probe):
+    old_app = install(previous, applications, scratch)
+    old_window = start(old_app, previous, home, probe)
+    marker = home / "Library/Application Support" / current.identifier / "signed-update-ci.txt"
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    marker.write_text("CI update sample\n", encoding="utf-8")
+    marker_sha = digest(marker)
+    package, signature = signed_update_archive(directory, scratch, current.version)
+    routes = {
+        "/valid/app.tar.gz": ("application/octet-stream", package),
+        "/tampered/app.tar.gz": ("application/octet-stream", bytes([package[0] ^ 1]) + package[1:]),
+    }
+
+    class UpdateHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            payload = routes.get(self.path)
+            if payload is None:
+                self.send_error(404)
+                return
+            content_type, body = payload
+            self.send_response(200)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, _format, *_args):
+            pass
+
+    tls = fixture_tls(scratch)
+    with ThreadingHTTPServer(("127.0.0.1", 0), UpdateHandler) as server:
+        origin = f"https://127.0.0.1:{server.server_port}"
+        for variant, version, artifact in (
+            ("valid", current.version, "valid"),
+            ("tampered", current.version, "tampered"),
+            ("wrong-version", "2.0.0", "valid"),
+        ):
+            manifest = {"version": version, "url": f"{origin}/{artifact}/app.tar.gz", "signature": signature}
+            routes[f"/{variant}/latest.json"] = ("application/json", json.dumps(manifest).encode())
+        (scratch / "update-origin").write_text(origin, encoding="ascii")
+        server.socket = tls.wrap_socket(server.socket, server_side=True)
+        thread = Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            tests = run(
+                "cargo", "test", "--manifest-path", "src-tauri/Cargo.toml", "--release", "--locked",
+                "desktop_updates::tests::signed_macos_update_installs_verified_bundle",
+                "--", "--ignored", "--exact", timeout=900, check=False,
+                env={**os.environ, "OCEAN_SIGNED_UPDATE_FIXTURE": str(scratch)},
+            )
+            require(tests.returncode == 0, tests.stdout[-3000:] + tests.stderr[-3000:])
+            print(tests.stdout, flush=True)
+        finally:
+            server.shutdown()
+            thread.join()
+    verify_bundle(old_app, current)
+    updated_window = start(old_app, current, home, probe)
+    remove(old_app, applications)
+    require(digest(marker) == marker_sha, "User file changed during signed update")
+    return {"previous_start": old_window, "updated_start": updated_window,
+            "archive_sha256": hashlib.sha256(package).hexdigest(), "tampered_payload_rejected": True,
+            "incorrect_version_rejected": True, "synthetic_user_file_preserved": True}
+
+
 def main():
     require(os.environ.get("GITHUB_ACTIONS") == "true"
             and os.environ.get("RUNNER_ENVIRONMENT") == "github-hosted"
@@ -186,7 +301,7 @@ def main():
     current = image_from_receipt(directory, repository=repository, commit=commit, run_id=run_id)
     config = json.loads(Path("src-tauri/tauri.conf.json").read_text(encoding="utf-8"))
     require(current.version == config["version"] and current.identifier == config["identifier"], "DMG source mismatch")
-    migration = None
+    migration = signed_update = None
     with tempfile.TemporaryDirectory(prefix="ocean-dmg-", dir=temp) as work:
         scratch = Path(work).resolve()
         applications, home = scratch / "Applications", scratch / "home"
@@ -212,13 +327,14 @@ def main():
             migration = {"legacy_run_id": int(previous_run), "legacy_commit": previous_commit,
                          "legacy_dmg_sha256": previous.sha256, "legacy_version": previous.version,
                          **migrate(current, previous, applications, scratch, home, probe)}
+            signed_update = verify_signed_update(directory, current, previous, applications, scratch, home, probe)
         require(not any(applications.iterdir()), "Test Applications directory is not empty")
     receipt = {
         "schema": "ellmos-system-gui.macos-installer-check.v1",
         "source_commit": commit, "run_id": int(run_id), "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
         "app_identifier": current.identifier, "version": current.version, "dmg_sha256": current.sha256,
         "installed_binary_sha256": current.entry_sha256, "clean_install_start": window,
-        "removed": True, "legacy_migration": migration,
+        "removed": True, "legacy_migration": migration, "signed_update": signed_update,
     }
     (directory / "macos-installer-check.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(receipt))
