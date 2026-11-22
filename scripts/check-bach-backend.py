@@ -15,7 +15,7 @@ import sys
 import tempfile
 import threading
 import time
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlsplit
 from zipfile import ZipFile
 
 import httpx
@@ -61,6 +61,7 @@ def prepare_backend(bach, dist, scratch):
         BACH_NO_AUTO_MIGRATE="1",
         BACH_CONTROL_HOST="127.0.0.1",
         BACH_CONTROL_PORT="0",
+        BACH_DEVICE_ID="BACH-CI-Device",
         BACH_CONTROL_API_TOKEN=secrets.token_urlsafe(32),
         ELLMOS_SYSTEM_GUI_DIST=str(dist),
     )
@@ -240,6 +241,104 @@ def check_native(origin, token, worker_count, dist, commit, out, webview2_port):
     return proof
 
 
+def observe_wkwebview_requests(app, observations):
+    """Track successful session-cookie reads without retaining credentials."""
+    async def application(scope, receive, send):
+        if scope["type"] != "http" or scope["method"] != "GET":
+            await app(scope, receive, send)
+            return
+        path = scope["path"]
+        if path not in ("/api/tasks", "/api/system/workers"):
+            await app(scope, receive, send)
+            return
+        headers = dict(scope["headers"])
+        cookie = headers.get(b"cookie", b"")
+        apple_webkit = b"AppleWebKit/" in headers.get(b"user-agent", b"")
+        cookie_only = b"authorization" not in headers and any(
+            part.strip().startswith(b"bach_device_token=") for part in cookie.split(b";")
+        )
+
+        async def observe(message):
+            if message["type"] == "http.response.start" and message["status"] == 200 and apple_webkit and cookie_only:
+                query = parse_qs(scope["query_string"].decode("ascii"))
+                suffix = "?status=done" if path == "/api/tasks" and query.get("status") == ["done"] else ""
+                observations.add(path + suffix)
+            await send(message)
+
+        await app(scope, receive, observe)
+
+    return application
+
+
+def check_macos_application(origin, worker_count, open_task_id, app, manifest, out, scratch):
+    binary = app / "Contents" / "MacOS" / "ellmos-system-gui-desktop"
+    candidate = binary.read_bytes()
+    assert b"OCEAN_MAC_SMOKE_INPUTS" not in candidate, "Expected the regular DMG build"
+    assert app.parent.name == "Applications" and app.name == "OpenOcean.app"
+    runner_temp = Path(os.environ["RUNNER_TEMP"]).resolve()
+    assert app.resolve().is_relative_to(runner_temp)
+    output = out.resolve()
+    home = scratch / "desktop-home"
+    home.mkdir()
+    config = scratch / "ocean-test.json"
+    config.write_text(json.dumps({
+        "application": str(app.resolve()), "origin": origin, "openTask": OPEN_TASK, "openTaskID": open_task_id,
+        "doneTask": DONE_TASK, "workerCount": worker_count, "home": str(home),
+    }), encoding="utf-8")
+    scripts = Path("scripts/macos-desktop-uitest").resolve()
+    project = scratch / "OceanDMG.xcodeproj"
+    subprocess.run([
+        "ruby", str(scripts / "create-project.rb"), str(project),
+        str(scripts / "OceanDMGUITests.swift"), str(config),
+    ], check=True, timeout=45)
+    result_bundle = scratch / "native-ui.xcresult"
+    subprocess.run([
+        "xcodebuild", "-project", str(project), "-scheme", "OceanDMG",
+        "-destination", "platform=macOS", "-parallel-testing-enabled", "NO",
+        "-derivedDataPath", str(scratch / "derived"), "-resultBundlePath", str(result_bundle), "test",
+    ], check=True, timeout=240)
+    exported = scratch / "attachments"
+    subprocess.run([
+        "xcrun", "xcresulttool", "export", "attachments", "--path", str(result_bundle),
+        "--output-path", str(exported),
+    ], check=True, timeout=45)
+    attachment_manifest = json.loads((exported / "manifest.json").read_text(encoding="utf-8"))
+    attachments = [row for test in attachment_manifest for row in test["attachments"]]
+
+    def read_attachment(name):
+        matches = [
+            row for row in attachments
+            if row["suggestedHumanReadableName"].startswith(name)
+        ]
+        assert len(matches) == 1, f"Missing or ambiguous XCTest attachment: {name}"
+        path = exported / matches[0]["exportedFileName"]
+        assert path.parent == exported and path.is_file() and not path.is_symlink()
+        return path.read_bytes()
+
+    proof = json.loads(read_attachment("ocean-ui-proof"))
+    assert proof["renderer"] == "WKWebView"
+    assert proof["routes"] == list(PAGES)
+    for key in ("native_windows_observed", "http_consent_enforced", "tasks_filter_verified",
+                "connection_restored_after_backend_close", "clean_window_exit"):
+        assert proof[key] is True
+    assert candidate == binary.read_bytes()
+    proof.update(
+        desktop_source_commit=os.environ["DESKTOP_SOURCE_COMMIT"],
+        installed_binary_sha256=hashlib.sha256(candidate).hexdigest(),
+        source_commit=manifest["source_commit"],
+        routes=[
+            {"route": route, "html_sha256": manifest["files"][file], "screenshot": name + ".png"}
+            for route, (file, name, _) in PAGES.items()
+        ],
+    )
+    for row in proof["routes"]:
+        screenshot = output / row["screenshot"]
+        png = read_attachment("ocean-" + screenshot.stem)
+        assert png.startswith(bytes.fromhex("89504e470d0a1a0a"))
+        screenshot.write_bytes(png)
+    return proof
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("bach", type=Path)
@@ -247,11 +346,14 @@ def main():
     parser.add_argument("out", type=Path)
     parser.add_argument("--native", action="store_true")
     parser.add_argument("--webview2-port", type=int)
+    parser.add_argument("--macos-app", type=Path)
     args = parser.parse_args()
     if args.webview2_port is not None and (
         not args.native or sys.platform != "win32" or not 0 < args.webview2_port <= 65535
     ):
         parser.error("--webview2-port requires --native on Windows and a valid local port")
+    if args.macos_app and (args.native or sys.platform != "darwin"):
+        parser.error("--macos-app requires a macOS DMG installation")
     assert os.environ.get("GITHUB_ACTIONS") == "true"
     assert os.environ.get("RUNNER_ENVIRONMENT") == "github-hosted"
     bach_commit = subprocess.check_output(["git", "-C", str(args.bach), "rev-parse", "HEAD"], text=True).strip()
@@ -270,14 +372,24 @@ def main():
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
             origin = f"http://127.0.0.1:{listener.getsockname()[1]}"
-            server = uvicorn.Server(uvicorn.Config(app, access_log=False))
+            observations = set()
+            application = observe_wkwebview_requests(app, observations) if args.macos_app else app
+            server = uvicorn.Server(uvicorn.Config(application, access_log=False, timeout_graceful_shutdown=20))
             thread = threading.Thread(target=server.run, kwargs={"sockets": [listener]}, daemon=True)
             thread.start()
             try:
                 wait_for_gui(server, thread, origin)
                 result = check_http(origin, token, manifest)
                 worker_count = result["running_worker_profile_count"]
-                if args.native:
+                if args.macos_app:
+                    result["native_webview"] = check_macos_application(
+                        origin, worker_count, result["task_ids"]["pending"],
+                        args.macos_app, manifest, args.out, scratch,
+                    )
+                    protected = {"/api/tasks", "/api/tasks?status=done", "/api/system/workers"}
+                    assert protected <= observations, f"Missing authenticated WKWebView reads: {protected - observations}"
+                    result["native_webview"]["authenticated_bach_reads"] = sorted(observations)
+                elif args.native:
                     result["native_webview"] = check_native(
                         origin, token, worker_count, dist, manifest["source_commit"],
                         args.out, args.webview2_port,
@@ -287,7 +399,7 @@ def main():
                     result["chromium_browser_session_verified"] = True
             finally:
                 server.should_exit = True
-                thread.join(10)
+                thread.join(30)
                 control.always_on_startup_stop.set()
                 control.shutdown()
                 control.server_close()

@@ -17,6 +17,7 @@ on:
       - 'scripts/check-linux-webview.mjs'
       - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
+      - 'scripts/macos-desktop-uitest/**'
       - 'scripts/check-macos-webview.mjs'
       - 'docs/DESKTOP-APP.md'
   push:
@@ -36,6 +37,7 @@ on:
       - 'scripts/check-linux-webview.mjs'
       - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
+      - 'scripts/macos-desktop-uitest/**'
       - 'scripts/check-macos-webview.mjs'
       - 'docs/DESKTOP-APP.md'
   workflow_dispatch:
@@ -244,7 +246,6 @@ jobs:
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/legacy-desktop
       - name: Prepare the isolated BACH backend for the installed app
-        if: runner.os == 'Linux' || runner.os == 'Windows'
         uses: ./.github/actions/prepare-bach-smoke
         with:
           github-token: ${{ github.token }}
