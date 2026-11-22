@@ -120,7 +120,13 @@ def check_http(origin, token, manifest):
         assert workers["availability"] == "available"
         assert workers["source"] == "authenticated_local_control_api"
         assert workers["count"] == len(workers["workers"])
-    return {"page_count": dist["page_count"], "pages": pages, "task_ids": task_ids, "worker_count": workers["count"]}
+    return {
+        "page_count": dist["page_count"],
+        "pages": pages,
+        "task_ids": task_ids,
+        "control_api_worker_count": workers["count"],
+        "running_worker_profile_count": sum(worker.get("system") is not True for worker in workers["workers"]),
+    }
 
 
 def check_browser(origin, token, worker_count, out):
@@ -196,7 +202,7 @@ def main():
             try:
                 wait_for_gui(server, thread, origin)
                 result = check_http(origin, token, manifest)
-                check_browser(origin, token, result["worker_count"], args.out)
+                check_browser(origin, token, result["running_worker_profile_count"], args.out)
             finally:
                 server.should_exit = True
                 thread.join(10)
