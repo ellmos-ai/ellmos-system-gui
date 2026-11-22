@@ -139,7 +139,10 @@ function Test-SignedNsisUpdate($Installer, $InstallerHash, $PayloadHash, $Versio
             Where-Object { $_.ExecutablePath -ieq $handoff[0].FullName } | Select-Object -First 1
         if ($installerProcess) {
             $pending = Get-Process -Id $installerProcess.ProcessId -ErrorAction SilentlyContinue
-            if ($pending -and -not $pending.WaitForExit(90000)) { throw 'The signed NSIS installer did not finish.' }
+            if ($pending -and -not $pending.WaitForExit(90000)) {
+                $pending.Refresh()
+                throw "The signed NSIS installer did not finish. Window: $($pending.MainWindowTitle)"
+            }
         }
         $restarted = Wait-RestartedProcess $executable $updateRequested
         if ((Read-Registration $RegistrationKey $directory).DisplayVersion -cne $Version -or

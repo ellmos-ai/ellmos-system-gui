@@ -20,6 +20,9 @@
     "updater": {
       "pubkey": "",
       "requireSignedVersion": true,
+      "windows": {
+        "installMode": "quiet"
+      },
       "endpoints": [
         "https://github.com/ellmos-ai/ellmos-system-gui/releases/latest/download/latest.json"
       ]
