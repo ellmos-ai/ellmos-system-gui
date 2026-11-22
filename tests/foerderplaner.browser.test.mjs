@@ -1,7 +1,7 @@
 // T-20261107-347299705: /foerderplaner in a real browser (Playwright) with injected BACH answers, no backend.
 // Cloud stays disabled until readiness allows it; every privacy block is shown as plain text with its next step;
 // reason panel and mode panel reach 4.5:1 in all five themes; no horizontal overflow on a phone.
-// Without an installed browser the test is skipped (CI installs none); locally `npx playwright-core install chromium` once.
+// Uses Playwright Chromium or an already installed Chrome/Edge; otherwise skips.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
@@ -19,6 +19,7 @@ const NER_BLOCK = {success: true, cloud_ready: false, error_code: 'ner_unavailab
   error: "Cloud-Modus verweigert: Namenserkennung unvollstaendig (spaCy ist nicht installiert). Es wurde nichts gesendet."};
 const IDENTITY_BLOCK = {success: false, privacy_block: true, error_code: 'identity_terms_in_prompt',
   error: 'Datenschutz-Sperre: 2 Kennung(en) des Falls stuenden noch im Cloud-Prompt. Es wurde nichts gesendet.'};
+const READY = {success: true, cloud_ready: true, error_code: null, error: null};
 
 const luminance = ([r, g, b]) => {
   const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
@@ -42,7 +43,13 @@ let dist, server, baseUrl, browser;
 test.before(async () => {
   try {
     const {chromium} = await import('playwright-core');
-    browser = await chromium.launch();
+    const executablePath = [process.env.EDGE_PATH, chromium.executablePath(),
+      'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+      '/usr/bin/google-chrome', '/usr/bin/chromium',
+      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    ].find(path => path && existsSync(path));
+    if (!executablePath) return;
+    browser = await chromium.launch({executablePath});
   } catch { return; }
   dist = await sharedDist(root);
   server = createServer((req, res) => {
@@ -61,14 +68,24 @@ test.after(async () => {
   server?.close();
 });
 
-async function open({theme = 'dark', width = 1440, readiness = NER_BLOCK} = {}) {
+async function open({theme = 'dark', width = 1440, readiness = NER_BLOCK, handle, ignoreAbort = false} = {}) {
   const context = await browser.newContext({viewport: {width, height: 900}});
   await context.addInitScript(value => localStorage.setItem('bach-theme', value), theme);
+  if (ignoreAbort) {
+    // The server can finish independently from frontend cancellation. Exercise
+    // the case guard by delivering a stale response even after abort().
+    await context.addInitScript(() => {
+      const fetch = window.fetch.bind(window);
+      window.fetch = (resource, options) => fetch(resource, {...options, signal: undefined});
+    });
+  }
   const requests = [];
-  await context.route('**/api/**', route => {
+  await context.route('**/api/**', async route => {
     const url = new URL(route.request().url());
     requests.push(route.request().method() + ' ' + url.pathname);
     const json = body => route.fulfill({status: 200, contentType: 'application/json', body: JSON.stringify(body)});
+    const custom = handle?.(url, route);
+    if (custom !== undefined) return json(await custom);
     if (url.pathname === '/api/report/readiness') return json(readiness);
     if (url.pathname === '/api/report/session/start') return json({success: true, session_id: 'WF_synth', status: 'initialized'});
     if (url.pathname.endsWith('/profile')) return json({success: true, tarnname: 'Tarn Person', mappings_count: 12, status: 'anonymizing'});
@@ -94,6 +111,100 @@ test('without name recognition the cloud steps stay disabled and the reason is s
     assert.match(await page.locator('#report-mode-local').innerText(), /Modus lokal/);
     assert.deepEqual(errors, []);
   } finally { await context.close(); }
+});
+
+test('New case clears the form values and ignores a delayed start from the old case', async t => {
+  if (!browser) return t.skip('kein Playwright-Browser installiert');
+  const earlyStart = Promise.withResolvers();
+  const receiveEarlyStart = Promise.withResolvers();
+  const nextReady = Promise.withResolvers();
+  const entered = {
+    'report-folder': 'synthetisch/alt',
+    'report-client-name': 'Fall Alt Synthetisch',
+    'report-birthdate': '03.07.2014',
+    'report-parents': 'Eltern Alt',
+    'report-address': 'Teststraße 1',
+    'report-terms': 'Begriff Alt',
+    'report-period': 'Jahr Alt',
+    'report-instructions': 'Anweisung Alt',
+    'report-response': '{"text":"Antwort Alt"}',
+  };
+  const sentProfiles = [];
+  let starts = 0, checks = 0;
+  const {page, context, requests} = await open({readiness: READY, ignoreAbort: true, handle(url, route) {
+    if (url.pathname === '/api/report/readiness' && ++checks > 1) return nextReady.promise;
+    if (url.pathname === '/api/report/session/start') {
+      if (++starts === 1) {
+        receiveEarlyStart.resolve();
+        return earlyStart.promise;
+      }
+      return {success: true, session_id: 'WF_new'};
+    }
+    if (url.pathname.endsWith('/profile')) {
+      sentProfiles.push(route.request().postDataJSON());
+      return {success: true, tarnname: 'Tarn Person', mappings_count: 1};
+    }
+  }});
+  const profileButton = page.locator('#report-profile-form button[type="submit"]');
+  try {
+    await profileButton.waitFor();
+    for (const [id, value] of Object.entries(entered)) await page.locator('#' + id).fill(value);
+    await page.locator('#report-kb').uncheck();
+    await profileButton.click();
+    await receiveEarlyStart.promise;
+    await page.locator('#report-new-case').click();
+    for (const id of Object.keys(entered)) assert.equal(await page.locator('#' + id).inputValue(), '', id);
+    assert.equal(await page.locator('#report-kb').isChecked(), true);
+    assert.equal(await profileButton.isDisabled(), true);
+    nextReady.resolve(READY);
+    await page.locator('#report-client-name').fill('Fall Neu Synthetisch');
+    await page.locator('#report-birthdate').fill('04.08.2015');
+    await profileButton.click();
+    await page.waitForFunction(() => /Profil angelegt/.test(document.querySelector('#report-profile-status').textContent));
+    const oldResponse = page.waitForResponse(async response => response.url().endsWith('/session/start') &&
+      (await response.json()).session_id === 'WF_old');
+    earlyStart.resolve({success: true, session_id: 'WF_old'});
+    await oldResponse;
+    await page.evaluate(() => new Promise(requestAnimationFrame));
+    assert.equal(await page.locator('#report-session-id').textContent(), 'WF_new');
+    assert.deepEqual(requests.filter(path => path.endsWith('/profile')), ['POST /api/report/session/WF_new/profile']);
+    assert.deepEqual(sentProfiles, [{client_name: 'Fall Neu Synthetisch', geburtsdatum: '04.08.2015', additional_terms: []}]);
+  } finally {
+    nextReady.resolve(READY);
+    earlyStart.resolve({success: true, session_id: 'WF_old'});
+    await context.close();
+  }
+});
+
+test('a delayed prompt is discarded after the case changes and a new readiness check blocks cloud use', async t => {
+  if (!browser) return t.skip('kein Playwright-Browser installiert');
+  const oldPrompt = Promise.withResolvers();
+  const promptRequested = Promise.withResolvers();
+  let checks = 0;
+  const {page, context} = await open({readiness: READY, ignoreAbort: true, handle(url) {
+    if (url.pathname === '/api/report/readiness' && ++checks > 1) return NER_BLOCK;
+    if (url.pathname.endsWith('/prompt')) {
+      promptRequested.resolve();
+      return oldPrompt.promise;
+    }
+  }});
+  try {
+    await page.locator('#report-prompt-form button[type="submit"]').click();
+    await promptRequested.promise;
+    await page.locator('#report-new-case').click();
+    await page.locator('#report-reason:not([hidden])').waitFor();
+    const response = page.waitForResponse(item => item.url().endsWith('/prompt'));
+    oldPrompt.resolve({success: true, prompt: 'PROMPT_OLD_CASE', prompt_length: 15});
+    await (await response).finished();
+    await page.evaluate(() => new Promise(requestAnimationFrame));
+    assert.equal(await page.locator('#report-prompt').inputValue(), '');
+    assert.equal(await page.locator('#report-prompt-box').isHidden(), true);
+    assert.equal(await page.locator('#report-cloud-steps').evaluate(fieldset => fieldset.disabled), true);
+    assert.match(await page.locator('#report-reason-title').textContent(), /Namenserkennung fehlt/);
+  } finally {
+    oldPrompt.resolve(IDENTITY_BLOCK);
+    await context.close();
+  }
 });
 
 test('when ready, a blocked prompt shows the reason and never the prompt', async t => {

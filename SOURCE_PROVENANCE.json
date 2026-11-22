@@ -392,7 +392,12 @@
     "src/lib/transcript-history.mjs": "30270ecc9afb6599aef106fa15cee808408de8b1cc2fe57c2d8fe73daf500fd9",
     "src/scripts/chat-page.mjs": "55270255e662c188e0d5b145da289b0be754a49a46b073e296b12a94e445d1d9",
     "tests/chat-client.test.mjs": "473d13499ab21dbb2841d13aa920adc58f0a0d1dbd88c9f69f95a4a226b55bfd",
-    "tests/route-contract.test.mjs": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1"
+    "tests/route-contract.test.mjs": "c81608768904029fea06fa699711291ef357acdfe4eb278b769b81ba25cb02b1",
+    "src/lib/report-session.mjs": "04f08b572b763b1a184a1fac6e719852b43d6ea03efbb2c684d973f0081061f1",
+    "src/scripts/foerderplaner-page.mjs": "3e40325dacacedc2830839dd47fcb60ddf46c694cdb5d1af24921fcc9ee9188a",
+    "tests/foerderplaner.browser.test.mjs": "62193adb7c88a27256b91ab7dd9b54017c8c88d6ebe28ac0d0c590eaf8c5b338",
+    "tests/report-session.test.mjs": "e3dc57aa01a5a5db8d6727822ba3f4963e0dc7f507eae490f54c5cc3bcd07a81",
+    "tests/fixtures/shared-dist.mjs": "444793d2356200461a80774835cf31dcc3e270fcbf19d69fed5c31030d3ee14b"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -6018,6 +6023,37 @@
           "previous_sha256": "83ab3ecaa5f0cbb3d7b66396443defd15269d1fa07363190009f12b1f606ec69",
           "other_parent_sha256": "c7999dd63834f15e2a0c44c0fa32d577286e2978516a28dd73e5ecedc1a0f9e2",
           "sha256": "3b59087c912a3057c3385794af0dc268afccfe07ee0adc04ea173217812aea03"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
+      "summary": "Separate consecutive report cases in the shared Förderplaner page. Reset case inputs, ignore outdated session responses and keep cloud steps disabled until the current case readiness check completes.",
+      "files": [
+        {
+          "path": "src/lib/report-session.mjs",
+          "previous_sha256": "8d94c784ffe0fd02e488aa321b2691a23bcff45cc899ed821e95d6a01c384c5d",
+          "sha256": "04f08b572b763b1a184a1fac6e719852b43d6ea03efbb2c684d973f0081061f1"
+        },
+        {
+          "path": "src/scripts/foerderplaner-page.mjs",
+          "previous_sha256": "694f7da17eb6b7bed7e8d52d377402fae2a3f3f2af5e856e11abd14c48ed2fe3",
+          "sha256": "3e40325dacacedc2830839dd47fcb60ddf46c694cdb5d1af24921fcc9ee9188a"
+        },
+        {
+          "path": "tests/foerderplaner.browser.test.mjs",
+          "previous_sha256": "571097f9ec3847b995001ce1cbeecd5efe2337c4fe6855e7f070c6d178b794aa",
+          "sha256": "62193adb7c88a27256b91ab7dd9b54017c8c88d6ebe28ac0d0c590eaf8c5b338"
+        },
+        {
+          "path": "tests/report-session.test.mjs",
+          "previous_sha256": "f6ab23251bfc56af282d6593401983c8eb800606f6dace8f58e2b5741b61d36c",
+          "sha256": "e3dc57aa01a5a5db8d6727822ba3f4963e0dc7f507eae490f54c5cc3bcd07a81"
+        },
+        {
+          "path": "tests/fixtures/shared-dist.mjs",
+          "previous_sha256": "dbf7fa56533cffb46cb6f4003fdbdfda60888c3b0299c79443244b2cdf2692d9",
+          "sha256": "444793d2356200461a80774835cf31dcc3e270fcbf19d69fed5c31030d3ee14b"
         }
       ]
     }
