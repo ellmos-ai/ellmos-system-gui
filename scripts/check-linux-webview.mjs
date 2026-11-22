@@ -87,6 +87,7 @@ try {
 
   windowManager = spawn('openbox', [], {stdio:['ignore','ignore','inherit']});
   await once(windowManager, 'spawn');
+  windowManager.unref();
   await waitFor(() => command('wmctrl', ['-m'], {timeout:1000}).then(() => true, () => false), 'the X11 window manager');
 
   // Use the same native driver and automation settings as tauri-driver on Linux.
@@ -95,15 +96,19 @@ try {
     stdio:['ignore','ignore','inherit'],
   });
   await once(driver, 'spawn');
+  driver.unref();
   await waitFor(() => request('/status').then(result => result.ready, () => false), 'the local WebDriver');
+  console.error('WebKitGTK smoke: driver accepting requests');
   const opened = await request('/session', 'POST', {capabilities:{alwaysMatch:{
     'webkitgtk:browserOptions':{binary:application, args:[]},
   }}});
   assert.ok(opened.sessionId, 'WebKit did not create a session');
   session = '/session/' + opened.sessionId;
+  console.error('WebKitGTK smoke: native session opened');
   const call = (path, method, body) => request(session + path, method, body);
   const evaluate = (script, ...args) => call('/execute/sync', 'POST', {script,args});
   const connection = await waitFor(() => x11Window('^Ocean \\(BACH\\) verbinden$'), 'the native connection window');
+  console.error('WebKitGTK smoke: native connection window visible');
   const originOfWindow = await evaluate('return location.href');
   assert.match(originOfWindow, /^(?:tauri:\/\/localhost|https?:\/\/tauri\.localhost)(?:\/|$)/);
   await evaluate(`
@@ -118,6 +123,7 @@ try {
   `);
   const backend = await waitFor(() => x11Window('^Ocean \\(BACH\\) – Anmeldung erforderlich$', connection.pid),
     'the native backend window');
+  console.error('WebKitGTK smoke: native backend window visible');
   await waitFor(async () => {
     for (const handle of await call('/window/handles')) {
       await call('/window', 'POST', {handle});
@@ -143,6 +149,7 @@ try {
     assert.equal(data.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
     await writeFile(join(output, screenshot), data);
     routes.push({route:path, html_sha256:gui.pageHash(path), screenshot});
+    console.error('WebKitGTK smoke: rendered ' + path);
   }
 
   await waitText('#tasks-container', smokeSamples.openTask.title);
@@ -182,6 +189,8 @@ try {
     'the restored connection window'));
   await waitFor(async () => await readlink('/proc/' + connection.pid + '/exe').catch(() => '') !== application,
     'the app process exit after closing its windows');
+  session = undefined; // The app closed its last browsing context.
+  console.error('WebKitGTK smoke: native app exited');
   console.log(JSON.stringify({
     source_commit:gui.sourceCommit, web_build_page_count:gui.pageCount, page_contract_count:gui.pageCount,
     fixture_backend:'loopback-read-only', renderer:'WebKitGTK', native_windows_observed:true,
@@ -191,6 +200,9 @@ try {
   if (session) await request(session, 'DELETE').catch(() => {});
   driver?.kill();
   windowManager?.kill();
-  fixture.closeAllConnections();
-  await closeServer(fixture);
+  if (fixture.listening) {
+    const closed = closeServer(fixture);
+    fixture.closeAllConnections();
+    await closed;
+  }
 }

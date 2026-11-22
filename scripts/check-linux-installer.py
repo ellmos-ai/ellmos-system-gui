@@ -122,8 +122,9 @@ def start_window(package, home, app=APP):
 
 def verify_native_pages(home, commit):
     home.mkdir()
-    result = run(
-        "node", "scripts/check-linux-webview.mjs", timeout=180,
+    result = subprocess.run(
+        ["node", "scripts/check-linux-webview.mjs"], check=True, stdout=subprocess.PIPE,
+        encoding="utf-8", timeout=180,
         env={
             **os.environ, "HOME": str(home), "GDK_BACKEND": "x11", "LIBGL_ALWAYS_SOFTWARE": "1",
             "WEBKIT_DISABLE_DMABUF_RENDERER": "1",
