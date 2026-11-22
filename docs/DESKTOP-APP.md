@@ -222,6 +222,17 @@ Windows-Update ohne weiteren Dialog. Der Test beobachtet das Fenster des
 neu gestarteten Prozesses am ursprünglichen Installationspfad.
 [Tauri-Updater](https://v2.tauri.app/plugin/updater/)
 
+### Drei Kernseiten im nativen Fenster
+
+Der Windows-CI-Installer startet die installierte Anwendung. Der Test
+öffnet Dashboard, Aufgaben und Running in deren WebView2 mit dem
+Web-Build desselben Commits. Er vergleicht alle gebauten HTML-Seiten
+mit dem Seitenvertrag und prüft die SHA-256-Werte der ausgelieferten
+Dateien. Eine lokale, schreibgeschützte Test-API liefert synthetische
+Aufgaben und einen einsatzbereiten Worker. Der Test prüft den Aufgabenfilter,
+die Agentensuche in Running, sichtbare Überschriften sowie das saubere Beenden
+der App. Das CI-Artefakt enthält Bilder der drei Ansichten.
+
 ## Offene vollständige Abnahme
 
 Die Task2337-Anforderungen bleiben erhalten: tatsächlicher Start und Reconnect,

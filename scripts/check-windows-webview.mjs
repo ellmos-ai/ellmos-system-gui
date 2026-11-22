@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {createServer} from 'node:http';
 import {once} from 'node:events';
+import {resolve} from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
 import {chromium} from 'playwright-core';
+import {openVerifiedGui, walkGuiPages} from './check-native-gui-pages.mjs';
 
 if (process.platform !== 'win32' || process.env.GITHUB_ACTIONS !== 'true'
     || process.env.RUNNER_ENVIRONMENT !== 'github-hosted') {
@@ -14,9 +16,18 @@ const port = Number(process.argv[2]);
 assert.ok(Number.isInteger(port) && port > 0 && port <= 65535, 'Invalid WebView debug port');
 const debuggerOrigins = ['http://127.0.0.1:', 'http://[::1]:'].map(host => host + port);
 const marker = randomUUID();
+const gui = await openVerifiedGui(resolve('dist'), process.env.DESKTOP_SOURCE_COMMIT);
+const guiErrors = [];
 let capabilityReads = 0;
+let serveRealGui = false;
 const fixture = createServer((request, response) => {
-  if (request.method !== 'GET') {
+  if (serveRealGui) {
+    void gui.respond(request, response).catch(error => {
+      guiErrors.push(error.message);
+      if (!response.headersSent) response.writeHead(500);
+      response.end();
+    });
+  } else if (request.method !== 'GET') {
     response.writeHead(405).end();
   } else if (request.url === '/api/gui/capabilities') {
     capabilityReads++;
@@ -88,6 +99,9 @@ try {
   assert.equal(capabilityReads, 1, 'Expected one backend capability request');
   await connection.locator('#connection-status[data-state="connected"]').waitFor({state:'attached',timeout:10000});
   assert.match(await connection.locator('#connection-status').textContent(), /Anmeldung ist im App-Fenster geöffnet/);
+  serveRealGui = true;
+  const nativePages = await walkGuiPages(backend, gui, origin, resolve('desktop-package', 'webview-smoke'));
+  assert.deepEqual(guiErrors, [], 'The verified static GUI fixture reported errors');
   console.log(JSON.stringify({
     schema:'ellmos-system-gui.windows-webview-check.v1',
     loopback_opt_in_enforced:true,
@@ -95,6 +109,7 @@ try {
     authentication_required:true,
     unsigned_update_channel_unavailable:true,
     remote_update_denied:true,
+    native_pages:nativePages,
   }));
 } finally {
   if (browser) await browser.close();

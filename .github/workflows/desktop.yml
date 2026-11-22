@@ -10,6 +10,7 @@ on:
       - 'scripts/package-desktop.py'
       - 'scripts/check-windows-installer.ps1'
       - 'scripts/check-windows-webview.mjs'
+      - 'scripts/check-native-gui-pages.mjs'
       - 'scripts/check-linux-installer.py'
       - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
@@ -24,6 +25,7 @@ on:
       - 'scripts/package-desktop.py'
       - 'scripts/check-windows-installer.ps1'
       - 'scripts/check-windows-webview.mjs'
+      - 'scripts/check-native-gui-pages.mjs'
       - 'scripts/check-linux-installer.py'
       - 'scripts/desktop_update_fixture.py'
       - 'scripts/check-macos-installer.py'
@@ -172,6 +174,12 @@ jobs:
           $pluginsAdd = Join-Path $tauriCache "NSIS\Plugins\x86-unicode\additional"
           New-Item -ItemType Directory -Force -Path $pluginsAdd | Out-Null
           gh release download nsis_tauri_utils-v0.5.3 --repo tauri-apps/nsis-tauri-utils --pattern "nsis_tauri_utils.dll" --dir $pluginsAdd --clobber
+      - name: Install the locked WebView test client
+        if: runner.os == 'Windows'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Build the shared GUI for the native WebView smoke
+        if: runner.os == 'Windows'
+        run: npm run build:release
       - name: Compile desktop consumer and unsigned installer candidates
         shell: bash
         run: node .github/desktop-toolchain/node_modules/@tauri-apps/cli/tauri.js build --ci --no-sign --bundles "$DESKTOP_BUNDLES" -- --locked
@@ -223,9 +231,6 @@ jobs:
           run-id: ${{ inputs.legacy_run }}
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/legacy-desktop
-      - name: Install the locked WebView test client
-        if: runner.os == 'Windows'
-        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Verify Windows installer lifecycle
         if: runner.os == 'Windows'
         env:
