@@ -34,13 +34,13 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
           <h2 style="font-size:1.15rem;margin:0.15rem 0 0;">🔌 6 Koordinatoren (ehem. Bosse), Domänen-Experten &amp; <span id="ocean-module-role-count"></span>Modul-Rollen (<code>roles[]</code>)</h2>
         </div>
         <label style="flex-direction:row;align-items:center;gap:0.45rem;margin:0;">
-          <span>Aktiver Anbieter-Sockel:</span>
+          <span>Anbieter für Modellvorschau</span>
           <select id="ocean-socket-provider-select" style="width:auto;padding:0.35rem 0.65rem;">
-            <option value="claude">Claude (Opus / Sonnet / Haiku)</option>
-            <option value="codex">Codex / OpenAI (GPT-5.4)</option>
-            <option value="agy">Gemini / Antigravity (3.1 Pro / Flash)</option>
-            <option value="kimi">Kimi (K2.5)</option>
-            <option value="ollama">Ollama Lokal (Qwen 3.5 35B)</option>
+            <option value="claude">Claude</option>
+            <option value="codex">Codex / OpenAI</option>
+            <option value="agy">Gemini / Antigravity</option>
+            <option value="kimi">Kimi</option>
+            <option value="ollama">Ollama lokal</option>
             <option value="openrouter">OpenRouter</option>
           </select>
         </label>
@@ -50,7 +50,15 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         <strong>Deterministisches Routing:</strong> <code>ellmos-controlcenter-mcp</code> (<code>resolve_semantic_route</code> / <code>switch_profile</code>) &middot;
         <strong>Modell-Sockel:</strong> <code>reasoning_coordinator</code> | <code>domain_specialist</code> | <code>fast_worker</code>.
       </p>
+      <label style="flex-direction:row;align-items:center;gap:0.45rem;margin:0 0 0.65rem;">
+        <span>Rollenquelle</span>
+        <select id="ocean-role-source-select" style="width:auto;">
+          <option value="">Alle Rollen</option>
+          <option value="module">Modulrollen</option>
+        </select>
+      </label>
       <div id="ocean-role-socket-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.65rem;font-size:0.8rem;"></div>
+      <button type="button" class="btn" id="ocean-role-show-more" style="margin-top:0.65rem;" hidden>Weitere Rollen anzeigen</button>
     </div>
   </section>
   <script>
