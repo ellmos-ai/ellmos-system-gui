@@ -170,6 +170,22 @@ XDG-Anwendungsordnern belegen den Datenerhalt. Produktive Anmeldungen,
 AppImage-Installation, automatische Updates und Geräteabnahme
 benötigen eigene Nachweise.
 
+### macOS-Paket und Wechsel von BACH Ocean zu OpenOcean
+
+Der macOS-Runner hängt die zum Commit gehörende `.dmg` schreibgeschützt
+ein und kopiert die Anwendung in einen frischen, temporären
+Anwendungsordner. Er prüft App-ID, Version, ausführbaren Einstieg und
+Dateihash, startet die installierte App und liest ihr sichtbares Fenster
+über die WindowServer-Metadaten zurück. Anschließend entfernt er das
+Testbundle. Der Nachweis steht in `macos-installer-check.json`.
+
+Beim manuellen Workflow-Start aktiviert `legacy_dmg_sha256` zusätzlich
+den Wechsel von BACH Ocean 0.2.38 zu OpenOcean und den Rückweg. Der Test
+startet zuerst die neue App und entfernt danach das alte Bundle. Zwei
+synthetische Dateien im temporären Anwendungsprofil bleiben erhalten.
+Der Test erteilt keine Bildschirmaufnahmeberechtigung. Signierung,
+Notarisierung, Anmeldung und Geräteabnahme bleiben separate Schritte.
+
 ## Offene vollständige Abnahme
 
 Die Task2337-Anforderungen bleiben erhalten: tatsächlicher Start und Reconnect,
