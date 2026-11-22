@@ -219,10 +219,10 @@ mod tests {
         assert!(replay.verify(PAYLOAD).is_err());
     }
 
-    #[cfg(target_os = "macos")]
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
     #[test]
     #[ignore = "requires the CI-generated HTTPS fixture and temporary installed app"]
-    fn signed_macos_update_installs_verified_bundle() {
+    fn signed_update_installs_verified_package() {
         use std::{fs, path::PathBuf};
         use tauri_plugin_updater::Error;
 
@@ -238,13 +238,19 @@ mod tests {
             .canonicalize()
             .unwrap();
         assert_eq!(root.parent(), Some(runner_temp.as_path()));
+        #[cfg(target_os = "macos")]
+        let (prefix, relative_path) = (
+            "ocean-dmg-",
+            "Applications/BACH Ocean.app/Contents/MacOS/ellmos-system-gui-desktop",
+        );
+        #[cfg(target_os = "linux")]
+        let (prefix, relative_path) = ("ocean-signed-appimage-", "Ocean.AppImage");
         assert!(root
             .file_name()
             .unwrap()
             .to_string_lossy()
-            .starts_with("ocean-dmg-"));
-        let executable =
-            root.join("Applications/BACH Ocean.app/Contents/MacOS/ellmos-system-gui-desktop");
+            .starts_with(prefix));
+        let executable = root.join(relative_path);
         assert_eq!(executable.canonicalize().unwrap(), executable);
         let old_bytes = fs::read(&executable).unwrap();
 

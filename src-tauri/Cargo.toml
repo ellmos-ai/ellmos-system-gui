@@ -20,7 +20,7 @@ serde_json = "1"
 [dev-dependencies]
 tauri = { version = "=2.12.5", features = ["test"] }
 
-[target.'cfg(target_os = "macos")'.dev-dependencies]
+[target.'cfg(any(target_os = "linux", target_os = "macos"))'.dev-dependencies]
 reqwest-updater = { package = "reqwest", version = "=0.13.5", default-features = false, features = ["rustls-no-provider"] }
 
 [features]
