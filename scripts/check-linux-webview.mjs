@@ -204,7 +204,7 @@ try {
   assert.equal(await evaluate(containsVisibleText, '#tasks-table-container', openTask), false);
   await record('/tasks', 'aufgaben', 'Aufgaben');
 
-  await call('/back', 'POST', {});
+  await evaluate(`document.querySelector('a.logo[href="/"]').click()`);
   await waitText('#tasks-container', openTask);
   await evaluate("document.querySelector('#main-content a[href=\"/agenten/running\"]').click()");
   await waitText('#worker-status-summary', (real?.workerCount ?? 1) + ' Worker registriert');

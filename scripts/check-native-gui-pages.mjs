@@ -77,7 +77,10 @@ export async function openVerifiedGui(dist, commit) {
   };
 }
 
-export async function walkGuiPages(page, gui, origin, output) {
+export async function walkGuiPages(page, gui, origin, output, {
+  openTitle = openTask.title, doneTitle = doneTask.title, workerCount = 1,
+  workerName = worker.name, backend = 'loopback-read-only',
+} = {}) {
   const timeout = 10000;
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -99,31 +102,33 @@ export async function walkGuiPages(page, gui, origin, output) {
   // The native connection flow already opened this target. Reuse it for the real web distribution.
   const dashboard = await page.reload({waitUntil:'domcontentloaded', timeout});
   assert.equal(dashboard.status(), 200);
-  await page.locator('#tasks-container').getByText(openTask.title, {exact:false}).waitFor({timeout});
+  await page.locator('#tasks-container').getByText(openTitle, {exact:false}).waitFor({timeout});
   assert.equal(await page.locator('#stat-tasks').textContent(), '1');
   await record('/', 'dashboard', /Willkommen/);
   await page.locator('#main-content a[href="/tasks"]').click({timeout});
   const taskTable = page.locator('#tasks-table-container');
-  await taskTable.getByText(openTask.title, {exact:true}).waitFor({timeout});
+  await taskTable.getByText(openTitle, {exact:true}).waitFor({timeout});
   await page.locator('#tasks-status-filter').selectOption('done', {timeout});
-  await taskTable.getByText(doneTask.title, {exact:true}).waitFor({timeout});
-  assert.equal(await taskTable.getByText(openTask.title, {exact:true}).count(), 0);
+  await taskTable.getByText(doneTitle, {exact:true}).waitFor({timeout});
+  assert.equal(await taskTable.getByText(openTitle, {exact:true}).count(), 0);
   await record('/tasks', 'aufgaben', /^Aufgaben$/);
 
-  await page.goBack({waitUntil:'domcontentloaded', timeout});
+  await page.locator('a.logo[href="/"]').click({timeout});
   await page.locator('#main-content a[href="/agenten/running"]').last().click({timeout});
-  await page.locator('#worker-status-summary').filter({hasText:'1 Worker registriert'}).waitFor({timeout});
-  const readyWorker = page.locator('#ready-agents-grid').getByText(worker.name, {exact:true});
-  await readyWorker.waitFor({timeout});
-  const search = page.locator('#agent-overview-query');
-  await search.fill('anderer Name', {timeout});
-  await readyWorker.waitFor({state:'hidden', timeout});
-  await search.fill('', {timeout});
-  await readyWorker.waitFor({timeout});
+  await page.locator('#worker-status-summary').filter({hasText:new RegExp('^' + workerCount + ' Worker registriert')}).waitFor({timeout});
+  if (workerName !== null) {
+    const readyWorker = page.locator('#ready-agents-grid').getByText(workerName, {exact:true});
+    await readyWorker.waitFor({timeout});
+    const search = page.locator('#agent-overview-query');
+    await search.fill('anderer Name', {timeout});
+    await readyWorker.waitFor({state:'hidden', timeout});
+    await search.fill('', {timeout});
+    await readyWorker.waitFor({timeout});
+  }
   await record('/agenten/running', 'running', /Living & Running/);
   assert.deepEqual(errors, [], 'Uncaught JavaScript errors in the native page walk');
   return {
     source_commit:gui.sourceCommit, web_build_page_count:gui.pageCount, page_contract_count:gui.pageCount,
-    fixture_backend:'loopback-read-only', uncaught_javascript_errors:errors.length, routes:results,
+    fixture_backend:backend, uncaught_javascript_errors:errors.length, routes:results,
   };
 }
