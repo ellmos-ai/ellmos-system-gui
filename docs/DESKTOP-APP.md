@@ -103,9 +103,42 @@ aller enthaltenen Lieferdateien fest. Änderungen der beiden Locks während des 
 werden abgewiesen. Die Windows-CI prüft weiterhin direkt den PE-Header der App auf
 GUI-Subsystem2.
 
+Unter Windows prüft ein zusätzlicher Schritt den NSIS-Installer in einem
+frischen GitHub-Runner. Er gleicht die installierte EXE mit dem Installer-Inhalt
+und den Registry-Eintrag mit der Konfiguration ab, startet die EXE bis zur
+Windows-Nachrichtenschleife und prüft die Entfernung des Installationsordners
+und des Deinstallationseintrags. Der Abschnitt `installed_webview` in
+`windows-installer-check.json` belegt den zur gestarteten EXE gehörenden
+WebView2-Prozess und sein temporäres Profil. Playwright prüft im installierten
+Verbindungsdialog die HTTP-Loopback-Bestätigung und das Öffnen einer isolierten
+Testseite mit erforderlicher Anmeldung. Dafür öffnet die CI vorübergehend einen
+Loopback-Debug-Port für diese EXE. Der Test entfernt den Richtlinienwert vor
+der Deinstallation. Die Anmeldung an einem echten Backend, die Geräteabnahme,
+automatische Updates und die Signierung benötigen eigene Nachweise.
+
 Der heruntergeladene Beleg und die Binary müssen zum selben vollständig
 erfolgreichen CI-Lauf und exakten Quellcommit gehören; der Dateihash muss passen.
 Ein Hash aus demselben Paket ist ein Integritätsbeleg, keine unabhängige Signatur.
+
+### Windows-Wechsel von BACH Ocean zu OpenOcean
+
+Die App-ID bleibt `ai.ellmos.system-gui.desktop`. Windows führt **BACH Ocean**
+und **OpenOcean** unter getrennten Deinstallationseinträgen.
+
+1. BACH Ocean schließen. OpenOcean in einen separaten Installationsordner
+   installieren und öffnen. Die Verbindung mit dem gewohnten Backend prüfen.
+2. Erst danach unter **Installierte Apps** den alten Eintrag **BACH Ocean**
+   deinstallieren. Die Option zum Löschen der App-Daten dabei abgewählt lassen.
+   Beide Versionen verwenden dieselben App-Datenverzeichnisse.
+3. Für den Rückweg OpenOcean schließen und ohne Löschen der App-Daten
+   deinstallieren. Anschließend den vorherigen Installer von BACH Ocean verwenden.
+
+Der manuell gestartete Workflow **Desktop compile** prüft diese Abfolge mit
+einem älteren Windows-Artefakt von `main`. Als Eingaben dienen CI-Lauf,
+Quellcommit und Installer-SHA-256. Der Windows-Beleg
+`windows-installer-check.json` enthält hierfür `legacy_migration`.
+Der Test verwendet eigens angelegte Dateien in beiden App-Datenverzeichnissen.
+Anmeldungen und bestehende WebView-Sitzungen werden am Gerät geprüft.
 Die Programme und Installer werden beim Erstellen des Artefakts nicht gestartet.
 Die Buildoption `--no-sign` erzeugt ausdrücklich Kandidaten ohne Publishersignatur
 oder Notarisierung. Der Receiptwert `acceptance.installer=false` kennzeichnet die
