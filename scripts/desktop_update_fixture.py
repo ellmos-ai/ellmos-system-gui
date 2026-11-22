@@ -6,6 +6,7 @@ import os
 import shutil
 import ssl
 import subprocess
+import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
@@ -120,14 +121,23 @@ def run_signed_update(source, scratch, version):
         thread = Thread(target=server.serve_forever, daemon=True)
         thread.start()
         try:
+            env = {**os.environ, "OCEAN_SIGNED_UPDATE_FIXTURE": str(scratch)}
+            if os.name == "nt":
+                temp = scratch / "temp"
+                temp.mkdir()
+                env.update(TEMP=str(temp), TMP=str(temp))
             tests = run(
                 "cargo", "test", "--manifest-path", "src-tauri/Cargo.toml", "--release", "--locked",
                 "desktop_updates::tests::signed_update_installs_verified_package",
                 "--", "--ignored", "--exact", timeout=900, check=False,
-                env={**os.environ, "OCEAN_SIGNED_UPDATE_FIXTURE": str(scratch)},
+                env=env,
             )
             require(tests.returncode == 0, tests.stdout[-3000:] + tests.stderr[-3000:])
-            print(tests.stdout, flush=True)
+            if os.name == "nt":
+                require((scratch / "update-checks-complete").read_bytes() == b"verified",
+                        "Windows updater exited before completing the signature checks")
+            else:
+                print(tests.stdout, flush=True)
         finally:
             server.shutdown()
             thread.join()
@@ -136,3 +146,18 @@ def run_signed_update(source, scratch, version):
         "tampered_payload_rejected": True,
         "incorrect_version_rejected": True,
     }
+
+
+
+def main():
+    require(os.name == "nt" and os.environ.get("GITHUB_ACTIONS") == "true"
+            and os.environ.get("RUNNER_ENVIRONMENT") == "github-hosted", "Use a disposable hosted Windows runner")
+    source, scratch, version = sys.argv[1:]
+    scratch = Path(scratch).resolve()
+    require(scratch.parent == Path(os.environ["RUNNER_TEMP"]).resolve()
+            and scratch.name.startswith("ocean-signed-nsis-"), "Unexpected NSIS fixture directory")
+    print(json.dumps(run_signed_update(Path(source), scratch, version)))
+
+
+if __name__ == "__main__":
+    main()

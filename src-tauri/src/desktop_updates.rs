@@ -219,7 +219,7 @@ mod tests {
         assert!(replay.verify(PAYLOAD).is_err());
     }
 
-    #[cfg(any(target_os = "linux", target_os = "macos"))]
+    #[cfg(any(target_os = "linux", target_os = "macos", windows))]
     #[test]
     #[ignore = "requires the CI-generated HTTPS fixture and temporary installed app"]
     fn signed_update_installs_verified_package() {
@@ -245,6 +245,11 @@ mod tests {
         );
         #[cfg(target_os = "linux")]
         let (prefix, relative_path) = ("ocean-signed-appimage-", "Ocean.AppImage");
+        #[cfg(windows)]
+        let (prefix, relative_path) = (
+            "ocean-signed-nsis-",
+            "installed app/ellmos-system-gui-desktop.exe",
+        );
         assert!(root
             .file_name()
             .unwrap()
@@ -265,13 +270,15 @@ mod tests {
             reqwest_updater::Certificate::from_pem(&fs::read(root.join("update-ca.pem")).unwrap())
                 .unwrap();
         let manifest = |kind| origin.join(kind).unwrap();
+        let previous_version = if cfg!(windows) { "0.2.39" } else { "0.2.38" };
         let mut context = tauri::test::mock_context(tauri::test::noop_assets());
-        context.package_info_mut().version = "0.2.38".parse().unwrap();
+        context.package_info_mut().version = previous_version.parse().unwrap();
         context.config_mut().plugins.0.insert(
             "updater".into(),
             json!({
                 "pubkey": fs::read_to_string(root.join("update-key.pub")).unwrap().trim(),
                 "requireSignedVersion": true,
+                "windows": {"installMode": "quiet"},
                 "endpoints": [manifest("/valid/latest.json")]
             }),
         );
@@ -318,10 +325,22 @@ mod tests {
                 .await
                 .unwrap()
                 .unwrap();
-            assert_eq!(update.current_version, "0.2.38");
+            assert_eq!(update.current_version, previous_version);
             assert_eq!(update.version, "0.2.40");
-            update.download_and_install(|_, _| {}, || {}).await.unwrap();
-            assert_ne!(fs::read(&executable).unwrap(), old_bytes);
+            #[cfg(windows)]
+            {
+                // NSIS runs as a separate process and the updater exits this test process
+                // on a successful handoff. The fixture driver verifies the installed files.
+                let bytes = update.download(|_, _| {}, || {}).await.unwrap();
+                fs::write(root.join("update-checks-complete"), b"verified").unwrap();
+                update.restart_after_install(false).install(bytes).unwrap();
+                panic!("Windows updater returned without exiting after installer handoff");
+            }
+            #[cfg(not(windows))]
+            {
+                update.download_and_install(|_, _| {}, || {}).await.unwrap();
+                assert_ne!(fs::read(&executable).unwrap(), old_bytes);
+            }
         });
     }
 }
