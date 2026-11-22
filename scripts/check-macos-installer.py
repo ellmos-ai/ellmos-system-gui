@@ -6,6 +6,7 @@ import plistlib
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 from dataclasses import dataclass
@@ -195,7 +196,7 @@ def main():
     current = image_from_receipt(directory, repository=repository, commit=commit, run_id=run_id)
     config = json.loads(Path("src-tauri/tauri.conf.json").read_text(encoding="utf-8"))
     require(current.version == config["version"] and current.identifier == config["identifier"], "DMG source mismatch")
-    migration = signed_update = None
+    migration = signed_update = bach_pages = None
     with tempfile.TemporaryDirectory(prefix="ocean-dmg-", dir=temp) as work:
         scratch = Path(work).resolve()
         applications, home = scratch / "Applications", scratch / "home"
@@ -206,8 +207,19 @@ def main():
         probe = scratch / "window-probe"
         run("xcrun", "swiftc", str(swift_source), "-o", str(probe), timeout=90)
         app = install(current, applications, scratch)
-        window = start(app, current, home, probe)
-        remove(app, applications)
+        try:
+            window = start(app, current, home, probe)
+            if archive := os.environ.get("BACH_SMOKE_ARCHIVE"):
+                output = directory / "bach-native-smoke"
+                subprocess.run([
+                    sys.executable, "scripts/check-bach-backend.py", ".ci-bach", archive,
+                    str(output), "--macos-app", str(app),
+                ], check=True, timeout=330)
+                bach_pages = json.loads((output / "result.json").read_text(encoding="utf-8"))
+                require(bach_pages["native_webview"]["installed_binary_sha256"] == current.entry_sha256,
+                        "Native BACH proof references a different macOS executable")
+        finally:
+            remove(app, applications)
         pin = os.environ.get("LEGACY_DMG_SHA256")
         if pin:
             previous_commit = os.environ["LEGACY_COMMIT"]
@@ -229,6 +241,7 @@ def main():
         "app_identifier": current.identifier, "version": current.version, "dmg_sha256": current.sha256,
         "installed_binary_sha256": current.entry_sha256, "clean_install_start": window,
         "removed": True, "legacy_migration": migration, "signed_update": signed_update,
+        "bach_native_pages": bach_pages,
     }
     (directory / "macos-installer-check.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(receipt))
