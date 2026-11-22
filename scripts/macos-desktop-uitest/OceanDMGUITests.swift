@@ -33,23 +33,23 @@ final class OceanDMGUITests: XCTestCase {
         app.launch()
 
         let connection = try require(app.windows["Ocean (BACH) verbinden"], "Installed connection window not found")
-        let connect = try require(connection.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Verbinden")).firstMatch,
+        let connect = try require(connection.buttons["Verbinden"].firstMatch,
                                   "Connect button not found", in: connection)
-        let address = try require(connection.textFields.firstMatch, "Backend address field not found", in: connection)
+        let address = try require(connection.textFields["Backendadresse"].firstMatch, "Backend address field not found", in: connection)
         address.click()
         address.typeText(input.origin)
         connect.click()
-        _ = try require(connection.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Loopbackadressen")).firstMatch,
+        _ = try require(connection.staticTexts["HTTPS verwenden. HTTP ist nur für ausdrücklich bestätigte lokale Loopbackadressen möglich."].firstMatch,
                         "Expected confirmation before using HTTP", in: connection)
-        let consent = try require(connection.checkBoxes.firstMatch, "HTTP confirmation checkbox not found", in: connection)
+        let consent = try require(connection.checkBoxes["HTTP für diese lokale Loopbackadresse erlauben"].firstMatch, "HTTP confirmation checkbox not found", in: connection)
         consent.click()
         connect.click()
 
         let backend = try require(app.windows["Ocean (BACH)"], "BACH backend window not found")
         let web = backend
-        let heading = web.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Willkommen")).firstMatch
+        let heading = web.staticTexts.matching(NSPredicate(format: "title BEGINSWITH %@ OR value BEGINSWITH %@", "Willkommen", "Willkommen")).firstMatch
         _ = try require(heading, "Dashboard did not render in WKWebView", in: backend)
-        let openTitle = web.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", input.openTask)).firstMatch
+        let openTitle = web.staticTexts[input.openTask].firstMatch
         _ = try require(openTitle, "The enrolled device could not read its open BACH task", in: backend)
         try backend.screenshot().pngRepresentation.write(to: output.appendingPathComponent("dashboard.png"))
 
@@ -57,27 +57,27 @@ final class OceanDMGUITests: XCTestCase {
         tasks.click()
         _ = try require(openTitle, "Open task not rendered on the Tasks page")
         let filter = try require(web.popUpButtons.matching(
-            NSPredicate(format: "value CONTAINS %@", "Offen · alle aktiven")).firstMatch, "Task status filter not found", in: backend)
+            NSPredicate(format: "value CONTAINS %@ OR title == %@", "Offen · alle aktiven", "Status")).firstMatch, "Task status filter not found", in: backend)
         filter.click()
-        let doneOption = try require(app.menuItems.matching(NSPredicate(format: "label CONTAINS %@", "Erledigt · alle")).firstMatch,
+        let doneOption = try require(app.menuItems.matching(NSPredicate(format: "title CONTAINS %@ OR label CONTAINS %@", "Erledigt · alle", "Erledigt · alle")).firstMatch,
                                      "Completed task option not found", in: app)
         doneOption.click()
-        let doneTitle = web.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", input.doneTask)).firstMatch
+        let doneTitle = web.staticTexts[input.doneTask].firstMatch
         _ = try require(doneTitle, "Completed task not rendered after filtering")
         XCTAssertFalse(openTitle.exists)
         try backend.screenshot().pngRepresentation.write(to: output.appendingPathComponent("aufgaben.png"))
 
         let running = try require(web.links["Deine Agenten"].firstMatch, "Living & Running link not found")
         running.click()
-        _ = try require(web.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Living & Running")).firstMatch,
+        _ = try require(web.staticTexts.matching(NSPredicate(format: "title CONTAINS %@ OR value CONTAINS %@", "Living & Running", "Living & Running")).firstMatch,
                         "Living & Running did not render")
-        _ = try require(web.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "\(input.workerCount) Worker registriert")).firstMatch,
+        _ = try require(web.staticTexts.matching(NSPredicate(format: "value BEGINSWITH %@", "\(input.workerCount) Worker registriert")).firstMatch,
                         "Worker count did not match the Control API")
         try backend.screenshot().pngRepresentation.write(to: output.appendingPathComponent("running.png"))
 
-        try require(backend.buttons["Close"].firstMatch, "Backend close button not found").click()
+        try require(backend.buttons["_XCUI:CloseWindow"].firstMatch, "Backend close button not found").click()
         _ = try require(connection, "Connection window did not return after closing BACH")
-        try require(connection.buttons["Close"].firstMatch, "Connection close button not found").click()
+        try require(connection.buttons["_XCUI:CloseWindow"].firstMatch, "Connection close button not found").click()
         XCTAssertTrue(app.wait(for: .notRunning, timeout: 10), "Ocean stayed open after closing both windows")
 
         let evidence: [String: Any] = [
