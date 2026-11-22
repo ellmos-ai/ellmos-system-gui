@@ -63,8 +63,9 @@ def prepare_backend(bach, dist, scratch):
 
     setup = BACHSetup(bach_root=bach)
     setup.db_path = database
+    # The committed schema is the fresh database snapshot for this API test.
+    # The installer migration sequence is exercised independently.
     setup._step_s2_db_init(None)
-    setup._step_s3_migrations(None)
     from gui.device_auth import create_device
     from hub.bach_paths import BACH_DB
 
