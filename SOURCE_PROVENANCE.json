@@ -20,9 +20,9 @@
     "docs/blueprint-revisions.md": "07960421acded75854e85fcb2845d1c4ab8285a748bd2f899208e7fa566caab2",
     "docs/model-residency-access.md": "fa66b0aad13dfd36fd7d05a2f744bc3d09d1814e6166f9662125321e678c8fb4",
     "docs/task-hindrances.md": "2efe2f7d142a83262d2b855251b6787e8044b2d0352bf5a96913af4e4200cf78",
-    "ellmos-module.v2.json": "b45872b9c70f7dbc9b028892c7f81c9b001ed7f3c7ea299355b532bb1c76b38f",
+    "ellmos-module.v2.json": "e53a8729e2e9a515832356b227ab9b1fc5a55bdfcf015070e96ed977c270fd8e",
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
-    "package.json": "e56c2a605296da71cff680ae3b720ea768e98fcca7be1ffa7290fcdc85b8d09b",
+    "package.json": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
     "public/page-reads.v1.json": "3e75a4338d82710902601bd565e4dc9ddf95dad30808932ea8970f55e8774b5b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
@@ -6322,5 +6322,35 @@
     "sha256": "a0e025755e99704c742274628019f25750f538c62dc78b7d50eac36a0200c977",
     "added_on": "2026-10-11"
   },
-  "version": "0.2.40"
+  "version": "0.2.40",
+  "modifications": [
+    {
+      "date": "2026-11-24",
+      "summary": "Bump shared GUI and Tauri desktop metadata to 0.2.42 (visible editable system prompts + reset HTTP 400 fix, PR #173).",
+      "files": [
+        {
+          "path": "package.json",
+          "previous_sha256": "e56c2a605296da71cff680ae3b720ea768e98fcca7be1ffa7290fcdc85b8d09b",
+          "sha256": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc"
+        },
+        {
+          "path": "ellmos-module.v2.json",
+          "previous_sha256": "b45872b9c70f7dbc9b028892c7f81c9b001ed7f3c7ea299355b532bb1c76b38f",
+          "sha256": "e53a8729e2e9a515832356b227ab9b1fc5a55bdfcf015070e96ed977c270fd8e"
+        },
+        {
+          "path": "src-tauri/tauri.conf.json",
+          "sha256": "9ef17d16116404d845846ce04f11a2d34ad2704c143e3d66182d2953c8ea960e"
+        },
+        {
+          "path": "src-tauri/Cargo.toml",
+          "sha256": "7acb04682ed3aed43195697a88012dd4d58836479eb0f538cb42b6dd4abfd076"
+        },
+        {
+          "path": "src-tauri/Cargo.lock",
+          "sha256": "4fcbf2b7282c9d8d1aa645a75bb5bfe651e788cb15df95328bc1090f58dbd438"
+        }
+      ]
+    }
+  ]
 }
