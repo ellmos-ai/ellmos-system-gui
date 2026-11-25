@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 // B-08: /agenten/fabrika and /agenten/bibliothek were removed as pages; saved links keep their destination.
 export const LIBRARY_HOME = '/agenten/blueprints';
+export const PROMPT_AGENTS_HOME = '/agenten/blueprints?tab=prompt-agents';
 
 export function libraryRedirectTarget(search = '') {
   const old = new URLSearchParams(search);
@@ -8,5 +9,15 @@ export function libraryRedirectTarget(search = '') {
   const target = new URL(LIBRARY_HOME, 'https://gui.invalid');
   if (name) target.searchParams.set('blueprint', name);
   else if (old.get('tab') === 'teams' || old.get('tab') === 'teambuilding') target.searchParams.set('tab', 'teams');
+  else if (old.get('tab') === 'prompt-agents' || old.get('tab') === 'subscription-agents') target.searchParams.set('tab', 'prompt-agents');
+  return target.pathname + target.search;
+}
+
+export function promptAgentsRedirectTarget(search = '') {
+  const old = new URLSearchParams(search);
+  const target = new URL(LIBRARY_HOME, 'https://gui.invalid');
+  target.searchParams.set('tab', 'prompt-agents');
+  const blueprint = old.get('blueprint') || old.get('load');
+  if (blueprint) target.searchParams.set('blueprint', blueprint);
   return target.pathname + target.search;
 }

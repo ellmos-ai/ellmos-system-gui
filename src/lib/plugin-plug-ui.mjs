@@ -47,13 +47,13 @@ export function plugCableElement(item, observedAt = new Date()) {
   wrapper.dataset.state = info.state;
   wrapper.setAttribute('aria-label', plugAccessibleText(name, info, observedAt));
   wrapper.title = info.headline + ' · ' + info.reason + ' ' + info.runtime;
-  wrapper.append(cableGraphic(info.state), html('strong', info.headline, 'plug-headline'));
+  wrapper.append(html('strong', info.headline, 'plug-headline'));
   const evidence = document.createElement('details');
   evidence.className = 'plug-evidence';
   evidence.append(html('summary', 'Beleg zum Zustand'));
   for (const line of [info.reason, 'Quelle: ' + info.source, info.scope, info.host, observedLabel(observedAt), info.runtime]) {
     if (line) evidence.append(html('p', line));
   }
-  wrapper.append(evidence);
+  wrapper.append(evidence, cableGraphic(info.state));
   return wrapper;
 }
