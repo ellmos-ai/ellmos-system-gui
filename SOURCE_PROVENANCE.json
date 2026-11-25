@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "3e75a4338d82710902601bd565e4dc9ddf95dad30808932ea8970f55e8774b5b",
+    "public/page-reads.v1.json": "a8fd63592d31e03f8bd5e653266715986094ce387429ebd809b036f95883576d",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -244,7 +244,7 @@
     "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
     "src/components/WorkerLeaseCountdown.astro": "c60b7c2e33e83d833ffdd85066c1aed3d18144108af9ffb0ef09c8960f33c52d",
     "src/components/WorkerPolicySettings.astro": "5f18aa3fe8fbba8fcc76f36c306beab94b64be5154cdec086074ffd651a077d0",
-    "src/config/nav_config.json": "b733d931b6350eecb16584125ec4eeb2c2df625f05e1c369a5454503097830e8",
+    "src/config/nav_config.json": "6ca3b184668ca2848684f9764bf2257f6e47d844fa69182a55372a6efd9f5164",
     "src/i18n/world.json": "5162900f4327c3b9143f7a38c29276e1f6ed9cee0617da86d361881a462fc2db",
     "src/layouts/BachLayout.astro": "280095e742e9b86c19bc7d22ac356ab829962a0c7d3821b41cf4f30312616185",
     "src/lib/agent-avatar-browser.mjs": "02b51e85852532af3549dbecd1b4c1b1bf7bf48eda7340f23523c7597ec44abf",
@@ -280,12 +280,12 @@
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
-    "src/pages/agenten/blueprints.astro": "f5a4f26b127b29811d9a3e94658acd83e00d6ebfd018b17bd5d89dbd06b0d027",
+    "src/pages/agenten/blueprints.astro": "8c2aa26804132d943019d49efd699f64ce45f56d1af8d6ea1f5fcd323081f441",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
-    "src/pages/agenten/running.astro": "f8324cd1ca60724d62c77835d14f896c114c0061925d00d87053bd6b0be053a2",
+    "src/pages/agenten/running.astro": "1e0e11b66f5d5bf8935c32752c49cb113f9bd3298e0c3b98bb41669cfcf1a59e",
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
-    "src/pages/agenten/subscription-agents.astro": "5e1eca8ee6ef5e97a018c104f1e4f342975897bcd9ff656b7ca2a2636b5cb4b5",
+    "src/pages/agenten/subscription-agents.astro": "9a47a998bc04cbc0882d4fc936fc713a70fd286a034bffdc7dc0b75c6fada06a",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
     "src/pages/ati.astro": "9654c6490c123e02a4f2e6028d1b22ce8740b2e0e0de2a2448f13c3ec4fd1f84",
     "src/pages/chat.astro": "bf8b82351dba4b25baf2cd677f5e3f3ee5d1e77273ff9050edb625caaca1aebc",
@@ -326,7 +326,7 @@
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
     "src/scripts/agent-history.mjs": "3b5080126d5653be9931211c3c6f9cc05ad085a97fc3026117868262e08de26f",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/scripts/blueprint-studio.mjs": "244aac035f35c0b3e45f931a6d31f0c0142ca4353090a2ca25ae38709112f61d",
+    "src/scripts/blueprint-studio.mjs": "f0aed22160e0509f35e89179eedf251c126e24894cb62288845098930eab5ef3",
     "src/scripts/domain-studio.mjs": "d883c4a608b1fd087a9c021eb6b8d496fb420a5d0412388e14c65d11cdd6d2ca",
     "src/scripts/installation-updates.mjs": "c6fcc4aaee0cb0056246cb870008e27e6a538cb18037ca4fe6793f68cbbbcb6c",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
@@ -377,10 +377,10 @@
     "tests/worker-queue.test.mjs": "9a35203491037c61d905d4309c1e841239404fdc4b0eafb1b2a2649ffc48141f",
     "src/lib/voice-and-talk-contract.mjs": "ae0b57f627bc47143784b10160ccfb51883530fc9869f9e31b602c5f33055980",
     "tests/voice-and-talk-contract.test.mjs": "4029b20acea02ea7ddd4e03b89acfff77f878b66c087771b9a8064311e3eaf09",
-    "src/components/AgentTriggers.astro": "2a69dc3e3e6c223cc53ae2d0b8a6e02b6164ac27bb78d29ac85fd5d107f2c9fe",
+    "src/components/AgentTriggers.astro": "ed1deca600e76a6d2e1762fb1313d034953230b766082d2058e2f453be848fbb",
     "src/lib/agent-triggers.mjs": "289e00f21c89f9521296e64f384fd580737578f7626b6ed3ca05d2941822141b",
-    "src/lib/agent-triggers-ui.mjs": "9e9191a853668a2ea2c9ea50cf7392436d13ebcbdd1631535de6e92507ffa913",
-    "tests/agent-triggers.test.mjs": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
+    "src/lib/agent-triggers-ui.mjs": "966c0aa625e20c4f570750d69af83632988d048c2b246eb93b00acb97bd89149",
+    "tests/agent-triggers.test.mjs": "330486fc198e42cdbfe89972c579c98f8b08901d8b5586f30ec9da74bd48925f",
     "scripts/page-reads-helpers.mjs": "2c09229565e98b75010bbca31679589fade600e6e4cc8cbc850063ba7ab3285b",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
     "src/lib/role-socket-preview.mjs": "5fe445fa828709ecb8cef14fc26c2e4a3c1f9662a8f4dc19e752803cb933d47c",
@@ -6407,6 +6407,145 @@
           "previous_sha256": "e467c49cfe15985d78250d039859a7ac472933edd1ee7deabe14948206760454",
           "other_parent_sha256": "b3a8276ab0e79f3aa241722800026166424c9f980d7a8f2753b96d6db4d9ceae",
           "sha256": "04be2b8a001d45a9a86937a4779371f183bd8e9b9439ea0a20763f75ebac41ff"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-08",
+      "summary": "PB-25 items 6, 7, 8 and 9: Prompt-Agenten is a tab of the agent library (old /agenten/subscription-agents redirects), Deine Agenten has Living & Running and Memory, living agents on Living & Running are grouped by Living, Pausiert and Deaktiviert, and the start-rule panel (Automatische Startregeln & Zeitpläne) lives on Routinen & Jobs only. Page reads of the composer moved to /agenten/blueprints, the agent-trigger reads left /agenten/running. New files living-agent-groups.mjs and its test are not pinned here.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "b7af8890eefada79a80bb81a25934f896fab9282fe610600b61546335b71d757",
+          "sha256": "0197f29dc91a8a24154691d2f70146d45f8fc0481a349ae26842298684a1a190"
+        },
+        {
+          "path": "src/components/AgentTriggers.astro",
+          "previous_sha256": "2a69dc3e3e6c223cc53ae2d0b8a6e02b6164ac27bb78d29ac85fd5d107f2c9fe",
+          "sha256": "ed1deca600e76a6d2e1762fb1313d034953230b766082d2058e2f453be848fbb"
+        },
+        {
+          "path": "src/config/nav_config.json",
+          "previous_sha256": "b733d931b6350eecb16584125ec4eeb2c2df625f05e1c369a5454503097830e8",
+          "sha256": "6ca3b184668ca2848684f9764bf2257f6e47d844fa69182a55372a6efd9f5164"
+        },
+        {
+          "path": "src/lib/agent-triggers-ui.mjs",
+          "previous_sha256": "9e9191a853668a2ea2c9ea50cf7392436d13ebcbdd1631535de6e92507ffa913",
+          "sha256": "966c0aa625e20c4f570750d69af83632988d048c2b246eb93b00acb97bd89149"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "a85b80451f14dad23ea1847daf8f2f3fb2826aa7299bdc2d1b188c4d240444b3",
+          "sha256": "0f61e86acd0678959a1821e98a277c7cb356bb8236b178ac3a853f2ad75ae07e"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "8409464401a5a90c65080885dad03831170c102886fb6828a62bb94cf119491a",
+          "sha256": "0fb473f995594a5add621054b4791c17c715e9d01836ec92f2aca4a7d2bf8c0f"
+        },
+        {
+          "path": "src/pages/agenten/subscription-agents.astro",
+          "previous_sha256": "5e1eca8ee6ef5e97a018c104f1e4f342975897bcd9ff656b7ca2a2636b5cb4b5",
+          "sha256": "9e88d4d65c5562d13332a112ab68b072318f146f7177bced5aa423d6110b6013"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "e5ec034d151be478b3598f932e15f2afaa8f1895e7cdbb24252d9af9cd93e749",
+          "sha256": "ae15f90f7263d01eb9f18b162e819e7019e42caffb5c9e67aabdf3b6e61afeaf"
+        },
+        {
+          "path": "tests/agent-triggers.test.mjs",
+          "previous_sha256": "9fa765e68b7a1bfbececb5cc05eebc850bfc81d79f05c26373e98c8cdee515df",
+          "sha256": "330486fc198e42cdbfe89972c579c98f8b08901d8b5586f30ec9da74bd48925f"
+        }
+      ],
+      "source_base_commit": "32569cbe8dbe3994bf14565e1378752c22bb9361"
+    },
+    {
+      "date": "2026-11-14",
+      "scope": "OCEAN gui#136: integrate deployed GUI branch and current main without losing branch provenance",
+      "source_base_commit": "32569cbe8dbe3994bf14565e1378752c22bb9361",
+      "merged_source_commit": "91e695540e67bce69bd6cbc99a8ad707acc4abde",
+      "common_base_commit": "32569cbe8dbe3994bf14565e1378752c22bb9361",
+      "branch_bases": [
+        "32569cbe8dbe3994bf14565e1378752c22bb9361"
+      ],
+      "changes": [
+        "Merge current main into the branch; only SOURCE_PROVENANCE.json conflicted, all hashes recomputed from the merged tree."
+      ],
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "0197f29dc91a8a24154691d2f70146d45f8fc0481a349ae26842298684a1a190",
+          "other_parent_sha256": "c7999dd63834f15e2a0c44c0fa32d577286e2978516a28dd73e5ecedc1a0f9e2",
+          "sha256": "01cf1c0c311bc8b7c799a756a92a286577043c5975eb264575e144c2a822fdfa"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-22",
+      "scope": "OCEAN gui#136: integrate deployed GUI branch and current main without losing branch provenance",
+      "source_base_commit": "aba1b51b92047a392df886555ed54000d99eba20",
+      "merged_source_commit": "2ac523c9cc8c09c0509345c71ced8c55bfb47806",
+      "common_base_commit": "91e695540e67bce69bd6cbc99a8ad707acc4abde",
+      "branch_bases": [
+        "91e695540e67bce69bd6cbc99a8ad707acc4abde",
+        "32569cbe8dbe3994bf14565e1378752c22bb9361"
+      ],
+      "changes": [
+        "Merge current main (2ac523c9cc8c, v0.2.41) into gui#136 (aba1b51b9204) and recompute merged file hashes."
+      ],
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "01cf1c0c311bc8b7c799a756a92a286577043c5975eb264575e144c2a822fdfa",
+          "sha256": "a8fd63592d31e03f8bd5e653266715986094ce387429ebd809b036f95883576d",
+          "other_parent_sha256": "3e75a4338d82710902601bd565e4dc9ddf95dad30808932ea8970f55e8774b5b"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-25",
+      "scope": "OCEAN gui#136: integrate deployed GUI branch and current main without losing branch provenance",
+      "source_base_commit": "f600d8eda8805cf2670b437ab5397ebbe6be5b15",
+      "merged_source_commit": "1badd9e3bc6a2f99b960f0c015e778664a6ba53e",
+      "common_base_commit": "2ac523c9cc8c09c0509345c71ced8c55bfb47806",
+      "branch_bases": [
+        "2ac523c9cc8c09c0509345c71ced8c55bfb47806"
+      ],
+      "changes": [
+        "Merge current main (1badd9e3bc6a, v0.2.42) into gui#136 (f600d8eda880) and recompute merged file hashes."
+      ],
+      "files": [
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "sha256": "8c2aa26804132d943019d49efd699f64ce45f56d1af8d6ea1f5fcd323081f441",
+          "previous_sha256": "5135f83c802f3bcb5a02582050820ac518462a79f99b106ce059b1dc91d5205b",
+          "other_parent_sha256": "f5a4f26b127b29811d9a3e94658acd83e00d6ebfd018b17bd5d89dbd06b0d027"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "sha256": "1e0e11b66f5d5bf8935c32752c49cb113f9bd3298e0c3b98bb41669cfcf1a59e",
+          "previous_sha256": "a85e60ae7ea75a6863d5df132b23c54782cefcb8b04a1e9c2a5af09be0491e0a",
+          "other_parent_sha256": "f8324cd1ca60724d62c77835d14f896c114c0061925d00d87053bd6b0be053a2"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "sha256": "f0aed22160e0509f35e89179eedf251c126e24894cb62288845098930eab5ef3",
+          "previous_sha256": "5c4c4017578938c8782dfb99f92327fdf239e072143d1e117baf5dea7a9df604",
+          "other_parent_sha256": "244aac035f35c0b3e45f931a6d31f0c0142ca4353090a2ca25ae38709112f61d"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-25",
+      "scope": "PB-25: standalone redirect for /agenten/subscription-agents and dist area-nav check",
+      "files": [
+        {
+          "path": "src/pages/agenten/subscription-agents.astro",
+          "previous_sha256": "9e88d4d65c5562d13332a112ab68b072318f146f7177bced5aa423d6110b6013",
+          "sha256": "9a47a998bc04cbc0882d4fc936fc713a70fd286a034bffdc7dc0b75c6fada06a"
         }
       ]
     }

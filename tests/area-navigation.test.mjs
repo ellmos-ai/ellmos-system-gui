@@ -26,7 +26,7 @@ const entryIds = (id) => area(id).entries.map((entry) => entry.id);
 
 test('the navigation config declares the three area navigations with the agreed entries', () => {
   assert.deepEqual(areas.map((entry) => entry.id), ['agent-library', 'betrieb', 'governance']);
-  assert.deepEqual(entryIds('agent-library'), ['templates', 'prompt-agents', 'chains']);
+  assert.deepEqual(entryIds('agent-library'), ['templates', 'chains']);
   // B-10: Systeme und Installation & Updates gehoeren in die Bereichsnavigation von Verbindungen und Modelle & Ressourcen.
   assert.deepEqual(entryIds('betrieb'), ['connections', 'models-resources', 'systems', 'installation-updates', 'services', 'maintenance', 'quality']);
   // B-12: jeder Governance-Eintrag hat eine eigene Route.
@@ -70,11 +70,16 @@ test('pages outside an area carry no area navigation', () => {
 });
 
 test('B-08: fabrika and bibliothek are redirects to the template page, the old page is not duplicated', () => {
-  assert.deepEqual(nav.redirects, {'/agenten/fabrika': '/agenten/blueprints', '/agenten/bibliothek': '/agenten/blueprints'});
+  assert.deepEqual(nav.redirects, {
+    '/agenten/fabrika': '/agenten/blueprints',
+    '/agenten/bibliothek': '/agenten/blueprints',
+    '/agenten/subscription-agents': '/agenten/blueprints?tab=prompt-agents',
+  });
   for (const [from, to] of Object.entries(nav.redirects)) {
     const page = pages.find((entry) => entry.route === from);
     assert.ok(page, `${from} stays as a redirect page`);
-    assert.match(page.source, new RegExp(`http-equiv="refresh" content="0;url=${to}"`));
+    const escapedTo = to.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.match(page.source, new RegExp(`http-equiv="refresh" content="0;url=${escapedTo}"`));
     assert.match(page.source, /location\.replace/);
     assert.ok(page.source.length < 2500, `${from} is only a redirect`);
     assert.equal(areaForPath(areas, from), null);
@@ -160,7 +165,7 @@ test('pages with extra query parameters or deeper paths keep their area marked',
 
 test('a page of an area without its own sidebar entry marks the area home entry (classic has no "Ketten")', () => {
   assert.equal(active('classic', '/agenten/marblerun'), 'agent-library');
-  assert.equal(active('classic', '/agenten/subscription-agents'), 'agent-library');
+  assert.equal(active('classic', '/agenten/blueprints?tab=prompt-agents'), 'agent-library');
   assert.equal(active('standard', '/agenten/marblerun'), 'chains');
   assert.equal(active('classic', '/governance/sperren'), 'governance-control');
 });
@@ -194,7 +199,7 @@ test('every page of one area gets the identical, ordered entry list', () => {
   for (const a of areas) {
     const lists = pages.filter((page) => areaForPath(areas, page.route)?.id === a.id)
       .map((page) => areaNavModel(a, page.route, '').entries.map((entry) => `${entry.id}=${entry.href}`).join('|'));
-    assert.ok(lists.length >= 3, a.id);
+    assert.ok(lists.length >= 2, a.id);
     assert.equal(new Set(lists).size, 1, a.id);
   }
 });
@@ -215,4 +220,38 @@ test('the sidebar governance group links to the real sub routes', () => {
   for (const href of ['/governance/regeln', '/governance/sperren', '/governance/hooks', '/governance/rechte', '/governance/logs']) assert.ok(links.includes(href), href);
   assert.ok(!links.some((href) => /^\/governance\?tab=/.test(href)), 'no query tab links remain in the sidebar');
   assert.ok(existsSync(join(pagesRoot, 'governance', 'regeln.astro')));
+});
+
+test('PB-25 (6): Prompt-Agenten is part of Agenten-Bibliothek, not a separate menu item, and lands directly in template view', () => {
+  const allMenuIds = Object.values(nav.presets).flatMap((preset) =>
+    preset.sections.flatMap((section) => section.items.flatMap((item) => [item.id, ...(item.children || []).map((c) => c.id)])),
+  );
+  assert.ok(!allMenuIds.includes('prompt-agents'), 'prompt-agents is removed from preset menus');
+  assert.ok(!entryIds('agent-library').includes('prompt-agents'), 'prompt-agents is removed from agent-library area nav');
+  assert.equal(nav.redirects['/agenten/subscription-agents'], '/agenten/blueprints?tab=prompt-agents');
+
+  const blueprints = pages.find((entry) => entry.route === '/agenten/blueprints').source;
+  assert.match(blueprints, /<button role="tab" type="button" aria-selected="true" data-library="templates">/);
+  assert.match(blueprints, /<button role="tab" type="button" aria-selected="false" data-library="prompt-agents">Prompt-Agenten<\/button>/);
+  assert.match(blueprints, /id="studio-prompt-agents"/);
+  assert.ok(
+    blueprints.indexOf('id="studio-grid"') < blueprints.indexOf('id="ocean-role-socket-panel"'),
+    'template grid comes directly after tabs before role socket panel',
+  );
+});
+
+test('PB-25 (7): Deine Agenten in standard preset has Living & Running and Memory children', () => {
+  const arbeitItems = nav.presets.standard.sections.find((s) => s.id === 'arbeit').items;
+  const deineAgenten = arbeitItems.find((item) => item.label === 'Deine Agenten');
+  assert.ok(deineAgenten, 'Deine Agenten group exists in standard preset');
+  assert.equal(deineAgenten.id, 'agents');
+  assert.deepEqual(
+    deineAgenten.children.map((c) => ({ id: c.id, label: c.label, href: c.href })),
+    [
+      { id: 'living-running', label: 'Living & Running', href: '/agenten/running' },
+      { id: 'memory', label: 'Memory', href: '/memory' },
+    ],
+  );
+  assert.equal(active('standard', '/agenten/running'), 'living-running');
+  assert.equal(active('standard', '/memory'), 'memory');
 });
