@@ -298,7 +298,7 @@
     "src/pages/governance/funk.astro": "d2a3f8e17500ddf44376f3e53e431425508ce7694e570ffb2860498fcd86b76c",
     "src/pages/governance/index.astro": "5b5ce800eff6bfa95996c969416394d4af11a3aac05352947897e5bf29f775e3",
     "src/pages/governance/logs.astro": "1227c2cb3cb5306990090b2adf9b7d6384f3e4a118db0c309011004a26e73a1d",
-    "src/pages/governance/usecases.astro": "fabb09df9521dc2d8ada7c3e6864753939b14547faecd8fc10818b8dfc6d2685",
+    "src/pages/governance/usecases.astro": "263f8f759c73b797eeb8792730721687bc7dcfec882fab33c4b22cecdfbeb9b6",
     "src/pages/help.astro": "a76db365556eeb71100b28cf27159054a3dba56dcfe92efcc33cb8d80f8f307a",
     "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
@@ -371,7 +371,7 @@
     "tests/tasks-routines.test.mjs": "6f7d425e389176b1676e1da690c6c0da565f0c41d5baa293c91059cd994704d1",
     "tests/theme-contrast.test.mjs": "7e955a7e88dd90fc34ec6a1092173d32dfac3abb95e97b7f5715d790f6d6d194",
     "tests/ticket-symbol.test.mjs": "07dff1019f27e8d06f730c01d2c939059f4520316e79b54d13923448e50310bb",
-    "tests/usecase-source.test.mjs": "cb3808c5825654fc41225305111906891ef7f5556ec1ee848055b803cfccc870",
+    "tests/usecase-source.test.mjs": "5be932dcd97d3d4e18f9d83f5780eb67fcc4f83ee7db890d0a1ed6b7af4ef21b",
     "tests/worker-decomposition.test.mjs": "616ff5ee47c3b7ba57ff2beae09bf58763cf131a8ef298828943b9e829ae76f6",
     "tests/worker-policy-settings.test.mjs": "bd60ca6ae73788d9a814eac4e2fa2f994e50db403b90429bb07ea0acb7af04b5",
     "tests/worker-queue.test.mjs": "9a35203491037c61d905d4309c1e841239404fdc4b0eafb1b2a2649ffc48141f",
@@ -6310,6 +6310,22 @@
           "path": "tests/abort-notice-settings.browser.test.mjs",
           "previous_sha256": null,
           "sha256": "265e2d42036b275b1b7fcaed81f1a2823953e262b8d18963a6a40c7006f102cd"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-25",
+      "scope": "PB-5: fix Dark-Mode contrast for dynamically rendered .uc-list buttons via :global() selectors",
+      "files": [
+        {
+          "path": "src/pages/governance/usecases.astro",
+          "previous_sha256": "fabb09df9521dc2d8ada7c3e6864753939b14547faecd8fc10818b8dfc6d2685",
+          "sha256": "263f8f759c73b797eeb8792730721687bc7dcfec882fab33c4b22cecdfbeb9b6"
+        },
+        {
+          "path": "tests/usecase-source.test.mjs",
+          "previous_sha256": "cb3808c5825654fc41225305111906891ef7f5556ec1ee848055b803cfccc870",
+          "sha256": "5be932dcd97d3d4e18f9d83f5780eb67fcc4f83ee7db890d0a1ed6b7af4ef21b"
         }
       ]
     }
