@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "b16e22c906a77ab727f9a28a3bcb0024f9ac97a08acd4f66c49a20bfed77cd7b",
+    "public/page-reads.v1.json": "fdb5f65a1cd724c305cc7a654eea8d2740fba2812f2553f6c4a19db379ad4317",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -263,7 +263,7 @@
     "src/lib/installation-updates-model.mjs": "cf48d1d068e69c4c441dd19910e232d8604082a55221ad7bb312292612227794",
     "src/lib/model-sockets-ui.mjs": "1325abb9e163348b3542e906ab5fa16e7b905a2ad10332369db5245f6c0a7379",
     "src/lib/model-sockets.mjs": "ad170a078e00f8347c31daa2915cb3b6db2bf729bfae8101ecf1cfc2fabd1e74",
-    "src/lib/navigation-route-inventory.mjs": "24e219f57770ae1ac06f40b4039477c25b1f26807b0460d4bb1dee1a905ba646",
+    "src/lib/navigation-route-inventory.mjs": "619425d5a43f5e2075f4639724add2d906ba76cbe0b846c183a47fb16f462bd2",
     "src/lib/settings-connections.mjs": "1ef6196556c70917058cc243b6f5609468743feb49de219f42d3aec2be960955",
     "src/lib/subscription-agents-client.mjs": "b0aa643ebadcc1b5f88671d75795982dcf6136d0a5b37879fe64a6b3fa85e1ab",
     "src/lib/task-assignment.mjs": "63336acb07ccba520890503e7ec4399a466d70f07ac6156f02c5cd86d05a2bcc",
@@ -287,14 +287,14 @@
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
     "src/pages/agenten/subscription-agents.astro": "9a47a998bc04cbc0882d4fc936fc713a70fd286a034bffdc7dc0b75c6fada06a",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
-    "src/pages/ati.astro": "9654c6490c123e02a4f2e6028d1b22ce8740b2e0e0de2a2448f13c3ec4fd1f84",
+    "src/pages/ati.astro": "3b5b999dfc0c05e6ba276555f88938190c638879e0ccb5d8533fd0550517e89e",
     "src/pages/chat.astro": "bf8b82351dba4b25baf2cd677f5e3f3ee5d1e77273ff9050edb625caaca1aebc",
     "src/pages/connectors.astro": "193bbba5e7a616562bfe059f2f84f2e020c4ae812f67ad14b44d4781585bd710",
-    "src/pages/daemon.astro": "c2d641c55057b3be9612b8db608fc7ea9044d612a10836bed8a14de9ef62908e",
+    "src/pages/daemon.astro": "e60efb1dc73998b2d3ea7627d071def5ed4ba53369885288e9c0aeef54551061",
     "src/pages/denkarium.astro": "1094dbea038bc026ebda80e5a9a0259b3244600d3e9d6509fb6dc397f4751f81",
     "src/pages/domains.astro": "c16adc26bae104f8952a99ca3d40367b0ed7e9fc24289dfdb88d66ebb4934a7d",
-    "src/pages/financial.astro": "17649d4da4c760da7b96d6970f0a968c385bd029cacbdeda85c391349fca3689",
-    "src/pages/gesundheit.astro": "9f95b2292aadeb45287b6edf0ddcdbc7906f9b35b0611bb792fc34128f15047c",
+    "src/pages/financial.astro": "8b5be0cfce762a805f46067220504d59443c3fa124dc90c9fb41dbcef46f897d",
+    "src/pages/gesundheit.astro": "8f403313e4b0717b0d011597b3719b98174678c97a64f22e1308c77aa71a61e8",
     "src/pages/governance/funk.astro": "d2a3f8e17500ddf44376f3e53e431425508ce7694e570ffb2860498fcd86b76c",
     "src/pages/governance/index.astro": "5b5ce800eff6bfa95996c969416394d4af11a3aac05352947897e5bf29f775e3",
     "src/pages/governance/logs.astro": "1227c2cb3cb5306990090b2adf9b7d6384f3e4a118db0c309011004a26e73a1d",
@@ -302,13 +302,13 @@
     "src/pages/help.astro": "db44dea00e326de2b600b278c0212cffe658ddb2f4072d18602f1962bcc091d5",
     "src/pages/inbox.astro": "bbf7ea46658020ff9c3a876a7d5cef373f5f74e602de6c05b35900047bb76d06",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
-    "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
+    "src/pages/kontakte.astro": "ddabc8881b0fdda68a8cedaefdae47ffbb50e8687145ba777a52bbb4c14ed946",
     "src/pages/life.astro": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481",
     "src/pages/maintenance.astro": "1e47fe3566eee28aa580867ad6eef3df5001b80aeec29d97481ff0449d70e3ab",
     "src/pages/memory.astro": "943915b31aed448f1137de4fb9688643b5d7020e933602afcd1481ea3edb3293",
     "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
     "src/pages/notizen.astro": "55f9b57e345d574794d67a458184128d6f675dfbe4b212b1d2770d4ff4cd7865",
-    "src/pages/persoenlich.astro": "f4f26c145c11721776c7e150032ed1d6a0d2d3e3f6172e6f891f821863ebc700",
+    "src/pages/persoenlich.astro": "9c0ca413bb88e3f823e219e7ee452c5d9283a598dab3fcd04122b83c031575b0",
     "src/pages/routinen.astro": "a2e041430e5848a19429b15999ac6af86613eedf05de1c3112d239e74894e746",
     "src/pages/sensation.astro": "110ae810922ef21fe8aee85d370f296c860b005f1873f6bf79996d4e76bbfed0",
     "src/pages/sessions.astro": "bb515024c04451ca8b7e3b586350707a7da29db6dc5467c2172aca3ff87a8774",
@@ -317,7 +317,7 @@
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
-    "src/pages/steuer.astro": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
+    "src/pages/steuer.astro": "cbe9e45477d8ae3f857e69f33ad4f1ed5106a34e4875faae146b87f9c965a148",
     "src/pages/system/installation-updates.astro": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
     "src/pages/talk.astro": "cc28dbf6e5a8c500f6b035233ea49bbaff17dc143f050803416af27bfa55fe26",
     "src/pages/tasks.astro": "5a61f8316afc4d0fe1d78749955bc426cae3c75f67b20c2596507067652491d9",
@@ -349,7 +349,7 @@
     "tests/gui-shell-navigation.test.mjs": "10746987973e2b7ce7927b7c5c8810601a114d721af151ed7452f7a80e00ed7b",
     "tests/gui100-regressions.test.mjs": "c35ffdbc229a13da85b57619a3a225ddb821c6cebe05f01fcbe16eb401259d2b",
     "tests/installation-updates-model.test.mjs": "c8509643c399b7a8f4006983383963f8027d35050362e59bba5ac0b7262a34dd",
-    "tests/legacy-route-fallback.test.mjs": "4d88e87f54e3dbf893a2fe301b5efcfe9e8c81a0cdda1aa211489d77a0e17d90",
+    "tests/legacy-route-fallback.test.mjs": "10029232d6ed906ffc2a24cac55bbe7c03a69c773334758103046f418d11c573",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
     "tests/memory-facts.test.mjs": "9b270f3d733fba2c857a5e57641f37da57a65bf6535908615d7ee53ae088f05b",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
@@ -6637,6 +6637,62 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "a8fd63592d31e03f8bd5e653266715986094ce387429ebd809b036f95883576d",
           "sha256": "b16e22c906a77ab727f9a28a3bcb0024f9ac97a08acd4f66c49a20bfed77cd7b"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-25",
+      "scope": "PB-5 (T-20261125-373318856): replace all 7 visible LegacyRouteFallback pages (/kontakte, /financial, /daemon, /ati, /steuer, /persoenlich, /gesundheit) with live backend-connected Astro views",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "b16e22c906a77ab727f9a28a3bcb0024f9ac97a08acd4f66c49a20bfed77cd7b",
+          "sha256": "fdb5f65a1cd724c305cc7a654eea8d2740fba2812f2553f6c4a19db379ad4317"
+        },
+        {
+          "path": "src/lib/navigation-route-inventory.mjs",
+          "previous_sha256": "24e219f57770ae1ac06f40b4039477c25b1f26807b0460d4bb1dee1a905ba646",
+          "sha256": "619425d5a43f5e2075f4639724add2d906ba76cbe0b846c183a47fb16f462bd2"
+        },
+        {
+          "path": "src/pages/ati.astro",
+          "previous_sha256": "9654c6490c123e02a4f2e6028d1b22ce8740b2e0e0de2a2448f13c3ec4fd1f84",
+          "sha256": "3b5b999dfc0c05e6ba276555f88938190c638879e0ccb5d8533fd0550517e89e"
+        },
+        {
+          "path": "src/pages/daemon.astro",
+          "previous_sha256": "c2d641c55057b3be9612b8db608fc7ea9044d612a10836bed8a14de9ef62908e",
+          "sha256": "e60efb1dc73998b2d3ea7627d071def5ed4ba53369885288e9c0aeef54551061"
+        },
+        {
+          "path": "src/pages/financial.astro",
+          "previous_sha256": "17649d4da4c760da7b96d6970f0a968c385bd029cacbdeda85c391349fca3689",
+          "sha256": "8b5be0cfce762a805f46067220504d59443c3fa124dc90c9fb41dbcef46f897d"
+        },
+        {
+          "path": "src/pages/gesundheit.astro",
+          "previous_sha256": "9f95b2292aadeb45287b6edf0ddcdbc7906f9b35b0611bb792fc34128f15047c",
+          "sha256": "8f403313e4b0717b0d011597b3719b98174678c97a64f22e1308c77aa71a61e8"
+        },
+        {
+          "path": "src/pages/kontakte.astro",
+          "previous_sha256": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
+          "sha256": "ddabc8881b0fdda68a8cedaefdae47ffbb50e8687145ba777a52bbb4c14ed946"
+        },
+        {
+          "path": "src/pages/persoenlich.astro",
+          "previous_sha256": "f4f26c145c11721776c7e150032ed1d6a0d2d3e3f6172e6f891f821863ebc700",
+          "sha256": "9c0ca413bb88e3f823e219e7ee452c5d9283a598dab3fcd04122b83c031575b0"
+        },
+        {
+          "path": "src/pages/steuer.astro",
+          "previous_sha256": "e3097d32a799e4819506f5a51d00d9176d29855c57e714584f807433c4c6fddf",
+          "sha256": "cbe9e45477d8ae3f857e69f33ad4f1ed5106a34e4875faae146b87f9c965a148"
+        },
+        {
+          "path": "tests/legacy-route-fallback.test.mjs",
+          "previous_sha256": "4d88e87f54e3dbf893a2fe301b5efcfe9e8c81a0cdda1aa211489d77a0e17d90",
+          "sha256": "10029232d6ed906ffc2a24cac55bbe7c03a69c773334758103046f418d11c573"
         }
       ]
     }

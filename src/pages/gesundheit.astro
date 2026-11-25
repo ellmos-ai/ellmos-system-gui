@@ -1,11 +1,74 @@
 ---
+// Gesundheit & Vitalität — ehrliche Statusgrenze + gemessenes Energie-Budget & Arztkontakte (/api/life/*, /api/contacts)
 import BachLayout from '../layouts/BachLayout.astro';
-import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
-import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
-
-const route = legacyFallbackRoutes.find((entry) => entry.path === '/gesundheit');
-if (!route) throw new Error('Fallback-Konfiguration für /gesundheit fehlt.');
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+<BachLayout title="Gesundheit & Vitalität" currentPath="/gesundheit">
+  <section class="gh-page" aria-labelledby="gh-title">
+    <header class="gh-head">
+      <div>
+        <p class="gh-eyebrow">Life · Gesundheit &amp; Vitalität</p>
+        <h1 id="gh-title">Gesundheit, Energie-Budget &amp; Arztkontakte</h1>
+        <p class="gh-lead">Gemessenes lokales Energie-Budget, gespeicherte medizinische Kontakte und transparenter Anbindungsstand des Gesundheitsadapters.</p>
+      </div>
+      <div class="gh-actions">
+        <button type="button" id="gh-refresh" class="btn btn-secondary">Aktualisieren</button>
+        <a href="/kontakte" class="btn btn-secondary">Alle Kontakte</a>
+        <a href="/life?tab=gesundheit" class="btn btn-primary">← Life-Zentrale</a>
+      </div>
+    </header>
+
+    <section id="gh-boundary" class="card gh-boundary" aria-label="Anbindungsstand">
+      <div class="gh-boundary-head">
+        <strong>Fachadapter Gesundheit</strong>
+        <span id="gh-provider-badge" class="badge">Wird geprüft …</span>
+      </div>
+      <p id="gh-provider-message">Prüfe Adapterstatus über /api/life/providers …</p>
+    </section>
+
+    <div class="gh-kpis" aria-label="Gemessene Gesundheits-Kennzahlen">
+      <article class="card gh-kpi"><span>Energie-Budget (Spoons)</span><strong id="gh-kpi-spoons">–</strong><small id="gh-kpi-spoons-status">–</small></article>
+      <article class="card gh-kpi"><span>Gespeicherte Arztkontakte</span><strong id="gh-kpi-doctors">–</strong><small>aus /api/contacts (category=arzt)</small></article>
+    </div>
+
+    <p id="gh-status" class="gh-status" role="status" aria-live="polite">Lade Daten …</p>
+
+    <section class="card gh-panel" aria-labelledby="gh-doctors-heading">
+      <div class="gh-panel-head">
+        <h2 id="gh-doctors-heading">Medizinische Kontakte &amp; Praxen</h2>
+        <input id="gh-search" type="search" placeholder="Arzt, Fachrichtung oder Klinik filtern …" autocomplete="off" />
+      </div>
+      <div id="gh-doctors-list" class="gh-grid"></div>
+    </section>
+  </section>
+
+  <style is:global>
+    .gh-page { display:grid; gap:1rem; }
+    .gh-head { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; }
+    .gh-eyebrow { margin:0 0 .2rem; font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent-text); }
+    .gh-head h1 { margin:0 0 .25rem; font-size:1.65rem; }
+    .gh-lead { margin:0; color:var(--text-muted); font-size:.9rem; max-width:65ch; }
+    .gh-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .gh-boundary { padding:1rem 1.15rem; background:var(--bg-card); border:1px solid var(--border); border-left:3px solid var(--warning, #f0b429); border-radius:var(--radius-md); display:grid; gap:.35rem; }
+    .gh-boundary-head { display:flex; justify-content:space-between; align-items:center; gap:.5rem; flex-wrap:wrap; }
+    .gh-boundary p { margin:0; font-size:.86rem; color:var(--text-muted); line-height:1.5; }
+    .gh-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:.75rem; }
+    .gh-kpi { padding:.95rem 1.1rem; display:flex; flex-direction:column; gap:.2rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .gh-kpi span,.gh-kpi small { font-size:.78rem; color:var(--text-muted); }
+    .gh-kpi strong { font-size:1.45rem; color:var(--text); }
+    .gh-status { margin:0; padding:.6rem .9rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-panel); color:var(--text-muted); font-size:.86rem; }
+    .gh-status[data-tone="error"] { border-color:var(--error); color:var(--error-text); }
+    .gh-panel { padding:1.1rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); display:grid; gap:.85rem; }
+    .gh-panel-head { display:flex; justify-content:space-between; align-items:center; gap:.75rem; flex-wrap:wrap; }
+    .gh-panel-head h2 { margin:0; font-size:1.05rem; }
+    .gh-panel-head input { padding:.5rem .7rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-dark); color:var(--text); font:inherit; min-width:220px; }
+    .gh-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr)); gap:.75rem; }
+    .gh-card { padding:.95rem; background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius-sm); display:grid; gap:.3rem; }
+    .gh-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem; }
+    .gh-card strong { color:var(--text); font-size:.95rem; overflow-wrap:anywhere; }
+    .gh-meta { margin:0; font-size:.82rem; color:var(--text-muted); overflow-wrap:anywhere; }
+  </style>
+
+  <script>
+    import '../scripts/gesundheit-page.mjs';
+  </script>
 </BachLayout>

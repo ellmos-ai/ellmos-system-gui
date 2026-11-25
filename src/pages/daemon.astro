@@ -1,78 +1,88 @@
 ---
+// Betrieb › Dienste & Dauerläufer — Live-Status, Cron-Jobs, Läufe & Befehlsketten (Toolchains)
 import BachLayout from '../layouts/BachLayout.astro';
 import DaemonChains from '../components/DaemonChains.astro';
-import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
-import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
-
-const route = legacyFallbackRoutes.find((entry) => entry.path === '/daemon');
-if (!route) throw new Error('Fallback-Konfiguration für /daemon fehlt.');
 ---
 <BachLayout title="Betrieb › Dienste & Dauerläufer" currentPath="/daemon">
-  <section style="margin-bottom:1.25rem;padding:1.25rem;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+  <section class="dm-page" aria-labelledby="dm-title">
+    <header class="dm-head card">
       <div>
-        <p style="margin:0 0 0.25rem;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Betrieb › Dienste (#2485, #2488)</p>
-        <h1 style="margin:0 0 0.3rem;font-size:1.55rem;">⚙️ Dienste &amp; Hintergrund-Dauerläufer</h1>
-        <p style="margin:0;font-size:0.86rem;color:var(--text-muted);">
-          Dauerhaft laufende Systemdienste (GUI-Server, Telegram-Bridge, Scheduler, Doku-Pflegedienst). Zeitgesteuerte Einzeljobs liegen unter <a href="/routinen?from=betrieb">Routinen &amp; Jobs</a>, Befehlsketten unter <a href="/agenten/marblerun?from=betrieb">Agenten-Bibliothek › Ketten</a>.
+        <p class="dm-eyebrow">Betrieb › Dienste &amp; Dauerläufer</p>
+        <h1 id="dm-title">Dienste, Daemon-Jobs &amp; Befehlsketten</h1>
+        <p class="dm-lead">
+          Gemessener Laufzeitstatus des BACH-Daemons, geplante Cron-Jobs, letzte Ausführungen sowie Befehlsketten (Toolchains).
+          Zeitgesteuerte Routinen liegen unter <a href="/routinen?from=betrieb">Routinen &amp; Jobs</a>.
         </p>
       </div>
-      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-        <a href="/daemon" class="btn btn-sm btn-primary">⚙️ Dauerläufer-Dienste</a>
-        <a href="/daemon?tab=chains" class="btn btn-sm">⛓️ Befehlsketten (Toolchains)</a>
+      <div class="dm-actions">
+        <a href="/daemon" id="dm-tab-services" class="btn btn-sm btn-primary">Dauerläufer &amp; Jobs</a>
+        <a href="/daemon?tab=chains" id="dm-tab-chains" class="btn btn-sm btn-secondary">Befehlsketten (Toolchains)</a>
+        <button type="button" id="dm-refresh" class="btn btn-sm btn-secondary">Aktualisieren</button>
+      </div>
+    </header>
+
+    <div id="daemon-services-panel" class="dm-services">
+      <div class="dm-kpis" aria-label="Daemon-Kennzahlen">
+        <article class="card dm-kpi"><span>Daemon-Laufzeit</span><strong id="dm-kpi-running">Wird geprüft …</strong><small id="dm-kpi-identity">–</small></article>
+        <article class="card dm-kpi"><span>Konfigurierte Jobs</span><strong id="dm-kpi-jobs">–</strong><small id="dm-kpi-active">–</small></article>
+        <article class="card dm-kpi"><span>Läufe heute</span><strong id="dm-kpi-runs">–</strong><small id="dm-kpi-failed">–</small></article>
+        <article class="card dm-kpi"><span>DB-Backups</span><strong id="dm-kpi-backup">–</strong><small id="dm-kpi-memory">–</small></article>
+      </div>
+
+      <p id="dm-status" class="dm-status" role="status" aria-live="polite">Lade Daemon-Status …</p>
+
+      <div class="dm-columns">
+        <section class="card dm-section" aria-labelledby="dm-jobs-heading">
+          <div class="dm-section-head">
+            <h2 id="dm-jobs-heading">Geplante Daemon-Jobs</h2>
+            <span id="dm-jobs-badge" class="badge">0</span>
+          </div>
+          <div id="dm-jobs-list" class="dm-list"></div>
+        </section>
+
+        <section class="card dm-section" aria-labelledby="dm-runs-heading">
+          <div class="dm-section-head">
+            <h2 id="dm-runs-heading">Letzte Job-Läufe</h2>
+            <span id="dm-runs-badge" class="badge">0</span>
+          </div>
+          <div id="dm-runs-list" class="dm-list"></div>
+        </section>
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0.85rem;">
-      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
-          <strong>🌐 BACH/Ocean GUI-Server</strong>
-          <span class="badge">launchd · Port 8000</span>
-        </div>
-        <p style="margin:0;font-size:0.82rem;color:var(--text-muted);">FastAPI + Astro-Oberfläche (<code>com.bach.gui-server</code>) mit automatischer Loopback-Geräte-ID-Sitzung.</p>
-      </article>
-
-      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
-          <strong>⏱️ Daemon- &amp; Job-Scheduler</strong>
-          <span class="badge">Hintergrunddienst</span>
-        </div>
-        <p style="margin:0;font-size:0.82rem;color:var(--text-muted);">Steuert periodische Wartungs-, Sync- und Toolchain-Läufe gemäß konfiguriertem Takt.</p>
-      </article>
-
-      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
-          <strong>✈️ Telegram- &amp; Connector-Dienst</strong>
-          <span class="badge">Connector-Bridge</span>
-        </div>
-        <p style="margin:0;font-size:0.82rem;color:var(--text-muted);">Optionale Nachrichten- und Benachrichtigungsbrücke für mobile Rückfragen und Eingangssignale.</p>
-      </article>
-
-      <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
-          <strong>📘 Doku- &amp; Register-Pflegedienst</strong>
-          <span class="badge">Hintergrundpflege</span>
-        </div>
-        <p style="margin:0;font-size:0.82rem;color:var(--text-muted);">Hält Modulmanifeste, Skill-Kataloge und Lock-Caches aktuell.</p>
-      </article>
+    <div id="daemon-chain-content" hidden>
+      <DaemonChains />
     </div>
   </section>
 
-  <div id="daemon-legacy-fallback" hidden>
-    <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
-  </div>
-  <div id="daemon-chain-content" hidden>
-    <DaemonChains />
-  </div>
-</BachLayout>
+  <style is:global>
+    .dm-page { display:grid; gap:1rem; }
+    .dm-head { padding:1.15rem 1.25rem; display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .dm-eyebrow { margin:0 0 .2rem; font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent-text); }
+    .dm-head h1 { margin:0 0 .25rem; font-size:1.55rem; }
+    .dm-lead { margin:0; font-size:.88rem; color:var(--text-muted); max-width:65ch; }
+    .dm-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .dm-services { display:grid; gap:1rem; }
+    .dm-services[hidden] { display:none; }
+    .dm-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:.75rem; }
+    .dm-kpi { padding:.95rem 1.1rem; display:flex; flex-direction:column; gap:.2rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .dm-kpi span,.dm-kpi small { font-size:.78rem; color:var(--text-muted); }
+    .dm-kpi strong { font-size:1.35rem; color:var(--text); }
+    .dm-status { margin:0; padding:.6rem .9rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-panel); color:var(--text-muted); font-size:.86rem; }
+    .dm-status[data-tone="error"] { border-color:var(--error); color:var(--error-text); }
+    .dm-columns { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); gap:1rem; align-items:start; }
+    .dm-section { padding:1.1rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); display:grid; gap:.75rem; }
+    .dm-section-head { display:flex; justify-content:space-between; align-items:center; gap:.5rem; }
+    .dm-section-head h2 { margin:0; font-size:1.05rem; }
+    .dm-list { display:grid; gap:.65rem; }
+    .dm-item { padding:.85rem; background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius-sm); display:grid; gap:.3rem; }
+    .dm-item-head { display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem; }
+    .dm-item strong { color:var(--text); font-size:.94rem; overflow-wrap:anywhere; }
+    .dm-meta { margin:0; font-size:.8rem; color:var(--text-muted); overflow-wrap:anywhere; }
+    .dm-out { margin:.25rem 0 0; padding:.5rem .65rem; background:var(--bg-dark); border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font-mono,monospace); font-size:.76rem; color:var(--text-muted); white-space:pre-wrap; overflow-wrap:anywhere; }
+  </style>
 
-<script is:inline>
-  (() => {
-    const showChains = new URLSearchParams(window.location.search).get('tab') === 'chains';
-    const fallback = document.getElementById('daemon-legacy-fallback');
-    const chains = document.getElementById('daemon-chain-content');
-    if (!fallback || !chains) return;
-    fallback.hidden = showChains;
-    chains.hidden = !showChains;
-  })();
-</script>
+  <script>
+    import '../scripts/daemon-page.mjs';
+  </script>
+</BachLayout>

@@ -1,11 +1,82 @@
 ---
+// Finanzen — vollständiges Finanzmodul im gemeinsamen Astro-Design (/api/financial/*)
 import BachLayout from '../layouts/BachLayout.astro';
-import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
-import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
-
-const route = legacyFallbackRoutes.find((entry) => entry.path === '/financial');
-if (!route) throw new Error('Fallback-Konfiguration für /financial fehlt.');
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+<BachLayout title="Finanzen & Verträge" currentPath="/financial">
+  <section class="fin-page" aria-labelledby="fin-title">
+    <header class="fin-head">
+      <div>
+        <p class="fin-eyebrow">Life · Finanzmodul</p>
+        <h1 id="fin-title">Finanzen, Verträge &amp; Versicherungen</h1>
+        <p class="fin-lead">Gemessene Finanzdaten aus dem verbundenen BACH-Backend: Verträge, Versicherungen, Fristen, Kredite und Bankkonten.</p>
+      </div>
+      <div class="fin-actions">
+        <button type="button" id="fin-refresh" class="btn btn-secondary">Aktualisieren</button>
+        <a href="/steuer" class="btn btn-secondary">Steuer-Übersicht</a>
+        <a href="/life?tab=finanzen" class="btn btn-primary">← Life-Zentrale</a>
+      </div>
+    </header>
+
+    <div class="fin-kpis" aria-label="Finanz-Kennzahlen">
+      <article class="card fin-kpi"><span>Aktive Abos / Monat</span><strong id="fin-kpi-abos">–</strong><small id="fin-kpi-abos-count">–</small></article>
+      <article class="card fin-kpi"><span>Verträge</span><strong id="fin-kpi-contracts">–</strong><small>laufende Einträge</small></article>
+      <article class="card fin-kpi"><span>Versicherungen / Jahr</span><strong id="fin-kpi-insurances">–</strong><small id="fin-kpi-insurances-count">–</small></article>
+      <article class="card fin-kpi"><span>Offene Fristen</span><strong id="fin-kpi-deadlines">–</strong><small id="fin-kpi-emails">–</small></article>
+    </div>
+
+    <p id="fin-status" class="fin-status" role="status" aria-live="polite">Lade Finanzdaten …</p>
+    <p id="fin-dup-notice" class="fin-notice" role="status" hidden></p>
+
+    <div class="fin-toolbar card">
+      <div class="fin-tabs" role="tablist" aria-label="Finanzbereiche">
+        <button type="button" role="tab" class="fin-tab" data-fin-tab="contracts" aria-selected="true">Verträge</button>
+        <button type="button" role="tab" class="fin-tab" data-fin-tab="insurances" aria-selected="false">Versicherungen</button>
+        <button type="button" role="tab" class="fin-tab" data-fin-tab="deadlines" aria-selected="false">Fristen</button>
+        <button type="button" role="tab" class="fin-tab" data-fin-tab="accounts" aria-selected="false">Kredite &amp; Konten</button>
+      </div>
+      <label class="fin-search-wrap">Filter
+        <input id="fin-search" type="search" placeholder="Name, Anbieter, Kategorie oder Tarif …" autocomplete="off" />
+      </label>
+    </div>
+
+    <div id="fin-panel-contracts" class="fin-panel" role="tabpanel"></div>
+    <div id="fin-panel-insurances" class="fin-panel" role="tabpanel" hidden></div>
+    <div id="fin-panel-deadlines" class="fin-panel" role="tabpanel" hidden></div>
+    <div id="fin-panel-accounts" class="fin-panel" role="tabpanel" hidden></div>
+  </section>
+
+  <style is:global>
+    .fin-page { display:grid; gap:1rem; }
+    .fin-head { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; }
+    .fin-eyebrow { margin:0 0 .2rem; font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent-text); }
+    .fin-head h1 { margin:0 0 .25rem; font-size:1.65rem; }
+    .fin-lead { margin:0; color:var(--text-muted); font-size:.9rem; max-width:65ch; }
+    .fin-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .fin-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:.75rem; }
+    .fin-kpi { padding:.95rem 1.1rem; display:flex; flex-direction:column; gap:.2rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .fin-kpi span,.fin-kpi small { font-size:.78rem; color:var(--text-muted); }
+    .fin-kpi strong { font-size:1.45rem; color:var(--text); }
+    .fin-status { margin:0; padding:.6rem .9rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-panel); color:var(--text-muted); font-size:.86rem; }
+    .fin-status[data-tone="error"] { border-color:var(--error); color:var(--error-text); }
+    .fin-notice { margin:0; padding:.65rem .95rem; border:1px solid var(--warning, #f0b429); border-left-width:3px; border-radius:var(--radius-sm); background:var(--bg-panel); color:var(--text); font-size:.85rem; }
+    .fin-toolbar { padding:.85rem 1rem; display:flex; justify-content:space-between; align-items:flex-end; gap:.85rem; flex-wrap:wrap; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .fin-tabs { display:flex; gap:.4rem; flex-wrap:wrap; }
+    .fin-tab { padding:.5rem .85rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-dark); color:var(--text-muted); font:inherit; font-size:.85rem; font-weight:600; cursor:pointer; }
+    .fin-tab[aria-selected="true"] { border-color:var(--accent); color:var(--text); background:var(--bg-panel); }
+    .fin-search-wrap { display:flex; flex-direction:column; gap:.2rem; font-size:.78rem; color:var(--text-muted); min-width:210px; flex:1 1 220px; max-width:360px; }
+    .fin-search-wrap input { padding:.5rem .7rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-dark); color:var(--text); font:inherit; }
+    .fin-panel { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr)); gap:.85rem; }
+    .fin-panel[hidden] { display:none; }
+    .fin-card { padding:1rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); display:flex; flex-direction:column; gap:.4rem; min-width:0; }
+    .fin-card[data-severity="high"] { border-left:3px solid var(--error); }
+    .fin-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem; }
+    .fin-card h3 { margin:0; font-size:1rem; color:var(--text); overflow-wrap:anywhere; }
+    .fin-meta { margin:0; font-size:.83rem; color:var(--text-muted); overflow-wrap:anywhere; }
+    .fin-amount { font-weight:700; color:var(--text); font-size:.95rem; }
+    .fin-empty { padding:1.25rem; text-align:center; color:var(--text-muted); border:1px dashed var(--border); border-radius:var(--radius-md); grid-column:1 / -1; }
+  </style>
+
+  <script>
+    import '../scripts/financial-page.mjs';
+  </script>
 </BachLayout>

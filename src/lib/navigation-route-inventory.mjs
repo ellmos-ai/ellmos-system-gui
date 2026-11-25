@@ -4,86 +4,46 @@ export const fallbackTask = Object.freeze({
   label: 'Aufgabe #2468 öffnen',
 });
 
-export const commonRoutePaths = Object.freeze(['/routinen', '/chat']);
+export const commonRoutePaths = Object.freeze([
+  '/routinen',
+  '/chat',
+  '/persoenlich',
+  '/financial',
+  '/gesundheit',
+  '/ati',
+  '/steuer',
+  '/kontakte',
+  '/daemon',
+]);
 
 export const legacyFallbackRoutes = Object.freeze([
   {
-    path: '/persoenlich',
-    label: 'Persönlicher Assistent',
-    reason: 'Der BACH-Consumer liefert hier noch eine alte Assistenten-Vorlage.',
-    nextHref: '/life',
-    nextLabel: 'Life-Zentrale öffnen',
-  },
-  {
-    path: '/financial',
-    label: 'Finanzen',
-    reason: 'Der Finanzpfad ist noch nicht in die gemeinsame Life-Oberfläche umgestellt.',
-    nextHref: '/life',
-    nextLabel: 'Life-Zentrale öffnen',
-  },
-  {
-    path: '/gesundheit',
-    label: 'Gesundheit & Vitalität',
-    reason: 'Der Fachpfad fällt im BACH-Consumer noch auf eine alte Vorlage zurück.',
-    nextHref: '/life',
-    nextLabel: 'Life-Zentrale öffnen',
-  },
-  {
-    path: '/ati',
-    label: 'ATI-Entwickler',
-    reason: 'Der Domänenpfad ist noch nicht als gemeinsame Astro-Seite angebunden.',
-    nextHref: '/domains',
-    nextLabel: 'Domänen öffnen',
-  },
-  {
-    path: '/steuer',
-    label: 'Steuern',
-    reason: 'Der Steuerpfad liefert noch die alte BACH-Fachvorlage.',
-    nextHref: '/domains',
-    nextLabel: 'Domänen öffnen',
-  },
-  {
     path: '/inbox',
     label: 'Inbox & Dateien',
-    reason: 'Die Datei-Inbox ist noch nicht auf die gemeinsame Oberfläche umgestellt.',
-    nextHref: '/user-inbox',
-    nextLabel: 'Nachrichten öffnen',
+    reason: 'Die Datei-Inbox ist in Artefakte, Anonymisierung und Einstellungen aufgeteilt.',
+    nextHref: '/artefakte',
+    nextLabel: 'Artefakte öffnen',
   },
   {
     path: '/help',
     label: 'Hilfe & Dokumentation',
-    reason: 'Der Hilfe-Pfad hat noch keine eigene gemeinsame Astro-Seite.',
+    reason: 'Gemeinsame Architektur- und Doku-Seite (Legacy-Fallback nur noch archiviert).',
     nextHref: '/settings',
     nextLabel: 'Einstellungen öffnen',
   },
   {
     path: '/tools',
     label: 'Tools & CLI-Werkzeuge',
-    reason: 'Der Werkzeugpfad liefert noch die alte BACH-Vorlage.',
+    reason: 'Gemeinsame Werkzeug-Suche (Legacy-Fallback nur noch archiviert).',
     nextHref: '/skills',
     nextLabel: 'Skill- & Tool-Center öffnen',
   },
   {
     path: '/maintenance',
     label: 'Wartung & Integrität',
-    reason: 'Der Wartungspfad ist noch nicht an eine gemeinsame Seite angebunden.',
+    reason: 'Gemeinsame Wartungsansicht (Legacy-Fallback nur noch archiviert).',
     nextHref: '/governance',
     nextLabel: 'Governance öffnen',
-  },
-  {
-    path: '/kontakte',
-    label: 'Kontakte & Netzwerk',
-    reason: 'Der Header-Schnellzugriff zeigt noch den alten Kontaktpfad des BACH-Consumers.',
-    nextHref: '/life',
-    nextLabel: 'Life-Zentrale öffnen',
-  },
-  {
-    path: '/daemon',
-    label: 'Daemon & Dienste',
-    reason: 'Ohne den neuen Ketten-Tab fällt der Dienstpfad auf die alte BACH-Vorlage zurück.',
-    nextHref: '/daemon?tab=chains',
-    nextLabel: 'Daemon-Ketten öffnen',
-    mode: 'query-gated',
   },
 ]);
 

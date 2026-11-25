@@ -76,7 +76,28 @@
   }
  ],
  "pages": {
-  "/ati": [],
+  "/ati": [
+   {
+    "method": "GET",
+    "path": "/api/ati/stats",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/ati/tasks",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/ati/sessions",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/scanner/status",
+    "required": false
+   }
+  ],
   "/chat": [
    {
     "method": "GET",
@@ -117,8 +138,60 @@
   ],
   "/connectors": [],
   "/denkarium": [],
-  "/financial": [],
-  "/gesundheit": [],
+  "/financial": [
+   {
+    "method": "GET",
+    "path": "/api/financial/status",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/summary",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/contracts",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/insurances",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/deadlines",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/credits",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/bank-accounts",
+    "required": false
+   }
+  ],
+  "/gesundheit": [
+   {
+    "method": "GET",
+    "path": "/api/life/providers",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/life/overview",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/contacts",
+    "required": false
+   }
+  ],
   "/help": [
    {
     "method": "GET",
@@ -132,7 +205,18 @@
    }
   ],
   "/inbox": [],
-  "/kontakte": [],
+  "/kontakte": [
+   {
+    "method": "GET",
+    "path": "/api/contacts",
+    "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/contacts",
+    "required": false
+   }
+  ],
   "/maintenance": [],
   "/modules": [
    {
@@ -146,7 +230,23 @@
     "required": false
    }
   ],
-  "/persoenlich": [],
+  "/persoenlich": [
+   {
+    "method": "GET",
+    "path": "/api/life/overview",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/life/providers",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/contacts",
+    "required": false
+   }
+  ],
   "/sensation": [
    {
     "method": "GET",
@@ -160,7 +260,28 @@
    }
   ],
   "/sessions": [],
-  "/steuer": [],
+  "/steuer": [
+   {
+    "method": "GET",
+    "path": "/api/steuer/dokumente/unlinked",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/status",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/summary",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/financial/insurances",
+    "required": false
+   }
+  ],
   "/talk": [
    {
     "method": "GET",
@@ -897,16 +1018,16 @@
     "path": "/api/system/worker-policy",
     "required": false
    },
-    {
-      "method": "GET",
-      "path": "/api/system/abort-notice-settings",
-      "required": false
-    },
-    {
-      "method": "PUT",
-      "path": "/api/system/abort-notice-settings",
-      "required": false
-    },
+   {
+    "method": "GET",
+    "path": "/api/system/abort-notice-settings",
+    "required": false
+   },
+   {
+    "method": "PUT",
+    "path": "/api/system/abort-notice-settings",
+    "required": false
+   },
    {
     "method": "GET",
     "path": "/api/system/cluster-cockpit",
@@ -1852,6 +1973,26 @@
     "required": false,
     "dynamic": true,
     "found_in": "src/lib/daemon-chains.mjs#createChainClient"
+   },
+   {
+    "method": "GET",
+    "path": "/api/daemon/status",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/daemon/jobs",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/daemon/runs",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/wartung/status",
+    "required": false
    }
   ],
   "/system/ocean": [
