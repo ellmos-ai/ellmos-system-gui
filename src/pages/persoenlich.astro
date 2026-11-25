@@ -1,11 +1,72 @@
 ---
+// Persönlicher Assistent — Live-Übersicht über Life, Routinen, Kontakte & Aufgaben (/api/life/*, /api/contacts)
 import BachLayout from '../layouts/BachLayout.astro';
-import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
-import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
-
-const route = legacyFallbackRoutes.find((entry) => entry.path === '/persoenlich');
-if (!route) throw new Error('Fallback-Konfiguration für /persoenlich fehlt.');
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+<BachLayout title="Persönlicher Assistent" currentPath="/persoenlich">
+  <section class="pa-page" aria-labelledby="pa-title">
+    <header class="pa-head">
+      <div>
+        <p class="pa-eyebrow">Persönlich · Assistent</p>
+        <h1 id="pa-title">Persönlicher Assistent &amp; Alltags-Übersicht</h1>
+        <p class="pa-lead">Zentrale Übersicht für deine persönlichen Bereiche: Aufgaben, Routinen, Energie-Budget, Finanzen, Kontakte und Direktzugänge.</p>
+      </div>
+      <div class="pa-actions">
+        <button type="button" id="pa-refresh" class="btn btn-secondary">Aktualisieren</button>
+        <a href="/life" class="btn btn-primary">Life-Zentrale öffnen</a>
+        <a href="/chat" class="btn btn-secondary">Zum Chat</a>
+      </div>
+    </header>
+
+    <div class="pa-kpis" aria-label="Persönliche Kennzahlen">
+      <article class="card pa-kpi"><span>Offene Aufgaben</span><strong id="pa-kpi-tasks">–</strong><small id="pa-kpi-chains">–</small></article>
+      <article class="card pa-kpi"><span>Routinen heute fällig</span><strong id="pa-kpi-routines">–</strong><small id="pa-kpi-routines-meta">–</small></article>
+      <article class="card pa-kpi"><span>Energie-Budget</span><strong id="pa-kpi-spoons">–</strong><small id="pa-kpi-spoons-status">–</small></article>
+      <article class="card pa-kpi"><span>Abos / Monat</span><strong id="pa-kpi-abos">–</strong><small id="pa-kpi-contacts">–</small></article>
+    </div>
+
+    <p id="pa-status" class="pa-status" role="status" aria-live="polite">Lade persönliche Übersicht …</p>
+
+    <section class="pa-links" aria-label="Direktbereiche">
+      <a class="card pa-link-card" href="/life"><strong>Life-Zentrale</strong><span>Kalender, Routinen, Finanzen und Selbstmanagement</span></a>
+      <a class="card pa-link-card" href="/kontakte"><strong>Kontakte &amp; Netzwerk</strong><span>Adressbuch, Ärzte und Ansprechpartner</span></a>
+      <a class="card pa-link-card" href="/financial"><strong>Finanzen &amp; Verträge</strong><span>Verträge, Versicherungen und Fristen</span></a>
+      <a class="card pa-link-card" href="/gesundheit"><strong>Gesundheit &amp; Vitalität</strong><span>Energie-Budget, Arztkontakte und Anbindungsstand</span></a>
+      <a class="card pa-link-card" href="/notizen"><strong>Notizen &amp; Logbuch</strong><span>Gedankenablage und Tageslogbuch (llm-note)</span></a>
+      <a class="card pa-link-card" href="/tasks"><strong>Aufgaben-Board</strong><span>Offene Aufgaben, Prioritäten und Filter</span></a>
+    </section>
+
+    <section class="card pa-providers" aria-labelledby="pa-providers-heading">
+      <h2 id="pa-providers-heading">Status persönlicher Fachadapter</h2>
+      <div id="pa-providers-list" class="pa-provider-grid"></div>
+    </section>
+  </section>
+
+  <style is:global>
+    .pa-page { display:grid; gap:1rem; }
+    .pa-head { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; }
+    .pa-eyebrow { margin:0 0 .2rem; font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent-text); }
+    .pa-head h1 { margin:0 0 .25rem; font-size:1.65rem; }
+    .pa-lead { margin:0; color:var(--text-muted); font-size:.9rem; max-width:65ch; }
+    .pa-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .pa-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:.75rem; }
+    .pa-kpi { padding:.95rem 1.1rem; display:flex; flex-direction:column; gap:.2rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .pa-kpi span,.pa-kpi small { font-size:.78rem; color:var(--text-muted); }
+    .pa-kpi strong { font-size:1.45rem; color:var(--text); }
+    .pa-status { margin:0; padding:.6rem .9rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-panel); color:var(--text-muted); font-size:.86rem; }
+    .pa-status[data-tone="error"] { border-color:var(--error); color:var(--error-text); }
+    .pa-links { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.75rem; }
+    .pa-link-card { padding:1rem; display:flex; flex-direction:column; gap:.3rem; text-decoration:none; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text); }
+    .pa-link-card:hover,.pa-link-card:focus-visible { border-color:var(--accent); outline:2px solid var(--accent); outline-offset:1px; }
+    .pa-link-card span { font-size:.82rem; color:var(--text-muted); }
+    .pa-providers { padding:1.1rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); display:grid; gap:.75rem; }
+    .pa-providers h2 { margin:0; font-size:1.05rem; }
+    .pa-provider-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:.7rem; }
+    .pa-provider-item { padding:.85rem; background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius-sm); display:grid; gap:.3rem; }
+    .pa-provider-head { display:flex; justify-content:space-between; align-items:center; gap:.5rem; }
+    .pa-provider-item p { margin:0; font-size:.81rem; color:var(--text-muted); line-height:1.45; }
+  </style>
+
+  <script>
+    import '../scripts/persoenlich-page.mjs';
+  </script>
 </BachLayout>

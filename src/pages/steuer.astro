@@ -1,11 +1,68 @@
 ---
+// Steuern — Belege, steuerrelevante Versicherungen & Kennzahlen (/api/steuer/*, /api/financial/*)
 import BachLayout from '../layouts/BachLayout.astro';
-import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
-import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
-
-const route = legacyFallbackRoutes.find((entry) => entry.path === '/steuer');
-if (!route) throw new Error('Fallback-Konfiguration für /steuer fehlt.');
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+<BachLayout title="Steuer-Assistent & Belege" currentPath="/steuer">
+  <section class="st-page" aria-labelledby="st-title">
+    <header class="st-head">
+      <div>
+        <p class="st-eyebrow">Domäne · Steuern</p>
+        <h1 id="st-title">Steuern, Belege &amp; Vorsorge</h1>
+        <p class="st-lead">Gemessene steuerrelevante Kennzahlen aus E-Mail-Scan, Versicherungs-Policen und unverknüpften Steuerbelegen.</p>
+      </div>
+      <div class="st-actions">
+        <button type="button" id="st-refresh" class="btn btn-secondary">Aktualisieren</button>
+        <a href="/financial" class="btn btn-secondary">Finanzmodul</a>
+        <a href="/domains" class="btn btn-primary">Domänen</a>
+      </div>
+    </header>
+
+    <div class="st-kpis" aria-label="Steuer-Kennzahlen">
+      <article class="card st-kpi"><span>Steuerrel. E-Mails</span><strong id="st-kpi-emails">–</strong><small id="st-kpi-total-emails">–</small></article>
+      <article class="card st-kpi"><span>Unverknüpfte Belege</span><strong id="st-kpi-unlinked">–</strong><small>/api/steuer/dokumente/unlinked</small></article>
+      <article class="card st-kpi"><span>Steuerrel. Versicherungen</span><strong id="st-kpi-ins">–</strong><small>mit steuer_relevant_typ</small></article>
+      <article class="card st-kpi"><span>Gemessene Steuersumme</span><strong id="st-kpi-sum">–</strong><small>aktueller Monatsstand</small></article>
+    </div>
+
+    <p id="st-status" class="st-status" role="status" aria-live="polite">Lade Steuerdaten …</p>
+
+    <div class="st-columns">
+      <section class="card st-panel" aria-labelledby="st-ins-heading">
+        <h2 id="st-ins-heading">Steuerrelevante Versicherungen &amp; Vorsorge</h2>
+        <div id="st-ins-list" class="st-list"></div>
+      </section>
+
+      <section class="card st-panel" aria-labelledby="st-docs-heading">
+        <h2 id="st-docs-heading">Unverknüpfte Steuerbelege</h2>
+        <div id="st-docs-list" class="st-list"></div>
+      </section>
+    </div>
+  </section>
+
+  <style is:global>
+    .st-page { display:grid; gap:1rem; }
+    .st-head { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; }
+    .st-eyebrow { margin:0 0 .2rem; font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent-text); }
+    .st-head h1 { margin:0 0 .25rem; font-size:1.65rem; }
+    .st-lead { margin:0; color:var(--text-muted); font-size:.9rem; max-width:65ch; }
+    .st-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .st-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr)); gap:.75rem; }
+    .st-kpi { padding:.95rem 1.1rem; display:flex; flex-direction:column; gap:.2rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .st-kpi span,.st-kpi small { font-size:.78rem; color:var(--text-muted); }
+    .st-kpi strong { font-size:1.45rem; color:var(--text); }
+    .st-status { margin:0; padding:.6rem .9rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-panel); color:var(--text-muted); font-size:.86rem; }
+    .st-status[data-tone="error"] { border-color:var(--error); color:var(--error-text); }
+    .st-columns { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); gap:1rem; align-items:start; }
+    .st-panel { padding:1.1rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); display:grid; gap:.75rem; }
+    .st-panel h2 { margin:0; font-size:1.05rem; }
+    .st-list { display:grid; gap:.6rem; }
+    .st-item { padding:.85rem; background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius-sm); display:grid; gap:.25rem; }
+    .st-item-head { display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem; }
+    .st-item strong { color:var(--text); font-size:.94rem; overflow-wrap:anywhere; }
+    .st-meta { margin:0; font-size:.81rem; color:var(--text-muted); overflow-wrap:anywhere; }
+  </style>
+
+  <script>
+    import '../scripts/steuer-page.mjs';
+  </script>
 </BachLayout>

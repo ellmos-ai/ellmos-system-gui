@@ -1,11 +1,87 @@
 ---
+// ATI-Entwickler — Software-Scanner & erkannte Entwickler-Tasks (/api/ati/*, /api/scanner/*)
 import BachLayout from '../layouts/BachLayout.astro';
-import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
-import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
-
-const route = legacyFallbackRoutes.find((entry) => entry.path === '/ati');
-if (!route) throw new Error('Fallback-Konfiguration für /ati fehlt.');
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+<BachLayout title="ATI-Entwickler & Scanner" currentPath="/ati">
+  <section class="ati-page" aria-labelledby="ati-title">
+    <header class="ati-head">
+      <div>
+        <p class="ati-eyebrow">Domäne · ATI-Entwickler</p>
+        <h1 id="ati-title">ATI-Entwickler &amp; Projekt-Scanner</h1>
+        <p class="ati-lead">Gescannte Entwickler-Aufgaben aus Projekt-TODOs, Scanner-Status und letzte ATI-Sitzungen direkt aus dem BACH-Backend.</p>
+      </div>
+      <div class="ati-actions">
+        <button type="button" id="ati-refresh" class="btn btn-secondary">Aktualisieren</button>
+        <a href="/domains" class="btn btn-secondary">Domänen</a>
+        <a href="/tasks" class="btn btn-primary">Alle Aufgaben</a>
+      </div>
+    </header>
+
+    <div class="ati-kpis" aria-label="ATI-Kennzahlen">
+      <article class="card ati-kpi"><span>Gescannte Tasks</span><strong id="ati-kpi-total">–</strong></article>
+      <article class="card ati-kpi"><span>Offene Tasks</span><strong id="ati-kpi-open">–</strong></article>
+      <article class="card ati-kpi"><span>Gescannte Tools</span><strong id="ati-kpi-tools">–</strong></article>
+      <article class="card ati-kpi"><span>Letzter Scan</span><strong id="ati-kpi-last">–</strong><small id="ati-kpi-found">–</small></article>
+    </div>
+
+    <p id="ati-status" class="ati-status" role="status" aria-live="polite">Lade ATI-Daten …</p>
+
+    <section class="card ati-toolbar" aria-label="ATI-Filter">
+      <label class="ati-search-wrap">Suche
+        <input id="ati-search" type="search" placeholder="Toolname, Aufgabe oder Quelldatei …" autocomplete="off" />
+      </label>
+      <label>Status
+        <select id="ati-filter-status">
+          <option value="">Alle Status</option>
+          <option value="offen">Offen</option>
+          <option value="erledigt">Erledigt</option>
+        </select>
+      </label>
+      <span id="ati-count" class="badge">0 angezeigt</span>
+    </section>
+
+    <div class="ati-columns">
+      <section class="card ati-panel" aria-labelledby="ati-tasks-heading">
+        <h2 id="ati-tasks-heading">Gescannte Projekt-Aufgaben</h2>
+        <div id="ati-tasks-list" class="ati-list"></div>
+      </section>
+
+      <section class="card ati-panel" aria-labelledby="ati-sessions-heading">
+        <h2 id="ati-sessions-heading">Letzte ATI-Sitzungen</h2>
+        <div id="ati-sessions-list" class="ati-list"></div>
+      </section>
+    </div>
+  </section>
+
+  <style is:global>
+    .ati-page { display:grid; gap:1rem; }
+    .ati-head { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; }
+    .ati-eyebrow { margin:0 0 .2rem; font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent-text); }
+    .ati-head h1 { margin:0 0 .25rem; font-size:1.65rem; }
+    .ati-lead { margin:0; color:var(--text-muted); font-size:.9rem; max-width:65ch; }
+    .ati-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .ati-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:.75rem; }
+    .ati-kpi { padding:.95rem 1.1rem; display:flex; flex-direction:column; gap:.2rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .ati-kpi span,.ati-kpi small { font-size:.78rem; color:var(--text-muted); }
+    .ati-kpi strong { font-size:1.4rem; color:var(--text); }
+    .ati-status { margin:0; padding:.6rem .9rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-panel); color:var(--text-muted); font-size:.86rem; }
+    .ati-status[data-tone="error"] { border-color:var(--error); color:var(--error-text); }
+    .ati-toolbar { padding:.9rem 1.1rem; display:flex; gap:.85rem; align-items:flex-end; flex-wrap:wrap; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .ati-toolbar label { display:flex; flex-direction:column; gap:.25rem; font-size:.8rem; color:var(--text-muted); }
+    .ati-toolbar input,.ati-toolbar select { padding:.5rem .7rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-dark); color:var(--text); font:inherit; }
+    .ati-search-wrap { flex:1 1 240px; min-width:200px; }
+    .ati-columns { display:grid; grid-template-columns:minmax(0,2fr) minmax(260px,1fr); gap:1rem; align-items:start; }
+    @media (max-width:900px) { .ati-columns { grid-template-columns:1fr; } }
+    .ati-panel { padding:1.1rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); display:grid; gap:.75rem; }
+    .ati-panel h2 { margin:0; font-size:1.05rem; }
+    .ati-list { display:grid; gap:.6rem; }
+    .ati-item { padding:.85rem; background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius-sm); display:grid; gap:.3rem; }
+    .ati-item-head { display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem; }
+    .ati-item strong { color:var(--text); font-size:.93rem; overflow-wrap:anywhere; }
+    .ati-meta { margin:0; font-size:.8rem; color:var(--text-muted); overflow-wrap:anywhere; }
+  </style>
+
+  <script>
+    import '../scripts/ati-page.mjs';
+  </script>
 </BachLayout>

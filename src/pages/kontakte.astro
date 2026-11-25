@@ -1,11 +1,101 @@
 ---
+// Kontakte & Netzwerk — gemeinsame Astro-Oberfläche über /api/contacts
 import BachLayout from '../layouts/BachLayout.astro';
-import LegacyRouteFallback from '../components/LegacyRouteFallback.astro';
-import { legacyFallbackRoutes } from '../lib/navigation-route-inventory.mjs';
-
-const route = legacyFallbackRoutes.find((entry) => entry.path === '/kontakte');
-if (!route) throw new Error('Fallback-Konfiguration für /kontakte fehlt.');
 ---
-<BachLayout title={route.label} currentPath={route.path}>
-  <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
+<BachLayout title="Kontakte & Netzwerk" currentPath="/kontakte">
+  <section class="knt-page" aria-labelledby="knt-title">
+    <header class="knt-head">
+      <div>
+        <p class="knt-eyebrow">Persönlich · Kontakte &amp; Netzwerk</p>
+        <h1 id="knt-title">Kontakte &amp; Netzwerk</h1>
+        <p class="knt-lead">Gespeicherte Kontakte aus dem verbundenen BACH-Backend nach Kategorie durchsuchen oder direkt ergänzen.</p>
+      </div>
+      <div class="knt-actions">
+        <button type="button" id="knt-toggle-form" class="btn btn-primary">+ Neuer Kontakt</button>
+        <button type="button" id="knt-refresh" class="btn btn-secondary">Aktualisieren</button>
+        <a href="/life" class="btn btn-secondary">Life-Zentrale</a>
+      </div>
+    </header>
+
+    <div class="knt-kpis" aria-label="Kontakt-Übersicht">
+      <article class="card knt-kpi"><span>Gesamt</span><strong id="knt-kpi-total">–</strong></article>
+      <article class="card knt-kpi"><span>Gesundheit &amp; Ärzte</span><strong id="knt-kpi-health">–</strong></article>
+      <article class="card knt-kpi"><span>Geschäftlich</span><strong id="knt-kpi-business">–</strong></article>
+      <article class="card knt-kpi"><span>Privat</span><strong id="knt-kpi-personal">–</strong></article>
+    </div>
+
+    <p id="knt-status" class="knt-status" role="status" aria-live="polite">Lade Kontakte …</p>
+
+    <section id="knt-form-panel" class="card knt-form-panel" hidden aria-labelledby="knt-form-title">
+      <h2 id="knt-form-title">Neuen Kontakt anlegen</h2>
+      <form id="knt-create-form" class="knt-form-grid">
+        <label>Name *<input id="knt-name" name="name" type="text" required maxlength="160" placeholder="z. B. Dr. Muster oder Max Beispiel" /></label>
+        <label>Kategorie
+          <select id="knt-category" name="category">
+            <option value="personal">Privat</option>
+            <option value="arzt">Arzt / Gesundheit</option>
+            <option value="business">Geschäftlich</option>
+            <option value="other">Sonstiges</option>
+          </select>
+        </label>
+        <label>Fachbereich / Rolle<input id="knt-subcategory" name="subcategory" type="text" maxlength="120" placeholder="z. B. Hausarzt, Beratung" /></label>
+        <label>Organisation<input id="knt-organization" name="organization" type="text" maxlength="160" placeholder="z. B. Praxis / Klinik / Firma" /></label>
+        <label>Telefon<input id="knt-phone" name="phone" type="tel" maxlength="80" placeholder="+49 …" /></label>
+        <label>E-Mail<input id="knt-email" name="email" type="email" maxlength="160" placeholder="name@beispiel.de" /></label>
+        <label class="knt-wide">Notizen<textarea id="knt-notes" name="notes" rows="2" maxlength="1000" placeholder="Optionale Hinweise …"></textarea></label>
+        <div class="knt-wide knt-form-actions">
+          <button type="submit" id="knt-submit" class="btn btn-primary">Kontakt speichern</button>
+          <button type="button" id="knt-cancel" class="btn btn-secondary">Abbrechen</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card knt-toolbar" aria-label="Filter">
+      <label class="knt-search-wrap">Suche
+        <input id="knt-search" type="search" placeholder="Name, Fachbereich, Organisation, Ort oder Notiz …" autocomplete="off" />
+      </label>
+      <label>Kategorie
+        <select id="knt-filter-cat"><option value="">Alle Kategorien</option></select>
+      </label>
+      <span id="knt-count" class="badge">0 angezeigt</span>
+    </section>
+
+    <div id="knt-list" class="knt-grid" aria-live="polite"></div>
+  </section>
+
+  <style is:global>
+    .knt-page { display:grid; gap:1rem; }
+    .knt-head { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; }
+    .knt-eyebrow { margin:0 0 .2rem; font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--accent-text); }
+    .knt-head h1 { margin:0 0 .25rem; font-size:1.65rem; }
+    .knt-lead { margin:0; color:var(--text-muted); font-size:.9rem; max-width:60ch; }
+    .knt-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .knt-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:.75rem; }
+    .knt-kpi { padding:.95rem 1.1rem; display:flex; flex-direction:column; gap:.25rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .knt-kpi span { font-size:.78rem; color:var(--text-muted); }
+    .knt-kpi strong { font-size:1.55rem; color:var(--text); }
+    .knt-status { margin:0; padding:.6rem .9rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-panel); color:var(--text-muted); font-size:.86rem; }
+    .knt-status[data-tone="error"] { border-color:var(--error); color:var(--error-text); }
+    .knt-form-panel { padding:1.15rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .knt-form-panel h2 { margin:0 0 .75rem; font-size:1.1rem; }
+    .knt-form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:.75rem; }
+    .knt-form-grid label { display:flex; flex-direction:column; gap:.3rem; font-size:.82rem; color:var(--text-muted); }
+    .knt-form-grid input,.knt-form-grid select,.knt-form-grid textarea,.knt-toolbar input,.knt-toolbar select { padding:.55rem .7rem; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-dark); color:var(--text); font:inherit; width:100%; box-sizing:border-box; }
+    .knt-wide { grid-column:1 / -1; }
+    .knt-form-actions { display:flex; gap:.5rem; justify-content:flex-end; flex-wrap:wrap; }
+    .knt-toolbar { padding:.9rem 1.1rem; display:flex; gap:.85rem; align-items:flex-end; flex-wrap:wrap; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); }
+    .knt-toolbar label { display:flex; flex-direction:column; gap:.25rem; font-size:.8rem; color:var(--text-muted); }
+    .knt-search-wrap { flex:1 1 240px; min-width:200px; }
+    .knt-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr)); gap:.85rem; }
+    .knt-card { padding:1rem; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); display:flex; flex-direction:column; gap:.45rem; min-width:0; }
+    .knt-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem; }
+    .knt-card h3 { margin:0; font-size:1rem; color:var(--text); overflow-wrap:anywhere; }
+    .knt-meta { margin:0; font-size:.84rem; color:var(--text-muted); overflow-wrap:anywhere; }
+    .knt-notes { margin:.15rem 0 0; padding-top:.45rem; border-top:1px solid var(--border); font-size:.82rem; color:var(--text); overflow-wrap:anywhere; }
+    .knt-empty { padding:1.25rem; text-align:center; color:var(--text-muted); border:1px dashed var(--border); border-radius:var(--radius-md); grid-column:1 / -1; }
+  </style>
+
+  <script>
+    import '../scripts/kontakte-page.mjs';
+  </script>
 </BachLayout>
