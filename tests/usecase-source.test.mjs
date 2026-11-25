@@ -609,3 +609,13 @@ test('Ungültige Ocean-Quelle bleibt sichtbar gesperrt, ohne Quelltext offenzule
   assert.deepEqual(state['uc-create'], ['', true]);
   assert.match(state['uc-page-status'][0], /nicht verifiziert/);
 });
+
+test('dynamically created .uc-list buttons use :global() theme rules so Dark Mode stays readable', () => {
+  const page = readFileSync(resolve(root, 'src/pages/governance/usecases.astro'), 'utf8');
+  const styleBlock = page.match(/<style>([\s\S]*?)<\/style>/)?.[1] || '';
+  assert.match(styleBlock, /\.uc-list\s+:global\(button\)\s*\{[^}]*background:\s*var\(--bg-dark\)[^}]*color:\s*var\(--text\)/);
+  assert.match(styleBlock, /\.uc-list\s+:global\(button\[aria-current="true"\]\)\s*\{[^}]*border-color:\s*var\(--accent\)/);
+  assert.match(styleBlock, /\.uc-list\s+:global\(small\)/);
+  assert.match(styleBlock, /\.uc-list\s+:global\(strong\)/);
+  assert.doesNotMatch(styleBlock, /\.uc-list\s+(?:button|small|strong)\b/);
+});
