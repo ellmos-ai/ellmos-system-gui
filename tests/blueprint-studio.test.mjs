@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {escapeHtml,blueprintState,executionSettings,normalizeTools,correlatedStart,instanceSettings,startLabel,modelBindingMatches} from "../src/scripts/blueprint-studio.mjs";
+import fs from "node:fs";
+import {escapeHtml,blueprintState,executionSettings,normalizeTools,correlatedStart,instanceSettings,startLabel,modelBindingMatches,promptMutationPayload} from "../src/scripts/blueprint-studio.mjs";
 
 test("catalogue escapes saved names and prompts",()=>{
   assert.equal(escapeHtml('<img src=x onerror="alert(1)">'),"&lt;img src=x onerror=&quot;alert(1)&quot;&gt;");
@@ -71,4 +72,20 @@ test("model readback checks the ordered fallback chain of the saved template",()
   assert.equal(modelBindingMatches(saved({...withoutFallbacks}),withoutFallbacks),true);
   assert.equal(modelBindingMatches(saved(sent),withoutFallbacks),false);
   assert.equal(modelBindingMatches(saved(withoutFallbacks),{...withoutFallbacks,model_fallbacks:[]}),false);
+});
+
+test("core-prompt reset payload omits text field (required by BACH API 400 guard)",()=>{
+  assert.deepEqual(promptMutationPayload("v1","Bearbeiteter Text",false),{configuration_version:"v1",text:"Bearbeiteter Text"});
+  assert.deepEqual(promptMutationPayload("v1","Bearbeiteter Text",true),{configuration_version:"v1"});
+  assert.equal(Object.hasOwn(promptMutationPayload("v1","x",true),"text"),false);
+});
+
+test("system prompt editor trigger is visible and reachable from blueprints, chat, and running",()=>{
+  const bp = fs.readFileSync(new URL("../src/pages/agenten/blueprints.astro", import.meta.url), "utf8");
+  assert.match(bp, /id="studio-prompts"/);
+  assert.doesNotMatch(bp, /id="studio-prompts"[^>]*\bhidden\b/);
+  const chat = fs.readFileSync(new URL("../src/pages/chat.astro", import.meta.url), "utf8");
+  assert.match(chat, /\/agenten\/blueprints\?restore=prompts/);
+  const running = fs.readFileSync(new URL("../src/pages/agenten/running.astro", import.meta.url), "utf8");
+  assert.match(running, /\/agenten\/blueprints\?restore=prompts/);
 });
