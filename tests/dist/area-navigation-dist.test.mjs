@@ -53,7 +53,6 @@ test('every page of an area renders the same area navigation, all others render 
 test('the entry of the current page is marked by path (query refinement happens in the browser)', () => {
   const marked = (route) => areaNavOf(page(route).html).entries.filter((link) => link.current).map((link) => link.id);
   assert.deepEqual(marked('/agenten/blueprints'), ['templates']);
-  assert.deepEqual(marked('/agenten/subscription-agents'), ['prompt-agents']);
   assert.deepEqual(marked('/agenten/marblerun'), ['chains']);
   assert.deepEqual(marked('/system/ocean'), ['systems']);
   assert.deepEqual(marked('/system/installation-updates'), ['installation-updates']);
@@ -75,8 +74,9 @@ test('no area entry leads to a page with another area navigation (B-11)', () => 
 });
 
 test('B-08: the old library URLs are redirects to the templates', () => {
-  for (const route of Object.keys(nav.redirects)) {
-    assert.match(page(route).html, /http-equiv="refresh" content="0;url=\/agenten\/blueprints"/, route);
+  for (const [route, target] of Object.entries(nav.redirects)) {
+    const escaped = target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.match(page(route).html, new RegExp(`http-equiv="refresh" content="0;url=${escaped}"`), route);
     assert.equal(areaNavOf(page(route).html), null, route);
   }
 });

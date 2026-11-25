@@ -1,18 +1,18 @@
 ---
 // PB-25: Prompt-Agenten sind Teil der Agenten-Bibliothek; alte Links leiten direkt in die Vorlagenansicht weiter.
-import BachLayout from "../../layouts/BachLayout.astro";
 ---
-<BachLayout title="Weiterleitung zur Agenten-Bibliothek (Prompt-Agenten)" currentPath="/agenten/blueprints">
-  <meta http-equiv="refresh" content="0;url=/agenten/blueprints?tab=prompt-agents" />
-  <section class="card" aria-labelledby="prompt-agents-redirect-title">
-    <h1 id="prompt-agents-redirect-title">Agenten-Bibliothek · Prompt-Agenten</h1>
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="0;url=/agenten/blueprints?tab=prompt-agents" />
+    <title>Weiterleitung zur Agenten-Bibliothek (Prompt-Agenten)</title>
+    <script>
+      import { promptAgentsRedirectTarget } from "../../lib/library-redirect.mjs";
+      location.replace(promptAgentsRedirectTarget(location.search));
+    </script>
+  </head>
+  <body>
     <p>Prompt-Agenten sind jetzt direkt in der <a id="prompt-agents-redirect-link" href="/agenten/blueprints?tab=prompt-agents">Agenten-Bibliothek (Reiter Prompt-Agenten)</a> verfügbar. Prompt-Agenten werden extern zugeschaltet und von dieser GUI nicht gesteuert; Vorschau und Kopieren belegen weder einen Client-Start noch einen laufenden Agenten (<a href="/agenten/running">Living &amp; Running</a>).</p>
-  </section>
-  <script>
-    import { promptAgentsRedirectTarget } from '../../lib/library-redirect.mjs';
-    const next = promptAgentsRedirectTarget(location.search);
-    const link = document.getElementById('prompt-agents-redirect-link');
-    if (link) link.setAttribute('href', next);
-    location.replace(next);
-  </script>
-</BachLayout>
+  </body>
+</html>

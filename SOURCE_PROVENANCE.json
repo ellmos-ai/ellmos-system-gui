@@ -299,7 +299,7 @@
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
     "src/pages/agenten/running.astro": "1e0e11b66f5d5bf8935c32752c49cb113f9bd3298e0c3b98bb41669cfcf1a59e",
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
-    "src/pages/agenten/subscription-agents.astro": "9e88d4d65c5562d13332a112ab68b072318f146f7177bced5aa423d6110b6013",
+    "src/pages/agenten/subscription-agents.astro": "9a47a998bc04cbc0882d4fc936fc713a70fd286a034bffdc7dc0b75c6fada06a",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
     "src/pages/ati.astro": "9654c6490c123e02a4f2e6028d1b22ce8740b2e0e0de2a2448f13c3ec4fd1f84",
     "src/pages/chat.astro": "bf8b82351dba4b25baf2cd677f5e3f3ee5d1e77273ff9050edb625caaca1aebc",
@@ -6438,6 +6438,17 @@
           "sha256": "f0aed22160e0509f35e89179eedf251c126e24894cb62288845098930eab5ef3",
           "previous_sha256": "5c4c4017578938c8782dfb99f92327fdf239e072143d1e117baf5dea7a9df604",
           "other_parent_sha256": "244aac035f35c0b3e45f931a6d31f0c0142ca4353090a2ca25ae38709112f61d"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-25",
+      "scope": "PB-25: standalone redirect for /agenten/subscription-agents and dist area-nav check",
+      "files": [
+        {
+          "path": "src/pages/agenten/subscription-agents.astro",
+          "previous_sha256": "9e88d4d65c5562d13332a112ab68b072318f146f7177bced5aa423d6110b6013",
+          "sha256": "9a47a998bc04cbc0882d4fc936fc713a70fd286a034bffdc7dc0b75c6fada06a"
         }
       ]
     }
