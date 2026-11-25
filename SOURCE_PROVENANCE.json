@@ -233,9 +233,9 @@
     "src/assets/ticket-symbols/topics_uni.svg": "45b565524ec66eff4b5f87a12729afc958d5ff2027af337f8472ecde0fe1bd19",
     "src/assets/ticket-symbols/usr.svg": "33e53da93147ad81a3b26822669ac7465866736b500ac47ea6ef9f849dd2383c",
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
-    "src/components/CapabilityBoard.astro": "2ea76b0a5aefcae58fa7cc556601e792b9b25a243e9f8d888580e9afa3b7c19b",
+    "src/components/CapabilityBoard.astro": "4378ae98b7aa5c6c9b6014c99712443ba0fca8c213f68ace28ad4d0b658bb43a",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
-    "src/components/Header.astro": "92331ffbb6606e3aa1998e1861a992404fea179a51b818e981daa6973ae8ba01",
+    "src/components/Header.astro": "4d06bbf2c3e9d7b0c9341d34ca5ce5d98b7114b73f679e1359e3b0b364509b7b",
     "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
@@ -254,7 +254,7 @@
     "src/lib/agent-overview.mjs": "577beec1bb33f98cbf81d54a39f5d8b9a4e4b95671081d5061381e7e75712738",
     "src/lib/blueprint-revisions.mjs": "7d8972bfda113c60210dd0611997329c4a0855a00119638868e7bb5d064dc236",
     "src/lib/capability-board-client.mjs": "7a80423bc472ade80f05065c57ef9b732493b40cd2900f0705b2c3af8f72d831",
-    "src/lib/capability-board-ui.mjs": "ae4d73808cb1b95c904c02d5996cb2ba5e3ac6cc9eba249e6801619b9a9cb123",
+    "src/lib/capability-board-ui.mjs": "e467c49cfe15985d78250d039859a7ac472933edd1ee7deabe14948206760454",
     "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
     "src/lib/domain-pins.mjs": "e6c4fd1700f0cfc0995c17c0ec3cb66d3ac12f7457eff13b96421d314999a813",
     "src/lib/domain-routes.mjs": "2dd127d08b0f53110306e09ca256b75c138ca56fcc444f0f4e62f59f75403dd3",
@@ -305,14 +305,14 @@
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
     "src/pages/life.astro": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481",
     "src/pages/maintenance.astro": "1e47fe3566eee28aa580867ad6eef3df5001b80aeec29d97481ff0449d70e3ab",
-    "src/pages/memory.astro": "47ab9040873b20341882c6d9463eb70a523ef6c4852d5e4357f9bb3f397f6952",
+    "src/pages/memory.astro": "943915b31aed448f1137de4fb9688643b5d7020e933602afcd1481ea3edb3293",
     "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
     "src/pages/notizen.astro": "55f9b57e345d574794d67a458184128d6f675dfbe4b212b1d2770d4ff4cd7865",
     "src/pages/persoenlich.astro": "f4f26c145c11721776c7e150032ed1d6a0d2d3e3f6172e6f891f821863ebc700",
     "src/pages/routinen.astro": "a2e041430e5848a19429b15999ac6af86613eedf05de1c3112d239e74894e746",
     "src/pages/sensation.astro": "110ae810922ef21fe8aee85d370f296c860b005f1873f6bf79996d4e76bbfed0",
     "src/pages/sessions.astro": "bb515024c04451ca8b7e3b586350707a7da29db6dc5467c2172aca3ff87a8774",
-    "src/pages/settings.astro": "2a6f0b6b6d8c3a06dfd25d705d05e271b66a4c29c7f8667f4e41140b40763255",
+    "src/pages/settings.astro": "f60750a4000848c679c6782f4e333c11fafc462c4a057d44c17dfc72addae11c",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
@@ -351,7 +351,7 @@
     "tests/installation-updates-model.test.mjs": "c8509643c399b7a8f4006983383963f8027d35050362e59bba5ac0b7262a34dd",
     "tests/legacy-route-fallback.test.mjs": "4d88e87f54e3dbf893a2fe301b5efcfe9e8c81a0cdda1aa211489d77a0e17d90",
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
-    "tests/memory-facts.test.mjs": "a7c9724c7e28631f9a661fcde596f81fe5dd93375838259a6cf55244c24f3897",
+    "tests/memory-facts.test.mjs": "9b270f3d733fba2c857a5e57641f37da57a65bf6535908615d7ee53ae088f05b",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
     "tests/page-reads.test.mjs": "b11941b547f93ff9cc2f89315e6a88b78dfe49b4124e1798d98ed403efc10cfe",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
@@ -6326,6 +6326,41 @@
           "path": "tests/usecase-source.test.mjs",
           "previous_sha256": "cb3808c5825654fc41225305111906891ef7f5556ec1ee848055b803cfccc870",
           "sha256": "5be932dcd97d3d4e18f9d83f5780eb67fcc4f83ee7db890d0a1ed6b7af4ef21b"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-22",
+      "scope": "OCEAN gui#135: integrate deployed GUI branch and current main without losing branch provenance",
+      "source_base_commit": "db71aa40aa67748acd79fb6985b31a3688d77946",
+      "merged_source_commit": "2ac523c9cc8c09c0509345c71ced8c55bfb47806",
+      "common_base_commit": "91e695540e67bce69bd6cbc99a8ad707acc4abde",
+      "branch_bases": [
+        "91e695540e67bce69bd6cbc99a8ad707acc4abde"
+      ],
+      "changes": [
+        "Merge current main (2ac523c9cc8c, v0.2.41) into gui#135 (db71aa40aa67) and recompute merged file hashes."
+      ],
+      "files": []
+    },
+    {
+      "date": "2026-11-25",
+      "scope": "OCEAN gui#135: integrate deployed GUI branch and current main without losing branch provenance",
+      "source_base_commit": "7ec9ce59da910dd7c051863bd47b4f3b69f3e3fd",
+      "merged_source_commit": "1badd9e3bc6a2f99b960f0c015e778664a6ba53e",
+      "common_base_commit": "2ac523c9cc8c09c0509345c71ced8c55bfb47806",
+      "branch_bases": [
+        "2ac523c9cc8c09c0509345c71ced8c55bfb47806"
+      ],
+      "changes": [
+        "Merge current main (1badd9e3bc6a, v0.2.42) into gui#135 (7ec9ce59da91) and recompute merged file hashes."
+      ],
+      "files": [
+        {
+          "path": "src/pages/settings.astro",
+          "sha256": "f60750a4000848c679c6782f4e333c11fafc462c4a057d44c17dfc72addae11c",
+          "previous_sha256": "6439558ae40bc4e63a9c6172571f2a7093427e6bb11b17c0bd6f3ea0f335561c",
+          "other_parent_sha256": "2a6f0b6b6d8c3a06dfd25d705d05e271b66a4c29c7f8667f4e41140b40763255"
         }
       ]
     }
