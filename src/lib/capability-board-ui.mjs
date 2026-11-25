@@ -5,7 +5,16 @@ import {catalogMatches, publicationLabel, safePublicationUrl} from './software-c
 import {plugCableElement} from './plugin-plug-ui.mjs';
 import {plugSummaryText} from './plugin-plug-state.mjs';
 
-const board = document.getElementById('capability-board');
+export function formatSkillOrigin(item) {
+  const raw = String(item?.origin || item?.source_system || item?.system || item?.source || item?.path || '').toLowerCase();
+  if (raw.includes('mac') || raw.includes('studio')) return 'Mac Studio';
+  if (raw.includes('bach')) return 'BACH';
+  if (raw.includes('ocean') || raw.includes('.skills') || raw.includes('topics')) return 'Ocean .SKILLS';
+  if (item?.origin) return String(item.origin);
+  return 'Ocean .SKILLS';
+}
+
+const board = typeof document !== 'undefined' ? document.getElementById('capability-board') : null;
 if (board) {
   const kind = board.dataset.board;
   const symbolUrls=JSON.parse(board.dataset.ticketSymbols);
@@ -90,6 +99,7 @@ if (board) {
       if (kind !== 'mcp') meta.append(badge(item.version || 'Ohne Versionsnummer'));
       if (kind === 'skills') {
         meta.append(badge(item.category || 'Allgemein'));
+        meta.append(node('span', formatSkillOrigin(item), 'badge badge-origin'));
         if (item._groupedLangs?.length) meta.append(badge('🌐 ' + item._groupedLangs.join(', ')));
         card.append(meta, node('p', item.id, 'card-caption'), button('Anleitung bearbeiten', () => openSkill(item.id), 'btn card-action'));
       } else {
@@ -97,9 +107,10 @@ if (board) {
         if (isControlCenterMcp) meta.append(badge('⭐ Bündelt alle MCP-Werkzeuge'));
         if (isDeprecatedBachMcp) meta.append(badge('⚠️ veraltet · ersetzt durch ellmos-*commander'));
         card.append(meta);
+        let plug = null; // appended after the source details, so the plug always sits at the bottom of the tile
         if (kind === 'plugins') {
           card.append(node('p', item.code_present ? 'Plugin-Dateien vorhanden' : 'Installationsverweis ohne erreichbare Dateien'));
-          card.append(plugCableElement(item, fetchedAt));
+          plug = plugCableElement(item, fetchedAt);
         } else if (kind === 'mcp') {
           card.append(node('p', 'Im Client konfiguriert · ' + item.transport));
           if (isDeprecatedBachMcp) card.append(node('p', 'Veralteter BACH-Servername — bitte auf den entsprechenden ellmos-*commander umstellen.', 'card-caption'));
@@ -122,10 +133,16 @@ if (board) {
         const detail = node('details'), summary = node('summary', 'Quelle');
         detail.append(summary, node('p', item.path || item.source || 'Quelle nicht angegeben'));
         card.append(detail);
+        if (plug) card.append(plug);
       }
       byId('board-items').append(card);
     }
-    if (!visible.length) byId('board-items').append(node('p', query || category ? 'Keine passenden Einträge.' : 'In den erreichbaren Quellen sind keine Einträge vorhanden.'));
+    if (!visible.length) {
+      const emptyMsg = kind === 'skills'
+        ? (query || category ? 'Keine passenden Einträge.' : 'Keine Skills verfügbar. Die Skill-Bibliothek (/api/capabilities bzw. /api/skills) ist offline oder liefert keine Einträge. (Keine Dummy-Skills)')
+        : (query || category ? 'Keine passenden Einträge.' : 'In den erreichbaren Quellen sind keine Einträge vorhanden.');
+      byId('board-items').append(node('p', emptyMsg));
+    }
   }
 
   function focusRequestedComponent() {
@@ -155,7 +172,9 @@ if (board) {
       if (!catalogMatches(kind, data)) throw new Error(kind === 'plugins'
         ? 'Die Antwort ist kein Plugin-Inventar (erwartet: Schema bach.capability-inventory.v1, Art plugins).'
         : 'Der Anwendungskatalog und die Ocean-Quellen sind noch nicht getrennt angebunden.');
-      const rows = kind === 'skills' ? data.skills : data.items;
+      const rows = kind === 'skills'
+        ? (Array.isArray(data?.skills) ? data.skills : Array.isArray(data?.items) ? data.items : Array.isArray(data) ? data : [])
+        : data.items;
       if (!Array.isArray(rows)) throw new Error('Die Quelle liefert keinen Eintragskatalog.');
       items = rows;
       fetchedAt = new Date();
@@ -185,7 +204,10 @@ if (board) {
     } catch (error) {
       if (generation !== inventoryGeneration) return;
       items = []; renderItems();
-      byId('board-status').textContent = 'Quelle nicht geladen: ' + describeSourceError(error);
+      const statusPrefix = kind === 'skills'
+        ? 'Skill-Bibliothek nicht geladen (/api/capabilities bzw. /api/skills offline): '
+        : 'Quelle nicht geladen: ';
+      byId('board-status').textContent = statusPrefix + describeSourceError(error);
     } finally { if (generation === inventoryGeneration) byId('board-refresh').disabled = false; }
   }
 
@@ -210,8 +232,22 @@ if (board) {
     },'wissen');
   }
   function describeSource() {
-    byId('skill-source-info').textContent = currentSource?.source_version === '0' ? 'Neue lokale Anleitung. Eine bestehende Kennung wird nicht überschrieben.'
-      : currentSource ? (currentSource.version || 'Ohne Versionsnummer') + ' · Quelle ' + currentSource.source_version.slice(0, 12) : 'Aktuelle Quelle wird geladen …';
+    const info = byId('skill-source-info');
+    info.replaceChildren();
+    if (currentSource?.source_version === '0') {
+      info.textContent = 'Neue lokale Anleitung. Eine bestehende Kennung wird nicht überschrieben.';
+      return;
+    }
+    if (!currentSource) {
+      info.textContent = 'Aktuelle Quelle wird geladen …';
+      return;
+    }
+    info.append(node('span', currentSource.version || 'Ohne Versionsnummer'));
+    if (currentSource.source_version) {
+      const hashDetails = node('details', null, 'skill-hash-details');
+      hashDetails.append(node('summary', 'Technische Details'), node('p', 'Quelle (SHA-256): ' + currentSource.source_version, 'skill-hash-value'));
+      info.append(hashDetails);
+    }
   }
   async function loadHistory() {
     const select = byId('skill-history');

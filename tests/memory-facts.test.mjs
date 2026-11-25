@@ -123,9 +123,9 @@ test('Facts-Tabelle kennzeichnet gespeicherte Werte ohne Hermes-Herkunft zu erfi
 });
 
 
-test('Hermes ohne bestätigten Laufzeitbeleg behauptet keinen aktiven Dienst',()=>{
+test('Skill-Gärtner ohne bestätigten Laufzeitbeleg behauptet keinen aktiven Dienst',()=>{
   const badge=source.match(/<span[^>]*id="hermes-status-badge"[^>]*>[\s\S]*?<\/span>/)?.[0];
   assert.ok(badge);
-  assert.match(badge,/Hermes: Status ungeprüft/);
-  assert.doesNotMatch(badge,/badge-success|●|Hermes: Aktiv/);
+  assert.match(badge,/Skill-Gärtner: Status ungeprüft/);
+  assert.doesNotMatch(badge,/badge-success|●|Skill-Gärtner: Aktiv/);
 });
