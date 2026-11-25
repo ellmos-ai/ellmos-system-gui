@@ -9,9 +9,9 @@ const page=read('src/pages/agenten/running.astro');
 const start=page.indexOf('function workerReadiness('),end=page.indexOf('async function loadBackgroundWorkers(',start);
 const readiness=vm.runInNewContext('('+page.slice(start,end).trim()+')');
 function paths(directory){return readdirSync(directory,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?paths(new URL(entry.name+'/',directory)):[new URL(entry.name,directory)]);}
-test('all fifty-one productive pages, including fallback routes, redirects, governance sub routes and Routinen & Jobs, are present',()=>{
-  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,51);
-  for(const path of ['user-inbox','agenten/blueprints','agenten/subscription-agents','routinen','notizen','skills/plugins','skills/mcp','skills/software','skills/ocean','daemon','system/ocean','system/installation-updates','prompt-library','chat','modules','talk','sensation','connectors','sessions'])assert.ok(read('src/pages/'+path+'.astro'));
+test('all fifty-two productive pages, including fallback routes, redirects, governance sub routes and Routinen & Jobs, are present',()=>{
+  assert.equal(paths(new URL('src/pages/',root)).filter(path=>path.pathname.endsWith('.astro')).length,52);
+  for(const path of ['user-inbox','foerderplaner','agenten/blueprints','agenten/subscription-agents','routinen','notizen','skills/plugins','skills/mcp','skills/software','skills/ocean','daemon','system/ocean','system/installation-updates','prompt-library','chat','modules','talk','sensation','connectors','sessions'])assert.ok(read('src/pages/'+path+'.astro'));
 });
 test('the shared branding contract and bundled same-origin authentication stay intact',()=>{
   assert.match(read('src/components/Header.astro'),/\/api\/gui\/brand/);

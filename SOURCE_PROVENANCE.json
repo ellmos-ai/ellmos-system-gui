@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "a8fd63592d31e03f8bd5e653266715986094ce387429ebd809b036f95883576d",
+    "public/page-reads.v1.json": "b16e22c906a77ab727f9a28a3bcb0024f9ac97a08acd4f66c49a20bfed77cd7b",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -257,7 +257,7 @@
     "src/lib/capability-board-ui.mjs": "04be2b8a001d45a9a86937a4779371f183bd8e9b9439ea0a20763f75ebac41ff",
     "src/lib/consumer-api-auth.mjs": "0a69d305319de462675fe0b5d02a7a45a7740eb0385064116783cdea229f555a",
     "src/lib/domain-pins.mjs": "e6c4fd1700f0cfc0995c17c0ec3cb66d3ac12f7457eff13b96421d314999a813",
-    "src/lib/domain-routes.mjs": "2dd127d08b0f53110306e09ca256b75c138ca56fcc444f0f4e62f59f75403dd3",
+    "src/lib/domain-routes.mjs": "854117bebf6b0324edadf3a212ba4d0a692603b3f95ff4569f1e61f91e802a00",
     "src/lib/gemini-avatar-assets.mjs": "72f30b9af1c0374ab30aef6cdb5f5a662af8d4f9448ff86596e0b6fd607e115a",
     "src/lib/i18n.mjs": "726aded8be4e35e10363ad7fccb85f5e4b041db2639884d67a65c4f9ef76e5ab",
     "src/lib/installation-updates-model.mjs": "cf48d1d068e69c4c441dd19910e232d8604082a55221ad7bb312292612227794",
@@ -300,7 +300,7 @@
     "src/pages/governance/logs.astro": "1227c2cb3cb5306990090b2adf9b7d6384f3e4a118db0c309011004a26e73a1d",
     "src/pages/governance/usecases.astro": "263f8f759c73b797eeb8792730721687bc7dcfec882fab33c4b22cecdfbeb9b6",
     "src/pages/help.astro": "db44dea00e326de2b600b278c0212cffe658ddb2f4072d18602f1962bcc091d5",
-    "src/pages/inbox.astro": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
+    "src/pages/inbox.astro": "bbf7ea46658020ff9c3a876a7d5cef373f5f74e602de6c05b35900047bb76d06",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "2aba293fee8013d337b27a8e6ebb03bc7c81cb46381cd3d466829bcff75c2bb8",
     "src/pages/life.astro": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481",
@@ -340,12 +340,12 @@
     "tests/blueprint-studio.test.mjs": "f28da3d7589131ca81b69df628af0a81204f1a119bc6cb8782e043095a50dfef",
     "tests/capability-board.test.mjs": "872f1edddd179a590aae093d2ec424767ae4edd91c61f5f0eda7f9b999c6c180",
     "tests/device-fetch.test.mjs": "a87bc1a4120d6a2aa97af8bd628ffb42e5b0272262ece13c58dae316fb329fa1",
-    "tests/domain-pins.test.mjs": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
-    "tests/domain-routes.test.mjs": "eb151b9752db41b5c22c441df8ca6c403b105ada24d4edf5bd90763d08277d6e",
+    "tests/domain-pins.test.mjs": "f082e8231d3445f3eb40de7a8563285e16168f81f85c5ba4c3374105a381a925",
+    "tests/domain-routes.test.mjs": "1608708300425eb6ddb1fb13f4c5cf21f3d9cfdcbe671b0ac37df313c8a24ab3",
     "tests/dompurify-compatibility.test.mjs": "96e94426818ae76bff1d11de09be051b2a351575291c58c5f8b2f254f86f76d6",
     "tests/fabrika.test.mjs": "a82d8c4fcde441ac2c430aea93a0b38019233860cfe753a9ecf1c9fb0bde25fc",
     "tests/fixtures/dompurify-regressions.html": "1d8528be769ca371863fba21acf73fd9376c6b941e1bd8e36613a9f2af6a6c2c",
-    "tests/frontend-parity.test.mjs": "419cc003835917e4be438c229ccddbe3689c133fc74056e52e1d8f2e48a90fa1",
+    "tests/frontend-parity.test.mjs": "bf07df534aec5700416568d1361b328d15217146a70c645dcb7e5b75eee2a99f",
     "tests/gui-shell-navigation.test.mjs": "10746987973e2b7ce7927b7c5c8810601a114d721af151ed7452f7a80e00ed7b",
     "tests/gui100-regressions.test.mjs": "c35ffdbc229a13da85b57619a3a225ddb821c6cebe05f01fcbe16eb401259d2b",
     "tests/installation-updates-model.test.mjs": "c8509643c399b7a8f4006983383963f8027d35050362e59bba5ac0b7262a34dd",
@@ -381,7 +381,7 @@
     "src/lib/agent-triggers.mjs": "289e00f21c89f9521296e64f384fd580737578f7626b6ed3ca05d2941822141b",
     "src/lib/agent-triggers-ui.mjs": "966c0aa625e20c4f570750d69af83632988d048c2b246eb93b00acb97bd89149",
     "tests/agent-triggers.test.mjs": "330486fc198e42cdbfe89972c579c98f8b08901d8b5586f30ec9da74bd48925f",
-    "scripts/page-reads-helpers.mjs": "2c09229565e98b75010bbca31679589fade600e6e4cc8cbc850063ba7ab3285b",
+    "scripts/page-reads-helpers.mjs": "aa501f6bd9ad8cedb3353f0df44623ed6cdc9f7a27244690d8ee66bf9f04778d",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
     "src/lib/role-socket-preview.mjs": "5fe445fa828709ecb8cef14fc26c2e4a3c1f9662a8f4dc19e752803cb933d47c",
     "tests/role-socket-preview.test.mjs": "e024944cca4d787ef26c78753fabee0eb3c20b8badcab56a505b75289f83e0ff",
@@ -404,7 +404,12 @@
     "src/components/AbortNoticeSettings.astro": "bfdf75290de7342cc0663c7b662ecd05e4957456a1e3b4206af90674ab4c3ca9",
     "tests/abort-notice-settings.browser.test.mjs": "265e2d42036b275b1b7fcaed81f1a2823953e262b8d18963a6a40c7006f102cd",
     "tests/help-audit.test.mjs": "49650eb3d28b8d89ba809c053a79a10592432009ec5deb291ec9f22bc80bab79",
-    "tests/life-finance-summary.test.mjs": "c87ed0a461c0830d4356fdb7799adb97cdabc49ac24182db506ffff2a338bc5e"
+    "tests/life-finance-summary.test.mjs": "c87ed0a461c0830d4356fdb7799adb97cdabc49ac24182db506ffff2a338bc5e",
+    "src/lib/report-session.mjs": "04f08b572b763b1a184a1fac6e719852b43d6ea03efbb2c684d973f0081061f1",
+    "src/scripts/foerderplaner-page.mjs": "3e40325dacacedc2830839dd47fcb60ddf46c694cdb5d1af24921fcc9ee9188a",
+    "tests/fixtures/shared-dist.mjs": "444793d2356200461a80774835cf31dcc3e270fcbf19d69fed5c31030d3ee14b",
+    "tests/foerderplaner.browser.test.mjs": "62193adb7c88a27256b91ab7dd9b54017c8c88d6ebe28ac0d0c590eaf8c5b338",
+    "tests/report-session.test.mjs": "e3dc57aa01a5a5db8d6727822ba3f4963e0dc7f507eae490f54c5cc3bcd07a81"
   },
   "current_frontend_authority": "ellmos-ai/ellmos-system-gui",
   "post_extraction_shared_changes": [
@@ -6546,6 +6551,92 @@
           "path": "src/pages/agenten/subscription-agents.astro",
           "previous_sha256": "9e88d4d65c5562d13332a112ab68b072318f146f7177bced5aa423d6110b6013",
           "sha256": "9a47a998bc04cbc0882d4fc936fc713a70fd286a034bffdc7dc0b75c6fada06a"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-07",
+      "summary": "PB-15 Folgearbeit (T-20261107-347299705): new Foerderplaner page /foerderplaner runs the BACH report workflow /api/report/session/... in cloud mode (start, optional import of the case folder, profile with name recognition and case scan, prompt behind the privacy gate, model answer -> report with local back-replacement). A privacy block from BACH (privacy_block, error_code ner_unavailable | document_scan_missing | profile_missing | identity_terms_in_prompt, message without case values) is shown as plain-language reason with the next step via textContent, the prompt stays hidden; /inbox links the page. BACH already serves /foerderplaner from dist/foerderplaner.html. page-reads manifest, helper registration and the page count (52) follow. New files (not recorded as imports): src/lib/report-session.mjs, src/scripts/foerderplaner-page.mjs, src/pages/foerderplaner.astro, tests/report-session.test.mjs.",
+      "files": [
+        {
+          "path": "scripts/page-reads-helpers.mjs",
+          "previous_sha256": "2c09229565e98b75010bbca31679589fade600e6e4cc8cbc850063ba7ab3285b",
+          "sha256": "aa501f6bd9ad8cedb3353f0df44623ed6cdc9f7a27244690d8ee66bf9f04778d"
+        },
+        {
+          "path": "src/pages/inbox.astro",
+          "previous_sha256": "2f0fc64138e14b37221a2d2713c66999655c60f4c06b8a50c058c6dc90e3c577",
+          "sha256": "bbf7ea46658020ff9c3a876a7d5cef373f5f74e602de6c05b35900047bb76d06"
+        },
+        {
+          "path": "tests/frontend-parity.test.mjs",
+          "previous_sha256": "419cc003835917e4be438c229ccddbe3689c133fc74056e52e1d8f2e48a90fa1",
+          "sha256": "bf07df534aec5700416568d1361b328d15217146a70c645dcb7e5b75eee2a99f"
+        }
+      ],
+      "source_base_commit": "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e"
+    },
+    {
+      "date": "2026-11-07",
+      "summary": "PB-15 Folgearbeit (T-20261107-347299705), second step: /foerderplaner reads GET /api/report/readiness (required page read) and keeps the cloud steps in a disabled fieldset until BACH confirms name recognition; any other answer counts as not ready (fail-closed, reason readiness_unknown). Both modes are shown: cloud (this page, pseudonymised) and local (pipeline only, bach bericht pipeline --modus lokal). The reason panel uses only theme tokens; a browser test checks 4.5:1 in all five themes and no overflow at 390 px. /foerderplaner joins DOMAIN_WORKBENCH_ROUTES, so the Foerderplaner domain card and its sidebar pin open it (BACH domain catalog already declares workbench_url /foerderplaner). The prompt box no longer shows while hidden (inline display overrode the hidden attribute). Route snapshot gains GET /api/report/readiness. New file (not recorded as import): tests/foerderplaner.browser.test.mjs.",
+      "files": [
+        {
+          "path": "src/lib/domain-routes.mjs",
+          "previous_sha256": "2dd127d08b0f53110306e09ca256b75c138ca56fcc444f0f4e62f59f75403dd3",
+          "sha256": "854117bebf6b0324edadf3a212ba4d0a692603b3f95ff4569f1e61f91e802a00"
+        },
+        {
+          "path": "tests/domain-routes.test.mjs",
+          "previous_sha256": "eb151b9752db41b5c22c441df8ca6c403b105ada24d4edf5bd90763d08277d6e",
+          "sha256": "1608708300425eb6ddb1fb13f4c5cf21f3d9cfdcbe671b0ac37df313c8a24ab3"
+        },
+        {
+          "path": "tests/domain-pins.test.mjs",
+          "previous_sha256": "6352eca4bfa9fce50bbb93837e77937b09946aca97734721a3945858cbdea6d4",
+          "sha256": "f082e8231d3445f3eb40de7a8563285e16168f81f85c5ba4c3374105a381a925"
+        }
+      ],
+      "source_base_commit": "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e"
+    },
+    {
+      "date": "2026-11-21",
+      "summary": "Separate consecutive report cases in the shared Förderplaner page. Reset case inputs, ignore outdated session responses and keep cloud steps disabled until the current case readiness check completes.",
+      "files": [
+        {
+          "path": "src/lib/report-session.mjs",
+          "previous_sha256": "8d94c784ffe0fd02e488aa321b2691a23bcff45cc899ed821e95d6a01c384c5d",
+          "sha256": "04f08b572b763b1a184a1fac6e719852b43d6ea03efbb2c684d973f0081061f1"
+        },
+        {
+          "path": "src/scripts/foerderplaner-page.mjs",
+          "previous_sha256": "694f7da17eb6b7bed7e8d52d377402fae2a3f3f2af5e856e11abd14c48ed2fe3",
+          "sha256": "3e40325dacacedc2830839dd47fcb60ddf46c694cdb5d1af24921fcc9ee9188a"
+        },
+        {
+          "path": "tests/foerderplaner.browser.test.mjs",
+          "previous_sha256": "571097f9ec3847b995001ce1cbeecd5efe2337c4fe6855e7f070c6d178b794aa",
+          "sha256": "62193adb7c88a27256b91ab7dd9b54017c8c88d6ebe28ac0d0c590eaf8c5b338"
+        },
+        {
+          "path": "tests/report-session.test.mjs",
+          "previous_sha256": "f6ab23251bfc56af282d6593401983c8eb800606f6dace8f58e2b5741b61d36c",
+          "sha256": "e3dc57aa01a5a5db8d6727822ba3f4963e0dc7f507eae490f54c5cc3bcd07a81"
+        },
+        {
+          "path": "tests/fixtures/shared-dist.mjs",
+          "previous_sha256": "dbf7fa56533cffb46cb6f4003fdbdfda60888c3b0299c79443244b2cdf2692d9",
+          "sha256": "444793d2356200461a80774835cf31dcc3e270fcbf19d69fed5c31030d3ee14b"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-25",
+      "scope": "PB-15g (gui#132): add /foerderplaner reads to public/page-reads.v1.json on main (post-#136)",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "a8fd63592d31e03f8bd5e653266715986094ce387429ebd809b036f95883576d",
+          "sha256": "b16e22c906a77ab727f9a28a3bcb0024f9ac97a08acd4f66c49a20bfed77cd7b"
         }
       ]
     }

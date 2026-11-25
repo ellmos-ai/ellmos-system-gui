@@ -3,8 +3,7 @@
 // which made the browser tests fail at random. The first caller builds, the others wait for the finished folder.
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync} from 'node:fs';
-import {tmpdir} from 'node:os';
+import {existsSync, mkdirSync, readdirSync, realpathSync, rmSync, statSync, writeFileSync} from 'node:fs';
 import {join} from 'node:path';
 
 function sourceKey(root) {
@@ -24,12 +23,19 @@ function sourceKey(root) {
 const sleep = ms => new Promise(done => setTimeout(done, ms));
 
 export async function sharedDist(root) {
-  const base = join(tmpdir(), 'ellmos-gui-dist-' + sourceKey(root));
+  // Astro moves prerendered assets by rename, so the output must stay on
+  // the checkout's volume (Windows CI has TEMP on C: and the repo on D:).
+  const cache = join(realpathSync(root), '.astro', 'browser-tests');
+  mkdirSync(cache, {recursive: true});
+  if (realpathSync(cache) !== cache) throw new Error('Browser test cache must stay inside its checkout');
+  const base = join(cache, 'ellmos-gui-dist-' + sourceKey(root));
   const done = join(base, '.done');
   const lock = base + '.lock';
-  for (const old of readdirSync(tmpdir())) {
-    if (!old.startsWith('ellmos-gui-dist-') || join(tmpdir(), old).startsWith(base)) continue;
-    try { if (Date.now() - statSync(join(tmpdir(), old)).mtimeMs > 3600e3) rmSync(join(tmpdir(), old), {recursive: true, force: true}); } catch { /* another run cleans it */ }
+  for (const old of readdirSync(cache)) {
+    if (!/^ellmos-gui-dist-[0-9a-f]{16}(?:\.lock)?$/.test(old)) continue;
+    const stale = join(cache, old);
+    if (stale === base || stale === lock) continue;
+    try { if (Date.now() - statSync(stale).mtimeMs > 3600e3) rmSync(stale, {recursive: true, force: true}); } catch { /* another run cleans it */ }
   }
   if (existsSync(done)) return base;
   let mine = false;
