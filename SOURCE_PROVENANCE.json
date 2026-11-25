@@ -6559,11 +6559,6 @@
       "summary": "PB-15 Folgearbeit (T-20261107-347299705): new Foerderplaner page /foerderplaner runs the BACH report workflow /api/report/session/... in cloud mode (start, optional import of the case folder, profile with name recognition and case scan, prompt behind the privacy gate, model answer -> report with local back-replacement). A privacy block from BACH (privacy_block, error_code ner_unavailable | document_scan_missing | profile_missing | identity_terms_in_prompt, message without case values) is shown as plain-language reason with the next step via textContent, the prompt stays hidden; /inbox links the page. BACH already serves /foerderplaner from dist/foerderplaner.html. page-reads manifest, helper registration and the page count (52) follow. New files (not recorded as imports): src/lib/report-session.mjs, src/scripts/foerderplaner-page.mjs, src/pages/foerderplaner.astro, tests/report-session.test.mjs.",
       "files": [
         {
-          "path": "public/page-reads.v1.json",
-          "previous_sha256": "b2ab990a780b7395f8869b2a709e2253daaa6b5d7becd0c63c75b78a8e54ef80",
-          "sha256": "ecd2b2176c008d47ac631383f981252474434af3fdc34fc1857a42571a39e9cf"
-        },
-        {
           "path": "scripts/page-reads-helpers.mjs",
           "previous_sha256": "2c09229565e98b75010bbca31679589fade600e6e4cc8cbc850063ba7ab3285b",
           "sha256": "aa501f6bd9ad8cedb3353f0df44623ed6cdc9f7a27244690d8ee66bf9f04778d"
@@ -6586,11 +6581,6 @@
       "summary": "PB-15 Folgearbeit (T-20261107-347299705), second step: /foerderplaner reads GET /api/report/readiness (required page read) and keeps the cloud steps in a disabled fieldset until BACH confirms name recognition; any other answer counts as not ready (fail-closed, reason readiness_unknown). Both modes are shown: cloud (this page, pseudonymised) and local (pipeline only, bach bericht pipeline --modus lokal). The reason panel uses only theme tokens; a browser test checks 4.5:1 in all five themes and no overflow at 390 px. /foerderplaner joins DOMAIN_WORKBENCH_ROUTES, so the Foerderplaner domain card and its sidebar pin open it (BACH domain catalog already declares workbench_url /foerderplaner). The prompt box no longer shows while hidden (inline display overrode the hidden attribute). Route snapshot gains GET /api/report/readiness. New file (not recorded as import): tests/foerderplaner.browser.test.mjs.",
       "files": [
         {
-          "path": "public/page-reads.v1.json",
-          "previous_sha256": "ecd2b2176c008d47ac631383f981252474434af3fdc34fc1857a42571a39e9cf",
-          "sha256": "83ab3ecaa5f0cbb3d7b66396443defd15269d1fa07363190009f12b1f606ec69"
-        },
-        {
           "path": "src/lib/domain-routes.mjs",
           "previous_sha256": "2dd127d08b0f53110306e09ca256b75c138ca56fcc444f0f4e62f59f75403dd3",
           "sha256": "854117bebf6b0324edadf3a212ba4d0a692603b3f95ff4569f1e61f91e802a00"
@@ -6607,27 +6597,6 @@
         }
       ],
       "source_base_commit": "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e"
-    },
-    {
-      "date": "2026-11-14",
-      "scope": "OCEAN gui#132: integrate deployed GUI branch and current main without losing branch provenance",
-      "source_base_commit": "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e",
-      "merged_source_commit": "91e695540e67bce69bd6cbc99a8ad707acc4abde",
-      "common_base_commit": "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e",
-      "branch_bases": [
-        "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e"
-      ],
-      "changes": [
-        "Merge current main into the branch; only SOURCE_PROVENANCE.json conflicted, all hashes recomputed from the merged tree."
-      ],
-      "files": [
-        {
-          "path": "public/page-reads.v1.json",
-          "previous_sha256": "83ab3ecaa5f0cbb3d7b66396443defd15269d1fa07363190009f12b1f606ec69",
-          "other_parent_sha256": "c7999dd63834f15e2a0c44c0fa32d577286e2978516a28dd73e5ecedc1a0f9e2",
-          "sha256": "3b59087c912a3057c3385794af0dc268afccfe07ee0adc04ea173217812aea03"
-        }
-      ]
     },
     {
       "date": "2026-11-21",
@@ -6661,49 +6630,12 @@
       ]
     },
     {
-      "date": "2026-11-22",
-      "scope": "OCEAN gui#132: integrate deployed GUI branch and current main without losing branch provenance",
-      "source_base_commit": "f35fddadf87e28df69a662549f483d81799405d3",
-      "merged_source_commit": "2ac523c9cc8c09c0509345c71ced8c55bfb47806",
-      "common_base_commit": "91e695540e67bce69bd6cbc99a8ad707acc4abde",
-      "branch_bases": [
-        "91e695540e67bce69bd6cbc99a8ad707acc4abde",
-        "97b07bc17eddf7e01f35cefa7a415ecb26b45c0e"
-      ],
-      "changes": [
-        "Merge current main (2ac523c9cc8c, v0.2.41) into gui#132 (f35fddadf87e) and recompute merged file hashes."
-      ],
-      "files": [
-        {
-          "path": "public/page-reads.v1.json",
-          "previous_sha256": "3b59087c912a3057c3385794af0dc268afccfe07ee0adc04ea173217812aea03",
-          "sha256": "2febf15ce601f80d8a41f241b5ab29f121d03c74a6119083cb0aaf1ef1c4cc30",
-          "other_parent_sha256": "3e75a4338d82710902601bd565e4dc9ddf95dad30808932ea8970f55e8774b5b"
-        }
-      ]
-    },
-    {
       "date": "2026-11-25",
-      "scope": "OCEAN gui#132: integrate deployed GUI branch and current main without losing branch provenance",
-      "source_base_commit": "3498d62541d4a41a26f864e7450ff745828ca1aa",
-      "merged_source_commit": "1badd9e3bc6a2f99b960f0c015e778664a6ba53e",
-      "common_base_commit": "2ac523c9cc8c09c0509345c71ced8c55bfb47806",
-      "branch_bases": [
-        "2ac523c9cc8c09c0509345c71ced8c55bfb47806"
-      ],
-      "changes": [
-        "Merge current main (1badd9e3bc6a, v0.2.42) into gui#132 (3498d62541d4) and recompute merged file hashes."
-      ],
-      "files": []
-    },
-    {
-      "date": "2026-11-25",
-      "scope": "Merge reconciliation of pb15g/report-privacy-reason with origin/main",
+      "scope": "PB-15g (gui#132): add /foerderplaner reads to public/page-reads.v1.json on main (post-#136)",
       "files": [
         {
           "path": "public/page-reads.v1.json",
           "previous_sha256": "a8fd63592d31e03f8bd5e653266715986094ce387429ebd809b036f95883576d",
-          "other_parent_sha256": "2febf15ce601f80d8a41f241b5ab29f121d03c74a6119083cb0aaf1ef1c4cc30",
           "sha256": "b16e22c906a77ab727f9a28a3bcb0024f9ac97a08acd4f66c49a20bfed77cd7b"
         }
       ]
