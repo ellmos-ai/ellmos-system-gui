@@ -11,6 +11,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     <div class="workshop-intro"><p class="studio-eyebrow">Agenten-Bibliothek · Reiter 1</p><h1><span aria-hidden="true">🤖</span> Agenten-Bibliothek · Vorlagen</h1><p class="studio-lead">Hier kannst du Vorlagen für Agenten und Rollen erstellen und versionieren.</p><p class="studio-note">Agenten zusammenstellen und aktivieren: <a href="/agenten/running">Living & Running</a>. Standard-Systemagenten auf Werkzustand zurücksetzen: <a href="/settings?tab=core#system-agent-restore">Systemeinstellungen</a>.</p></div>
     <div class="studio-actions">
       <button class="btn" id="studio-refresh">Aktualisieren</button>
+      <button class="btn" id="studio-prompts">📝 System- &amp; Rollenprompts</button>
       <button class="btn btn-primary" id="studio-new">Neue Vorlage</button>
       <a class="btn" href="/agenten/running">Deine Agenten</a>
     </div>
@@ -19,7 +20,6 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
   <div class="studio-toolbar">
     <label class="studio-search">Suchen<input id="studio-search" type="search" placeholder="Name, Rolle oder Beschreibung" /></label>
     <label>Typ<select id="studio-kind"><option value="">Alle Typen</option><option value="agent">Agenten</option><option value="role">Rollen</option><option value="skill">Skill-Vorlagen</option><option value="workflow">Workflow-Vorlagen</option><option value="service">Service-Vorlagen</option><option value="contractus">Arbeitsverträge</option></select></label>
-    <button class="btn" id="studio-prompts" hidden>System- und Rollenvorlagen</button>
   </div>
   <div class="studio-tabs" role="tablist" aria-label="Vorlagen-Bibliothek">
     <button role="tab" aria-selected="true" data-library="custom">Eigene Vorlagen <span id="count-custom">–</span></button>
@@ -177,11 +177,15 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
   </dialog>
 
   <dialog id="prompt-editor" class="studio-dialog" aria-labelledby="prompt-title">
-    <header class="studio-dialog-header"><h2 id="prompt-title">System- und Rollenvorlagen</h2><button class="btn" data-close="prompt-editor">Schließen</button></header>
+    <header class="studio-dialog-header"><h2 id="prompt-title">System- &amp; Rollenprompts</h2><button class="btn" data-close="prompt-editor">Schließen</button></header>
     <div class="studio-dialog-body">
-      <label>Vorlage<select id="prompt-key"></select></label>
-      <label>Aktiver Prompt<textarea id="prompt-effective" rows="12"></textarea></label>
-      <details><summary>Werkstandard anzeigen</summary><pre id="prompt-default" class="studio-prompt-preview"></pre></details>
+      <p class="studio-note">Hier siehst und bearbeitest du den globalen Systemprompt sowie alle Rollenprompts direkt in der Oberfläche. Die Werkstandards sind selbstheilend und veraltungssicher aufgebaut: Sie verweisen auf lebende Steuerdateien und Werkzeuge statt auf feste Modell- oder Versionswerte.</p>
+      <div class="studio-section-heading" style="margin-bottom:0;">
+        <label style="flex:1;min-width:220px;">Vorlage<select id="prompt-key"></select></label>
+        <span id="prompt-source-badge" class="studio-state">Werkstandard</span>
+      </div>
+      <label>Aktiver Prompt (wirkt sofort nach dem Speichern)<textarea id="prompt-effective" rows="14"></textarea></label>
+      <details><summary>Selbstheilenden Werkstandard anzeigen</summary><pre id="prompt-default" class="studio-prompt-preview"></pre></details>
       <p id="prompt-status" role="status" class="studio-message"></p>
     </div>
     <footer class="studio-dialog-footer"><button class="btn" id="prompt-reset">Werkstandard wiederherstellen</button><button class="btn btn-primary" id="prompt-save">Anpassung speichern</button></footer>

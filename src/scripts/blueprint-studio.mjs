@@ -61,6 +61,12 @@ export function correlatedStart(result, workerId, requestId) {
     typeof receipt.terminal === "boolean" && typeof receipt.worker_thread_started === "boolean";
 }
 
+export function promptMutationPayload(configurationVersion, text, reset = false) {
+  return reset
+    ? {configuration_version: configurationVersion}
+    : {configuration_version: configurationVersion, text};
+}
+
 if (typeof document !== "undefined") initializeStudio();
 
 function initializeStudio() {
@@ -254,6 +260,12 @@ function initializeStudio() {
   function showPrompt() {
     const prompt=state.prompts?.prompts?.[$("prompt-key").value];
     $("prompt-effective").value=prompt?.effective||"";$("prompt-default").textContent=prompt?.default||"";
+    const badge=$("prompt-source-badge");
+    if(badge){
+      const customized=prompt?.is_custom===true;
+      badge.textContent=customized?"Benutzerdefiniert angepasst":"Werkstandard (selbstheilend)";
+      badge.dataset.running=customized?"false":"true";
+    }
     $("prompt-save").disabled=state.prompts?.mutation_supported!==true;
     $("prompt-reset").disabled=$("prompt-save").disabled;
   }
@@ -337,13 +349,14 @@ function initializeStudio() {
   },"instance-status");
   handle("studio-prompts","click",async()=>{
     state.prompts=await api("/api/system/core-prompts");state.promptVersion=state.prompts.configuration_version;
-    selectOptions($("prompt-key"),Object.keys(state.prompts.prompts||{}).map(key=>({value:key,label:key==="system_default"?"Systemprompt":key.slice(5).replaceAll("_"," ")})),"system_default");
+    selectOptions($("prompt-key"),Object.keys(state.prompts.prompts||{}).map(key=>({value:key,label:key==="system_default"?"Systemprompt (Standard · Buddha)":"Rolle: "+key.slice(5).replaceAll("_"," ")})),"system_default");
     showPrompt();notify("prompt-status","");$("prompt-editor").showModal();
   });
   handle("prompt-key","change",showPrompt,"prompt-status");
   async function mutatePrompt(reset=false) {
     const key=$("prompt-key").value;
-    const result=await api("/api/system/core-prompts/"+encodeURIComponent(key)+(reset?"/reset":""),{method:reset?"POST":"PUT",body:JSON.stringify({configuration_version:state.promptVersion,text:$("prompt-effective").value})});
+    const payload=promptMutationPayload(state.promptVersion,$("prompt-effective").value,reset);
+    const result=await api("/api/system/core-prompts/"+encodeURIComponent(key)+(reset?"/reset":""),{method:reset?"POST":"PUT",body:JSON.stringify(payload)});
     if(result.ack?.configuration_saved!==true||result.ack?.worker_started!==false)throw new Error("Promptanpassung nicht bestätigt.");
     state.prompts=result;state.promptVersion=result.configuration_version;showPrompt();notify("prompt-status",reset?"Werkstandard wiederhergestellt.":"Anpassung gespeichert.");
   }
