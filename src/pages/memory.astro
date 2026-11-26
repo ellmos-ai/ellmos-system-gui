@@ -71,9 +71,10 @@ const mermaidCode = `flowchart TD
         Langzeitgedächtnis (<code>bach.db</code>, Gardener-Suche &amp; USMC). Kognitiver Schaltplan, Guards und Skill Keeper sind zusätzlich in ihren Fachbereichen verankert.
       </p>
       <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.65rem;">
-        <a href="/help?tab=architecture" class="btn btn-secondary btn-sm">🏗️ Hilfe › Architektur (Schaubild, Reiter 1–3, 6 &amp; Modulschaltplan)</a>
-        <a href="/governance#hooks-guards" class="btn btn-secondary btn-sm">🛡️ Governance › Hooks &amp; Guards (Reiter 4 &amp; 5)</a>
-        <a href="/skills#skill-keeper" class="btn btn-secondary btn-sm">🌙 Skills &amp; Software › Skill Keeper (Skill-Gärtner)</a>
+        <a href="/agenten/running" class="btn btn-secondary btn-sm">⚡ Living &amp; Running</a>
+        <a href="/help?tab=architecture" class="btn btn-secondary btn-sm">🏗️ Hilfe › Architektur &amp; Memory-Karte</a>
+        <a href="/governance/hooks" class="btn btn-secondary btn-sm">🛡️ Governance › Hooks &amp; Guards</a>
+        <a href="/skills" class="btn btn-secondary btn-sm">🌙 Skills &amp; Software › Skill Keeper</a>
         <a href="/notizen" class="btn btn-secondary btn-sm">📝 Notizen (Gedanken &amp; Logbuch)</a>
       </div>
     </div>
@@ -399,19 +400,19 @@ const mermaidCode = `flowchart TD
         <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;">
           <strong style="color:var(--text);font-size:0.9rem;">1. Context-Reader Tool</strong>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0;">Liest kontinuierlich Auszüge des Kontextfensters zur kognitiven Lagebeurteilung.</p>
-          <span class="badge badge-success">Messung: Nominal</span>
+          <span class="badge">Nicht geprüft · Soll-Sensor</span>
         </div>
 
         <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;">
           <strong style="color:var(--text);font-size:0.9rem;">2. Token- & Health-Monitor</strong>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0;">Überwacht Token-Verbrauch, Belegungsquote und warnt vor Füllständen &gt;80%.</p>
-          <span class="badge badge-success">0.71% Belegt</span>
+          <span class="badge">Kein Live-Feed angebunden</span>
         </div>
 
         <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;">
           <strong style="color:var(--text);font-size:0.9rem;">3. CoT-Loop & Drift-Detektor</strong>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0;">Erkennt zirkuläre Gedankenschleifen, repetitive Suchanfragen und zögerliche Formulierungen.</p>
-          <span class="badge badge-success">0 Loops erkannt</span>
+          <span class="badge">Nicht geprüft · Soll-Detektor</span>
         </div>
       </div>
     </div>
@@ -507,7 +508,7 @@ const mermaidCode = `flowchart TD
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:0.75rem;font-size:0.825rem;">
         <div style="background:var(--bg-panel);padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);">
-          <strong style="color:var(--text);">Agenten-Fabrik:</strong> Rolle, Modus, Tool-Whitelists
+          <strong style="color:var(--text);">Agenten-Bibliothek:</strong> Rolle, Modus, Tool-Whitelists
         </div>
         <div style="background:var(--bg-panel);padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border);">
           <strong style="color:var(--text);">Systemprompt:</strong> Host-Pfade, Windows/Mac-Besonderheiten
@@ -1064,20 +1065,34 @@ const mermaidCode = `flowchart TD
 
   // Initialdaten laden
   async function loadCognitiveState() {
+    const sysChip = document.getElementById('chip-sys-status');
     try {
       const res = await fetch('/api/memory/cognitive-state');
       if (res.ok) {
         const data = await res.json();
         if (data.langzeit_gedaechtnis) {
           const lzg = data.langzeit_gedaechtnis;
+          let total = 0;
+          let measured = 0;
           for (const [key, id] of Object.entries({facts: 'stat-facts', lessons: 'stat-lessons', sessions: 'stat-sessions', working: 'stat-working'})) {
             const count = lzg[key]?.count;
+            if (Number.isInteger(count)) {
+              total += count;
+              measured += 1;
+            }
             document.getElementById(id).textContent = Number.isInteger(count) ? count.toLocaleString('de-DE') : 'Nicht geprüft';
           }
+          if (sysChip) {
+            sysChip.textContent = measured > 0
+              ? `● bach.db verbunden · ${total.toLocaleString('de-DE')} Einträge`
+              : '● bach.db verbunden';
+          }
         }
+      } else if (sysChip) {
+        sysChip.textContent = `● Backend HTTP ${res.status}`;
       }
     } catch (e) {
-      // Unknown remains visible when the live source cannot be read.
+      if (sysChip) sysChip.textContent = '● Backend nicht erreichbar';
     }
   }
 
@@ -1441,20 +1456,32 @@ const mermaidCode = `flowchart TD
   // ═══════════════════════════════════════════════════════════════
 
   async function loadHermesStats() {
+    const statusBadge = document.getElementById('hermes-status-badge');
     try {
       const res = await fetch('/api/learning/hermes/stats');
-      if (!res.ok) return;
+      if (!res.ok) {
+        if (statusBadge) statusBadge.textContent = `Skill-Gärtner: HTTP ${res.status}`;
+        return;
+      }
       const data = await res.json();
       const setTxt = (id, val) => {
         const el = document.getElementById(id);
         if (el) el.textContent = val;
       };
-      setTxt('hermes-stat-runs', data.total_runs ?? 0);
+      const runs = data.total_runs ?? 0;
+      const pending = data.pending_candidates ?? 0;
+      setTxt('hermes-stat-runs', runs);
       setTxt('hermes-stat-noise', `${data.average_noise_reduction_percent ?? 0}%`);
-      setTxt('hermes-stat-pending', data.pending_candidates ?? 0);
+      setTxt('hermes-stat-pending', pending);
       setTxt('hermes-stat-approved', data.approved_candidates ?? 0);
       setTxt('hermes-stat-lessons', data.total_lessons_learned ?? 0);
-    } catch (_) {}
+      if (statusBadge) {
+        statusBadge.textContent = `Skill-Gärtner: ${runs} Läufe · ${pending} offen`;
+        statusBadge.title = 'Live-Statistik aus /api/learning/hermes/stats';
+      }
+    } catch (_) {
+      if (statusBadge) statusBadge.textContent = 'Skill-Gärtner: nicht erreichbar';
+    }
   }
 
   async function loadHermesCandidates(status = 'pending') {
@@ -1616,6 +1643,11 @@ const mermaidCode = `flowchart TD
     loadFactsTable();
     loadHermesStats();
     document.getElementById('memory-search-form').addEventListener('submit', searchMemory);
+    const tabParam = new URLSearchParams(location.search).get('tab');
+    const validTabs = ['ctx', 'ze', 'sensors', 'guards', 'auth', 'start', 'learn', 'ltm'];
+    if (tabParam && validTabs.includes(tabParam)) {
+      selectInspector(tabParam);
+    }
   });
 </script>
 

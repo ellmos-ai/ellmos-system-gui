@@ -217,7 +217,28 @@
     "required": false
    }
   ],
-  "/maintenance": [],
+  "/maintenance": [
+   {
+    "method": "GET",
+    "path": "/api/wartung/status",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/daemon/status",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/governance/locks",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/memory/cognitive-state",
+    "required": false
+   }
+  ],
   "/modules": [
    {
     "method": "GET",

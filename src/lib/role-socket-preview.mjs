@@ -27,11 +27,14 @@ export function countModuleRoles(catalogue) {
   return templates.filter(isModuleRole).length;
 }
 
-export function renderRoleSocketPreview(document, container, catalogue, provider, {modulesOnly = false, limit = PAGE_SIZE} = {}) {
+export function renderRoleSocketPreview(document, container, catalogue, provider, {modulesOnly = false, query = '', limit = PAGE_SIZE} = {}) {
   const sockets = catalogue?.role_socket_catalog?.provider_sockets;
+  const normalizedQuery = typeof query === 'string' ? query.trim().toLocaleLowerCase('de') : '';
   const templates = (Array.isArray(catalogue?.templates) ? catalogue.templates : [])
     .filter(template => template && typeof template === 'object' && !Array.isArray(template))
-    .filter(template => !modulesOnly || isModuleRole(template));
+    .filter(template => !modulesOnly || isModuleRole(template))
+    .filter(template => !normalizedQuery || [template.label, template.role_id, template.module_id, template.semantic_route, template.prompt, template.tier, template.socket_id]
+      .filter(Boolean).join(' ').toLocaleLowerCase('de').includes(normalizedQuery));
   const cards = [];
   for (const template of templates.slice(0, limit)) {
     const socketId = text(template.socket_id, 'domain_specialist');
@@ -57,6 +60,11 @@ export function renderRoleSocketPreview(document, container, catalogue, provider
     card.append(heading, route, binding);
     cards.push(card);
   }
+  if (!cards.length && normalizedQuery) {
+    const empty = element(document, 'p', 'Keine passenden Ocean-Rollen für diesen Suchbegriff.');
+    Object.assign(empty.style, {color: 'var(--text-muted)', fontSize: '0.8rem', margin: '0.25rem 0'});
+    cards.push(empty);
+  }
   container.replaceChildren(...cards);
   return templates.length;
 }
@@ -66,20 +74,34 @@ export async function mountRoleSocketPreview(document, fetcher = globalThis.fetc
   const select = document.getElementById('ocean-socket-provider-select');
   if (!container || !select) return;
   const source = document.getElementById('ocean-role-source-select');
+  const search = document.getElementById('ocean-role-search');
+  const status = document.getElementById('ocean-role-socket-status');
   const more = document.getElementById('ocean-role-show-more');
   let catalogue = null;
   let limit = PAGE_SIZE;
   const render = () => {
     if (!catalogue) return;
     const total = renderRoleSocketPreview(document, container, catalogue, select.value, {
-      modulesOnly: source?.value === 'module', limit,
+      modulesOnly: source?.value === 'module',
+      query: search?.value || '',
+      limit,
     });
+    if (status) {
+      const shown = Math.min(total, limit);
+      status.textContent = total === 0
+        ? '0 passende Rollen im Katalog.'
+        : `${shown} von ${total} Rollen angezeigt`;
+    }
     if (more) more.hidden = total <= limit;
   };
   const count = document.getElementById('ocean-module-role-count');
   if (count) count.textContent = '';
   select.addEventListener('change', render);
   source?.addEventListener('change', () => {
+    limit = PAGE_SIZE;
+    render();
+  });
+  search?.addEventListener('input', () => {
     limit = PAGE_SIZE;
     render();
   });
@@ -100,8 +122,10 @@ export async function mountRoleSocketPreview(document, fetcher = globalThis.fetc
       const roles = countModuleRoles(catalogue);
       if (count && roles !== null) count.textContent = roles + ' ';
       render();
+    } else if (status) {
+      status.textContent = `Rollenkatalog nicht bestätigt (HTTP ${response.status}).`;
     }
   } catch {
-    // An unavailable catalogue supplies no preview or execution evidence.
+    if (status) status.textContent = 'Rollenkatalog derzeit nicht erreichbar.';
   }
 }

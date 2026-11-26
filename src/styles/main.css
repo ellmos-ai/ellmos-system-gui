@@ -1903,6 +1903,7 @@ html[data-ui-nav-scope="custom"] .sidebar-domain-pins {
 
 .sidebar-group.active > .sidebar-group-title {
     color: var(--shell-text);
+    box-shadow: inset 2px 0 0 var(--shell-accent);
 }
 
 .sidebar-group-title {
@@ -1956,7 +1957,9 @@ html[data-ui-nav-scope="custom"] .sidebar-domain-pins {
 .sidebar-group-links {
     display: grid;
     gap: 2px;
-    padding: 0.25rem 0 0.4rem 0.4rem;
+    margin-left: 1.05rem;
+    padding: 0.25rem 0 0.4rem 0.55rem;
+    border-left: 1px solid var(--shell-border);
 }
 
 .app-sidebar .nav-item,

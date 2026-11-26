@@ -12,45 +12,72 @@ if (!route) throw new Error('Fallback-Konfiguration für /maintenance fehlt.');
       <p class="eyebrow" style="margin:0 0 0.25rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">Betrieb › Wartung (#2485, #2488)</p>
       <h1 style="margin:0 0 0.35rem 0;font-size:1.65rem;">🛠️ Wartung, System-Health &amp; Datenbankpflege</h1>
       <p style="margin:0;opacity:0.85;font-size:0.9rem;">
-        Zentrale Wartungsansicht im neuen Astro-Design: System-Health, SQLite-Datenbankpflege (<code>bach.db</code>), Lock-Prüfung und Qualitäts-Checkups.
+        Live-Wartungsansicht: System-Health, SQLite-Datenbankpflege (<code>bach.db</code>), Backups, Lock-Hygiene und Qualitäts-Checkups.
       </p>
     </div>
-    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+      <button type="button" id="maint-refresh-btn" class="btn btn-primary btn-sm">🔄 Live-Status prüfen</button>
+      <a href="/daemon?from=betrieb" class="btn btn-secondary btn-sm">⚙️ Dienste &amp; Daemon</a>
       <a href="/routinen?from=betrieb" class="btn btn-secondary btn-sm">⏱️ Routinen &amp; Jobs</a>
       <a href="/governance/logs?from=betrieb" class="btn btn-secondary btn-sm">📜 Logs &amp; Audit</a>
     </div>
   </div>
 
+  <p id="maint-live-status" role="status" aria-live="polite" style="margin:0 0 1rem;font-size:0.84rem;color:var(--text-muted);">Live-Status wird geprüft…</p>
+
+  <section aria-label="Wartungs-Kennzahlen" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.75rem;margin-bottom:1.25rem;">
+    <div class="card" style="padding:0.85rem 1rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);">
+      <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">BACH-Daemon</div>
+      <strong id="maint-kpi-daemon" style="font-size:1.05rem;">Wird geprüft…</strong>
+    </div>
+    <div class="card" style="padding:0.85rem 1rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);">
+      <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">DB-Backups</div>
+      <strong id="maint-kpi-backup" style="font-size:1.05rem;">Wird geprüft…</strong>
+    </div>
+    <div class="card" style="padding:0.85rem 1rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);">
+      <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Aktive Locks</div>
+      <strong id="maint-kpi-locks" style="font-size:1.05rem;">Wird geprüft…</strong>
+    </div>
+    <div class="card" style="padding:0.85rem 1rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);">
+      <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Live-Quellen</div>
+      <strong id="maint-kpi-sources" style="font-size:1.05rem;">– / 4</strong>
+    </div>
+  </section>
+
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-bottom:1.25rem;">
     <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h2 style="margin:0;font-size:1.05rem;">🩺 1. System-Health &amp; Adapter</h2>
-        <span class="badge">Betrieb</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
+        <h2 style="margin:0;font-size:1.05rem;">🩺 1. System-Health &amp; Daemon</h2>
+        <span class="badge" id="maint-health-badge">Wird geprüft…</span>
       </div>
-      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Prüft Erreichbarkeit des BACH/Ocean-Backends, aktive Geräte-ID-Sitzung und Laufzeit-Verbindungen.</p>
-      <a href="/settings?tab=connections" class="btn btn-secondary btn-sm" style="justify-self:start;">Verbindungsstatus prüfen →</a>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Prüft Erreichbarkeit des BACH/Ocean-Backends, verifizierten Scheduler-Daemon und aktive Jobs.</p>
+      <p id="maint-health-detail" style="margin:0;font-size:0.8rem;color:var(--text);">Live-Abfrage läuft…</p>
+      <a href="/daemon?from=betrieb" class="btn btn-secondary btn-sm" style="justify-self:start;">Dienste &amp; Daemon öffnen →</a>
     </article>
 
     <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h2 style="margin:0;font-size:1.05rem;">🗄️ 2. Datenbankpflege (bach.db)</h2>
-        <span class="badge">SQLite</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
+        <h2 style="margin:0;font-size:1.05rem;">🗄️ 2. Datenbankpflege &amp; Backups (bach.db)</h2>
+        <span class="badge" id="maint-db-badge">Wird geprüft…</span>
       </div>
-      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Tabellenbestände (<code>memory_facts</code>, <code>memory_lessons</code>, <code>tasks</code>), Integritätsprüfung und Backup-Stand.</p>
+      <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Tabellenbestände (<code>memory_facts</code>, <code>memory_lessons</code>, <code>memory_working</code>) und Backup-Stand.</p>
+      <p id="maint-db-detail" style="margin:0;font-size:0.8rem;color:var(--text);">Live-Abfrage läuft…</p>
+      <p id="maint-backup-detail" style="margin:0;font-size:0.78rem;color:var(--text-muted);">Backup-Stand wird geprüft…</p>
       <a href="/memory?from=betrieb" class="btn btn-secondary btn-sm" style="justify-self:start;">Datenbank-Inspektor öffnen →</a>
     </article>
 
     <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
         <h2 style="margin:0;font-size:1.05rem;">🔒 3. Lock-Hygiene &amp; Sperren</h2>
-        <span class="badge">Fail-Closed</span>
+        <span class="badge" id="maint-locks-badge">Wird geprüft…</span>
       </div>
       <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Prüfung abgelaufener Arbeits-Locks (<code>prune_stale_locks.py</code>) bei striktem Schutz aller <code>LOCK.user.*</code>-Sperren.</p>
+      <p id="maint-locks-detail" style="margin:0;font-size:0.8rem;color:var(--text);">Live-Abfrage läuft…</p>
       <a href="/governance/sperren?from=betrieb" class="btn btn-secondary btn-sm" style="justify-self:start;">Lock-Monitor öffnen →</a>
     </article>
 
     <article class="card" style="padding:1.15rem;border:1px solid var(--border);background:var(--bg-card);border-radius:var(--radius-md);display:grid;gap:0.5rem;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
         <h2 style="margin:0;font-size:1.05rem;">✅ 4. Qualität, Tests &amp; Use Cases</h2>
         <span class="badge">ellmos-tests</span>
       </div>
@@ -63,3 +90,7 @@ if (!route) throw new Error('Fallback-Konfiguration für /maintenance fehlt.');
     <LegacyRouteFallback route={route.path} label={route.label} reason={route.reason} nextHref={route.nextHref} nextLabel={route.nextLabel} />
   </div>
 </BachLayout>
+
+<script>
+  import '../scripts/maintenance-page.mjs';
+</script>

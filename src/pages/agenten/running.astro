@@ -22,6 +22,9 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     </div>
 
     <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+      <a href="/memory" class="btn">
+        <span>🧠</span> Memory
+      </a>
       <a href="/agenten/blueprints?restore=prompts" class="btn">
         <span>📝</span> Systemprompts
       </a>
@@ -1050,18 +1053,28 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     }
 
     function applyLivingAgentGroups() {
-      if (typeof document?.getElementById !== 'function') return;
-      window.BachLivingAgentGroups?.applyLivingGroupsToContainers?.(document, [
+      if (typeof document?.getElementById !== 'function') return null;
+      const results = window.BachLivingAgentGroups?.applyLivingGroupsToContainers?.(document, [
         document.getElementById('local-core-agent-cards'),
         document.getElementById('ready-agents-grid'),
         document.getElementById('core-agent-cards'),
-      ]);
+      ]) || [];
+      return results.reduce((acc, item) => {
+        if (!item) return acc;
+        acc.living += item.living || 0;
+        acc.paused += item.paused || 0;
+        acc.disabled += item.disabled || 0;
+        return acc;
+      }, {living: 0, paused: 0, disabled: 0});
     }
 
     function updateAgentOverviewSummary(result) {
+      const totals = applyLivingAgentGroups();
       const summary = document.getElementById('agent-overview-summary');
-      if (summary) summary.textContent = `${result.visible} von ${result.total} beobachteten Agenten sichtbar · tatsächliche Startart nur mit Laufzeitbeleg, derzeit unbekannt.`;
-      applyLivingAgentGroups();
+      const groupInfo = totals && (totals.living + totals.paused + totals.disabled > 0)
+        ? ` · Living: ${totals.living} · Pausiert: ${totals.paused} · Deaktiviert: ${totals.disabled}`
+        : '';
+      if (summary) summary.textContent = `${result.visible} von ${result.total} beobachteten Agenten sichtbar${groupInfo} · tatsächliche Startart nur mit Laufzeitbeleg, derzeit unbekannt.`;
     }
 
     function applyAgentOverviewControls() {

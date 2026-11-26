@@ -1,5 +1,5 @@
 import {domainWorkbenchRoute,domainAnonymizationRoute} from '../lib/domain-routes.mjs';
-import {loadDomainPins,setDomainPin,subscribePins,pinReadbackMatches} from '../lib/domain-pins.mjs';
+import {createDomainIconElement,loadDomainPins,setDomainPin,subscribePins,pinReadbackMatches} from '../lib/domain-pins.mjs';
 
 const node=(tag,className,text)=>{const n=document.createElement(tag);if(className)n.className=className;if(text!==undefined)n.textContent=String(text??'');return n;};
 function initialize(){

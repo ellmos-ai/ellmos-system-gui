@@ -74,6 +74,9 @@ const LINE_ICON_SVGS: Record<string, string> = {
   "rules-decisions": '<path d="M6 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
   locks: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
   "hooks-guards": '<circle cx="12" cy="5" r="2"/><path d="M12 7v9a4 4 0 0 0 8 0v-2m-2 2 2-2 2 2"/>',
+  "installation-updates": '<path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/><path d="M12 12 4 7.5M12 12l8-4.5M12 12v9"/>',
+  notes: '<path d="M5 4h14a1 1 0 0 1 1 1v10l-4 5H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M15 15v5M15 15h5M8 9h8M8 13h5"/>',
+  overview: '<path d="M3 10h18M5 10v8M10 10v8M14 10v8M19 10v8M3 18h18M4 10 12 4l8 6"/>',
   audit: '<path d="M18 20V10M12 20V4M6 20v-6"/>',
   life: '<path d="M12 21V11M12 14c-4 0-7-3-7-7 4 0 7 3 7 7zM12 11c0-4 3-7 7-7 0 4-3 7-7 7z"/>',
   assistant: '<circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/>',
@@ -708,23 +711,58 @@ function lineIconSvg(id: string): string {
 
   const validUiNavScopes = new Set(['compact', 'all', 'custom']);
   const uiNavScopeKey = 'bach-ui-nav-scope';
+  const uiNavOpenGroupsKey = 'bach-ui-nav-open-groups';
+  function readSavedOpenGroups() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(uiNavOpenGroupsKey) || '[]');
+      return new Set(Array.isArray(parsed) ? parsed.filter((id) => typeof id === 'string') : []);
+    } catch (_) {
+      return new Set();
+    }
+  }
+  function saveOpenGroups() {
+    try {
+      const openIds = [...new Set(
+        [...document.querySelectorAll('[data-nav-group]')].filter((group) => group.open).map((group) => group.dataset.navGroup).filter(Boolean),
+      )];
+      localStorage.setItem(uiNavOpenGroupsKey, JSON.stringify(openIds));
+    } catch (_) {}
+  }
   function normalizeUiNavScope(value) {
     return validUiNavScopes.has(value) ? value : 'compact';
   }
+  let applyingNavScope = false;
   function applyUiNavScope(value, persist = true) {
     const navScope = normalizeUiNavScope(value);
     document.documentElement.dataset.uiNavScope = navScope;
-    document.querySelectorAll('[data-nav-group]').forEach((group) => {
-      if (navScope === 'all') {
-        group.open = true;
-      } else if (navScope === 'compact') {
-        group.open = Boolean(group.querySelector('a.active'));
-      }
-    });
+    const savedOpen = navScope === 'custom' ? readSavedOpenGroups() : null;
+    applyingNavScope = true;
+    try {
+      document.querySelectorAll('[data-nav-group]').forEach((group) => {
+        if (navScope === 'all') {
+          group.open = true;
+        } else if (navScope === 'compact') {
+          group.open = Boolean(group.querySelector('a.active'));
+        } else if (navScope === 'custom') {
+          const groupId = group.dataset.navGroup || '';
+          group.open = Boolean(group.querySelector('a.active')) || Boolean(savedOpen?.has(groupId));
+        }
+      });
+    } finally {
+      applyingNavScope = false;
+    }
     if (persist) localStorage.setItem(uiNavScopeKey, navScope);
     window.dispatchEvent(new CustomEvent('bach-ui-nav-scope-change', { detail: { navScope } }));
     return navScope;
   }
+  document.querySelectorAll('[data-nav-group]').forEach((group) => {
+    group.addEventListener('toggle', () => {
+      if (applyingNavScope) return;
+      if (normalizeUiNavScope(localStorage.getItem(uiNavScopeKey) || document.documentElement.dataset.uiNavScope) === 'custom') {
+        saveOpenGroups();
+      }
+    });
+  });
   window.bachUiNavScope = {
     get: () => normalizeUiNavScope(localStorage.getItem(uiNavScopeKey) || document.documentElement.dataset.uiNavScope),
     set: (value, persist = true) => applyUiNavScope(value, persist),
