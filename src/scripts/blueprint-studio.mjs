@@ -306,7 +306,16 @@ function initializeStudio() {
   $("bp-pause-basis").addEventListener("change",syncPauseFields);
   $("bp-use-color").addEventListener("change",()=>{$("bp-color").disabled=!$("bp-use-color").checked;});
   document.querySelectorAll("[data-close]").forEach(button=>button.addEventListener("click",()=>close(button.dataset.close)));
-  document.querySelectorAll("[data-library]").forEach(button=>button.addEventListener("click",()=>{state.library=button.dataset.library;render();}));
+  document.querySelectorAll("[data-library]").forEach(button=>button.addEventListener("click",()=>{
+    state.library=button.dataset.library;
+    try {
+      const url=new URL(location.href);
+      if(state.library==="templates") url.searchParams.delete("tab");
+      else url.searchParams.set("tab",state.library);
+      history.replaceState(null,"",url.pathname+url.search+url.hash);
+    } catch {}
+    render();
+  }));
   handle("studio-refresh","click",loadData);handle("studio-new","click",()=>openEditor());
   handle("studio-search","input",render);handle("studio-kind","change",render);
   handle("studio-grid","click",async event=>{

@@ -138,13 +138,20 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         <strong>Deterministisches Routing:</strong> <code>ellmos-controlcenter-mcp</code> (<code>resolve_semantic_route</code> / <code>switch_profile</code>) &middot;
         <strong>Modell-Sockel:</strong> <code>reasoning_coordinator</code> | <code>domain_specialist</code> | <code>fast_worker</code>.
       </p>
-      <label style="flex-direction:row;align-items:center;gap:0.45rem;margin:0 0 0.65rem;">
-        <span>Rollenquelle</span>
-        <select id="ocean-role-source-select" style="width:auto;">
-          <option value="">Alle Rollen</option>
-          <option value="module">Modulrollen</option>
-        </select>
-      </label>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;margin:0 0 0.65rem;">
+        <label style="flex-direction:row;align-items:center;gap:0.45rem;margin:0;">
+          <span>Rollenquelle</span>
+          <select id="ocean-role-source-select" style="width:auto;">
+            <option value="">Alle Rollen</option>
+            <option value="module">Modulrollen</option>
+          </select>
+        </label>
+        <label style="flex-direction:row;align-items:center;gap:0.45rem;margin:0;flex:1;min-width:200px;">
+          <span>Suchen</span>
+          <input id="ocean-role-search" type="search" placeholder="Rolle, Modul oder Umbrella filtern" style="max-width:300px;" />
+        </label>
+        <small id="ocean-role-socket-status" class="studio-note" role="status" aria-live="polite">Rollenkatalog wird geprüft…</small>
+      </div>
       <div id="ocean-role-socket-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0.65rem;font-size:0.8rem;"></div>
       <button type="button" class="btn" id="ocean-role-show-more" style="margin-top:0.65rem;" hidden>Weitere Rollen anzeigen</button>
     </div>

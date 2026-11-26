@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "fdb5f65a1cd724c305cc7a654eea8d2740fba2812f2553f6c4a19db379ad4317",
+    "public/page-reads.v1.json": "00c49a6645f4d7d4a6d084b7f6b28e0223552bdc27e74435d2e3da8d9274958e",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -235,7 +235,7 @@
     "src/assets/ticket-symbols/wissen.svg": "285d15efe9cafd98d3faf5a138b088c4ea39593568e6681cf623e8eb0329011c",
     "src/components/CapabilityBoard.astro": "91ba5db6c0b2805d7ba85d419eed5e6372e89b0fd0ad486cd5869f55617d025b",
     "src/components/GitHubReviewEvidence.astro": "7a98dd86a8788add6abe62ac668da790a962bcad41aa4777f15186634bf66a99",
-    "src/components/Header.astro": "4d06bbf2c3e9d7b0c9341d34ca5ce5d98b7114b73f679e1359e3b0b364509b7b",
+    "src/components/Header.astro": "244ad8e9ea87904807a2e6efb6f9efa7272aa2037a8737d74eaf9d0724e679eb",
     "src/components/LegacyRouteFallback.astro": "42da78dd7d17e210b11a06834e5ae795e86c48950825076cf16719dcf206cbce",
     "src/components/ModelSockets.astro": "0731da6fd9b03e939aa87762e8421d43880ecf025f23ab850385e50c80ec767d",
     "src/components/SystemClusterStatus.astro": "e90a0ad37359ee0f7ecef0340e2b795582a18d127d7837ded3ad19aaf5c9ddbe",
@@ -244,7 +244,7 @@
     "src/components/TaskWorkerPolicySettings.astro": "05e7dd0922a685ae13c370fd92768d9e0d3f9ccdddaed86e3e120cada8e7429a",
     "src/components/WorkerLeaseCountdown.astro": "c60b7c2e33e83d833ffdd85066c1aed3d18144108af9ffb0ef09c8960f33c52d",
     "src/components/WorkerPolicySettings.astro": "5f18aa3fe8fbba8fcc76f36c306beab94b64be5154cdec086074ffd651a077d0",
-    "src/config/nav_config.json": "6ca3b184668ca2848684f9764bf2257f6e47d844fa69182a55372a6efd9f5164",
+    "src/config/nav_config.json": "8f2c52707b169f7a0162b597e4f29d63aaf71ccce30b921b50892021535e8fb1",
     "src/i18n/world.json": "5162900f4327c3b9143f7a38c29276e1f6ed9cee0617da86d361881a462fc2db",
     "src/layouts/BachLayout.astro": "280095e742e9b86c19bc7d22ac356ab829962a0c7d3821b41cf4f30312616185",
     "src/lib/agent-avatar-browser.mjs": "02b51e85852532af3549dbecd1b4c1b1bf7bf48eda7340f23523c7597ec44abf",
@@ -280,10 +280,10 @@
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
-    "src/pages/agenten/blueprints.astro": "8c2aa26804132d943019d49efd699f64ce45f56d1af8d6ea1f5fcd323081f441",
+    "src/pages/agenten/blueprints.astro": "2ef4e99683a1da1bdee3d1829a39466939bdcac85421ac2c28fac3df6f180395",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
-    "src/pages/agenten/running.astro": "1e0e11b66f5d5bf8935c32752c49cb113f9bd3298e0c3b98bb41669cfcf1a59e",
+    "src/pages/agenten/running.astro": "afcea176330a798594f68e6a3f57348611b48007ba3d165d20f7600f056e56aa",
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
     "src/pages/agenten/subscription-agents.astro": "9a47a998bc04cbc0882d4fc936fc713a70fd286a034bffdc7dc0b75c6fada06a",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
@@ -299,13 +299,13 @@
     "src/pages/governance/index.astro": "5b5ce800eff6bfa95996c969416394d4af11a3aac05352947897e5bf29f775e3",
     "src/pages/governance/logs.astro": "1227c2cb3cb5306990090b2adf9b7d6384f3e4a118db0c309011004a26e73a1d",
     "src/pages/governance/usecases.astro": "263f8f759c73b797eeb8792730721687bc7dcfec882fab33c4b22cecdfbeb9b6",
-    "src/pages/help.astro": "db44dea00e326de2b600b278c0212cffe658ddb2f4072d18602f1962bcc091d5",
+    "src/pages/help.astro": "f663f278f06357313548e12c9e83f285b84357633b41fa14d94b7b8454b26002",
     "src/pages/inbox.astro": "bbf7ea46658020ff9c3a876a7d5cef373f5f74e602de6c05b35900047bb76d06",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "ddabc8881b0fdda68a8cedaefdae47ffbb50e8687145ba777a52bbb4c14ed946",
     "src/pages/life.astro": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481",
-    "src/pages/maintenance.astro": "1e47fe3566eee28aa580867ad6eef3df5001b80aeec29d97481ff0449d70e3ab",
-    "src/pages/memory.astro": "943915b31aed448f1137de4fb9688643b5d7020e933602afcd1481ea3edb3293",
+    "src/pages/maintenance.astro": "7294172005c792f600e9609281afa82ab8cfb78c4036335430dec8da8b0ae1a3",
+    "src/pages/memory.astro": "3ba7a1abcb4253884ef1112a032c8cf42bb79e5e5479db9a19ff2f920f2ff761",
     "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
     "src/pages/notizen.astro": "55f9b57e345d574794d67a458184128d6f675dfbe4b212b1d2770d4ff4cd7865",
     "src/pages/persoenlich.astro": "9c0ca413bb88e3f823e219e7ee452c5d9283a598dab3fcd04122b83c031575b0",
@@ -321,17 +321,17 @@
     "src/pages/system/installation-updates.astro": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
     "src/pages/talk.astro": "cc28dbf6e5a8c500f6b035233ea49bbaff17dc143f050803416af27bfa55fe26",
     "src/pages/tasks.astro": "5a61f8316afc4d0fe1d78749955bc426cae3c75f67b20c2596507067652491d9",
-    "src/pages/tools.astro": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
+    "src/pages/tools.astro": "8f967ac26069007ca028010b0de9126f95c82e6f23b93e75b1dc19d026a44585",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
     "src/scripts/agent-color.mjs": "04c9904133915c2523cec8db39443fc67e1993034a33edc56bc3c4dfab9e1cc5",
     "src/scripts/agent-history.mjs": "3b5080126d5653be9931211c3c6f9cc05ad085a97fc3026117868262e08de26f",
     "src/scripts/agent-template-picker.mjs": "c2811fcf595dce2b40561a8874165ba583447147e9006ac40919de6eb629f9c1",
-    "src/scripts/blueprint-studio.mjs": "f0aed22160e0509f35e89179eedf251c126e24894cb62288845098930eab5ef3",
-    "src/scripts/domain-studio.mjs": "d883c4a608b1fd087a9c021eb6b8d496fb420a5d0412388e14c65d11cdd6d2ca",
+    "src/scripts/blueprint-studio.mjs": "8496c17b09bcd93655bcb3fd455418aa55e36b10504748b44c60aa7df4559eda",
+    "src/scripts/domain-studio.mjs": "19ffecacf34c784f3eeb9459b192a86572ca73780758baed5c797822c7d82896",
     "src/scripts/installation-updates.mjs": "c6fcc4aaee0cb0056246cb870008e27e6a538cb18037ca4fe6793f68cbbbcb6c",
     "src/scripts/marblerun-studio.mjs": "93d399ed17c1ad2360568b4f11b85e72440317d76d033807be919afaa4729c51",
     "src/styles/agent-avatars.css": "e4cb1dd96926bb0a4eba1db43b8ff8c74b907a6c5223e4b461a8b419206d1cf3",
-    "src/styles/main.css": "d95cbb61312745dd3d13f3f158882b38333117c3e5e96364c27f0a0d6c93f6ae",
+    "src/styles/main.css": "8ae7efb60f10cabc4ed3c671c9403e09d66c985b66124ee544a8221371d991ab",
     "src/styles/ticket-symbols.css": "773491f17a215df6f1fbfb339f663e99ee86618cb553277d3b35d97434f2544c",
     "tests/agent-avatar.test.mjs": "5001f4e17a5c4df5ee56a1cb04053ab5377abc49dad7a1198ec3b4a9e0b6d4c5",
     "tests/agent-color.test.mjs": "8663e1a58154b0b8c2488a89990386e28595631b3d4dc4749efeed0e20a51b98",
@@ -383,7 +383,7 @@
     "tests/agent-triggers.test.mjs": "330486fc198e42cdbfe89972c579c98f8b08901d8b5586f30ec9da74bd48925f",
     "scripts/page-reads-helpers.mjs": "aa501f6bd9ad8cedb3353f0df44623ed6cdc9f7a27244690d8ee66bf9f04778d",
     "docs/agent-triggers.md": "e30ec6bd06916cc8a54907f7612756617f58af6afa223704431d56e1b5229d4d",
-    "src/lib/role-socket-preview.mjs": "5fe445fa828709ecb8cef14fc26c2e4a3c1f9662a8f4dc19e752803cb933d47c",
+    "src/lib/role-socket-preview.mjs": "73ac6aa5883154b9b824e4d98b2d77ce17f82cd09449a1822edcd196505db8a6",
     "tests/role-socket-preview.test.mjs": "e024944cca4d787ef26c78753fabee0eb3c20b8badcab56a505b75289f83e0ff",
     "src/pages/agenten/bibliothek.astro": "4d388a99fd18fe7d8cb119ad2b3da7c41e1dfbe130b73ef8c323f7629a99186b",
     "tests/voice-mic-layout.test.mjs": "3f89ea7ff49ff62cb4e454a732af9eb67efafbc109582a2aa8e4656fa75d9780",
@@ -6693,6 +6693,77 @@
           "path": "tests/legacy-route-fallback.test.mjs",
           "previous_sha256": "4d88e87f54e3dbf893a2fe301b5efcfe9e8c81a0cdda1aa211489d77a0e17d90",
           "sha256": "10029232d6ed906ffc2a24cac55bbe7c03a69c773334758103046f418d11c573"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-26",
+      "scope": "Navigation, sidebar hierarchy, Memory, Living & Running, Agenten-Bibliothek, /domains import fix, and live /maintenance",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "fdb5f65a1cd724c305cc7a654eea8d2740fba2812f2553f6c4a19db379ad4317",
+          "sha256": "00c49a6645f4d7d4a6d084b7f6b28e0223552bdc27e74435d2e3da8d9274958e"
+        },
+        {
+          "path": "src/components/Header.astro",
+          "previous_sha256": "4d06bbf2c3e9d7b0c9341d34ca5ce5d98b7114b73f679e1359e3b0b364509b7b",
+          "sha256": "244ad8e9ea87904807a2e6efb6f9efa7272aa2037a8737d74eaf9d0724e679eb"
+        },
+        {
+          "path": "src/config/nav_config.json",
+          "previous_sha256": "6ca3b184668ca2848684f9764bf2257f6e47d844fa69182a55372a6efd9f5164",
+          "sha256": "8f2c52707b169f7a0162b597e4f29d63aaf71ccce30b921b50892021535e8fb1"
+        },
+        {
+          "path": "src/lib/role-socket-preview.mjs",
+          "previous_sha256": "5fe445fa828709ecb8cef14fc26c2e4a3c1f9662a8f4dc19e752803cb933d47c",
+          "sha256": "73ac6aa5883154b9b824e4d98b2d77ce17f82cd09449a1822edcd196505db8a6"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "8c2aa26804132d943019d49efd699f64ce45f56d1af8d6ea1f5fcd323081f441",
+          "sha256": "2ef4e99683a1da1bdee3d1829a39466939bdcac85421ac2c28fac3df6f180395"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "1e0e11b66f5d5bf8935c32752c49cb113f9bd3298e0c3b98bb41669cfcf1a59e",
+          "sha256": "afcea176330a798594f68e6a3f57348611b48007ba3d165d20f7600f056e56aa"
+        },
+        {
+          "path": "src/pages/help.astro",
+          "previous_sha256": "db44dea00e326de2b600b278c0212cffe658ddb2f4072d18602f1962bcc091d5",
+          "sha256": "f663f278f06357313548e12c9e83f285b84357633b41fa14d94b7b8454b26002"
+        },
+        {
+          "path": "src/pages/maintenance.astro",
+          "previous_sha256": "1e47fe3566eee28aa580867ad6eef3df5001b80aeec29d97481ff0449d70e3ab",
+          "sha256": "7294172005c792f600e9609281afa82ab8cfb78c4036335430dec8da8b0ae1a3"
+        },
+        {
+          "path": "src/pages/memory.astro",
+          "previous_sha256": "943915b31aed448f1137de4fb9688643b5d7020e933602afcd1481ea3edb3293",
+          "sha256": "3ba7a1abcb4253884ef1112a032c8cf42bb79e5e5479db9a19ff2f920f2ff761"
+        },
+        {
+          "path": "src/pages/tools.astro",
+          "previous_sha256": "fea3e95051dd9af9958f000579535d87dd56c02ce3753d2972863792266d6870",
+          "sha256": "8f967ac26069007ca028010b0de9126f95c82e6f23b93e75b1dc19d026a44585"
+        },
+        {
+          "path": "src/scripts/blueprint-studio.mjs",
+          "previous_sha256": "f0aed22160e0509f35e89179eedf251c126e24894cb62288845098930eab5ef3",
+          "sha256": "8496c17b09bcd93655bcb3fd455418aa55e36b10504748b44c60aa7df4559eda"
+        },
+        {
+          "path": "src/scripts/domain-studio.mjs",
+          "previous_sha256": "d883c4a608b1fd087a9c021eb6b8d496fb420a5d0412388e14c65d11cdd6d2ca",
+          "sha256": "19ffecacf34c784f3eeb9459b192a86572ca73780758baed5c797822c7d82896"
+        },
+        {
+          "path": "src/styles/main.css",
+          "previous_sha256": "d95cbb61312745dd3d13f3f158882b38333117c3e5e96364c27f0a0d6c93f6ae",
+          "sha256": "8ae7efb60f10cabc4ed3c671c9403e09d66c985b66124ee544a8221371d991ab"
         }
       ]
     }

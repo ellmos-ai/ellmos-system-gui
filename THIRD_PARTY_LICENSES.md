@@ -86,7 +86,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 Control icons (ui-icons.mjs): ear, radio, sparkles.
 
-Shell icons (Header.astro, domain-pins.mjs): domain-pins:film, domain-pins:puzzle, domain-pins:scale, domain-pins:wrench, header-inline:help-inline, header-inline:users, header-theme:ocean, header-theme:warm, header:agent-library, header:agents, header:assistant, header:audit, header:authority, header:connections, header:dashboard, header:domains, header:find-tools, header:help, header:hooks-guards, header:life, header:living-running, header:maintenance, header:messages, header:ocean-modules, header:prompt-agents, header:quality, header:routines, header:services, header:settings, header:skill-keeper, header:software, header:start, header:system, header:systems, header:tasks.
+Shell icons (Header.astro, domain-pins.mjs): domain-pins:film, domain-pins:puzzle, domain-pins:scale, domain-pins:wrench, header-inline:help-inline, header-inline:users, header-theme:ocean, header-theme:warm, header:agent-library, header:agents, header:assistant, header:audit, header:authority, header:connections, header:dashboard, header:domains, header:find-tools, header:help, header:hooks-guards, header:installation-updates, header:life, header:living-running, header:maintenance, header:messages, header:notes, header:ocean-modules, header:overview, header:prompt-agents, header:quality, header:routines, header:services, header:settings, header:skill-keeper, header:software, header:start, header:system, header:systems, header:tasks.
 
 For these, no matching icon was found in the three versions named above. Conventional pictograms (a house, a gear, a
 padlock) can resemble many icon sets without being copied from one.
