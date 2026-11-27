@@ -299,7 +299,7 @@
     "src/pages/governance/index.astro": "5b5ce800eff6bfa95996c969416394d4af11a3aac05352947897e5bf29f775e3",
     "src/pages/governance/logs.astro": "1227c2cb3cb5306990090b2adf9b7d6384f3e4a118db0c309011004a26e73a1d",
     "src/pages/governance/usecases.astro": "263f8f759c73b797eeb8792730721687bc7dcfec882fab33c4b22cecdfbeb9b6",
-    "src/pages/help.astro": "33769809d7347f8c6da2a4131b77bd1a9233992355b49ffbfdd760fdc10acaef",
+    "src/pages/help.astro": "07c56825acee95d6baf44cfd15b96538665fabf6b2e27fd6cddda10e8d6d9ee7",
     "src/pages/inbox.astro": "bbf7ea46658020ff9c3a876a7d5cef373f5f74e602de6c05b35900047bb76d06",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "ddabc8881b0fdda68a8cedaefdae47ffbb50e8687145ba777a52bbb4c14ed946",
@@ -6872,7 +6872,7 @@
         {
           "path": "src/pages/help.astro",
           "previous_sha256": "f663f278f06357313548e12c9e83f285b84357633b41fa14d94b7b8454b26002",
-          "sha256": "33769809d7347f8c6da2a4131b77bd1a9233992355b49ffbfdd760fdc10acaef"
+          "sha256": "07c56825acee95d6baf44cfd15b96538665fabf6b2e27fd6cddda10e8d6d9ee7"
         },
         {
           "path": "src/pages/life.astro",

@@ -524,7 +524,9 @@ if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
         badge.textContent = "Prüfstatus nicht verfügbar";
       }
     })();
+  </script>
 
+  <script is:inline>
     (function initHelpTopicsBrowser() {
       const listEl = document.getElementById("help-topic-list");
       const statusEl = document.getElementById("help-topic-status");
