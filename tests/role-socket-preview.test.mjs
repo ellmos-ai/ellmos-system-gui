@@ -62,7 +62,7 @@ test('normal preview preserves module badge, prompt, socket and selected provide
   const f = fixture();
   renderRoleSocketPreview(f.document, f.container, catalogue(), 'claude');
   assert.equal(f.container.children.length, 1);
-  assert.equal(f.container.textContent, 'Entwicklung📦 examplePrompt: roles/developer.mdSockel specialist → opus');
+  assert.equal(f.container.textContent, 'Entwicklung📦 examplePrompt: roles/developer.mdModell-Profil specialist → opus');
   const codes = nodes(f.container).filter(node => node.tagName === 'code');
   assert.deepEqual(codes.map(node => node.textContent), ['roles/developer.md','specialist']);
   assertStaticElements(f.container);
@@ -97,7 +97,7 @@ test('semantic routes, role badges and the first twelve cards are rendered by de
   data.templates = Array.from({length:15}, (_, index) => ({...data.templates[0], label:'Role ' + index}));
   renderRoleSocketPreview(f.document, f.container, data, 'missing-provider');
   assert.equal(f.container.children.length, 12);
-  assert.match(f.container.children[0].textContent, /Role 0🧭 coordinatorUmbrella: research-umbrellaSockel specialist → Keine Modellbindung/);
+  assert.match(f.container.children[0].textContent, /Role 0🧭 coordinatorUmbrella: research-umbrellaModell-Profil specialist → Keine Modellbindung/);
   assertStaticElements(f.container);
 });
 
@@ -140,7 +140,7 @@ test('malformed metadata cannot supply conversion hooks, tags or provider attrib
   const f = fixture(), data = catalogue({label:{toString(){throw Error('must not coerce');}},
     role_id:'fallback role', prompt:[], socket_id:{}, module_id:null});
   renderRoleSocketPreview(f.document, f.container, data, 'claude');
-  assert.equal(f.container.textContent, 'fallback role📦 Prompt: SKILL.mdSockel domain_specialist → Keine Modellbindung');
+  assert.equal(f.container.textContent, 'fallback role📦 Prompt: SKILL.mdModell-Profil domain_specialist → Keine Modellbindung');
   assertStaticElements(f.container);
 });
 

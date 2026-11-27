@@ -266,11 +266,11 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
 
   <div class="card models-relocated-banner" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:0.85rem 1.1rem;margin-bottom:1rem;">
     <div>
-      <strong style="font-size:0.9rem;">🔥 RAM-Distributor &amp; Modell-Runtime · Claiming (Klassen 1–4)</strong>
-      <p style="font-size:0.8rem;color:var(--text-muted);margin:0.15rem 0 0 0;">Zweistufiger Ressourcen-Claim: <strong>RAMDistributor</strong> (Hauptfackel für physisches RAM/VRAM) &amp; <strong>Modell-Runtime</strong> (Klassen 1 Interaktiv → 2 Auftrag → 3 Termin → 4 Hintergrund). <span id="running-release-compute-note"></span></p>
+      <strong style="font-size:0.9rem;">🔥 RAM-Zuteilung &amp; Modellzeit-Zuteilung · Claiming (Klassen 1–4)</strong>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin:0.15rem 0 0 0;">Zweistufiger Ressourcen-Claim: <strong>RAM-Zuteilung</strong> (Stufe 1: physischer RAM/VRAM über RAMDistributor) &amp; <strong>Modellzeit-Zuteilung</strong> (Stufe 2: Inferenz-Turns nach Nutzernähe-Klassen 1 Interaktiv → 2 Auftrag → 3 Termin → 4 Hintergrund). <span id="running-release-compute-note"></span></p>
     </div>
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-      <button type="button" class="btn btn-sm" id="running-release-compute-btn" title="Setzt Fackel-Priorität auf Compute, pausiert Hintergrundworker (Klasse 4) und entlädt lokale Modelle für externe Prozesse"><UiIcon name="power" /> Modell &amp; RAM für andere Prozesse freigeben</button>
+      <button type="button" class="btn btn-sm" id="running-release-compute-btn" title="Setzt Compute-Vorrang auf Compute, pausiert Hintergrundworker (Klasse 4) und entlädt lokale Modelle für externe Prozesse"><UiIcon name="power" /> Modell &amp; RAM für andere Prozesse freigeben</button>
       <a href="/help?topic=claiming" class="btn btn-sm">Claim-Doku</a>
       <a href="/settings?tab=core" class="btn btn-sm btn-primary">Zu Modelle &amp; Ressourcen →</a>
       <button type="button" class="btn btn-sm" onclick="const d=document.getElementById('running-models-resources-drawer');if(d)d.hidden=!d.hidden;">Hier ein-/ausblenden</button>
@@ -287,14 +287,14 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     <div class="torch-grid">
       <div class="torch-panel torch-owner" role="status" aria-live="polite">
         <svg id="hardware-flame" class="torch-svg" viewBox="0 0 64 80" role="img" aria-labelledby="torch-svg-title">
-          <title id="torch-svg-title">Hardware-Fackel ohne bestätigten Besitz</title>
+          <title id="torch-svg-title">RAM-Zuteilung ohne bestätigten Status</title>
           <path class="torch-flame-outer" d="M31 4c7 14 5 22 2 28 10-3 13-12 14-16 17 18 17 42 4 55-11 11-32 11-43-1C-2 59 2 41 15 28c1 9 3 14 8 17-2-16 1-29 8-41Z"/>
           <path class="torch-flame-inner" d="M33 39c2 7 6 10 9 15 5 11-1 22-11 22-10 0-16-11-11-21 2-5 8-10 13-16Z"/>
         </svg>
         <div>
-          <strong>Aktueller Fackelhalter</strong>
+          <strong>RAM-Zuteilung (Stufe 1)</strong>
           <p id="fackel-holder">Nicht geprüft</p>
-          <small id="fackel-owner-reason">Ein aktueller Halternachweis fehlt.</small>
+          <small id="fackel-owner-reason">Ein aktueller Belegungsnachweis fehlt.</small>
         </div>
       </div>
       <div class="torch-panel">
@@ -304,7 +304,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         <small>Einstellung ändert die Bevorzugung zwischen Compute und Ollama.</small>
       </div>
       <div class="torch-panel">
-        <strong>Lokaler Compute-Turn</strong>
+        <strong>Modellzeit-Zuteilung (Inferenz-Turn)</strong>
         <p id="compute-turn-status">Nicht geprüft</p>
         <small><span id="compute-turn-reason">Aktueller Turn und wartende Vordergrundanfragen.</span></small>
       </div>
@@ -664,9 +664,9 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       currentPriority = null;
       const flame = document.getElementById('hardware-flame');
       flame.classList.remove('is-owned');
-      document.getElementById('torch-svg-title').textContent = 'Hardware-Fackel ohne bestätigten Besitz';
+      document.getElementById('torch-svg-title').textContent = 'RAM-Zuteilung ohne bestätigten Status';
       document.getElementById('fackel-holder').textContent = message;
-      document.getElementById('fackel-owner-reason').textContent = 'Ein aktueller Halternachweis fehlt.';
+      document.getElementById('fackel-owner-reason').textContent = 'Ein aktueller Belegungsnachweis fehlt.';
       document.getElementById('fackel-priority').textContent = 'Nicht geprüft';
       document.getElementById('fackel-compute').textContent = 'Nicht geprüft';
       document.getElementById('fackel-capacity').textContent = 'Nicht geprüft';
@@ -690,17 +690,17 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const owned = owner.state === 'owned_by_this_system' && owner.holder_is_this_system === true && owner.flame === true && freshOwner;
         const flame = document.getElementById('hardware-flame');
         flame.classList.toggle('is-owned', owned);
-        document.getElementById('torch-svg-title').textContent = owned ? 'Hardware-Fackel: BACH rechnet ohne gemeldete Compute-Konkurrenz' : 'Hardware-Fackel ohne bestätigten eigenen Besitz';
+        document.getElementById('torch-svg-title').textContent = owned ? 'RAM-Zuteilung: BACH rechnet ohne gemeldete Compute-Konkurrenz' : 'RAM-Zuteilung ohne bestätigte eigene Belegung';
         document.getElementById('fackel-holder').textContent = owned ? String(owner.holder || 'Eigenes System') :
           owner.state === 'foreign' && freshOwner ? String(owner.holder || 'Fremdes System') :
           owner.state === 'competing_compute_reported' && freshOwner ? 'Rechenjobs melden Konkurrenz' :
           owner.state === 'idle' && freshOwner ? 'Derzeit kein lokaler BACH-Lauf' :
           owner.state === 'stale' ? 'Status veraltet' : 'Nicht geprüft';
-        document.getElementById('fackel-owner-reason').textContent = owned ? 'Frischer Halternachweis für dieses System.' :
-          owner.state === 'foreign' && freshOwner ? 'Ein anderes System hält die Fackel.' :
-          owner.state === 'competing_compute_reported' && freshOwner ? 'Ein lokaler Compute-Lock meldet konkurrierende Rechenjobs; BACH-Besitz wird deshalb nicht behauptet.' :
+        document.getElementById('fackel-owner-reason').textContent = owned ? 'Frischer Belegungsnachweis für dieses System.' :
+          owner.state === 'foreign' && freshOwner ? 'Ein anderes System hält aktuell die RAM-Zuteilung.' :
+          owner.state === 'competing_compute_reported' && freshOwner ? 'Ein lokaler Compute-Lock meldet konkurrierende Rechenjobs; BACH-Belegung wird deshalb nicht behauptet.' :
           owner.state === 'idle' && freshOwner ? 'Der lokale Control-Dienst bestätigt, dass BACH gerade keine Inferenz ausführt.' :
-          owner.state === 'stale' ? 'Der letzte Halternachweis ist zu alt.' : 'Der Hardware-Halteradapter fehlt oder liefert keinen Beleg.';
+          owner.state === 'stale' ? 'Der letzte Belegungsnachweis ist zu alt.' : 'Der Ressourcen-Adapter fehlt oder liefert keinen Beleg.';
         currentPriority = ['compute', 'ollama'].includes(f.priority?.value) ? f.priority.value : null;
         document.getElementById('fackel-priority').textContent = currentPriority === 'compute' ? 'Compute' :
           currentPriority === 'ollama' ? 'Ollama' : 'Nicht geprüft';
@@ -735,8 +735,8 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
           && Number.isFinite(cap.capacity_gib) && cap.capacity_gib > 0;
         const formatResourceNumber = value => new Intl.NumberFormat('de-DE', {maximumFractionDigits:2}).format(value);
         document.getElementById('fackel-capacity').textContent = capacityMeasured ?
-          `${reportedModelCount} geladene Modelle · ${formatResourceNumber(cap.used_gib)} / ${formatResourceNumber(cap.capacity_gib)} GiB gemeinsame Modellkapazität · ${formatResourceNumber(cap.occupied_units)} Fackelanteile belegt` :
-          cap.state === 'partial' ? 'Ollama antwortet; Fackelspeicher nicht messbar' :
+          `${reportedModelCount} geladene Modelle · ${formatResourceNumber(cap.used_gib)} / ${formatResourceNumber(cap.capacity_gib)} GiB gemeinsame RAM-Kapazität · ${formatResourceNumber(cap.occupied_units)}/10 Einheiten belegt` :
+          cap.state === 'partial' ? 'Ollama antwortet; RAM-Belegung nicht messbar' :
           cap.state === 'measured' ? 'Messung unvollständig' : 'Nicht geprüft';
         document.getElementById('fackel-loaded-models').textContent = modelNamesComplete ?
           (reportedModelCount === 0 ? 'Ollama meldet keine geladenen Modelle.' : `Ollama meldet geladene Modelle: ${reportedModels.join(', ')}`) :
@@ -768,7 +768,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         }
         await loadClusterCockpit();
         if (currentPriority !== desired) throw new Error('Readback weicht ab');
-        feedback.textContent = 'Vorrang gespeichert. Der Fackelbesitz wurde nicht verändert.';
+        feedback.textContent = 'Vorrang gespeichert. Die laufende RAM-Zuteilung wurde nicht verändert.';
       } catch (_error) {
         feedback.textContent = 'Vorrang konnte nicht bestätigt werden.';
         await loadClusterCockpit();
@@ -826,13 +826,13 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     }
 
     const SYSTEM_ROLE_DESCRIPTIONS = {
-      buddha_chat: 'Systemplatz · Chat: Persönlicher Assistent (Ticket-Master · Boss-Koordinator)',
-      buddha_always_on: 'Systemplatz · Always-On: Hintergrund-Wächter',
-      buddha_connector: 'Systemplatz · Connectoren: Telegram / WhatsApp / Signal (Ticket-Master · Boss-Koordinator)',
-      buddha_talk: 'Systemplatz · ELLMOS-Talk: Live-Funkgerät (Ticket-Master · Boss-Koordinator)',
-      interface_sensation: 'Systemplatz · Sensation & Open-Compute (Hardwareschnittstelle)',
-      interface_homecontrol: 'Systemplatz · SmartHome / HomeControl (Hardwareschnittstelle)',
-      interface_robotics: 'Systemplatz · ELLMOS Robotics (Hardwareschnittstelle)',
+      buddha_chat: 'System-Agent · Chat: Persönlicher Assistent (Ticket-Master · Boss-Koordinator)',
+      buddha_always_on: 'System-Agent · Always-On: Hintergrund-Wächter',
+      buddha_connector: 'System-Agent · Connectoren: Telegram / WhatsApp / Signal (Ticket-Master · Boss-Koordinator)',
+      buddha_talk: 'System-Agent · ELLMOS-Talk: Live-Funkgerät (Ticket-Master · Boss-Koordinator)',
+      interface_sensation: 'System-Agent · Sensation & Open-Compute (Hardwareschnittstelle)',
+      interface_homecontrol: 'System-Agent · SmartHome / HomeControl (Hardwareschnittstelle)',
+      interface_robotics: 'System-Agent · ELLMOS Robotics (Hardwareschnittstelle)',
     };
 
     function isCanonicalSystemRole(agent) {
@@ -1037,7 +1037,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       const tone = source === 'core' && agent.enabled === false ? 'idle' : tileTools.tileStatusTone(agent);
       const card = tileTools.createAgentTile(document, {
         kind, name: agent.name || agent.id,
-        kindLabel: sysRole ? (SYSTEM_ROLE_DESCRIPTIONS[agent.id] || 'Systemplatz (Hardwareschnittstelle)')
+        kindLabel: sysRole ? (SYSTEM_ROLE_DESCRIPTIONS[agent.id] || 'System-Agent (Hardwareschnittstelle)')
           : source === 'worker' ? 'Hintergrundworker' : source === 'core' ? (agent.role_id || 'Eigenes Profil') : undefined,
         avatarNode, symbolNode,
         status: {label: ctx.statusLabel, tone: ctx.tone || tone}, statusMeta,
@@ -2720,7 +2720,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ slot_id: 'buddha_always_on', updates: { enabled: false } }),
           });
-          if (note) note.textContent = ' ✅ Modell & RAM freigegeben (Fackel → Compute, Hintergrundworker pausiert).';
+          if (note) note.textContent = ' ✅ Modell & RAM freigegeben (RAM-Zuteilung → Compute-Vorrang, Hintergrundworker pausiert).';
           refreshAll();
         } catch (_) {
           if (note) note.textContent = ' ⚠️ Freigabe fehlgeschlagen.';

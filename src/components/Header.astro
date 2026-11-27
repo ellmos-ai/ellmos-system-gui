@@ -1045,7 +1045,7 @@ function lineIconSvg(id: string): string {
       if (personaSelect) personaSelect.value = persona;
       if (opmodeSelect) opmodeSelect.value = opmode;
       if (summonSelect && cfg.summon_policy) summonSelect.value = cfg.summon_policy;
-      if (activeModelPill) activeModelPill.textContent = 'Steckplatz: ' + (cfg.bound_slot || 'nicht zugeordnet');
+      if (activeModelPill) activeModelPill.textContent = 'Agent: ' + (cfg.bound_slot || 'nicht zugeordnet');
       syncSegmentedControls(persona, opmode);
 
       const modeLabels = {
