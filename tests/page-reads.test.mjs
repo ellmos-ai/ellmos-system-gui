@@ -323,3 +323,14 @@ test('a page block that appears twice in the manifest file is found (JSON.parse 
   const block = pageBlock[0];
   assert.deepEqual(duplicatePages(text.replace(block, block + ',' + block)), ['/daemon']);
 });
+
+test('manifest rejects empty {} and malformed API placeholders while matching encoded dynamic ids', () => {
+  const composed = tree({'src/pages/index.astro': page('async function run(id) { await fetch(`/api/calendar/events/${encodeURIComponent(id)}/mirror`, {method: "POST"}); }')});
+  const named = manifestOf([entry('POST', '/api/calendar/events/{id}/mirror', {dynamic: true, found_in: 'src/pages/index.astro#run'})]);
+  assert.deepEqual(check(composed, named), []);
+
+  for (const badPath of ['/api/calendar/events/{}/mirror', '/api/calendar/events/{1id}/mirror', '/api/calendar/events/', '/api/../calendar/events']) {
+    const invalid = manifestOf([entry('POST', badPath, {dynamic: true, found_in: 'src/pages/index.astro#run'})]);
+    has(check(composed, invalid), 'named {param} placeholders');
+  }
+});

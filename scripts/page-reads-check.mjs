@@ -8,10 +8,14 @@
 //        (and, for opaque URLs, its path as a literal in reachable code). A new unresolved call site is red until bound.
 import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {scan, normalizePattern} from './page-reads-scan.mjs';
 import {BINDINGS} from './page-reads-bindings.mjs';
 
 const METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
+// Matches BACH's consumer parser (system/hub/_services/gui_page_reads.py API regex):
+// every parameterized path segment must carry a valid identifier ({id}, not {}).
+const API_PATH_RE = /^\/api\/(?:[A-Za-z0-9_.~-]+|\{[A-Za-z_][A-Za-z0-9_]*\})(?:\/(?:[A-Za-z0-9_.~-]+|\{[A-Za-z_][A-Za-z0-9_]*\}))*$/;
 
 const norm = path => normalizePattern(path);
 
@@ -43,6 +47,8 @@ export function checkManifest(manifest, found, read, bindings = BINDINGS) {
       const id = `${where}: ${entry?.method} ${entry?.path}`;
       if (!METHODS.has(entry?.method)) problems.push(`${id}: invalid method`);
       if (typeof entry?.path !== 'string' || !entry.path.startsWith('/api/')) problems.push(`${id}: path must start with /api/`);
+      else if (entry.path.length > 512 || entry.path.includes('..') || !API_PATH_RE.test(entry.path))
+        problems.push(`${id}: path must match BACH API contract (named {param} placeholders, no empty {})`);
       if (typeof entry?.required !== 'boolean') problems.push(`${id}: required must be boolean`);
       if (where === 'layout' && entry?.required === true) problems.push(`${id}: layout reads must be optional`);
       if (entry?.required === true && entry?.method !== 'GET') problems.push(`${id}: only GET reads may be required (consumers reject the whole manifest otherwise)`);
@@ -140,4 +146,15 @@ export function checkRoot(root) {
   const absolute = resolve(root);
   const duplicates = duplicatePages(readFileSync(resolve(absolute, 'public', 'page-reads.v1.json'), 'utf8')).map(page => `page ${page}: declared twice in the manifest file`);
   return [...duplicates, ...checkManifest(loadManifest(absolute), scan(absolute), file => readFileSync(resolve(absolute, file), 'utf8'))];
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const root = resolve(process.argv[2] ?? '.');
+  const problems = checkRoot(root);
+  if (problems.length) {
+    for (const problem of problems) console.error(problem);
+    process.exitCode = 1;
+  } else {
+    console.log('page-reads check passed');
+  }
 }

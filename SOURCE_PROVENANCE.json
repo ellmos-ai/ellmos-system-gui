@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "afbf16049ea72aefde9cd014ce4adab8f94361ec99c72bda364e643a93959a5c",
+    "public/page-reads.v1.json": "03aaae828a15db96b3a38c13b49e73f2be68bb6fa5cb11d0b185a34b119c170e",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -353,7 +353,7 @@
     "tests/marblerun-studio.test.mjs": "f21ec6d0b86120108e29f76c0b5f3417d7198719bf2ed480ef9b1fe30513e0f3",
     "tests/memory-facts.test.mjs": "9b270f3d733fba2c857a5e57641f37da57a65bf6535908615d7ee53ae088f05b",
     "tests/model-sockets.test.mjs": "913d9db58885d022165cf219c5399e5038a4213b115d0f4da820d6d554ca36f6",
-    "tests/page-reads.test.mjs": "b11941b547f93ff9cc2f89315e6a88b78dfe49b4124e1798d98ed403efc10cfe",
+    "tests/page-reads.test.mjs": "f226fa12ff79755c248580b26c7c123f45ffb5392270a5c314a0481beff67909",
     "tests/readable-themes.test.mjs": "aedb452430b94f244853cc8c24c7bbd2587e988122dd68df402e77e0897ca72e",
     "tests/release-provenance.test.mjs": "15b7cc57e906331ec27975e00f1d41c11417768dc9f6027dbb2a39dc00f9fbd3",
     "tests/run-dompurify-browser.mjs": "e15b469539f5ab0913591e5ddac4c9eafa1f5ab9e072c6e443f6e6db8a9a8f47",
@@ -6931,6 +6931,22 @@
           "path": "public/page-reads.v1.json",
           "previous_sha256": "08094dcd60e5f5449bc19eceb96f749c9152c4955a66421fb9670b7a8955a710",
           "sha256": "afbf16049ea72aefde9cd014ce4adab8f94361ec99c72bda364e643a93959a5c"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-27",
+      "summary": "Page-reads contract: replace empty {} placeholders in /life calendar silo routes with named {id} in public/page-reads.v1.json and forbid empty {} placeholders in scripts/page-reads-check.mjs.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "afbf16049ea72aefde9cd014ce4adab8f94361ec99c72bda364e643a93959a5c",
+          "sha256": "03aaae828a15db96b3a38c13b49e73f2be68bb6fa5cb11d0b185a34b119c170e"
+        },
+        {
+          "path": "tests/page-reads.test.mjs",
+          "previous_sha256": "b11941b547f93ff9cc2f89315e6a88b78dfe49b4124e1798d98ed403efc10cfe",
+          "sha256": "f226fa12ff79755c248580b26c7c123f45ffb5392270a5c314a0481beff67909"
         }
       ]
     }
