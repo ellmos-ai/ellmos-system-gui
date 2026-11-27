@@ -238,7 +238,7 @@ import BachLayout from "../../layouts/BachLayout.astro";
       .then((d) => {
         if (d && Array.isArray(d.agents) && s1) {
           const configured = d.agents.filter((a) => a.model && a.backend).length;
-          s1.textContent = `${configured}/${d.agents.length} besetzt`;
+          s1.textContent = `${configured}/${d.agents.length} gebunden`;
         }
       })
       .catch(() => { if (s1) s1.textContent = "Bereit"; });

@@ -826,10 +826,10 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     }
 
     const SYSTEM_ROLE_DESCRIPTIONS = {
-      buddha_chat: 'System-Agent · Chat: Persönlicher Assistent (Ticket-Master · Boss-Koordinator)',
+      buddha_chat: 'System-Agent · Chat: Persönlicher Assistent (Koordination & Aufgaben-Routing)',
       buddha_always_on: 'System-Agent · Always-On: Hintergrund-Wächter',
-      buddha_connector: 'System-Agent · Connectoren: Telegram / WhatsApp / Signal (Ticket-Master · Boss-Koordinator)',
-      buddha_talk: 'System-Agent · ELLMOS-Talk: Live-Funkgerät (Ticket-Master · Boss-Koordinator)',
+      buddha_connector: 'System-Agent · Connectoren: Telegram / WhatsApp / Signal (Koordination & Routing)',
+      buddha_talk: 'System-Agent · ELLMOS-Talk: Live-Funkgerät (Koordination & Sprache)',
       interface_sensation: 'System-Agent · Sensation & Open-Compute (Hardwareschnittstelle)',
       interface_homecontrol: 'System-Agent · SmartHome / HomeControl (Hardwareschnittstelle)',
       interface_robotics: 'System-Agent · ELLMOS Robotics (Hardwareschnittstelle)',
@@ -849,15 +849,10 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     }
 
     function resolveSystemRoleOccupiedBy(agent) {
-      if (agent?.enabled === false) return 'Nicht besetzt · Schnittstelle inaktiv';
+      if (agent?.enabled === false) return 'Keine Modellbindung · Schnittstelle inaktiv';
       const model = String(agent?.model || '').trim();
       const backend = String(agent?.backend || '').trim();
-      if (!model) return 'Nicht besetzt · Schnittstelle inaktiv';
-      const list = Array.isArray(coreAgents) ? coreAgents : [];
-      const matchingLocal = list.find(other => !isCanonicalSystemRole(other) && other.model === model && other.backend === backend);
-      if (matchingLocal && matchingLocal.name) {
-        return `${matchingLocal.name} · ${model}${backend ? ' (' + backend + ')' : ''}${formatModelFallbacksSummary(agent)}`;
-      }
+      if (!model) return 'Keine Modellbindung · Schnittstelle inaktiv';
       return `${model}${backend ? ' (' + backend + ')' : ''}${formatModelFallbacksSummary(agent)}`;
     }
 
@@ -898,7 +893,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
     function tileActionsFor(agent, source, ctx) {
       const id = agent.id;
       const workerOnly = 'Nur für laufende Hintergrundworker verfügbar';
-      const viaOccupancy = 'Schnittstellen werden über die Besetzung gesteuert';
+      const viaOccupancy = 'Schnittstellen werden über ihre Modellbindung gesteuert';
       if (source === 'core') {
         const enabled = agent.enabled === true;
         const workerSlot = agent.execution_kind === 'worker' || id === 'buddha_always_on';
@@ -917,7 +912,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
                onClick: () => toggleCoreSlot(id, true)};
         return {
           run: runSpec,
-          edit: {label: ctx.sysRole ? 'Besetzung ändern' : 'Bearbeiten', onClick: () => openCoreEditor(id)},
+          edit: {label: ctx.sysRole ? 'Modellbindung ändern' : 'Bearbeiten', onClick: () => openCoreEditor(id)},
           chat: {label: 'Chat öffnen', href: '/chat?slot_id=' + encodeURIComponent(id), onClick: event => { event?.preventDefault?.(); openAgentSessionModal(agent, 'core'); }},
           assign: {href: '/tasks?create=1&assign_slot=' + encodeURIComponent(id)},
           pause: live
@@ -937,7 +932,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       if (source === 'talk') {
         return {
           run: {reason: 'Der Betriebsmodus wird im Abschnitt Talk-Betrieb eingestellt'},
-          edit: {label: 'Besetzung ändern', href: '#talk-slot'},
+          edit: {label: 'Modellbindung ändern', href: '#talk-slot'},
           chat: {label: 'Funkgerät öffnen', onClick: () => window.bachOpenTalkCompanion && window.bachOpenTalkCompanion()},
           assign: {reason: 'An Schnittstellen werden keine Aufgaben zugewiesen'},
           pause: {reason: viaOccupancy}, stop: {reason: viaOccupancy},
@@ -948,7 +943,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       if (source === 'interface') {
         return {
           run: {reason: viaOccupancy},
-          edit: {label: ctx.occupied ? 'Besetzung ändern' : 'Besetzen', onClick: () => openCoreEditor(ctx.occupied ? id : null)},
+          edit: {label: ctx.occupied ? 'Modellbindung ändern' : 'Modell binden', onClick: () => openCoreEditor(ctx.occupied ? id : null)},
           chat: {reason: 'Für Hardwareschnittstellen ist kein Chat angebunden'},
           assign: {reason: 'An Schnittstellen werden keine Aufgaben zugewiesen'},
           pause: {reason: viaOccupancy}, stop: {reason: viaOccupancy},
@@ -1008,7 +1003,6 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
       }
       const lines = ctx.modelLines || [...tileTools.tileModelLines(agent)];
       if (!ctx.modelLines) lines.splice(1, 0, coreAgentAccessLabel(agent) + ' · ' + (agent.backend || 'Anbieter unbekannt'));
-      if (sysRole) lines.push('Besetzt von: ' + resolveSystemRoleOccupiedBy(agent));
       const taskParts = [];
       if (source === 'core' && agent.runtime_verified !== true) taskParts.push('Laufstatus nicht bestätigt');
       else if (source === 'core' || source === 'worker') {
@@ -1421,7 +1415,7 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         const talkAgent = {id: 'buddha_talk', name: 'ELLMOS-Talk · Funkgerät', enabled: talkActive, status: talkActive ? 'ready' : 'paused'};
         const talkCard = renderAgentTile(talkAgent, 'talk', {
           statusLabel: talkActive ? 'Ready · Living' : 'Pausiert', tone: talkActive ? 'ok' : 'idle',
-          modelLines: [talkActive ? `Besetzt von: ${talkModel} (${talkPersona})` : 'Nicht besetzt · Schnittstelle inaktiv'],
+          modelLines: [talkActive ? `Modellbindung: ${talkModel} (${talkPersona})` : 'Keine Modellbindung · Schnittstelle inaktiv'],
         });
         coreGrid.append(talkCard);
         if (typeof registerAgentOverviewCard === 'function') registerAgentOverviewCard(coreGrid, talkCard, talkAgent, 'core', 'ready');
@@ -1436,9 +1430,9 @@ import ReturnTimeline from '../../components/ReturnTimeline.astro';
         for (const opt of optionalIfaces) {
           const occupiedAgent = data.agents.find(a => a.id === opt.id && a.enabled === true && String(a.model || '').trim());
           const icard = renderAgentTile({id: opt.id, name: opt.name}, 'interface', {
-            statusLabel: occupiedAgent ? 'Besetzt' : 'Inaktiv', tone: occupiedAgent ? 'ok' : 'idle', occupied: Boolean(occupiedAgent),
+            statusLabel: occupiedAgent ? 'Gebunden' : 'Inaktiv', tone: occupiedAgent ? 'ok' : 'idle', occupied: Boolean(occupiedAgent),
             data: {interfaceSlot: opt.id},
-            modelLines: [occupiedAgent ? `Besetzt von: ${resolveSystemRoleOccupiedBy(occupiedAgent)}` : 'Nicht besetzt · Schnittstelle ruht'],
+            modelLines: [occupiedAgent ? `Modellbindung: ${resolveSystemRoleOccupiedBy(occupiedAgent)}` : 'Keine Modellbindung · Schnittstelle ruht'],
           });
           if (occupiedAgent) icard.dataset.occupiedBy = occupiedAgent.id;
           ifaceGrid.append(icard);
