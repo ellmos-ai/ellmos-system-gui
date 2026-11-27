@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "b4eb26c639ea9b792475006e429348f9cd241bdc0652148db34298ed1cbdbbe9",
+    "public/page-reads.v1.json": "01b5eff0a86117e8b196a3f06ef9af23eb8fc45521496450a3c6671274f12955",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -303,7 +303,7 @@
     "src/pages/inbox.astro": "bbf7ea46658020ff9c3a876a7d5cef373f5f74e602de6c05b35900047bb76d06",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "ddabc8881b0fdda68a8cedaefdae47ffbb50e8687145ba777a52bbb4c14ed946",
-    "src/pages/life.astro": "26b8b6654ecdc859c7a7349c09951de677810ba4e11cde5c58d8c57d8b3be347",
+    "src/pages/life.astro": "1033abab8a809e82d8e213446a9ea2f6300ae006982fa1c45adb2eecd4ac9bd4",
     "src/pages/maintenance.astro": "7294172005c792f600e9609281afa82ab8cfb78c4036335430dec8da8b0ae1a3",
     "src/pages/memory.astro": "3ba7a1abcb4253884ef1112a032c8cf42bb79e5e5479db9a19ff2f920f2ff761",
     "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
@@ -6878,6 +6878,22 @@
           "path": "src/pages/life.astro",
           "previous_sha256": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481",
           "sha256": "26b8b6654ecdc859c7a7349c09951de677810ba4e11cde5c58d8c57d8b3be347"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-27",
+      "scope": "Life center Phase 3 rest: PDF calendar export, TerminPilot silo badge hardening, and embedded #life-agenda-panel with horizon filter and PDF/HTML/MD/TXT export",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "b4eb26c639ea9b792475006e429348f9cd241bdc0652148db34298ed1cbdbbe9",
+          "sha256": "01b5eff0a86117e8b196a3f06ef9af23eb8fc45521496450a3c6671274f12955"
+        },
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "26b8b6654ecdc859c7a7349c09951de677810ba4e11cde5c58d8c57d8b3be347",
+          "sha256": "1033abab8a809e82d8e213446a9ea2f6300ae006982fa1c45adb2eecd4ac9bd4"
         }
       ]
     }

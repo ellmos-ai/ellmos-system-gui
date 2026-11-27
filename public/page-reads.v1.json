@@ -509,6 +509,18 @@
   "/life": [
    {
     "method": "GET",
+    "path": "/api/agenda",
+    "required": false,
+    "query": "horizon"
+   },
+   {
+    "method": "GET",
+    "path": "/api/agenda/export",
+    "required": false,
+    "query": "format,horizon"
+   },
+   {
+    "method": "GET",
     "path": "/api/calendar/profiles",
     "required": false
    },

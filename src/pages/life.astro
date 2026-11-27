@@ -63,6 +63,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         </div>
         <div id="cal-export-toolbar" style="display:flex;flex-wrap:wrap;gap:0.35rem;align-items:center;">
           <span style="font-size:0.76rem;color:var(--text-muted);">Export:</span>
+          <button type="button" class="btn btn-secondary btn-sm" data-cal-export="pdf" title="Druckfertiges Kalenderblatt (PDF)">📑 PDF-Kalenderblatt</button>
           <button type="button" class="btn btn-secondary btn-sm" data-cal-export="html" title="Druckreifes Kalenderblatt (HTML)">🖨️ Blatt</button>
           <button type="button" class="btn btn-secondary btn-sm" data-cal-export="md" title="Markdown-Terminbericht">📝 MD</button>
           <button type="button" class="btn btn-secondary btn-sm" data-cal-export="txt" title="Klartext-Auszug">📄 TXT</button>
@@ -281,6 +282,33 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
          <ul><li>Fachmodul und installierte Web-Oberfläche verifizieren</li><li>Autorisierte Gesundheits-API anbinden</li><li>Erst danach Eingabe und Anzeige ergänzen</li></ul>
       </div>
     </div>
+
+    <!-- AGENDA & SCHWERPUNKTE -->
+    <section id="life-agenda-panel" class="glass-card agenda-panel" aria-labelledby="life-agenda-heading">
+      <div class="agenda-header">
+        <div>
+          <h2 id="life-agenda-heading" class="agenda-title"><span class="icon" aria-hidden="true">🧭</span> Agenda &amp; Schwerpunkte</h2>
+          <p class="card-desc">Übersicht nach Zeithorizont, Gewichtung, Fortschritt und Fristen</p>
+        </div>
+        <div class="agenda-controls">
+          <div class="agenda-horizon-filters" role="group" aria-label="Agenda-Zeithorizont">
+            <button type="button" class="agenda-horizon-btn active" data-agenda-horizon="all" aria-pressed="true">Alle</button>
+            <button type="button" class="agenda-horizon-btn" data-agenda-horizon="short" aria-pressed="false">Kurzfristig</button>
+            <button type="button" class="agenda-horizon-btn" data-agenda-horizon="mid" aria-pressed="false">Mittelfristig</button>
+            <button type="button" class="agenda-horizon-btn" data-agenda-horizon="long" aria-pressed="false">Langfristig</button>
+          </div>
+          <div id="agenda-export-toolbar" class="agenda-export-toolbar" role="group" aria-label="Agenda exportieren">
+            <span class="agenda-export-label">Export:</span>
+            <button type="button" class="btn btn-secondary btn-sm" data-agenda-export="pdf" title="Agenda als PDF herunterladen">📑 PDF</button>
+            <button type="button" class="btn btn-secondary btn-sm" data-agenda-export="html" title="Agenda als HTML öffnen">🖨️ HTML</button>
+            <button type="button" class="btn btn-secondary btn-sm" data-agenda-export="md" title="Agenda als Markdown herunterladen">📝 MD</button>
+            <button type="button" class="btn btn-secondary btn-sm" data-agenda-export="txt" title="Agenda als Klartext herunterladen">📄 TXT</button>
+          </div>
+        </div>
+      </div>
+      <p id="life-agenda-status" class="load-status" role="status" aria-live="polite">Lade Agenda …</p>
+      <div id="life-agenda-list" class="agenda-list"></div>
+    </section>
   </div>
 
   <!-- MODAL: NEUER TERMIN ANLEGEN -->
@@ -673,7 +701,117 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       :global(.month-day-cell) { min-height:72px; }
       .year-quarters-grid { grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); }
       :global(.cal-event-chip) { overflow-wrap:anywhere; }
+      .agenda-horizon-filters { width:100%; }
+      .agenda-horizon-btn { flex:1 1 auto; text-align:center; }
     }
+
+    :global(.cal-silo-btn) {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.24rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg-dark);
+      color: var(--text);
+      font-weight: 500;
+    }
+    :global(.cal-silo-btn.is-active) {
+      background: rgba(56, 189, 248, 0.18);
+      font-weight: 700;
+    }
+    :global(.cal-silo-badge) {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .agenda-panel { margin-top: 1.5rem; }
+    .agenda-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.85rem 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .agenda-title { margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--text); }
+    .agenda-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; }
+    .agenda-horizon-filters {
+      display: inline-flex;
+      flex-wrap: wrap;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px;
+      gap: 3px;
+      max-width: 100%;
+    }
+    .agenda-horizon-btn {
+      padding: 0.32rem 0.78rem;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .agenda-horizon-btn:hover { color: var(--text); }
+    .agenda-horizon-btn.active { background: var(--accent); color: #0b0d14; }
+    .agenda-export-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
+    .agenda-export-label { font-size: 0.76rem; color: var(--text-muted); }
+    .agenda-list { display: grid; gap: 0.7rem; }
+    :global(.agenda-row) {
+      min-width: 0;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-dark);
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    :global(.agenda-row-head) {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.45rem 0.75rem;
+    }
+    :global(.agenda-item-title) { color: var(--text); font-size: 0.95rem; overflow-wrap: anywhere; }
+    :global(.agenda-badges) { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+    :global(.agenda-horizon-badge) { font-size: 0.72rem; }
+    :global(.agenda-horizon-short) { background: rgba(244, 63, 94, 0.16); color: var(--error-text, #fda4af); }
+    :global(.agenda-horizon-mid) { background: rgba(245, 158, 11, 0.16); color: var(--warning-text, #fcd34d); }
+    :global(.agenda-horizon-long) { background: rgba(56, 189, 248, 0.16); color: var(--accent-text); }
+    :global(.agenda-meta) { margin: 0; color: var(--text-muted); font-size: 0.8rem; overflow-wrap: anywhere; }
+    :global(.agenda-progress-wrap) { display: flex; align-items: center; gap: 0.65rem; }
+    :global(.agenda-progress-track) {
+      flex: 1;
+      height: 8px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    :global(.agenda-progress-fill) {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--success) 100%);
+      border-radius: 999px;
+    }
+    :global(.agenda-progress-label) {
+      min-width: 2.8rem;
+      text-align: right;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    :global(.agenda-empty) { margin: 0.25rem 0; color: var(--text-muted); font-size: 0.86rem; }
 
     /* Common */
     .card-grid {
@@ -719,7 +857,8 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     .life-container.standalone-focus .tab-bar,
     .life-container.standalone-focus .tab-pane:not(#pane-selbstmanagement),
     .life-container.standalone-focus #pane-selbstmanagement .glass-card:first-child,
-    .life-container.standalone-focus #btn-focus-window { display:none !important; }
+    .life-container.standalone-focus #btn-focus-window,
+    .life-container.standalone-focus #life-agenda-panel { display:none !important; }
     .life-container.standalone-focus #pane-selbstmanagement { display:block; }
     .life-container.standalone-focus .card-grid { grid-template-columns:minmax(0,1fr); }
     .stats-row {
@@ -791,7 +930,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     let _currentDate = new Date();
     let _loadedEvents = [];
     let _activeSilo = 'all';
-    let _calProfiles = [
+    const DEFAULT_CAL_PROFILES = [
       { id: 'user', name: 'Nutzer', color: '#38bdf8' },
       { id: 'tickets', name: 'Tickets', color: '#f59e0b' },
       { id: 'finanzen', name: 'Finanzen', color: '#10b981' },
@@ -801,23 +940,40 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       { id: 'terminpilot', name: 'TerminPilot', color: '#14b8a6' },
       { id: 'routinen', name: 'Routinen', color: '#94a3b8' },
     ];
+    const DEFAULT_CAL_PROFILE_MAP = Object.fromEntries(DEFAULT_CAL_PROFILES.map(p => [p.id, p]));
+    let _calProfiles = DEFAULT_CAL_PROFILES.map(p => ({ ...p }));
+
+    function safeCalendarBadgeColor(value, fallback = '#38bdf8') {
+      const raw = typeof value === 'string' ? value.trim() : '';
+      return /^#[0-9a-fA-F]{3,8}$/.test(raw) ? raw : fallback;
+    }
 
     function renderCalendarSiloButtons() {
       const host = document.getElementById('cal-silo-filters');
       if (!host) return;
       host.replaceChildren();
       const lbl = document.createElement('span');
-      lbl.style.cssText = 'font-size:0.76rem;color:var(--text-muted);margin-right:0.2rem;';
+      lbl.style.fontSize = '0.76rem';
+      lbl.style.color = 'var(--text-muted)';
+      lbl.style.marginRight = '0.2rem';
       lbl.textContent = 'Silos:';
       host.appendChild(lbl);
       const makeBtn = (id, label, color, count) => {
         const b = document.createElement('button');
         b.type = 'button';
         const active = _activeSilo === id;
-        b.style.cssText = `display:inline-flex;align-items:center;gap:0.35rem;padding:0.24rem 0.6rem;border-radius:999px;font-size:0.75rem;cursor:pointer;border:1px solid ${active ? (color || 'var(--accent)') : 'var(--border)'};background:${active ? 'rgba(56,189,248,0.18)' : 'var(--bg-dark)'};color:var(--text);font-weight:${active ? '700' : '500'};`;
-        if (color) {
+        b.className = active ? 'cal-silo-btn is-active' : 'cal-silo-btn';
+        b.dataset.calSilo = String(id);
+        b.setAttribute('aria-pressed', active ? 'true' : 'false');
+        const safeColor = color ? safeCalendarBadgeColor(color, DEFAULT_CAL_PROFILE_MAP[id]?.color || '#38bdf8') : null;
+        if (active) {
+          b.style.borderColor = safeColor || 'var(--accent)';
+        }
+        if (safeColor) {
           const dot = document.createElement('span');
-          dot.style.cssText = `width:7px;height:7px;border-radius:50%;background:${color};display:inline-block;`;
+          dot.className = 'cal-silo-badge';
+          dot.setAttribute('aria-hidden', 'true');
+          dot.style.backgroundColor = safeColor;
           b.appendChild(dot);
         }
         const txt = document.createElement('span');
@@ -832,7 +988,11 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       };
       host.appendChild(makeBtn('all', 'Gesamtkalender', null, null));
       for (const p of _calProfiles) {
-        host.appendChild(makeBtn(p.id, p.name || p.id, p.color || '#38bdf8', typeof p.count === 'number' ? p.count : undefined));
+        if (!p || typeof p.id !== 'string' || !p.id.trim()) continue;
+        const fallback = DEFAULT_CAL_PROFILE_MAP[p.id];
+        const label = String(p.name || p.label || fallback?.name || p.id);
+        const color = p.color || fallback?.color || '#38bdf8';
+        host.appendChild(makeBtn(p.id, label, color, typeof p.count === 'number' ? p.count : undefined));
       }
     }
 
@@ -843,7 +1003,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         if (!res.ok) return;
         const data = await res.json();
         if (Array.isArray(data?.profiles) && data.profiles.length) {
-          _calProfiles = data.profiles;
+          _calProfiles = data.profiles.filter(p => p && typeof p.id === 'string' && p.id.trim());
           renderCalendarSiloButtons();
         }
       } catch (_) {}
@@ -876,6 +1036,233 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       } catch (_) {
         if (status) status.textContent = 'Kalender-Export derzeit nicht erreichbar.';
       }
+    }
+
+    // ── AGENDA & SCHWERPUNKTE ──
+    let _agendaHorizon = 'all';
+    let _agendaRequestSeq = 0;
+
+    const AGENDA_HORIZON_LABELS = {
+      all: 'Alle',
+      short: 'Kurzfristig',
+      mid: 'Mittelfristig',
+      long: 'Langfristig',
+    };
+
+    const AGENDA_STATUS_LABELS = {
+      open: 'Offen',
+      active: 'Aktiv',
+      in_progress: 'In Bearbeitung',
+      paused: 'Pausiert',
+      done: 'Erledigt',
+      completed: 'Erledigt',
+    };
+
+    function formatAgendaProgress(raw) {
+      if (raw === null || raw === undefined || raw === '') return null;
+      const num = Number(raw);
+      if (!Number.isFinite(num)) return null;
+      return Math.max(0, Math.min(100, Math.round(num)));
+    }
+
+    function renderAgendaEmpty(container, text) {
+      container.replaceChildren();
+      const empty = document.createElement('p');
+      empty.className = 'agenda-empty';
+      empty.textContent = text;
+      container.appendChild(empty);
+    }
+
+    function renderAgendaItems(items) {
+      const container = document.getElementById('life-agenda-list');
+      if (!container) return;
+      container.replaceChildren();
+      if (!Array.isArray(items) || !items.length) {
+        renderAgendaEmpty(container, 'Für diesen Zeithorizont sind aktuell keine Agenda-Schwerpunkte eingetragen.');
+        return;
+      }
+      for (const item of items) {
+        if (!item || typeof item !== 'object') continue;
+        const row = document.createElement('article');
+        row.className = 'agenda-row';
+        if (item.id != null) row.dataset.agendaId = String(item.id);
+
+        const head = document.createElement('div');
+        head.className = 'agenda-row-head';
+
+        const title = document.createElement('strong');
+        title.className = 'agenda-item-title';
+        title.textContent = String(item.title || 'Ohne Titel');
+        head.appendChild(title);
+
+        const badges = document.createElement('div');
+        badges.className = 'agenda-badges';
+
+        const horizonRaw = String(item.horizon || '').trim().toLowerCase();
+        const horizonKnown = Object.prototype.hasOwnProperty.call(AGENDA_HORIZON_LABELS, horizonRaw);
+        if (item.horizon != null && String(item.horizon).trim() !== '') {
+          const hBadge = document.createElement('span');
+          hBadge.className = `badge agenda-horizon-badge ${horizonKnown && horizonRaw !== 'all' ? `agenda-horizon-${horizonRaw}` : 'badge-neutral'}`;
+          hBadge.textContent = horizonKnown ? AGENDA_HORIZON_LABELS[horizonRaw] : String(item.horizon).trim();
+          badges.appendChild(hBadge);
+        }
+
+        if (item.category != null && String(item.category).trim() !== '') {
+          const catBadge = document.createElement('span');
+          catBadge.className = 'badge badge-neutral';
+          catBadge.textContent = String(item.category).trim();
+          badges.appendChild(catBadge);
+        }
+
+        if (item.status != null && String(item.status).trim() !== '') {
+          const statusKey = String(item.status).trim().toLowerCase();
+          const sBadge = document.createElement('span');
+          sBadge.className = `badge ${statusKey === 'done' || statusKey === 'completed' ? 'badge-success' : 'badge-secondary'}`;
+          sBadge.textContent = Object.prototype.hasOwnProperty.call(AGENDA_STATUS_LABELS, statusKey)
+            ? AGENDA_STATUS_LABELS[statusKey]
+            : String(item.status).trim();
+          badges.appendChild(sBadge);
+        }
+
+        head.appendChild(badges);
+        row.appendChild(head);
+
+        const metaParts = [];
+        if (item.weight !== null && item.weight !== undefined && String(item.weight).trim() !== '') {
+          metaParts.push(`Gewichtung: ${String(item.weight).trim()}`);
+        }
+        if (item.priority !== null && item.priority !== undefined && String(item.priority).trim() !== '') {
+          metaParts.push(`Priorität: ${String(item.priority).trim()}`);
+        }
+        metaParts.push(item.deadline != null && String(item.deadline).trim() !== '' ? `Frist: ${String(item.deadline).trim()}` : 'Keine Frist');
+
+        const meta = document.createElement('p');
+        meta.className = 'agenda-meta';
+        meta.textContent = metaParts.join(' · ');
+        row.appendChild(meta);
+
+        const pct = formatAgendaProgress(item.progress);
+        const progressWrap = document.createElement('div');
+        progressWrap.className = 'agenda-progress-wrap';
+
+        const track = document.createElement('div');
+        track.className = 'agenda-progress-track';
+        track.setAttribute('role', 'progressbar');
+        track.setAttribute('aria-valuemin', '0');
+        track.setAttribute('aria-valuemax', '100');
+        track.setAttribute('aria-valuenow', String(pct ?? 0));
+        track.setAttribute('aria-label', `Fortschritt: ${pct !== null ? `${pct} %` : 'nicht angegeben'}`);
+
+        const fill = document.createElement('div');
+        fill.className = 'agenda-progress-fill';
+        fill.style.width = `${pct ?? 0}%`;
+        track.appendChild(fill);
+
+        const pctLabel = document.createElement('span');
+        pctLabel.className = 'agenda-progress-label';
+        pctLabel.textContent = pct !== null ? `${pct} %` : '–';
+
+        progressWrap.append(track, pctLabel);
+        row.appendChild(progressWrap);
+
+        container.appendChild(row);
+      }
+    }
+
+    function updateAgendaHorizonButtons() {
+      document.querySelectorAll('[data-agenda-horizon]').forEach(btn => {
+        const horizon = btn.getAttribute('data-agenda-horizon') || 'all';
+        const active = horizon === _agendaHorizon;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+    }
+
+    async function loadAgendaItems(horizon = _agendaHorizon) {
+      const normalizedHorizon = Object.prototype.hasOwnProperty.call(AGENDA_HORIZON_LABELS, horizon) ? horizon : 'all';
+      _agendaHorizon = normalizedHorizon;
+      updateAgendaHorizonButtons();
+
+      const status = document.getElementById('life-agenda-status');
+      const container = document.getElementById('life-agenda-list');
+      if (!container) return;
+
+      const reqSeq = ++_agendaRequestSeq;
+      if (status) status.textContent = 'Lade Agenda …';
+
+      try {
+        const res = await lifeApiFetch(`/api/agenda?horizon=${encodeURIComponent(normalizedHorizon)}`);
+        if (reqSeq !== _agendaRequestSeq) return;
+        if (!res.ok) {
+          renderAgendaEmpty(container, 'Agenda konnte aktuell nicht geladen werden.');
+          if (status) {
+            status.textContent = res.status === 401 || res.status === 403
+              ? 'Bitte über die Geräteanmeldung anmelden.'
+              : `Agenda konnte nicht geladen werden (HTTP ${res.status}).`;
+          }
+          return;
+        }
+        const data = await res.json();
+        if (reqSeq !== _agendaRequestSeq) return;
+        if (data?.available === false) {
+          const notice = typeof data.message === 'string' && data.message.trim()
+            ? data.message.trim()
+            : 'Die Agenda-Anbindung steht aktuell noch nicht bereit.';
+          renderAgendaEmpty(container, notice);
+          if (status) status.textContent = '';
+          return;
+        }
+        const items = Array.isArray(data?.items) ? data.items : [];
+        renderAgendaItems(items);
+        if (status) {
+          status.textContent = items.length
+            ? `${items.length} ${items.length === 1 ? 'Schwerpunkt' : 'Schwerpunkte'} (${AGENDA_HORIZON_LABELS[normalizedHorizon]})`
+            : '';
+        }
+      } catch (_) {
+        if (reqSeq !== _agendaRequestSeq) return;
+        renderAgendaEmpty(container, 'Die Agenda ist derzeit nicht erreichbar.');
+        if (status) status.textContent = 'Agenda konnte wegen eines Netzwerkfehlers nicht geladen werden.';
+      }
+    }
+
+    async function exportAgendaReport(format) {
+      const allowed = new Set(['pdf', 'html', 'md', 'txt']);
+      const fmt = allowed.has(String(format).toLowerCase()) ? String(format).toLowerCase() : 'pdf';
+      const horizon = Object.prototype.hasOwnProperty.call(AGENDA_HORIZON_LABELS, _agendaHorizon) ? _agendaHorizon : 'all';
+      const status = document.getElementById('life-agenda-status');
+      try {
+        const res = await lifeApiFetch(`/api/agenda/export?format=${encodeURIComponent(fmt)}&horizon=${encodeURIComponent(horizon)}`);
+        if (!res.ok) {
+          if (status) status.textContent = `Agenda-Export fehlgeschlagen (HTTP ${res.status}).`;
+          return;
+        }
+        const blob = await res.blob();
+        const objUrl = URL.createObjectURL(blob);
+        if (fmt === 'html') {
+          window.open(objUrl, '_blank', 'noopener');
+        } else {
+          const a = document.createElement('a');
+          a.href = objUrl;
+          a.download = `ocean-agenda-${horizon}.${fmt}`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }
+        setTimeout(() => URL.revokeObjectURL(objUrl), 10000);
+        if (status) status.textContent = `Agenda-Export (${fmt.toUpperCase()}) erstellt.`;
+      } catch (_) {
+        if (status) status.textContent = 'Agenda-Export derzeit nicht erreichbar.';
+      }
+    }
+
+    function setupAgendaControls() {
+      document.querySelectorAll('[data-agenda-horizon]').forEach(btn => {
+        btn.addEventListener('click', () => loadAgendaItems(btn.getAttribute('data-agenda-horizon') || 'all'));
+      });
+      document.querySelectorAll('[data-agenda-export]').forEach(btn => {
+        btn.addEventListener('click', () => exportAgendaReport(btn.getAttribute('data-agenda-export') || 'pdf'));
+      });
     }
 
     const MONTH_NAMES = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
@@ -1656,7 +2043,9 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
     document.addEventListener('DOMContentLoaded', () => {
       setupTabs();
+      setupAgendaControls();
       loadCalendarEvents();
+      loadAgendaItems();
       loadAgentOptions();
       checkLifeProviders();
       document.getElementById('routine-add')?.addEventListener('click', () => openRoutineForm());
