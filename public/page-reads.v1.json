@@ -1026,6 +1026,16 @@
   "/settings": [
    {
     "method": "GET",
+    "path": "/api/system/models/tuning",
+    "required": false
+   },
+   {
+    "method": "PUT",
+    "path": "/api/system/models/tuning",
+    "required": false
+   },
+   {
+    "method": "GET",
     "path": "/api/gui/backend-origin",
     "required": true
    },

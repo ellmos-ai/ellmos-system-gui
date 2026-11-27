@@ -392,6 +392,23 @@ import AbortNoticeSettings from "../components/AbortNoticeSettings.astro";
           <p id="settings-fackel-feedback" role="status" aria-live="polite" style="font-size:0.8rem;color:var(--text-muted);margin:0.5rem 0 0 0;"></p>
         </div>
 
+        <div class="glass-card" id="settings-local-model-tuning" style="grid-column: 1 / -1;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.5rem;">
+            <h3 style="margin:0;"><span class="icon" aria-hidden="true">🎛️</span> Lokale Modelle · Hardware-Default-Profile &amp; Kontextfenster (<code>num_ctx</code>)</h3>
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+              <span class="badge" id="settings-model-tuning-host-ram">Wird geprüft</span>
+              <button id="settings-model-tuning-refresh" class="btn btn-secondary" type="button" style="font-size:0.78rem;padding:0.25rem 0.6rem;">Aktualisieren</button>
+            </div>
+          </div>
+          <p class="card-desc" style="margin-bottom:0.75rem;">
+            Sichere Standardwerte je RAM-Größe sind automatisch aktiv (Zero-Config-Default) — eingreifen musst du erst bei Bedarf oder Speicherengpässen. Änderungen aktualisieren Modell-Config und lokales Reserve-Budget gemeinsam.
+          </p>
+          <p id="settings-model-tuning-status" role="status" aria-live="polite" style="font-size:0.84rem;color:var(--text-muted);margin:0 0 0.75rem 0;">
+            Hardware-Default-Profile werden geladen…
+          </p>
+          <div id="settings-model-tuning-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:0.85rem;"></div>
+        </div>
+
         <div class="glass-card" id="settings-openrouter-card" style="grid-column: 1 / -1;">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.5rem;">
             <h3 style="margin:0;"><span class="icon">🌐</span> OpenRouter · kostenlose Modelle (Free Tier)</h3>
@@ -1097,6 +1114,14 @@ import AbortNoticeSettings from "../components/AbortNoticeSettings.astro";
 
 <script>
   import { describeBackendOrigin, setupSettingsTabs } from '../lib/settings-connections.mjs';
+  import {
+    describeModelTuningSummary,
+    formatConfidenceLabel,
+    formatNumberDe,
+    formatSourceLabel,
+    sortModelTuningEntries,
+    validateNumCtxInput,
+  } from '../lib/model-tuning.mjs';
 
   document.addEventListener('DOMContentLoaded', () => {
     setupSettingsTabs(document, window);
@@ -1352,5 +1377,159 @@ import AbortNoticeSettings from "../components/AbortNoticeSettings.astro";
     });
 
     loadUiSettings();
+
+    const tuningHostBadge = document.getElementById('settings-model-tuning-host-ram');
+    const tuningStatus = document.getElementById('settings-model-tuning-status');
+    const tuningList = document.getElementById('settings-model-tuning-list');
+    const tuningRefreshBtn = document.getElementById('settings-model-tuning-refresh');
+
+    async function saveModelTuning(modelMeta, payload, rowStatusEl, buttons) {
+      for (const b of buttons) if (b) b.disabled = true;
+      if (rowStatusEl) rowStatusEl.textContent = 'Speichere und prüfe Readback…';
+      try {
+        const res = await fetch('/api/system/models/tuning', {
+          method: 'PUT',
+          cache: 'no-store',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 401 || res.status === 403) {
+          throw new Error('Geräteanmeldung erforderlich (/token-dashboard).');
+        }
+        if (!res.ok || data.ok !== true) {
+          throw new Error(data.detail || ('HTTP ' + res.status));
+        }
+        await loadLocalModelTuning();
+        if (tuningStatus) {
+          const applied = data.resolved?.num_ctx;
+          tuningStatus.textContent = payload.reset_to_default
+            ? `Hardware-Default für ${modelMeta.model} wiederhergestellt (${formatNumberDe(applied)} Token).`
+            : `Kontextfenster für ${modelMeta.model} auf ${formatNumberDe(applied)} Token gespeichert${data.reserve_policy_synced ? ' (inkl. Reserve-Budget)' : ''}.`;
+        }
+      } catch (err) {
+        if (rowStatusEl) rowStatusEl.textContent = 'Nicht gespeichert: ' + (err?.message || 'Fehler');
+        for (const b of buttons) if (b) b.disabled = false;
+      }
+    }
+
+    function renderModelTuningCard(item) {
+      const card = document.createElement('div');
+      card.style.cssText = 'display:flex;flex-direction:column;gap:0.55rem;padding:0.9rem;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius-sm);';
+
+      const header = document.createElement('div');
+      header.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;flex-wrap:wrap;';
+      const title = document.createElement('strong');
+      title.textContent = item.model;
+      title.style.fontSize = '0.92rem';
+
+      const badges = document.createElement('div');
+      badges.style.cssText = 'display:flex;gap:0.35rem;flex-wrap:wrap;';
+      if (item.installed) {
+        const bInst = document.createElement('span');
+        bInst.className = 'badge badge-accent';
+        bInst.textContent = 'Installiert';
+        badges.appendChild(bInst);
+      }
+      const bConf = document.createElement('span');
+      bConf.className = 'badge';
+      bConf.textContent = formatConfidenceLabel(item.confidence_tier);
+      badges.appendChild(bConf);
+      if (item.supported_on_host === false) {
+        const bWarn = document.createElement('span');
+        bWarn.className = 'badge';
+        bWarn.style.cssText = 'border-color:var(--accent-red, #ef4444);color:var(--accent-red, #ef4444);';
+        bWarn.textContent = 'RAM-Grenze überschritten';
+        badges.appendChild(bWarn);
+      }
+      header.append(title, badges);
+
+      const meta = document.createElement('small');
+      meta.style.cssText = 'color:var(--text-muted);line-height:1.45;';
+      const tierLabel = item.matched_tier_min_ram_gib != null ? `ab ${item.matched_tier_min_ram_gib} GiB` : 'Basis';
+      meta.textContent = `${tierLabel} · Aktiv: ${formatNumberDe(item.num_ctx)} Token (${formatSourceLabel(item.num_ctx_source)}) · Sicher: ${formatNumberDe(item.num_ctx_safe)} · Max: ${formatNumberDe(item.num_ctx_max)} · Empfohlen: ${item.recommended_max_tool_rounds} Turns (Handoff ${item.handoff_percent} %)`;
+
+      const controls = document.createElement('div');
+      controls.style.cssText = 'display:flex;gap:0.45rem;align-items:center;flex-wrap:wrap;margin-top:0.15rem;';
+
+      const label = document.createElement('label');
+      const inputId = 'num-ctx-' + String(item.model).replace(/[^a-zA-Z0-9_-]/g, '_');
+      label.htmlFor = inputId;
+      label.textContent = 'num_ctx:';
+      label.style.cssText = 'font-size:0.78rem;color:var(--text-muted);';
+
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.id = inputId;
+      input.min = '512';
+      input.max = '262144';
+      input.step = '1024';
+      input.value = String(item.num_ctx);
+      input.style.cssText = 'width:6.5rem;padding:0.3rem 0.45rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.82rem;';
+
+      const saveBtn = document.createElement('button');
+      saveBtn.type = 'button';
+      saveBtn.className = 'btn btn-primary';
+      saveBtn.textContent = 'Speichern';
+      saveBtn.style.cssText = 'padding:0.28rem 0.65rem;font-size:0.78rem;';
+
+      const resetBtn = document.createElement('button');
+      resetBtn.type = 'button';
+      resetBtn.className = 'btn btn-secondary';
+      resetBtn.textContent = 'Hardware-Default';
+      resetBtn.disabled = !item.has_manual_override;
+      resetBtn.style.cssText = 'padding:0.28rem 0.65rem;font-size:0.78rem;';
+
+      const rowStatus = document.createElement('small');
+      rowStatus.setAttribute('role', 'status');
+      rowStatus.setAttribute('aria-live', 'polite');
+      rowStatus.style.cssText = 'color:var(--text-muted);min-height:1em;';
+      if (item.notes) rowStatus.textContent = item.notes;
+
+      saveBtn.addEventListener('click', () => {
+        const check = validateNumCtxInput(input.value, item);
+        if (!check.ok) {
+          rowStatus.textContent = check.error;
+          return;
+        }
+        if (check.warning) rowStatus.textContent = check.warning;
+        saveModelTuning(item, { model: item.model, num_ctx: check.value }, rowStatus, [saveBtn, resetBtn]);
+      });
+
+      resetBtn.addEventListener('click', () => {
+        saveModelTuning(item, { model: item.model, reset_to_default: true }, rowStatus, [saveBtn, resetBtn]);
+      });
+
+      controls.append(label, input, saveBtn, resetBtn);
+      card.append(header, meta, controls, rowStatus);
+      return card;
+    }
+
+    async function loadLocalModelTuning() {
+      if (!tuningList || !tuningStatus || !tuningHostBadge) return;
+      if (tuningRefreshBtn) tuningRefreshBtn.disabled = true;
+      try {
+        const res = await fetch('/api/system/models/tuning', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const summary = describeModelTuningSummary(data);
+        if (!summary.ready) throw new Error('Adapter-Antwort ungültig');
+        tuningHostBadge.textContent = summary.hostBadge;
+        tuningHostBadge.className = 'badge badge-accent';
+        tuningStatus.textContent = summary.summaryText;
+        const sorted = sortModelTuningEntries(data.models);
+        tuningList.replaceChildren(...sorted.map(renderModelTuningCard));
+      } catch (err) {
+        tuningHostBadge.textContent = 'Nicht verfügbar';
+        tuningHostBadge.className = 'badge';
+        tuningStatus.textContent = 'Hardware-Default-Katalog nicht erreichbar (' + (err?.message || 'Adapter fehlt') + ').';
+        tuningList.replaceChildren();
+      } finally {
+        if (tuningRefreshBtn) tuningRefreshBtn.disabled = false;
+      }
+    }
+
+    tuningRefreshBtn?.addEventListener('click', loadLocalModelTuning);
+    loadLocalModelTuning();
   });
 </script>
