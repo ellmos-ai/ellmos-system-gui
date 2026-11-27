@@ -622,21 +622,21 @@
    },
    {
     "method": "POST",
-    "path": "/api/calendar/events/{}/mirror",
+    "path": "/api/calendar/events/{id}/mirror",
     "required": false,
     "dynamic": true,
     "found_in": "src/pages/life.astro#runEventSiloAction"
    },
    {
     "method": "POST",
-    "path": "/api/calendar/events/{}/transfer",
+    "path": "/api/calendar/events/{id}/transfer",
     "required": false,
     "dynamic": true,
     "found_in": "src/pages/life.astro#runEventSiloAction"
    },
    {
     "method": "POST",
-    "path": "/api/calendar/events/{}/clone",
+    "path": "/api/calendar/events/{id}/clone",
     "required": false,
     "dynamic": true,
     "found_in": "src/pages/life.astro#runEventSiloAction"
