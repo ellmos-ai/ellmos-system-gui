@@ -60,6 +60,37 @@ import OceanSystem from '../../components/OceanSystem.astro';
     </div>
   </section>
   <OceanSystem />
+
+  <!-- PB-7: Modul-Anbindungsraster (/api/modules/surfaces) -->
+  <section id="ocean-module-surfaces-section" style="margin-top:1.5rem;padding:1.25rem;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);" aria-labelledby="ocean-surfaces-title">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:0.9rem;">
+      <div>
+        <p style="margin:0 0 0.25rem;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-text);">PB-7 · MODUL-ANBINDUNGSRASTER (<code>/api/modules/surfaces</code>)</p>
+        <h2 id="ocean-surfaces-title" style="margin:0 0 0.25rem;font-size:1.25rem;">🧩 Modul-Oberflächen &amp; Anbindungsstand</h2>
+        <p id="ocean-surfaces-status" style="margin:0;font-size:0.84rem;color:var(--text-muted);" role="status" aria-live="polite">Lade Modul-Anbindungsraster …</p>
+      </div>
+      <div id="ocean-surfaces-kpis" style="display:flex;gap:0.45rem;flex-wrap:wrap;align-items:center;"></div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.9rem;">
+      <div id="ocean-surfaces-filters" role="group" aria-label="Modul-Filter" style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+        <button type="button" class="btn btn-sm btn-primary" data-surface-filter="all" aria-pressed="true">Alle</button>
+        <button type="button" class="btn btn-sm btn-secondary" data-surface-filter="gui" aria-pressed="false">Mit GUI-Fläche</button>
+        <button type="button" class="btn btn-sm btn-secondary" data-surface-filter="agent_only" aria-pressed="false">Nur Agent (agent_only)</button>
+        <button type="button" class="btn btn-sm btn-secondary" data-surface-filter="demo" aria-pressed="false">Demo-Adapter</button>
+      </div>
+      <input
+        id="ocean-surfaces-search"
+        type="search"
+        placeholder="Modul oder Route filtern …"
+        aria-label="Modul oder Route filtern"
+        style="padding:0.42rem 0.7rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-panel);color:var(--text);font-size:0.82rem;min-width:220px;"
+      />
+    </div>
+
+    <div id="ocean-module-surfaces-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:0.75rem;"></div>
+  </section>
+
   <script is:inline>
     (async function hydrateOceanHostCard() {
       const summary = document.getElementById('ocean-host-mac-summary');
@@ -91,6 +122,142 @@ import OceanSystem from '../../components/OceanSystem.astro';
         summary.textContent = parts.join(' · ');
       } catch (_) {
         summary.textContent = 'Zentraler BACH/Ocean-Server (bach.db via Tailscale/SSH) · Live-Modellstatus derzeit nicht erreichbar.';
+      }
+    })();
+
+    (async function hydrateModuleSurfacesGrid() {
+      const statusEl = document.getElementById('ocean-surfaces-status');
+      const kpisEl = document.getElementById('ocean-surfaces-kpis');
+      const gridEl = document.getElementById('ocean-module-surfaces-grid');
+      const searchInput = document.getElementById('ocean-surfaces-search');
+      const filterBtns = Array.from(document.querySelectorAll('[data-surface-filter]'));
+      if (!gridEl) return;
+
+      let allModules = [];
+      let activeFilter = 'all';
+
+      function makeBadge(text, extraStyle = '') {
+        const span = document.createElement('span');
+        span.className = 'badge';
+        span.textContent = text;
+        if (extraStyle) span.setAttribute('style', extraStyle);
+        return span;
+      }
+
+      function renderGrid() {
+        const query = (searchInput?.value || '').trim().toLowerCase();
+        const filtered = allModules.filter((mod) => {
+          const surfaces = Array.isArray(mod?.ui?.surfaces) ? mod.ui.surfaces : [];
+          if (activeFilter === 'gui' && (mod.agent_only === true || surfaces.length === 0)) return false;
+          if (activeFilter === 'agent_only' && mod.agent_only !== true) return false;
+          if (activeFilter === 'demo' && mod.demo_mode !== true && mod.integration_status !== 'demo') return false;
+          if (query) {
+            const hay = `${mod.id || ''} ${mod.name || ''} ${mod.category || ''} ${surfaces.join(' ')}`.toLowerCase();
+            if (!hay.includes(query)) return false;
+          }
+          return true;
+        });
+
+        gridEl.replaceChildren();
+        if (!filtered.length) {
+          const empty = document.createElement('p');
+          empty.style.cssText = 'margin:0;font-size:0.84rem;color:var(--text-muted);';
+          empty.textContent = 'Keine Module passen zum aktuellen Filter.';
+          gridEl.append(empty);
+          return;
+        }
+
+        for (const mod of filtered) {
+          const card = document.createElement('article');
+          card.style.cssText = 'padding:0.85rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);display:flex;flex-direction:column;gap:0.45rem;';
+          const head = document.createElement('div');
+          head.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;gap:0.4rem;flex-wrap:wrap;';
+          const title = document.createElement('strong');
+          title.style.cssText = 'font-size:0.88rem;color:var(--text);';
+          title.textContent = String(mod.name || mod.id || 'Modul');
+          const badges = document.createElement('div');
+          badges.style.cssText = 'display:flex;gap:0.3rem;flex-wrap:wrap;';
+          const isDemo = mod.demo_mode === true || mod.integration_status === 'demo';
+          if (isDemo) {
+            badges.append(makeBadge('DEMO', 'border-color:#f59e0b;color:#f59e0b;'));
+          } else if (mod.integration_status) {
+            badges.append(makeBadge(String(mod.integration_status)));
+          }
+          if (mod.agent_only === true) {
+            badges.append(makeBadge('agent_only', 'opacity:0.85;'));
+          }
+          head.append(title, badges);
+          card.append(head);
+
+          const meta = document.createElement('div');
+          meta.style.cssText = 'font-size:0.75rem;color:var(--text-muted);';
+          meta.textContent = `${mod.id || ''}${mod.category ? ' · ' + mod.category : ''}`;
+          card.append(meta);
+
+          const surfaces = Array.isArray(mod?.ui?.surfaces) ? mod.ui.surfaces : [];
+          const row = document.createElement('div');
+          row.style.cssText = 'display:flex;gap:0.35rem;flex-wrap:wrap;margin-top:0.15rem;';
+          if (surfaces.length > 0) {
+            for (const route of surfaces) {
+              const s = String(route || '');
+              if (s.startsWith('/') && !s.startsWith('//')) {
+                const a = document.createElement('a');
+                a.href = s;
+                a.className = 'badge';
+                a.style.cssText = 'text-decoration:none;border-color:var(--accent);color:var(--accent-text);';
+                a.textContent = s;
+                row.append(a);
+              }
+            }
+          } else {
+            const note = document.createElement('span');
+            note.style.cssText = 'font-size:0.74rem;color:var(--text-muted);';
+            note.textContent = mod.agent_only ? 'Bewusst ohne eigene Oberfläche (agent_only).' : 'Keine GUI-Fläche hinterlegt.';
+            row.append(note);
+          }
+          card.append(row);
+          gridEl.append(card);
+        }
+      }
+
+      filterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          activeFilter = btn.getAttribute('data-surface-filter') || 'all';
+          filterBtns.forEach((b) => {
+            const on = b === btn;
+            b.classList.toggle('btn-primary', on);
+            b.classList.toggle('btn-secondary', !on);
+            b.setAttribute('aria-pressed', String(on));
+          });
+          renderGrid();
+        });
+      });
+      searchInput?.addEventListener('input', renderGrid);
+
+      try {
+        const res = await fetch('/api/modules/surfaces', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const modMap = data && typeof data.modules === 'object' ? data.modules : {};
+        allModules = Object.values(modMap).sort((a, b) => String(a?.id || '').localeCompare(String(b?.id || '')));
+        const guiCount = allModules.filter((m) => !m.agent_only && Array.isArray(m?.ui?.surfaces) && m.ui.surfaces.length > 0).length;
+        const agentOnlyCount = allModules.filter((m) => m.agent_only === true).length;
+        const demoCount = allModules.filter((m) => m.demo_mode === true || m.integration_status === 'demo').length;
+        if (kpisEl) {
+          kpisEl.replaceChildren(
+            makeBadge(`Gesamt: ${allModules.length}`),
+            makeBadge(`Mit GUI: ${guiCount}`),
+            makeBadge(`agent_only: ${agentOnlyCount}`),
+            makeBadge(`Demo: ${demoCount}`, demoCount > 0 ? 'border-color:#f59e0b;color:#f59e0b;' : ''),
+          );
+        }
+        if (statusEl) {
+          const src = data?.data_source || data?.['data-source'] || 'measured';
+          statusEl.textContent = `${allModules.length} Module aus /api/modules/surfaces geladen (Quelle: ${src}).`;
+        }
+        renderGrid();
+      } catch (_) {
+        if (statusEl) statusEl.textContent = 'Modul-Anbindungsraster (/api/modules/surfaces) derzeit nicht erreichbar.';
       }
     })();
   </script>
