@@ -21,9 +21,9 @@ import OceanSystem from '../../components/OceanSystem.astro';
       <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--accent);background:var(--bg-panel);">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.35rem;">
           <strong>🍎 Mac Studio (Leader)</strong>
-          <span class="badge">24/7 Server &amp; Compute</span>
+          <span class="badge" id="ocean-host-mac-badge">24/7 Server &amp; Compute</span>
         </div>
-        <p style="margin:0;font-size:0.81rem;color:var(--text-muted);">Zentraler BACH/Ocean-Server, Qwen 3.5 / Ollama Compute-Host, <code>bach.db</code> Hauptinstanz via Tailscale/SSH.</p>
+        <p id="ocean-host-mac-summary" style="margin:0;font-size:0.81rem;color:var(--text-muted);">Zentraler BACH/Ocean-Server &amp; lokaler Compute-Host (<code>bach.db</code> Hauptinstanz via Tailscale/SSH). Live-Modellstatus wird geladen …</p>
       </article>
 
       <article style="padding:0.95rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
@@ -60,4 +60,38 @@ import OceanSystem from '../../components/OceanSystem.astro';
     </div>
   </section>
   <OceanSystem />
+  <script is:inline>
+    (async function hydrateOceanHostCard() {
+      const summary = document.getElementById('ocean-host-mac-summary');
+      const badge = document.getElementById('ocean-host-mac-badge');
+      if (!summary) return;
+      try {
+        const [cockpitRes, tuningRes] = await Promise.all([
+          fetch('/api/system/cluster-cockpit').catch(() => null),
+          fetch('/api/system/models/tuning').catch(() => null),
+        ]);
+        const parts = ['Zentraler BACH/Ocean-Server (bach.db via Tailscale/SSH)'];
+        if (tuningRes && tuningRes.ok) {
+          const td = await tuningRes.json();
+          const ram = Number(td?.host_ram_gib || 0);
+          const installed = Array.isArray(td?.models) ? td.models.filter((m) => m.installed).length : 0;
+          if (ram > 0 && badge) badge.textContent = `${Math.round(ram)} GiB RAM · ${installed} lokale Modelle`;
+        }
+        if (cockpitRes && cockpitRes.ok) {
+          const cd = await cockpitRes.json();
+          const cap = cd?.fackel?.capacity || {};
+          const loaded = Array.isArray(cap.loaded_models) ? cap.loaded_models : [];
+          if (loaded.length) {
+            const gib = typeof cap.used_gib === 'number' ? ` (${cap.used_gib.toFixed(1)} GiB)` : '';
+            parts.push(`Aktiv geladen: ${loaded.join(', ')}${gib}`);
+          } else {
+            parts.push('Aktuell kein lokales Modell im RAM geladen');
+          }
+        }
+        summary.textContent = parts.join(' · ');
+      } catch (_) {
+        summary.textContent = 'Zentraler BACH/Ocean-Server (bach.db via Tailscale/SSH) · Live-Modellstatus derzeit nicht erreichbar.';
+      }
+    })();
+  </script>
 </BachLayout>

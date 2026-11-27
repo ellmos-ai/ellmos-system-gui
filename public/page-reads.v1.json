@@ -195,6 +195,18 @@
   "/help": [
    {
     "method": "GET",
+    "path": "/api/help/topics",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/help/topics/{topic}",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/pages/help.astro#openHelpTopic"
+   },
+   {
+    "method": "GET",
     "path": "/api/domains/modules",
     "required": false
    },
@@ -495,6 +507,16 @@
    }
   ],
   "/life": [
+   {
+    "method": "GET",
+    "path": "/api/calendar/profiles",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/calendar/export",
+    "required": false
+   },
    {
     "method": "GET",
     "path": "/api/calendar/events",
@@ -2027,6 +2049,16 @@
    }
   ],
   "/system/ocean": [
+   {
+    "method": "GET",
+    "path": "/api/system/cluster-cockpit",
+    "required": false
+   },
+   {
+    "method": "GET",
+    "path": "/api/system/models/tuning",
+    "required": false
+   },
    {
     "method": "GET",
     "path": "/api/capabilities/catalog",

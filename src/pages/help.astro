@@ -397,6 +397,36 @@ if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
         </div>
       </div>
     </div>
+
+    <!-- Live BACH-Hilfebrowser (PB-17) -->
+    <div id="help-live-topics-browser" style="margin-top:1.4rem;padding:1.1rem;border-radius:10px;border:1px solid rgba(56,189,248,0.3);background:rgba(15,23,42,0.55);">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.65rem;">
+        <div>
+          <strong style="font-size:1rem;">📚 BACH-Hilfebrowser (Live-Hilfetexte)</strong>
+          <p style="margin:0.2rem 0 0;font-size:0.82rem;color:var(--text-muted);">Durchsuche die lokalen BACH-Hilfetexte (<code>system/docs/help/*.txt</code>) direkt nach Thema und Sprache.</p>
+        </div>
+        <span id="help-topic-status" role="status" style="font-size:0.78rem;padding:0.2rem 0.55rem;border-radius:6px;background:rgba(148,163,184,0.18);">Lade Themen …</span>
+      </div>
+      <div style="display:flex;gap:0.55rem;flex-wrap:wrap;margin-bottom:0.75rem;">
+        <input id="help-topic-search" type="search" placeholder="Thema oder Begriff suchen (z. B. memory, backup, ollama)…" style="flex:1;min-width:220px;padding:0.45rem 0.7rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);color:var(--text);font-size:0.85rem;" />
+        <select id="help-topic-lang" aria-label="Hilfe-Sprache" style="padding:0.45rem 0.7rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-dark);color:var(--text);font-size:0.85rem;">
+          <option value="de">Deutsch (de)</option>
+          <option value="en">English (en)</option>
+          <option value="es">Español (es)</option>
+          <option value="ja">日本語 (ja)</option>
+          <option value="ru">Русский (ru)</option>
+          <option value="zh">中文 (zh)</option>
+        </select>
+        <button type="button" id="help-topic-search-btn" class="btn btn-primary btn-sm">Suchen</button>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(220px,320px) 1fr;gap:0.85rem;align-items:start;">
+        <div id="help-topic-list" style="display:flex;flex-direction:column;gap:0.35rem;max-height:360px;overflow-y:auto;padding-right:0.25rem;"></div>
+        <div id="help-topic-preview-wrap" style="padding:0.85rem;border-radius:8px;border:1px solid rgba(148,163,184,0.2);background:rgba(15,23,42,0.75);min-height:180px;max-height:360px;overflow:auto;">
+          <div id="help-topic-preview-title" style="font-weight:700;font-size:0.9rem;margin-bottom:0.45rem;color:var(--accent-text);">Kein Hilfethema ausgewählt</div>
+          <pre id="help-topic-preview-body" style="margin:0;white-space:pre-wrap;font-size:0.8rem;line-height:1.45;color:var(--text-muted);">Wähle links ein Hilfethema aus, um den vollständigen Text anzuzeigen.</pre>
+        </div>
+      </div>
+    </div>
   </section>
 
   <div hidden>
@@ -493,6 +523,81 @@ if (!route) throw new Error("Fallback-Konfiguration für /help fehlt.");
       } catch (_err) {
         badge.textContent = "Prüfstatus nicht verfügbar";
       }
+    })();
+  </script>
+
+  <script is:inline>
+    (function initHelpTopicsBrowser() {
+      const listEl = document.getElementById("help-topic-list");
+      const statusEl = document.getElementById("help-topic-status");
+      const searchEl = document.getElementById("help-topic-search");
+      const langEl = document.getElementById("help-topic-lang");
+      const btnEl = document.getElementById("help-topic-search-btn");
+      const titleEl = document.getElementById("help-topic-preview-title");
+      const bodyEl = document.getElementById("help-topic-preview-body");
+      if (!listEl || !statusEl) return;
+
+      async function openHelpTopic(topicId, lang) {
+        if (!titleEl || !bodyEl) return;
+        titleEl.textContent = `Lade ${topicId} (${lang}) …`;
+        bodyEl.textContent = "";
+        try {
+          const res = await fetch(`/api/help/topics/${encodeURIComponent(topicId)}?lang=${encodeURIComponent(lang)}`);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          titleEl.textContent = `${data.topic || topicId} · ${data.language || lang} (${data.file || ""})`;
+          bodyEl.textContent = String(data.content || "Kein Inhalt vorhanden.");
+        } catch (_err) {
+          titleEl.textContent = `Hilfethema ${topicId} nicht lesbar`;
+          bodyEl.textContent = "Das Backend konnte diesen Hilfetext derzeit nicht ausliefern.";
+        }
+      }
+
+      async function loadHelpTopics() {
+        const q = String(searchEl?.value || "").trim();
+        const lang = String(langEl?.value || "de").trim();
+        statusEl.textContent = "Suche Hilfetexte …";
+        try {
+          const params = new URLSearchParams({ lang, limit: "60" });
+          if (q) params.set("q", q);
+          const res = await fetch(`/api/help/topics?${params.toString()}`);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          const items = Array.isArray(data?.topics) ? data.topics : [];
+          const total = Number(data?.total_files ?? items.length);
+          statusEl.textContent = `${items.length} Treffer (${total} Hilfedateien)`;
+          listEl.replaceChildren();
+          if (!items.length) {
+            const empty = document.createElement("div");
+            empty.style.cssText = "font-size:0.82rem;color:var(--text-muted);padding:0.4rem;";
+            empty.textContent = "Keine passenden Hilfethemen gefunden.";
+            listEl.appendChild(empty);
+            return;
+          }
+          for (const item of items) {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.style.cssText = "text-align:left;padding:0.45rem 0.65rem;border-radius:7px;border:1px solid rgba(148,163,184,0.22);background:rgba(15,23,42,0.55);color:var(--text);cursor:pointer;font-size:0.82rem;";
+            const strong = document.createElement("strong");
+            strong.textContent = String(item.topic || "");
+            const meta = document.createElement("div");
+            meta.style.cssText = "font-size:0.74rem;color:var(--text-muted);margin-top:0.15rem;";
+            meta.textContent = String(item.summary || item.file || "");
+            btn.append(strong, meta);
+            btn.addEventListener("click", () => openHelpTopic(String(item.topic || ""), lang));
+            listEl.appendChild(btn);
+          }
+        } catch (_err) {
+          statusEl.textContent = "Hilfebrowser derzeit nicht verbunden";
+        }
+      }
+
+      btnEl?.addEventListener("click", loadHelpTopics);
+      langEl?.addEventListener("change", loadHelpTopics);
+      searchEl?.addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter") { ev.preventDefault(); loadHelpTopics(); }
+      });
+      loadHelpTopics();
     })();
   </script>
 </BachLayout>

@@ -134,7 +134,7 @@ import BackButton from "../components/BackButton.astro";
         </div>
         <div style="padding:0.6rem 0.75rem;border-radius:var(--radius-sm);background:var(--bg-dark);border:1px solid var(--border);font-size:0.78rem;color:var(--text-muted);">
           <strong>Lokale Sprach-Pipeline (<code>ellmos-voice-io</code>):</strong>
-          <div id="talk-voice-pipeline-detail" style="margin-top:0.2rem;">STT: <code>/api/voice/stt</code> (faster-whisper) · TTS: <code>/api/voice/tts</code> (Piper / Kokoro WAV)</div>
+          <div id="talk-voice-pipeline-detail" style="margin-top:0.2rem;">Prüfe lokale Sprach-Pipeline über <code>/api/voice/status</code> …</div>
         </div>
         <p id="talk-api-status" style="margin:0;font-size:0.8rem;color:var(--text-muted);" role="status">
           Prüfe <code>/api/talk/state</code> …
@@ -506,7 +506,7 @@ import BackButton from "../components/BackButton.astro";
         if (fastModelSelect && cfg.fast_relay_model) fastModelSelect.value = cfg.fast_relay_model;
         if (wakewordInput && cfg.wake_word) wakewordInput.value = cfg.wake_word;
         if (apiStatus) {
-          apiStatus.textContent = `Steckplatz: ${cfg.bound_slot || "nicht zugeordnet"} · Modell am Steckplatz konfiguriert · Modus: ${cfg.operating_mode || "ptt"}`;
+          apiStatus.textContent = `System-Agent: ${cfg.bound_slot || "nicht zugeordnet"} · Modellbindung aktiv · Modus: ${cfg.operating_mode || "ptt"}`;
         }
       }
       if (window.__bachTalkConfig) syncFromGlobalConfig(window.__bachTalkConfig);
@@ -537,16 +537,25 @@ import BackButton from "../components/BackButton.astro";
       fetch("/api/voice/status")
         .then((r) => (r.ok ? r.json() : null))
         .then((v) => {
-          if (!v || !v.status) return;
+          if (!v || !v.status) {
+            if (voicePill) voicePill.textContent = "Sprachstatus nicht bestätigt";
+            if (voiceDetail) voiceDetail.textContent = "Backend meldet derzeit keinen bestätigten Voice-Status.";
+            return;
+          }
           const st = v.status;
+          const sttName = st.stt_backend || "nicht erkannt";
+          const ttsName = st.tts_backend || "nicht erkannt";
           if (voicePill) {
-            voicePill.textContent = `STT: ${st.stt_backend || "faster-whisper"} · TTS: ${st.tts_backend || "piper/wave"}`;
+            voicePill.textContent = `STT: ${sttName} · TTS: ${ttsName}`;
           }
           if (voiceDetail) {
-            voiceDetail.textContent = `STT (${st.stt_backend || "whisper"}): ${v.stt_permission ? "Freigegeben" : "Gesperrt"} · TTS (${st.tts_backend || "piper"}): ${v.tts_permission ? "Freigegeben" : "Gesperrt"}`;
+            voiceDetail.textContent = `STT (${sttName}): ${v.stt_permission ? "Freigegeben" : "Gesperrt"} · TTS (${ttsName}): ${v.tts_permission ? "Freigegeben" : "Gesperrt"}`;
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          if (voicePill) voicePill.textContent = "Sprachstatus nicht erreichbar";
+          if (voiceDetail) voiceDetail.textContent = "Sprach-Pipeline (/api/voice/status) derzeit nicht erreichbar.";
+        });
     })();
   </script>
 </BachLayout>
