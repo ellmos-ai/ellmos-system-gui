@@ -378,6 +378,38 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     </div>
   </div>
 
+  <!-- MODAL: TERMIN-SILO-AKTIONEN (Spiegeln / Transferieren / Klonen) -->
+  <div id="modal-event-silo-action" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:2001;">
+    <div style="background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-md);width:100%;max-width:460px;padding:1.5rem;box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+      <h3 style="font-size:1.15rem;font-weight:700;margin:0 0 0.35rem;color:var(--text);">🔀 Termin-Silo-Aktion</h3>
+      <p id="silo-action-event-summary" style="font-size:0.84rem;color:var(--text-muted);margin:0 0 0.9rem;"></p>
+      <div id="silo-action-controls" style="display:flex;flex-direction:column;gap:0.75rem;">
+        <div>
+          <label for="silo-action-target" style="display:block;font-size:0.8rem;color:var(--text-muted);margin-bottom:0.25rem;">Ziel-Kalender-Silo</label>
+          <select id="silo-action-target" style="width:100%;padding:0.55rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;">
+            <option value="user">Nutzerkalender (user)</option>
+            <option value="tickets">Ticket-Kalender (tickets)</option>
+            <option value="finanzen">Finanzkalender (finanzen)</option>
+            <option value="gesundheit">Arzttermine &amp; Gesundheit (gesundheit)</option>
+            <option value="geburtstage_privat">Geburtstage privat</option>
+            <option value="geburtstage_beruflich">Geburtstage beruflich</option>
+            <option value="terminpilot">TerminPilot (terminpilot)</option>
+            <option value="routinen">Routinen (routinen)</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:0.45rem;flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary btn-sm" data-silo-op="mirror">🪞 Spiegeln</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-silo-op="transfer">➡️ Transferieren</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-silo-op="clone">📋 Klonen</button>
+        </div>
+      </div>
+      <p id="silo-action-feedback" class="load-status" role="status" aria-live="polite" style="margin:0.75rem 0 0;"></p>
+      <div style="display:flex;justify-content:flex-end;margin-top:0.85rem;">
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-close-silo-action">Schließen</button>
+      </div>
+    </div>
+  </div>
+
   <style>
     .hidden { display: none !important; }
     .life-container {
@@ -1378,10 +1410,14 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
             <div class="day-slot-time">${hourStr}</div>
             <div class="day-slot-content">
               ${slotEvents.map(e => `
-                <div style="background:var(--bg-card);border:1px solid var(--accent);border-left:4px solid var(--accent);padding:0.4rem 0.75rem;border-radius:4px;font-size:0.8rem;">
-                  <strong style="color:var(--text);">${escapeHtml(e.title)}</strong>
-                  ${e.location ? `<span style="color:var(--text-muted);font-size:0.75rem;"> @ ${escapeHtml(e.location)}</span>` : ''}
-                  <span class="badge badge-accent" style="margin-left:0.5rem;font-size:0.65rem;">${escapeHtml(e.origin === 'user' ? 'Nutzertermin' : e.origin === 'system' ? 'Systemtermin' : 'Herkunft unbekannt')}</span>
+                <div class="day-event-card" data-event-id="${escapeHtml(String(e.id ?? ''))}" style="background:var(--bg-card);border:1px solid var(--accent);border-left:4px solid var(--accent);padding:0.4rem 0.75rem;border-radius:4px;font-size:0.8rem;display:flex;justify-content:space-between;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+                  <div>
+                    <strong style="color:var(--text);">${escapeHtml(e.title)}</strong>
+                    ${e.location ? `<span style="color:var(--text-muted);font-size:0.75rem;"> @ ${escapeHtml(e.location)}</span>` : ''}
+                    <span class="badge badge-secondary" style="margin-left:0.4rem;font-size:0.65rem;">${escapeHtml(e.calendar_id || 'user')}</span>
+                    <span class="badge badge-accent" style="margin-left:0.3rem;font-size:0.65rem;">${escapeHtml(e.origin === 'user' ? 'Nutzertermin' : e.origin === 'system' ? 'Systemtermin' : 'Herkunft unbekannt')}</span>
+                  </div>
+                  ${Number.isInteger(Number(e.id)) && !e.read_only ? `<button type="button" class="btn btn-secondary btn-sm" data-open-silo-action="${escapeHtml(String(e.id))}" style="padding:0.18rem 0.5rem;font-size:0.72rem;">🔀 Silo-Aktion</button>` : ''}
                 </div>
               `).join('')}
             </div>
@@ -1389,6 +1425,9 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         `;
       }
       container.innerHTML = html;
+      container.querySelectorAll('[data-open-silo-action]').forEach(btn => {
+        btn.addEventListener('click', () => openEventSiloModal(Number(btn.getAttribute('data-open-silo-action'))));
+      });
     }
 
     // ── 2. WOCHENANSICHT ──
@@ -1550,6 +1589,74 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     function closeAddEventModal() {
       document.getElementById('modal-add-event').classList.add('hidden');
     }
+
+    let _siloActionEventId = null;
+
+    function openEventSiloModal(eventId) {
+      const ev = _loadedEvents.find(item => Number(item.id) === Number(eventId));
+      const modal = document.getElementById('modal-event-silo-action');
+      const summary = document.getElementById('silo-action-event-summary');
+      const feedback = document.getElementById('silo-action-feedback');
+      const targetSel = document.getElementById('silo-action-target');
+      if (!ev || !modal) return;
+      _siloActionEventId = Number(ev.id);
+      if (summary) {
+        summary.textContent = `„${ev.title || 'Termin'}“ · Aktuelles Silo: ${ev.calendar_id || 'user'} (${ev.start_datetime || ''})`;
+      }
+      if (feedback) feedback.textContent = '';
+      if (targetSel && ev.calendar_id === 'tickets') targetSel.value = 'user';
+      modal.classList.remove('hidden');
+    }
+
+    function closeEventSiloModal() {
+      _siloActionEventId = null;
+      document.getElementById('modal-event-silo-action')?.classList.add('hidden');
+    }
+
+    async function runEventSiloAction(action) {
+      const feedback = document.getElementById('silo-action-feedback');
+      const targetCal = document.getElementById('silo-action-target')?.value || 'user';
+      if (!Number.isInteger(_siloActionEventId) || _siloActionEventId <= 0) return;
+      if (feedback) feedback.textContent = 'Silo-Aktion wird ausgeführt …';
+      const payloadBody = JSON.stringify({ target_calendar_id: targetCal });
+      try {
+        let res;
+        if (action === 'mirror') {
+          res = await lifeApiFetch(`/api/calendar/events/${_siloActionEventId}/mirror`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payloadBody,
+          });
+        } else if (action === 'transfer') {
+          res = await lifeApiFetch(`/api/calendar/events/${_siloActionEventId}/transfer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payloadBody,
+          });
+        } else {
+          res = await lifeApiFetch(`/api/calendar/events/${_siloActionEventId}/clone`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payloadBody,
+          });
+        }
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.ok === false) {
+          if (feedback) feedback.textContent = data.detail || `Silo-Aktion fehlgeschlagen (HTTP ${res.status}).`;
+          return;
+        }
+        if (feedback) feedback.textContent = `Erfolgreich (${action}) → Ziel-Silo „${targetCal}“.`;
+        await loadCalendarProfiles();
+        await loadCalendarEvents();
+      } catch (e) {
+        if (feedback) feedback.textContent = 'Netzwerkfehler bei Silo-Aktion: ' + e.message;
+      }
+    }
+
+    document.getElementById('btn-close-silo-action')?.addEventListener('click', closeEventSiloModal);
+    document.querySelectorAll('[data-silo-op]').forEach(btn => {
+      btn.addEventListener('click', () => runEventSiloAction(btn.getAttribute('data-silo-op') || 'mirror'));
+    });
 
     async function submitNewEvent() {
       const title = document.getElementById('ne-title').value.trim();

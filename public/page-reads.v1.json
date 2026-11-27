@@ -619,6 +619,27 @@
     "method": "GET",
     "path": "/api/financial/summary",
     "required": false
+   },
+   {
+    "method": "POST",
+    "path": "/api/calendar/events/{}/mirror",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/pages/life.astro#runEventSiloAction"
+   },
+   {
+    "method": "POST",
+    "path": "/api/calendar/events/{}/transfer",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/pages/life.astro#runEventSiloAction"
+   },
+   {
+    "method": "POST",
+    "path": "/api/calendar/events/{}/clone",
+    "required": false,
+    "dynamic": true,
+    "found_in": "src/pages/life.astro#runEventSiloAction"
    }
   ],
   "/memory": [
@@ -2075,6 +2096,11 @@
     "method": "GET",
     "path": "/api/capabilities/catalog",
     "required": true
+   },
+   {
+    "method": "GET",
+    "path": "/api/modules/surfaces",
+    "required": false
    }
   ],
   "/prompt-library": [

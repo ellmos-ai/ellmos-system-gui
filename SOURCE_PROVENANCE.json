@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "01b5eff0a86117e8b196a3f06ef9af23eb8fc45521496450a3c6671274f12955",
+    "public/page-reads.v1.json": "afbf16049ea72aefde9cd014ce4adab8f94361ec99c72bda364e643a93959a5c",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -303,7 +303,7 @@
     "src/pages/inbox.astro": "bbf7ea46658020ff9c3a876a7d5cef373f5f74e602de6c05b35900047bb76d06",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "ddabc8881b0fdda68a8cedaefdae47ffbb50e8687145ba777a52bbb4c14ed946",
-    "src/pages/life.astro": "1033abab8a809e82d8e213446a9ea2f6300ae006982fa1c45adb2eecd4ac9bd4",
+    "src/pages/life.astro": "bb1329ecdc7161bd9916a877e9c58c2d5e16ba323e3a4df802d75507b32ce319",
     "src/pages/maintenance.astro": "7294172005c792f600e9609281afa82ab8cfb78c4036335430dec8da8b0ae1a3",
     "src/pages/memory.astro": "3ba7a1abcb4253884ef1112a032c8cf42bb79e5e5479db9a19ff2f920f2ff761",
     "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
@@ -319,7 +319,7 @@
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/steuer.astro": "cbe9e45477d8ae3f857e69f33ad4f1ed5106a34e4875faae146b87f9c965a148",
     "src/pages/system/installation-updates.astro": "346beb210bb661cf253e878b100cae2ebc3553ca516c89c812bf02db8e50d394",
-    "src/pages/talk.astro": "60b41dc7d2abba9a982fcc9515a71403d2b519614472c6bffbdee2582035883a",
+    "src/pages/talk.astro": "ca50759d9a4d59353320ce2172fc6f535fdfce03afdf11d1b38575cdbe924e06",
     "src/pages/tasks.astro": "5a61f8316afc4d0fe1d78749955bc426cae3c75f67b20c2596507067652491d9",
     "src/pages/tools.astro": "8f967ac26069007ca028010b0de9126f95c82e6f23b93e75b1dc19d026a44585",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
@@ -6894,6 +6894,43 @@
           "path": "src/pages/life.astro",
           "previous_sha256": "26b8b6654ecdc859c7a7349c09951de677810ba4e11cde5c58d8c57d8b3be347",
           "sha256": "1033abab8a809e82d8e213446a9ea2f6300ae006982fa1c45adb2eecd4ac9bd4"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-27",
+      "summary": "Wave 3 GUI: PB-7 live /api/modules/surfaces grid on /system/ocean, /talk voice engine & terminology fix, /life mirror/transfer/clone actions.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "01b5eff0a86117e8b196a3f06ef9af23eb8fc45521496450a3c6671274f12955",
+          "sha256": "08094dcd60e5f5449bc19eceb96f749c9152c4955a66421fb9670b7a8955a710"
+        },
+        {
+          "path": "src/pages/talk.astro",
+          "previous_sha256": "60b41dc7d2abba9a982fcc9515a71403d2b519614472c6bffbdee2582035883a",
+          "sha256": "ca50759d9a4d59353320ce2172fc6f535fdfce03afdf11d1b38575cdbe924e06"
+        },
+        {
+          "path": "src/pages/system/ocean.astro",
+          "previous_sha256": "35b60818de69408bce6254822ce1ec2578ca961458bf98f9712425e36765effd",
+          "sha256": "9dd307704e8bc5895d87691c440acbc9412180b572fbceadf76710c9f56543f0"
+        },
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "1033abab8a809e82d8e213446a9ea2f6300ae006982fa1c45adb2eecd4ac9bd4",
+          "sha256": "bb1329ecdc7161bd9916a877e9c58c2d5e16ba323e3a4df802d75507b32ce319"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-27",
+      "summary": "Wave 3 GUI: PB-7 live /api/modules/surfaces grid on /system/ocean, /talk voice engine & terminology fix, /life mirror/transfer/clone actions.",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "08094dcd60e5f5449bc19eceb96f749c9152c4955a66421fb9670b7a8955a710",
+          "sha256": "afbf16049ea72aefde9cd014ce4adab8f94361ec99c72bda364e643a93959a5c"
         }
       ]
     }
