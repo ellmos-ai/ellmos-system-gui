@@ -7,6 +7,8 @@ const CHECKED_FILES = [
   '../src/pages/settings.astro',
   '../src/pages/agenten/blueprints.astro',
   '../src/pages/system/installation-updates.astro',
+  '../src/pages/system/ocean.astro',
+  '../src/pages/talk.astro',
   '../src/components/Header.astro',
   '../src/lib/agent-tile.mjs',
   '../src/lib/model-tuning.mjs',

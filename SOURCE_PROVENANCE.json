@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "639cbbed5bb075698ca57871b31ca6711b94cc09fcdfcd825a85a169f14abcee",
+    "public/page-reads.v1.json": "b4eb26c639ea9b792475006e429348f9cd241bdc0652148db34298ed1cbdbbe9",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -283,7 +283,7 @@
     "src/pages/agenten/blueprints.astro": "5e153f87d3908ac6b7521284a8d1f59f93364e8ce599102a3f39f12d8a5da1de",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
-    "src/pages/agenten/running.astro": "5b512ee0e39bbff23d7909941cbc80bd26e4bb7cbae126ae059b9bc0281505f7",
+    "src/pages/agenten/running.astro": "322978e30293ecdad8f815056325910f0e27fc0b9849c89631945eb73c2226a9",
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
     "src/pages/agenten/subscription-agents.astro": "9a47a998bc04cbc0882d4fc936fc713a70fd286a034bffdc7dc0b75c6fada06a",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
@@ -299,11 +299,11 @@
     "src/pages/governance/index.astro": "5b5ce800eff6bfa95996c969416394d4af11a3aac05352947897e5bf29f775e3",
     "src/pages/governance/logs.astro": "1227c2cb3cb5306990090b2adf9b7d6384f3e4a118db0c309011004a26e73a1d",
     "src/pages/governance/usecases.astro": "263f8f759c73b797eeb8792730721687bc7dcfec882fab33c4b22cecdfbeb9b6",
-    "src/pages/help.astro": "f663f278f06357313548e12c9e83f285b84357633b41fa14d94b7b8454b26002",
+    "src/pages/help.astro": "33769809d7347f8c6da2a4131b77bd1a9233992355b49ffbfdd760fdc10acaef",
     "src/pages/inbox.astro": "bbf7ea46658020ff9c3a876a7d5cef373f5f74e602de6c05b35900047bb76d06",
     "src/pages/index.astro": "d9f10b606268c545b0063eac4a29ec0b7179f82a825da67e8d13949d842a7eb9",
     "src/pages/kontakte.astro": "ddabc8881b0fdda68a8cedaefdae47ffbb50e8687145ba777a52bbb4c14ed946",
-    "src/pages/life.astro": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481",
+    "src/pages/life.astro": "26b8b6654ecdc859c7a7349c09951de677810ba4e11cde5c58d8c57d8b3be347",
     "src/pages/maintenance.astro": "7294172005c792f600e9609281afa82ab8cfb78c4036335430dec8da8b0ae1a3",
     "src/pages/memory.astro": "3ba7a1abcb4253884ef1112a032c8cf42bb79e5e5479db9a19ff2f920f2ff761",
     "src/pages/modules.astro": "a2dfbdd640b9e7d95f31e36461fc386af276b8a668418b59b0bfaf34b6fa07f1",
@@ -318,8 +318,8 @@
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/steuer.astro": "cbe9e45477d8ae3f857e69f33ad4f1ed5106a34e4875faae146b87f9c965a148",
-    "src/pages/system/installation-updates.astro": "d1ec283452fd8d5c64bfd5544555c80e8e1a8b2ccf59bdbb4cc2cf4dfda5dcd3",
-    "src/pages/talk.astro": "cc28dbf6e5a8c500f6b035233ea49bbaff17dc143f050803416af27bfa55fe26",
+    "src/pages/system/installation-updates.astro": "346beb210bb661cf253e878b100cae2ebc3553ca516c89c812bf02db8e50d394",
+    "src/pages/talk.astro": "60b41dc7d2abba9a982fcc9515a71403d2b519614472c6bffbdee2582035883a",
     "src/pages/tasks.astro": "5a61f8316afc4d0fe1d78749955bc426cae3c75f67b20c2596507067652491d9",
     "src/pages/tools.astro": "8f967ac26069007ca028010b0de9126f95c82e6f23b93e75b1dc19d026a44585",
     "src/pages/user-inbox.astro": "f3af2fd6664351ae5df9243157fa894872922e25c9059a733f557cc3a1b09700",
@@ -6842,6 +6842,42 @@
           "path": "src/pages/system/installation-updates.astro",
           "previous_sha256": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
           "sha256": "d1ec283452fd8d5c64bfd5544555c80e8e1a8b2ccf59bdbb4cc2cf4dfda5dcd3"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-27",
+      "scope": "OCEAN Wave 2: live /system/ocean host card, honest /talk voice status, /help live topics browser, /life multi-calendar silos & export, System-Agenten label",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "639cbbed5bb075698ca57871b31ca6711b94cc09fcdfcd825a85a169f14abcee",
+          "sha256": "b4eb26c639ea9b792475006e429348f9cd241bdc0652148db34298ed1cbdbbe9"
+        },
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "5b512ee0e39bbff23d7909941cbc80bd26e4bb7cbae126ae059b9bc0281505f7",
+          "sha256": "322978e30293ecdad8f815056325910f0e27fc0b9849c89631945eb73c2226a9"
+        },
+        {
+          "path": "src/pages/system/installation-updates.astro",
+          "previous_sha256": "d1ec283452fd8d5c64bfd5544555c80e8e1a8b2ccf59bdbb4cc2cf4dfda5dcd3",
+          "sha256": "346beb210bb661cf253e878b100cae2ebc3553ca516c89c812bf02db8e50d394"
+        },
+        {
+          "path": "src/pages/talk.astro",
+          "previous_sha256": "cc28dbf6e5a8c500f6b035233ea49bbaff17dc143f050803416af27bfa55fe26",
+          "sha256": "60b41dc7d2abba9a982fcc9515a71403d2b519614472c6bffbdee2582035883a"
+        },
+        {
+          "path": "src/pages/help.astro",
+          "previous_sha256": "f663f278f06357313548e12c9e83f285b84357633b41fa14d94b7b8454b26002",
+          "sha256": "33769809d7347f8c6da2a4131b77bd1a9233992355b49ffbfdd760fdc10acaef"
+        },
+        {
+          "path": "src/pages/life.astro",
+          "previous_sha256": "880f6ee96496f75c604b47aee17fafb7de3509d1223339fa439eaab6965a9481",
+          "sha256": "26b8b6654ecdc859c7a7349c09951de677810ba4e11cde5c58d8c57d8b3be347"
         }
       ]
     }

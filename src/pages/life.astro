@@ -57,6 +57,18 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         <label><input id="cal-source-system" type="checkbox" checked /> BACH/Ocean-Systemtermine</label>
         <label><input id="cal-source-unknown" type="checkbox" checked /> Ältere Termine ohne Herkunft</label>
       </div>
+      <div id="cal-silo-bar" style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;margin:0 0 0.75rem;padding:0.6rem 0.75rem;border-radius:10px;border:1px solid var(--border);background:var(--bg-panel);">
+        <div id="cal-silo-filters" role="group" aria-label="Kalender-Silos" style="display:flex;flex-wrap:wrap;gap:0.4rem;align-items:center;">
+          <span style="font-size:0.76rem;color:var(--text-muted);margin-right:0.2rem;">Silos:</span>
+        </div>
+        <div id="cal-export-toolbar" style="display:flex;flex-wrap:wrap;gap:0.35rem;align-items:center;">
+          <span style="font-size:0.76rem;color:var(--text-muted);">Export:</span>
+          <button type="button" class="btn btn-secondary btn-sm" data-cal-export="html" title="Druckreifes Kalenderblatt (HTML)">🖨️ Blatt</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-cal-export="md" title="Markdown-Terminbericht">📝 MD</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-cal-export="txt" title="Klartext-Auszug">📄 TXT</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-cal-export="ics" title="iCalendar-Datei (.ics)">📅 ICS</button>
+        </div>
+      </div>
       <p id="calendar-load-status" class="load-status" role="status" aria-live="polite"></p>
 
       <!-- VIEW 1: TAGESANSICHT (24h Timeline) -->
@@ -298,6 +310,19 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
           <div>
+            <label style="display:block;font-size:0.8rem;color:var(--text-muted);margin-bottom:0.25rem;">Kalender-Silo / Profil</label>
+            <select id="ne-calendar-id" style="width:100%;padding:0.55rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;">
+              <option value="user">Nutzerkalender (user)</option>
+              <option value="tickets">Ticket-Kalender (tickets)</option>
+              <option value="finanzen">Finanzkalender (finanzen)</option>
+              <option value="gesundheit">Arzttermine &amp; Gesundheit (gesundheit)</option>
+              <option value="geburtstage_privat">Geburtstage privat</option>
+              <option value="geburtstage_beruflich">Geburtstage beruflich</option>
+              <option value="terminpilot">TerminPilot (terminpilot)</option>
+              <option value="routinen">Routinen (routinen)</option>
+            </select>
+          </div>
+          <div>
             <label style="display:block;font-size:0.8rem;color:var(--text-muted);margin-bottom:0.25rem;">Kategorie</label>
             <select id="ne-type" style="width:100%;padding:0.55rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;">
               <option value="termin">Termin / Meeting</option>
@@ -306,10 +331,10 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
               <option value="gesundheit">Gesundheit / Sport</option>
             </select>
           </div>
-          <div>
-            <label style="display:block;font-size:0.8rem;color:var(--text-muted);margin-bottom:0.25rem;">Ort / Tool</label>
-            <input type="text" id="ne-location" placeholder="z. B. Remote / Zoom / Office" style="width:100%;padding:0.55rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;" />
-          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:0.8rem;color:var(--text-muted);margin-bottom:0.25rem;">Ort / Tool</label>
+          <input type="text" id="ne-location" placeholder="z. B. Remote / Zoom / Office" style="width:100%;padding:0.55rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:0.85rem;" />
         </div>
 
         <div>
@@ -765,6 +790,93 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
     let _calView = 'month'; // 'day' | 'week' | 'month' | 'year'
     let _currentDate = new Date();
     let _loadedEvents = [];
+    let _activeSilo = 'all';
+    let _calProfiles = [
+      { id: 'user', name: 'Nutzer', color: '#38bdf8' },
+      { id: 'tickets', name: 'Tickets', color: '#f59e0b' },
+      { id: 'finanzen', name: 'Finanzen', color: '#10b981' },
+      { id: 'gesundheit', name: 'Gesundheit', color: '#f43f5e' },
+      { id: 'geburtstage_privat', name: 'Geburtstage (privat)', color: '#a855f7' },
+      { id: 'geburtstage_beruflich', name: 'Geburtstage (beruflich)', color: '#6366f1' },
+      { id: 'terminpilot', name: 'TerminPilot', color: '#14b8a6' },
+      { id: 'routinen', name: 'Routinen', color: '#94a3b8' },
+    ];
+
+    function renderCalendarSiloButtons() {
+      const host = document.getElementById('cal-silo-filters');
+      if (!host) return;
+      host.replaceChildren();
+      const lbl = document.createElement('span');
+      lbl.style.cssText = 'font-size:0.76rem;color:var(--text-muted);margin-right:0.2rem;';
+      lbl.textContent = 'Silos:';
+      host.appendChild(lbl);
+      const makeBtn = (id, label, color, count) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        const active = _activeSilo === id;
+        b.style.cssText = `display:inline-flex;align-items:center;gap:0.35rem;padding:0.24rem 0.6rem;border-radius:999px;font-size:0.75rem;cursor:pointer;border:1px solid ${active ? (color || 'var(--accent)') : 'var(--border)'};background:${active ? 'rgba(56,189,248,0.18)' : 'var(--bg-dark)'};color:var(--text);font-weight:${active ? '700' : '500'};`;
+        if (color) {
+          const dot = document.createElement('span');
+          dot.style.cssText = `width:7px;height:7px;border-radius:50%;background:${color};display:inline-block;`;
+          b.appendChild(dot);
+        }
+        const txt = document.createElement('span');
+        txt.textContent = typeof count === 'number' ? `${label} (${count})` : label;
+        b.appendChild(txt);
+        b.addEventListener('click', () => {
+          _activeSilo = id;
+          renderCalendarSiloButtons();
+          loadCalendarEvents();
+        });
+        return b;
+      };
+      host.appendChild(makeBtn('all', 'Gesamtkalender', null, null));
+      for (const p of _calProfiles) {
+        host.appendChild(makeBtn(p.id, p.name || p.id, p.color || '#38bdf8', typeof p.count === 'number' ? p.count : undefined));
+      }
+    }
+
+    async function loadCalendarProfiles() {
+      renderCalendarSiloButtons();
+      try {
+        const res = await lifeApiFetch('/api/calendar/profiles');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (Array.isArray(data?.profiles) && data.profiles.length) {
+          _calProfiles = data.profiles;
+          renderCalendarSiloButtons();
+        }
+      } catch (_) {}
+    }
+
+    async function exportCalendarReport(format) {
+      const dateStr = localDateKey(_currentDate);
+      const calParam = encodeURIComponent(_activeSilo || 'all');
+      const status = document.getElementById('calendar-load-status');
+      try {
+        const res = await lifeApiFetch(`/api/calendar/export?view=${encodeURIComponent(_calView)}&date=${encodeURIComponent(dateStr)}&calendars=${calParam}&format=${encodeURIComponent(format)}`);
+        if (!res.ok) {
+          if (status) status.textContent = `Kalender-Export fehlgeschlagen (HTTP ${res.status}).`;
+          return;
+        }
+        const blob = await res.blob();
+        const objUrl = URL.createObjectURL(blob);
+        if (format === 'html') {
+          window.open(objUrl, '_blank', 'noopener');
+        } else {
+          const a = document.createElement('a');
+          a.href = objUrl;
+          a.download = `ocean-kalender-${_calView}-${dateStr}.${format}`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }
+        setTimeout(() => URL.revokeObjectURL(objUrl), 10000);
+        if (status) status.textContent = `Kalender-Export (${format.toUpperCase()}) erstellt.`;
+      } catch (_) {
+        if (status) status.textContent = 'Kalender-Export derzeit nicht erreichbar.';
+      }
+    }
 
     const MONTH_NAMES = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
     const WEEKDAY_NAMES = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
@@ -783,7 +895,8 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         else if (userChecked && !sysChecked && unkChecked) originParam = 'without_system';
         else if (!userChecked && !sysChecked && unkChecked) originParam = 'unknown';
 
-        const res = await lifeApiFetch(`/api/calendar/events?view=${_calView}&date=${dateStr}&include_routines=false&origin=${originParam}`);
+        const includeRoutines = _activeSilo === 'all' || _activeSilo === 'routinen';
+        const res = await lifeApiFetch(`/api/calendar/events?view=${_calView}&date=${dateStr}&include_routines=${includeRoutines}&origin=${originParam}&calendars=${encodeURIComponent(_activeSilo || 'all')}`);
         if (res.ok) {
           const data = await res.json();
           _loadedEvents = Array.isArray(data.events) ? data.events : [];
@@ -1055,6 +1168,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
       const title = document.getElementById('ne-title').value.trim();
       const date = document.getElementById('ne-date').value;
       const time = document.getElementById('ne-time').value;
+      const calendar_id = document.getElementById('ne-calendar-id')?.value || 'user';
       const event_type = document.getElementById('ne-type').value;
       const location = document.getElementById('ne-location').value.trim();
       const description = document.getElementById('ne-description').value.trim();
@@ -1065,7 +1179,7 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         const res = await lifeApiFetch('/api/calendar/events', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, start_datetime, event_type, location, description })
+          body: JSON.stringify({ title, start_datetime, calendar_id, event_type, location, description })
         });
         if (res.ok) {
           const saved = await res.json();
@@ -1437,8 +1551,12 @@ import TaskCreateForm from "../components/TaskCreateForm.astro";
         });
       });
       document.querySelectorAll('.calendar-source-filters input').forEach(input => {
-        input.addEventListener('change', renderActiveCalendarView);
+        input.addEventListener('change', () => loadCalendarEvents());
       });
+      document.querySelectorAll('[data-cal-export]').forEach(btn => {
+        btn.addEventListener('click', () => exportCalendarReport(btn.getAttribute('data-cal-export') || 'html'));
+      });
+      loadCalendarProfiles();
 
       // Handle query param
       const urlParams = new URLSearchParams(window.location.search);
