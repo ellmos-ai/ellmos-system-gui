@@ -8,6 +8,7 @@ const CHECKED_FILES = [
   '../src/pages/agenten/blueprints.astro',
   '../src/components/Header.astro',
   '../src/lib/agent-tile.mjs',
+  '../src/lib/model-tuning.mjs',
   '../src/lib/role-socket-preview.mjs',
   '../src/scripts/blueprint-studio.mjs',
 ];

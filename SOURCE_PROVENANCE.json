@@ -24,7 +24,7 @@
     "package-lock.json": "5c3c26cb8350695fb1509e660525d19dd5e2099411821840ff1fcf2a167f5526",
     "package.json": "e572726019908bd12d07d36c4ff224491e9e421d27f80a9330473fc8e86abcfc",
     "public/device-fetch.js": "2200274facf36e92a39972fe6fbdb86b8b592797a2bead290f0e299ed735eef5",
-    "public/page-reads.v1.json": "00c49a6645f4d7d4a6d084b7f6b28e0223552bdc27e74435d2e3da8d9274958e",
+    "public/page-reads.v1.json": "639cbbed5bb075698ca57871b31ca6711b94cc09fcdfcd825a85a169f14abcee",
     "scripts/generate-agent-avatar-thumbnails.mjs": "af2ad22825a81520c8c17de0bca02cb62e03dcdcaac9d8b8223d122d59a71ea8",
     "scripts/package_release.py": "50af31f4a57ca4ef16723c2a2674958d00d86822449e0f4130003d356e7edf1f",
     "scripts/page-reads-bindings.mjs": "3c195292ebd8ea0ffdc884f422eebfc1a3299eafe7fa0ee7eec69af5a132da21",
@@ -312,7 +312,7 @@
     "src/pages/routinen.astro": "a2e041430e5848a19429b15999ac6af86613eedf05de1c3112d239e74894e746",
     "src/pages/sensation.astro": "110ae810922ef21fe8aee85d370f296c860b005f1873f6bf79996d4e76bbfed0",
     "src/pages/sessions.astro": "bb515024c04451ca8b7e3b586350707a7da29db6dc5467c2172aca3ff87a8774",
-    "src/pages/settings.astro": "683df50afd7c0a25a2dc28d21724ddf6545f96efa4ac26c28d64cca791722523",
+    "src/pages/settings.astro": "e1dbe9796e81c615f37eda7a2609fc46381a9f1f5059905ceb693197ee737958",
     "src/pages/skills.astro": "3ccae291007149701434108f0d09ca190a3576b5013275f922fd2f43404158d8",
     "src/pages/skills/mcp.astro": "bb594e1c75e69a64261da42153a9ab5990f76813879f5d16df4611b940d92092",
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
@@ -6805,6 +6805,22 @@
           "path": "tests/role-socket-preview.test.mjs",
           "previous_sha256": "e024944cca4d787ef26c78753fabee0eb3c20b8badcab56a505b75289f83e0ff",
           "sha256": "fdc005f10679c79aa86a34a0299318627d36902d4b75df595aa1cffc98b2351a"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-27",
+      "scope": "Local model hardware-default & num_ctx tuning surface under /settings (#2972 / #4445)",
+      "files": [
+        {
+          "path": "public/page-reads.v1.json",
+          "previous_sha256": "00c49a6645f4d7d4a6d084b7f6b28e0223552bdc27e74435d2e3da8d9274958e",
+          "sha256": "639cbbed5bb075698ca57871b31ca6711b94cc09fcdfcd825a85a169f14abcee"
+        },
+        {
+          "path": "src/pages/settings.astro",
+          "previous_sha256": "683df50afd7c0a25a2dc28d21724ddf6545f96efa4ac26c28d64cca791722523",
+          "sha256": "e1dbe9796e81c615f37eda7a2609fc46381a9f1f5059905ceb693197ee737958"
         }
       ]
     }
