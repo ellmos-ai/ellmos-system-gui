@@ -53,6 +53,8 @@
     "GET /agents/steuer",
     "GET /anonymization",
     "GET /anonymizer",
+    "GET /api/agenda",
+    "GET /api/agenda/export",
     "GET /api/agent-history/sessions",
     "GET /api/agent-history/sessions/{}",
     "GET /api/agent-history/tasks",
