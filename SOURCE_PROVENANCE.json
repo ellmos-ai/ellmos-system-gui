@@ -280,10 +280,10 @@
     "src/lib/worker-lease-countdown.mjs": "1f25d802e7ba42a57560ff3b95daa426201603577ad13e517cd751febc9ee9e9",
     "src/lib/worker-policy-settings.mjs": "cf8e63a8d2c90ca67e198596395f1467550b3605d0f332bcb7a1569a8f92ae1a",
     "src/lib/worker-selection-policy.mjs": "bd39e8550fb9c356580f55289c79218f0d407d53395db2999a4b48d43394e198",
-    "src/pages/agenten/blueprints.astro": "d0903a4471fde7ad30a4a0cd8a3d7c95608be884b1302fdde83f3a0e3489a906",
+    "src/pages/agenten/blueprints.astro": "5e153f87d3908ac6b7521284a8d1f59f93364e8ce599102a3f39f12d8a5da1de",
     "src/pages/agenten/fabrika.astro": "ed48ff59afba3d9aff6db67689f4fb74e15b8a944e2e1cfd3c50961944bbf284",
     "src/pages/agenten/marblerun.astro": "e05341bc22a50a90851d20dcbccda3cbd3580ef55cb8c5d4dc76f9723093fd71",
-    "src/pages/agenten/running.astro": "5b06ea458909e123bfe3f443c3d6fd06b8c13cf0c31f72be70cb2dc09eb78ac5",
+    "src/pages/agenten/running.astro": "5b512ee0e39bbff23d7909941cbc80bd26e4bb7cbae126ae059b9bc0281505f7",
     "src/pages/agenten/sessions.astro": "ee647b30c35d394c2e12eab0e2b7bff4486eacc690473e608085473a1af9920c",
     "src/pages/agenten/subscription-agents.astro": "9a47a998bc04cbc0882d4fc936fc713a70fd286a034bffdc7dc0b75c6fada06a",
     "src/pages/artefakte.astro": "572d4eac008e42ea7b99a06d268546d90cbe6582af0d964060c0119b2c46b16c",
@@ -318,7 +318,7 @@
     "src/pages/skills/plugins.astro": "c79c9b9d5fe8a826296c6a165235dc0a391af1f577938a57a9b545e89eb3f5dd",
     "src/pages/skills/software.astro": "25289586822281d3e694765d4544f4483e6bced8d306a3792e4f7a991458d003",
     "src/pages/steuer.astro": "cbe9e45477d8ae3f857e69f33ad4f1ed5106a34e4875faae146b87f9c965a148",
-    "src/pages/system/installation-updates.astro": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
+    "src/pages/system/installation-updates.astro": "d1ec283452fd8d5c64bfd5544555c80e8e1a8b2ccf59bdbb4cc2cf4dfda5dcd3",
     "src/pages/talk.astro": "cc28dbf6e5a8c500f6b035233ea49bbaff17dc143f050803416af27bfa55fe26",
     "src/pages/tasks.astro": "5a61f8316afc4d0fe1d78749955bc426cae3c75f67b20c2596507067652491d9",
     "src/pages/tools.astro": "8f967ac26069007ca028010b0de9126f95c82e6f23b93e75b1dc19d026a44585",
@@ -6821,6 +6821,27 @@
           "path": "src/pages/settings.astro",
           "previous_sha256": "683df50afd7c0a25a2dc28d21724ddf6545f96efa4ac26c28d64cca791722523",
           "sha256": "e1dbe9796e81c615f37eda7a2609fc46381a9f1f5059905ceb693197ee737958"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-27",
+      "scope": "Remove duplicate/misleading Besetzt-von-Boss line on system agent tiles and replace legacy Besetzung/Boss-Koordinator labels with Modellbindung/Koordination",
+      "files": [
+        {
+          "path": "src/pages/agenten/running.astro",
+          "previous_sha256": "5b06ea458909e123bfe3f443c3d6fd06b8c13cf0c31f72be70cb2dc09eb78ac5",
+          "sha256": "5b512ee0e39bbff23d7909941cbc80bd26e4bb7cbae126ae059b9bc0281505f7"
+        },
+        {
+          "path": "src/pages/agenten/blueprints.astro",
+          "previous_sha256": "d0903a4471fde7ad30a4a0cd8a3d7c95608be884b1302fdde83f3a0e3489a906",
+          "sha256": "5e153f87d3908ac6b7521284a8d1f59f93364e8ce599102a3f39f12d8a5da1de"
+        },
+        {
+          "path": "src/pages/system/installation-updates.astro",
+          "previous_sha256": "07ea289e2718b5e69a2c6fa4064e13fab4723a4261dddb990d6cdb0891995a76",
+          "sha256": "d1ec283452fd8d5c64bfd5544555c80e8e1a8b2ccf59bdbb4cc2cf4dfda5dcd3"
         }
       ]
     }

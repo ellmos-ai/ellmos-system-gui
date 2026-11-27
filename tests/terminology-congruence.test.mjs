@@ -6,6 +6,7 @@ const CHECKED_FILES = [
   '../src/pages/agenten/running.astro',
   '../src/pages/settings.astro',
   '../src/pages/agenten/blueprints.astro',
+  '../src/pages/system/installation-updates.astro',
   '../src/components/Header.astro',
   '../src/lib/agent-tile.mjs',
   '../src/lib/model-tuning.mjs',
@@ -28,6 +29,11 @@ const FORBIDDEN_LEGACY_UI_STRINGS = [
   'Systemplatz',
   'Anbieter-Sockel',
   'Modell-Sockel',
+  'Besetzt von:',
+  'Besetzung ändern',
+  'Nicht besetzt',
+  'Boss-Koordinator',
+  'ehem. Bosse',
 ];
 
 test('GUI views use congruent terminology without legacy Fackel/Steckplatz/Sockel labels', () => {

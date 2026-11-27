@@ -21,7 +21,7 @@ const find = (node, predicate) => all(node).filter(predicate);
 
 const SPECS = {
   'system-slot': {name: 'Buddha Chat', status: {label: 'Ready · Living', tone: 'ok'}, model: ['Modellbindung: qwen · ollama'],
-    actions: {run: {label: 'Pausieren', onClick() {}}, edit: {label: 'Besetzung ändern', onClick() {}},
+    actions: {run: {label: 'Pausieren', onClick() {}}, edit: {label: 'Modellbindung ändern', onClick() {}},
       chat: {href: '/chat?slot_id=buddha_chat'}, assign: {href: '/tasks?create=1&assign_slot=buddha_chat'}}},
   'system-profile': {name: 'Experte', status: {label: 'Pausiert', tone: 'idle'}, model: ['Modellbindung: qwen · ollama'],
     actions: {run: {label: 'Fortsetzen', tone: 'primary', onClick() {}}, edit: {label: 'Bearbeiten', onClick() {}}, chat: {href: '/chat?slot_id=x'}}},
@@ -30,8 +30,8 @@ const SPECS = {
   'worker-running': {name: 'Reviewer', status: {label: 'Running · bestätigt', tone: 'busy'}, task: 'Task #2217',
     actions: {run: {label: 'Pausieren', onClick() {}}, stop: {onClick() {}}, assign: {href: '/tasks'}}},
   talk: {name: 'ELLMOS-Talk', status: {label: 'Ready · Living', tone: 'ok'},
-    actions: {edit: {label: 'Besetzung ändern', href: '#talk-slot'}, chat: {label: 'Funkgerät öffnen', onClick() {}}}},
-  interface: {name: 'SmartHome', status: {label: 'Inaktiv', tone: 'idle'}, actions: {edit: {label: 'Besetzen', onClick() {}}}},
+    actions: {edit: {label: 'Modellbindung ändern', href: '#talk-slot'}, chat: {label: 'Funkgerät öffnen', onClick() {}}}},
+  interface: {name: 'SmartHome', status: {label: 'Inaktiv', tone: 'idle'}, actions: {edit: {label: 'Modell binden', onClick() {}}}},
 };
 
 test('there are exactly the documented kinds, slots and actions', () => {
