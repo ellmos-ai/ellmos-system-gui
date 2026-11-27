@@ -366,9 +366,9 @@ import AbortNoticeSettings from "../components/AbortNoticeSettings.astro";
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:0.75rem;">
             <div class="repo-item">
-              <strong>Aktueller Fackelhalter</strong>
+              <strong>RAM-Zuteilung (Stufe 1)</strong>
               <p id="settings-fackel-holder" style="margin:0.25rem 0;">Nicht geprüft</p>
-              <small id="settings-fackel-owner-reason" style="color:var(--text-muted);display:block;">Ein aktueller Halternachweis fehlt.</small>
+              <small id="settings-fackel-owner-reason" style="color:var(--text-muted);display:block;">Ein aktueller Belegungsnachweis fehlt.</small>
             </div>
             <div class="repo-item">
               <strong>Compute-Vorrang</strong>
@@ -377,7 +377,7 @@ import AbortNoticeSettings from "../components/AbortNoticeSettings.astro";
               <small style="color:var(--text-muted);display:block;">Einstellung ändert die Bevorzugung zwischen Compute und Ollama.</small>
             </div>
             <div class="repo-item">
-              <strong>Lokaler Compute-Turn</strong>
+              <strong>Modellzeit-Zuteilung (Inferenz-Turn)</strong>
               <p id="settings-compute-turn-status" style="margin:0.25rem 0;">Nicht geprüft</p>
               <small id="settings-compute-turn-reason" style="color:var(--text-muted);display:block;">Aktueller Turn und wartende Vordergrundanfragen.</small>
             </div>
@@ -976,11 +976,11 @@ import AbortNoticeSettings from "../components/AbortNoticeSettings.astro";
         owner.state === 'competing_compute_reported' && freshOwner ? 'Rechenjobs melden Konkurrenz' :
         owner.state === 'idle' && freshOwner ? 'Derzeit kein lokaler BACH-Lauf' :
         owner.state === 'stale' ? 'Status veraltet' : 'Nicht geprüft';
-      document.getElementById('settings-fackel-owner-reason').textContent = owned ? 'Frischer Halternachweis für dieses System.' :
-        owner.state === 'foreign' && freshOwner ? 'Ein anderes System hält die Fackel.' :
+      document.getElementById('settings-fackel-owner-reason').textContent = owned ? 'Frischer Belegungsnachweis für dieses System.' :
+        owner.state === 'foreign' && freshOwner ? 'Ein anderes System hält aktuell die RAM-Zuteilung.' :
         owner.state === 'competing_compute_reported' && freshOwner ? 'Ein lokaler Compute-Lock meldet konkurrierende Rechenjobs.' :
         owner.state === 'idle' && freshOwner ? 'Der lokale Control-Dienst bestätigt, dass BACH gerade keine Inferenz ausführt.' :
-        owner.state === 'stale' ? 'Der letzte Halternachweis ist zu alt.' : 'Der Hardware-Halteradapter fehlt oder liefert keinen Beleg.';
+        owner.state === 'stale' ? 'Der letzte Belegungsnachweis ist zu alt.' : 'Der Ressourcen-Adapter fehlt oder liefert keinen Beleg.';
       settingsCurrentPriority = ['compute', 'ollama'].includes(f.priority?.value) ? f.priority.value : null;
       document.getElementById('settings-fackel-priority').textContent = settingsCurrentPriority === 'compute' ? 'Compute' :
         settingsCurrentPriority === 'ollama' ? 'Ollama' : 'Nicht geprüft';
@@ -1011,8 +1011,8 @@ import AbortNoticeSettings from "../components/AbortNoticeSettings.astro";
         && Number.isFinite(cap.capacity_gib) && cap.capacity_gib > 0;
       const fmt = v => new Intl.NumberFormat('de-DE', {maximumFractionDigits:2}).format(v);
       document.getElementById('settings-fackel-capacity').textContent = capacityMeasured
-        ? `${reportedModelCount} geladene Modelle · ${fmt(cap.used_gib)} / ${fmt(cap.capacity_gib)} GiB gemeinsame Modellkapazität · ${fmt(cap.occupied_units)} Fackelanteile belegt`
-        : cap.state === 'partial' ? 'Ollama antwortet; Fackelspeicher nicht messbar' : 'Nicht geprüft';
+        ? `${reportedModelCount} geladene Modelle · ${fmt(cap.used_gib)} / ${fmt(cap.capacity_gib)} GiB gemeinsame RAM-Kapazität · ${fmt(cap.occupied_units)}/10 Einheiten belegt`
+        : cap.state === 'partial' ? 'Ollama antwortet; RAM-Belegung nicht messbar' : 'Nicht geprüft';
       document.getElementById('settings-fackel-loaded-models').textContent = modelNamesComplete
         ? (reportedModelCount === 0 ? 'Ollama meldet keine geladenen Modelle.' : `Ollama meldet geladene Modelle: ${reportedModels.join(', ')}`)
         : 'Modellnamen nicht bestätigt.';
@@ -1037,7 +1037,7 @@ import AbortNoticeSettings from "../components/AbortNoticeSettings.astro";
       const data = await res.json();
       if (!res.ok || data.ok !== true || data.preference !== desired || data.ownership_changed !== false) throw new Error('Speicherung nicht bestätigt');
       await loadSettingsModelsResources();
-      if (feedback) feedback.textContent = 'Vorrang gespeichert. Der Fackelbesitz wurde nicht verändert.';
+      if (feedback) feedback.textContent = 'Vorrang gespeichert. Die laufende RAM-Zuteilung wurde nicht verändert.';
     } catch (_) {
       if (feedback) feedback.textContent = 'Vorrang konnte nicht bestätigt werden.';
       await loadSettingsModelsResources();

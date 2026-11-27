@@ -55,7 +55,7 @@ export function renderRoleSocketPreview(document, container, catalogue, provider
     route.append(text(template.semantic_route) ? 'Umbrella: ' : 'Prompt: ',
       element(document, 'code', text(template.semantic_route, text(template.prompt, 'SKILL.md'))));
     const binding = detail(document);
-    binding.append('Sockel ', element(document, 'code', socketId), ' → ',
+    binding.append('Modell-Profil ', element(document, 'code', socketId), ' → ',
       element(document, 'strong', text(model, 'Keine Modellbindung')));
     card.append(heading, route, binding);
     cards.push(card);

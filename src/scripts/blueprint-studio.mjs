@@ -135,7 +135,7 @@ function initializeStudio() {
         '<div class="studio-card-details"><span>'+escapeHtml(labels[bp.kind]||bp.kind)+'</span><span>· Version '+escapeHtml(bp.version)+'</span>'+(model?'<span>· '+escapeHtml(model)+'</span>':"")+'</div>'+
         '<div class="studio-card-actions"><button class="btn" data-revisions="'+id+'">Versionen</button><button class="btn" data-copy="'+id+'">'+(bp.is_template?"Kopie erstellen":"Duplizieren")+'</button>'+
         (!bp.is_template?'<button class="btn" data-edit="'+id+'">Bearbeiten</button>':"")+
-        (canExecute?'<button class="btn" data-instance="'+id+'">'+(slot?"Steckplatz aktualisieren":"Als Steckplatz")+'</button>':"")+
+        (canExecute?'<button class="btn" data-instance="'+id+'">'+(slot?"Agent aktualisieren":"Als Agent einrichten")+'</button>':"")+
         (slot?'<a class="btn" href="/tasks?assigned_slot='+encodeURIComponent(slot.id)+'">Aufgaben</a>':"")+
         (slot&&slot.runtime_verified===true&&slot.running===false&&slot.enabled!==false?'<button class="btn btn-primary" data-start="'+id+'">'+startLabel(slot)+'</button>':"")+
         (!bp.is_template&&!slot?'<button class="btn" data-delete="'+id+'">Entfernen</button>':"")+'</div></article>';
@@ -286,7 +286,7 @@ function initializeStudio() {
     const members=checked("team-members");
     selectOptions($("team-leader"),members.map(name=>({value:name,label:state.blueprints.find(bp=>bp.name===name)?.title||name})),members.includes(value)?value:members[0]||"");
     const drafts=Object.fromEntries([...$("team-models").querySelectorAll("input")].map(input=>[input.dataset.member,input.value]));
-    $("team-models").innerHTML=members.map(name=>'<label>'+escapeHtml(state.blueprints.find(bp=>bp.name===name)?.title||name)+'<input data-member="'+escapeHtml(name)+'" maxlength="120" value="'+escapeHtml(drafts[name]??state.team?.member_models?.[name]??"")+'" placeholder="Steckplatzmodell" /></label>').join("");
+    $("team-models").innerHTML=members.map(name=>'<label>'+escapeHtml(state.blueprints.find(bp=>bp.name===name)?.title||name)+'<input data-member="'+escapeHtml(name)+'" maxlength="120" value="'+escapeHtml(drafts[name]??state.team?.member_models?.[name]??"")+'" placeholder="Agenten-Modellbindung" /></label>').join("");
   }
   function openTeam(team=null) {
     state.team=team;$("team-form").reset();$("team-models").replaceChildren();$("team-name").value=team?.name||"";$("team-description").value=team?.description||"";
@@ -362,8 +362,8 @@ function initializeStudio() {
       const slot=observed.agents?.find(item=>item.id===result.slot_id);
       if(typeof result.configuration_version!=="string"||observed.configuration_version!==result.configuration_version||
          !modelBindingMatches(slot,{...execution,model_fallbacks:execution.model_fallbacks??[]}))
-        throw new Error("Modellbindung des Steckplatzes nicht bestätigt. Bitte aktualisieren.");
-      close("instance-editor");await loadData();notify("studio-status","Steckplatz eingerichtet · "+(slot.living===true?"Living bereit":"Runtime-Status wird unter Living & Running geprüft"));
+        throw new Error("Modellbindung des Agenten nicht bestätigt. Bitte aktualisieren.");
+      close("instance-editor");await loadData();notify("studio-status","Agent eingerichtet · "+(slot.living===true?"Living-Agent bereit":"Runtime-Status wird unter Living & Running geprüft"));
     }finally{$("instance-save").disabled=false;}
   },"instance-status");
   handle("studio-prompts","click",async()=>{

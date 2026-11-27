@@ -118,7 +118,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
     <div style="width:100%;">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.5rem;">
         <div>
-          <p class="studio-eyebrow" style="margin:0;">Ocean-Rollen · Dual-Routing &amp; Flexible Anbieter-Sockel (<code>ellmos.role-socket-catalog.v1</code>)</p>
+          <p class="studio-eyebrow" style="margin:0;">Ocean-Rollen · Dual-Routing &amp; Rollenvorlagen mit Modell-Profilen (<code>ellmos.role-socket-catalog.v1</code>)</p>
           <h2 style="font-size:1.15rem;margin:0.15rem 0 0;">🔌 6 Koordinatoren (ehem. Bosse), Domänen-Experten &amp; <span id="ocean-module-role-count"></span>Modul-Rollen (<code>roles[]</code>)</h2>
         </div>
         <label style="flex-direction:row;align-items:center;gap:0.45rem;margin:0;">
@@ -136,7 +136,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
       <p class="studio-note" style="margin:0 0 0.65rem 0;">
         <strong>Semantisches Routing:</strong> Umbrella-Skills (<code>*-umbrella</code>) + <code>semantic-persona-routing</code> &middot;
         <strong>Deterministisches Routing:</strong> <code>ellmos-controlcenter-mcp</code> (<code>resolve_semantic_route</code> / <code>switch_profile</code>) &middot;
-        <strong>Modell-Sockel:</strong> <code>reasoning_coordinator</code> | <code>domain_specialist</code> | <code>fast_worker</code>.
+        <strong>Modell-Profile:</strong> <code>reasoning_coordinator</code> | <code>domain_specialist</code> | <code>fast_worker</code>.
       </p>
       <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;margin:0 0 0.65rem;">
         <label style="flex-direction:row;align-items:center;gap:0.45rem;margin:0;">
@@ -249,7 +249,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
 
   <dialog id="instance-editor" class="studio-dialog studio-dialog-small" aria-labelledby="instance-title">
     <form id="instance-form">
-      <header class="studio-dialog-header"><h2 id="instance-title">Steckplatz einrichten</h2><button type="button" class="btn" data-close="instance-editor">Schließen</button></header>
+      <header class="studio-dialog-header"><h2 id="instance-title">Agent einrichten</h2><button type="button" class="btn" data-close="instance-editor">Schließen</button></header>
       <div class="studio-dialog-body">
         <p id="instance-description"></p>
         <div class="studio-fields">
@@ -258,10 +258,10 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
             <small class="studio-note" id="instance-model-fallbacks" hidden></small></label>
           <label>Modus<select id="instance-mode"><option value="safe">Safe</option><option value="full">Full</option></select></label>
         </div>
-        <p class="studio-note">Der Steckplatz wird als Living konfiguriert. Einen Worker startest du anschließend ausdrücklich; Aufgaben weist du im Taskboard zu.</p>
+        <p class="studio-note">Der Agent wird als Living-Agent konfiguriert. Einen Worker startest du anschließend ausdrücklich; Aufgaben weist du im Taskboard zu.</p>
         <p id="instance-status" class="studio-message" role="status"></p>
       </div>
-      <footer class="studio-dialog-footer"><button type="button" class="btn" data-close="instance-editor">Abbrechen</button><button type="submit" class="btn btn-primary" id="instance-save">Steckplatz einrichten</button></footer>
+      <footer class="studio-dialog-footer"><button type="button" class="btn" data-close="instance-editor">Abbrechen</button><button type="submit" class="btn btn-primary" id="instance-save">Agent einrichten</button></footer>
     </form>
   </dialog>
 
@@ -289,7 +289,7 @@ import {TICKET_SYMBOL_URLS} from '../../lib/ticket-symbol-assets.mjs';
         <label>Strategie<select id="team-strategy"><option value="swarm_parallel">Gleiche Aufgabe, verschiedene Perspektiven</option><option value="swarm_hierarchy">Koordination und Teilaufgaben</option><option value="sequential_pipeline">Schrittweise Übergabe</option></select></label>
         <p class="studio-note">Mitglieder auswählen</p><div id="team-members" class="studio-options"></div>
         <div id="team-models" class="studio-fields" aria-label="Modelle der Teammitglieder"></div>
-        <p class="studio-note">Modellvorgaben je Mitglied; leer übernimmt dessen Steckplatzkonfiguration.</p>
+        <p class="studio-note">Modellvorgaben je Mitglied; leer übernimmt dessen Agenten-Modellbindung.</p>
         <label>Koordination<select id="team-leader"></select></label>
         <p id="team-status" class="studio-message" role="status"></p>
       </div>

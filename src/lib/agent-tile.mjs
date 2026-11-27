@@ -10,7 +10,7 @@ export const TILE_ACTION_IDS = Object.freeze(['run', 'edit', 'chat', 'assign', '
 export const TILE_MENU_IDS = Object.freeze(['pause', 'stop', 'handoff', 'decompose', 'delete']);
 
 const KIND_LABELS = Object.freeze({
-  'system-slot': 'Systemplatz',
+  'system-slot': 'System-Agent',
   'system-profile': 'Systemprofil',
   worker: 'Hintergrundworker',
   'worker-running': 'Hintergrundworker',
